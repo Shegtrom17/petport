@@ -10,6 +10,9 @@ import { DocumentsSection } from "@/components/DocumentsSection";
 import { BadgesSection } from "@/components/BadgesSection";
 import { CareInstructionsSection } from "@/components/CareInstructionsSection";
 import { QuickIDSection } from "@/components/QuickIDSection";
+import { PetResumeSection } from "@/components/PetResumeSection";
+import { ReviewsSection } from "@/components/ReviewsSection";
+import { TravelMapSection } from "@/components/TravelMapSection";
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState("profile");
@@ -29,13 +32,20 @@ const Index = () => {
     lastVaccination: "March 2024",
     badges: ["Well-Behaved", "Good with Kids", "House Trained", "Therapy Certified"],
     medications: ["Daily joint supplement", "Allergy medication as needed"],
-    notes: "Friendly with other dogs, loves swimming, afraid of thunderstorms"
+    notes: "Friendly with other dogs, loves swimming, afraid of thunderstorms",
+    bio: "Luna is a gentle and loving Golden Retriever with an exceptional temperament. She's been professionally trained and has a calm, patient demeanor that makes her wonderful with children and other pets. Luna loves outdoor adventures, especially hiking and swimming, but is equally content relaxing at home. She's house-trained, leash-trained, and responds well to commands. Her favorite activities include fetch, long walks, and meeting new people at the dog park."
   };
 
   const renderActiveSection = () => {
     switch (activeTab) {
       case "profile":
         return <PetProfileCard petData={petData} />;
+      case "resume":
+        return <PetResumeSection petData={petData} />;
+      case "reviews":
+        return <ReviewsSection petData={petData} />;
+      case "travel":
+        return <TravelMapSection petData={petData} />;
       case "documents":
         return <DocumentsSection />;
       case "badges":

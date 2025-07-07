@@ -1,6 +1,6 @@
 
 import { Button } from "@/components/ui/button";
-import { FileText, Award, Badge, Star, Heart } from "lucide-react";
+import { FileText, Award, Badge, Star, Heart, MapPin, Users } from "lucide-react";
 
 interface NavigationTabsProps {
   activeTab: string;
@@ -10,6 +10,9 @@ interface NavigationTabsProps {
 export const NavigationTabs = ({ activeTab, onTabChange }: NavigationTabsProps) => {
   const tabs = [
     { id: "profile", label: "Profile", icon: FileText },
+    { id: "resume", label: "Pet Resume", icon: Badge },
+    { id: "reviews", label: "Reviews", icon: Users },
+    { id: "travel", label: "Travel Map", icon: MapPin },
     { id: "documents", label: "Documents", icon: FileText },
     { id: "badges", label: "Badges", icon: Award },
     { id: "care", label: "Care Instructions", icon: Heart },
@@ -30,7 +33,7 @@ export const NavigationTabs = ({ activeTab, onTabChange }: NavigationTabsProps) 
           }`}
         >
           <tab.icon className="w-4 h-4" />
-          <span>{tab.label}</span>
+          <span className="hidden sm:inline">{tab.label}</span>
         </Button>
       ))}
     </div>

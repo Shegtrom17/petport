@@ -1,7 +1,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Award, Star, Heart, Shield, Horse, Trophy } from "lucide-react";
+import { Award, Star, Heart, Shield, PawPrint, Trophy } from "lucide-react";
 
 interface BadgesSectionProps {
   badges: string[];
@@ -77,7 +77,7 @@ export const BadgesSection = ({ badges, petData }: BadgesSectionProps) => {
                   >
                     <div className={`w-12 h-12 rounded-full bg-gradient-to-r ${category.color} flex items-center justify-center mb-2`}>
                       {isHorse && category.icon === Trophy ? (
-                        <Horse className="w-6 h-6 text-white" />
+                        <PawPrint className="w-6 h-6 text-white" />
                       ) : (
                         <category.icon className="w-6 h-6 text-white" />
                       )}
@@ -116,7 +116,7 @@ export const BadgesSection = ({ badges, petData }: BadgesSectionProps) => {
                 className="flex flex-col items-center p-4 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300 opacity-60"
               >
                 <div className="w-12 h-12 rounded-full bg-gray-300 flex items-center justify-center mb-2">
-                  {isHorse ? <Horse className="w-6 h-6 text-gray-500" /> : <Award className="w-6 h-6 text-gray-500" />}
+                  {isHorse ? <PawPrint className="w-6 h-6 text-gray-500" /> : <Award className="w-6 h-6 text-gray-500" />}
                 </div>
                 <Badge variant="outline" className="text-xs">
                   {badge}

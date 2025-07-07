@@ -1,6 +1,6 @@
 
 import { Button } from "@/components/ui/button";
-import { FileText, Award, Badge, Star } from "lucide-react";
+import { FileText, Award, Badge, Star, Heart } from "lucide-react";
 
 interface NavigationTabsProps {
   activeTab: string;
@@ -12,6 +12,7 @@ export const NavigationTabs = ({ activeTab, onTabChange }: NavigationTabsProps) 
     { id: "profile", label: "Profile", icon: FileText },
     { id: "documents", label: "Documents", icon: FileText },
     { id: "badges", label: "Badges", icon: Award },
+    { id: "care", label: "Care Instructions", icon: Heart },
     { id: "quickid", label: "Quick ID", icon: Star },
   ];
 

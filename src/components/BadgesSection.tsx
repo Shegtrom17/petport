@@ -1,44 +1,52 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Award, Star, Heart, Shield } from "lucide-react";
+import { Award, Star, Heart, Shield, Horse, Trophy } from "lucide-react";
 
 interface BadgesSectionProps {
   badges: string[];
+  petData?: {
+    species?: string;
+  };
 }
 
-export const BadgesSection = ({ badges }: BadgesSectionProps) => {
+export const BadgesSection = ({ badges, petData }: BadgesSectionProps) => {
+  const isHorse = petData?.species?.toLowerCase() === 'horse';
+  
   const badgeCategories = [
     {
       title: "Behavior Badges",
       description: "Verified behavioral achievements",
       badges: badges.filter(badge => 
-        ["Well-Behaved", "Good with Kids", "House Trained", "Friendly with Dogs"].includes(badge)
+        ["Well-Behaved", "Good with Kids", "House Trained", "Friendly with Dogs", "Calm Under Saddle", "Good with Handlers"].includes(badge)
       ),
       icon: Heart,
       color: "from-green-500 to-emerald-600"
     },
     {
-      title: "Training Badges",
-      description: "Training and certification achievements",
+      title: isHorse ? "Training & Riding Badges" : "Training Badges",
+      description: isHorse ? "Riding and training certifications" : "Training and certification achievements",
       badges: badges.filter(badge => 
-        ["Therapy Certified", "Basic Obedience", "Advanced Training"].includes(badge)
+        ["Therapy Certified", "Basic Obedience", "Advanced Training", "Dressage Trained", "Trail Safe", "Ground Manners"].includes(badge)
       ),
       icon: Award,
       color: "from-blue-500 to-indigo-600"
     },
     {
-      title: "Special Recognition",
-      description: "Unique achievements and recognitions",
+      title: isHorse ? "Competition & Performance" : "Special Recognition",
+      description: isHorse ? "Show and competition achievements" : "Unique achievements and recognitions",
       badges: badges.filter(badge => 
-        ["Hero Pet", "Community Favorite", "Show Winner"].includes(badge)
+        ["Hero Pet", "Community Favorite", "Show Winner", "Champion", "Hunter Class", "Jumper Certified"].includes(badge)
       ),
-      icon: Star,
+      icon: isHorse ? Trophy : Star,
       color: "from-yellow-500 to-orange-600"
     }
   ];
 
-  const availableBadges = [
+  const availableBadges = isHorse ? [
+    "English Trained", "Western Trained", "Trailer Loading", "Farrier Friendly", 
+    "Vet Friendly", "Cross Country", "Show Ring Ready", "Therapy Horse"
+  ] : [
     "Agility Trained", "Therapy Ready", "Good with Cats", "Travel Ready", 
     "Swim Certified", "Guard Trained", "Show Quality", "Community Helper"
   ];
@@ -68,7 +76,11 @@ export const BadgesSection = ({ badges }: BadgesSectionProps) => {
                     className="flex flex-col items-center p-4 bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg border-2 border-gray-200 hover:border-blue-300 transition-colors"
                   >
                     <div className={`w-12 h-12 rounded-full bg-gradient-to-r ${category.color} flex items-center justify-center mb-2`}>
-                      <category.icon className="w-6 h-6 text-white" />
+                      {isHorse && category.icon === Trophy ? (
+                        <Horse className="w-6 h-6 text-white" />
+                      ) : (
+                        <category.icon className="w-6 h-6 text-white" />
+                      )}
                     </div>
                     <Badge 
                       variant="secondary" 
@@ -104,7 +116,7 @@ export const BadgesSection = ({ badges }: BadgesSectionProps) => {
                 className="flex flex-col items-center p-4 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300 opacity-60"
               >
                 <div className="w-12 h-12 rounded-full bg-gray-300 flex items-center justify-center mb-2">
-                  <Award className="w-6 h-6 text-gray-500" />
+                  {isHorse ? <Horse className="w-6 h-6 text-gray-500" /> : <Award className="w-6 h-6 text-gray-500" />}
                 </div>
                 <Badge variant="outline" className="text-xs">
                   {badge}

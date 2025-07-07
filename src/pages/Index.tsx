@@ -8,15 +8,17 @@ import { PetProfileCard } from "@/components/PetProfileCard";
 import { NavigationTabs } from "@/components/NavigationTabs";
 import { DocumentsSection } from "@/components/DocumentsSection";
 import { BadgesSection } from "@/components/BadgesSection";
+import { CareInstructionsSection } from "@/components/CareInstructionsSection";
 import { QuickIDSection } from "@/components/QuickIDSection";
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState("profile");
   
-  // Sample pet data
+  // Sample pet data - can be modified to test horse features
   const petData = {
     name: "Luna",
     breed: "Golden Retriever",
+    species: "dog", // Change to "horse" to test horse features
     age: "3 years",
     weight: "65 lbs",
     microchipId: "985112001234567",
@@ -37,7 +39,9 @@ const Index = () => {
       case "documents":
         return <DocumentsSection />;
       case "badges":
-        return <BadgesSection badges={petData.badges} />;
+        return <BadgesSection badges={petData.badges} petData={petData} />;
+      case "care":
+        return <CareInstructionsSection petData={petData} />;
       case "quickid":
         return <QuickIDSection petData={petData} />;
       default:

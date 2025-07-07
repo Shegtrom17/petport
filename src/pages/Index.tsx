@@ -15,7 +15,10 @@ import { ReviewsSection } from "@/components/ReviewsSection";
 import { TravelMapSection } from "@/components/TravelMapSection";
 
 const Index = () => {
+  console.log("Index component is rendering");
+  
   const [activeTab, setActiveTab] = useState("profile");
+  console.log("Active tab:", activeTab);
   
   // Sample pet data - can be modified to test horse features
   const petData = {
@@ -36,28 +39,48 @@ const Index = () => {
     bio: "Luna is a gentle and loving Golden Retriever with an exceptional temperament. She's been professionally trained and has a calm, patient demeanor that makes her wonderful with children and other pets. Luna loves outdoor adventures, especially hiking and swimming, but is equally content relaxing at home. She's house-trained, leash-trained, and responds well to commands. Her favorite activities include fetch, long walks, and meeting new people at the dog park."
   };
 
+  console.log("Pet data:", petData);
+
   const renderActiveSection = () => {
-    switch (activeTab) {
-      case "profile":
-        return <PetProfileCard petData={petData} />;
-      case "resume":
-        return <PetResumeSection petData={petData} />;
-      case "reviews":
-        return <ReviewsSection petData={petData} />;
-      case "travel":
-        return <TravelMapSection petData={petData} />;
-      case "documents":
-        return <DocumentsSection />;
-      case "badges":
-        return <BadgesSection badges={petData.badges} petData={petData} />;
-      case "care":
-        return <CareInstructionsSection petData={petData} />;
-      case "quickid":
-        return <QuickIDSection petData={petData} />;
-      default:
-        return <PetProfileCard petData={petData} />;
+    console.log("Rendering section for tab:", activeTab);
+    
+    try {
+      switch (activeTab) {
+        case "profile":
+          console.log("Rendering PetProfileCard");
+          return <PetProfileCard petData={petData} />;
+        case "resume":
+          console.log("Rendering PetResumeSection");
+          return <PetResumeSection petData={petData} />;
+        case "reviews":
+          console.log("Rendering ReviewsSection");
+          return <ReviewsSection petData={petData} />;
+        case "travel":
+          console.log("Rendering TravelMapSection");
+          return <TravelMapSection petData={petData} />;
+        case "documents":
+          console.log("Rendering DocumentsSection");
+          return <DocumentsSection />;
+        case "badges":
+          console.log("Rendering BadgesSection");
+          return <BadgesSection badges={petData.badges} petData={petData} />;
+        case "care":
+          console.log("Rendering CareInstructionsSection");
+          return <CareInstructionsSection petData={petData} />;
+        case "quickid":
+          console.log("Rendering QuickIDSection");
+          return <QuickIDSection petData={petData} />;
+        default:
+          console.log("Default case - rendering PetProfileCard");
+          return <PetProfileCard petData={petData} />;
+      }
+    } catch (error) {
+      console.error("Error rendering section:", error);
+      return <div className="p-4 text-red-600">Error loading section: {error.message}</div>;
     }
   };
+
+  console.log("About to render main component");
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">

@@ -63,10 +63,22 @@ export default {
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
 				},
-				// Custom passport colors
+				// Passport color palette
 				navy: {
-					900: '#1e293b',
-					800: '#334155',
+					900: '#0A1F44',
+					800: '#203864',
+					700: '#334155',
+				},
+				gold: {
+					500: '#C8AA6E',
+					400: '#D4BE87',
+					300: '#E0D2A0',
+				},
+				passport: {
+					navy: '#0A1F44',
+					'light-navy': '#203864',
+					gold: '#C8AA6E',
+					white: '#F5F5F5',
 				}
 			},
 			borderRadius: {

@@ -84,7 +84,7 @@ const Index = () => {
   console.log("About to render main component");
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-navy-100">
       {/* Header */}
       <header className="bg-white/80 backdrop-blur-sm border-b border-blue-100 sticky top-0 z-50">
         <div className="max-w-4xl mx-auto px-4 py-4">
@@ -92,19 +92,19 @@ const Index = () => {
             <div className="flex items-center space-x-3">
               <div className="w-10 h-10 rounded-xl flex items-center justify-center overflow-hidden">
                 <img 
-                  src="/lovable-uploads/e9c82f5b-c0e6-4c78-b66a-a6af1226cc63.png" 
+                  src="/lovable-uploads/61126f7b-5822-4f60-bf90-f595bb83b874.png" 
                   alt="PetPass Logo"
                   className="w-full h-full object-contain"
                 />
               </div>
               <div>
-                <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                <h1 className="text-2xl font-bold bg-gradient-to-r from-navy-900 to-gold-500 bg-clip-text text-transparent">
                   PetPass
                 </h1>
                 <p className="text-sm text-gray-600">Digital Pet Passport</p>
               </div>
             </div>
-            <Button className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700">
+            <Button className="bg-gradient-to-r from-navy-900 to-navy-800 hover:from-navy-800 hover:to-navy-700 text-gold-500 border border-gold-500/30">
               Add Pet
             </Button>
           </div>
@@ -126,7 +126,7 @@ const Index = () => {
             <div className="flex items-center justify-between mb-4 relative">
               <div className="flex items-center space-x-3">
                 <img 
-                  src="/lovable-uploads/e9c82f5b-c0e6-4c78-b66a-a6af1226cc63.png" 
+                  src="/lovable-uploads/61126f7b-5822-4f60-bf90-f595bb83b874.png" 
                   alt="PetPass Logo"
                   className="w-8 h-8 object-contain"
                 />

@@ -1,3 +1,4 @@
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -37,7 +38,7 @@ export const QuickIDSection = ({ petData }: QuickIDSectionProps) => {
       <Card className="border-0 shadow-lg bg-white/90 backdrop-blur-sm">
         <CardHeader>
           <CardTitle className="flex items-center space-x-2">
-            <QrCode className="w-5 h-5 text-blue-600" />
+            <QrCode className="w-5 h-5 text-navy-900" />
             <span>Emergency Quick ID Card</span>
           </CardTitle>
         </CardHeader>
@@ -46,7 +47,7 @@ export const QuickIDSection = ({ petData }: QuickIDSectionProps) => {
             {/* PetPass Logo on Quick ID */}
             <div className="absolute top-3 left-3 flex items-center space-x-2">
               <img 
-                src="/lovable-uploads/e9c82f5b-c0e6-4c78-b66a-a6af1226cc63.png" 
+                src="/lovable-uploads/61126f7b-5822-4f60-bf90-f595bb83b874.png" 
                 alt="PetPass Logo"
                 className="w-6 h-6 object-contain opacity-80"
               />
@@ -109,15 +110,15 @@ export const QuickIDSection = ({ petData }: QuickIDSectionProps) => {
           </div>
 
           <div className="flex flex-wrap gap-3">
-            <Button className="flex items-center space-x-2 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700">
+            <Button className="flex items-center space-x-2 bg-gradient-to-r from-navy-900 to-navy-800 text-gold-500 hover:from-navy-800 hover:to-navy-700 border border-gold-500/30">
               <QrCode className="w-4 h-4" />
               <span>Generate QR Code</span>
             </Button>
-            <Button variant="outline" className="flex items-center space-x-2">
+            <Button variant="outline" className="flex items-center space-x-2 border-navy-900 text-navy-900 hover:bg-navy-50">
               <Download className="w-4 h-4" />
               <span>Download PDF</span>
             </Button>
-            <Button variant="outline" className="flex items-center space-x-2">
+            <Button variant="outline" className="flex items-center space-x-2 border-navy-900 text-navy-900 hover:bg-navy-50">
               <Share className="w-4 h-4" />
               <span>Share Link</span>
             </Button>
@@ -153,15 +154,15 @@ export const QuickIDSection = ({ petData }: QuickIDSectionProps) => {
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <Button variant="outline" className="h-16 flex flex-col items-center justify-center space-y-1">
+            <Button variant="outline" className="h-16 flex flex-col items-center justify-center space-y-1 border-navy-800 text-navy-800 hover:bg-navy-50">
               <Share className="w-5 h-5" />
               <span className="text-sm">Social Media</span>
             </Button>
-            <Button variant="outline" className="h-16 flex flex-col items-center justify-center space-y-1">
+            <Button variant="outline" className="h-16 flex flex-col items-center justify-center space-y-1 border-navy-800 text-navy-800 hover:bg-navy-50">
               <Phone className="w-5 h-5" />
               <span className="text-sm">Text Message</span>
             </Button>
-            <Button variant="outline" className="h-16 flex flex-col items-center justify-center space-y-1">
+            <Button variant="outline" className="h-16 flex flex-col items-center justify-center space-y-1 border-navy-800 text-navy-800 hover:bg-navy-50">
               <QrCode className="w-5 h-5" />
               <span className="text-sm">Print QR Code</span>
             </Button>

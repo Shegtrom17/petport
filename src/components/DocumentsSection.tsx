@@ -17,20 +17,20 @@ export const DocumentsSection = () => {
       <Card className="border-0 shadow-lg bg-white/90 backdrop-blur-sm">
         <CardHeader>
           <CardTitle className="flex items-center space-x-2">
-            <Upload className="w-5 h-5 text-blue-600" />
+            <Upload className="w-5 h-5 text-navy-900" />
             <span>Upload Documents</span>
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="border-2 border-dashed border-blue-200 rounded-lg p-8 text-center bg-blue-50/50">
-            <Upload className="w-12 h-12 text-blue-400 mx-auto mb-4" />
+          <div className="border-2 border-dashed border-navy-300 rounded-lg p-8 text-center bg-navy-50/50">
+            <Upload className="w-12 h-12 text-navy-600 mx-auto mb-4" />
             <p className="text-lg font-medium text-gray-700 mb-2">
               Drag and drop files here, or click to browse
             </p>
             <p className="text-sm text-gray-500 mb-4">
               Supported formats: PDF, JPG, PNG (Max 10MB)
             </p>
-            <Button className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700">
+            <Button className="bg-gradient-to-r from-navy-900 to-navy-800 text-gold-500 hover:from-navy-800 hover:to-navy-700 border border-gold-500/30">
               Choose Files
             </Button>
           </div>
@@ -41,7 +41,7 @@ export const DocumentsSection = () => {
       <Card className="border-0 shadow-lg bg-white/90 backdrop-blur-sm">
         <CardHeader>
           <CardTitle className="flex items-center space-x-2">
-            <FileText className="w-5 h-5 text-blue-600" />
+            <FileText className="w-5 h-5 text-navy-900" />
             <span>Stored Documents</span>
           </CardTitle>
         </CardHeader>
@@ -64,10 +64,10 @@ export const DocumentsSection = () => {
                   </div>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <Button variant="ghost" size="sm">
+                  <Button variant="ghost" size="sm" className="hover:bg-navy-50 text-navy-800">
                     <Eye className="w-4 h-4" />
                   </Button>
-                  <Button variant="ghost" size="sm">
+                  <Button variant="ghost" size="sm" className="hover:bg-navy-50 text-navy-800">
                     <Download className="w-4 h-4" />
                   </Button>
                 </div>

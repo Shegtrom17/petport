@@ -28,8 +28,8 @@ export const NavigationTabs = ({ activeTab, onTabChange }: NavigationTabsProps) 
           onClick={() => onTabChange(tab.id)}
           className={`flex items-center space-x-2 ${
             activeTab === tab.id 
-              ? "bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg" 
-              : "text-gray-600 hover:text-blue-600"
+              ? "bg-gradient-to-r from-navy-900 to-navy-800 text-gold-500 shadow-lg border border-gold-500/30" 
+              : "text-gray-600 hover:text-navy-800 hover:bg-navy-50"
           }`}
         >
           <tab.icon className="w-4 h-4" />

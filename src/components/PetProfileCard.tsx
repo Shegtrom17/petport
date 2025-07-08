@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -113,14 +112,8 @@ export const PetProfileCard = ({ petData }: PetProfileCardProps) => {
         </CardContent>
       </Card>
 
-      {/* Passport Photos Section */}
+      {/* Passport Photos Section - Removed overlapping stamp */}
       <Card className="border-2 border-yellow-600 shadow-xl bg-gradient-to-br from-slate-800 to-slate-900 text-white relative">
-        <div className="absolute top-4 right-4 w-20 h-12 bg-yellow-500/20 rounded-lg transform rotate-6 flex items-center justify-center border border-yellow-400/30">
-          <div className="text-center">
-            <div className="w-4 h-4 bg-yellow-400 rounded-full mx-auto mb-1"></div>
-            <span className="text-xs font-bold text-yellow-400 block leading-tight">VERIFIED<br/>PHOTOS</span>
-          </div>
-        </div>
         <CardHeader>
           <CardTitle className="flex items-center justify-between text-yellow-400">
             <div className="flex items-center space-x-2">
@@ -131,7 +124,7 @@ export const PetProfileCard = ({ petData }: PetProfileCardProps) => {
               onClick={handleViewGallery}
               variant="outline" 
               size="sm"
-              className="border-yellow-600 text-yellow-400 hover:bg-yellow-600/20"
+              className="border-yellow-600 text-yellow-400 hover:bg-yellow-600/20 relative z-30"
             >
               <Camera className="w-4 h-4 mr-2" />
               View Gallery ({petData.galleryPhotos?.length || 0})

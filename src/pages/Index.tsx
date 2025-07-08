@@ -163,15 +163,15 @@ const Index = () => {
             <div className="absolute top-0 right-0 w-32 h-32 bg-yellow-500/10 rounded-full -translate-y-16 translate-x-16"></div>
             <div className="absolute bottom-0 left-0 w-24 h-24 bg-yellow-500/10 rounded-full translate-y-12 -translate-x-12"></div>
             
-            {/* Centered Global Travel Stamp - Smaller, Straighter, More Opaque */}
-            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-20 h-14 bg-yellow-500/70 rounded border-2 border-yellow-400/80 flex items-center justify-center z-10">
+            {/* Global Travel Stamp - Moved to Top as Decorative Watermark */}
+            <div className="absolute top-4 left-1/2 transform -translate-x-1/2 w-20 h-14 bg-yellow-500/70 rounded border-2 border-yellow-400/80 flex items-center justify-center z-10">
               <div className="text-center">
                 <div className="w-4 h-4 bg-yellow-200 rounded-full mx-auto mb-1"></div>
                 <span className="text-xs font-bold text-navy-900 block leading-tight tracking-wide">GLOBAL<br/>TRAVEL</span>
               </div>
             </div>
             
-            <div className="flex items-center justify-between mb-4 relative z-20">
+            <div className="flex items-center justify-between mb-4 relative z-20 pt-8">
               <div className="flex items-center space-x-3">
                 <img 
                   src="/lovable-uploads/61126f7b-5822-4f60-bf90-f595bb83b874.png" 
@@ -184,7 +184,7 @@ const Index = () => {
                 </div>
               </div>
               <div className="text-right">
-                <p className="text-yellow-400 text-sm font-serif tracking-wide">UNITED STATES</p>
+                <p className="text-yellow-400 text-sm font-serif tracking-wide">GLOBE TROTTER</p>
                 <p className="text-xs text-yellow-300 font-mono">ID: {petData.petPassId}</p>
               </div>
             </div>

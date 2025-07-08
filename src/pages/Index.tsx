@@ -329,27 +329,13 @@ const Index = () => {
                 <div className="absolute bottom-0 left-0 w-18 h-18 md:w-24 md:h-24 bg-yellow-500/10 rounded-full translate-y-9 md:translate-y-12 -translate-x-9 md:-translate-x-12"></div>
                 
                 {/* Pawprint & HoofBeats Title */}
-                <div className="text-center mb-2 md:mb-4">
+                <div className="text-center mb-4">
                   <h1 className="text-yellow-400 text-sm md:text-lg font-serif font-bold tracking-wider">
                     PAWPRINT & HOOFBEATS
                   </h1>
                 </div>
                 
-                {/* PetPass Logo as Passport Emblem - Fixed positioning */}
-                <div className="absolute top-8 left-1/2 transform -translate-x-1/2 w-12 h-12 md:w-16 md:h-16 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-full flex items-center justify-center z-10 border-4 border-yellow-300/50 shadow-lg">
-                  <img 
-                    src="/lovable-uploads/1af9fe70-ed76-44c5-a1e1-1a058e497a10.png" 
-                    alt="PetPass Logo"
-                    className="w-6 h-6 md:w-10 md:h-10 object-contain"
-                    onError={(e) => {
-                      console.error("Passport emblem logo failed to load:", e);
-                      e.currentTarget.style.display = 'none';
-                    }}
-                    onLoad={() => console.log("Passport emblem logo loaded successfully")}
-                  />
-                </div>
-                
-                <div className="flex items-center justify-between mb-4 relative z-20 pt-8 md:pt-6">
+                <div className="flex items-center justify-between mb-4 relative z-20">
                   <div className="flex items-center space-x-2 md:space-x-3">
                     <img 
                       src="/lovable-uploads/1af9fe70-ed76-44c5-a1e1-1a058e497a10.png" 

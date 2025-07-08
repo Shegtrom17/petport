@@ -264,6 +264,232 @@ export async function updatePetMedical(petId: string, medicalData: {
   }
 }
 
+// Update experience information
+export async function updatePetExperience(petId: string, experiences: {
+  activity: string;
+  contact?: string;
+  description?: string;
+}[]): Promise<boolean> {
+  try {
+    // Delete existing experiences
+    await supabase
+      .from("experiences")
+      .delete()
+      .eq("pet_id", petId);
+
+    // Insert new experiences
+    if (experiences.length > 0) {
+      const { error } = await supabase
+        .from("experiences")
+        .insert(experiences.map(exp => ({
+          pet_id: petId,
+          activity: exp.activity,
+          contact: exp.contact,
+          description: exp.description
+        })));
+
+      if (error) {
+        console.error("Error updating experiences:", error);
+        throw error;
+      }
+    }
+
+    return true;
+  } catch (error) {
+    console.error("Error in updatePetExperience:", error);
+    return false;
+  }
+}
+
+// Update achievements information
+export async function updatePetAchievements(petId: string, achievements: {
+  title: string;
+  description?: string;
+}[]): Promise<boolean> {
+  try {
+    // Delete existing achievements
+    await supabase
+      .from("achievements")
+      .delete()
+      .eq("pet_id", petId);
+
+    // Insert new achievements
+    if (achievements.length > 0) {
+      const { error } = await supabase
+        .from("achievements")
+        .insert(achievements.map(achievement => ({
+          pet_id: petId,
+          title: achievement.title,
+          description: achievement.description
+        })));
+
+      if (error) {
+        console.error("Error updating achievements:", error);
+        throw error;
+      }
+    }
+
+    return true;
+  } catch (error) {
+    console.error("Error in updatePetAchievements:", error);
+    return false;
+  }
+}
+
+// Update training information
+export async function updatePetTraining(petId: string, training: {
+  course: string;
+  facility?: string;
+  phone?: string;
+  completed?: string;
+}[]): Promise<boolean> {
+  try {
+    // Delete existing training
+    await supabase
+      .from("training")
+      .delete()
+      .eq("pet_id", petId);
+
+    // Insert new training
+    if (training.length > 0) {
+      const { error } = await supabase
+        .from("training")
+        .insert(training.map(course => ({
+          pet_id: petId,
+          course: course.course,
+          facility: course.facility,
+          phone: course.phone,
+          completed: course.completed
+        })));
+
+      if (error) {
+        console.error("Error updating training:", error);
+        throw error;
+      }
+    }
+
+    return true;
+  } catch (error) {
+    console.error("Error in updatePetTraining:", error);
+    return false;
+  }
+}
+
+// Update reviews information
+export async function updatePetReviews(petId: string, reviews: {
+  reviewerName: string;
+  reviewerContact?: string;
+  rating: number;
+  text?: string;
+  date?: string;
+  location?: string;
+  type?: string;
+}[]): Promise<boolean> {
+  try {
+    // Delete existing reviews
+    await supabase
+      .from("reviews")
+      .delete()
+      .eq("pet_id", petId);
+
+    // Insert new reviews
+    if (reviews.length > 0) {
+      const { error } = await supabase
+        .from("reviews")
+        .insert(reviews.map(review => ({
+          pet_id: petId,
+          reviewer_name: review.reviewerName,
+          reviewer_contact: review.reviewerContact,
+          rating: review.rating,
+          text: review.text,
+          date: review.date,
+          location: review.location,
+          type: review.type
+        })));
+
+      if (error) {
+        console.error("Error updating reviews:", error);
+        throw error;
+      }
+    }
+
+    return true;
+  } catch (error) {
+    console.error("Error in updatePetReviews:", error);
+    return false;
+  }
+}
+
+// Update travel locations
+export async function updateTravelLocations(petId: string, locations: {
+  name: string;
+  type: string;
+  code?: string;
+  dateVisited?: string;
+  photoUrl?: string;
+  notes?: string;
+}[]): Promise<boolean> {
+  try {
+    // Delete existing travel locations
+    await supabase
+      .from("travel_locations")
+      .delete()
+      .eq("pet_id", petId);
+
+    // Insert new travel locations
+    if (locations.length > 0) {
+      const { error } = await supabase
+        .from("travel_locations")
+        .insert(locations.map(location => ({
+          pet_id: petId,
+          name: location.name,
+          type: location.type,
+          code: location.code,
+          date_visited: location.dateVisited,
+          photo_url: location.photoUrl,
+          notes: location.notes
+        })));
+
+      if (error) {
+        console.error("Error updating travel locations:", error);
+        throw error;
+      }
+    }
+
+    return true;
+  } catch (error) {
+    console.error("Error in updateTravelLocations:", error);
+    return false;
+  }
+}
+
+// Update professional data (badges and support animal status)
+export async function updateProfessionalData(petId: string, data: {
+  badges?: string[];
+  supportAnimalStatus?: string;
+}): Promise<boolean> {
+  try {
+    const { error } = await supabase
+      .from("professional_data")
+      .upsert({
+        pet_id: petId,
+        badges: data.badges,
+        support_animal_status: data.supportAnimalStatus,
+        updated_at: new Date().toISOString()
+      });
+
+    if (error) {
+      console.error("Error updating professional data:", error);
+      throw error;
+    }
+
+    return true;
+  } catch (error) {
+    console.error("Error in updateProfessionalData:", error);
+    return false;
+  }
+}
+
 // Upload file to storage
 export async function uploadFile(file: File, bucket: string, path: string): Promise<string | null> {
   try {

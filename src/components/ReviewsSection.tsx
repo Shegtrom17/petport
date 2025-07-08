@@ -1,9 +1,10 @@
-
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Star, Plus, Share2, Mail, MapPin, Calendar, User } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Star, Plus, Share2, Mail, MapPin, Calendar, User, Edit } from "lucide-react";
+import { ReviewsEditForm } from "@/components/ReviewsEditForm";
 
 interface Review {
   id: string;
@@ -18,12 +19,15 @@ interface Review {
 
 interface ReviewsSectionProps {
   petData: {
+    id: string;
     name: string;
     reviews?: Review[];
   };
+  onUpdate?: () => void;
 }
 
-export const ReviewsSection = ({ petData }: ReviewsSectionProps) => {
+export const ReviewsSection = ({ petData, onUpdate }: ReviewsSectionProps) => {
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [reviews] = useState<Review[]>(petData.reviews || [
     {
       id: '1',
@@ -80,6 +84,13 @@ export const ReviewsSection = ({ petData }: ReviewsSectionProps) => {
     // This would generate a shareable link
   };
 
+  const handleEditSave = () => {
+    setIsEditModalOpen(false);
+    if (onUpdate) {
+      onUpdate();
+    }
+  };
+
   return (
     <div className="space-y-6">
       {/* Header with Summary */}
@@ -91,6 +102,14 @@ export const ReviewsSection = ({ petData }: ReviewsSectionProps) => {
               <p className="text-blue-100">Trusted feedback from hosts, vets, and caregivers</p>
             </div>
             <div className="flex space-x-2">
+              <Button 
+                onClick={() => setIsEditModalOpen(true)} 
+                variant="secondary" 
+                size="sm"
+              >
+                <Edit className="w-4 h-4 mr-2" />
+                Edit
+              </Button>
               <Button onClick={handleRequestReview} variant="secondary" size="sm">
                 <Plus className="w-4 h-4 mr-2" />
                 Request Review
@@ -126,6 +145,20 @@ export const ReviewsSection = ({ petData }: ReviewsSectionProps) => {
           </div>
         </CardContent>
       </Card>
+
+      {/* Edit Modal */}
+      <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Edit Reviews & References</DialogTitle>
+          </DialogHeader>
+          <ReviewsEditForm
+            petData={petData}
+            onSave={handleEditSave}
+            onCancel={() => setIsEditModalOpen(false)}
+          />
+        </DialogContent>
+      </Dialog>
 
       {/* Reviews List */}
       <div className="space-y-4">

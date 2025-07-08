@@ -1,9 +1,10 @@
-
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { MapPin, Camera, Download, Share2, Calendar, Trophy } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { MapPin, Camera, Download, Share2, Calendar, Trophy, Edit } from "lucide-react";
+import { TravelEditForm } from "@/components/TravelEditForm";
 
 interface TravelLocation {
   id: string;
@@ -17,13 +18,16 @@ interface TravelLocation {
 
 interface TravelMapSectionProps {
   petData: {
+    id: string;
     name: string;
-    travelLocations?: TravelLocation[];
+    travel_locations?: TravelLocation[];
   };
+  onUpdate?: () => void;
 }
 
-export const TravelMapSection = ({ petData }: TravelMapSectionProps) => {
-  const [locations] = useState<TravelLocation[]>(petData.travelLocations || [
+export const TravelMapSection = ({ petData, onUpdate }: TravelMapSectionProps) => {
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [locations] = useState<TravelLocation[]>(petData.travel_locations || [
     { id: '1', name: 'Colorado', type: 'state', code: 'CO', dateVisited: '2023-01-15', notes: 'Home state - loves the mountains!' },
     { id: '2', name: 'Utah', type: 'state', code: 'UT', dateVisited: '2023-07-20', photoUrl: 'https://images.unsplash.com/photo-1472396961693-142e6e269027?w=200&h=150&fit=crop', notes: 'Great hiking adventure' },
     { id: '3', name: 'Wyoming', type: 'state', code: 'WY', dateVisited: '2023-09-10', notes: 'Yellowstone camping trip' },
@@ -52,6 +56,13 @@ export const TravelMapSection = ({ petData }: TravelMapSectionProps) => {
     console.log("Sharing travel map...");
   };
 
+  const handleEditSave = () => {
+    setIsEditModalOpen(false);
+    if (onUpdate) {
+      onUpdate();
+    }
+  };
+
   return (
     <div className="space-y-6">
       {/* Header with Stats */}
@@ -63,6 +74,14 @@ export const TravelMapSection = ({ petData }: TravelMapSectionProps) => {
               <p className="text-blue-100">Places we've explored together</p>
             </div>
             <div className="flex space-x-2">
+              <Button 
+                onClick={() => setIsEditModalOpen(true)} 
+                variant="secondary" 
+                size="sm"
+              >
+                <Edit className="w-4 h-4 mr-2" />
+                Edit
+              </Button>
               <Button onClick={handleDownload} variant="secondary" size="sm">
                 <Download className="w-4 h-4 mr-2" />
                 Download
@@ -91,6 +110,20 @@ export const TravelMapSection = ({ petData }: TravelMapSectionProps) => {
           </div>
         </CardContent>
       </Card>
+
+      {/* Edit Modal */}
+      <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Edit Travel Locations</DialogTitle>
+          </DialogHeader>
+          <TravelEditForm
+            petData={petData}
+            onSave={handleEditSave}
+            onCancel={() => setIsEditModalOpen(false)}
+          />
+        </DialogContent>
+      </Dialog>
 
       {/* Travel Map Placeholder */}
       <Card className="border-0 shadow-xl bg-passport-section-bg backdrop-blur-sm">

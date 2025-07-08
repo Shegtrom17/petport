@@ -1,12 +1,15 @@
-
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Download, Share2, QrCode, Star, Shield, Heart, Phone, Mail, Award, AlertTriangle, MapPin, GraduationCap, Trophy, Activity } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Download, Share2, QrCode, Star, Shield, Heart, Phone, Mail, Award, AlertTriangle, MapPin, GraduationCap, Trophy, Activity, Edit } from "lucide-react";
 import { SupportAnimalBanner } from "@/components/SupportAnimalBanner";
+import { PetResumeEditForm } from "@/components/PetResumeEditForm";
 
 interface PetResumeSectionProps {
   petData: {
+    id: string;
     name: string;
     breed: string;
     species: string;
@@ -24,7 +27,7 @@ interface PetResumeSectionProps {
     supportAnimalStatus?: string | null;
     medicalAlert: boolean;
     medicalConditions?: string;
-    experience?: Array<{
+    experiences?: Array<{
       activity: string;
       contact?: string;
       description: string;
@@ -48,9 +51,12 @@ interface PetResumeSectionProps {
       location: string;
     }>;
   };
+  onUpdate?: () => void;
 }
 
-export const PetResumeSection = ({ petData }: PetResumeSectionProps) => {
+export const PetResumeSection = ({ petData, onUpdate }: PetResumeSectionProps) => {
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+
   const averageRating = petData.reviews?.length 
     ? petData.reviews.reduce((sum, review) => sum + review.rating, 0) / petData.reviews.length 
     : 0;
@@ -68,6 +74,13 @@ export const PetResumeSection = ({ petData }: PetResumeSectionProps) => {
   const handleQRCode = () => {
     console.log("Generating QR Code...");
     // QR code generation would be implemented here
+  };
+
+  const handleEditSave = () => {
+    setIsEditModalOpen(false);
+    if (onUpdate) {
+      onUpdate();
+    }
   };
 
   return (
@@ -114,6 +127,14 @@ export const PetResumeSection = ({ petData }: PetResumeSectionProps) => {
               </div>
             </div>
             <div className="flex space-x-2">
+              <Button 
+                onClick={() => setIsEditModalOpen(true)} 
+                variant="secondary" 
+                size="sm"
+              >
+                <Edit className="w-4 h-4 mr-2" />
+                Edit
+              </Button>
               <Button onClick={handleDownloadPDF} variant="secondary" size="sm">
                 <Download className="w-4 h-4 mr-2" />
                 PDF
@@ -129,6 +150,20 @@ export const PetResumeSection = ({ petData }: PetResumeSectionProps) => {
           </div>
         </CardContent>
       </Card>
+
+      {/* Edit Modal */}
+      <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Edit Pet Resume</DialogTitle>
+          </DialogHeader>
+          <PetResumeEditForm
+            petData={petData}
+            onSave={handleEditSave}
+            onCancel={() => setIsEditModalOpen(false)}
+          />
+        </DialogContent>
+      </Dialog>
 
       {/* Pet Information */}
       <Card className="border-0 shadow-xl bg-white/90 backdrop-blur-sm">
@@ -233,7 +268,7 @@ export const PetResumeSection = ({ petData }: PetResumeSectionProps) => {
       </Card>
 
       {/* Experience Section */}
-      {petData.experience && petData.experience.length > 0 && (
+      {petData.experiences && petData.experiences.length > 0 && (
         <Card className="border-0 shadow-xl bg-white/90 backdrop-blur-sm">
           <CardHeader>
             <CardTitle className="flex items-center space-x-2">
@@ -243,7 +278,7 @@ export const PetResumeSection = ({ petData }: PetResumeSectionProps) => {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {petData.experience.map((exp, index) => (
+              {petData.experiences.map((exp, index) => (
                 <div key={index} className="border-l-4 border-green-500 pl-4 py-2">
                   <h4 className="font-semibold text-gray-800">{exp.activity}</h4>
                   <p className="text-gray-600 text-sm mb-2">{exp.description}</p>

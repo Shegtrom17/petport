@@ -72,11 +72,20 @@ export const PetResumeSection = ({ petData }: PetResumeSectionProps) => {
 
   return (
     <div className="space-y-6">
+      {/* Documentation Note */}
+      <Card className="border-0 shadow-lg bg-blue-50 border-l-4 border-blue-500">
+        <CardContent className="p-4">
+          <p className="text-blue-800 text-sm font-medium">
+            📄 For supporting documentation, please see the Documents page.
+          </p>
+        </CardContent>
+      </Card>
+
       {/* Support Animal Status Banner */}
       <SupportAnimalBanner status={petData.supportAnimalStatus || null} />
 
-      {/* Medical Alert Banner */}
-      {petData.medicalAlert && (
+      {/* Medical Alert Banner - Only show if medicalAlert is true */}
+      {petData.medicalAlert && petData.medicalConditions && (
         <Card className="border-2 border-red-600 shadow-xl bg-gradient-to-r from-red-500 to-red-600 text-white relative overflow-hidden">
           <div className="absolute inset-0 bg-black/10"></div>
           <CardContent className="p-4 relative">
@@ -301,6 +310,17 @@ export const PetResumeSection = ({ petData }: PetResumeSectionProps) => {
                 </div>
               ))}
             </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Phase 2 Note for Equine Badges */}
+      {petData.species.toLowerCase() === 'horse' && (
+        <Card className="border-0 shadow-lg bg-amber-50 border-l-4 border-amber-500">
+          <CardContent className="p-4">
+            <p className="text-amber-800 text-sm font-medium">
+              🐴 Note: Equine-specific badges and certifications will be available in Phase 2 to better reflect horse-related skills and achievements.
+            </p>
           </CardContent>
         </Card>
       )}

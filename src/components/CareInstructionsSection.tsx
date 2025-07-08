@@ -24,13 +24,22 @@ export const CareInstructionsSection = ({ petData }: CareInstructionsSectionProp
   const horseSchedule = [
     { time: "6:00 AM", meal: "Morning hay - 2 flakes timothy", notes: "Check water buckets" },
     { time: "12:00 PM", meal: "Grain feed - 2 lbs sweet feed", notes: "Add supplements" },
-    { time: "6:00 PM", meal: "Evening hay - 2 flakes", notes: "Turn out or bring in" },
+    { time: "6:00 PM", meal: "Evening hay - 2 flakes", notes: "Turn out or bring in from pasture" },
   ];
 
   const currentSchedule = isHorse ? horseSchedule : feedingSchedule;
 
   return (
     <div className="space-y-6">
+      {/* Documentation Note */}
+      <Card className="border-0 shadow-lg bg-blue-50 border-l-4 border-blue-500">
+        <CardContent className="p-4">
+          <p className="text-blue-800 text-sm font-medium">
+            📄 For supporting documentation, please see the Documents page.
+          </p>
+        </CardContent>
+      </Card>
+
       {/* Care Summary */}
       <Card className="border-0 shadow-lg bg-gradient-to-r from-green-500 to-emerald-600 text-white">
         <CardHeader>

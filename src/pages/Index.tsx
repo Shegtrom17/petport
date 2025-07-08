@@ -136,7 +136,7 @@ const Index = () => {
             <div className="flex items-center space-x-3">
               <div className="w-10 h-10 rounded-xl flex items-center justify-center overflow-hidden">
                 <img 
-                  src="/lovable-uploads/f6a3519f-a6e7-4515-ad5c-e8dca27a8e64.png" 
+                  src="/lovable-uploads/61126f7b-5822-4f60-bf90-f595bb83b874.png" 
                   alt="PetPass Logo"
                   className="w-full h-full object-contain"
                 />
@@ -160,20 +160,22 @@ const Index = () => {
         {/* Pet Header Card - Updated Passport Style */}
         <Card className="mb-8 overflow-hidden border-0 shadow-xl bg-white/90 backdrop-blur-sm">
           <div className="bg-gradient-to-r from-navy-900 to-slate-800 p-6 text-white relative overflow-hidden">
-            {/* Passport-style decorative elements - Updated */}
+            {/* Passport-style decorative elements */}
             <div className="absolute top-0 right-0 w-32 h-32 bg-yellow-500/10 rounded-full -translate-y-16 translate-x-16"></div>
             <div className="absolute bottom-0 left-0 w-24 h-24 bg-yellow-500/10 rounded-full translate-y-12 -translate-x-12"></div>
-            <div className="absolute top-4 right-4 w-20 h-12 bg-yellow-500/20 rounded-lg transform rotate-6 flex items-center justify-center border border-yellow-400/30">
+            
+            {/* Centered Global Travel Stamp - More Opaque */}
+            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-32 h-20 bg-yellow-500/30 rounded-lg rotate-12 flex items-center justify-center border-2 border-yellow-400/50">
               <div className="text-center">
-                <div className="w-4 h-4 bg-yellow-400 rounded-full mx-auto mb-1"></div>
-                <span className="text-xs font-bold text-yellow-400 block leading-tight">GLOBAL<br/>TRAVEL</span>
+                <div className="w-6 h-6 bg-yellow-400 rounded-full mx-auto mb-1 opacity-80"></div>
+                <span className="text-sm font-bold text-yellow-400 block leading-tight tracking-wide">GLOBAL<br/>TRAVEL</span>
               </div>
             </div>
             
-            <div className="flex items-center justify-between mb-4 relative">
+            <div className="flex items-center justify-between mb-4 relative z-10">
               <div className="flex items-center space-x-3">
                 <img 
-                  src="/lovable-uploads/f6a3519f-a6e7-4515-ad5c-e8dca27a8e64.png" 
+                  src="/lovable-uploads/61126f7b-5822-4f60-bf90-f595bb83b874.png" 
                   alt="PetPass Logo"
                   className="w-8 h-8 object-contain"
                 />
@@ -188,7 +190,7 @@ const Index = () => {
               </div>
             </div>
             
-            <div className="flex items-center space-x-6 relative">
+            <div className="flex items-center space-x-6 relative z-10">
               <div className="w-24 h-24 rounded-lg overflow-hidden border-4 border-yellow-500/50 shadow-lg flex-shrink-0">
                 <img 
                   src={petData.photoUrl} 

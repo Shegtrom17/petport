@@ -1,8 +1,8 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { MapPin, Phone, FileText, Calendar, Pill, Image, Stethoscope, Clipboard } from "lucide-react";
+import { SupportAnimalBanner } from "@/components/SupportAnimalBanner";
 
 interface PetData {
   name: string;
@@ -19,6 +19,7 @@ interface PetData {
   medications: string[];
   notes: string;
   species?: string;
+  supportAnimalStatus?: string | null;
 }
 
 interface PetProfileCardProps {
@@ -28,6 +29,9 @@ interface PetProfileCardProps {
 export const PetProfileCard = ({ petData }: PetProfileCardProps) => {
   return (
     <div className="space-y-6">
+      {/* Support Animal Status Banner */}
+      <SupportAnimalBanner status={petData.supportAnimalStatus || null} />
+
       {/* Passport Header - Vet & Microchip Info */}
       <Card className="border-2 border-yellow-600 shadow-xl bg-gradient-to-br from-slate-800 to-navy-900 text-white relative overflow-hidden">
         <div className="absolute top-0 right-0 w-32 h-32 bg-yellow-500/10 rounded-full -translate-y-16 translate-x-16"></div>

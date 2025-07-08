@@ -1,8 +1,8 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Download, Share2, QrCode, Star, Shield, Heart, Phone, Mail } from "lucide-react";
+import { Download, Share2, QrCode, Star, Shield, Heart, Phone, Mail, Award } from "lucide-react";
+import { SupportAnimalBanner } from "@/components/SupportAnimalBanner";
 
 interface PetResumeSectionProps {
   petData: {
@@ -18,6 +18,7 @@ interface PetResumeSectionProps {
     emergencyContact: string;
     badges: string[];
     bio?: string;
+    supportAnimalStatus?: string | null;
     reviews?: Array<{
       reviewerName: string;
       reviewerContact?: string;
@@ -51,6 +52,9 @@ export const PetResumeSection = ({ petData }: PetResumeSectionProps) => {
 
   return (
     <div className="space-y-6">
+      {/* Support Animal Status Banner */}
+      <SupportAnimalBanner status={petData.supportAnimalStatus || null} />
+
       {/* Header Actions */}
       <Card className="border-0 shadow-xl bg-gradient-to-r from-navy-900 to-navy-800 text-white">
         <CardContent className="p-6">

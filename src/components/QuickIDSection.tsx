@@ -1,8 +1,7 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { QrCode, Download, Share, Phone, Pill } from "lucide-react";
+import { QrCode, Download, Share, Phone, Pill, Shield, Heart, Award } from "lucide-react";
 
 interface PetData {
   name: string;
@@ -13,6 +12,7 @@ interface PetData {
   emergencyContact: string;
   medications: string[];
   notes: string;
+  supportAnimalStatus?: string | null;
 }
 
 interface QuickIDSectionProps {
@@ -20,6 +20,17 @@ interface QuickIDSectionProps {
 }
 
 export const QuickIDSection = ({ petData }: QuickIDSectionProps) => {
+  const getSupportAnimalIcon = (status: string) => {
+    switch (status) {
+      case "Emotional Support Animal":
+        return Heart;
+      case "Certified Therapy Dog":
+        return Award;
+      default:
+        return Shield;
+    }
+  };
+
   return (
     <div className="space-y-6">
       {/* Quick ID Preview */}
@@ -32,6 +43,21 @@ export const QuickIDSection = ({ petData }: QuickIDSectionProps) => {
         </CardHeader>
         <CardContent>
           <div className="bg-gradient-to-r from-red-500 to-pink-600 p-6 rounded-xl text-white mb-4">
+            {/* Support Animal Status Banner on Quick ID */}
+            {petData.supportAnimalStatus && (
+              <div className="bg-white/20 backdrop-blur-sm p-3 rounded-lg mb-4 border-2 border-white/30">
+                <div className="flex items-center justify-center space-x-2">
+                  {(() => {
+                    const IconComponent = getSupportAnimalIcon(petData.supportAnimalStatus);
+                    return <IconComponent className="w-5 h-5" />;
+                  })()}
+                  <span className="font-bold text-sm tracking-wide">
+                    {petData.supportAnimalStatus.toUpperCase()}
+                  </span>
+                </div>
+              </div>
+            )}
+            
             <div className="flex items-start space-x-4">
               <div className="w-20 h-20 rounded-full overflow-hidden border-4 border-white/30 flex-shrink-0">
                 <img 

@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -36,7 +35,8 @@ const Index = () => {
     badges: ["Well-Behaved", "Good with Kids", "House Trained", "Therapy Certified"],
     medications: ["Daily joint supplement", "Allergy medication as needed"],
     notes: "Friendly with other dogs, loves swimming, afraid of thunderstorms",
-    bio: "Luna is a gentle and loving Golden Retriever with an exceptional temperament. She's been professionally trained and has a calm, patient demeanor that makes her wonderful with children and other pets. Luna loves outdoor adventures, especially hiking and swimming, but is equally content relaxing at home. She's house-trained, leash-trained, and responds well to commands. Her favorite activities include fetch, long walks, and meeting new people at the dog park."
+    bio: "Luna is a gentle and loving Golden Retriever with an exceptional temperament. She's been professionally trained and has a calm, patient demeanor that makes her wonderful with children and other pets. Luna loves outdoor adventures, especially hiking and swimming, but is equally content relaxing at home. She's house-trained, leash-trained, and responds well to commands. Her favorite activities include fetch, long walks, and meeting new people at the dog park.",
+    supportAnimalStatus: "Certified Therapy Dog" // Options: "Emotional Support Animal", "Certified Therapy Dog", null
   };
 
   console.log("Pet data:", petData);

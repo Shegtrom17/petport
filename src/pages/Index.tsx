@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -21,7 +20,6 @@ const Index = () => {
   const [activeTab, setActiveTab] = useState("profile");
   console.log("Active tab:", activeTab);
   
-  // Enhanced pet data with new fields
   const petData = {
     name: "Luna",
     breed: "Golden Retriever",
@@ -136,7 +134,7 @@ const Index = () => {
             <div className="flex items-center space-x-3">
               <div className="w-10 h-10 rounded-xl flex items-center justify-center overflow-hidden">
                 <img 
-                  src="/lovable-uploads/61126f7b-5822-4f60-bf90-f595bb83b874.png" 
+                  src="/lovable-uploads/1af9fe70-ed76-44c5-a1e1-1a058e497a10.png" 
                   alt="PetPass Logo"
                   className="w-full h-full object-contain"
                   onError={(e) => {
@@ -169,10 +167,10 @@ const Index = () => {
             <div className="absolute top-0 right-0 w-32 h-32 bg-yellow-500/10 rounded-full -translate-y-16 translate-x-16"></div>
             <div className="absolute bottom-0 left-0 w-24 h-24 bg-yellow-500/10 rounded-full translate-y-12 -translate-x-12"></div>
             
-            {/* PetPass Logo as Passport Emblem - Replaced Globe Stamp */}
+            {/* PetPass Logo as Passport Emblem - Updated with new logo */}
             <div className="absolute top-2 left-1/2 transform -translate-x-1/2 w-16 h-16 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-full flex items-center justify-center z-10 border-4 border-yellow-300/50 shadow-lg">
               <img 
-                src="/lovable-uploads/61126f7b-5822-4f60-bf90-f595bb83b874.png" 
+                src="/lovable-uploads/1af9fe70-ed76-44c5-a1e1-1a058e497a10.png" 
                 alt="PetPass Logo"
                 className="w-10 h-10 object-contain"
                 onError={(e) => {
@@ -186,7 +184,7 @@ const Index = () => {
             <div className="flex items-center justify-between mb-4 relative z-20 pt-6">
               <div className="flex items-center space-x-3">
                 <img 
-                  src="/lovable-uploads/61126f7b-5822-4f60-bf90-f595bb83b874.png" 
+                  src="/lovable-uploads/1af9fe70-ed76-44c5-a1e1-1a058e497a10.png" 
                   alt="PetPass Logo"
                   className="w-8 h-8 object-contain"
                   onError={(e) => {

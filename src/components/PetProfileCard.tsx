@@ -112,7 +112,7 @@ export const PetProfileCard = ({ petData }: PetProfileCardProps) => {
         </CardContent>
       </Card>
 
-      {/* Passport Photos Section - Removed overlapping stamp */}
+      {/* Passport Photos Section */}
       <Card className="border-2 border-yellow-600 shadow-xl bg-gradient-to-br from-slate-800 to-slate-900 text-white relative">
         <CardHeader>
           <CardTitle className="flex items-center justify-between text-yellow-400">
@@ -122,9 +122,8 @@ export const PetProfileCard = ({ petData }: PetProfileCardProps) => {
             </div>
             <Button 
               onClick={handleViewGallery}
-              variant="outline" 
+              className="bg-gradient-to-r from-gold-500 to-gold-400 text-navy-900 hover:from-gold-400 hover:to-gold-300 border border-gold-500/50 shadow-md font-medium"
               size="sm"
-              className="border-yellow-600 text-yellow-400 hover:bg-yellow-600/20 relative z-30"
             >
               <Camera className="w-4 h-4 mr-2" />
               View Gallery ({petData.galleryPhotos?.length || 0})

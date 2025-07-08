@@ -1,10 +1,14 @@
+
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { MapPin, Phone, FileText, Calendar, Pill, Image, Stethoscope, Clipboard, AlertTriangle, Upload, User, Camera } from "lucide-react";
+import { MapPin, Phone, FileText, Calendar, Pill, Image, Stethoscope, Clipboard, AlertTriangle, Upload, User, Camera, Edit } from "lucide-react";
 import { SupportAnimalBanner } from "@/components/SupportAnimalBanner";
+import { PetEditForm } from "@/components/PetEditForm";
 
 interface PetData {
+  id: string;
   name: string;
   breed: string;
   age: string;
@@ -31,9 +35,12 @@ interface PetData {
 
 interface PetProfileCardProps {
   petData: PetData;
+  onUpdate?: () => void;
 }
 
-export const PetProfileCard = ({ petData }: PetProfileCardProps) => {
+export const PetProfileCard = ({ petData, onUpdate }: PetProfileCardProps) => {
+  const [isEditing, setIsEditing] = useState(false);
+
   const handleUploadMedicalDoc = () => {
     console.log("Opening medical document upload...");
     // Document upload would be implemented here
@@ -44,8 +51,36 @@ export const PetProfileCard = ({ petData }: PetProfileCardProps) => {
     // This would trigger navigation to gallery tab
   };
 
+  const handleEditSave = () => {
+    setIsEditing(false);
+    if (onUpdate) {
+      onUpdate();
+    }
+  };
+
+  if (isEditing) {
+    return (
+      <PetEditForm
+        petData={petData}
+        onSave={handleEditSave}
+        onCancel={() => setIsEditing(false)}
+      />
+    );
+  }
+
   return (
     <div className="space-y-6">
+      {/* Edit Button */}
+      <div className="flex justify-end">
+        <Button 
+          onClick={() => setIsEditing(true)}
+          className="bg-navy-800 hover:bg-navy-700 text-gold-500"
+        >
+          <Edit className="w-4 h-4 mr-2" />
+          Edit Pet Profile
+        </Button>
+      </div>
+
       {/* Support Animal Status Banner */}
       <SupportAnimalBanner status={petData.supportAnimalStatus || null} />
 

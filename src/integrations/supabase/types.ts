@@ -515,7 +515,28 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      handle_document_upload: {
+        Args: {
+          _pet_id: string
+          _name: string
+          _type: string
+          _file_url: string
+          _size?: string
+        }
+        Returns: string
+      }
+      handle_gallery_photo_upload: {
+        Args: { _pet_id: string; _url: string; _caption?: string }
+        Returns: string
+      }
+      handle_photo_upload: {
+        Args: {
+          _pet_id: string
+          _photo_url?: string
+          _full_body_photo_url?: string
+        }
+        Returns: string
+      }
     }
     Enums: {
       [_ in never]: never

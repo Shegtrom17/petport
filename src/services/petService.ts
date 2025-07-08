@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 import { Tables } from "@/integrations/supabase/types";
 
@@ -205,5 +204,193 @@ export async function createPet(petData: {
   } catch (error) {
     console.error("Error in createPet:", error);
     return null;
+  }
+}
+
+// Update contact information
+export async function updatePetContacts(petId: string, contactData: {
+  vet_contact?: string;
+  emergency_contact?: string;
+  second_emergency_contact?: string;
+  pet_caretaker?: string;
+}): Promise<boolean> {
+  try {
+    const { error } = await supabase
+      .from("contacts")
+      .upsert({
+        pet_id: petId,
+        ...contactData,
+        updated_at: new Date().toISOString()
+      });
+
+    if (error) {
+      console.error("Error updating contacts:", error);
+      throw error;
+    }
+
+    return true;
+  } catch (error) {
+    console.error("Error in updatePetContacts:", error);
+    return false;
+  }
+}
+
+// Update medical information
+export async function updatePetMedical(petId: string, medicalData: {
+  medical_alert?: boolean;
+  medical_conditions?: string;
+  medications?: string[];
+  last_vaccination?: string;
+  medical_emergency_document?: string;
+}): Promise<boolean> {
+  try {
+    const { error } = await supabase
+      .from("medical")
+      .upsert({
+        pet_id: petId,
+        ...medicalData,
+        updated_at: new Date().toISOString()
+      });
+
+    if (error) {
+      console.error("Error updating medical:", error);
+      throw error;
+    }
+
+    return true;
+  } catch (error) {
+    console.error("Error in updatePetMedical:", error);
+    return false;
+  }
+}
+
+// Upload file to storage
+export async function uploadFile(file: File, bucket: string, path: string): Promise<string | null> {
+  try {
+    const { data, error } = await supabase.storage
+      .from(bucket)
+      .upload(path, file, { upsert: true });
+
+    if (error) {
+      console.error("Error uploading file:", error);
+      throw error;
+    }
+
+    const { data: { publicUrl } } = supabase.storage
+      .from(bucket)
+      .getPublicUrl(data.path);
+
+    return publicUrl;
+  } catch (error) {
+    console.error("Error in uploadFile:", error);
+    return null;
+  }
+}
+
+// Upload pet photos
+export async function uploadPetPhotos(petId: string, photos: {
+  profilePhoto?: File;
+  fullBodyPhoto?: File;
+}): Promise<boolean> {
+  try {
+    const uploads: Promise<string | null>[] = [];
+    let photoUrl = null;
+    let fullBodyPhotoUrl = null;
+
+    if (photos.profilePhoto) {
+      const profilePath = `${petId}/profile-${Date.now()}.${photos.profilePhoto.name.split('.').pop()}`;
+      uploads.push(uploadFile(photos.profilePhoto, 'pet_photos', profilePath));
+    }
+
+    if (photos.fullBodyPhoto) {
+      const fullBodyPath = `${petId}/fullbody-${Date.now()}.${photos.fullBodyPhoto.name.split('.').pop()}`;
+      uploads.push(uploadFile(photos.fullBodyPhoto, 'pet_photos', fullBodyPath));
+    }
+
+    const results = await Promise.all(uploads);
+    
+    if (photos.profilePhoto && results[0]) {
+      photoUrl = results[0];
+    }
+    if (photos.fullBodyPhoto && results[photos.profilePhoto ? 1 : 0]) {
+      fullBodyPhotoUrl = results[photos.profilePhoto ? 1 : 0];
+    }
+
+    // Call the database function to update photos
+    const { error } = await supabase.rpc('handle_photo_upload', {
+      _pet_id: petId,
+      _photo_url: photoUrl,
+      _full_body_photo_url: fullBodyPhotoUrl
+    });
+
+    if (error) {
+      console.error("Error updating photos in database:", error);
+      throw error;
+    }
+
+    return true;
+  } catch (error) {
+    console.error("Error in uploadPetPhotos:", error);
+    return false;
+  }
+}
+
+// Upload gallery photo
+export async function uploadGalleryPhoto(petId: string, photo: File, caption?: string): Promise<boolean> {
+  try {
+    const photoPath = `${petId}/gallery-${Date.now()}.${photo.name.split('.').pop()}`;
+    const photoUrl = await uploadFile(photo, 'pet_photos', photoPath);
+
+    if (!photoUrl) {
+      throw new Error("Failed to upload photo");
+    }
+
+    // Call the database function to create gallery photo record
+    const { error } = await supabase.rpc('handle_gallery_photo_upload', {
+      _pet_id: petId,
+      _url: photoUrl,
+      _caption: caption || null
+    });
+
+    if (error) {
+      console.error("Error creating gallery photo record:", error);
+      throw error;
+    }
+
+    return true;
+  } catch (error) {
+    console.error("Error in uploadGalleryPhoto:", error);
+    return false;
+  }
+}
+
+// Upload document
+export async function uploadDocument(petId: string, document: File, type: string): Promise<boolean> {
+  try {
+    const docPath = `${petId}/docs/${type}-${Date.now()}.${document.name.split('.').pop()}`;
+    const docUrl = await uploadFile(document, 'pet_documents', docPath);
+
+    if (!docUrl) {
+      throw new Error("Failed to upload document");
+    }
+
+    // Call the database function to create document record
+    const { error } = await supabase.rpc('handle_document_upload', {
+      _pet_id: petId,
+      _name: document.name,
+      _type: type,
+      _file_url: docUrl,
+      _size: `${(document.size / 1024).toFixed(2)} KB`
+    });
+
+    if (error) {
+      console.error("Error creating document record:", error);
+      throw error;
+    }
+
+    return true;
+  } catch (error) {
+    console.error("Error in uploadDocument:", error);
+    return false;
   }
 }

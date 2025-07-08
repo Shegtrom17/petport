@@ -78,6 +78,27 @@ const Index = () => {
     }
   };
 
+  // Function to refresh pet data after updates
+  const handlePetUpdate = async () => {
+    if (selectedPet?.id) {
+      try {
+        const updatedPetDetails = await fetchPetDetails(selectedPet.id);
+        setSelectedPet(updatedPetDetails);
+        
+        // Also refresh the pets list
+        const userPets = await fetchUserPets();
+        setPets(userPets);
+        
+        toast({
+          title: "Success",
+          description: "Pet profile updated successfully!",
+        });
+      } catch (error) {
+        console.error("Error refreshing pet data:", error);
+      }
+    }
+  };
+
   // Use dummy data for now if no pets are found
   const petData = selectedPet || {
     name: "Luna",
@@ -153,7 +174,7 @@ const Index = () => {
       switch (activeTab) {
         case "profile":
           console.log("Rendering PetProfileCard");
-          return <PetProfileCard petData={petData} />;
+          return <PetProfileCard petData={petData} onUpdate={handlePetUpdate} />;
         case "resume":
           console.log("Rendering PetResumeSection");
           return <PetResumeSection petData={petData} />;
@@ -180,7 +201,7 @@ const Index = () => {
           return <PetGallerySection petData={petData} />;
         default:
           console.log("Default case - rendering PetProfileCard");
-          return <PetProfileCard petData={petData} />;
+          return <PetProfileCard petData={petData} onUpdate={handlePetUpdate} />;
       }
     } catch (error) {
       console.error("Error rendering section:", error);

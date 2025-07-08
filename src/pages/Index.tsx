@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -89,8 +90,12 @@ const Index = () => {
         <div className="max-w-4xl mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl flex items-center justify-center">
-                <Shield className="w-6 h-6 text-white" />
+              <div className="w-10 h-10 rounded-xl flex items-center justify-center overflow-hidden">
+                <img 
+                  src="/lovable-uploads/e9c82f5b-c0e6-4c78-b66a-a6af1226cc63.png" 
+                  alt="PetPass Logo"
+                  className="w-full h-full object-contain"
+                />
               </div>
               <div>
                 <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
@@ -108,32 +113,60 @@ const Index = () => {
 
       {/* Main Content */}
       <main className="max-w-4xl mx-auto px-4 py-8">
-        {/* Pet Header Card */}
+        {/* Pet Header Card - Updated Passport Style */}
         <Card className="mb-8 overflow-hidden border-0 shadow-xl bg-white/90 backdrop-blur-sm">
-          <div className="bg-gradient-to-r from-blue-500 to-purple-600 p-6 text-white">
-            <div className="flex items-center space-x-4">
-              <div className="w-20 h-20 rounded-full overflow-hidden border-4 border-white/30">
+          <div className="bg-gradient-to-r from-navy-900 to-slate-800 p-6 text-white relative overflow-hidden">
+            {/* Passport-style decorative elements */}
+            <div className="absolute top-0 right-0 w-32 h-32 bg-yellow-500/10 rounded-full -translate-y-16 translate-x-16"></div>
+            <div className="absolute bottom-0 left-0 w-24 h-24 bg-yellow-500/10 rounded-full translate-y-12 -translate-x-12"></div>
+            <div className="absolute top-4 right-4 w-16 h-8 bg-yellow-500/20 rounded transform rotate-12 flex items-center justify-center">
+              <span className="text-xs font-bold text-yellow-400">OFFICIAL</span>
+            </div>
+            
+            <div className="flex items-center justify-between mb-4 relative">
+              <div className="flex items-center space-x-3">
+                <img 
+                  src="/lovable-uploads/e9c82f5b-c0e6-4c78-b66a-a6af1226cc63.png" 
+                  alt="PetPass Logo"
+                  className="w-8 h-8 object-contain"
+                />
+                <div>
+                  <h1 className="text-yellow-400 text-lg font-serif font-bold tracking-wider">PETPASS</h1>
+                  <p className="text-yellow-300 text-xs font-serif tracking-wide">DIGITAL PET PASSPORT</p>
+                </div>
+              </div>
+              <div className="text-right">
+                <p className="text-yellow-400 text-sm font-serif tracking-wide">UNITED STATES</p>
+                <p className="text-xs text-yellow-300 font-mono">ID: {petData.microchipId.slice(-8)}</p>
+              </div>
+            </div>
+            
+            <div className="flex items-center space-x-6 relative">
+              <div className="w-24 h-24 rounded-lg overflow-hidden border-4 border-yellow-500/50 shadow-lg flex-shrink-0">
                 <img 
                   src={petData.photoUrl} 
                   alt={petData.name}
                   className="w-full h-full object-cover"
                 />
               </div>
-              <div>
-                <h2 className="text-3xl font-bold">{petData.name}</h2>
-                <p className="text-blue-100">{petData.breed} • {petData.age}</p>
-                <div className="flex items-center space-x-4 mt-2 text-sm">
-                  <span className="flex items-center space-x-1">
-                    <Heart className="w-4 h-4" />
-                    <span>{petData.weight}</span>
-                  </span>
-                  <span className="flex items-center space-x-1">
-                    <Star className="w-4 h-4" />
-                    <span>{petData.badges.length} badges</span>
-                  </span>
+              <div className="flex-1">
+                <h2 className="text-3xl font-serif font-bold text-yellow-400 mb-1 tracking-wide">{petData.name.toUpperCase()}</h2>
+                <p className="text-yellow-200 font-serif text-lg mb-2">{petData.breed} • {petData.age}</p>
+                <div className="flex items-center space-x-6 text-sm">
+                  <div className="flex items-center space-x-2">
+                    <div className="w-2 h-2 bg-yellow-400 rounded-full"></div>
+                    <span className="font-serif text-yellow-200">Weight: {petData.weight}</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <div className="w-2 h-2 bg-yellow-400 rounded-full"></div>
+                    <span className="font-serif text-yellow-200">{petData.badges.length} Certifications</span>
+                  </div>
                 </div>
               </div>
             </div>
+            
+            {/* Passport-style bottom border */}
+            <div className="absolute bottom-0 left-0 right-0 h-2 bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-400"></div>
           </div>
         </Card>
 

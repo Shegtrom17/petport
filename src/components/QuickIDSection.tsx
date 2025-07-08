@@ -42,10 +42,20 @@ export const QuickIDSection = ({ petData }: QuickIDSectionProps) => {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="bg-gradient-to-r from-red-500 to-pink-600 p-6 rounded-xl text-white mb-4">
+          <div className="bg-gradient-to-r from-red-500 to-pink-600 p-6 rounded-xl text-white mb-4 relative overflow-hidden">
+            {/* PetPass Logo on Quick ID */}
+            <div className="absolute top-3 left-3 flex items-center space-x-2">
+              <img 
+                src="/lovable-uploads/e9c82f5b-c0e6-4c78-b66a-a6af1226cc63.png" 
+                alt="PetPass Logo"
+                className="w-6 h-6 object-contain opacity-80"
+              />
+              <span className="text-xs font-bold opacity-80">PETPASS</span>
+            </div>
+            
             {/* Support Animal Status Banner on Quick ID */}
             {petData.supportAnimalStatus && (
-              <div className="bg-white/20 backdrop-blur-sm p-3 rounded-lg mb-4 border-2 border-white/30">
+              <div className="bg-white/20 backdrop-blur-sm p-3 rounded-lg mb-4 border-2 border-white/30 mt-8">
                 <div className="flex items-center justify-center space-x-2">
                   {(() => {
                     const IconComponent = getSupportAnimalIcon(petData.supportAnimalStatus);

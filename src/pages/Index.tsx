@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -225,7 +226,7 @@ const Index = () => {
         <div className="max-w-4xl mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 rounded-xl flex items-center justify-center overflow-hidden">
+              <div className="w-8 h-8 md:w-10 md:h-10 rounded-xl flex items-center justify-center overflow-hidden">
                 <img 
                   src="/lovable-uploads/1af9fe70-ed76-44c5-a1e1-1a058e497a10.png" 
                   alt="PetPass Logo"
@@ -238,29 +239,30 @@ const Index = () => {
                 />
               </div>
               <div>
-                <h1 className="text-lg font-serif font-bold text-gold-500 mb-1 tracking-wide">
+                <h1 className="text-sm md:text-lg font-serif font-bold text-gold-500 mb-1 tracking-wide">
                   Pawprint & HoofBeats
                 </h1>
-                <h2 className="text-2xl font-bold bg-gradient-to-r from-navy-900 to-gold-500 bg-clip-text text-transparent">
+                <h2 className="text-lg md:text-2xl font-bold bg-gradient-to-r from-navy-900 to-gold-500 bg-clip-text text-transparent">
                   PetPass
                 </h2>
-                <p className="text-sm text-gray-600">Digital Pet Passport</p>
+                <p className="text-xs md:text-sm text-gray-600">Digital Pet Passport</p>
               </div>
             </div>
-            <div className="flex items-center space-x-3">
+            <div className="flex items-center space-x-2 md:space-x-3">
               <Button 
-                className="bg-gradient-to-r from-navy-900 to-navy-800 hover:from-navy-800 hover:to-navy-700 text-gold-500 border border-gold-500/30"
+                className="bg-gradient-to-r from-navy-900 to-navy-800 hover:from-navy-800 hover:to-navy-700 text-gold-500 border border-gold-500/30 text-xs md:text-sm px-2 md:px-3 py-1 md:py-2"
                 onClick={() => navigate('/add-pet')}
               >
-                <PlusCircle className="mr-1 h-4 w-4" /> Add Pet
+                <PlusCircle className="mr-1 h-3 w-3 md:h-4 md:w-4" /> Add Pet
               </Button>
               <Button 
                 variant="outline" 
                 size="icon"
                 onClick={signOut}
                 title="Sign Out"
+                className="h-8 w-8 md:h-10 md:w-10"
               >
-                <LogOut className="h-4 w-4" />
+                <LogOut className="h-3 w-3 md:h-4 md:w-4" />
               </Button>
             </div>
           </div>
@@ -322,17 +324,24 @@ const Index = () => {
 
             {/* Pet Header Card - Updated Passport Style */}
             <Card className="mb-8 overflow-hidden border-0 shadow-xl bg-white/90 backdrop-blur-sm">
-              <div className="bg-gradient-to-r from-navy-900 to-slate-800 p-6 text-white relative overflow-hidden">
+              <div className="bg-gradient-to-r from-navy-900 to-slate-800 p-4 md:p-6 text-white relative overflow-hidden">
                 {/* Passport-style decorative elements */}
-                <div className="absolute top-0 right-0 w-32 h-32 bg-yellow-500/10 rounded-full -translate-y-16 translate-x-16"></div>
-                <div className="absolute bottom-0 left-0 w-24 h-24 bg-yellow-500/10 rounded-full translate-y-12 -translate-x-12"></div>
+                <div className="absolute top-0 right-0 w-24 h-24 md:w-32 md:h-32 bg-yellow-500/10 rounded-full -translate-y-12 md:-translate-y-16 translate-x-12 md:translate-x-16"></div>
+                <div className="absolute bottom-0 left-0 w-18 h-18 md:w-24 md:h-24 bg-yellow-500/10 rounded-full translate-y-9 md:translate-y-12 -translate-x-9 md:-translate-x-12"></div>
+                
+                {/* Pawprint & HoofBeats Title */}
+                <div className="text-center mb-2 md:mb-4">
+                  <h1 className="text-yellow-400 text-sm md:text-lg font-serif font-bold tracking-wider">
+                    PAWPRINT & HOOFBEATS
+                  </h1>
+                </div>
                 
                 {/* PetPass Logo as Passport Emblem */}
-                <div className="absolute top-2 left-1/2 transform -translate-x-1/2 w-16 h-16 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-full flex items-center justify-center z-10 border-4 border-yellow-300/50 shadow-lg">
+                <div className="absolute top-2 left-1/2 transform -translate-x-1/2 w-12 h-12 md:w-16 md:h-16 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-full flex items-center justify-center z-10 border-4 border-yellow-300/50 shadow-lg">
                   <img 
                     src="/lovable-uploads/1af9fe70-ed76-44c5-a1e1-1a058e497a10.png" 
                     alt="PetPass Logo"
-                    className="w-10 h-10 object-contain"
+                    className="w-6 h-6 md:w-10 md:h-10 object-contain"
                     onError={(e) => {
                       console.error("Passport emblem logo failed to load:", e);
                       e.currentTarget.style.display = 'none';
@@ -341,12 +350,12 @@ const Index = () => {
                   />
                 </div>
                 
-                <div className="flex items-center justify-between mb-4 relative z-20 pt-6">
-                  <div className="flex items-center space-x-3">
+                <div className="flex items-center justify-between mb-4 relative z-20 pt-8 md:pt-6">
+                  <div className="flex items-center space-x-2 md:space-x-3">
                     <img 
                       src="/lovable-uploads/1af9fe70-ed76-44c5-a1e1-1a058e497a10.png" 
                       alt="PetPass Logo"
-                      className="w-8 h-8 object-contain"
+                      className="w-6 h-6 md:w-8 md:h-8 object-contain"
                       onError={(e) => {
                         console.error("Passport logo failed to load:", e);
                         e.currentTarget.style.display = 'none';
@@ -354,18 +363,18 @@ const Index = () => {
                       onLoad={() => console.log("Passport logo loaded successfully")}
                     />
                     <div>
-                      <h1 className="text-yellow-400 text-lg font-serif font-bold tracking-wider">PETPASS</h1>
+                      <h1 className="text-yellow-400 text-sm md:text-lg font-serif font-bold tracking-wider">PETPASS</h1>
                       <p className="text-yellow-300 text-xs font-serif tracking-wide">DIGITAL PET PASSPORT</p>
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="text-yellow-400 text-sm font-serif tracking-wide">GLOBE TROTTER</p>
+                    <p className="text-yellow-400 text-xs md:text-sm font-serif tracking-wide">GLOBE TROTTER</p>
                     <p className="text-xs text-yellow-300 font-mono">ID: {petData.petPassId}</p>
                   </div>
                 </div>
                 
-                <div className="flex items-center space-x-6 relative z-20">
-                  <div className="w-24 h-24 rounded-lg overflow-hidden border-4 border-yellow-500/50 shadow-lg flex-shrink-0">
+                <div className="flex items-center space-x-3 md:space-x-6 relative z-20">
+                  <div className="w-16 h-16 md:w-24 md:h-24 rounded-lg overflow-hidden border-4 border-yellow-500/50 shadow-lg flex-shrink-0">
                     <img 
                       src={petData.photoUrl || "https://placehold.co/100x100?text=" + petData.name?.charAt(0)} 
                       alt={petData.name}
@@ -373,9 +382,9 @@ const Index = () => {
                     />
                   </div>
                   <div className="flex-1">
-                    <h2 className="text-3xl font-serif font-bold text-yellow-400 mb-1 tracking-wide">{petData.name?.toUpperCase()}</h2>
-                    <p className="text-yellow-200 font-serif text-lg mb-2">{petData.breed} • {petData.age}</p>
-                    <div className="flex items-center space-x-6 text-sm">
+                    <h2 className="text-xl md:text-3xl font-serif font-bold text-yellow-400 mb-1 tracking-wide">{petData.name?.toUpperCase()}</h2>
+                    <p className="text-yellow-200 font-serif text-sm md:text-lg mb-2">{petData.breed} • {petData.age}</p>
+                    <div className="flex items-center space-x-3 md:space-x-6 text-xs md:text-sm">
                       <div className="flex items-center space-x-2">
                         <div className="w-2 h-2 bg-yellow-400 rounded-full"></div>
                         <span className="font-serif text-yellow-200">Weight: {petData.weight}</span>

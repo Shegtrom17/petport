@@ -39,7 +39,7 @@ export const QuickIDSection = ({ petData }: QuickIDSectionProps) => {
   return (
     <div className="space-y-6">
       {/* Quick ID Preview */}
-      <Card className="border-0 shadow-lg bg-white/90 backdrop-blur-sm">
+      <Card className="border-0 shadow-lg bg-passport-section-bg backdrop-blur-sm">
         <CardHeader>
           <CardTitle className="flex items-center space-x-2">
             <QrCode className="w-5 h-5 text-navy-900" />
@@ -51,7 +51,7 @@ export const QuickIDSection = ({ petData }: QuickIDSectionProps) => {
             {/* PetPass Logo on Quick ID */}
             <div className="absolute top-3 left-3 flex items-center space-x-2">
               <img 
-                src="/lovable-uploads/f6a3519f-a6e7-4515-ad5c-e8dca27a8e64.png" 
+                src="/lovable-uploads/61126f7b-5822-4f60-bf90-f595bb83b874.png" 
                 alt="PetPass Logo"
                 className="w-6 h-6 object-contain opacity-80"
               />
@@ -153,7 +153,7 @@ export const QuickIDSection = ({ petData }: QuickIDSectionProps) => {
       </Card>
 
       {/* QR Code Display */}
-      <Card className="border-0 shadow-lg bg-white/90 backdrop-blur-sm">
+      <Card className="border-0 shadow-lg bg-passport-section-bg backdrop-blur-sm">
         <CardHeader>
           <CardTitle>QR Code for Quick Access</CardTitle>
         </CardHeader>
@@ -174,7 +174,7 @@ export const QuickIDSection = ({ petData }: QuickIDSectionProps) => {
       </Card>
 
       {/* Sharing Options */}
-      <Card className="border-0 shadow-lg bg-white/90 backdrop-blur-sm">
+      <Card className="border-0 shadow-lg bg-passport-section-bg backdrop-blur-sm">
         <CardHeader>
           <CardTitle>Share Emergency ID</CardTitle>
         </CardHeader>

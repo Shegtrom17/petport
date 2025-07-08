@@ -30,7 +30,9 @@ export const NavigationTabs = ({ activeTab, onTabChange }: NavigationTabsProps) 
           className={`flex items-center space-x-2 transition-all ${
             activeTab === tab.id 
               ? "bg-gradient-to-r from-navy-900 to-navy-800 text-gold-500 shadow-lg border border-gold-500/30 hover:from-navy-800 hover:to-navy-700" 
-              : "text-navy-800 hover:text-gold-500 hover:bg-navy-900 hover:shadow-md border border-transparent hover:border-gold-500/20"
+              : tab.id === "gallery" 
+                ? "bg-gradient-to-r from-gold-500 to-gold-400 text-navy-900 shadow-md border border-gold-500/50 hover:from-gold-400 hover:to-gold-300 font-medium"
+                : "text-navy-800 hover:text-gold-500 hover:bg-navy-900 hover:shadow-md border border-transparent hover:border-gold-500/20"
           }`}
         >
           <tab.icon className="w-4 h-4" />

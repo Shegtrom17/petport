@@ -53,6 +53,9 @@ export const PetEditForm = ({ petData, onSave, onCancel }: PetEditFormProps) => 
     setIsLoading(true);
     
     try {
+      console.log("Starting form submission with data:", data);
+      console.log("Photos to upload:", { profilePhoto, fullBodyPhoto });
+
       // Update contacts
       const contactSuccess = await updatePetContacts(petData.id, {
         vet_contact: data.vetContact,
@@ -79,6 +82,7 @@ export const PetEditForm = ({ petData, onSave, onCancel }: PetEditFormProps) => 
 
       // Upload photos if provided
       if (profilePhoto || fullBodyPhoto) {
+        console.log("Uploading photos...");
         const photoSuccess = await uploadPetPhotos(petData.id, {
           profilePhoto: profilePhoto || undefined,
           fullBodyPhoto: fullBodyPhoto || undefined,
@@ -87,22 +91,27 @@ export const PetEditForm = ({ petData, onSave, onCancel }: PetEditFormProps) => 
         if (!photoSuccess) {
           throw new Error("Failed to upload photos");
         }
+        console.log("Photos uploaded successfully!");
       }
 
       // Upload gallery photo if provided
       if (galleryPhoto) {
+        console.log("Uploading gallery photo...");
         const gallerySuccess = await uploadGalleryPhoto(petData.id, galleryPhoto, galleryCaption);
         if (!gallerySuccess) {
           throw new Error("Failed to upload gallery photo");
         }
+        console.log("Gallery photo uploaded successfully!");
       }
 
       // Upload document if provided
       if (document) {
+        console.log("Uploading document...");
         const docSuccess = await uploadDocument(petData.id, document, documentType);
         if (!docSuccess) {
           throw new Error("Failed to upload document");
         }
+        console.log("Document uploaded successfully!");
       }
 
       toast({
@@ -241,7 +250,11 @@ export const PetEditForm = ({ petData, onSave, onCancel }: PetEditFormProps) => 
                     id="profilePhoto"
                     type="file"
                     accept="image/*"
-                    onChange={(e) => setProfilePhoto(e.target.files?.[0] || null)}
+                    onChange={(e) => {
+                      const file = e.target.files?.[0] || null;
+                      console.log("Profile photo selected:", file?.name);
+                      setProfilePhoto(file);
+                    }}
                   />
                   {profilePhoto && (
                     <Button
@@ -262,7 +275,11 @@ export const PetEditForm = ({ petData, onSave, onCancel }: PetEditFormProps) => 
                     id="fullBodyPhoto"
                     type="file"
                     accept="image/*"
-                    onChange={(e) => setFullBodyPhoto(e.target.files?.[0] || null)}
+                    onChange={(e) => {
+                      const file = e.target.files?.[0] || null;
+                      console.log("Full body photo selected:", file?.name);
+                      setFullBodyPhoto(file);
+                    }}
                   />
                   {fullBodyPhoto && (
                     <Button
@@ -287,7 +304,11 @@ export const PetEditForm = ({ petData, onSave, onCancel }: PetEditFormProps) => 
                   id="galleryPhoto"
                   type="file"
                   accept="image/*"
-                  onChange={(e) => setGalleryPhoto(e.target.files?.[0] || null)}
+                  onChange={(e) => {
+                    const file = e.target.files?.[0] || null;
+                    console.log("Gallery photo selected:", file?.name);
+                    setGalleryPhoto(file);
+                  }}
                 />
                 <Input
                   placeholder="Photo caption (optional)"
@@ -315,7 +336,11 @@ export const PetEditForm = ({ petData, onSave, onCancel }: PetEditFormProps) => 
                   id="document"
                   type="file"
                   accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
-                  onChange={(e) => setDocument(e.target.files?.[0] || null)}
+                  onChange={(e) => {
+                    const file = e.target.files?.[0] || null;
+                    console.log("Document selected:", file?.name);
+                    setDocument(file);
+                  }}
                 />
               </div>
               <div>

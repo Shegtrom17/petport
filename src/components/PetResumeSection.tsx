@@ -1,7 +1,8 @@
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Download, Share2, QrCode, Star, Shield, Heart, Phone, Mail, Award } from "lucide-react";
+import { Download, Share2, QrCode, Star, Shield, Heart, Phone, Mail, Award, AlertTriangle, MapPin, GraduationCap, Trophy, Activity } from "lucide-react";
 import { SupportAnimalBanner } from "@/components/SupportAnimalBanner";
 
 interface PetResumeSectionProps {
@@ -12,13 +13,32 @@ interface PetResumeSectionProps {
     age: string;
     weight: string;
     microchipId: string;
+    petPassId: string;
     photoUrl: string;
     fullBodyPhotoUrl: string;
     vetContact: string;
     emergencyContact: string;
+    secondEmergencyContact: string;
     badges: string[];
     bio?: string;
     supportAnimalStatus?: string | null;
+    medicalAlert: boolean;
+    medicalConditions?: string;
+    experience?: Array<{
+      activity: string;
+      contact?: string;
+      description: string;
+    }>;
+    achievements?: Array<{
+      title: string;
+      description: string;
+    }>;
+    training?: Array<{
+      course: string;
+      facility: string;
+      phone: string;
+      completed: string;
+    }>;
     reviews?: Array<{
       reviewerName: string;
       reviewerContact?: string;
@@ -55,6 +75,23 @@ export const PetResumeSection = ({ petData }: PetResumeSectionProps) => {
       {/* Support Animal Status Banner */}
       <SupportAnimalBanner status={petData.supportAnimalStatus || null} />
 
+      {/* Medical Alert Banner */}
+      {petData.medicalAlert && (
+        <Card className="border-2 border-red-600 shadow-xl bg-gradient-to-r from-red-500 to-red-600 text-white relative overflow-hidden">
+          <div className="absolute inset-0 bg-black/10"></div>
+          <CardContent className="p-4 relative">
+            <div className="flex items-center justify-center space-x-3">
+              <AlertTriangle className="w-8 h-8 text-white animate-pulse" />
+              <div className="text-center">
+                <h3 className="text-xl font-bold tracking-wide">MEDICAL ALERT</h3>
+                <p className="text-red-100 text-sm">{petData.medicalConditions}</p>
+              </div>
+              <AlertTriangle className="w-8 h-8 text-white animate-pulse" />
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       {/* Header Actions */}
       <Card className="border-0 shadow-xl bg-gradient-to-r from-navy-900 to-navy-800 text-white">
         <CardContent className="p-6">
@@ -64,6 +101,7 @@ export const PetResumeSection = ({ petData }: PetResumeSectionProps) => {
               <div>
                 <h2 className="text-2xl font-bold">Pet Resume</h2>
                 <p className="text-blue-100">Professional pet credentials & references</p>
+                <p className="text-xs text-blue-200 mt-1">PetPass ID: {petData.petPassId}</p>
               </div>
             </div>
             <div className="flex space-x-2">
@@ -124,15 +162,22 @@ export const PetResumeSection = ({ petData }: PetResumeSectionProps) => {
                 <div className="flex items-center space-x-2">
                   <Mail className="w-4 h-4 text-blue-600" />
                   <div>
-                    <p className="text-sm font-semibold text-blue-900">Emergency Contact</p>
+                    <p className="text-sm font-semibold text-blue-900">Primary Emergency</p>
                     <p className="text-sm text-blue-700">{petData.emergencyContact}</p>
                   </div>
                 </div>
-                <div className="md:col-span-2 flex items-center space-x-2">
+                <div className="flex items-center space-x-2">
+                  <Phone className="w-4 h-4 text-blue-600" />
+                  <div>
+                    <p className="text-sm font-semibold text-blue-900">Secondary Emergency</p>
+                    <p className="text-sm text-blue-700">{petData.secondEmergencyContact}</p>
+                  </div>
+                </div>
+                <div className="flex items-center space-x-2">
                   <Shield className="w-4 h-4 text-blue-600" />
                   <div>
-                    <p className="text-sm font-semibold text-blue-900">Microchip ID</p>
-                    <p className="text-sm text-blue-700 font-mono">{petData.microchipId}</p>
+                    <p className="text-sm font-semibold text-blue-900">PetPass ID</p>
+                    <p className="text-sm text-blue-700 font-mono">{petData.petPassId}</p>
                   </div>
                 </div>
               </div>
@@ -178,7 +223,89 @@ export const PetResumeSection = ({ petData }: PetResumeSectionProps) => {
         </CardContent>
       </Card>
 
-      {/* Earned Badges */}
+      {/* Experience Section */}
+      {petData.experience && petData.experience.length > 0 && (
+        <Card className="border-0 shadow-xl bg-white/90 backdrop-blur-sm">
+          <CardHeader>
+            <CardTitle className="flex items-center space-x-2">
+              <Activity className="w-5 h-5 text-green-600" />
+              <span>Experience & Activities</span>
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {petData.experience.map((exp, index) => (
+                <div key={index} className="border-l-4 border-green-500 pl-4 py-2">
+                  <h4 className="font-semibold text-gray-800">{exp.activity}</h4>
+                  <p className="text-gray-600 text-sm mb-2">{exp.description}</p>
+                  {exp.contact && (
+                    <div className="flex items-center space-x-2 text-sm text-green-600">
+                      <Phone className="w-3 h-3" />
+                      <span>Contact: {exp.contact}</span>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Achievements Section */}
+      {petData.achievements && petData.achievements.length > 0 && (
+        <Card className="border-0 shadow-xl bg-white/90 backdrop-blur-sm">
+          <CardHeader>
+            <CardTitle className="flex items-center space-x-2">
+              <Trophy className="w-5 h-5 text-yellow-600" />
+              <span>Notable Achievements</span>
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {petData.achievements.map((achievement, index) => (
+                <div key={index} className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                  <h4 className="font-bold text-yellow-800 mb-2">{achievement.title}</h4>
+                  <p className="text-yellow-700 text-sm">{achievement.description}</p>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Training & Education Section */}
+      {petData.training && petData.training.length > 0 && (
+        <Card className="border-0 shadow-xl bg-white/90 backdrop-blur-sm">
+          <CardHeader>
+            <CardTitle className="flex items-center space-x-2">
+              <GraduationCap className="w-5 h-5 text-purple-600" />
+              <span>Training & Certifications</span>
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {petData.training.map((course, index) => (
+                <div key={index} className="bg-purple-50 border border-purple-200 rounded-lg p-4">
+                  <h4 className="font-semibold text-purple-800">{course.course}</h4>
+                  <div className="mt-2 space-y-1 text-sm text-purple-700">
+                    <div className="flex items-center space-x-2">
+                      <MapPin className="w-3 h-3" />
+                      <span>{course.facility}</span>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <Phone className="w-3 h-3" />
+                      <span>{course.phone}</span>
+                    </div>
+                    <p className="text-xs text-purple-600">Completed: {course.completed}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Earned Badges with New Icons */}
       <Card className="border-0 shadow-xl bg-white/90 backdrop-blur-sm">
         <CardHeader>
           <CardTitle className="flex items-center space-x-2">
@@ -188,25 +315,32 @@ export const PetResumeSection = ({ petData }: PetResumeSectionProps) => {
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {petData.badges.map((badge, index) => (
-              <div
-                key={index}
-                className="flex flex-col items-center p-4 bg-gradient-to-br from-blue-50 to-purple-50 rounded-lg border-2 border-blue-200 transform hover:scale-105 transition-transform"
-                style={{
-                  backgroundImage: "radial-gradient(circle at 50% 50%, rgba(59, 130, 246, 0.1) 0%, transparent 70%)"
-                }}
-              >
-                <div className="w-12 h-12 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center mb-2">
-                  <Shield className="w-6 h-6 text-white" />
-                </div>
-                <Badge 
-                  variant="secondary" 
-                  className="bg-gradient-to-r from-blue-500 to-purple-600 text-white text-xs font-bold border-2 border-yellow-400"
+            {petData.badges.map((badge, index) => {
+              // Different icons for different badge types using emojis
+              const getIcon = (badgeName: string) => {
+                if (badgeName.toLowerCase().includes('therapy') || badgeName.toLowerCase().includes('certified')) return '🏆';
+                if (badgeName.toLowerCase().includes('kids') || badgeName.toLowerCase().includes('child')) return '🐾';
+                if (badgeName.toLowerCase().includes('trained') || badgeName.toLowerCase().includes('behaved')) return '🦴';
+                return '🌍';
+              };
+
+              return (
+                <div
+                  key={index}
+                  className="flex flex-col items-center p-4 bg-gradient-to-br from-blue-50 to-purple-50 rounded-lg border-2 border-blue-200 transform hover:scale-105 transition-transform"
                 >
-                  {badge}
-                </Badge>
-              </div>
-            ))}
+                  <div className="w-12 h-12 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center mb-2 text-2xl">
+                    {getIcon(badge)}
+                  </div>
+                  <Badge 
+                    variant="secondary" 
+                    className="bg-gradient-to-r from-blue-500 to-purple-600 text-white text-xs font-bold border-2 border-yellow-400"
+                  >
+                    {badge}
+                  </Badge>
+                </div>
+              );
+            })}
           </div>
         </CardContent>
       </Card>

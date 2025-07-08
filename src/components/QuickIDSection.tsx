@@ -1,7 +1,8 @@
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { QrCode, Download, Share, Phone, Pill, Shield, Heart, Award } from "lucide-react";
+import { QrCode, Download, Share, Phone, Pill, Shield, Heart, Award, AlertTriangle } from "lucide-react";
 
 interface PetData {
   name: string;
@@ -10,9 +11,13 @@ interface PetData {
   weight: string;
   photoUrl: string;
   emergencyContact: string;
+  secondEmergencyContact: string;
   medications: string[];
   notes: string;
   supportAnimalStatus?: string | null;
+  medicalAlert: boolean;
+  medicalConditions?: string;
+  petPassId: string;
 }
 
 interface QuickIDSectionProps {
@@ -52,10 +57,28 @@ export const QuickIDSection = ({ petData }: QuickIDSectionProps) => {
               />
               <span className="text-xs font-bold opacity-80">PETPASS</span>
             </div>
+
+            {/* PetPass ID in top right */}
+            <div className="absolute top-3 right-3 text-xs font-mono bg-white/20 px-2 py-1 rounded">
+              {petData.petPassId}
+            </div>
+            
+            {/* Medical Alert Banner on Quick ID */}
+            {petData.medicalAlert && (
+              <div className="bg-black/30 backdrop-blur-sm p-3 rounded-lg mb-4 border-2 border-white/50 mt-8">
+                <div className="flex items-center justify-center space-x-2">
+                  <AlertTriangle className="w-5 h-5 animate-pulse" />
+                  <span className="font-bold text-sm tracking-wide">
+                    MEDICAL ALERT: {petData.medicalConditions}
+                  </span>
+                  <AlertTriangle className="w-5 h-5 animate-pulse" />
+                </div>
+              </div>
+            )}
             
             {/* Support Animal Status Banner on Quick ID */}
             {petData.supportAnimalStatus && (
-              <div className="bg-white/20 backdrop-blur-sm p-3 rounded-lg mb-4 border-2 border-white/30 mt-8">
+              <div className="bg-white/20 backdrop-blur-sm p-3 rounded-lg mb-4 border-2 border-white/30 mt-2">
                 <div className="flex items-center justify-center space-x-2">
                   {(() => {
                     const IconComponent = getSupportAnimalIcon(petData.supportAnimalStatus);
@@ -83,7 +106,11 @@ export const QuickIDSection = ({ petData }: QuickIDSectionProps) => {
                 <div className="space-y-2 text-sm">
                   <div className="flex items-center space-x-2">
                     <Phone className="w-4 h-4" />
-                    <span className="font-medium">Emergency: {petData.emergencyContact}</span>
+                    <span className="font-medium">Primary: {petData.emergencyContact}</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Phone className="w-4 h-4" />
+                    <span className="font-medium">Secondary: {petData.secondEmergencyContact}</span>
                   </div>
                   
                   {petData.medications.length > 0 && (

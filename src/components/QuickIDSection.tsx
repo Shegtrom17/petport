@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -47,7 +46,7 @@ export const QuickIDSection = ({ petData }: QuickIDSectionProps) => {
             {/* PetPass Logo on Quick ID */}
             <div className="absolute top-3 left-3 flex items-center space-x-2">
               <img 
-                src="/lovable-uploads/61126f7b-5822-4f60-bf90-f595bb83b874.png" 
+                src="/lovable-uploads/f6a3519f-a6e7-4515-ad5c-e8dca27a8e64.png" 
                 alt="PetPass Logo"
                 className="w-6 h-6 object-contain opacity-80"
               />

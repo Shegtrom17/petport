@@ -92,7 +92,7 @@ const Index = () => {
             <div className="flex items-center space-x-3">
               <div className="w-10 h-10 rounded-xl flex items-center justify-center overflow-hidden">
                 <img 
-                  src="/lovable-uploads/61126f7b-5822-4f60-bf90-f595bb83b874.png" 
+                  src="/lovable-uploads/f6a3519f-a6e7-4515-ad5c-e8dca27a8e64.png" 
                   alt="PetPass Logo"
                   className="w-full h-full object-contain"
                 />
@@ -126,7 +126,7 @@ const Index = () => {
             <div className="flex items-center justify-between mb-4 relative">
               <div className="flex items-center space-x-3">
                 <img 
-                  src="/lovable-uploads/61126f7b-5822-4f60-bf90-f595bb83b874.png" 
+                  src="/lovable-uploads/f6a3519f-a6e7-4515-ad5c-e8dca27a8e64.png" 
                   alt="PetPass Logo"
                   className="w-8 h-8 object-contain"
                 />

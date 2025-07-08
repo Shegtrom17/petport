@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -138,6 +139,11 @@ const Index = () => {
                   src="/lovable-uploads/61126f7b-5822-4f60-bf90-f595bb83b874.png" 
                   alt="PetPass Logo"
                   className="w-full h-full object-contain"
+                  onError={(e) => {
+                    console.error("Header logo failed to load:", e);
+                    e.currentTarget.style.display = 'none';
+                  }}
+                  onLoad={() => console.log("Header logo loaded successfully")}
                 />
               </div>
               <div>
@@ -163,20 +169,25 @@ const Index = () => {
             <div className="absolute top-0 right-0 w-32 h-32 bg-yellow-500/10 rounded-full -translate-y-16 translate-x-16"></div>
             <div className="absolute bottom-0 left-0 w-24 h-24 bg-yellow-500/10 rounded-full translate-y-12 -translate-x-12"></div>
             
-            {/* Global Travel Stamp - Moved to Top as Decorative Watermark */}
-            <div className="absolute top-4 left-1/2 transform -translate-x-1/2 w-20 h-14 bg-yellow-500/70 rounded border-2 border-yellow-400/80 flex items-center justify-center z-10">
+            {/* Global Travel Stamp - Positioned at very top as decorative watermark */}
+            <div className="absolute top-2 left-1/2 transform -translate-x-1/2 w-16 h-12 bg-yellow-500/60 rounded border-2 border-yellow-400/70 flex items-center justify-center z-10">
               <div className="text-center">
-                <div className="w-4 h-4 bg-yellow-200 rounded-full mx-auto mb-1"></div>
-                <span className="text-xs font-bold text-navy-900 block leading-tight tracking-wide">GLOBAL<br/>TRAVEL</span>
+                <div className="w-3 h-3 bg-yellow-200 rounded-full mx-auto mb-0.5"></div>
+                <span className="text-xs font-bold text-navy-900 block leading-tight tracking-wide">GLOBE<br/>TRAVEL</span>
               </div>
             </div>
             
-            <div className="flex items-center justify-between mb-4 relative z-20 pt-8">
+            <div className="flex items-center justify-between mb-4 relative z-20 pt-6">
               <div className="flex items-center space-x-3">
                 <img 
                   src="/lovable-uploads/61126f7b-5822-4f60-bf90-f595bb83b874.png" 
                   alt="PetPass Logo"
                   className="w-8 h-8 object-contain"
+                  onError={(e) => {
+                    console.error("Passport logo failed to load:", e);
+                    e.currentTarget.style.display = 'none';
+                  }}
+                  onLoad={() => console.log("Passport logo loaded successfully")}
                 />
                 <div>
                   <h1 className="text-yellow-400 text-lg font-serif font-bold tracking-wider">PETPASS</h1>

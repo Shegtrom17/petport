@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -41,6 +40,9 @@ interface PetProfileCardProps {
 export const PetProfileCard = ({ petData, onUpdate }: PetProfileCardProps) => {
   const [isEditing, setIsEditing] = useState(false);
 
+  console.log("PetProfileCard rendered with petData:", petData);
+  console.log("Is editing state:", isEditing);
+
   const handleUploadMedicalDoc = () => {
     console.log("Opening medical document upload...");
     // Document upload would be implemented here
@@ -70,13 +72,17 @@ export const PetProfileCard = ({ petData, onUpdate }: PetProfileCardProps) => {
 
   return (
     <div className="space-y-6">
-      {/* Edit Button */}
-      <div className="flex justify-end">
+      {/* Edit Button - Make it more prominent */}
+      <div className="flex justify-end mb-4">
         <Button 
-          onClick={() => setIsEditing(true)}
-          className="bg-navy-800 hover:bg-navy-700 text-gold-500"
+          onClick={() => {
+            console.log("Edit button clicked!");
+            setIsEditing(true);
+          }}
+          className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 text-base font-medium"
+          size="lg"
         >
-          <Edit className="w-4 h-4 mr-2" />
+          <Edit className="w-5 h-5 mr-2" />
           Edit Pet Profile
         </Button>
       </div>

@@ -38,7 +38,7 @@ export const BadgesSection = ({ badges, petData }: BadgesSectionProps) => {
       badges: badges.filter(badge => 
         ["Hero Pet", "Community Favorite", "Show Winner", "Champion", "Hunter Class", "Jumper Certified"].includes(badge)
       ),
-      icon: isHorse ? Trophy : Star,
+      icon: Trophy,
       color: "from-yellow-500 to-orange-600"
     }
   ];
@@ -76,11 +76,7 @@ export const BadgesSection = ({ badges, petData }: BadgesSectionProps) => {
                     className="flex flex-col items-center p-4 bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg border-2 border-gray-200 hover:border-blue-300 transition-colors"
                   >
                     <div className={`w-12 h-12 rounded-full bg-gradient-to-r ${category.color} flex items-center justify-center mb-2`}>
-                      {isHorse && category.icon === Trophy ? (
-                        <PawPrint className="w-6 h-6 text-white" />
-                      ) : (
-                        <category.icon className="w-6 h-6 text-white" />
-                      )}
+                      <PawPrint className="w-6 h-6 text-white" />
                     </div>
                     <Badge 
                       variant="secondary" 
@@ -116,7 +112,7 @@ export const BadgesSection = ({ badges, petData }: BadgesSectionProps) => {
                 className="flex flex-col items-center p-4 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300 opacity-60"
               >
                 <div className="w-12 h-12 rounded-full bg-gray-300 flex items-center justify-center mb-2">
-                  {isHorse ? <PawPrint className="w-6 h-6 text-gray-500" /> : <Award className="w-6 h-6 text-gray-500" />}
+                  <PawPrint className="w-6 h-6 text-gray-500" />
                 </div>
                 <Badge variant="outline" className="text-xs">
                   {badge}

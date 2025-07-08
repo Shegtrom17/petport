@@ -16,7 +16,7 @@ import { TravelMapSection } from "@/components/TravelMapSection";
 import { PetGallerySection } from "@/components/PetGallerySection";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
-import { fetchUserPets, fetchPetDetails, PetWithDetails } from "@/services/petService";
+import { fetchUserPets, fetchPetDetails } from "@/services/petService";
 import { useToast } from "@/components/ui/use-toast";
 
 const Index = () => {
@@ -25,8 +25,8 @@ const Index = () => {
   const [activeTab, setActiveTab] = useState("profile");
   console.log("Active tab:", activeTab);
   
-  const [pets, setPets] = useState<PetWithDetails[]>([]);
-  const [selectedPet, setSelectedPet] = useState<PetWithDetails | null>(null);
+  const [pets, setPets] = useState<any[]>([]);
+  const [selectedPet, setSelectedPet] = useState<any | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   
   const navigate = useNavigate();
@@ -85,31 +85,23 @@ const Index = () => {
     species: "dog",
     age: "3 years",
     weight: "65 lbs",
-    microchip_id: "985112001234567",
-    pet_pass_id: "PP-2025-001", // New simplified ID
+    microchipId: "985112001234567",
+    petPassId: "PP-2025-001",
     bio: "Luna is a gentle and loving Golden Retriever with an exceptional temperament. She's been professionally trained and has a calm, patient demeanor that makes her wonderful with children and other pets. Luna loves outdoor adventures, especially hiking and swimming, but is equally content relaxing at home. She's house-trained, leash-trained, and responds well to commands. Her favorite activities include fetch, long walks, and meeting new people at the dog park.",
     notes: "Friendly with other dogs, loves swimming, afraid of thunderstorms",
-    contacts: {
-      vet_contact: "Dr. Sarah Johnson - (555) 123-4567",
-      emergency_contact: "John Smith - (555) 987-6543",
-      second_emergency_contact: "Jane Smith - (555) 456-7890",
-      pet_caretaker: "John Smith"
-    },
-    medical: {
-      last_vaccination: "March 2024",
-      medications: ["Daily joint supplement", "Allergy medication as needed"],
-      medical_alert: true,
-      medical_conditions: "Diabetes - requires insulin twice daily, Mild hip dysplasia",
-      medical_emergency_document: null
-    },
-    photos: {
-      photo_url: "https://images.unsplash.com/photo-1552053831-71594a27632d?w=400&h=400&fit=crop",
-      full_body_photo_url: "https://images.unsplash.com/photo-1583337130417-3346a1be7dee?w=400&h=300&fit=crop",
-    },
-    professional_data: {
-      badges: ["Well-Behaved", "Good with Kids", "House Trained", "Therapy Certified"],
-      support_animal_status: "Certified Therapy Dog"
-    },
+    vetContact: "Dr. Sarah Johnson - (555) 123-4567",
+    emergencyContact: "John Smith - (555) 987-6543",
+    secondEmergencyContact: "Jane Smith - (555) 456-7890",
+    petCaretaker: "John Smith",
+    medicalAlert: true,
+    medicalConditions: "Diabetes - requires insulin twice daily, Mild hip dysplasia",
+    medications: ["Daily joint supplement", "Allergy medication as needed"],
+    lastVaccination: "March 2024",
+    medicalEmergencyDocument: null,
+    photoUrl: "https://images.unsplash.com/photo-1552053831-71594a27632d?w=400&h=400&fit=crop",
+    fullBodyPhotoUrl: "https://images.unsplash.com/photo-1583337130417-3346a1be7dee?w=400&h=300&fit=crop",
+    badges: ["Well-Behaved", "Good with Kids", "House Trained", "Therapy Certified"],
+    supportAnimalStatus: "Certified Therapy Dog",
     experiences: [
       {
         activity: "Therapy visits at Sunny Meadows Nursing Home",
@@ -129,6 +121,17 @@ const Index = () => {
         facility: "Happy Paws Training Center",
         phone: "(555) 345-6789",
         completed: "January 2024"
+      }
+    ],
+    reviews: [
+      {
+        reviewerName: "Sarah Johnson",
+        reviewerContact: "(555) 123-4567",
+        rating: 5,
+        text: "Luna is an exceptional therapy dog!",
+        date: "March 2024",
+        location: "Sunny Meadows Nursing Home",
+        type: "Therapy Visit"
       }
     ],
     gallery_photos: [
@@ -165,7 +168,7 @@ const Index = () => {
           return <DocumentsSection />;
         case "badges":
           console.log("Rendering BadgesSection");
-          return <BadgesSection badges={petData.professional_data?.badges || []} petData={petData} />;
+          return <BadgesSection badges={petData.badges || []} petData={petData} />;
         case "care":
           console.log("Rendering CareInstructionsSection");
           return <CareInstructionsSection petData={petData} />;
@@ -275,10 +278,13 @@ const Index = () => {
                     >
                       <div className="p-4 flex items-center space-x-3">
                         <div className="w-12 h-12 bg-gray-200 rounded-full overflow-hidden flex-shrink-0">
-                          {/* We would load the pet's photo here if available */}
-                          <div className="w-full h-full bg-navy-200 flex items-center justify-center">
-                            {pet.name?.charAt(0).toUpperCase()}
-                          </div>
+                          {pet.photoUrl ? (
+                            <img src={pet.photoUrl} alt={pet.name} className="w-full h-full object-cover" />
+                          ) : (
+                            <div className="w-full h-full bg-navy-200 flex items-center justify-center">
+                              {pet.name?.charAt(0).toUpperCase()}
+                            </div>
+                          )}
                         </div>
                         <div>
                           <h3 className="font-semibold">{pet.name}</h3>
@@ -298,7 +304,7 @@ const Index = () => {
                 <div className="absolute top-0 right-0 w-32 h-32 bg-yellow-500/10 rounded-full -translate-y-16 translate-x-16"></div>
                 <div className="absolute bottom-0 left-0 w-24 h-24 bg-yellow-500/10 rounded-full translate-y-12 -translate-x-12"></div>
                 
-                {/* PetPass Logo as Passport Emblem - Updated with new logo */}
+                {/* PetPass Logo as Passport Emblem */}
                 <div className="absolute top-2 left-1/2 transform -translate-x-1/2 w-16 h-16 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-full flex items-center justify-center z-10 border-4 border-yellow-300/50 shadow-lg">
                   <img 
                     src="/lovable-uploads/1af9fe70-ed76-44c5-a1e1-1a058e497a10.png" 
@@ -331,14 +337,14 @@ const Index = () => {
                   </div>
                   <div className="text-right">
                     <p className="text-yellow-400 text-sm font-serif tracking-wide">GLOBE TROTTER</p>
-                    <p className="text-xs text-yellow-300 font-mono">ID: {petData.pet_pass_id}</p>
+                    <p className="text-xs text-yellow-300 font-mono">ID: {petData.petPassId}</p>
                   </div>
                 </div>
                 
                 <div className="flex items-center space-x-6 relative z-20">
                   <div className="w-24 h-24 rounded-lg overflow-hidden border-4 border-yellow-500/50 shadow-lg flex-shrink-0">
                     <img 
-                      src={petData.photos?.photo_url || "https://placehold.co/100x100?text=" + petData.name?.charAt(0)} 
+                      src={petData.photoUrl || "https://placehold.co/100x100?text=" + petData.name?.charAt(0)} 
                       alt={petData.name}
                       className="w-full h-full object-cover"
                     />
@@ -353,7 +359,7 @@ const Index = () => {
                       </div>
                       <div className="flex items-center space-x-2">
                         <div className="w-2 h-2 bg-yellow-400 rounded-full"></div>
-                        <span className="font-serif text-yellow-200">{petData.professional_data?.badges?.length || 0} Certifications</span>
+                        <span className="font-serif text-yellow-200">{petData.badges?.length || 0} Certifications</span>
                       </div>
                     </div>
                   </div>

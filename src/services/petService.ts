@@ -26,7 +26,57 @@ export type PetWithDetails = {
   documents?: Tables<"documents">[];
 };
 
-export async function fetchUserPets(): Promise<PetWithDetails[]> {
+// Transform database data to component-expected format
+export function transformPetData(pet: PetWithDetails): any {
+  return {
+    id: pet.id,
+    name: pet.name,
+    breed: pet.breed,
+    species: pet.species,
+    age: pet.age,
+    weight: pet.weight,
+    microchipId: pet.microchip_id,
+    petPassId: pet.pet_pass_id,
+    bio: pet.bio,
+    notes: pet.notes,
+    // Transform contacts
+    vetContact: pet.contacts?.vet_contact || "",
+    emergencyContact: pet.contacts?.emergency_contact || "",
+    secondEmergencyContact: pet.contacts?.second_emergency_contact || "",
+    petCaretaker: pet.contacts?.pet_caretaker || "",
+    // Transform medical
+    medicalAlert: pet.medical?.medical_alert || false,
+    medicalConditions: pet.medical?.medical_conditions || "",
+    medications: pet.medical?.medications || [],
+    lastVaccination: pet.medical?.last_vaccination || "",
+    medicalEmergencyDocument: pet.medical?.medical_emergency_document || null,
+    // Transform photos
+    photoUrl: pet.photos?.photo_url || "",
+    fullBodyPhotoUrl: pet.photos?.full_body_photo_url || "",
+    // Transform professional data
+    badges: pet.professional_data?.badges || [],
+    supportAnimalStatus: pet.professional_data?.support_animal_status || null,
+    // Transform other arrays
+    experiences: pet.experiences || [],
+    achievements: pet.achievements || [],
+    training: pet.training || [],
+    reviews: pet.reviews?.map(review => ({
+      id: review.id,
+      reviewerName: review.reviewer_name,
+      reviewerContact: review.reviewer_contact,
+      rating: review.rating,
+      text: review.text,
+      date: review.date,
+      location: review.location,
+      type: review.type
+    })) || [],
+    travel_locations: pet.travel_locations || [],
+    documents: pet.documents || [],
+    gallery_photos: pet.gallery_photos || []
+  };
+}
+
+export async function fetchUserPets(): Promise<any[]> {
   try {
     const { data: pets, error } = await supabase
       .from("pets")
@@ -42,15 +92,15 @@ export async function fetchUserPets(): Promise<PetWithDetails[]> {
       return [];
     }
 
-    // Return the pets
-    return pets;
+    // Transform the pets data to match component expectations
+    return pets.map(pet => transformPetData(pet as PetWithDetails));
   } catch (error) {
     console.error("Error in fetchUserPets:", error);
     return [];
   }
 }
 
-export async function fetchPetDetails(petId: string): Promise<PetWithDetails | null> {
+export async function fetchPetDetails(petId: string): Promise<any | null> {
   try {
     // First fetch the pet
     const { data: pet, error } = await supabase
@@ -92,7 +142,7 @@ export async function fetchPetDetails(petId: string): Promise<PetWithDetails | n
     ]);
 
     // Combine all data
-    return {
+    const petWithDetails: PetWithDetails = {
       ...pet,
       contacts: contactsResponse.data,
       medical: medicalResponse.data,
@@ -106,6 +156,8 @@ export async function fetchPetDetails(petId: string): Promise<PetWithDetails | n
       travel_locations: travelResponse.data || [],
       documents: documentsResponse.data || []
     };
+
+    return transformPetData(petWithDetails);
   } catch (error) {
     console.error("Error in fetchPetDetails:", error);
     return null;
@@ -123,9 +175,21 @@ export async function createPet(petData: {
   notes?: string;
 }): Promise<string | null> {
   try {
+    // Get the current user
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      throw new Error("User not authenticated");
+    }
+
+    // Add user_id to pet data
+    const petDataWithUser = {
+      ...petData,
+      user_id: user.id
+    };
+
     const { data, error } = await supabase
       .from("pets")
-      .insert([petData])
+      .insert([petDataWithUser])
       .select();
 
     if (error) {

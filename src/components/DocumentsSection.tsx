@@ -14,7 +14,7 @@ export const DocumentsSection = () => {
   return (
     <div className="space-y-6">
       {/* Upload Section */}
-      <Card className="border-0 shadow-lg bg-white/90 backdrop-blur-sm">
+      <Card className="border-0 shadow-lg bg-passport-section-bg backdrop-blur-sm">
         <CardHeader>
           <CardTitle className="flex items-center space-x-2">
             <Upload className="w-5 h-5 text-navy-900" />
@@ -38,7 +38,7 @@ export const DocumentsSection = () => {
       </Card>
 
       {/* Document List */}
-      <Card className="border-0 shadow-lg bg-white/90 backdrop-blur-sm">
+      <Card className="border-0 shadow-lg bg-passport-section-bg backdrop-blur-sm">
         <CardHeader>
           <CardTitle className="flex items-center space-x-2">
             <FileText className="w-5 h-5 text-navy-900" />

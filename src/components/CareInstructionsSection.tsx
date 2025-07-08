@@ -61,7 +61,7 @@ export const CareInstructionsSection = ({ petData }: CareInstructionsSectionProp
       </Card>
 
       {/* Feeding Schedule */}
-      <Card className="border-0 shadow-lg bg-white/90 backdrop-blur-sm">
+      <Card className="border-0 shadow-lg bg-passport-section-bg backdrop-blur-sm">
         <CardHeader>
           <CardTitle className="flex items-center space-x-2">
             <Coffee className="w-5 h-5 text-orange-600" />
@@ -89,7 +89,7 @@ export const CareInstructionsSection = ({ petData }: CareInstructionsSectionProp
       </Card>
 
       {/* Medications & Health */}
-      <Card className="border-0 shadow-lg bg-white/90 backdrop-blur-sm">
+      <Card className="border-0 shadow-lg bg-passport-section-bg backdrop-blur-sm">
         <CardHeader>
           <CardTitle className="flex items-center space-x-2">
             <Pill className="w-5 h-5 text-red-600" />
@@ -128,7 +128,7 @@ export const CareInstructionsSection = ({ petData }: CareInstructionsSectionProp
       </Card>
 
       {/* Daily Routine */}
-      <Card className="border-0 shadow-lg bg-white/90 backdrop-blur-sm">
+      <Card className="border-0 shadow-lg bg-passport-section-bg backdrop-blur-sm">
         <CardHeader>
           <CardTitle className="flex items-center space-x-2">
             <Moon className="w-5 h-5 text-purple-600" />
@@ -160,7 +160,7 @@ export const CareInstructionsSection = ({ petData }: CareInstructionsSectionProp
       </Card>
 
       {/* Emergency & Important Notes */}
-      <Card className="border-0 shadow-lg bg-white/90 backdrop-blur-sm border-l-4 border-red-500">
+      <Card className="border-0 shadow-lg bg-passport-section-bg backdrop-blur-sm border-l-4 border-red-500">
         <CardHeader>
           <CardTitle className="flex items-center space-x-2 text-red-700">
             <AlertTriangle className="w-5 h-5" />

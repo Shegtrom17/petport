@@ -93,7 +93,7 @@ export const TravelMapSection = ({ petData }: TravelMapSectionProps) => {
       </Card>
 
       {/* Travel Map Placeholder */}
-      <Card className="border-0 shadow-xl bg-white/90 backdrop-blur-sm">
+      <Card className="border-0 shadow-xl bg-passport-section-bg backdrop-blur-sm">
         <CardHeader>
           <CardTitle className="flex items-center space-x-2">
             <MapPin className="w-5 h-5 text-blue-600" />
@@ -115,7 +115,7 @@ export const TravelMapSection = ({ petData }: TravelMapSectionProps) => {
       {/* Locations List */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {locations.map((location) => (
-          <Card key={location.id} className="border-0 shadow-lg bg-white/90 backdrop-blur-sm hover:shadow-xl transition-shadow">
+          <Card key={location.id} className="border-0 shadow-lg bg-passport-section-bg backdrop-blur-sm hover:shadow-xl transition-shadow">
             <CardContent className="p-4">
               <div className="flex items-start space-x-4">
                 {location.photoUrl ? (

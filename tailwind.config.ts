@@ -79,6 +79,7 @@ export default {
 					'light-navy': '#203864',
 					gold: '#C8AA6E',
 					white: '#F5F5F5',
+					'section-bg': '#D8DFE8', // New deeper blue-gray for sections
 				}
 			},
 			borderRadius: {

@@ -130,7 +130,7 @@ export const ReviewsSection = ({ petData }: ReviewsSectionProps) => {
       {/* Reviews List */}
       <div className="space-y-4">
         {reviews.map((review) => (
-          <Card key={review.id} className="border-0 shadow-lg bg-white/90 backdrop-blur-sm hover:shadow-xl transition-shadow">
+          <Card key={review.id} className="border-0 shadow-lg bg-passport-section-bg backdrop-blur-sm hover:shadow-xl transition-shadow">
             <CardContent className="p-6">
               <div className="flex justify-between items-start mb-4">
                 <div className="flex items-center space-x-3">

@@ -56,7 +56,7 @@ export const BadgesSection = ({ badges, petData }: BadgesSectionProps) => {
       {/* Earned Badges */}
       {badgeCategories.map((category, index) => (
         category.badges.length > 0 && (
-          <Card key={index} className="border-0 shadow-lg bg-white/90 backdrop-blur-sm">
+          <Card key={index} className="border-0 shadow-lg bg-passport-section-bg backdrop-blur-sm">
             <CardHeader>
               <CardTitle className="flex items-center space-x-2">
                 <div className={`w-8 h-8 rounded-lg bg-gradient-to-r ${category.color} flex items-center justify-center`}>
@@ -93,7 +93,7 @@ export const BadgesSection = ({ badges, petData }: BadgesSectionProps) => {
       ))}
 
       {/* Available Badges */}
-      <Card className="border-0 shadow-lg bg-white/90 backdrop-blur-sm">
+      <Card className="border-0 shadow-lg bg-passport-section-bg backdrop-blur-sm">
         <CardHeader>
           <CardTitle className="flex items-center space-x-2">
             <Shield className="w-5 h-5 text-gray-500" />

@@ -58,7 +58,7 @@ export const PetGallerySection = ({ petData }: PetGallerySectionProps) => {
       </Card>
 
       {/* Upload Area */}
-      <Card className="border-0 shadow-lg bg-white/90 backdrop-blur-sm">
+      <Card className="border-0 shadow-lg bg-passport-section-bg backdrop-blur-sm">
         <CardHeader>
           <CardTitle className="flex items-center space-x-2">
             <Upload className="w-5 h-5 text-blue-600" />
@@ -82,7 +82,7 @@ export const PetGallerySection = ({ petData }: PetGallerySectionProps) => {
       </Card>
 
       {/* Photo Gallery Grid */}
-      <Card className="border-0 shadow-lg bg-white/90 backdrop-blur-sm">
+      <Card className="border-0 shadow-lg bg-passport-section-bg backdrop-blur-sm">
         <CardHeader>
           <CardTitle className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
@@ -130,7 +130,7 @@ export const PetGallerySection = ({ petData }: PetGallerySectionProps) => {
       </Card>
 
       {/* Photo Guidelines */}
-      <Card className="border-0 shadow-lg bg-white/90 backdrop-blur-sm">
+      <Card className="border-0 shadow-lg bg-passport-section-bg backdrop-blur-sm">
         <CardHeader>
           <CardTitle className="text-lg">Photo Guidelines</CardTitle>
         </CardHeader>

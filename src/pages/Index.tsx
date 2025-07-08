@@ -336,8 +336,8 @@ const Index = () => {
                   </h1>
                 </div>
                 
-                {/* PetPass Logo as Passport Emblem */}
-                <div className="absolute top-2 left-1/2 transform -translate-x-1/2 w-12 h-12 md:w-16 md:h-16 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-full flex items-center justify-center z-10 border-4 border-yellow-300/50 shadow-lg">
+                {/* PetPass Logo as Passport Emblem - Fixed positioning */}
+                <div className="absolute top-8 left-1/2 transform -translate-x-1/2 w-12 h-12 md:w-16 md:h-16 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-full flex items-center justify-center z-10 border-4 border-yellow-300/50 shadow-lg">
                   <img 
                     src="/lovable-uploads/1af9fe70-ed76-44c5-a1e1-1a058e497a10.png" 
                     alt="PetPass Logo"

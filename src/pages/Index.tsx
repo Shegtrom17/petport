@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -239,9 +238,12 @@ const Index = () => {
                 />
               </div>
               <div>
-                <h1 className="text-2xl font-bold bg-gradient-to-r from-navy-900 to-gold-500 bg-clip-text text-transparent">
-                  PetPass
+                <h1 className="text-lg font-serif font-bold text-gold-500 mb-1 tracking-wide">
+                  Pawprint & HoofBeats
                 </h1>
+                <h2 className="text-2xl font-bold bg-gradient-to-r from-navy-900 to-gold-500 bg-clip-text text-transparent">
+                  PetPass
+                </h2>
                 <p className="text-sm text-gray-600">Digital Pet Passport</p>
               </div>
             </div>

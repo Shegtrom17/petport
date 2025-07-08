@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -373,8 +372,8 @@ const Index = () => {
                   </div>
                 </div>
                 
-                <div className="flex items-center space-x-3 md:space-x-6 relative z-20">
-                  <div className="w-16 h-16 md:w-24 md:h-24 rounded-lg overflow-hidden border-4 border-yellow-500/50 shadow-lg flex-shrink-0">
+                <div className="flex items-center space-x-4 md:space-x-8 relative z-20">
+                  <div className="w-24 h-24 md:w-32 md:h-32 lg:w-40 lg:h-40 rounded-lg overflow-hidden border-4 border-yellow-500/50 shadow-lg flex-shrink-0">
                     <img 
                       src={petData.photoUrl || "https://placehold.co/100x100?text=" + petData.name?.charAt(0)} 
                       alt={petData.name}

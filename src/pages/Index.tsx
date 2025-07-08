@@ -1,8 +1,9 @@
-import { useState } from "react";
+
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Camera, FileText, Star, Shield, Heart, Award } from "lucide-react";
+import { Camera, FileText, Star, Shield, Heart, Award, PlusCircle, LogOut } from "lucide-react";
 import { PetProfileCard } from "@/components/PetProfileCard";
 import { NavigationTabs } from "@/components/NavigationTabs";
 import { DocumentsSection } from "@/components/DocumentsSection";
@@ -13,6 +14,10 @@ import { PetResumeSection } from "@/components/PetResumeSection";
 import { ReviewsSection } from "@/components/ReviewsSection";
 import { TravelMapSection } from "@/components/TravelMapSection";
 import { PetGallerySection } from "@/components/PetGallerySection";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/context/AuthContext";
+import { fetchUserPets, fetchPetDetails, PetWithDetails } from "@/services/petService";
+import { useToast } from "@/components/ui/use-toast";
 
 const Index = () => {
   console.log("Index component is rendering");
@@ -20,32 +25,92 @@ const Index = () => {
   const [activeTab, setActiveTab] = useState("profile");
   console.log("Active tab:", activeTab);
   
-  const petData = {
+  const [pets, setPets] = useState<PetWithDetails[]>([]);
+  const [selectedPet, setSelectedPet] = useState<PetWithDetails | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  
+  const navigate = useNavigate();
+  const { signOut, user } = useAuth();
+  const { toast } = useToast();
+
+  // Fetch user's pets
+  useEffect(() => {
+    const loadPets = async () => {
+      try {
+        const userPets = await fetchUserPets();
+        setPets(userPets);
+        
+        // If there are pets, select the first one by default
+        if (userPets.length > 0) {
+          const petDetails = await fetchPetDetails(userPets[0].id);
+          setSelectedPet(petDetails);
+        }
+      } catch (error) {
+        console.error("Error loading pets:", error);
+        toast({
+          variant: "destructive",
+          title: "Error loading pets",
+          description: "Could not load your pets. Please try again."
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadPets();
+  }, [toast]);
+
+  // Function to select a pet and fetch its details
+  const handleSelectPet = async (petId: string) => {
+    try {
+      setIsLoading(true);
+      const petDetails = await fetchPetDetails(petId);
+      setSelectedPet(petDetails);
+    } catch (error) {
+      console.error("Error fetching pet details:", error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Could not load pet details. Please try again."
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Use dummy data for now if no pets are found
+  const petData = selectedPet || {
     name: "Luna",
     breed: "Golden Retriever",
     species: "dog",
     age: "3 years",
     weight: "65 lbs",
-    microchipId: "985112001234567",
-    petPassId: "PP-2025-001", // New simplified ID
-    photoUrl: "https://images.unsplash.com/photo-1552053831-71594a27632d?w=400&h=400&fit=crop",
-    fullBodyPhotoUrl: "https://images.unsplash.com/photo-1583337130417-3346a1be7dee?w=400&h=300&fit=crop",
-    vetContact: "Dr. Sarah Johnson - (555) 123-4567",
-    emergencyContact: "John Smith - (555) 987-6543",
-    secondEmergencyContact: "Jane Smith - (555) 456-7890", // New field
-    petCaretaker: "John Smith", // New field
-    lastVaccination: "March 2024",
-    badges: ["Well-Behaved", "Good with Kids", "House Trained", "Therapy Certified"],
-    medications: ["Daily joint supplement", "Allergy medication as needed"],
-    notes: "Friendly with other dogs, loves swimming, afraid of thunderstorms",
+    microchip_id: "985112001234567",
+    pet_pass_id: "PP-2025-001", // New simplified ID
     bio: "Luna is a gentle and loving Golden Retriever with an exceptional temperament. She's been professionally trained and has a calm, patient demeanor that makes her wonderful with children and other pets. Luna loves outdoor adventures, especially hiking and swimming, but is equally content relaxing at home. She's house-trained, leash-trained, and responds well to commands. Her favorite activities include fetch, long walks, and meeting new people at the dog park.",
-    supportAnimalStatus: "Certified Therapy Dog",
-    // New medical alert fields
-    medicalAlert: true,
-    medicalConditions: "Diabetes - requires insulin twice daily, Mild hip dysplasia",
-    medicalEmergencyDocument: null, // URL to uploaded document
-    // New experience and training fields
-    experience: [
+    notes: "Friendly with other dogs, loves swimming, afraid of thunderstorms",
+    contacts: {
+      vet_contact: "Dr. Sarah Johnson - (555) 123-4567",
+      emergency_contact: "John Smith - (555) 987-6543",
+      second_emergency_contact: "Jane Smith - (555) 456-7890",
+      pet_caretaker: "John Smith"
+    },
+    medical: {
+      last_vaccination: "March 2024",
+      medications: ["Daily joint supplement", "Allergy medication as needed"],
+      medical_alert: true,
+      medical_conditions: "Diabetes - requires insulin twice daily, Mild hip dysplasia",
+      medical_emergency_document: null
+    },
+    photos: {
+      photo_url: "https://images.unsplash.com/photo-1552053831-71594a27632d?w=400&h=400&fit=crop",
+      full_body_photo_url: "https://images.unsplash.com/photo-1583337130417-3346a1be7dee?w=400&h=300&fit=crop",
+    },
+    professional_data: {
+      badges: ["Well-Behaved", "Good with Kids", "House Trained", "Therapy Certified"],
+      support_animal_status: "Certified Therapy Dog"
+    },
+    experiences: [
       {
         activity: "Therapy visits at Sunny Meadows Nursing Home",
         contact: "Sarah Wilson - (555) 234-5678",
@@ -66,8 +131,7 @@ const Index = () => {
         completed: "January 2024"
       }
     ],
-    // Gallery photos with captions
-    galleryPhotos: [
+    gallery_photos: [
       {
         url: "https://images.unsplash.com/photo-1583337130417-3346a1be7dee?w=600&h=400&fit=crop",
         caption: "Distinctive white chest marking - heart-shaped pattern"
@@ -78,8 +142,6 @@ const Index = () => {
       }
     ]
   };
-
-  console.log("Pet data:", petData);
 
   const renderActiveSection = () => {
     console.log("Rendering section for tab:", activeTab);
@@ -103,7 +165,7 @@ const Index = () => {
           return <DocumentsSection />;
         case "badges":
           console.log("Rendering BadgesSection");
-          return <BadgesSection badges={petData.badges} petData={petData} />;
+          return <BadgesSection badges={petData.professional_data?.badges || []} petData={petData} />;
         case "care":
           console.log("Rendering CareInstructionsSection");
           return <CareInstructionsSection petData={petData} />;
@@ -124,6 +186,14 @@ const Index = () => {
   };
 
   console.log("About to render main component");
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-navy-100 flex items-center justify-center">
+        <div className="text-xl text-navy-800 animate-pulse">Loading your pets...</div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-navy-100">
@@ -151,95 +221,158 @@ const Index = () => {
                 <p className="text-sm text-gray-600">Digital Pet Passport</p>
               </div>
             </div>
-            <Button className="bg-gradient-to-r from-navy-900 to-navy-800 hover:from-navy-800 hover:to-navy-700 text-gold-500 border border-gold-500/30">
-              Add Pet
-            </Button>
+            <div className="flex items-center space-x-3">
+              <Button 
+                className="bg-gradient-to-r from-navy-900 to-navy-800 hover:from-navy-800 hover:to-navy-700 text-gold-500 border border-gold-500/30"
+                onClick={() => navigate('/add-pet')}
+              >
+                <PlusCircle className="mr-1 h-4 w-4" /> Add Pet
+              </Button>
+              <Button 
+                variant="outline" 
+                size="icon"
+                onClick={signOut}
+                title="Sign Out"
+              >
+                <LogOut className="h-4 w-4" />
+              </Button>
+            </div>
           </div>
         </div>
       </header>
 
       {/* Main Content */}
       <main className="max-w-4xl mx-auto px-4 py-8">
-        {/* Pet Header Card - Updated Passport Style */}
-        <Card className="mb-8 overflow-hidden border-0 shadow-xl bg-white/90 backdrop-blur-sm">
-          <div className="bg-gradient-to-r from-navy-900 to-slate-800 p-6 text-white relative overflow-hidden">
-            {/* Passport-style decorative elements */}
-            <div className="absolute top-0 right-0 w-32 h-32 bg-yellow-500/10 rounded-full -translate-y-16 translate-x-16"></div>
-            <div className="absolute bottom-0 left-0 w-24 h-24 bg-yellow-500/10 rounded-full translate-y-12 -translate-x-12"></div>
-            
-            {/* PetPass Logo as Passport Emblem - Updated with new logo */}
-            <div className="absolute top-2 left-1/2 transform -translate-x-1/2 w-16 h-16 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-full flex items-center justify-center z-10 border-4 border-yellow-300/50 shadow-lg">
-              <img 
-                src="/lovable-uploads/1af9fe70-ed76-44c5-a1e1-1a058e497a10.png" 
-                alt="PetPass Logo"
-                className="w-10 h-10 object-contain"
-                onError={(e) => {
-                  console.error("Passport emblem logo failed to load:", e);
-                  e.currentTarget.style.display = 'none';
-                }}
-                onLoad={() => console.log("Passport emblem logo loaded successfully")}
-              />
+        {pets.length === 0 ? (
+          <div className="text-center py-20">
+            <div className="w-20 h-20 bg-white/70 rounded-full flex items-center justify-center mx-auto mb-6">
+              <PlusCircle className="h-10 w-10 text-navy-800/50" />
             </div>
-            
-            <div className="flex items-center justify-between mb-4 relative z-20 pt-6">
-              <div className="flex items-center space-x-3">
-                <img 
-                  src="/lovable-uploads/1af9fe70-ed76-44c5-a1e1-1a058e497a10.png" 
-                  alt="PetPass Logo"
-                  className="w-8 h-8 object-contain"
-                  onError={(e) => {
-                    console.error("Passport logo failed to load:", e);
-                    e.currentTarget.style.display = 'none';
-                  }}
-                  onLoad={() => console.log("Passport logo loaded successfully")}
-                />
-                <div>
-                  <h1 className="text-yellow-400 text-lg font-serif font-bold tracking-wider">PETPASS</h1>
-                  <p className="text-yellow-300 text-xs font-serif tracking-wide">DIGITAL PET PASSPORT</p>
-                </div>
-              </div>
-              <div className="text-right">
-                <p className="text-yellow-400 text-sm font-serif tracking-wide">GLOBE TROTTER</p>
-                <p className="text-xs text-yellow-300 font-mono">ID: {petData.petPassId}</p>
-              </div>
-            </div>
-            
-            <div className="flex items-center space-x-6 relative z-20">
-              <div className="w-24 h-24 rounded-lg overflow-hidden border-4 border-yellow-500/50 shadow-lg flex-shrink-0">
-                <img 
-                  src={petData.photoUrl} 
-                  alt={petData.name}
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <div className="flex-1">
-                <h2 className="text-3xl font-serif font-bold text-yellow-400 mb-1 tracking-wide">{petData.name.toUpperCase()}</h2>
-                <p className="text-yellow-200 font-serif text-lg mb-2">{petData.breed} • {petData.age}</p>
-                <div className="flex items-center space-x-6 text-sm">
-                  <div className="flex items-center space-x-2">
-                    <div className="w-2 h-2 bg-yellow-400 rounded-full"></div>
-                    <span className="font-serif text-yellow-200">Weight: {petData.weight}</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <div className="w-2 h-2 bg-yellow-400 rounded-full"></div>
-                    <span className="font-serif text-yellow-200">{petData.badges.length} Certifications</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-            
-            {/* Passport-style bottom border */}
-            <div className="absolute bottom-0 left-0 right-0 h-2 bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-400"></div>
+            <h2 className="text-2xl font-bold text-navy-800 mb-3">No pets found</h2>
+            <p className="text-navy-600 mb-6">You haven't added any pets yet. Create your first PetPass!</p>
+            <Button 
+              className="bg-gradient-to-r from-navy-900 to-navy-800 hover:from-navy-800 hover:to-navy-700 text-gold-500 border border-gold-500/30"
+              onClick={() => navigate('/add-pet')}
+            >
+              <PlusCircle className="mr-2 h-5 w-5" /> Add Your First Pet
+            </Button>
           </div>
-        </Card>
+        ) : (
+          <>
+            {/* Pet Selection (if multiple pets) */}
+            {pets.length > 1 && (
+              <div className="mb-6 overflow-x-auto pb-2">
+                <div className="flex space-x-3">
+                  {pets.map(pet => (
+                    <Card 
+                      key={pet.id} 
+                      className={`border-2 cursor-pointer flex-shrink-0 w-64 transition-all ${
+                        selectedPet?.id === pet.id 
+                          ? 'border-navy-700 shadow-lg' 
+                          : 'border-transparent hover:border-navy-300'
+                      }`}
+                      onClick={() => handleSelectPet(pet.id)}
+                    >
+                      <div className="p-4 flex items-center space-x-3">
+                        <div className="w-12 h-12 bg-gray-200 rounded-full overflow-hidden flex-shrink-0">
+                          {/* We would load the pet's photo here if available */}
+                          <div className="w-full h-full bg-navy-200 flex items-center justify-center">
+                            {pet.name?.charAt(0).toUpperCase()}
+                          </div>
+                        </div>
+                        <div>
+                          <h3 className="font-semibold">{pet.name}</h3>
+                          <p className="text-sm text-gray-500">{pet.breed}</p>
+                        </div>
+                      </div>
+                    </Card>
+                  ))}
+                </div>
+              </div>
+            )}
 
-        {/* Navigation */}
-        <NavigationTabs activeTab={activeTab} onTabChange={setActiveTab} />
+            {/* Pet Header Card - Updated Passport Style */}
+            <Card className="mb-8 overflow-hidden border-0 shadow-xl bg-white/90 backdrop-blur-sm">
+              <div className="bg-gradient-to-r from-navy-900 to-slate-800 p-6 text-white relative overflow-hidden">
+                {/* Passport-style decorative elements */}
+                <div className="absolute top-0 right-0 w-32 h-32 bg-yellow-500/10 rounded-full -translate-y-16 translate-x-16"></div>
+                <div className="absolute bottom-0 left-0 w-24 h-24 bg-yellow-500/10 rounded-full translate-y-12 -translate-x-12"></div>
+                
+                {/* PetPass Logo as Passport Emblem - Updated with new logo */}
+                <div className="absolute top-2 left-1/2 transform -translate-x-1/2 w-16 h-16 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-full flex items-center justify-center z-10 border-4 border-yellow-300/50 shadow-lg">
+                  <img 
+                    src="/lovable-uploads/1af9fe70-ed76-44c5-a1e1-1a058e497a10.png" 
+                    alt="PetPass Logo"
+                    className="w-10 h-10 object-contain"
+                    onError={(e) => {
+                      console.error("Passport emblem logo failed to load:", e);
+                      e.currentTarget.style.display = 'none';
+                    }}
+                    onLoad={() => console.log("Passport emblem logo loaded successfully")}
+                  />
+                </div>
+                
+                <div className="flex items-center justify-between mb-4 relative z-20 pt-6">
+                  <div className="flex items-center space-x-3">
+                    <img 
+                      src="/lovable-uploads/1af9fe70-ed76-44c5-a1e1-1a058e497a10.png" 
+                      alt="PetPass Logo"
+                      className="w-8 h-8 object-contain"
+                      onError={(e) => {
+                        console.error("Passport logo failed to load:", e);
+                        e.currentTarget.style.display = 'none';
+                      }}
+                      onLoad={() => console.log("Passport logo loaded successfully")}
+                    />
+                    <div>
+                      <h1 className="text-yellow-400 text-lg font-serif font-bold tracking-wider">PETPASS</h1>
+                      <p className="text-yellow-300 text-xs font-serif tracking-wide">DIGITAL PET PASSPORT</p>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-yellow-400 text-sm font-serif tracking-wide">GLOBE TROTTER</p>
+                    <p className="text-xs text-yellow-300 font-mono">ID: {petData.pet_pass_id}</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-center space-x-6 relative z-20">
+                  <div className="w-24 h-24 rounded-lg overflow-hidden border-4 border-yellow-500/50 shadow-lg flex-shrink-0">
+                    <img 
+                      src={petData.photos?.photo_url || "https://placehold.co/100x100?text=" + petData.name?.charAt(0)} 
+                      alt={petData.name}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <div className="flex-1">
+                    <h2 className="text-3xl font-serif font-bold text-yellow-400 mb-1 tracking-wide">{petData.name?.toUpperCase()}</h2>
+                    <p className="text-yellow-200 font-serif text-lg mb-2">{petData.breed} • {petData.age}</p>
+                    <div className="flex items-center space-x-6 text-sm">
+                      <div className="flex items-center space-x-2">
+                        <div className="w-2 h-2 bg-yellow-400 rounded-full"></div>
+                        <span className="font-serif text-yellow-200">Weight: {petData.weight}</span>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <div className="w-2 h-2 bg-yellow-400 rounded-full"></div>
+                        <span className="font-serif text-yellow-200">{petData.professional_data?.badges?.length || 0} Certifications</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                {/* Passport-style bottom border */}
+                <div className="absolute bottom-0 left-0 right-0 h-2 bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-400"></div>
+              </div>
+            </Card>
 
-        {/* Content Section */}
-        <div className="mt-6">
-          {renderActiveSection()}
-        </div>
+            {/* Navigation */}
+            <NavigationTabs activeTab={activeTab} onTabChange={setActiveTab} />
+
+            {/* Content Section */}
+            <div className="mt-6">
+              {renderActiveSection()}
+            </div>
+          </>
+        )}
       </main>
     </div>
   );

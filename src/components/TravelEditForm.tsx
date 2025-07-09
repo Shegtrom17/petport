@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { updateTravelLocations } from "@/services/petService";
 import { Plus, Trash2, MapPin } from "lucide-react";
 
@@ -16,6 +16,7 @@ interface TravelEditFormProps {
     id: string;
     name: string;
     travel_locations?: Array<{
+      id?: string;
       name: string;
       type: string;
       code?: string;
@@ -31,14 +32,23 @@ interface TravelEditFormProps {
 export const TravelEditForm = ({ petData, onSave, onCancel }: TravelEditFormProps) => {
   const { control, handleSubmit, register, setValue, watch } = useForm({
     defaultValues: {
-      locations: petData.travel_locations || [{ 
-        name: "", 
-        type: "state", 
-        code: "", 
-        dateVisited: "", 
-        photoUrl: "", 
-        notes: "" 
-      }]
+      locations: petData.travel_locations && petData.travel_locations.length > 0 
+        ? petData.travel_locations.map(location => ({
+            name: location.name || "", 
+            type: location.type || "state", 
+            code: location.code || "", 
+            dateVisited: location.date_visited || "", 
+            photoUrl: location.photo_url || "", 
+            notes: location.notes || ""
+          }))
+        : [{ 
+            name: "", 
+            type: "state", 
+            code: "", 
+            dateVisited: "", 
+            photoUrl: "", 
+            notes: "" 
+          }]
     }
   });
 
@@ -54,10 +64,21 @@ export const TravelEditForm = ({ petData, onSave, onCancel }: TravelEditFormProp
     setIsLoading(true);
     
     try {
-      const locationSuccess = await updateTravelLocations(
-        petData.id,
-        data.locations.filter((location: any) => location.name.trim() !== "")
-      );
+      // Filter out empty locations and format the data properly
+      const formattedLocations = data.locations
+        .filter((location: any) => location.name.trim() !== "")
+        .map((location: any) => ({
+          name: location.name,
+          type: location.type,
+          code: location.code || null,
+          dateVisited: location.dateVisited || null,
+          photoUrl: location.photoUrl || null,
+          notes: location.notes || null
+        }));
+
+      console.log("Saving travel locations:", formattedLocations);
+      
+      const locationSuccess = await updateTravelLocations(petData.id, formattedLocations);
 
       if (!locationSuccess) {
         throw new Error("Failed to update travel locations");
@@ -82,18 +103,18 @@ export const TravelEditForm = ({ petData, onSave, onCancel }: TravelEditFormProp
   };
 
   return (
-    <div className="space-y-6">
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 sm:space-y-6">
         <Card>
           <CardHeader>
-            <CardTitle className="flex items-center space-x-2">
-              <MapPin className="w-5 h-5" />
+            <CardTitle className="flex items-center space-x-2 text-base sm:text-lg">
+              <MapPin className="w-4 h-4 sm:w-5 sm:h-5" />
               <span>Travel Locations</span>
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             {locationFields.map((field, index) => (
-              <div key={field.id} className="space-y-4 p-4 border rounded-lg">
+              <div key={field.id} className="space-y-3 sm:space-y-4 p-3 sm:p-4 border rounded-lg">
                 <div className="flex justify-between items-center">
                   <Label className="text-sm font-medium">Location {index + 1}</Label>
                   {locationFields.length > 1 && (
@@ -102,27 +123,29 @@ export const TravelEditForm = ({ petData, onSave, onCancel }: TravelEditFormProp
                       variant="outline"
                       size="sm"
                       onClick={() => removeLocation(index)}
+                      className="text-xs sm:text-sm"
                     >
-                      <Trash2 className="w-4 h-4" />
+                      <Trash2 className="w-3 h-3 sm:w-4 sm:h-4" />
                     </Button>
                   )}
                 </div>
                 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                   <div>
-                    <Label htmlFor={`locations.${index}.name`}>Location Name</Label>
+                    <Label htmlFor={`locations.${index}.name`} className="text-sm">Location Name</Label>
                     <Input
                       {...register(`locations.${index}.name`)}
                       placeholder="e.g., Colorado"
+                      className="text-sm"
                     />
                   </div>
                   <div>
-                    <Label htmlFor={`locations.${index}.type`}>Type</Label>
+                    <Label htmlFor={`locations.${index}.type`} className="text-sm">Type</Label>
                     <Select
                       value={watch(`locations.${index}.type`)}
                       onValueChange={(value) => setValue(`locations.${index}.type`, value)}
                     >
-                      <SelectTrigger>
+                      <SelectTrigger className="text-sm">
                         <SelectValue placeholder="Select type" />
                       </SelectTrigger>
                       <SelectContent>
@@ -132,37 +155,41 @@ export const TravelEditForm = ({ petData, onSave, onCancel }: TravelEditFormProp
                     </Select>
                   </div>
                   <div>
-                    <Label htmlFor={`locations.${index}.code`}>Code</Label>
+                    <Label htmlFor={`locations.${index}.code`} className="text-sm">Code</Label>
                     <Input
                       {...register(`locations.${index}.code`)}
                       placeholder="e.g., CO or US"
+                      className="text-sm"
                     />
                   </div>
                 </div>
                 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
-                    <Label htmlFor={`locations.${index}.dateVisited`}>Date Visited</Label>
+                    <Label htmlFor={`locations.${index}.dateVisited`} className="text-sm">Date Visited</Label>
                     <Input
                       {...register(`locations.${index}.dateVisited`)}
                       placeholder="e.g., March 2024"
+                      className="text-sm"
                     />
                   </div>
                   <div>
-                    <Label htmlFor={`locations.${index}.photoUrl`}>Photo URL</Label>
+                    <Label htmlFor={`locations.${index}.photoUrl`} className="text-sm">Photo URL</Label>
                     <Input
                       {...register(`locations.${index}.photoUrl`)}
                       placeholder="https://example.com/photo.jpg"
+                      className="text-sm"
                     />
                   </div>
                 </div>
                 
                 <div>
-                  <Label htmlFor={`locations.${index}.notes`}>Notes</Label>
+                  <Label htmlFor={`locations.${index}.notes`} className="text-sm">Notes</Label>
                   <Textarea
                     {...register(`locations.${index}.notes`)}
                     placeholder="Add notes about this location..."
                     rows={2}
+                    className="text-sm"
                   />
                 </div>
               </div>
@@ -179,6 +206,7 @@ export const TravelEditForm = ({ petData, onSave, onCancel }: TravelEditFormProp
                 photoUrl: "", 
                 notes: "" 
               })}
+              className="w-full sm:w-auto text-sm"
             >
               <Plus className="w-4 h-4 mr-2" />
               Add Location
@@ -187,11 +215,11 @@ export const TravelEditForm = ({ petData, onSave, onCancel }: TravelEditFormProp
         </Card>
 
         {/* Form Actions */}
-        <div className="flex justify-end space-x-4">
-          <Button type="button" variant="outline" onClick={onCancel}>
+        <div className="flex flex-col sm:flex-row justify-end space-y-2 sm:space-y-0 sm:space-x-4">
+          <Button type="button" variant="outline" onClick={onCancel} className="text-sm">
             Cancel
           </Button>
-          <Button type="submit" disabled={isLoading}>
+          <Button type="submit" disabled={isLoading} className="text-sm">
             {isLoading ? "Saving..." : "Save Changes"}
           </Button>
         </div>

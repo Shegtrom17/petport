@@ -1,19 +1,21 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { MapPin, Camera, Download, Share2, Calendar, Trophy, Edit } from "lucide-react";
 import { TravelEditForm } from "@/components/TravelEditForm";
+import { fetchPetDetails } from "@/services/petService";
+import { useToast } from "@/hooks/use-toast";
 
 interface TravelLocation {
   id: string;
   name: string;
   type: 'state' | 'country';
-  code: string;
-  dateVisited?: string;
-  photoUrl?: string;
+  code?: string;
+  date_visited?: string;
+  photo_url?: string;
   notes?: string;
 }
 
@@ -28,13 +30,14 @@ interface TravelMapSectionProps {
 
 export const TravelMapSection = ({ petData, onUpdate }: TravelMapSectionProps) => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [locations] = useState<TravelLocation[]>(petData.travel_locations || [
-    { id: '1', name: 'Colorado', type: 'state', code: 'CO', dateVisited: '2023-01-15', notes: 'Home state - loves the mountains!' },
-    { id: '2', name: 'Utah', type: 'state', code: 'UT', dateVisited: '2023-07-20', photoUrl: 'https://images.unsplash.com/photo-1472396961693-142e6e269027?w=200&h=150&fit=crop', notes: 'Great hiking adventure' },
-    { id: '3', name: 'Wyoming', type: 'state', code: 'WY', dateVisited: '2023-09-10', notes: 'Yellowstone camping trip' },
-    { id: '4', name: 'New Mexico', type: 'state', code: 'NM', dateVisited: '2024-03-05', notes: 'Desert exploration' },
-    { id: '5', name: 'Canada', type: 'country', code: 'CA', dateVisited: '2024-06-15', photoUrl: 'https://images.unsplash.com/photo-1517022812141-23620dba5c23?w=200&h=150&fit=crop', notes: 'First international trip!' }
-  ]);
+  const [locations, setLocations] = useState<TravelLocation[]>(petData.travel_locations || []);
+  const [isLoading, setIsLoading] = useState(false);
+  const { toast } = useToast();
+
+  // Update locations when petData changes
+  useEffect(() => {
+    setLocations(petData.travel_locations || []);
+  }, [petData.travel_locations]);
 
   const statesCount = locations.filter(loc => loc.type === 'state').length;
   const countriesCount = locations.filter(loc => loc.type === 'country').length;
@@ -51,17 +54,53 @@ export const TravelMapSection = ({ petData, onUpdate }: TravelMapSectionProps) =
 
   const handleDownload = () => {
     console.log("Downloading travel map...");
+    toast({
+      title: "Feature Coming Soon",
+      description: "Travel map download will be available soon!",
+    });
   };
 
   const handleShare = () => {
     console.log("Sharing travel map...");
+    toast({
+      title: "Feature Coming Soon", 
+      description: "Travel map sharing will be available soon!",
+    });
   };
 
-  const handleEditSave = () => {
-    setIsEditModalOpen(false);
-    if (onUpdate) {
-      onUpdate();
+  const handleEditSave = async () => {
+    setIsLoading(true);
+    try {
+      // Refresh the pet data to get the latest travel locations
+      const updatedPetData = await fetchPetDetails(petData.id);
+      if (updatedPetData && updatedPetData.travel_locations) {
+        setLocations(updatedPetData.travel_locations);
+      }
+      
+      setIsEditModalOpen(false);
+      
+      if (onUpdate) {
+        onUpdate();
+      }
+      
+      toast({
+        title: "Success",
+        description: "Travel locations refreshed successfully!",
+      });
+    } catch (error) {
+      console.error("Error refreshing travel locations:", error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to refresh travel locations",
+      });
+    } finally {
+      setIsLoading(false);
     }
+  };
+
+  const handleAddNewLocation = () => {
+    setIsEditModalOpen(true);
   };
 
   return (
@@ -151,64 +190,88 @@ export const TravelMapSection = ({ petData, onUpdate }: TravelMapSectionProps) =
       </Card>
 
       {/* Locations List */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4">
-        {locations.map((location) => (
-          <Card key={location.id} className="border-0 shadow-lg bg-passport-section-bg backdrop-blur-sm hover:shadow-xl transition-shadow">
-            <CardContent className="p-3 sm:p-4">
-              <div className="flex flex-col sm:flex-row items-center sm:items-start space-y-3 sm:space-y-0 sm:space-x-4">
-                {location.photoUrl ? (
-                  <div className="w-16 h-16 sm:w-16 sm:h-16 rounded-lg overflow-hidden border-2 border-blue-200 flex-shrink-0">
-                    <img 
-                      src={location.photoUrl} 
-                      alt={location.name}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                ) : (
-                  <div className="w-16 h-16 sm:w-16 sm:h-16 rounded-lg bg-gradient-to-br from-blue-100 to-purple-100 border-2 border-blue-200 flex items-center justify-center flex-shrink-0">
-                    <MapPin className="w-6 h-6 sm:w-8 sm:h-8 text-blue-500" />
-                  </div>
-                )}
-                
-                <div className="flex-1 text-center sm:text-left w-full">
-                  <div className="flex flex-col sm:flex-row items-center sm:items-start space-y-1 sm:space-y-0 sm:space-x-2 mb-2">
-                    <h4 className="font-semibold text-navy-900 text-sm sm:text-base">{location.name}</h4>
-                    <Badge variant="outline" className={`text-xs ${location.type === 'country' ? 'bg-green-50 text-green-700' : 'bg-blue-50 text-blue-700'}`}>
-                      {location.type === 'country' ? '🌍' : '📍'} {location.code}
-                    </Badge>
-                  </div>
-                  
-                  {location.dateVisited && (
-                    <div className="flex items-center justify-center sm:justify-start space-x-1 text-xs sm:text-sm text-gray-600 mb-2">
-                      <Calendar className="w-3 h-3 sm:w-4 sm:h-4" />
-                      <span>{new Date(location.dateVisited).toLocaleDateString()}</span>
+      {locations.length > 0 ? (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4">
+          {locations.map((location) => (
+            <Card key={location.id} className="border-0 shadow-lg bg-passport-section-bg backdrop-blur-sm hover:shadow-xl transition-shadow">
+              <CardContent className="p-3 sm:p-4">
+                <div className="flex flex-col sm:flex-row items-center sm:items-start space-y-3 sm:space-y-0 sm:space-x-4">
+                  {location.photo_url ? (
+                    <div className="w-16 h-16 sm:w-16 sm:h-16 rounded-lg overflow-hidden border-2 border-blue-200 flex-shrink-0">
+                      <img 
+                        src={location.photo_url} 
+                        alt={location.name}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                  ) : (
+                    <div className="w-16 h-16 sm:w-16 sm:h-16 rounded-lg bg-gradient-to-br from-blue-100 to-purple-100 border-2 border-blue-200 flex items-center justify-center flex-shrink-0">
+                      <MapPin className="w-6 h-6 sm:w-8 sm:h-8 text-blue-500" />
                     </div>
                   )}
                   
-                  {location.notes && (
-                    <p className="text-xs sm:text-sm text-gray-700 text-center sm:text-left">{location.notes}</p>
-                  )}
+                  <div className="flex-1 text-center sm:text-left w-full">
+                    <div className="flex flex-col sm:flex-row items-center sm:items-start space-y-1 sm:space-y-0 sm:space-x-2 mb-2">
+                      <h4 className="font-semibold text-navy-900 text-sm sm:text-base">{location.name}</h4>
+                      <Badge variant="outline" className={`text-xs ${location.type === 'country' ? 'bg-green-50 text-green-700' : 'bg-blue-50 text-blue-700'}`}>
+                        {location.type === 'country' ? '🌍' : '📍'} {location.code || location.type}
+                      </Badge>
+                    </div>
+                    
+                    {location.date_visited && (
+                      <div className="flex items-center justify-center sm:justify-start space-x-1 text-xs sm:text-sm text-gray-600 mb-2">
+                        <Calendar className="w-3 h-3 sm:w-4 sm:h-4" />
+                        <span>{location.date_visited}</span>
+                      </div>
+                    )}
+                    
+                    {location.notes && (
+                      <p className="text-xs sm:text-sm text-gray-700 text-center sm:text-left">{location.notes}</p>
+                    )}
+                  </div>
                 </div>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      ) : (
+        <Card className="border-2 border-dashed border-blue-300 bg-blue-50/50">
+          <CardContent className="p-6 sm:p-8 text-center">
+            <MapPin className="w-12 h-12 sm:w-16 sm:h-16 text-blue-400 mx-auto mb-4" />
+            <h3 className="text-lg sm:text-xl font-semibold text-blue-900 mb-2">No Travel Locations Yet</h3>
+            <p className="text-blue-700 mb-4 text-sm sm:text-base px-2">
+              Start recording the places you've visited with {petData.name}!
+            </p>
+            <Button 
+              onClick={handleAddNewLocation}
+              className="bg-blue-600 hover:bg-blue-700 text-sm sm:text-base"
+            >
+              <MapPin className="w-4 h-4 mr-2" />
+              Add First Location
+            </Button>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Add New Location */}
-      <Card className="border-2 border-dashed border-blue-300 bg-blue-50/50">
-        <CardContent className="p-4 sm:p-6 text-center">
-          <Camera className="w-10 h-10 sm:w-12 sm:h-12 text-blue-400 mx-auto mb-4" />
-          <h3 className="text-base sm:text-lg font-semibold text-blue-900 mb-2">Add New Adventure</h3>
-          <p className="text-blue-700 mb-4 text-sm sm:text-base px-2">
-            Record a new place you've visited with {petData.name}
-          </p>
-          <Button className="bg-blue-600 hover:bg-blue-700 text-sm sm:text-base">
-            <MapPin className="w-4 h-4 mr-2" />
-            Add Location
-          </Button>
-        </CardContent>
-      </Card>
+      {locations.length > 0 && (
+        <Card className="border-2 border-dashed border-blue-300 bg-blue-50/50">
+          <CardContent className="p-4 sm:p-6 text-center">
+            <Camera className="w-10 h-10 sm:w-12 sm:h-12 text-blue-400 mx-auto mb-4" />
+            <h3 className="text-base sm:text-lg font-semibold text-blue-900 mb-2">Add New Adventure</h3>
+            <p className="text-blue-700 mb-4 text-sm sm:text-base px-2">
+              Record a new place you've visited with {petData.name}
+            </p>
+            <Button 
+              onClick={handleAddNewLocation}
+              className="bg-blue-600 hover:bg-blue-700 text-sm sm:text-base"
+            >
+              <MapPin className="w-4 h-4 mr-2" />
+              Add Location
+            </Button>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 };

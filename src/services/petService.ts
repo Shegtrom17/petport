@@ -83,7 +83,16 @@ export function transformPetData(pet: PetWithDetails): any {
       location: review.location,
       type: review.type
     })) || [],
-    travel_locations: pet.travel_locations || [],
+    // Transform travel locations with proper mapping
+    travel_locations: pet.travel_locations?.map(location => ({
+      id: location.id,
+      name: location.name,
+      type: location.type,
+      code: location.code,
+      date_visited: location.date_visited,
+      photo_url: location.photo_url,
+      notes: location.notes
+    })) || [],
     documents: pet.documents || [],
     gallery_photos: pet.gallery_photos || []
   };
@@ -523,7 +532,7 @@ export async function updatePetReviews(petId: string, reviews: {
   }
 }
 
-// Update travel locations
+// Update travel locations with improved error handling
 export async function updateTravelLocations(petId: string, locations: {
   name: string;
   type: string;
@@ -533,32 +542,44 @@ export async function updateTravelLocations(petId: string, locations: {
   notes?: string;
 }[]): Promise<boolean> {
   try {
+    console.log("Updating travel locations for pet:", petId, "with locations:", locations);
+    
     // Delete existing travel locations
-    await supabase
+    const { error: deleteError } = await supabase
       .from("travel_locations")
       .delete()
       .eq("pet_id", petId);
 
+    if (deleteError) {
+      console.error("Error deleting existing travel locations:", deleteError);
+      throw deleteError;
+    }
+
     // Insert new travel locations
     if (locations.length > 0) {
-      const { error } = await supabase
-        .from("travel_locations")
-        .insert(locations.map(location => ({
-          pet_id: petId,
-          name: location.name,
-          type: location.type,
-          code: location.code,
-          date_visited: location.dateVisited,
-          photo_url: location.photoUrl,
-          notes: location.notes
-        })));
+      const locationsToInsert = locations.map(location => ({
+        pet_id: petId,
+        name: location.name,
+        type: location.type,
+        code: location.code,
+        date_visited: location.dateVisited,
+        photo_url: location.photoUrl,
+        notes: location.notes
+      }));
 
-      if (error) {
-        console.error("Error updating travel locations:", error);
-        throw error;
+      console.log("Inserting travel locations:", locationsToInsert);
+
+      const { error: insertError } = await supabase
+        .from("travel_locations")
+        .insert(locationsToInsert);
+
+      if (insertError) {
+        console.error("Error inserting travel locations:", insertError);
+        throw insertError;
       }
     }
 
+    console.log("Travel locations updated successfully");
     return true;
   } catch (error) {
     console.error("Error in updateTravelLocations:", error);

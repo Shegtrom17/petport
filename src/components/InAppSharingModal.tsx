@@ -97,8 +97,8 @@ export const InAppSharingModal = ({ isOpen, onClose, petId, petName }: InAppShar
         throw new Error("User not authenticated.");
       }
 
-      // Create share records in the database using direct SQL query
-      // This bypasses the TypeScript type checking until types are regenerated
+      // For now, we'll use a simple approach and insert directly into a temporary table
+      // This will be replaced once the pet_shares table is properly created
       const shareRecords = Array.from(selectedUsers).map(userId => ({
         pet_id: petId,
         shared_with_user_id: userId,
@@ -106,15 +106,10 @@ export const InAppSharingModal = ({ isOpen, onClose, petId, petName }: InAppShar
         created_at: new Date().toISOString()
       }));
 
-      // Use rpc or direct SQL to insert into pet_shares table
-      const { error } = await supabase.rpc('insert_pet_shares', {
-        shares: shareRecords
-      }).catch(async () => {
-        // Fallback: direct insert using any type cast
-        return await (supabase as any)
-          .from('pet_shares')
-          .insert(shareRecords);
-      });
+      // Temporary workaround: use any type cast to bypass TypeScript checking
+      const { error } = await (supabase as any)
+        .from('pet_shares')
+        .insert(shareRecords);
 
       if (error) {
         console.error('Error creating shares:', error);

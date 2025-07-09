@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -229,7 +228,7 @@ const Index = () => {
         console.log("Rendering profile tab");
         return (
           <div className="space-y-6">
-            <SupportAnimalBanner />
+            <SupportAnimalBanner status={petData.supportAnimalStatus} />
             <PetProfileCard 
               petData={petData} 
             />

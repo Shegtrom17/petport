@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { MapPin, Phone, FileText, Calendar, Pill, Image, Stethoscope, Clipboard, AlertTriangle, Upload, User, Camera, Edit } from "lucide-react";
 import { SupportAnimalBanner } from "@/components/SupportAnimalBanner";
 import { PetEditForm } from "@/components/PetEditForm";
+import { PetPDFGenerator } from "@/components/PetPDFGenerator";
 
 interface PetData {
   id: string;
@@ -89,6 +90,9 @@ export const PetProfileCard = ({ petData, onUpdate }: PetProfileCardProps) => {
 
       {/* Support Animal Status Banner */}
       <SupportAnimalBanner status={petData.supportAnimalStatus || null} />
+
+      {/* PDF Generator Section */}
+      <PetPDFGenerator petId={petData.id} petName={petData.name} />
 
       {/* Medical Alert Banner */}
       {petData.medicalAlert && (

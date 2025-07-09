@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -64,46 +65,50 @@ export const TravelMapSection = ({ petData, onUpdate }: TravelMapSectionProps) =
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       {/* Header with Stats */}
       <Card className="border-0 shadow-xl bg-gradient-to-r from-navy-900 to-navy-800 text-white">
-        <CardContent className="p-6">
-          <div className="flex justify-between items-center mb-4">
-            <div>
-              <h2 className="text-2xl font-bold mb-2">{petData.name}'s Travel Adventures</h2>
-              <p className="text-blue-100">Places we've explored together</p>
+        <CardContent className="p-4 sm:p-6">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 space-y-3 sm:space-y-0">
+            <div className="w-full sm:w-auto">
+              <h2 className="text-xl sm:text-2xl font-bold mb-2">{petData.name}'s Travel Adventures</h2>
+              <p className="text-blue-100 text-sm sm:text-base">Places we've explored together</p>
             </div>
-            <div className="flex space-x-2">
+            <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2 w-full sm:w-auto">
               <Button 
                 onClick={() => setIsEditModalOpen(true)} 
                 variant="secondary" 
                 size="sm"
+                className="w-full sm:w-auto text-xs sm:text-sm"
               >
-                <Edit className="w-4 h-4 mr-2" />
+                <Edit className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
                 Edit
               </Button>
-              <Button onClick={handleDownload} variant="secondary" size="sm">
-                <Download className="w-4 h-4 mr-2" />
-                Download
-              </Button>
-              <Button onClick={handleShare} variant="secondary" size="sm">
-                <Share2 className="w-4 h-4" />
-              </Button>
+              <div className="flex space-x-2 sm:space-x-0">
+                <Button onClick={handleDownload} variant="secondary" size="sm" className="flex-1 sm:flex-none text-xs sm:text-sm">
+                  <Download className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
+                  <span className="hidden sm:inline">Download</span>
+                </Button>
+                <Button onClick={handleShare} variant="secondary" size="sm" className="flex-1 sm:flex-none text-xs sm:text-sm">
+                  <Share2 className="w-3 h-3 sm:w-4 sm:h-4" />
+                  <span className="hidden sm:inline ml-2">Share</span>
+                </Button>
+              </div>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="text-center p-4 bg-white/10 rounded-lg backdrop-blur-sm">
-              <div className="text-3xl font-bold text-yellow-400">{statesCount}</div>
-              <div className="text-blue-100">States Visited</div>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
+            <div className="text-center p-3 sm:p-4 bg-white/10 rounded-lg backdrop-blur-sm">
+              <div className="text-2xl sm:text-3xl font-bold text-yellow-400">{statesCount}</div>
+              <div className="text-blue-100 text-sm sm:text-base">States Visited</div>
             </div>
-            <div className="text-center p-4 bg-white/10 rounded-lg backdrop-blur-sm">
-              <div className="text-3xl font-bold text-green-400">{countriesCount}</div>
-              <div className="text-blue-100">Countries Visited</div>
+            <div className="text-center p-3 sm:p-4 bg-white/10 rounded-lg backdrop-blur-sm">
+              <div className="text-2xl sm:text-3xl font-bold text-green-400">{countriesCount}</div>
+              <div className="text-blue-100 text-sm sm:text-base">Countries Visited</div>
             </div>
-            <div className="text-center p-4 bg-white/10 rounded-lg backdrop-blur-sm">
-              <Trophy className="w-8 h-8 text-yellow-400 mx-auto mb-1" />
-              <Badge className={`bg-gradient-to-r ${milestone.color} text-white border-0`}>
+            <div className="text-center p-3 sm:p-4 bg-white/10 rounded-lg backdrop-blur-sm">
+              <Trophy className="w-6 h-6 sm:w-8 sm:h-8 text-yellow-400 mx-auto mb-1" />
+              <Badge className={`bg-gradient-to-r ${milestone.color} text-white border-0 text-xs sm:text-sm`}>
                 {milestone.text}
               </Badge>
             </div>
@@ -113,9 +118,9 @@ export const TravelMapSection = ({ petData, onUpdate }: TravelMapSectionProps) =
 
       {/* Edit Modal */}
       <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto mx-4">
           <DialogHeader>
-            <DialogTitle>Edit Travel Locations</DialogTitle>
+            <DialogTitle className="text-base sm:text-lg">Edit Travel Locations</DialogTitle>
           </DialogHeader>
           <TravelEditForm
             petData={petData}
@@ -127,32 +132,32 @@ export const TravelMapSection = ({ petData, onUpdate }: TravelMapSectionProps) =
 
       {/* Travel Map Placeholder */}
       <Card className="border-0 shadow-xl bg-passport-section-bg backdrop-blur-sm">
-        <CardHeader>
-          <CardTitle className="flex items-center space-x-2">
-            <MapPin className="w-5 h-5 text-blue-600" />
+        <CardHeader className="pb-3 sm:pb-6">
+          <CardTitle className="flex items-center space-x-2 text-base sm:text-lg">
+            <MapPin className="w-4 h-4 sm:w-5 sm:h-5 text-blue-600" />
             <span>Travel Map</span>
           </CardTitle>
         </CardHeader>
-        <CardContent>
-          <div className="bg-gradient-to-br from-blue-100 to-green-100 rounded-lg h-64 flex items-center justify-center border-2 border-dashed border-blue-300">
-            <div className="text-center">
-              <MapPin className="w-16 h-16 text-blue-400 mx-auto mb-4" />
-              <h3 className="text-lg font-semibold text-blue-900 mb-2">Interactive Travel Map</h3>
-              <p className="text-blue-700">Map visualization would be displayed here</p>
-              <p className="text-sm text-blue-600 mt-2">Showing pins for all {statesCount + countriesCount} locations</p>
+        <CardContent className="pt-0">
+          <div className="bg-gradient-to-br from-blue-100 to-green-100 rounded-lg h-48 sm:h-64 flex items-center justify-center border-2 border-dashed border-blue-300">
+            <div className="text-center p-4">
+              <MapPin className="w-12 h-12 sm:w-16 sm:h-16 text-blue-400 mx-auto mb-4" />
+              <h3 className="text-base sm:text-lg font-semibold text-blue-900 mb-2">Interactive Travel Map</h3>
+              <p className="text-blue-700 text-sm sm:text-base">Map visualization would be displayed here</p>
+              <p className="text-xs sm:text-sm text-blue-600 mt-2">Showing pins for all {statesCount + countriesCount} locations</p>
             </div>
           </div>
         </CardContent>
       </Card>
 
       {/* Locations List */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4">
         {locations.map((location) => (
           <Card key={location.id} className="border-0 shadow-lg bg-passport-section-bg backdrop-blur-sm hover:shadow-xl transition-shadow">
-            <CardContent className="p-4">
-              <div className="flex items-start space-x-4">
+            <CardContent className="p-3 sm:p-4">
+              <div className="flex flex-col sm:flex-row items-center sm:items-start space-y-3 sm:space-y-0 sm:space-x-4">
                 {location.photoUrl ? (
-                  <div className="w-16 h-16 rounded-lg overflow-hidden border-2 border-blue-200">
+                  <div className="w-16 h-16 sm:w-16 sm:h-16 rounded-lg overflow-hidden border-2 border-blue-200 flex-shrink-0">
                     <img 
                       src={location.photoUrl} 
                       alt={location.name}
@@ -160,28 +165,28 @@ export const TravelMapSection = ({ petData, onUpdate }: TravelMapSectionProps) =
                     />
                   </div>
                 ) : (
-                  <div className="w-16 h-16 rounded-lg bg-gradient-to-br from-blue-100 to-purple-100 border-2 border-blue-200 flex items-center justify-center">
-                    <MapPin className="w-8 h-8 text-blue-500" />
+                  <div className="w-16 h-16 sm:w-16 sm:h-16 rounded-lg bg-gradient-to-br from-blue-100 to-purple-100 border-2 border-blue-200 flex items-center justify-center flex-shrink-0">
+                    <MapPin className="w-6 h-6 sm:w-8 sm:h-8 text-blue-500" />
                   </div>
                 )}
                 
-                <div className="flex-1">
-                  <div className="flex items-center space-x-2 mb-2">
-                    <h4 className="font-semibold text-navy-900">{location.name}</h4>
-                    <Badge variant="outline" className={location.type === 'country' ? 'bg-green-50 text-green-700' : 'bg-blue-50 text-blue-700'}>
+                <div className="flex-1 text-center sm:text-left w-full">
+                  <div className="flex flex-col sm:flex-row items-center sm:items-start space-y-1 sm:space-y-0 sm:space-x-2 mb-2">
+                    <h4 className="font-semibold text-navy-900 text-sm sm:text-base">{location.name}</h4>
+                    <Badge variant="outline" className={`text-xs ${location.type === 'country' ? 'bg-green-50 text-green-700' : 'bg-blue-50 text-blue-700'}`}>
                       {location.type === 'country' ? '🌍' : '📍'} {location.code}
                     </Badge>
                   </div>
                   
                   {location.dateVisited && (
-                    <div className="flex items-center space-x-1 text-sm text-gray-600 mb-2">
-                      <Calendar className="w-4 h-4" />
+                    <div className="flex items-center justify-center sm:justify-start space-x-1 text-xs sm:text-sm text-gray-600 mb-2">
+                      <Calendar className="w-3 h-3 sm:w-4 sm:h-4" />
                       <span>{new Date(location.dateVisited).toLocaleDateString()}</span>
                     </div>
                   )}
                   
                   {location.notes && (
-                    <p className="text-sm text-gray-700">{location.notes}</p>
+                    <p className="text-xs sm:text-sm text-gray-700 text-center sm:text-left">{location.notes}</p>
                   )}
                 </div>
               </div>
@@ -192,13 +197,13 @@ export const TravelMapSection = ({ petData, onUpdate }: TravelMapSectionProps) =
 
       {/* Add New Location */}
       <Card className="border-2 border-dashed border-blue-300 bg-blue-50/50">
-        <CardContent className="p-6 text-center">
-          <Camera className="w-12 h-12 text-blue-400 mx-auto mb-4" />
-          <h3 className="text-lg font-semibold text-blue-900 mb-2">Add New Adventure</h3>
-          <p className="text-blue-700 mb-4">
+        <CardContent className="p-4 sm:p-6 text-center">
+          <Camera className="w-10 h-10 sm:w-12 sm:h-12 text-blue-400 mx-auto mb-4" />
+          <h3 className="text-base sm:text-lg font-semibold text-blue-900 mb-2">Add New Adventure</h3>
+          <p className="text-blue-700 mb-4 text-sm sm:text-base px-2">
             Record a new place you've visited with {petData.name}
           </p>
-          <Button className="bg-blue-600 hover:bg-blue-700">
+          <Button className="bg-blue-600 hover:bg-blue-700 text-sm sm:text-base">
             <MapPin className="w-4 h-4 mr-2" />
             Add Location
           </Button>

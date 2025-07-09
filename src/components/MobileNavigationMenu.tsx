@@ -22,18 +22,18 @@ export const MobileNavigationMenu = ({ activeTab, onTabChange }: MobileNavigatio
     <div className="md:hidden">
       <Sheet open={isOpen} onOpenChange={setIsOpen}>
         <SheetTrigger asChild>
-          <Button variant="outline" size="icon" className="md:hidden">
-            <Menu className="h-5 w-5" />
+          <Button variant="outline" size="icon" className="md:hidden h-8 w-8 sm:h-10 sm:w-10">
+            <Menu className="h-4 w-4 sm:h-5 sm:w-5" />
           </Button>
         </SheetTrigger>
-        <SheetContent side="left" className="w-80 p-6">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-lg font-semibold text-navy-900">Navigation</h2>
+        <SheetContent side="left" className="w-72 sm:w-80 p-4 sm:p-6">
+          <div className="flex items-center justify-between mb-4 sm:mb-6">
+            <h2 className="text-base sm:text-lg font-semibold text-navy-900">Navigation</h2>
             <Button 
               variant="ghost" 
               size="icon" 
               onClick={() => setIsOpen(false)}
-              className="h-6 w-6"
+              className="h-6 w-6 sm:h-8 sm:w-8"
             >
               <X className="h-4 w-4" />
             </Button>

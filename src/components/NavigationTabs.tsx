@@ -29,7 +29,7 @@ export const NavigationTabs = ({ activeTab, onTabChange, isMobile = false }: Nav
             key={tab.id}
             variant={activeTab === tab.id ? "default" : "ghost"}
             onClick={() => onTabChange(tab.id)}
-            className={`w-full justify-start space-x-3 transition-all ${
+            className={`w-full justify-start space-x-3 transition-all text-sm sm:text-base py-2 sm:py-3 ${
               activeTab === tab.id 
                 ? "bg-gradient-to-r from-navy-900 to-navy-800 text-gold-500 shadow-lg border border-gold-500/30" 
                 : tab.id === "gallery" 
@@ -37,7 +37,7 @@ export const NavigationTabs = ({ activeTab, onTabChange, isMobile = false }: Nav
                   : "text-navy-800 hover:text-gold-500 hover:bg-navy-900 hover:shadow-md border border-transparent hover:border-gold-500/20"
             }`}
           >
-            <tab.icon className="w-5 h-5" />
+            <tab.icon className="w-4 h-4 sm:w-5 sm:h-5" />
             <span className="font-medium">{tab.label}</span>
           </Button>
         ))}
@@ -52,7 +52,7 @@ export const NavigationTabs = ({ activeTab, onTabChange, isMobile = false }: Nav
           key={tab.id}
           variant={activeTab === tab.id ? "default" : "ghost"}
           onClick={() => onTabChange(tab.id)}
-          className={`flex items-center space-x-2 transition-all ${
+          className={`flex items-center space-x-2 transition-all text-xs sm:text-sm py-1.5 sm:py-2 px-2 sm:px-3 ${
             activeTab === tab.id 
               ? "bg-gradient-to-r from-navy-900 to-navy-800 text-gold-500 shadow-lg border border-gold-500/30 hover:from-navy-800 hover:to-navy-700" 
               : tab.id === "gallery" 
@@ -60,7 +60,7 @@ export const NavigationTabs = ({ activeTab, onTabChange, isMobile = false }: Nav
                 : "text-navy-800 hover:text-gold-500 hover:bg-navy-900 hover:shadow-md border border-transparent hover:border-gold-500/20"
           }`}
         >
-          <tab.icon className="w-4 h-4" />
+          <tab.icon className="w-3 h-3 sm:w-4 sm:h-4" />
           <span className="hidden sm:inline font-medium">{tab.label}</span>
         </Button>
       ))}

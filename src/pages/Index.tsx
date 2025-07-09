@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -273,20 +274,20 @@ const Index = () => {
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 flex items-center justify-center">
-        <div className="text-xl text-navy-800 animate-pulse">Loading your pets...</div>
+        <div className="text-lg md:text-xl text-navy-800 animate-pulse">Loading your pets...</div>
       </div>
     );
   }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
-      {/* Header */}
+      {/* Header - Optimized for mobile */}
       <header className="bg-white/80 backdrop-blur-sm border-b border-blue-100 sticky top-0 z-50">
-        <div className="max-w-4xl mx-auto px-4 py-4">
+        <div className="max-w-4xl mx-auto px-3 sm:px-4 py-3 sm:py-4">
           <div className="flex items-center justify-between">
             {/* Left Side - Logo and Title */}
-            <div className="flex items-center space-x-3 md:space-x-4">
-              <div className="w-12 h-12 md:w-16 md:h-16 lg:w-20 lg:h-20 flex-shrink-0">
+            <div className="flex items-center space-x-2 sm:space-x-3 md:space-x-4 flex-1 min-w-0">
+              <div className="w-10 h-10 sm:w-12 sm:h-12 md:w-16 md:h-16 lg:w-20 lg:h-20 flex-shrink-0">
                 <img 
                   src="/lovable-uploads/d4e1e1f9-612c-48bb-8391-e7bce7658e8c.png" 
                   alt="PetPass Logo"
@@ -298,20 +299,22 @@ const Index = () => {
                   onLoad={() => console.log("Header logo loaded successfully")}
                 />
               </div>
-              <div className="hidden sm:block">
-                <h1 className="text-lg md:text-xl lg:text-2xl font-bold text-navy-900 tracking-wide">
+              <div className="hidden sm:block min-w-0 flex-1">
+                <h1 className="text-sm sm:text-lg md:text-xl lg:text-2xl font-bold text-navy-900 tracking-wide truncate">
                   Digital Pet Passport
                 </h1>
               </div>
             </div>
             
             {/* Right Side Controls */}
-            <div className="flex items-center space-x-2 md:space-x-3">
+            <div className="flex items-center space-x-1 sm:space-x-2 md:space-x-3 flex-shrink-0">
               <Button 
-                className="bg-gradient-to-r from-navy-900 to-navy-800 hover:from-navy-800 hover:to-navy-700 text-gold-500 border border-gold-500/30 text-xs md:text-sm px-2 md:px-3 py-1 md:py-2"
+                className="bg-gradient-to-r from-navy-900 to-navy-800 hover:from-navy-800 hover:to-navy-700 text-gold-500 border border-gold-500/30 text-xs sm:text-sm px-2 sm:px-3 py-1 sm:py-2 whitespace-nowrap"
                 onClick={() => navigate('/add-pet')}
               >
-                <PlusCircle className="mr-1 h-3 w-3 md:h-4 md:w-4" /> Add Pet
+                <PlusCircle className="mr-1 h-3 w-3 sm:h-4 sm:w-4" /> 
+                <span className="hidden sm:inline">Add Pet</span>
+                <span className="sm:hidden">Add</span>
               </Button>
               <MobileNavigationMenu activeTab={activeTab} onTabChange={setActiveTab} />
               <Button 
@@ -319,16 +322,16 @@ const Index = () => {
                 size="icon"
                 onClick={signOut}
                 title="Sign Out"
-                className="h-8 w-8 md:h-10 md:w-10"
+                className="h-8 w-8 sm:h-10 sm:w-10"
               >
-                <LogOut className="h-3 w-3 md:h-4 md:w-4" />
+                <LogOut className="h-3 w-3 sm:h-4 sm:w-4" />
               </Button>
             </div>
           </div>
           
           {/* Mobile Title - Show below logo on small screens */}
           <div className="sm:hidden mt-2 text-center">
-            <h1 className="text-base font-bold text-navy-900 tracking-wide">
+            <h1 className="text-sm font-bold text-navy-900 tracking-wide">
               Digital Pet Passport
             </h1>
           </div>
@@ -344,50 +347,50 @@ const Index = () => {
       />
 
       {/* Main Content */}
-      <main className="max-w-4xl mx-auto px-4 py-8">
+      <main className="max-w-4xl mx-auto px-3 sm:px-4 py-4 sm:py-6 lg:py-8">
         {pets.length === 0 ? (
-          <div className="text-center py-20">
-            <div className="w-20 h-20 bg-white/70 rounded-full flex items-center justify-center mx-auto mb-6">
-              <PlusCircle className="h-10 w-10 text-navy-800/50" />
+          <div className="text-center py-12 sm:py-20">
+            <div className="w-16 h-16 sm:w-20 sm:h-20 bg-white/70 rounded-full flex items-center justify-center mx-auto mb-4 sm:mb-6">
+              <PlusCircle className="h-8 w-8 sm:h-10 sm:w-10 text-navy-800/50" />
             </div>
-            <h2 className="text-2xl font-bold text-navy-800 mb-3">No pets found</h2>
-            <p className="text-navy-600 mb-6">You haven't added any pets yet. Create your first PetPass!</p>
+            <h2 className="text-xl sm:text-2xl font-bold text-navy-800 mb-2 sm:mb-3">No pets found</h2>
+            <p className="text-navy-600 mb-4 sm:mb-6 text-sm sm:text-base px-4">You haven't added any pets yet. Create your first PetPass!</p>
             <Button 
               className="bg-gradient-to-r from-navy-900 to-navy-800 hover:from-navy-800 hover:to-navy-700 text-gold-500 border border-gold-500/30"
               onClick={() => navigate('/add-pet')}
             >
-              <PlusCircle className="mr-2 h-5 w-5" /> Add Your First Pet
+              <PlusCircle className="mr-2 h-4 w-4 sm:h-5 sm:w-5" /> Add Your First Pet
             </Button>
           </div>
         ) : (
           <>
-            {/* Pet Selection (if multiple pets) */}
+            {/* Pet Selection (if multiple pets) - Mobile optimized */}
             {pets.length > 1 && (
-              <div className="mb-6 overflow-x-auto pb-2">
-                <div className="flex space-x-3">
+              <div className="mb-4 sm:mb-6 overflow-x-auto pb-2">
+                <div className="flex space-x-2 sm:space-x-3 min-w-max">
                   {pets.map(pet => (
                     <Card 
                       key={pet.id} 
-                      className={`border-2 cursor-pointer flex-shrink-0 w-64 transition-all ${
+                      className={`border-2 cursor-pointer flex-shrink-0 w-56 sm:w-64 transition-all ${
                         selectedPet?.id === pet.id 
                           ? 'border-navy-700 shadow-lg' 
                           : 'border-transparent hover:border-navy-300'
                       }`}
                       onClick={() => handleSelectPet(pet.id)}
                     >
-                      <div className="p-4 flex items-center space-x-3">
-                        <div className="w-12 h-12 bg-gray-200 rounded-full overflow-hidden flex-shrink-0">
+                      <div className="p-3 sm:p-4 flex items-center space-x-2 sm:space-x-3">
+                        <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gray-200 rounded-full overflow-hidden flex-shrink-0">
                           {pet.photoUrl ? (
                             <img src={pet.photoUrl} alt={pet.name} className="w-full h-full object-cover" />
                           ) : (
-                            <div className="w-full h-full bg-navy-200 flex items-center justify-center">
+                            <div className="w-full h-full bg-navy-200 flex items-center justify-center text-sm sm:text-base">
                               {pet.name?.charAt(0).toUpperCase()}
                             </div>
                           )}
                         </div>
-                        <div>
-                          <h3 className="font-semibold">{pet.name}</h3>
-                          <p className="text-sm text-gray-500">{pet.breed}</p>
+                        <div className="min-w-0 flex-1">
+                          <h3 className="font-semibold text-sm sm:text-base truncate">{pet.name}</h3>
+                          <p className="text-xs sm:text-sm text-gray-500 truncate">{pet.breed}</p>
                         </div>
                       </div>
                     </Card>
@@ -396,16 +399,16 @@ const Index = () => {
               </div>
             )}
 
-            {/* Pet Header Card - Updated Passport Style with Moved Logo */}
-            <Card className="mb-8 overflow-hidden border-0 shadow-xl bg-white/90 backdrop-blur-sm">
-              <div className="bg-gradient-to-r from-navy-900 to-slate-800 p-4 md:p-6 text-white relative overflow-hidden">
+            {/* Pet Header Card - Mobile optimized */}
+            <Card className="mb-6 sm:mb-8 overflow-hidden border-0 shadow-xl bg-white/90 backdrop-blur-sm">
+              <div className="bg-gradient-to-r from-navy-900 to-slate-800 p-4 sm:p-6 text-white relative overflow-hidden">
                 {/* Passport-style decorative elements */}
-                <div className="absolute top-0 right-0 w-24 h-24 md:w-32 md:h-32 bg-yellow-500/10 rounded-full -translate-y-12 md:-translate-y-16 translate-x-12 md:translate-x-16"></div>
-                <div className="absolute bottom-0 left-0 w-18 h-18 md:w-24 md:h-24 bg-yellow-500/10 rounded-full translate-y-9 md:translate-y-12 -translate-x-9 md:-translate-x-12"></div>
+                <div className="absolute top-0 right-0 w-16 h-16 sm:w-24 sm:h-24 md:w-32 md:h-32 bg-yellow-500/10 rounded-full -translate-y-8 sm:-translate-y-12 md:-translate-y-16 translate-x-8 sm:translate-x-12 md:translate-x-16"></div>
+                <div className="absolute bottom-0 left-0 w-12 h-12 sm:w-18 sm:h-18 md:w-24 md:h-24 bg-yellow-500/10 rounded-full translate-y-6 sm:translate-y-9 md:translate-y-12 -translate-x-6 sm:-translate-x-9 md:-translate-x-12"></div>
                 
-                {/* Moved Logo - Top Right Corner */}
-                <div className="absolute top-4 right-4 md:top-6 md:right-6 z-30">
-                  <div className="w-8 h-8 md:w-10 md:h-10 rounded-xl flex items-center justify-center overflow-hidden bg-white/10 backdrop-blur-sm border border-yellow-500/30">
+                {/* Logo - Top Right Corner */}
+                <div className="absolute top-3 right-3 sm:top-4 sm:right-4 md:top-6 md:right-6 z-30">
+                  <div className="w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10 rounded-lg sm:rounded-xl flex items-center justify-center overflow-hidden bg-white/10 backdrop-blur-sm border border-yellow-500/30">
                     <img 
                       src="/lovable-uploads/1af9fe70-ed76-44c5-a1e1-1a058e497a10.png" 
                       alt="Pawprint & HoofBeats Logo"
@@ -419,29 +422,30 @@ const Index = () => {
                   </div>
                 </div>
                 
-                <div className="flex items-center space-x-4 md:space-x-8 relative z-20">
-                  <div className="w-32 h-32 md:w-40 md:h-40 lg:w-48 lg:h-48 rounded-lg overflow-hidden border-4 border-yellow-500/50 shadow-lg flex-shrink-0">
+                {/* Mobile-first layout */}
+                <div className="flex flex-col sm:flex-row items-center sm:items-start space-y-4 sm:space-y-0 sm:space-x-4 md:space-x-8 relative z-20">
+                  <div className="w-24 h-24 sm:w-32 sm:h-32 md:w-40 md:h-40 lg:w-48 lg:h-48 rounded-lg overflow-hidden border-4 border-yellow-500/50 shadow-lg flex-shrink-0">
                     <img 
                       src={petData.photoUrl || "https://placehold.co/100x100?text=" + petData.name?.charAt(0)} 
                       alt={petData.name}
                       className="w-full h-full object-cover"
                     />
                   </div>
-                  <div className="flex-1 pr-12 md:pr-16">
-                    <h2 className="text-xl md:text-3xl font-serif font-bold text-yellow-400 mb-1 tracking-wide">{petData.name?.toUpperCase()}</h2>
-                    <p className="text-yellow-200 font-serif text-sm md:text-lg mb-2">{petData.breed} • {petData.age}</p>
-                    <div className="flex items-center space-x-3 md:space-x-6 text-xs md:text-sm mb-4">
-                      <div className="flex items-center space-x-2">
+                  <div className="flex-1 text-center sm:text-left w-full sm:pr-8 md:pr-12">
+                    <h2 className="text-lg sm:text-xl md:text-3xl font-serif font-bold text-yellow-400 mb-1 tracking-wide break-words">{petData.name?.toUpperCase()}</h2>
+                    <p className="text-yellow-200 font-serif text-sm sm:text-base md:text-lg mb-2">{petData.breed} • {petData.age}</p>
+                    <div className="flex flex-col sm:flex-row items-center justify-center sm:justify-start space-y-1 sm:space-y-0 sm:space-x-3 md:space-x-6 text-xs sm:text-sm mb-4">
+                      <div className="flex items-center space-x-1 sm:space-x-2">
                         <div className="w-2 h-2 bg-yellow-400 rounded-full"></div>
                         <span className="font-serif text-yellow-200">Weight: {petData.weight}</span>
                       </div>
-                      <div className="flex items-center space-x-2">
+                      <div className="flex items-center space-x-1 sm:space-x-2">
                         <div className="w-2 h-2 bg-yellow-400 rounded-full"></div>
                         <span className="font-serif text-yellow-200">{petData.badges?.length || 0} Certifications</span>
                       </div>
                     </div>
-                    <div className="text-right">
-                      <p className="text-yellow-400 text-xs md:text-sm font-serif tracking-wide">GLOBE TROTTER</p>
+                    <div className="text-center sm:text-right">
+                      <p className="text-yellow-400 text-xs sm:text-sm font-serif tracking-wide">GLOBE TROTTER</p>
                       <p className="text-xs text-yellow-300 font-mono">ID: {petData.petPassId}</p>
                     </div>
                   </div>
@@ -452,11 +456,13 @@ const Index = () => {
               </div>
             </Card>
 
-            {/* Navigation */}
-            <NavigationTabs activeTab={activeTab} onTabChange={setActiveTab} />
+            {/* Navigation - Mobile optimized */}
+            <div className="mb-4 sm:mb-6">
+              <NavigationTabs activeTab={activeTab} onTabChange={setActiveTab} />
+            </div>
 
             {/* Content Section */}
-            <div className="mt-6">
+            <div className="space-y-4 sm:space-y-6">
               {renderTabContent()}
             </div>
           </>

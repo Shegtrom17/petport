@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -225,29 +226,23 @@ const Index = () => {
       <header className="bg-white/80 backdrop-blur-sm border-b border-blue-100 sticky top-0 z-50">
         <div className="max-w-4xl mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 md:w-10 md:h-10 rounded-xl flex items-center justify-center overflow-hidden">
+            {/* Centered New Logo */}
+            <div className="flex-1 flex justify-center">
+              <div className="w-16 h-16 md:w-20 md:h-20 lg:w-24 lg:h-24">
                 <img 
-                  src="/lovable-uploads/1af9fe70-ed76-44c5-a1e1-1a058e497a10.png" 
+                  src="/lovable-uploads/d4e1e1f9-612c-48bb-8391-e7bce7658e8c.png" 
                   alt="PetPass Logo"
                   className="w-full h-full object-contain"
                   onError={(e) => {
-                    console.error("Header logo failed to load:", e);
+                    console.error("New header logo failed to load:", e);
                     e.currentTarget.style.display = 'none';
                   }}
-                  onLoad={() => console.log("Header logo loaded successfully")}
+                  onLoad={() => console.log("New header logo loaded successfully")}
                 />
               </div>
-              <div>
-                <h1 className="text-sm md:text-lg font-serif font-bold text-gold-500 mb-1 tracking-wide">
-                  Pawprint & HoofBeats
-                </h1>
-                <h2 className="text-lg md:text-2xl font-bold bg-gradient-to-r from-navy-900 to-gold-500 bg-clip-text text-transparent">
-                  PetPass
-                </h2>
-                <p className="text-xs md:text-sm text-gray-600">Digital Pet Passport</p>
-              </div>
             </div>
+            
+            {/* Right Side Controls */}
             <div className="flex items-center space-x-2 md:space-x-3">
               <Button 
                 className="bg-gradient-to-r from-navy-900 to-navy-800 hover:from-navy-800 hover:to-navy-700 text-gold-500 border border-gold-500/30 text-xs md:text-sm px-2 md:px-3 py-1 md:py-2"
@@ -323,12 +318,28 @@ const Index = () => {
               </div>
             )}
 
-            {/* Pet Header Card - Updated Passport Style */}
+            {/* Pet Header Card - Updated Passport Style with Moved Logo */}
             <Card className="mb-8 overflow-hidden border-0 shadow-xl bg-white/90 backdrop-blur-sm">
               <div className="bg-gradient-to-r from-navy-900 to-slate-800 p-4 md:p-6 text-white relative overflow-hidden">
                 {/* Passport-style decorative elements */}
                 <div className="absolute top-0 right-0 w-24 h-24 md:w-32 md:h-32 bg-yellow-500/10 rounded-full -translate-y-12 md:-translate-y-16 translate-x-12 md:translate-x-16"></div>
                 <div className="absolute bottom-0 left-0 w-18 h-18 md:w-24 md:h-24 bg-yellow-500/10 rounded-full translate-y-9 md:translate-y-12 -translate-x-9 md:-translate-x-12"></div>
+                
+                {/* Moved Logo - Top Right Corner */}
+                <div className="absolute top-4 right-4 md:top-6 md:right-6 z-30">
+                  <div className="w-8 h-8 md:w-10 md:h-10 rounded-xl flex items-center justify-center overflow-hidden bg-white/10 backdrop-blur-sm border border-yellow-500/30">
+                    <img 
+                      src="/lovable-uploads/1af9fe70-ed76-44c5-a1e1-1a058e497a10.png" 
+                      alt="Pawprint & HoofBeats Logo"
+                      className="w-full h-full object-contain"
+                      onError={(e) => {
+                        console.error("Moved logo failed to load:", e);
+                        e.currentTarget.style.display = 'none';
+                      }}
+                      onLoad={() => console.log("Moved logo loaded successfully")}
+                    />
+                  </div>
+                </div>
                 
                 <div className="flex items-center space-x-4 md:space-x-8 relative z-20">
                   <div className="w-32 h-32 md:w-40 md:h-40 lg:w-48 lg:h-48 rounded-lg overflow-hidden border-4 border-yellow-500/50 shadow-lg flex-shrink-0">
@@ -338,7 +349,7 @@ const Index = () => {
                       className="w-full h-full object-cover"
                     />
                   </div>
-                  <div className="flex-1">
+                  <div className="flex-1 pr-12 md:pr-16">
                     <h2 className="text-xl md:text-3xl font-serif font-bold text-yellow-400 mb-1 tracking-wide">{petData.name?.toUpperCase()}</h2>
                     <p className="text-yellow-200 font-serif text-sm md:text-lg mb-2">{petData.breed} • {petData.age}</p>
                     <div className="flex items-center space-x-3 md:space-x-6 text-xs md:text-sm mb-4">

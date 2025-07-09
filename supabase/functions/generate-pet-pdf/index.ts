@@ -25,6 +25,10 @@ interface PetData {
   medications: string[];
   last_vaccination: string;
   notes: string;
+  state: string;
+  county: string;
+  gallery_photos: Array<{ url: string; caption: string; }>;
+  documents: Array<{ name: string; type: string; file_url: string; }>;
 }
 
 function generatePetPDF(petData: PetData): string {
@@ -108,6 +112,7 @@ function generatePetPDF(petData: PetData): string {
             max-height: 200px;
             border-radius: 10px;
             border: 2px solid #ddd;
+            margin: 5px;
         }
         .medications {
             background-color: #f8fafc;
@@ -119,6 +124,18 @@ function generatePetPDF(petData: PetData): string {
             padding: 3px 0;
             border-bottom: 1px solid #e2e8f0;
         }
+        .document-list {
+            background-color: #f8fafc;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 5px;
+        }
+        .document-item {
+            padding: 5px 0;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+        }
         .footer {
             margin-top: 30px;
             text-align: center;
@@ -126,6 +143,26 @@ function generatePetPDF(petData: PetData): string {
             color: #666;
             border-top: 1px solid #ddd;
             padding-top: 10px;
+        }
+        .photos-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 10px;
+        }
+        .gallery-photo {
+            text-align: center;
+        }
+        .gallery-photo img {
+            max-width: 180px;
+            max-height: 180px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+        }
+        .gallery-caption {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
         }
     </style>
 </head>
@@ -140,6 +177,7 @@ function generatePetPDF(petData: PetData): string {
     ${petData.photo_url ? `
     <div class="photo-section">
         <img src="${petData.photo_url}" alt="${petData.name}" class="photo" />
+        ${petData.full_body_photo_url ? `<img src="${petData.full_body_photo_url}" alt="${petData.name} full body" class="photo" />` : ''}
     </div>
     ` : ''}
 
@@ -162,6 +200,18 @@ function generatePetPDF(petData: PetData): string {
                 <span class="field-label">Weight:</span>
                 <span class="field-value">${petData.weight || 'Not specified'}</span>
             </div>
+            ${petData.state ? `
+            <div class="field">
+                <span class="field-label">State:</span>
+                <span class="field-value">${petData.state}</span>
+            </div>
+            ` : ''}
+            ${petData.county ? `
+            <div class="field">
+                <span class="field-label">County:</span>
+                <span class="field-value">${petData.county}</span>
+            </div>
+            ` : ''}
         </div>
         ${petData.notes ? `
         <div class="field">
@@ -213,6 +263,34 @@ function generatePetPDF(petData: PetData): string {
         </div>
         ` : ''}
     </div>
+
+    ${petData.documents && petData.documents.length > 0 ? `
+    <div class="section">
+        <div class="section-title">Documents</div>
+        <div class="document-list">
+            ${petData.documents.map(doc => `
+                <div class="document-item">
+                    <span>${doc.name} (${doc.type})</span>
+                    <a href="${doc.file_url}" target="_blank">View</a>
+                </div>
+            `).join('')}
+        </div>
+    </div>
+    ` : ''}
+
+    ${petData.gallery_photos && petData.gallery_photos.length > 0 ? `
+    <div class="section">
+        <div class="section-title">Additional Photos</div>
+        <div class="photos-grid">
+            ${petData.gallery_photos.slice(0, 4).map(photo => `
+                <div class="gallery-photo">
+                    <img src="${photo.url}" alt="Gallery photo" />
+                    ${photo.caption ? `<div class="gallery-caption">${photo.caption}</div>` : ''}
+                </div>
+            `).join('')}
+        </div>
+    </div>
+    ` : ''}
 
     <div class="footer">
         Generated on ${new Date().toLocaleDateString()} at ${new Date().toLocaleTimeString()}<br>
@@ -268,11 +346,15 @@ Deno.serve(async (req) => {
     const [
       contactsResponse,
       medicalResponse,
-      photosResponse
+      photosResponse,
+      galleryResponse,
+      documentsResponse
     ] = await Promise.all([
       supabase.from('contacts').select('*').eq('pet_id', petId).maybeSingle(),
       supabase.from('medical').select('*').eq('pet_id', petId).maybeSingle(),
-      supabase.from('pet_photos').select('*').eq('pet_id', petId).maybeSingle()
+      supabase.from('pet_photos').select('*').eq('pet_id', petId).maybeSingle(),
+      supabase.from('gallery_photos').select('*').eq('pet_id', petId),
+      supabase.from('documents').select('*').eq('pet_id', petId)
     ]);
 
     // Combine data
@@ -295,14 +377,17 @@ Deno.serve(async (req) => {
       medical_conditions: medicalResponse.data?.medical_conditions || '',
       medications: medicalResponse.data?.medications || [],
       last_vaccination: medicalResponse.data?.last_vaccination || '',
-      notes: pet.notes || ''
+      notes: pet.notes || '',
+      state: pet.state || '',
+      county: pet.county || '',
+      gallery_photos: galleryResponse.data || [],
+      documents: documentsResponse.data || []
     };
 
     // Generate HTML content
     const htmlContent = generatePetPDF(petData);
     
-    // Convert HTML to PDF using a simple HTML-to-PDF approach
-    // For now, we'll store the HTML and later implement proper PDF conversion
+    // Store the HTML document
     const fileName = `${petId}/pet-passport-${Date.now()}.html`;
     
     // Upload to Supabase Storage

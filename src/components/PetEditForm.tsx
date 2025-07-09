@@ -14,9 +14,10 @@ import {
   updatePetMedical, 
   uploadPetPhotos, 
   uploadGalleryPhoto, 
-  uploadDocument 
+  uploadDocument,
+  updatePetBasicInfo
 } from "@/services/petService";
-import { Upload, FileText, Camera, Stethoscope, Phone, X } from "lucide-react";
+import { Upload, FileText, Camera, Stethoscope, Phone, X, MapPin } from "lucide-react";
 
 interface PetEditFormProps {
   petData: any;
@@ -27,10 +28,16 @@ interface PetEditFormProps {
 export const PetEditForm = ({ petData, onSave, onCancel }: PetEditFormProps) => {
   const { register, handleSubmit, watch, setValue } = useForm({
     defaultValues: {
+      // Basic info
+      notes: petData.notes || "",
+      state: petData.state || "",
+      county: petData.county || "",
+      // Contact info
       vetContact: petData.vetContact || "",
       emergencyContact: petData.emergencyContact || "",
       secondEmergencyContact: petData.secondEmergencyContact || "",
       petCaretaker: petData.petCaretaker || "",
+      // Medical info
       medicalAlert: petData.medicalAlert || false,
       medicalConditions: petData.medicalConditions || "",
       medications: petData.medications?.join(", ") || "",
@@ -54,7 +61,17 @@ export const PetEditForm = ({ petData, onSave, onCancel }: PetEditFormProps) => 
     
     try {
       console.log("Starting form submission with data:", data);
-      console.log("Photos to upload:", { profilePhoto, fullBodyPhoto });
+
+      // Update basic pet information (notes, state, county)
+      const basicInfoSuccess = await updatePetBasicInfo(petData.id, {
+        notes: data.notes,
+        state: data.state,
+        county: data.county,
+      });
+
+      if (!basicInfoSuccess) {
+        throw new Error("Failed to update basic information");
+      }
 
       // Update contacts
       const contactSuccess = await updatePetContacts(petData.id, {
@@ -135,6 +152,45 @@ export const PetEditForm = ({ petData, onSave, onCancel }: PetEditFormProps) => 
   return (
     <div className="space-y-6">
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+        {/* Basic Information */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center space-x-2">
+              <MapPin className="w-5 h-5" />
+              <span>Basic Information</span>
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="state">State</Label>
+                <Input
+                  id="state"
+                  {...register("state")}
+                  placeholder="California"
+                />
+              </div>
+              <div>
+                <Label htmlFor="county">County</Label>
+                <Input
+                  id="county"
+                  {...register("county")}
+                  placeholder="Los Angeles County"
+                />
+              </div>
+            </div>
+            <div>
+              <Label htmlFor="notes">Notes</Label>
+              <Textarea
+                id="notes"
+                {...register("notes")}
+                placeholder="Behavioral notes, special instructions, etc."
+                rows={3}
+              />
+            </div>
+          </CardContent>
+        </Card>
+
         {/* Contact Information */}
         <Card>
           <CardHeader>

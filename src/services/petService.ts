@@ -12,6 +12,8 @@ export type PetWithDetails = {
   pet_pass_id: string | null;
   bio: string | null;
   notes: string | null;
+  state: string | null;
+  county: string | null;
   contacts?: Tables<"contacts"> | null;
   medical?: Tables<"medical"> | null;
   photos?: Tables<"pet_photos"> | null;
@@ -38,6 +40,8 @@ export function transformPetData(pet: PetWithDetails): any {
     petPassId: pet.pet_pass_id,
     bio: pet.bio,
     notes: pet.notes,
+    state: pet.state,
+    county: pet.county,
     // Transform contacts
     vetContact: pet.contacts?.vet_contact || "",
     emergencyContact: pet.contacts?.emergency_contact || "",
@@ -204,6 +208,33 @@ export async function createPet(petData: {
   } catch (error) {
     console.error("Error in createPet:", error);
     return null;
+  }
+}
+
+// Update basic pet information
+export async function updatePetBasicInfo(petId: string, basicData: {
+  notes?: string;
+  state?: string;
+  county?: string;
+}): Promise<boolean> {
+  try {
+    const { error } = await supabase
+      .from("pets")
+      .update({
+        ...basicData,
+        updated_at: new Date().toISOString()
+      })
+      .eq("id", petId);
+
+    if (error) {
+      console.error("Error updating basic pet info:", error);
+      throw error;
+    }
+
+    return true;
+  } catch (error) {
+    console.error("Error in updatePetBasicInfo:", error);
+    return false;
   }
 }
 

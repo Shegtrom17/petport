@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -25,6 +26,8 @@ interface PetData {
   badges: string[];
   medications: string[];
   notes: string;
+  state?: string;
+  county?: string;
   species?: string;
   supportAnimalStatus?: string | null;
   medicalAlert: boolean;
@@ -148,9 +151,11 @@ export const PetProfileCard = ({ petData, onUpdate }: PetProfileCardProps) => {
               <p className="text-lg font-medium">{petData.petCaretaker}</p>
             </div>
             <div className="space-y-2">
-              <p className="text-yellow-400 text-sm font-semibold tracking-wide">PETPASS ID</p>
-              <p className="text-lg font-mono bg-slate-700/50 px-3 py-2 rounded border border-yellow-600/30">
-                {petData.petPassId}
+              <p className="text-yellow-400 text-sm font-semibold tracking-wide">LOCATION</p>
+              <p className="text-lg font-medium">
+                {petData.state && petData.county ? `${petData.county}, ${petData.state}` : 
+                 petData.state ? petData.state : 
+                 petData.county ? petData.county : 'Not specified'}
               </p>
             </div>
           </div>

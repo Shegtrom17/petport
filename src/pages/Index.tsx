@@ -1,9 +1,11 @@
+
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { PlusCircle, LogOut } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { PetProfileCard } from "@/components/PetProfileCard";
@@ -21,7 +23,7 @@ import { PetPDFGenerator } from "@/components/PetPDFGenerator";
 import { SupportAnimalBanner } from "@/components/SupportAnimalBanner";
 import { InAppSharingModal } from "@/components/InAppSharingModal";
 import { fetchUserPets, fetchPetDetails } from "@/services/petService";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { MobileNavigationMenu } from "@/components/MobileNavigationMenu";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -227,10 +229,9 @@ const Index = () => {
         console.log("Rendering profile tab");
         return (
           <div className="space-y-6">
-            <SupportAnimalBanner petData={petData} />
+            <SupportAnimalBanner />
             <PetProfileCard 
               petData={petData} 
-              onEdit={() => setIsEditDialogOpen(true)}
             />
             <PetPDFGenerator petId={selectedPet?.id || petData.id || ""} petName={petData.name} />
           </div>

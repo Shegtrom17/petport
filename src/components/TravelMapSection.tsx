@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { MapPin, Camera, Download, Share2, Calendar, Trophy, Edit } from "lucide-react";
 import { TravelEditForm } from "@/components/TravelEditForm";
+import { InteractiveTravelMap } from "@/components/InteractiveTravelMap";
 import { fetchPetDetails } from "@/services/petService";
 import { useToast } from "@/hooks/use-toast";
 
@@ -85,7 +86,7 @@ export const TravelMapSection = ({ petData, onUpdate }: TravelMapSectionProps) =
       
       toast({
         title: "Success",
-        description: "Travel locations refreshed successfully!",
+        description: "Travel locations updated successfully!",
       });
     } catch (error) {
       console.error("Error refreshing travel locations:", error);
@@ -169,25 +170,8 @@ export const TravelMapSection = ({ petData, onUpdate }: TravelMapSectionProps) =
         </DialogContent>
       </Dialog>
 
-      {/* Travel Map Placeholder */}
-      <Card className="border-0 shadow-xl bg-passport-section-bg backdrop-blur-sm">
-        <CardHeader className="pb-3 sm:pb-6">
-          <CardTitle className="flex items-center space-x-2 text-base sm:text-lg">
-            <MapPin className="w-4 h-4 sm:w-5 sm:h-5 text-blue-600" />
-            <span>Travel Map</span>
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="pt-0">
-          <div className="bg-gradient-to-br from-blue-100 to-green-100 rounded-lg h-48 sm:h-64 flex items-center justify-center border-2 border-dashed border-blue-300">
-            <div className="text-center p-4">
-              <MapPin className="w-12 h-12 sm:w-16 sm:h-16 text-blue-400 mx-auto mb-4" />
-              <h3 className="text-base sm:text-lg font-semibold text-blue-900 mb-2">Interactive Travel Map</h3>
-              <p className="text-blue-700 text-sm sm:text-base">Map visualization would be displayed here</p>
-              <p className="text-xs sm:text-sm text-blue-600 mt-2">Showing pins for all {statesCount + countriesCount} locations</p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+      {/* Interactive Travel Map */}
+      <InteractiveTravelMap locations={locations} petName={petData.name} />
 
       {/* Locations List */}
       {locations.length > 0 ? (

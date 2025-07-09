@@ -1,236 +1,205 @@
 
-import { useState, useEffect } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { Save, X, Loader2 } from "lucide-react";
-import { saveCareInstructions, fetchCareInstructions } from "@/services/careInstructionsService";
+import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
+import { updateCareInstructions } from "@/services/careInstructionsService";
+import { Clock, Heart, AlertTriangle, Activity, Pill, Loader2 } from "lucide-react";
 
 interface CareInstructionsEditFormProps {
-  petData: {
-    id: string;
-    name: string;
-    species?: string;
-    medications: string[];
-  };
+  petData: any;
   onSave: () => void;
   onCancel: () => void;
 }
 
 export const CareInstructionsEditForm = ({ petData, onSave, onCancel }: CareInstructionsEditFormProps) => {
-  const [formData, setFormData] = useState({
-    feedingSchedule: "",
-    medications: petData.medications.join(", "),
-    morningRoutine: "",
-    eveningRoutine: "",
-    allergies: "",
-    behavioralNotes: "",
-    favoriteActivities: "",
+  const { register, handleSubmit, formState: { isDirty } } = useForm({
+    defaultValues: {
+      feedingSchedule: petData.careInstructions?.feedingSchedule || "",
+      morningRoutine: petData.careInstructions?.morningRoutine || "",
+      eveningRoutine: petData.careInstructions?.eveningRoutine || "",
+      allergies: petData.careInstructions?.allergies || "",
+      behavioralNotes: petData.careInstructions?.behavioralNotes || "",
+      favoriteActivities: petData.careInstructions?.favoriteActivities || "",
+      medications: petData.medications?.join(", ") || "",
+    }
   });
+
   const [isLoading, setIsLoading] = useState(false);
-  const [isLoadingData, setIsLoadingData] = useState(true);
   const { toast } = useToast();
 
-  // Load existing care instructions when component mounts
-  useEffect(() => {
-    const loadCareInstructions = async () => {
-      try {
-        console.log("Loading care instructions for pet:", petData.id);
-        const careData = await fetchCareInstructions(petData.id);
-        
-        if (careData) {
-          setFormData({
-            feedingSchedule: careData.feeding_schedule || "",
-            medications: petData.medications.join(", "),
-            morningRoutine: careData.morning_routine || "",
-            eveningRoutine: careData.evening_routine || "",
-            allergies: careData.allergies || "",
-            behavioralNotes: careData.behavioral_notes || "",
-            favoriteActivities: careData.favorite_activities || "",
-          });
-        } else {
-          // Set medications from pet data if no care instructions exist
-          setFormData(prev => ({
-            ...prev,
-            medications: petData.medications.join(", ")
-          }));
-        }
-      } catch (error) {
-        console.error("Error loading care instructions:", error);
-        toast({
-          variant: "destructive",
-          title: "Error",
-          description: "Failed to load care instructions."
-        });
-      } finally {
-        setIsLoadingData(false);
-      }
-    };
+  console.log("CareInstructionsEditForm initial data:", petData);
 
-    loadCareInstructions();
-  }, [petData.id, petData.medications, toast]);
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const onSubmit = async (data: any) => {
     setIsLoading(true);
     
     try {
-      console.log("Submitting care instructions:", formData);
-      
-      const success = await saveCareInstructions(petData.id, {
-        feeding_schedule: formData.feedingSchedule,
-        morning_routine: formData.morningRoutine,
-        evening_routine: formData.eveningRoutine,
-        allergies: formData.allergies,
-        behavioral_notes: formData.behavioralNotes,
-        favorite_activities: formData.favoriteActivities
+      console.log("Submitting care instructions form with data:", data);
+
+      const success = await updateCareInstructions(petData.id, {
+        feedingSchedule: data.feedingSchedule,
+        morningRoutine: data.morningRoutine,
+        eveningRoutine: data.eveningRoutine,
+        allergies: data.allergies,
+        behavioralNotes: data.behavioralNotes,
+        favoriteActivities: data.favoriteActivities,
+        medications: data.medications,
       });
 
       if (success) {
         toast({
           title: "Success",
-          description: "Care instructions saved successfully!"
+          description: "Care instructions updated successfully!",
         });
         onSave();
       } else {
-        throw new Error("Failed to save care instructions");
+        throw new Error("Failed to update care instructions");
       }
     } catch (error) {
-      console.error("Error saving care instructions:", error);
+      console.error("Error updating care instructions:", error);
       toast({
         variant: "destructive",
         title: "Error",
-        description: "Failed to save care instructions. Please try again."
+        description: "Failed to update care instructions. Please try again.",
       });
     } finally {
       setIsLoading(false);
     }
   };
 
-  if (isLoadingData) {
-    return (
-      <Card className="border-0 shadow-lg">
-        <CardContent className="p-8 text-center">
-          <Loader2 className="w-8 h-8 animate-spin mx-auto mb-4" />
-          <p>Loading care instructions...</p>
-        </CardContent>
-      </Card>
-    );
-  }
-
   return (
-    <Card className="border-0 shadow-lg">
-      <CardHeader>
-        <CardTitle className="flex items-center justify-between">
-          <span>Edit Care Instructions for {petData.name}</span>
-          <div className="flex items-center space-x-2">
-            <Button onClick={onCancel} variant="outline" size="sm" disabled={isLoading}>
-              <X className="w-4 h-4 mr-2" />
-              Cancel
-            </Button>
-            <Button onClick={handleSubmit} size="sm" disabled={isLoading}>
-              {isLoading ? (
+    <div className="space-y-6">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+        {/* Daily Routines */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center space-x-2">
+              <Clock className="w-5 h-5" />
+              <span>Daily Routines</span>
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div>
+              <Label htmlFor="feedingSchedule">Feeding Schedule</Label>
+              <Textarea
+                id="feedingSchedule"
+                {...register("feedingSchedule")}
+                placeholder="e.g., 7 AM - 1 cup dry food, 6 PM - 1 cup dry food"
+                rows={3}
+                disabled={isLoading}
+              />
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="morningRoutine">Morning Routine</Label>
+                <Textarea
+                  id="morningRoutine"
+                  {...register("morningRoutine")}
+                  placeholder="Morning walk, breakfast, medications..."
+                  rows={3}
+                  disabled={isLoading}
+                />
+              </div>
+              <div>
+                <Label htmlFor="eveningRoutine">Evening Routine</Label>
+                <Textarea
+                  id="eveningRoutine"
+                  {...register("eveningRoutine")}
+                  placeholder="Evening walk, dinner, bedtime..."
+                  rows={3}
+                  disabled={isLoading}
+                />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Health & Medications */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center space-x-2">
+              <Pill className="w-5 h-5" />
+              <span>Medications & Health</span>
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div>
+              <Label htmlFor="medications">Current Medications</Label>
+              <Textarea
+                id="medications"
+                {...register("medications")}
+                placeholder="Medication 1, Medication 2, ..."
+                rows={3}
+                disabled={isLoading}
+              />
+              <p className="text-sm text-gray-500 mt-1">Separate medications with commas</p>
+            </div>
+            <div>
+              <Label htmlFor="allergies">Allergies & Dietary Restrictions</Label>
+              <Textarea
+                id="allergies"
+                {...register("allergies")}
+                placeholder="Food allergies, environmental allergies, restrictions..."
+                rows={3}
+                disabled={isLoading}
+              />
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Behavior & Activities */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center space-x-2">
+              <Heart className="w-5 h-5" />
+              <span>Behavior & Activities</span>
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div>
+              <Label htmlFor="behavioralNotes">Behavioral Notes</Label>
+              <Textarea
+                id="behavioralNotes"
+                {...register("behavioralNotes")}
+                placeholder="Personality traits, quirks, things to watch for..."
+                rows={3}
+                disabled={isLoading}
+              />
+            </div>
+            <div>
+              <Label htmlFor="favoriteActivities">Favorite Activities</Label>
+              <Textarea
+                id="favoriteActivities"
+                {...register("favoriteActivities")}
+                placeholder="Playing fetch, going to the park, swimming..."
+                rows={3}
+                disabled={isLoading}
+              />
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Form Actions */}
+        <div className="flex justify-end space-x-4">
+          <Button type="button" variant="outline" onClick={onCancel} disabled={isLoading}>
+            Cancel
+          </Button>
+          <Button type="submit" disabled={isLoading}>
+            {isLoading ? (
+              <>
                 <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-              ) : (
-                <Save className="w-4 h-4 mr-2" />
-              )}
-              {isLoading ? "Saving..." : "Save Changes"}
-            </Button>
-          </div>
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="space-y-2">
-            <Label htmlFor="feedingSchedule">Feeding Schedule</Label>
-            <Textarea
-              id="feedingSchedule"
-              placeholder="Enter feeding times and instructions (e.g., Morning: 7:00 AM - 2 cups dry food, Evening: 6:00 PM - 2 cups dry food)..."
-              value={formData.feedingSchedule}
-              onChange={(e) => setFormData({ ...formData, feedingSchedule: e.target.value })}
-              rows={4}
-              disabled={isLoading}
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="medications">Current Medications</Label>
-            <Textarea
-              id="medications"
-              placeholder="List current medications and dosages..."
-              value={formData.medications}
-              onChange={(e) => setFormData({ ...formData, medications: e.target.value })}
-              rows={3}
-              disabled={isLoading}
-            />
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="morningRoutine">Morning Routine</Label>
-              <Textarea
-                id="morningRoutine"
-                placeholder="Describe morning routine..."
-                value={formData.morningRoutine}
-                onChange={(e) => setFormData({ ...formData, morningRoutine: e.target.value })}
-                rows={4}
-                disabled={isLoading}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="eveningRoutine">Evening Routine</Label>
-              <Textarea
-                id="eveningRoutine"
-                placeholder="Describe evening routine..."
-                value={formData.eveningRoutine}
-                onChange={(e) => setFormData({ ...formData, eveningRoutine: e.target.value })}
-                rows={4}
-                disabled={isLoading}
-              />
-            </div>
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="allergies">Allergies & Sensitivities</Label>
-            <Textarea
-              id="allergies"
-              placeholder="List any allergies or sensitivities..."
-              value={formData.allergies}
-              onChange={(e) => setFormData({ ...formData, allergies: e.target.value })}
-              rows={3}
-              disabled={isLoading}
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="behavioralNotes">Behavioral Notes</Label>
-            <Textarea
-              id="behavioralNotes"
-              placeholder="Describe behavioral traits and preferences..."
-              value={formData.behavioralNotes}
-              onChange={(e) => setFormData({ ...formData, behavioralNotes: e.target.value })}
-              rows={3}
-              disabled={isLoading}
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="favoriteActivities">Favorite Activities</Label>
-            <Textarea
-              id="favoriteActivities"
-              placeholder="List favorite activities and preferences..."
-              value={formData.favoriteActivities}
-              onChange={(e) => setFormData({ ...formData, favoriteActivities: e.target.value })}
-              rows={3}
-              disabled={isLoading}
-            />
-          </div>
-        </form>
-      </CardContent>
-    </Card>
+                Saving...
+              </>
+            ) : (
+              "Save Changes"
+            )}
+          </Button>
+        </div>
+      </form>
+    </div>
   );
 };

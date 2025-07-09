@@ -2,66 +2,84 @@
 import { supabase } from "@/integrations/supabase/client";
 
 export interface CareInstructionsData {
-  feeding_schedule?: string;
-  morning_routine?: string;
-  evening_routine?: string;
+  feedingSchedule?: string;
+  morningRoutine?: string;
+  eveningRoutine?: string;
   allergies?: string;
-  behavioral_notes?: string;
-  favorite_activities?: string;
+  behavioralNotes?: string;
+  favoriteActivities?: string;
+  medications?: string;
 }
 
-export async function saveCareInstructions(petId: string, data: CareInstructionsData): Promise<boolean> {
+export async function updateCareInstructions(
+  petId: string,
+  data: CareInstructionsData
+): Promise<boolean> {
   try {
-    console.log("Saving care instructions for pet:", petId, data);
-    
-    const { error } = await supabase.rpc('handle_care_instructions_upsert', {
+    console.log("Updating care instructions for pet:", petId, "with data:", data);
+
+    // Update care instructions using the database function
+    const { error: careError } = await supabase.rpc('handle_care_instructions_upsert', {
       _pet_id: petId,
-      _feeding_schedule: data.feeding_schedule || null,
-      _morning_routine: data.morning_routine || null,
-      _evening_routine: data.evening_routine || null,
+      _feeding_schedule: data.feedingSchedule || null,
+      _morning_routine: data.morningRoutine || null,
+      _evening_routine: data.eveningRoutine || null,
       _allergies: data.allergies || null,
-      _behavioral_notes: data.behavioral_notes || null,
-      _favorite_activities: data.favorite_activities || null
+      _behavioral_notes: data.behavioralNotes || null,
+      _favorite_activities: data.favoriteActivities || null,
     });
 
-    if (error) {
-      console.error("Error saving care instructions:", error);
-      throw error;
+    if (careError) {
+      console.error("Error updating care instructions:", careError);
+      throw careError;
     }
 
-    console.log("Care instructions saved successfully!");
+    // Also update medications in the medical table if provided
+    if (data.medications !== undefined) {
+      const medicationsArray = data.medications 
+        ? data.medications.split(",").map((m: string) => m.trim()).filter(m => m)
+        : [];
+
+      const { error: medicalError } = await supabase
+        .from("medical")
+        .upsert({
+          pet_id: petId,
+          medications: medicationsArray,
+          updated_at: new Date().toISOString()
+        }, {
+          onConflict: 'pet_id'
+        });
+
+      if (medicalError) {
+        console.error("Error updating medications in medical table:", medicalError);
+        throw medicalError;
+      }
+    }
+
+    console.log("Care instructions updated successfully");
     return true;
   } catch (error) {
-    console.error("Error in saveCareInstructions:", error);
+    console.error("Error in updateCareInstructions:", error);
     return false;
   }
 }
 
-export async function fetchCareInstructions(petId: string): Promise<CareInstructionsData | null> {
+export async function fetchCareInstructions(petId: string) {
   try {
     const { data, error } = await supabase
       .from("care_instructions")
       .select("*")
       .eq("pet_id", petId)
+      .order("updated_at", { ascending: false })
+      .limit(1)
       .maybeSingle();
 
     if (error) {
       console.error("Error fetching care instructions:", error);
-      throw error;
-    }
-
-    if (!data) {
       return null;
     }
 
-    return {
-      feeding_schedule: data.feeding_schedule || "",
-      morning_routine: data.morning_routine || "",
-      evening_routine: data.evening_routine || "",
-      allergies: data.allergies || "",
-      behavioral_notes: data.behavioral_notes || "",
-      favorite_activities: data.favorite_activities || ""
-    };
+    return data;
   } catch (error) {
     console.error("Error in fetchCareInstructions:", error);
     return null;

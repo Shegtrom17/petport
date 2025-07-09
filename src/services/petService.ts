@@ -156,7 +156,7 @@ export async function fetchPetDetails(petId: string): Promise<any | null> {
       return null;
     }
 
-    // Then fetch all related data
+    // Then fetch all related data - using single() instead of maybeSingle() to ensure we get the most recent record
     const [
       contactsResponse,
       medicalResponse,
@@ -171,11 +171,11 @@ export async function fetchPetDetails(petId: string): Promise<any | null> {
       travelResponse,
       documentsResponse
     ] = await Promise.all([
-      supabase.from("contacts").select("*").eq("pet_id", petId).maybeSingle(),
-      supabase.from("medical").select("*").eq("pet_id", petId).maybeSingle(),
-      supabase.from("pet_photos").select("*").eq("pet_id", petId).maybeSingle(),
-      supabase.from("professional_data").select("*").eq("pet_id", petId).maybeSingle(),
-      supabase.from("care_instructions").select("*").eq("pet_id", petId).maybeSingle(),
+      supabase.from("contacts").select("*").eq("pet_id", petId).order("updated_at", { ascending: false }).limit(1).maybeSingle(),
+      supabase.from("medical").select("*").eq("pet_id", petId).order("updated_at", { ascending: false }).limit(1).maybeSingle(),
+      supabase.from("pet_photos").select("*").eq("pet_id", petId).order("updated_at", { ascending: false }).limit(1).maybeSingle(),
+      supabase.from("professional_data").select("*").eq("pet_id", petId).order("updated_at", { ascending: false }).limit(1).maybeSingle(),
+      supabase.from("care_instructions").select("*").eq("pet_id", petId).order("updated_at", { ascending: false }).limit(1).maybeSingle(),
       supabase.from("gallery_photos").select("*").eq("pet_id", petId),
       supabase.from("experiences").select("*").eq("pet_id", petId),
       supabase.from("achievements").select("*").eq("pet_id", petId),
@@ -184,6 +184,13 @@ export async function fetchPetDetails(petId: string): Promise<any | null> {
       supabase.from("travel_locations").select("*").eq("pet_id", petId),
       supabase.from("documents").select("*").eq("pet_id", petId)
     ]);
+
+    // Log any errors but don't fail the entire operation
+    if (contactsResponse.error) console.error("Error fetching contacts:", contactsResponse.error);
+    if (medicalResponse.error) console.error("Error fetching medical:", medicalResponse.error);
+    if (photosResponse.error) console.error("Error fetching photos:", photosResponse.error);
+    if (professionalResponse.error) console.error("Error fetching professional:", professionalResponse.error);
+    if (careInstructionsResponse.error) console.error("Error fetching care instructions:", careInstructionsResponse.error);
 
     // Combine all data into a properly typed PetWithDetails object
     const petWithDetails: PetWithDetails = {
@@ -213,6 +220,7 @@ export async function fetchPetDetails(petId: string): Promise<any | null> {
       documents: documentsResponse.data || []
     };
 
+    console.log("Fetched pet with details:", petWithDetails);
     return transformPetData(petWithDetails);
   } catch (error) {
     console.error("Error in fetchPetDetails:", error);
@@ -284,6 +292,7 @@ export async function updatePetBasicInfo(petId: string, basicData: {
       throw error;
     }
 
+    console.log("Basic pet info updated successfully");
     return true;
   } catch (error) {
     console.error("Error in updatePetBasicInfo:", error);
@@ -291,7 +300,7 @@ export async function updatePetBasicInfo(petId: string, basicData: {
   }
 }
 
-// Update contact information
+// Update contact information with improved error handling
 export async function updatePetContacts(petId: string, contactData: {
   vet_contact?: string;
   emergency_contact?: string;
@@ -299,12 +308,16 @@ export async function updatePetContacts(petId: string, contactData: {
   pet_caretaker?: string;
 }): Promise<boolean> {
   try {
+    console.log("Updating contacts for pet:", petId, "with data:", contactData);
+    
     const { error } = await supabase
       .from("contacts")
       .upsert({
         pet_id: petId,
         ...contactData,
         updated_at: new Date().toISOString()
+      }, {
+        onConflict: 'pet_id'
       });
 
     if (error) {
@@ -312,6 +325,7 @@ export async function updatePetContacts(petId: string, contactData: {
       throw error;
     }
 
+    console.log("Contacts updated successfully");
     return true;
   } catch (error) {
     console.error("Error in updatePetContacts:", error);
@@ -319,7 +333,7 @@ export async function updatePetContacts(petId: string, contactData: {
   }
 }
 
-// Update medical information
+// Update medical information with improved error handling
 export async function updatePetMedical(petId: string, medicalData: {
   medical_alert?: boolean;
   medical_conditions?: string;
@@ -328,12 +342,16 @@ export async function updatePetMedical(petId: string, medicalData: {
   medical_emergency_document?: string;
 }): Promise<boolean> {
   try {
+    console.log("Updating medical for pet:", petId, "with data:", medicalData);
+    
     const { error } = await supabase
       .from("medical")
       .upsert({
         pet_id: petId,
         ...medicalData,
         updated_at: new Date().toISOString()
+      }, {
+        onConflict: 'pet_id'
       });
 
     if (error) {
@@ -341,6 +359,7 @@ export async function updatePetMedical(petId: string, medicalData: {
       throw error;
     }
 
+    console.log("Medical info updated successfully");
     return true;
   } catch (error) {
     console.error("Error in updatePetMedical:", error);
@@ -547,19 +566,26 @@ export async function updateTravelLocations(petId: string, locations: {
   }
 }
 
-// Update professional data (badges and support animal status)
+// Update professional data with improved error handling and parameter mapping fix
 export async function updateProfessionalData(petId: string, data: {
   badges?: string[];
   supportAnimalStatus?: string;
 }): Promise<boolean> {
   try {
+    console.log("Updating professional data for pet:", petId, "with data:", data);
+    
+    // Map supportAnimalStatus to support_animal_status for database
+    const dbData = {
+      pet_id: petId,
+      badges: data.badges,
+      support_animal_status: data.supportAnimalStatus, // Fixed parameter mapping
+      updated_at: new Date().toISOString()
+    };
+    
     const { error } = await supabase
       .from("professional_data")
-      .upsert({
-        pet_id: petId,
-        badges: data.badges,
-        support_animal_status: data.supportAnimalStatus,
-        updated_at: new Date().toISOString()
+      .upsert(dbData, {
+        onConflict: 'pet_id'
       });
 
     if (error) {
@@ -567,6 +593,7 @@ export async function updateProfessionalData(petId: string, data: {
       throw error;
     }
 
+    console.log("Professional data updated successfully");
     return true;
   } catch (error) {
     console.error("Error in updateProfessionalData:", error);

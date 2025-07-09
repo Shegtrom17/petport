@@ -128,7 +128,7 @@ export type Database = {
           {
             foreignKeyName: "contacts_pet_id_fkey"
             columns: ["pet_id"]
-            isOneToOne: false
+            isOneToOne: true
             referencedRelation: "pets"
             referencedColumns: ["id"]
           },
@@ -280,7 +280,7 @@ export type Database = {
           {
             foreignKeyName: "medical_pet_id_fkey"
             columns: ["pet_id"]
-            isOneToOne: false
+            isOneToOne: true
             referencedRelation: "pets"
             referencedColumns: ["id"]
           },
@@ -404,7 +404,7 @@ export type Database = {
           {
             foreignKeyName: "professional_data_pet_id_fkey"
             columns: ["pet_id"]
-            isOneToOne: false
+            isOneToOne: true
             referencedRelation: "pets"
             referencedColumns: ["id"]
           },

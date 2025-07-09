@@ -1,3 +1,4 @@
+
 import { supabase } from "@/integrations/supabase/client";
 import { Tables } from "@/integrations/supabase/types";
 
@@ -96,7 +97,35 @@ export async function fetchUserPets(): Promise<any[]> {
     }
 
     // Transform the pets data to match component expectations
-    return pets.map(pet => transformPetData(pet as PetWithDetails));
+    return pets.map(pet => {
+      // Create a minimal PetWithDetails object for transformation
+      const petWithDetails: PetWithDetails = {
+        id: pet.id,
+        name: pet.name,
+        breed: pet.breed,
+        species: pet.species,
+        age: pet.age,
+        weight: pet.weight,
+        microchip_id: pet.microchip_id,
+        pet_pass_id: pet.pet_pass_id,
+        bio: pet.bio,
+        notes: pet.notes,
+        state: pet.state,
+        county: pet.county,
+        contacts: null,
+        medical: null,
+        photos: null,
+        professional_data: null,
+        gallery_photos: [],
+        experiences: [],
+        achievements: [],
+        training: [],
+        reviews: [],
+        travel_locations: [],
+        documents: []
+      };
+      return transformPetData(petWithDetails);
+    });
   } catch (error) {
     console.error("Error in fetchUserPets:", error);
     return [];
@@ -144,9 +173,20 @@ export async function fetchPetDetails(petId: string): Promise<any | null> {
       supabase.from("documents").select("*").eq("pet_id", petId)
     ]);
 
-    // Combine all data
+    // Combine all data into a properly typed PetWithDetails object
     const petWithDetails: PetWithDetails = {
-      ...pet,
+      id: pet.id,
+      name: pet.name,
+      breed: pet.breed,
+      species: pet.species,
+      age: pet.age,
+      weight: pet.weight,
+      microchip_id: pet.microchip_id,
+      pet_pass_id: pet.pet_pass_id,
+      bio: pet.bio,
+      notes: pet.notes,
+      state: pet.state,
+      county: pet.county,
       contacts: contactsResponse.data,
       medical: medicalResponse.data,
       photos: photosResponse.data,

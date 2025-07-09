@@ -279,6 +279,7 @@ export type Database = {
           age: string | null
           bio: string | null
           breed: string | null
+          county: string | null
           created_at: string
           id: string
           microchip_id: string | null
@@ -286,6 +287,7 @@ export type Database = {
           notes: string | null
           pet_pass_id: string | null
           species: string | null
+          state: string | null
           updated_at: string
           user_id: string
           weight: string | null
@@ -294,6 +296,7 @@ export type Database = {
           age?: string | null
           bio?: string | null
           breed?: string | null
+          county?: string | null
           created_at?: string
           id?: string
           microchip_id?: string | null
@@ -301,6 +304,7 @@ export type Database = {
           notes?: string | null
           pet_pass_id?: string | null
           species?: string | null
+          state?: string | null
           updated_at?: string
           user_id: string
           weight?: string | null
@@ -309,6 +313,7 @@ export type Database = {
           age?: string | null
           bio?: string | null
           breed?: string | null
+          county?: string | null
           created_at?: string
           id?: string
           microchip_id?: string | null
@@ -316,6 +321,7 @@ export type Database = {
           notes?: string | null
           pet_pass_id?: string | null
           species?: string | null
+          state?: string | null
           updated_at?: string
           user_id?: string
           weight?: string | null

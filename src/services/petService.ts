@@ -83,7 +83,7 @@ export async function fetchUserPets(): Promise<any[]> {
   try {
     const { data: pets, error } = await supabase
       .from("pets")
-      .select("*")
+      .select("id, name, breed, species, age, weight, microchip_id, pet_pass_id, bio, notes, state, county, created_at, updated_at, user_id")
       .order("created_at", { ascending: false });
 
     if (error) {
@@ -105,10 +105,10 @@ export async function fetchUserPets(): Promise<any[]> {
 
 export async function fetchPetDetails(petId: string): Promise<any | null> {
   try {
-    // First fetch the pet
+    // First fetch the pet with all required fields
     const { data: pet, error } = await supabase
       .from("pets")
-      .select("*")
+      .select("id, name, breed, species, age, weight, microchip_id, pet_pass_id, bio, notes, state, county, created_at, updated_at, user_id")
       .eq("id", petId)
       .single();
 

@@ -74,7 +74,7 @@ export const PetEditForm = ({ petData, onSave, onCancel }: PetEditFormProps) => 
       }
       console.log("Basic info updated successfully");
 
-      // Update contacts
+      // Update contacts - including emergency contacts
       const contactSuccess = await updatePetContacts(petData.id, {
         vet_contact: data.vetContact,
         emergency_contact: data.emergencyContact,

@@ -6,14 +6,13 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Separator } from "@/components/ui/separator";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { 
   updatePetExperience, 
   updatePetAchievements, 
   updatePetTraining 
 } from "@/services/petService";
-import { Plus, Trash2, Activity, Trophy, GraduationCap } from "lucide-react";
+import { Plus, Trash2, Activity, Trophy, GraduationCap, Loader2 } from "lucide-react";
 
 interface PetResumeEditFormProps {
   petData: {
@@ -40,11 +39,11 @@ interface PetResumeEditFormProps {
 }
 
 export const PetResumeEditForm = ({ petData, onSave, onCancel }: PetResumeEditFormProps) => {
-  const { control, handleSubmit, register } = useForm({
+  const { control, handleSubmit, register, formState: { isSubmitting } } = useForm({
     defaultValues: {
-      experiences: petData.experiences || [{ activity: "", contact: "", description: "" }],
-      achievements: petData.achievements || [{ title: "", description: "" }],
-      training: petData.training || [{ course: "", facility: "", phone: "", completed: "" }]
+      experiences: petData.experiences && petData.experiences.length > 0 ? petData.experiences : [{ activity: "", contact: "", description: "" }],
+      achievements: petData.achievements && petData.achievements.length > 0 ? petData.achievements : [{ title: "", description: "" }],
+      training: petData.training && petData.training.length > 0 ? petData.training : [{ course: "", facility: "", phone: "", completed: "" }]
     }
   });
 
@@ -70,31 +69,33 @@ export const PetResumeEditForm = ({ petData, onSave, onCancel }: PetResumeEditFo
     setIsLoading(true);
     
     try {
+      console.log("Submitting resume data:", data);
+
       // Update experiences
-      const experienceSuccess = await updatePetExperience(
-        petData.id,
-        data.experiences.filter((exp: any) => exp.activity.trim() !== "")
-      );
+      const validExperiences = data.experiences.filter((exp: any) => exp.activity.trim() !== "");
+      console.log("Valid experiences to save:", validExperiences);
+      
+      const experienceSuccess = await updatePetExperience(petData.id, validExperiences);
 
       if (!experienceSuccess) {
         throw new Error("Failed to update experience information");
       }
 
       // Update achievements
-      const achievementSuccess = await updatePetAchievements(
-        petData.id,
-        data.achievements.filter((ach: any) => ach.title.trim() !== "")
-      );
+      const validAchievements = data.achievements.filter((ach: any) => ach.title.trim() !== "");
+      console.log("Valid achievements to save:", validAchievements);
+      
+      const achievementSuccess = await updatePetAchievements(petData.id, validAchievements);
 
       if (!achievementSuccess) {
         throw new Error("Failed to update achievement information");
       }
 
       // Update training
-      const trainingSuccess = await updatePetTraining(
-        petData.id,
-        data.training.filter((tr: any) => tr.course.trim() !== "")
-      );
+      const validTraining = data.training.filter((tr: any) => tr.course.trim() !== "");
+      console.log("Valid training to save:", validTraining);
+      
+      const trainingSuccess = await updatePetTraining(petData.id, validTraining);
 
       if (!trainingSuccess) {
         throw new Error("Failed to update training information");
@@ -140,6 +141,7 @@ export const PetResumeEditForm = ({ petData, onSave, onCancel }: PetResumeEditFo
                       variant="outline"
                       size="sm"
                       onClick={() => removeExperience(index)}
+                      disabled={isLoading}
                     >
                       <Trash2 className="w-4 h-4" />
                     </Button>
@@ -148,10 +150,11 @@ export const PetResumeEditForm = ({ petData, onSave, onCancel }: PetResumeEditFo
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   <div>
-                    <Label htmlFor={`experiences.${index}.activity`}>Activity</Label>
+                    <Label htmlFor={`experiences.${index}.activity`}>Activity *</Label>
                     <Input
-                      {...register(`experiences.${index}.activity`)}
+                      {...register(`experiences.${index}.activity`, { required: true })}
                       placeholder="e.g., Therapy visits at nursing home"
+                      disabled={isLoading}
                     />
                   </div>
                   <div>
@@ -159,6 +162,7 @@ export const PetResumeEditForm = ({ petData, onSave, onCancel }: PetResumeEditFo
                     <Input
                       {...register(`experiences.${index}.contact`)}
                       placeholder="Contact information"
+                      disabled={isLoading}
                     />
                   </div>
                 </div>
@@ -169,6 +173,7 @@ export const PetResumeEditForm = ({ petData, onSave, onCancel }: PetResumeEditFo
                     {...register(`experiences.${index}.description`)}
                     placeholder="Describe the experience..."
                     rows={3}
+                    disabled={isLoading}
                   />
                 </div>
               </div>
@@ -178,6 +183,7 @@ export const PetResumeEditForm = ({ petData, onSave, onCancel }: PetResumeEditFo
               type="button"
               variant="outline"
               onClick={() => appendExperience({ activity: "", contact: "", description: "" })}
+              disabled={isLoading}
             >
               <Plus className="w-4 h-4 mr-2" />
               Add Experience
@@ -204,6 +210,7 @@ export const PetResumeEditForm = ({ petData, onSave, onCancel }: PetResumeEditFo
                       variant="outline"
                       size="sm"
                       onClick={() => removeAchievement(index)}
+                      disabled={isLoading}
                     >
                       <Trash2 className="w-4 h-4" />
                     </Button>
@@ -211,10 +218,11 @@ export const PetResumeEditForm = ({ petData, onSave, onCancel }: PetResumeEditFo
                 </div>
                 
                 <div>
-                  <Label htmlFor={`achievements.${index}.title`}>Title</Label>
+                  <Label htmlFor={`achievements.${index}.title`}>Title *</Label>
                   <Input
-                    {...register(`achievements.${index}.title`)}
+                    {...register(`achievements.${index}.title`, { required: true })}
                     placeholder="e.g., Outstanding Therapy Dog Award 2024"
+                    disabled={isLoading}
                   />
                 </div>
                 
@@ -224,6 +232,7 @@ export const PetResumeEditForm = ({ petData, onSave, onCancel }: PetResumeEditFo
                     {...register(`achievements.${index}.description`)}
                     placeholder="Describe the achievement..."
                     rows={3}
+                    disabled={isLoading}
                   />
                 </div>
               </div>
@@ -233,6 +242,7 @@ export const PetResumeEditForm = ({ petData, onSave, onCancel }: PetResumeEditFo
               type="button"
               variant="outline"
               onClick={() => appendAchievement({ title: "", description: "" })}
+              disabled={isLoading}
             >
               <Plus className="w-4 h-4 mr-2" />
               Add Achievement
@@ -259,6 +269,7 @@ export const PetResumeEditForm = ({ petData, onSave, onCancel }: PetResumeEditFo
                       variant="outline"
                       size="sm"
                       onClick={() => removeTraining(index)}
+                      disabled={isLoading}
                     >
                       <Trash2 className="w-4 h-4" />
                     </Button>
@@ -267,10 +278,11 @@ export const PetResumeEditForm = ({ petData, onSave, onCancel }: PetResumeEditFo
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   <div>
-                    <Label htmlFor={`training.${index}.course`}>Course</Label>
+                    <Label htmlFor={`training.${index}.course`}>Course *</Label>
                     <Input
-                      {...register(`training.${index}.course`)}
+                      {...register(`training.${index}.course`, { required: true })}
                       placeholder="e.g., Advanced Obedience Training"
+                      disabled={isLoading}
                     />
                   </div>
                   <div>
@@ -278,6 +290,7 @@ export const PetResumeEditForm = ({ petData, onSave, onCancel }: PetResumeEditFo
                     <Input
                       {...register(`training.${index}.facility`)}
                       placeholder="Training facility name"
+                      disabled={isLoading}
                     />
                   </div>
                   <div>
@@ -285,6 +298,7 @@ export const PetResumeEditForm = ({ petData, onSave, onCancel }: PetResumeEditFo
                     <Input
                       {...register(`training.${index}.phone`)}
                       placeholder="Facility phone number"
+                      disabled={isLoading}
                     />
                   </div>
                   <div>
@@ -292,6 +306,7 @@ export const PetResumeEditForm = ({ petData, onSave, onCancel }: PetResumeEditFo
                     <Input
                       {...register(`training.${index}.completed`)}
                       placeholder="e.g., January 2024"
+                      disabled={isLoading}
                     />
                   </div>
                 </div>
@@ -302,6 +317,7 @@ export const PetResumeEditForm = ({ petData, onSave, onCancel }: PetResumeEditFo
               type="button"
               variant="outline"
               onClick={() => appendTraining({ course: "", facility: "", phone: "", completed: "" })}
+              disabled={isLoading}
             >
               <Plus className="w-4 h-4 mr-2" />
               Add Training
@@ -311,11 +327,18 @@ export const PetResumeEditForm = ({ petData, onSave, onCancel }: PetResumeEditFo
 
         {/* Form Actions */}
         <div className="flex justify-end space-x-4">
-          <Button type="button" variant="outline" onClick={onCancel}>
+          <Button type="button" variant="outline" onClick={onCancel} disabled={isLoading}>
             Cancel
           </Button>
-          <Button type="submit" disabled={isLoading}>
-            {isLoading ? "Saving..." : "Save Changes"}
+          <Button type="submit" disabled={isLoading || isSubmitting}>
+            {isLoading ? (
+              <>
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                Saving...
+              </>
+            ) : (
+              "Save Changes"
+            )}
           </Button>
         </div>
       </form>

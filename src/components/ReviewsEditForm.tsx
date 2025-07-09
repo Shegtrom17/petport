@@ -7,9 +7,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { updatePetReviews } from "@/services/petService";
-import { Plus, Trash2, Star } from "lucide-react";
+import { Plus, Trash2, Star, Loader2 } from "lucide-react";
 
 interface ReviewsEditFormProps {
   petData: {
@@ -30,9 +30,9 @@ interface ReviewsEditFormProps {
 }
 
 export const ReviewsEditForm = ({ petData, onSave, onCancel }: ReviewsEditFormProps) => {
-  const { control, handleSubmit, register, setValue, watch } = useForm({
+  const { control, handleSubmit, register, setValue, watch, formState: { isSubmitting } } = useForm({
     defaultValues: {
-      reviews: petData.reviews || [{ 
+      reviews: petData.reviews && petData.reviews.length > 0 ? petData.reviews : [{ 
         reviewerName: "", 
         reviewerContact: "", 
         rating: 5, 
@@ -56,10 +56,16 @@ export const ReviewsEditForm = ({ petData, onSave, onCancel }: ReviewsEditFormPr
     setIsLoading(true);
     
     try {
-      const reviewSuccess = await updatePetReviews(
-        petData.id,
-        data.reviews.filter((review: any) => review.reviewerName.trim() !== "")
+      console.log("Submitting reviews data:", data);
+      
+      // Filter out empty reviews and ensure required fields
+      const validReviews = data.reviews.filter((review: any) => 
+        review.reviewerName.trim() !== "" && review.rating
       );
+
+      console.log("Valid reviews to save:", validReviews);
+
+      const reviewSuccess = await updatePetReviews(petData.id, validReviews);
 
       if (!reviewSuccess) {
         throw new Error("Failed to update reviews");
@@ -113,6 +119,7 @@ export const ReviewsEditForm = ({ petData, onSave, onCancel }: ReviewsEditFormPr
                       variant="outline"
                       size="sm"
                       onClick={() => removeReview(index)}
+                      disabled={isLoading}
                     >
                       <Trash2 className="w-4 h-4" />
                     </Button>
@@ -121,10 +128,11 @@ export const ReviewsEditForm = ({ petData, onSave, onCancel }: ReviewsEditFormPr
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   <div>
-                    <Label htmlFor={`reviews.${index}.reviewerName`}>Reviewer Name</Label>
+                    <Label htmlFor={`reviews.${index}.reviewerName`}>Reviewer Name *</Label>
                     <Input
-                      {...register(`reviews.${index}.reviewerName`)}
+                      {...register(`reviews.${index}.reviewerName`, { required: true })}
                       placeholder="e.g., Sarah Johnson"
+                      disabled={isLoading}
                     />
                   </div>
                   <div>
@@ -132,13 +140,15 @@ export const ReviewsEditForm = ({ petData, onSave, onCancel }: ReviewsEditFormPr
                     <Input
                       {...register(`reviews.${index}.reviewerContact`)}
                       placeholder="Email or phone"
+                      disabled={isLoading}
                     />
                   </div>
                   <div>
-                    <Label htmlFor={`reviews.${index}.rating`}>Rating</Label>
+                    <Label htmlFor={`reviews.${index}.rating`}>Rating *</Label>
                     <Select
                       value={watch(`reviews.${index}.rating`)?.toString()}
                       onValueChange={(value) => setValue(`reviews.${index}.rating`, parseInt(value))}
+                      disabled={isLoading}
                     >
                       <SelectTrigger>
                         <SelectValue placeholder="Select rating" />
@@ -157,6 +167,7 @@ export const ReviewsEditForm = ({ petData, onSave, onCancel }: ReviewsEditFormPr
                     <Select
                       value={watch(`reviews.${index}.type`)}
                       onValueChange={(value) => setValue(`reviews.${index}.type`, value)}
+                      disabled={isLoading}
                     >
                       <SelectTrigger>
                         <SelectValue placeholder="Select type" />
@@ -175,6 +186,7 @@ export const ReviewsEditForm = ({ petData, onSave, onCancel }: ReviewsEditFormPr
                     <Input
                       {...register(`reviews.${index}.date`)}
                       placeholder="e.g., March 2024"
+                      disabled={isLoading}
                     />
                   </div>
                   <div>
@@ -182,6 +194,7 @@ export const ReviewsEditForm = ({ petData, onSave, onCancel }: ReviewsEditFormPr
                     <Input
                       {...register(`reviews.${index}.location`)}
                       placeholder="e.g., Denver, CO"
+                      disabled={isLoading}
                     />
                   </div>
                 </div>
@@ -192,6 +205,7 @@ export const ReviewsEditForm = ({ petData, onSave, onCancel }: ReviewsEditFormPr
                     {...register(`reviews.${index}.text`)}
                     placeholder="Write the review..."
                     rows={3}
+                    disabled={isLoading}
                   />
                 </div>
               </div>
@@ -209,6 +223,7 @@ export const ReviewsEditForm = ({ petData, onSave, onCancel }: ReviewsEditFormPr
                 location: "", 
                 type: "boarding" 
               })}
+              disabled={isLoading}
             >
               <Plus className="w-4 h-4 mr-2" />
               Add Review
@@ -218,11 +233,18 @@ export const ReviewsEditForm = ({ petData, onSave, onCancel }: ReviewsEditFormPr
 
         {/* Form Actions */}
         <div className="flex justify-end space-x-4">
-          <Button type="button" variant="outline" onClick={onCancel}>
+          <Button type="button" variant="outline" onClick={onCancel} disabled={isLoading}>
             Cancel
           </Button>
-          <Button type="submit" disabled={isLoading}>
-            {isLoading ? "Saving..." : "Save Changes"}
+          <Button type="submit" disabled={isLoading || isSubmitting}>
+            {isLoading ? (
+              <>
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                Saving...
+              </>
+            ) : (
+              "Save Changes"
+            )}
           </Button>
         </div>
       </form>

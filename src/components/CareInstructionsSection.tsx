@@ -1,8 +1,10 @@
 
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Heart, Clock, Pill, Coffee, Moon, AlertTriangle, Edit } from "lucide-react";
+import { CareInstructionsEditForm } from "@/components/CareInstructionsEditForm";
 
 interface CareInstructionsSectionProps {
   petData: {
@@ -13,7 +15,18 @@ interface CareInstructionsSectionProps {
 }
 
 export const CareInstructionsSection = ({ petData }: CareInstructionsSectionProps) => {
+  const [isEditing, setIsEditing] = useState(false);
   const isHorse = petData.species?.toLowerCase() === 'horse';
+  
+  if (isEditing) {
+    return (
+      <CareInstructionsEditForm
+        petData={petData}
+        onSave={() => setIsEditing(false)}
+        onCancel={() => setIsEditing(false)}
+      />
+    );
+  }
   
   const feedingSchedule = [
     { time: "7:00 AM", meal: "Morning feed - 2 cups dry food + supplements", notes: "Mix with warm water if preferred" },
@@ -40,23 +53,29 @@ export const CareInstructionsSection = ({ petData }: CareInstructionsSectionProp
         </CardContent>
       </Card>
 
-      {/* Care Summary */}
-      <Card className="border-0 shadow-lg bg-gradient-to-r from-green-500 to-emerald-600 text-white">
+      {/* Care Summary - Updated to gray-blue */}
+      <Card className="border-0 shadow-lg bg-gradient-to-r from-slate-600 to-slate-700 text-white">
         <CardHeader>
-          <CardTitle className="flex items-center space-x-2">
-            <Heart className="w-5 h-5" />
-            <span>Care Instructions for {petData.name}</span>
+          <CardTitle className="flex items-center justify-between">
+            <div className="flex items-center space-x-2">
+              <Heart className="w-5 h-5" />
+              <span>Care Instructions for {petData.name}</span>
+            </div>
+            <Button 
+              onClick={() => setIsEditing(true)}
+              variant="secondary" 
+              className="bg-white/20 hover:bg-white/30 text-white border-white/30"
+            >
+              <Edit className="w-4 h-4 mr-2" />
+              Edit Instructions
+            </Button>
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-green-100">
+          <p className="text-slate-100">
             Complete care guide for pet sitters, boarding facilities, and emergency caregivers.
             All instructions are current as of the last update.
           </p>
-          <Button variant="secondary" className="mt-4 bg-white/20 hover:bg-white/30 text-white border-white/30">
-            <Edit className="w-4 h-4 mr-2" />
-            Edit Instructions
-          </Button>
         </CardContent>
       </Card>
 

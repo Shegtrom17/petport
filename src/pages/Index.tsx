@@ -17,6 +17,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { fetchUserPets, fetchPetDetails } from "@/services/petService";
 import { useToast } from "@/components/ui/use-toast";
+import { MobileNavigationMenu } from "@/components/MobileNavigationMenu";
 
 const Index = () => {
   console.log("Index component is rendering");
@@ -254,6 +255,7 @@ const Index = () => {
               >
                 <PlusCircle className="mr-1 h-3 w-3 md:h-4 md:w-4" /> Add Pet
               </Button>
+              <MobileNavigationMenu activeTab={activeTab} onTabChange={setActiveTab} />
               <Button 
                 variant="outline" 
                 size="icon"
@@ -328,38 +330,8 @@ const Index = () => {
                 <div className="absolute top-0 right-0 w-24 h-24 md:w-32 md:h-32 bg-yellow-500/10 rounded-full -translate-y-12 md:-translate-y-16 translate-x-12 md:translate-x-16"></div>
                 <div className="absolute bottom-0 left-0 w-18 h-18 md:w-24 md:h-24 bg-yellow-500/10 rounded-full translate-y-9 md:translate-y-12 -translate-x-9 md:-translate-x-12"></div>
                 
-                {/* Pawprint & HoofBeats Title */}
-                <div className="text-center mb-4">
-                  <h1 className="text-yellow-400 text-sm md:text-lg font-serif font-bold tracking-wider">
-                    PAWPRINT & HOOFBEATS
-                  </h1>
-                </div>
-                
-                <div className="flex items-center justify-between mb-4 relative z-20">
-                  <div className="flex items-center space-x-2 md:space-x-3">
-                    <img 
-                      src="/lovable-uploads/1af9fe70-ed76-44c5-a1e1-1a058e497a10.png" 
-                      alt="PetPass Logo"
-                      className="w-6 h-6 md:w-8 md:h-8 object-contain"
-                      onError={(e) => {
-                        console.error("Passport logo failed to load:", e);
-                        e.currentTarget.style.display = 'none';
-                      }}
-                      onLoad={() => console.log("Passport logo loaded successfully")}
-                    />
-                    <div>
-                      <h1 className="text-yellow-400 text-sm md:text-lg font-serif font-bold tracking-wider">PETPASS</h1>
-                      <p className="text-yellow-300 text-xs font-serif tracking-wide">DIGITAL PET PASSPORT</p>
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-yellow-400 text-xs md:text-sm font-serif tracking-wide">GLOBE TROTTER</p>
-                    <p className="text-xs text-yellow-300 font-mono">ID: {petData.petPassId}</p>
-                  </div>
-                </div>
-                
                 <div className="flex items-center space-x-4 md:space-x-8 relative z-20">
-                  <div className="w-24 h-24 md:w-32 md:h-32 lg:w-40 lg:h-40 rounded-lg overflow-hidden border-4 border-yellow-500/50 shadow-lg flex-shrink-0">
+                  <div className="w-32 h-32 md:w-40 md:h-40 lg:w-48 lg:h-48 rounded-lg overflow-hidden border-4 border-yellow-500/50 shadow-lg flex-shrink-0">
                     <img 
                       src={petData.photoUrl || "https://placehold.co/100x100?text=" + petData.name?.charAt(0)} 
                       alt={petData.name}
@@ -369,7 +341,7 @@ const Index = () => {
                   <div className="flex-1">
                     <h2 className="text-xl md:text-3xl font-serif font-bold text-yellow-400 mb-1 tracking-wide">{petData.name?.toUpperCase()}</h2>
                     <p className="text-yellow-200 font-serif text-sm md:text-lg mb-2">{petData.breed} • {petData.age}</p>
-                    <div className="flex items-center space-x-3 md:space-x-6 text-xs md:text-sm">
+                    <div className="flex items-center space-x-3 md:space-x-6 text-xs md:text-sm mb-4">
                       <div className="flex items-center space-x-2">
                         <div className="w-2 h-2 bg-yellow-400 rounded-full"></div>
                         <span className="font-serif text-yellow-200">Weight: {petData.weight}</span>
@@ -378,6 +350,10 @@ const Index = () => {
                         <div className="w-2 h-2 bg-yellow-400 rounded-full"></div>
                         <span className="font-serif text-yellow-200">{petData.badges?.length || 0} Certifications</span>
                       </div>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-yellow-400 text-xs md:text-sm font-serif tracking-wide">GLOBE TROTTER</p>
+                      <p className="text-xs text-yellow-300 font-mono">ID: {petData.petPassId}</p>
                     </div>
                   </div>
                 </div>

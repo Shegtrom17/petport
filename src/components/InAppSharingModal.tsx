@@ -90,11 +90,18 @@ export const InAppSharingModal = ({ isOpen, onClose, petId, petName }: InAppShar
 
     setIsSending(true);
     try {
+      // Fetch the current user info
+      const { data: { user } } = await supabase.auth.getUser();
+
+      if (!user) {
+        throw new Error("User not authenticated.");
+      }
+
       // Create share records in the database
       const shareRecords = Array.from(selectedUsers).map(userId => ({
         pet_id: petId,
         shared_with_user_id: userId,
-        shared_by_user_id: (await supabase.auth.getUser()).data.user?.id,
+        shared_by_user_id: user.id,
         created_at: new Date().toISOString()
       }));
 
@@ -123,7 +130,7 @@ export const InAppSharingModal = ({ isOpen, onClose, petId, petName }: InAppShar
       console.error('Error sharing profile:', error);
       toast({
         title: "Error",
-        description: "Failed to share pet profile. Please try again.",
+        description: error instanceof Error ? error.message : "Failed to share pet profile. Please try again.",
         variant: "destructive",
       });
     } finally {

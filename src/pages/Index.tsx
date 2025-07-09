@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -19,6 +18,7 @@ import { useAuth } from "@/context/AuthContext";
 import { fetchUserPets, fetchPetDetails } from "@/services/petService";
 import { useToast } from "@/components/ui/use-toast";
 import { MobileNavigationMenu } from "@/components/MobileNavigationMenu";
+import { supabase } from "@/integrations/supabase/client";
 
 const Index = () => {
   console.log("Index component is rendering");
@@ -29,10 +29,31 @@ const Index = () => {
   const [pets, setPets] = useState<any[]>([]);
   const [selectedPet, setSelectedPet] = useState<any | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [documents, setDocuments] = useState<any[]>([]);
   
   const navigate = useNavigate();
   const { signOut, user } = useAuth();
   const { toast } = useToast();
+
+  // Fetch documents for the selected pet
+  const fetchDocuments = async (petId: string) => {
+    try {
+      const { data, error } = await supabase
+        .from('documents')
+        .select('*')
+        .eq('pet_id', petId)
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.error("Error fetching documents:", error);
+        return;
+      }
+
+      setDocuments(data || []);
+    } catch (error) {
+      console.error("Error fetching documents:", error);
+    }
+  };
 
   // Fetch user's pets
   useEffect(() => {
@@ -45,6 +66,7 @@ const Index = () => {
         if (userPets.length > 0) {
           const petDetails = await fetchPetDetails(userPets[0].id);
           setSelectedPet(petDetails);
+          await fetchDocuments(userPets[0].id);
         }
       } catch (error) {
         console.error("Error loading pets:", error);
@@ -67,6 +89,7 @@ const Index = () => {
       setIsLoading(true);
       const petDetails = await fetchPetDetails(petId);
       setSelectedPet(petDetails);
+      await fetchDocuments(petId);
     } catch (error) {
       console.error("Error fetching pet details:", error);
       toast({
@@ -100,10 +123,17 @@ const Index = () => {
     }
   };
 
+  // Function to refresh documents after changes
+  const handleDocumentUpdate = async () => {
+    if (selectedPet?.id) {
+      await fetchDocuments(selectedPet.id);
+    }
+  };
+
   // Use dummy data for now if no pets are found
   const petData = selectedPet || {
     name: "Luna",
-    breed: "Golden Retriever",
+    breed: "Golden Retriever", 
     species: "dog",
     age: "3 years",
     weight: "65 lbs",
@@ -187,7 +217,11 @@ const Index = () => {
           return <TravelMapSection petData={petData} />;
         case "documents":
           console.log("Rendering DocumentsSection");
-          return <DocumentsSection />;
+          return <DocumentsSection 
+            petId={selectedPet?.id || petData.id || ""} 
+            documents={documents} 
+            onDocumentDeleted={handleDocumentUpdate}
+          />;
         case "badges":
           console.log("Rendering BadgesSection");
           return <BadgesSection badges={petData.badges || []} petData={petData} />;

@@ -30,6 +30,7 @@ export const CareInstructionsSection = ({ petData }: CareInstructionsSectionProp
       try {
         console.log("Loading care instructions for display, pet:", petData.id);
         const data = await fetchCareInstructions(petData.id);
+        console.log("Loaded care data:", data);
         setCareData(data);
       } catch (error) {
         console.error("Error loading care instructions:", error);
@@ -81,24 +82,37 @@ export const CareInstructionsSection = ({ petData }: CareInstructionsSectionProp
       </Card>
     );
   }
-  
-  const feedingSchedule = careData?.feeding_schedule ? [
-    { time: "Morning", meal: careData.feeding_schedule, notes: "As specified by owner" }
-  ] : [
-    { time: "7:00 AM", meal: "Morning feed - 2 cups dry food + supplements", notes: "Mix with warm water if preferred" },
-    { time: "12:00 PM", meal: "Light snack - Training treats only", notes: "If active/training day" },
-    { time: "6:00 PM", meal: "Evening feed - 2 cups dry food", notes: "Fresh water always available" },
-  ];
 
-  const horseSchedule = careData?.feeding_schedule ? [
-    { time: "Daily", meal: careData.feeding_schedule, notes: "Follow owner's instructions" }
-  ] : [
-    { time: "6:00 AM", meal: "Morning hay - 2 flakes timothy", notes: "Check water buckets" },
-    { time: "12:00 PM", meal: "Grain feed - 2 lbs sweet feed", notes: "Add supplements" },
-    { time: "6:00 PM", meal: "Evening hay - 2 flakes", notes: "Turn out or bring in from pasture" },
-  ];
+  // Parse feeding schedule - if saved data exists, use it; otherwise show defaults
+  const getFeedingScheduleItems = () => {
+    if (careData?.feeding_schedule) {
+      // If there's saved feeding schedule, display it as a single item
+      return [
+        { 
+          time: "Custom Schedule", 
+          meal: careData.feeding_schedule, 
+          notes: "As specified by owner" 
+        }
+      ];
+    }
+    
+    // Default schedule based on species
+    if (isHorse) {
+      return [
+        { time: "6:00 AM", meal: "Morning hay - 2 flakes timothy", notes: "Check water buckets" },
+        { time: "12:00 PM", meal: "Grain feed - 2 lbs sweet feed", notes: "Add supplements" },
+        { time: "6:00 PM", meal: "Evening hay - 2 flakes", notes: "Turn out or bring in from pasture" },
+      ];
+    } else {
+      return [
+        { time: "7:00 AM", meal: "Morning feed - 2 cups dry food + supplements", notes: "Mix with warm water if preferred" },
+        { time: "12:00 PM", meal: "Light snack - Training treats only", notes: "If active/training day" },
+        { time: "6:00 PM", meal: "Evening feed - 2 cups dry food", notes: "Fresh water always available" },
+      ];
+    }
+  };
 
-  const currentSchedule = isHorse ? horseSchedule : feedingSchedule;
+  const feedingScheduleItems = getFeedingScheduleItems();
 
   return (
     <div className="space-y-6">
@@ -147,7 +161,7 @@ export const CareInstructionsSection = ({ petData }: CareInstructionsSectionProp
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            {currentSchedule.map((feeding, index) => (
+            {feedingScheduleItems.map((feeding, index) => (
               <div key={index} className="flex items-start space-x-4 p-4 bg-orange-50 rounded-lg border-l-4 border-orange-500">
                 <div className="flex items-center space-x-2 min-w-0">
                   <Clock className="w-4 h-4 text-orange-600 flex-shrink-0" />

@@ -51,6 +51,12 @@ export const CareInstructionsEditForm = ({ petData, onSave, onCancel }: CareInst
             behavioralNotes: careData.behavioral_notes || "",
             favoriteActivities: careData.favorite_activities || "",
           });
+        } else {
+          // Set medications from pet data if no care instructions exist
+          setFormData(prev => ({
+            ...prev,
+            medications: petData.medications.join(", ")
+          }));
         }
       } catch (error) {
         console.error("Error loading care instructions:", error);
@@ -142,7 +148,7 @@ export const CareInstructionsEditForm = ({ petData, onSave, onCancel }: CareInst
             <Label htmlFor="feedingSchedule">Feeding Schedule</Label>
             <Textarea
               id="feedingSchedule"
-              placeholder="Enter feeding times and instructions..."
+              placeholder="Enter feeding times and instructions (e.g., Morning: 7:00 AM - 2 cups dry food, Evening: 6:00 PM - 2 cups dry food)..."
               value={formData.feedingSchedule}
               onChange={(e) => setFormData({ ...formData, feedingSchedule: e.target.value })}
               rows={4}

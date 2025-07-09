@@ -138,17 +138,17 @@ export const PetProfileCard = ({ petData, onUpdate }: PetProfileCardProps) => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
               <p className="text-yellow-400 text-sm font-semibold tracking-wide">PRIMARY VETERINARIAN</p>
-              <p className="text-lg font-medium">{petData.vetContact}</p>
+              <p className="text-lg font-medium">{petData.vetContact || "Not specified"}</p>
             </div>
             <div className="space-y-2">
               <p className="text-yellow-400 text-sm font-semibold tracking-wide">MICROCHIP NUMBER</p>
               <p className="text-lg font-mono bg-slate-700/50 px-3 py-2 rounded border border-yellow-600/30">
-                {petData.microchipId}
+                {petData.microchipId || "Not specified"}
               </p>
             </div>
             <div className="space-y-2">
               <p className="text-yellow-400 text-sm font-semibold tracking-wide">PET CARETAKER</p>
-              <p className="text-lg font-medium">{petData.petCaretaker}</p>
+              <p className="text-lg font-medium">{petData.petCaretaker || "Not specified"}</p>
             </div>
             <div className="space-y-2">
               <p className="text-yellow-400 text-sm font-semibold tracking-wide">LOCATION</p>
@@ -191,7 +191,7 @@ export const PetProfileCard = ({ petData, onUpdate }: PetProfileCardProps) => {
               </div>
               <div className="aspect-square rounded-lg overflow-hidden border-4 border-yellow-600/50 shadow-lg">
                 <img 
-                  src={petData.photoUrl} 
+                  src={petData.photoUrl || "/placeholder.svg"} 
                   alt={`${petData.name} portrait`}
                   className="w-full h-full object-cover"
                 />
@@ -206,7 +206,7 @@ export const PetProfileCard = ({ petData, onUpdate }: PetProfileCardProps) => {
               </div>
               <div className="aspect-[4/3] rounded-lg overflow-hidden border-4 border-yellow-600/50 shadow-lg">
                 <img 
-                  src={petData.fullBodyPhotoUrl} 
+                  src={petData.fullBodyPhotoUrl || "/placeholder.svg"} 
                   alt={`${petData.name} full profile`}
                   className="w-full h-full object-cover"
                 />
@@ -227,7 +227,7 @@ export const PetProfileCard = ({ petData, onUpdate }: PetProfileCardProps) => {
         <CardContent className="space-y-4">
           <div className="bg-slate-700/30 p-4 rounded-lg border border-yellow-600/30">
             <p className="text-yellow-400 text-sm font-semibold tracking-wide mb-2">BEHAVIORAL NOTES</p>
-            <p className="text-slate-200">{petData.notes}</p>
+            <p className="text-slate-200">{petData.notes || "No notes specified"}</p>
           </div>
         </CardContent>
       </Card>
@@ -243,11 +243,11 @@ export const PetProfileCard = ({ petData, onUpdate }: PetProfileCardProps) => {
         <CardContent className="space-y-4">
           <div>
             <p className="text-sm font-medium text-gray-600">Primary Emergency Contact</p>
-            <p className="text-lg font-medium text-red-600">{petData.emergencyContact}</p>
+            <p className="text-lg font-medium text-red-600">{petData.emergencyContact || "Not specified"}</p>
           </div>
           <div>
             <p className="text-sm font-medium text-gray-600">Secondary Emergency Contact</p>
-            <p className="text-lg font-medium text-red-600">{petData.secondEmergencyContact}</p>
+            <p className="text-lg font-medium text-red-600">{petData.secondEmergencyContact || "Not specified"}</p>
           </div>
         </CardContent>
       </Card>
@@ -263,7 +263,7 @@ export const PetProfileCard = ({ petData, onUpdate }: PetProfileCardProps) => {
         <CardContent className="space-y-4">
           <div>
             <p className="text-sm font-medium text-gray-600">Last Vaccination</p>
-            <p className="text-lg text-green-600 font-medium">{petData.lastVaccination}</p>
+            <p className="text-lg text-green-600 font-medium">{petData.lastVaccination || "Not specified"}</p>
           </div>
           
           {/* Medical Alert Section */}
@@ -280,7 +280,7 @@ export const PetProfileCard = ({ petData, onUpdate }: PetProfileCardProps) => {
             {petData.medicalAlert ? (
               <div className="bg-red-50 border border-red-200 rounded-lg p-4">
                 <p className="text-red-800 font-medium mb-2">Medical Conditions:</p>
-                <p className="text-red-700">{petData.medicalConditions}</p>
+                <p className="text-red-700">{petData.medicalConditions || "No conditions specified"}</p>
                 
                 <div className="mt-4 flex items-center space-x-2">
                   {petData.medicalEmergencyDocument ? (

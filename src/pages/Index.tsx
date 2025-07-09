@@ -226,19 +226,24 @@ const Index = () => {
       <header className="bg-white/80 backdrop-blur-sm border-b border-blue-100 sticky top-0 z-50">
         <div className="max-w-4xl mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
-            {/* Centered New Logo */}
-            <div className="flex-1 flex justify-center">
-              <div className="w-16 h-16 md:w-20 md:h-20 lg:w-24 lg:h-24">
+            {/* Left Side - Logo and Title */}
+            <div className="flex items-center space-x-3 md:space-x-4">
+              <div className="w-12 h-12 md:w-16 md:h-16 lg:w-20 lg:h-20 flex-shrink-0">
                 <img 
                   src="/lovable-uploads/d4e1e1f9-612c-48bb-8391-e7bce7658e8c.png" 
                   alt="PetPass Logo"
                   className="w-full h-full object-contain"
                   onError={(e) => {
-                    console.error("New header logo failed to load:", e);
+                    console.error("Header logo failed to load:", e);
                     e.currentTarget.style.display = 'none';
                   }}
-                  onLoad={() => console.log("New header logo loaded successfully")}
+                  onLoad={() => console.log("Header logo loaded successfully")}
                 />
+              </div>
+              <div className="hidden sm:block">
+                <h1 className="text-lg md:text-xl lg:text-2xl font-bold text-navy-900 tracking-wide">
+                  Digital Pet Passport
+                </h1>
               </div>
             </div>
             
@@ -261,6 +266,13 @@ const Index = () => {
                 <LogOut className="h-3 w-3 md:h-4 md:w-4" />
               </Button>
             </div>
+          </div>
+          
+          {/* Mobile Title - Show below logo on small screens */}
+          <div className="sm:hidden mt-2 text-center">
+            <h1 className="text-base font-bold text-navy-900 tracking-wide">
+              Digital Pet Passport
+            </h1>
           </div>
         </div>
       </header>

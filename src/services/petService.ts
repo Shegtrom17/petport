@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 import { Tables } from "@/integrations/supabase/types";
 
@@ -19,6 +18,7 @@ export type PetWithDetails = {
   medical?: Tables<"medical"> | null;
   photos?: Tables<"pet_photos"> | null;
   professional_data?: Tables<"professional_data"> | null;
+  care_instructions?: Tables<"care_instructions"> | null;
   gallery_photos?: Tables<"gallery_photos">[];
   experiences?: Tables<"experiences">[];
   achievements?: Tables<"achievements">[];
@@ -60,6 +60,15 @@ export function transformPetData(pet: PetWithDetails): any {
     // Transform professional data
     badges: pet.professional_data?.badges || [],
     supportAnimalStatus: pet.professional_data?.support_animal_status || null,
+    // Transform care instructions
+    careInstructions: pet.care_instructions ? {
+      feedingSchedule: pet.care_instructions.feeding_schedule,
+      morningRoutine: pet.care_instructions.morning_routine,
+      eveningRoutine: pet.care_instructions.evening_routine,
+      allergies: pet.care_instructions.allergies,
+      behavioralNotes: pet.care_instructions.behavioral_notes,
+      favoriteActivities: pet.care_instructions.favorite_activities
+    } : null,
     // Transform other arrays
     experiences: pet.experiences || [],
     achievements: pet.achievements || [],
@@ -116,6 +125,7 @@ export async function fetchUserPets(): Promise<any[]> {
         medical: null,
         photos: null,
         professional_data: null,
+        care_instructions: null,
         gallery_photos: [],
         experiences: [],
         achievements: [],
@@ -152,6 +162,7 @@ export async function fetchPetDetails(petId: string): Promise<any | null> {
       medicalResponse,
       photosResponse,
       professionalResponse,
+      careInstructionsResponse,
       galleryResponse,
       experiencesResponse,
       achievementsResponse,
@@ -164,6 +175,7 @@ export async function fetchPetDetails(petId: string): Promise<any | null> {
       supabase.from("medical").select("*").eq("pet_id", petId).maybeSingle(),
       supabase.from("pet_photos").select("*").eq("pet_id", petId).maybeSingle(),
       supabase.from("professional_data").select("*").eq("pet_id", petId).maybeSingle(),
+      supabase.from("care_instructions").select("*").eq("pet_id", petId).maybeSingle(),
       supabase.from("gallery_photos").select("*").eq("pet_id", petId),
       supabase.from("experiences").select("*").eq("pet_id", petId),
       supabase.from("achievements").select("*").eq("pet_id", petId),
@@ -191,6 +203,7 @@ export async function fetchPetDetails(petId: string): Promise<any | null> {
       medical: medicalResponse.data,
       photos: photosResponse.data,
       professional_data: professionalResponse.data,
+      care_instructions: careInstructionsResponse.data,
       gallery_photos: galleryResponse.data || [],
       experiences: experiencesResponse.data || [],
       achievements: achievementsResponse.data || [],

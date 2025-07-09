@@ -46,6 +46,53 @@ export type Database = {
           },
         ]
       }
+      care_instructions: {
+        Row: {
+          allergies: string | null
+          behavioral_notes: string | null
+          created_at: string
+          evening_routine: string | null
+          favorite_activities: string | null
+          feeding_schedule: string | null
+          id: string
+          morning_routine: string | null
+          pet_id: string
+          updated_at: string
+        }
+        Insert: {
+          allergies?: string | null
+          behavioral_notes?: string | null
+          created_at?: string
+          evening_routine?: string | null
+          favorite_activities?: string | null
+          feeding_schedule?: string | null
+          id?: string
+          morning_routine?: string | null
+          pet_id: string
+          updated_at?: string
+        }
+        Update: {
+          allergies?: string | null
+          behavioral_notes?: string | null
+          created_at?: string
+          evening_routine?: string | null
+          favorite_activities?: string | null
+          feeding_schedule?: string | null
+          id?: string
+          morning_routine?: string | null
+          pet_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "care_instructions_pet_id_fkey"
+            columns: ["pet_id"]
+            isOneToOne: true
+            referencedRelation: "pets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       contacts: {
         Row: {
           created_at: string
@@ -521,6 +568,18 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      handle_care_instructions_upsert: {
+        Args: {
+          _pet_id: string
+          _feeding_schedule?: string
+          _morning_routine?: string
+          _evening_routine?: string
+          _allergies?: string
+          _behavioral_notes?: string
+          _favorite_activities?: string
+        }
+        Returns: string
+      }
       handle_document_upload: {
         Args: {
           _pet_id: string

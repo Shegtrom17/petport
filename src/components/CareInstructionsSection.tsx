@@ -1,13 +1,16 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Heart, Clock, Pill, Coffee, Moon, AlertTriangle, Edit } from "lucide-react";
+import { Heart, Clock, Pill, Coffee, Moon, AlertTriangle, Edit, Loader2 } from "lucide-react";
 import { CareInstructionsEditForm } from "@/components/CareInstructionsEditForm";
+import { fetchCareInstructions } from "@/services/careInstructionsService";
+import { useToast } from "@/hooks/use-toast";
 
 interface CareInstructionsSectionProps {
   petData: {
+    id: string;
     name: string;
     species?: string;
     medications: string[];
@@ -16,25 +19,80 @@ interface CareInstructionsSectionProps {
 
 export const CareInstructionsSection = ({ petData }: CareInstructionsSectionProps) => {
   const [isEditing, setIsEditing] = useState(false);
+  const [careData, setCareData] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const { toast } = useToast();
   const isHorse = petData.species?.toLowerCase() === 'horse';
+
+  // Load care instructions from database
+  useEffect(() => {
+    const loadCareInstructions = async () => {
+      try {
+        console.log("Loading care instructions for display, pet:", petData.id);
+        const data = await fetchCareInstructions(petData.id);
+        setCareData(data);
+      } catch (error) {
+        console.error("Error loading care instructions:", error);
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "Failed to load care instructions."
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadCareInstructions();
+  }, [petData.id, toast]);
+
+  const handleSave = async () => {
+    setIsEditing(false);
+    setIsLoading(true);
+    
+    // Reload the data after saving
+    try {
+      const data = await fetchCareInstructions(petData.id);
+      setCareData(data);
+    } catch (error) {
+      console.error("Error reloading care instructions:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
   
   if (isEditing) {
     return (
       <CareInstructionsEditForm
         petData={petData}
-        onSave={() => setIsEditing(false)}
+        onSave={handleSave}
         onCancel={() => setIsEditing(false)}
       />
     );
   }
+
+  if (isLoading) {
+    return (
+      <Card className="border-0 shadow-lg">
+        <CardContent className="p-8 text-center">
+          <Loader2 className="w-8 h-8 animate-spin mx-auto mb-4" />
+          <p>Loading care instructions...</p>
+        </CardContent>
+      </Card>
+    );
+  }
   
-  const feedingSchedule = [
+  const feedingSchedule = careData?.feeding_schedule ? [
+    { time: "Morning", meal: careData.feeding_schedule, notes: "As specified by owner" }
+  ] : [
     { time: "7:00 AM", meal: "Morning feed - 2 cups dry food + supplements", notes: "Mix with warm water if preferred" },
     { time: "12:00 PM", meal: "Light snack - Training treats only", notes: "If active/training day" },
     { time: "6:00 PM", meal: "Evening feed - 2 cups dry food", notes: "Fresh water always available" },
   ];
 
-  const horseSchedule = [
+  const horseSchedule = careData?.feeding_schedule ? [
+    { time: "Daily", meal: careData.feeding_schedule, notes: "Follow owner's instructions" }
+  ] : [
     { time: "6:00 AM", meal: "Morning hay - 2 flakes timothy", notes: "Check water buckets" },
     { time: "12:00 PM", meal: "Grain feed - 2 lbs sweet feed", notes: "Add supplements" },
     { time: "6:00 PM", meal: "Evening hay - 2 flakes", notes: "Turn out or bring in from pasture" },
@@ -53,7 +111,7 @@ export const CareInstructionsSection = ({ petData }: CareInstructionsSectionProp
         </CardContent>
       </Card>
 
-      {/* Care Summary - Updated to gray-blue */}
+      {/* Care Summary */}
       <Card className="border-0 shadow-lg bg-gradient-to-r from-slate-600 to-slate-700 text-white">
         <CardHeader>
           <CardTitle className="flex items-center justify-between">
@@ -73,7 +131,7 @@ export const CareInstructionsSection = ({ petData }: CareInstructionsSectionProp
         </CardHeader>
         <CardContent>
           <p className="text-slate-100">
-            Complete care guide for pet sitters, boarding facilities, and emergency caregivers.
+            {careData ? "Custom care instructions have been provided." : "Complete care guide for pet sitters, boarding facilities, and emergency caregivers."}
             All instructions are current as of the last update.
           </p>
         </CardContent>
@@ -158,21 +216,29 @@ export const CareInstructionsSection = ({ petData }: CareInstructionsSectionProp
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="p-4 bg-purple-50 rounded-lg">
               <h4 className="font-medium text-purple-900 mb-2">Morning Routine</h4>
-              <ul className="text-sm text-purple-800 space-y-1">
-                <li>• Wake up around 7:00 AM</li>
-                <li>• {isHorse ? 'Check water buckets and hay' : 'Potty break immediately'}</li>
-                <li>• {isHorse ? 'Quick health check' : 'Short walk before breakfast'}</li>
-                <li>• Feeding time</li>
-              </ul>
+              {careData?.morning_routine ? (
+                <p className="text-sm text-purple-800">{careData.morning_routine}</p>
+              ) : (
+                <ul className="text-sm text-purple-800 space-y-1">
+                  <li>• Wake up around 7:00 AM</li>
+                  <li>• {isHorse ? 'Check water buckets and hay' : 'Potty break immediately'}</li>
+                  <li>• {isHorse ? 'Quick health check' : 'Short walk before breakfast'}</li>
+                  <li>• Feeding time</li>
+                </ul>
+              )}
             </div>
             <div className="p-4 bg-indigo-50 rounded-lg">
               <h4 className="font-medium text-indigo-900 mb-2">Evening Routine</h4>
-              <ul className="text-sm text-indigo-800 space-y-1">
-                <li>• Dinner around 6:00 PM</li>
-                <li>• {isHorse ? 'Turn out or bring in from pasture' : 'Play time after dinner'}</li>
-                <li>• {isHorse ? 'Final hay feeding' : 'Final potty break at 10 PM'}</li>
-                <li>• {!isHorse && 'Bedtime routine - quiet time'}</li>
-              </ul>
+              {careData?.evening_routine ? (
+                <p className="text-sm text-indigo-800">{careData.evening_routine}</p>
+              ) : (
+                <ul className="text-sm text-indigo-800 space-y-1">
+                  <li>• Dinner around 6:00 PM</li>
+                  <li>• {isHorse ? 'Turn out or bring in from pasture' : 'Play time after dinner'}</li>
+                  <li>• {isHorse ? 'Final hay feeding' : 'Final potty break at 10 PM'}</li>
+                  <li>• {!isHorse && 'Bedtime routine - quiet time'}</li>
+                </ul>
+              )}
             </div>
           </div>
         </CardContent>
@@ -190,28 +256,28 @@ export const CareInstructionsSection = ({ petData }: CareInstructionsSectionProp
           <div className="p-3 bg-red-50 rounded border border-red-200">
             <h4 className="font-medium text-red-900 mb-1">Allergies & Sensitivities</h4>
             <p className="text-sm text-red-800">
-              {isHorse 
+              {careData?.allergies || (isHorse 
                 ? "Sensitive to alfalfa - stick to timothy hay only. No moldy or dusty feed."
                 : "Sensitive to chicken - avoid all poultry-based treats and foods."
-              }
+              )}
             </p>
           </div>
           <div className="p-3 bg-yellow-50 rounded border border-yellow-200">
             <h4 className="font-medium text-yellow-900 mb-1">Behavioral Notes</h4>
             <p className="text-sm text-yellow-800">
-              {isHorse
+              {careData?.behavioral_notes || (isHorse
                 ? "Generally calm but can be anxious during storms. Provide extra hay for comfort."
                 : "Friendly with other dogs but needs slow introductions. Afraid of thunderstorms - provide comfort."
-              }
+              )}
             </p>
           </div>
           <div className="p-3 bg-green-50 rounded border border-green-200">
             <h4 className="font-medium text-green-900 mb-1">Favorite Activities</h4>
             <p className="text-sm text-green-800">
-              {isHorse
+              {careData?.favorite_activities || (isHorse
                 ? "Enjoys trail rides and groundwork. Loves grooming sessions."
                 : "Loves swimming, fetch, and puzzle toys. Great with children."
-              }
+              )}
             </p>
           </div>
         </CardContent>

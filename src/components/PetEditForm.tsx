@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { 
   updatePetContacts, 
   updatePetMedical, 
@@ -17,7 +17,7 @@ import {
   uploadDocument,
   updatePetBasicInfo
 } from "@/services/petService";
-import { Upload, FileText, Camera, Stethoscope, Phone, X, MapPin } from "lucide-react";
+import { Upload, FileText, Camera, Stethoscope, Phone, X, MapPin, Loader2 } from "lucide-react";
 
 interface PetEditFormProps {
   petData: any;
@@ -26,7 +26,7 @@ interface PetEditFormProps {
 }
 
 export const PetEditForm = ({ petData, onSave, onCancel }: PetEditFormProps) => {
-  const { register, handleSubmit, watch, setValue } = useForm({
+  const { register, handleSubmit, watch, setValue, formState: { isDirty } } = useForm({
     defaultValues: {
       // Basic info
       notes: petData.notes || "",
@@ -72,6 +72,7 @@ export const PetEditForm = ({ petData, onSave, onCancel }: PetEditFormProps) => 
       if (!basicInfoSuccess) {
         throw new Error("Failed to update basic information");
       }
+      console.log("Basic info updated successfully");
 
       // Update contacts
       const contactSuccess = await updatePetContacts(petData.id, {
@@ -84,18 +85,20 @@ export const PetEditForm = ({ petData, onSave, onCancel }: PetEditFormProps) => 
       if (!contactSuccess) {
         throw new Error("Failed to update contact information");
       }
+      console.log("Contacts updated successfully");
 
       // Update medical information
       const medicalSuccess = await updatePetMedical(petData.id, {
         medical_alert: data.medicalAlert,
         medical_conditions: data.medicalConditions,
-        medications: data.medications ? data.medications.split(",").map((m: string) => m.trim()) : [],
+        medications: data.medications ? data.medications.split(",").map((m: string) => m.trim()).filter(m => m) : [],
         last_vaccination: data.lastVaccination,
       });
 
       if (!medicalSuccess) {
         throw new Error("Failed to update medical information");
       }
+      console.log("Medical info updated successfully");
 
       // Upload photos if provided
       if (profilePhoto || fullBodyPhoto) {
@@ -168,6 +171,7 @@ export const PetEditForm = ({ petData, onSave, onCancel }: PetEditFormProps) => 
                   id="state"
                   {...register("state")}
                   placeholder="California"
+                  disabled={isLoading}
                 />
               </div>
               <div>
@@ -176,6 +180,7 @@ export const PetEditForm = ({ petData, onSave, onCancel }: PetEditFormProps) => 
                   id="county"
                   {...register("county")}
                   placeholder="Los Angeles County"
+                  disabled={isLoading}
                 />
               </div>
             </div>
@@ -186,6 +191,7 @@ export const PetEditForm = ({ petData, onSave, onCancel }: PetEditFormProps) => 
                 {...register("notes")}
                 placeholder="Behavioral notes, special instructions, etc."
                 rows={3}
+                disabled={isLoading}
               />
             </div>
           </CardContent>
@@ -207,6 +213,7 @@ export const PetEditForm = ({ petData, onSave, onCancel }: PetEditFormProps) => 
                   id="vetContact"
                   {...register("vetContact")}
                   placeholder="Dr. Smith - (555) 123-4567"
+                  disabled={isLoading}
                 />
               </div>
               <div>
@@ -215,6 +222,7 @@ export const PetEditForm = ({ petData, onSave, onCancel }: PetEditFormProps) => 
                   id="petCaretaker"
                   {...register("petCaretaker")}
                   placeholder="John Doe"
+                  disabled={isLoading}
                 />
               </div>
               <div>
@@ -223,6 +231,7 @@ export const PetEditForm = ({ petData, onSave, onCancel }: PetEditFormProps) => 
                   id="emergencyContact"
                   {...register("emergencyContact")}
                   placeholder="(555) 987-6543"
+                  disabled={isLoading}
                 />
               </div>
               <div>
@@ -231,6 +240,7 @@ export const PetEditForm = ({ petData, onSave, onCancel }: PetEditFormProps) => 
                   id="secondEmergencyContact"
                   {...register("secondEmergencyContact")}
                   placeholder="(555) 456-7890"
+                  disabled={isLoading}
                 />
               </div>
             </div>
@@ -251,6 +261,7 @@ export const PetEditForm = ({ petData, onSave, onCancel }: PetEditFormProps) => 
                 id="medicalAlert"
                 checked={medicalAlert}
                 onCheckedChange={(checked) => setValue("medicalAlert", checked)}
+                disabled={isLoading}
               />
               <Label htmlFor="medicalAlert">Medical Alert</Label>
             </div>
@@ -262,6 +273,7 @@ export const PetEditForm = ({ petData, onSave, onCancel }: PetEditFormProps) => 
                   id="medicalConditions"
                   {...register("medicalConditions")}
                   placeholder="Describe any medical conditions..."
+                  disabled={isLoading}
                 />
               </div>
             )}
@@ -274,6 +286,7 @@ export const PetEditForm = ({ petData, onSave, onCancel }: PetEditFormProps) => 
                   {...register("medications")}
                   placeholder="Medication 1, Medication 2, ..."
                   rows={3}
+                  disabled={isLoading}
                 />
                 <p className="text-sm text-gray-500 mt-1">Separate medications with commas</p>
               </div>
@@ -283,6 +296,7 @@ export const PetEditForm = ({ petData, onSave, onCancel }: PetEditFormProps) => 
                   id="lastVaccination"
                   {...register("lastVaccination")}
                   placeholder="March 2024"
+                  disabled={isLoading}
                 />
               </div>
             </div>
@@ -311,6 +325,7 @@ export const PetEditForm = ({ petData, onSave, onCancel }: PetEditFormProps) => 
                       console.log("Profile photo selected:", file?.name);
                       setProfilePhoto(file);
                     }}
+                    disabled={isLoading}
                   />
                   {profilePhoto && (
                     <Button
@@ -318,6 +333,7 @@ export const PetEditForm = ({ petData, onSave, onCancel }: PetEditFormProps) => 
                       variant="outline"
                       size="sm"
                       onClick={() => setProfilePhoto(null)}
+                      disabled={isLoading}
                     >
                       <X className="w-4 h-4" />
                     </Button>
@@ -336,6 +352,7 @@ export const PetEditForm = ({ petData, onSave, onCancel }: PetEditFormProps) => 
                       console.log("Full body photo selected:", file?.name);
                       setFullBodyPhoto(file);
                     }}
+                    disabled={isLoading}
                   />
                   {fullBodyPhoto && (
                     <Button
@@ -343,6 +360,7 @@ export const PetEditForm = ({ petData, onSave, onCancel }: PetEditFormProps) => 
                       variant="outline"
                       size="sm"
                       onClick={() => setFullBodyPhoto(null)}
+                      disabled={isLoading}
                     >
                       <X className="w-4 h-4" />
                     </Button>
@@ -365,11 +383,13 @@ export const PetEditForm = ({ petData, onSave, onCancel }: PetEditFormProps) => 
                     console.log("Gallery photo selected:", file?.name);
                     setGalleryPhoto(file);
                   }}
+                  disabled={isLoading}
                 />
                 <Input
                   placeholder="Photo caption (optional)"
                   value={galleryCaption}
                   onChange={(e) => setGalleryCaption(e.target.value)}
+                  disabled={isLoading}
                 />
               </div>
             </div>
@@ -397,6 +417,7 @@ export const PetEditForm = ({ petData, onSave, onCancel }: PetEditFormProps) => 
                     console.log("Document selected:", file?.name);
                     setDocument(file);
                   }}
+                  disabled={isLoading}
                 />
               </div>
               <div>
@@ -406,6 +427,7 @@ export const PetEditForm = ({ petData, onSave, onCancel }: PetEditFormProps) => 
                   value={documentType}
                   onChange={(e) => setDocumentType(e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  disabled={isLoading}
                 >
                   <option value="vaccination">Vaccination Record</option>
                   <option value="certificate">Certificate</option>
@@ -421,11 +443,18 @@ export const PetEditForm = ({ petData, onSave, onCancel }: PetEditFormProps) => 
 
         {/* Form Actions */}
         <div className="flex justify-end space-x-4">
-          <Button type="button" variant="outline" onClick={onCancel}>
+          <Button type="button" variant="outline" onClick={onCancel} disabled={isLoading}>
             Cancel
           </Button>
           <Button type="submit" disabled={isLoading}>
-            {isLoading ? "Saving..." : "Save Changes"}
+            {isLoading ? (
+              <>
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                Saving...
+              </>
+            ) : (
+              "Save Changes"
+            )}
           </Button>
         </div>
       </form>

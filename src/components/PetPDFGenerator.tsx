@@ -3,8 +3,8 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { FileText, Download, QrCode, Share2, Loader2 } from "lucide-react";
-import { generatePetPDF, generateQRCodeUrl, downloadPDF } from "@/services/pdfService";
+import { FileText, Download, QrCode, Share2, Loader2, Users, ExternalLink } from "lucide-react";
+import { generatePetPDF, generateQRCodeUrl, downloadPDF, generatePublicProfileUrl, shareProfile } from "@/services/pdfService";
 import { useToast } from "@/hooks/use-toast";
 
 interface PetPDFGeneratorProps {
@@ -14,26 +14,37 @@ interface PetPDFGeneratorProps {
 
 export const PetPDFGenerator = ({ petId, petName }: PetPDFGeneratorProps) => {
   const [isGenerating, setIsGenerating] = useState(false);
-  const [pdfUrl, setPdfUrl] = useState<string | null>(null);
-  const [qrCodeUrl, setQrCodeUrl] = useState<string | null>(null);
+  const [emergencyPdfUrl, setEmergencyPdfUrl] = useState<string | null>(null);
+  const [fullPdfUrl, setFullPdfUrl] = useState<string | null>(null);
+  const [emergencyQrCodeUrl, setEmergencyQrCodeUrl] = useState<string | null>(null);
+  const [fullQrCodeUrl, setFullQrCodeUrl] = useState<string | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isSharing, setIsSharing] = useState(false);
   const { toast } = useToast();
 
-  const handleGeneratePDF = async () => {
+  const publicProfileUrl = generatePublicProfileUrl(petId);
+
+  const handleGeneratePDF = async (type: 'emergency' | 'full') => {
     setIsGenerating(true);
     try {
-      console.log('Starting PDF generation for pet:', petId);
+      console.log(`Starting ${type} PDF generation for pet:`, petId);
       
-      const result = await generatePetPDF(petId);
+      const result = await generatePetPDF(petId, type);
       
       if (result.success && result.pdfUrl) {
-        setPdfUrl(result.pdfUrl);
-        setQrCodeUrl(generateQRCodeUrl(result.pdfUrl));
+        if (type === 'emergency') {
+          setEmergencyPdfUrl(result.pdfUrl);
+          setEmergencyQrCodeUrl(generateQRCodeUrl(result.pdfUrl));
+        } else {
+          setFullPdfUrl(result.pdfUrl);
+          setFullQrCodeUrl(generateQRCodeUrl(result.pdfUrl));
+        }
+        
         setIsDialogOpen(true);
         
         toast({
           title: "PDF Generated Successfully",
-          description: `${petName}'s passport PDF is ready to download and share.`,
+          description: `${petName}'s ${type === 'emergency' ? 'emergency passport' : 'complete profile'} PDF is ready to download and share.`,
         });
       } else {
         throw new Error(result.error || 'Failed to generate PDF');
@@ -50,14 +61,14 @@ export const PetPDFGenerator = ({ petId, petName }: PetPDFGeneratorProps) => {
     }
   };
 
-  const handleDownload = async () => {
-    if (!pdfUrl) return;
+  const handleDownload = async (url: string, type: 'emergency' | 'full') => {
+    if (!url) return;
     
     try {
-      await downloadPDF(pdfUrl, `${petName}-passport.html`);
+      await downloadPDF(url, `${petName}-${type}-profile.html`);
       toast({
         title: "Download Started",
-        description: "Your pet's passport is being downloaded.",
+        description: `Your pet's ${type} profile is being downloaded.`,
       });
     } catch (error) {
       toast({
@@ -68,35 +79,35 @@ export const PetPDFGenerator = ({ petId, petName }: PetPDFGeneratorProps) => {
     }
   };
 
-  const handleShare = async () => {
-    if (!pdfUrl) return;
+  const handleShare = async (url: string, type: string) => {
+    if (!url) return;
 
-    if (navigator.share) {
-      try {
-        await navigator.share({
-          title: `${petName}'s Pet Passport`,
-          text: `Emergency information for ${petName}`,
-          url: pdfUrl,
-        });
-      } catch (error) {
-        console.error('Error sharing:', error);
-      }
-    } else {
-      // Fallback: copy to clipboard
-      try {
-        await navigator.clipboard.writeText(pdfUrl);
+    setIsSharing(true);
+    try {
+      const success = await shareProfile(url, petName);
+      if (success) {
         toast({
-          title: "Link Copied",
-          description: "PDF link copied to clipboard.",
+          title: navigator.share ? "Shared Successfully" : "Link Copied",
+          description: navigator.share ? 
+            `${petName}'s ${type} profile has been shared.` : 
+            `${type} profile link copied to clipboard.`,
         });
-      } catch (error) {
-        toast({
-          title: "Share Failed",
-          description: "Could not copy link to clipboard.",
-          variant: "destructive",
-        });
+      } else {
+        throw new Error('Failed to share');
       }
+    } catch (error) {
+      toast({
+        title: "Share Failed",
+        description: "Could not share the profile. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSharing(false);
     }
+  };
+
+  const handleSharePublicProfile = async () => {
+    await handleShare(publicProfileUrl, "public");
   };
 
   return (
@@ -104,84 +115,172 @@ export const PetPDFGenerator = ({ petId, petName }: PetPDFGeneratorProps) => {
       <CardHeader>
         <CardTitle className="flex items-center space-x-2 text-amber-800">
           <FileText className="w-5 h-5" />
-          <span>Emergency Passport</span>
+          <span>Pet Profiles & Sharing</span>
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         <p className="text-sm text-amber-700">
-          Generate a shareable PDF with {petName}'s vital information for emergencies and travel.
+          Generate shareable documents and profiles for {petName}. Choose between emergency info or complete profile.
         </p>
         
-        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <DialogTrigger asChild>
-            <Button 
-              onClick={handleGeneratePDF}
-              disabled={isGenerating}
-              className="w-full bg-amber-600 hover:bg-amber-700 text-white"
-            >
-              {isGenerating ? (
-                <>
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  Generating PDF...
-                </>
-              ) : (
-                <>
-                  <FileText className="w-4 h-4 mr-2" />
-                  Generate Emergency Passport
-                </>
-              )}
-            </Button>
-          </DialogTrigger>
-          
-          <DialogContent className="max-w-md">
-            <DialogHeader>
-              <DialogTitle>Emergency Passport Ready</DialogTitle>
-            </DialogHeader>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <Button 
+            onClick={() => handleGeneratePDF('emergency')}
+            disabled={isGenerating}
+            variant="outline"
+            className="w-full"
+          >
+            {isGenerating ? (
+              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+            ) : (
+              <FileText className="w-4 h-4 mr-2" />
+            )}
+            Emergency Passport
+          </Button>
+
+          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+            <DialogTrigger asChild>
+              <Button 
+                onClick={() => handleGeneratePDF('full')}
+                disabled={isGenerating}
+                className="w-full bg-amber-600 hover:bg-amber-700 text-white"
+              >
+                {isGenerating ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    Generating...
+                  </>
+                ) : (
+                  <>
+                    <FileText className="w-4 h-4 mr-2" />
+                    Full Profile PDF
+                  </>
+                )}
+              </Button>
+            </DialogTrigger>
             
-            <div className="space-y-4">
-              {qrCodeUrl && (
-                <div className="text-center space-y-2">
-                  <p className="text-sm text-gray-600">Scan QR Code for Quick Access:</p>
-                  <div className="flex justify-center">
-                    <img 
-                      src={qrCodeUrl} 
-                      alt="QR Code for Pet Passport" 
-                      className="border-2 border-gray-300 rounded-lg"
-                    />
+            <DialogContent className="max-w-md">
+              <DialogHeader>
+                <DialogTitle>Share {petName}'s Profile</DialogTitle>
+              </DialogHeader>
+              
+              <div className="space-y-6">
+                {/* Public Profile Link */}
+                <div className="space-y-3">
+                  <h4 className="font-medium flex items-center gap-2">
+                    <ExternalLink className="w-4 h-4" />
+                    Public Profile Page
+                  </h4>
+                  <p className="text-sm text-gray-600">Share a read-only online profile that anyone can view</p>
+                  <Button
+                    onClick={handleSharePublicProfile}
+                    disabled={isSharing}
+                    variant="outline"
+                    className="w-full"
+                  >
+                    {isSharing ? (
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    ) : (
+                      <Share2 className="w-4 h-4 mr-2" />
+                    )}
+                    Share Public Profile
+                  </Button>
+                </div>
+
+                {/* Emergency PDF */}
+                {emergencyPdfUrl && emergencyQrCodeUrl && (
+                  <div className="space-y-3">
+                    <h4 className="font-medium">Emergency Passport PDF</h4>
+                    <div className="text-center">
+                      <img 
+                        src={emergencyQrCodeUrl} 
+                        alt="Emergency PDF QR Code" 
+                        className="border-2 border-gray-300 rounded-lg mx-auto mb-2"
+                        style={{width: '120px', height: '120px'}}
+                      />
+                    </div>
+                    <div className="grid grid-cols-2 gap-2">
+                      <Button
+                        onClick={() => handleDownload(emergencyPdfUrl, 'emergency')}
+                        variant="outline"
+                        size="sm"
+                      >
+                        <Download className="w-4 h-4 mr-1" />
+                        Download
+                      </Button>
+                      <Button
+                        onClick={() => handleShare(emergencyPdfUrl, 'emergency')}
+                        variant="outline"
+                        size="sm"
+                        disabled={isSharing}
+                      >
+                        <Share2 className="w-4 h-4 mr-1" />
+                        Share
+                      </Button>
+                    </div>
                   </div>
+                )}
+
+                {/* Full Profile PDF */}
+                {fullPdfUrl && fullQrCodeUrl && (
+                  <div className="space-y-3">
+                    <h4 className="font-medium">Complete Profile PDF</h4>
+                    <div className="text-center">
+                      <img 
+                        src={fullQrCodeUrl} 
+                        alt="Full Profile PDF QR Code" 
+                        className="border-2 border-gray-300 rounded-lg mx-auto mb-2"
+                        style={{width: '120px', height: '120px'}}
+                      />
+                    </div>
+                    <div className="grid grid-cols-2 gap-2">
+                      <Button
+                        onClick={() => handleDownload(fullPdfUrl, 'full')}
+                        variant="outline"
+                        size="sm"
+                      >
+                        <Download className="w-4 h-4 mr-1" />
+                        Download
+                      </Button>
+                      <Button
+                        onClick={() => handleShare(fullPdfUrl, 'complete')}
+                        variant="outline"
+                        size="sm"
+                        disabled={isSharing}
+                      >
+                        <Share2 className="w-4 h-4 mr-1" />
+                        Share
+                      </Button>
+                    </div>
+                  </div>
+                )}
+
+                {/* In-App Sharing */}
+                <div className="border-t pt-3">
+                  <Button
+                    onClick={() => {
+                      setIsDialogOpen(false);
+                      // Navigate to in-app sharing component
+                      window.location.hash = 'share-with-members';
+                    }}
+                    variant="default"
+                    className="w-full"
+                  >
+                    <Users className="w-4 h-4 mr-2" />
+                    Share with PetPass Members
+                  </Button>
                 </div>
-              )}
-              
-              <div className="grid grid-cols-2 gap-3">
-                <Button
-                  onClick={handleDownload}
-                  variant="outline"
-                  className="w-full"
-                >
-                  <Download className="w-4 h-4 mr-2" />
-                  Download
-                </Button>
-                
-                <Button
-                  onClick={handleShare}
-                  variant="outline"
-                  className="w-full"
-                >
-                  <Share2 className="w-4 h-4 mr-2" />
-                  Share
-                </Button>
+
+                {/* Direct Links */}
+                <div className="text-xs text-gray-500 space-y-1">
+                  <p>Public Profile: {publicProfileUrl}</p>
+                  {emergencyPdfUrl && <p className="break-all">Emergency PDF: {emergencyPdfUrl}</p>}
+                  {fullPdfUrl && <p className="break-all">Full PDF: {fullPdfUrl}</p>}
+                </div>
               </div>
-              
-              {pdfUrl && (
-                <div className="text-center">
-                  <p className="text-xs text-gray-500 break-all">
-                    Direct link: {pdfUrl}
-                  </p>
-                </div>
-              )}
-            </div>
-          </DialogContent>
-        </Dialog>
+            </DialogContent>
+          </Dialog>
+        </div>
       </CardContent>
     </Card>
   );

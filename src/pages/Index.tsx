@@ -1,20 +1,25 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
-import { Camera, FileText, Star, Shield, Heart, Award, PlusCircle, LogOut } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/context/AuthContext";
 import { PetProfileCard } from "@/components/PetProfileCard";
+import { PetEditForm } from "@/components/PetEditForm";
 import { NavigationTabs } from "@/components/NavigationTabs";
-import { DocumentsSection } from "@/components/DocumentsSection";
-import { BadgesSection } from "@/components/BadgesSection";
-import { CareInstructionsSection } from "@/components/CareInstructionsSection";
 import { QuickIDSection } from "@/components/QuickIDSection";
+import { CareInstructionsSection } from "@/components/CareInstructionsSection";
 import { PetResumeSection } from "@/components/PetResumeSection";
 import { ReviewsSection } from "@/components/ReviewsSection";
 import { TravelMapSection } from "@/components/TravelMapSection";
+import { DocumentsSection } from "@/components/DocumentsSection";
+import { BadgesSection } from "@/components/BadgesSection";
 import { PetGallerySection } from "@/components/PetGallerySection";
-import { useNavigate } from "react-router-dom";
-import { useAuth } from "@/context/AuthContext";
+import { PetPDFGenerator } from "@/components/PetPDFGenerator";
+import { SupportAnimalBanner } from "@/components/SupportAnimalBanner";
+import { InAppSharingModal } from "@/components/InAppSharingModal";
 import { fetchUserPets, fetchPetDetails } from "@/services/petService";
 import { useToast } from "@/components/ui/use-toast";
 import { MobileNavigationMenu } from "@/components/MobileNavigationMenu";
@@ -24,12 +29,13 @@ const Index = () => {
   console.log("Index component is rendering");
   
   const [activeTab, setActiveTab] = useState("profile");
-  console.log("Active tab:", activeTab);
-  
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [pets, setPets] = useState<any[]>([]);
   const [selectedPet, setSelectedPet] = useState<any | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [documents, setDocuments] = useState<any[]>([]);
+  const [isInAppSharingOpen, setIsInAppSharingOpen] = useState(false);
   
   const navigate = useNavigate();
   const { signOut, user } = useAuth();
@@ -82,6 +88,23 @@ const Index = () => {
 
     loadPets();
   }, [toast]);
+
+  // Check for in-app sharing hash
+  useEffect(() => {
+    const handleHashChange = () => {
+      if (window.location.hash === '#share-with-members') {
+        setIsInAppSharingOpen(true);
+        window.location.hash = ''; // Clear the hash
+      }
+    };
+
+    handleHashChange(); // Check on mount
+    window.addEventListener('hashchange', handleHashChange);
+    
+    return () => {
+      window.removeEventListener('hashchange', handleHashChange);
+    };
+  }, []);
 
   // Function to select a pet and fetch its details
   const handleSelectPet = async (petId: string) => {
@@ -198,49 +221,50 @@ const Index = () => {
     ]
   };
 
-  const renderActiveSection = () => {
-    console.log("Rendering section for tab:", activeTab);
-    
-    try {
-      switch (activeTab) {
-        case "profile":
-          console.log("Rendering PetProfileCard");
-          return <PetProfileCard petData={petData} onUpdate={handlePetUpdate} />;
-        case "resume":
-          console.log("Rendering PetResumeSection");
-          return <PetResumeSection petData={petData} />;
-        case "reviews":
-          console.log("Rendering ReviewsSection");
-          return <ReviewsSection petData={petData} />;
-        case "travel":
-          console.log("Rendering TravelMapSection");
-          return <TravelMapSection petData={petData} />;
-        case "documents":
-          console.log("Rendering DocumentsSection");
-          return <DocumentsSection 
-            petId={selectedPet?.id || petData.id || ""} 
-            documents={documents} 
-            onDocumentDeleted={handleDocumentUpdate}
-          />;
-        case "badges":
-          console.log("Rendering BadgesSection");
-          return <BadgesSection badges={petData.badges || []} petData={petData} />;
-        case "care":
-          console.log("Rendering CareInstructionsSection");
-          return <CareInstructionsSection petData={petData} />;
-        case "quickid":
-          console.log("Rendering QuickIDSection");
-          return <QuickIDSection petData={petData} />;
-        case "gallery":
-          console.log("Rendering PetGallerySection");
-          return <PetGallerySection petData={petData} />;
-        default:
-          console.log("Default case - rendering PetProfileCard");
-          return <PetProfileCard petData={petData} onUpdate={handlePetUpdate} />;
-      }
-    } catch (error) {
-      console.error("Error rendering section:", error);
-      return <div className="p-4 text-red-600">Error loading section: {error.message}</div>;
+  const renderTabContent = () => {
+    switch (activeTab) {
+      case "profile":
+        console.log("Rendering profile tab");
+        return (
+          <div className="space-y-6">
+            <SupportAnimalBanner petData={petData} />
+            <PetProfileCard 
+              petData={petData} 
+              onEdit={() => setIsEditDialogOpen(true)}
+            />
+            <PetPDFGenerator petId={selectedPet?.id || petData.id || ""} petName={petData.name} />
+          </div>
+        );
+      case "care":
+        console.log("Rendering CareInstructionsSection");
+        return <CareInstructionsSection petData={petData} />;
+      case "resume":
+        console.log("Rendering PetResumeSection");
+        return <PetResumeSection petData={petData} />;
+      case "reviews":
+        console.log("Rendering ReviewsSection");
+        return <ReviewsSection petData={petData} />;
+      case "travel":
+        console.log("Rendering TravelMapSection");
+        return <TravelMapSection petData={petData} />;
+      case "documents":
+        console.log("Rendering DocumentsSection");
+        return <DocumentsSection 
+          petId={selectedPet?.id || petData.id || ""} 
+          documents={documents} 
+          onDocumentDeleted={handleDocumentUpdate}
+        />;
+      case "badges":
+        console.log("Rendering BadgesSection");
+        return <BadgesSection badges={petData.badges || []} petData={petData} />;
+      case "gallery":
+        console.log("Rendering PetGallerySection");
+        return <PetGallerySection petData={petData} />;
+      case "quickid":
+        console.log("Rendering QuickIDSection");
+        return <QuickIDSection petData={petData} />;
+      default:
+        return <div>Tab not found</div>;
     }
   };
 
@@ -248,14 +272,14 @@ const Index = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-navy-100 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 flex items-center justify-center">
         <div className="text-xl text-navy-800 animate-pulse">Loading your pets...</div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-navy-100">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
       {/* Header */}
       <header className="bg-white/80 backdrop-blur-sm border-b border-blue-100 sticky top-0 z-50">
         <div className="max-w-4xl mx-auto px-4 py-4">
@@ -310,6 +334,14 @@ const Index = () => {
           </div>
         </div>
       </header>
+
+      {/* In-App Sharing Modal */}
+      <InAppSharingModal
+        isOpen={isInAppSharingOpen}
+        onClose={() => setIsInAppSharingOpen(false)}
+        petId={selectedPet?.id || petData.id || ""}
+        petName={petData.name}
+      />
 
       {/* Main Content */}
       <main className="max-w-4xl mx-auto px-4 py-8">
@@ -425,7 +457,7 @@ const Index = () => {
 
             {/* Content Section */}
             <div className="mt-6">
-              {renderActiveSection()}
+              {renderTabContent()}
             </div>
           </>
         )}

@@ -46,7 +46,7 @@ export const NavigationTabs = ({ activeTab, onTabChange, isMobile = false }: Nav
   }
 
   return (
-    <div className="hidden md:flex flex-wrap gap-2 p-3 bg-slate-100 backdrop-blur-sm rounded-xl border border-slate-200 shadow-sm">
+    <div className="hidden md:flex flex-wrap gap-2 p-4 bg-gradient-to-br from-slate-700 to-slate-800 backdrop-blur-sm rounded-xl border border-slate-600 shadow-lg">
       {tabs.map((tab) => (
         <Button
           key={tab.id}
@@ -57,7 +57,7 @@ export const NavigationTabs = ({ activeTab, onTabChange, isMobile = false }: Nav
               ? "bg-gradient-to-r from-navy-900 to-navy-800 text-gold-500 shadow-lg border border-gold-500/30 hover:from-navy-800 hover:to-navy-700" 
               : tab.id === "gallery" 
                 ? "bg-gradient-to-r from-gold-500 to-gold-400 text-white shadow-md border border-gold-500/50 hover:from-gold-400 hover:to-gold-300 font-medium"
-                : "text-navy-800 hover:text-gold-500 hover:bg-navy-900 hover:shadow-md border border-transparent hover:border-gold-500/20"
+                : "text-white hover:text-gold-400 hover:bg-slate-600 hover:shadow-md border border-transparent hover:border-gold-500/20"
           }`}
         >
           <tab.icon className="w-3 h-3 sm:w-4 sm:h-4" />

@@ -76,14 +76,14 @@ export const PetProfileCard = ({ petData, onUpdate }: PetProfileCardProps) => {
 
   return (
     <div className="space-y-6">
-      {/* Edit Button - Make it more prominent */}
+      {/* Edit Button - Navy blue styling */}
       <div className="flex justify-end mb-4">
         <Button 
           onClick={() => {
             console.log("Edit button clicked!");
             setIsEditing(true);
           }}
-          className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 text-base font-medium"
+          className="bg-gradient-to-r from-navy-900 to-navy-800 hover:from-navy-800 hover:to-navy-700 text-gold-500 border border-gold-500/30 px-6 py-2 text-base font-medium shadow-lg"
           size="lg"
         >
           <Edit className="w-5 h-5 mr-2" />
@@ -94,8 +94,10 @@ export const PetProfileCard = ({ petData, onUpdate }: PetProfileCardProps) => {
       {/* Support Animal Status Banner */}
       <SupportAnimalBanner status={petData.supportAnimalStatus || null} />
 
-      {/* PDF Generator Section */}
-      <PetPDFGenerator petId={petData.id} petName={petData.name} />
+      {/* PDF Generator Section - Navy blue styling */}
+      <div className="bg-gradient-to-br from-navy-900 to-slate-800 p-6 rounded-xl border border-yellow-600/30 shadow-xl">
+        <PetPDFGenerator petId={petData.id} petName={petData.name} />
+      </div>
 
       {/* Medical Alert Banner */}
       {petData.medicalAlert && (
@@ -232,44 +234,44 @@ export const PetProfileCard = ({ petData, onUpdate }: PetProfileCardProps) => {
         </CardContent>
       </Card>
 
-      {/* Emergency Contacts */}
-      <Card className="border-0 shadow-lg bg-white/90 backdrop-blur-sm">
+      {/* Emergency Contacts - Navy blue styling */}
+      <Card className="border-2 border-yellow-600/30 shadow-xl bg-gradient-to-br from-navy-900 to-slate-800 text-white">
         <CardHeader>
-          <CardTitle className="flex items-center space-x-2">
-            <Phone className="w-5 h-5 text-blue-600" />
-            <span>Emergency Contacts</span>
+          <CardTitle className="flex items-center space-x-2 text-gold-500">
+            <Phone className="w-5 h-5" />
+            <span className="tracking-wide">EMERGENCY CONTACTS</span>
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div>
-            <p className="text-sm font-medium text-gray-600">Primary Emergency Contact</p>
-            <p className="text-lg font-medium text-red-600">{petData.emergencyContact || "Not specified"}</p>
+            <p className="text-gold-400 text-sm font-medium tracking-wide">Primary Emergency Contact</p>
+            <p className="text-lg font-medium text-white">{petData.emergencyContact || "Not specified"}</p>
           </div>
           <div>
-            <p className="text-sm font-medium text-gray-600">Secondary Emergency Contact</p>
-            <p className="text-lg font-medium text-red-600">{petData.secondEmergencyContact || "Not specified"}</p>
+            <p className="text-gold-400 text-sm font-medium tracking-wide">Secondary Emergency Contact</p>
+            <p className="text-lg font-medium text-white">{petData.secondEmergencyContact || "Not specified"}</p>
           </div>
         </CardContent>
       </Card>
 
-      {/* Health Information */}
-      <Card className="border-0 shadow-lg bg-white/90 backdrop-blur-sm">
+      {/* Health Information - Navy blue styling */}
+      <Card className="border-2 border-yellow-600/30 shadow-xl bg-gradient-to-br from-navy-900 to-slate-800 text-white">
         <CardHeader>
-          <CardTitle className="flex items-center space-x-2">
-            <Calendar className="w-5 h-5 text-blue-600" />
-            <span>Health Information</span>
+          <CardTitle className="flex items-center space-x-2 text-gold-500">
+            <Calendar className="w-5 h-5" />
+            <span className="tracking-wide">HEALTH INFORMATION</span>
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div>
-            <p className="text-sm font-medium text-gray-600">Last Vaccination</p>
-            <p className="text-lg text-green-600 font-medium">{petData.lastVaccination || "Not specified"}</p>
+            <p className="text-gold-400 text-sm font-medium tracking-wide">Last Vaccination</p>
+            <p className="text-lg text-white font-medium">{petData.lastVaccination || "Not specified"}</p>
           </div>
           
           {/* Medical Alert Section */}
-          <div className="border-t pt-4">
+          <div className="border-t border-yellow-600/30 pt-4">
             <div className="flex items-center justify-between mb-2">
-              <p className="text-sm font-medium text-gray-600">Medical Alerts</p>
+              <p className="text-gold-400 text-sm font-medium tracking-wide">Medical Alerts</p>
               {petData.medicalAlert && (
                 <Badge variant="destructive" className="bg-red-600">
                   <AlertTriangle className="w-3 h-3 mr-1" />
@@ -278,13 +280,13 @@ export const PetProfileCard = ({ petData, onUpdate }: PetProfileCardProps) => {
               )}
             </div>
             {petData.medicalAlert ? (
-              <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-                <p className="text-red-800 font-medium mb-2">Medical Conditions:</p>
-                <p className="text-red-700">{petData.medicalConditions || "No conditions specified"}</p>
+              <div className="bg-red-900/30 border border-red-600/50 rounded-lg p-4">
+                <p className="text-red-300 font-medium mb-2">Medical Conditions:</p>
+                <p className="text-red-200">{petData.medicalConditions || "No conditions specified"}</p>
                 
                 <div className="mt-4 flex items-center space-x-2">
                   {petData.medicalEmergencyDocument ? (
-                    <Button size="sm" variant="outline" className="border-red-300 text-red-700">
+                    <Button size="sm" variant="outline" className="border-red-400 text-red-300 hover:bg-red-900/50">
                       <FileText className="w-4 h-4 mr-2" />
                       View Medical Document
                     </Button>
@@ -293,7 +295,7 @@ export const PetProfileCard = ({ petData, onUpdate }: PetProfileCardProps) => {
                       onClick={handleUploadMedicalDoc}
                       size="sm" 
                       variant="outline" 
-                      className="border-red-300 text-red-700"
+                      className="border-red-400 text-red-300 hover:bg-red-900/50"
                     >
                       <Upload className="w-4 h-4 mr-2" />
                       Upload Medical Document
@@ -302,18 +304,18 @@ export const PetProfileCard = ({ petData, onUpdate }: PetProfileCardProps) => {
                 </div>
               </div>
             ) : (
-              <p className="text-gray-500 italic">No medical alerts</p>
+              <p className="text-slate-400 italic">No medical alerts</p>
             )}
           </div>
 
           {petData.medications.length > 0 && (
             <div>
-              <p className="text-sm font-medium text-gray-600 mb-2">Current Medications</p>
+              <p className="text-gold-400 text-sm font-medium tracking-wide mb-2">Current Medications</p>
               <div className="space-y-2">
                 {petData.medications.map((medication, index) => (
-                  <div key={index} className="flex items-center space-x-2 bg-red-50 p-3 rounded-lg">
-                    <Pill className="w-4 h-4 text-red-500" />
-                    <span>{medication}</span>
+                  <div key={index} className="flex items-center space-x-2 bg-navy-800/50 p-3 rounded-lg border border-yellow-600/30">
+                    <Pill className="w-4 h-4 text-gold-400" />
+                    <span className="text-white">{medication}</span>
                   </div>
                 ))}
               </div>

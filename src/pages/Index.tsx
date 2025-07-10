@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -400,15 +399,15 @@ const Index = () => {
             )}
 
             {/* Pet Header Card - Mobile optimized */}
-            <Card className="mb-6 sm:mb-8 overflow-hidden border-0 shadow-xl bg-white/90 backdrop-blur-sm">
+            <Card className="mb-6 sm:mb-8 overflow-hidden border-0 shadow-xl bg-gradient-to-br from-navy-900 to-slate-800 text-white">
               <div className="bg-gradient-to-r from-navy-900 to-slate-800 p-4 sm:p-6 text-white relative overflow-hidden">
                 {/* Passport-style decorative elements */}
                 <div className="absolute top-0 right-0 w-16 h-16 sm:w-24 sm:h-24 md:w-32 md:h-32 bg-yellow-500/10 rounded-full -translate-y-8 sm:-translate-y-12 md:-translate-y-16 translate-x-8 sm:translate-x-12 md:translate-x-16"></div>
                 <div className="absolute bottom-0 left-0 w-12 h-12 sm:w-18 sm:h-18 md:w-24 md:h-24 bg-yellow-500/10 rounded-full translate-y-6 sm:translate-y-9 md:translate-y-12 -translate-x-6 sm:-translate-x-9 md:-translate-x-12"></div>
                 
-                {/* Logo - Top Right Corner */}
+                {/* Logo - Top Right Corner - LARGER SIZE */}
                 <div className="absolute top-3 right-3 sm:top-4 sm:right-4 md:top-6 md:right-6 z-30">
-                  <div className="w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10 rounded-lg sm:rounded-xl flex items-center justify-center overflow-hidden bg-white/10 backdrop-blur-sm border border-yellow-500/30">
+                  <div className="w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 lg:w-24 lg:h-24 rounded-lg sm:rounded-xl flex items-center justify-center overflow-hidden bg-white/10 backdrop-blur-sm border border-yellow-500/30">
                     <img 
                       src="/lovable-uploads/1af9fe70-ed76-44c5-a1e1-1a058e497a10.png" 
                       alt="Pawprint & HoofBeats Logo"
@@ -444,9 +443,24 @@ const Index = () => {
                         <span className="font-serif text-yellow-200">{petData.badges?.length || 0} Certifications</span>
                       </div>
                     </div>
-                    <div className="text-center sm:text-right">
-                      <p className="text-yellow-400 text-xs sm:text-sm font-serif tracking-wide">GLOBE TROTTER</p>
-                      <p className="text-xs text-yellow-300 font-mono">ID: {petData.petPassId}</p>
+                    {/* Centered Globe Trotter section with larger logo */}
+                    <div className="text-center">
+                      <div className="mb-3 flex justify-center">
+                        <div className="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 rounded-xl flex items-center justify-center overflow-hidden bg-white/20 backdrop-blur-sm border-2 border-yellow-500/50 shadow-lg">
+                          <img 
+                            src="/lovable-uploads/1af9fe70-ed76-44c5-a1e1-1a058e497a10.png" 
+                            alt="Globe Trotter Logo"
+                            className="w-full h-full object-contain"
+                            onError={(e) => {
+                              console.error("Globe Trotter logo failed to load:", e);
+                              e.currentTarget.style.display = 'none';
+                            }}
+                            onLoad={() => console.log("Globe Trotter logo loaded successfully")}
+                          />
+                        </div>
+                      </div>
+                      <p className="text-yellow-400 text-sm sm:text-base md:text-lg font-serif tracking-wide font-bold">GLOBE TROTTER</p>
+                      <p className="text-xs sm:text-sm text-yellow-300 font-mono">ID: {petData.petPassId}</p>
                     </div>
                   </div>
                 </div>
@@ -456,7 +470,7 @@ const Index = () => {
               </div>
             </Card>
 
-            {/* Navigation - Mobile optimized */}
+            {/* Navigation - Mobile optimized with deeper gray-blue background */}
             <div className="mb-4 sm:mb-6">
               <NavigationTabs activeTab={activeTab} onTabChange={setActiveTab} />
             </div>

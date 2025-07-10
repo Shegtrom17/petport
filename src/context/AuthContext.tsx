@@ -1,8 +1,8 @@
-
 import { createContext, useContext, useEffect, useState } from "react";
 import { Session, User } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
+import { cleanupAuthState } from "@/utils/authCleanup";
 
 type AuthContextType = {
   user: User | null;
@@ -50,6 +50,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       console.log("AuthProvider: Attempting sign in", { email });
       setIsLoading(true);
+      
+      // Clean up any existing auth state first
+      cleanupAuthState();
+      
+      // Try to sign out globally first
+      try {
+        await supabase.auth.signOut({ scope: 'global' });
+      } catch (err) {
+        console.log("AuthProvider: Global signout failed (continuing anyway)", err);
+      }
+      
       const { error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) {
         console.error("AuthProvider: Sign in error", error);
@@ -77,6 +88,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       console.log("AuthProvider: Attempting sign up", { email, fullName });
       setIsLoading(true);
+      
+      // Clean up any existing auth state first
+      cleanupAuthState();
+      
+      // Try to sign out globally first
+      try {
+        await supabase.auth.signOut({ scope: 'global' });
+      } catch (err) {
+        console.log("AuthProvider: Global signout failed during signup (continuing anyway)", err);
+      }
       
       const redirectUrl = `${window.location.origin}/`;
       console.log("AuthProvider: Using redirect URL", redirectUrl);
@@ -121,8 +142,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       console.log("AuthProvider: Attempting sign out");
       setIsLoading(true);
-      await supabase.auth.signOut();
+      
+      // Clean up auth state first
+      cleanupAuthState();
+      
+      await supabase.auth.signOut({ scope: 'global' });
       console.log("AuthProvider: Sign out successful");
+      
+      // Force page reload to ensure clean state
+      window.location.href = '/auth';
+      
       toast({
         title: "Signed out",
         description: "You have been successfully signed out.",

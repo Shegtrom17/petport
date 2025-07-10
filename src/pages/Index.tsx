@@ -405,63 +405,51 @@ const Index = () => {
                 <div className="absolute top-0 right-0 w-16 h-16 sm:w-24 sm:h-24 md:w-32 md:h-32 bg-yellow-500/10 rounded-full -translate-y-8 sm:-translate-y-12 md:-translate-y-16 translate-x-8 sm:translate-x-12 md:translate-x-16"></div>
                 <div className="absolute bottom-0 left-0 w-12 h-12 sm:w-18 sm:h-18 md:w-24 md:h-24 bg-yellow-500/10 rounded-full translate-y-6 sm:translate-y-9 md:translate-y-12 -translate-x-6 sm:-translate-x-9 md:-translate-x-12"></div>
                 
-                {/* Logo - Top Right Corner - LARGER SIZE */}
-                <div className="absolute top-3 right-3 sm:top-4 sm:right-4 md:top-6 md:right-6 z-30">
-                  <div className="w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 lg:w-24 lg:h-24 rounded-lg sm:rounded-xl flex items-center justify-center overflow-hidden bg-white/10 backdrop-blur-sm border border-yellow-500/30">
-                    <img 
-                      src="/lovable-uploads/1af9fe70-ed76-44c5-a1e1-1a058e497a10.png" 
-                      alt="Pawprint & HoofBeats Logo"
-                      className="w-full h-full object-contain"
-                      onError={(e) => {
-                        console.error("Moved logo failed to load:", e);
-                        e.currentTarget.style.display = 'none';
-                      }}
-                      onLoad={() => console.log("Moved logo loaded successfully")}
-                    />
-                  </div>
-                </div>
-                
-                {/* Mobile-first layout */}
+                {/* Mobile-first layout with Globe Trotter section on the right */}
                 <div className="flex flex-col sm:flex-row items-center sm:items-start space-y-4 sm:space-y-0 sm:space-x-4 md:space-x-8 relative z-20">
-                  <div className="w-24 h-24 sm:w-32 sm:h-32 md:w-40 md:h-40 lg:w-48 lg:h-48 rounded-lg overflow-hidden border-4 border-yellow-500/50 shadow-lg flex-shrink-0">
-                    <img 
-                      src={petData.photoUrl || "https://placehold.co/100x100?text=" + petData.name?.charAt(0)} 
-                      alt={petData.name}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                  <div className="flex-1 text-center sm:text-left w-full sm:pr-8 md:pr-12">
-                    <h2 className="text-lg sm:text-xl md:text-3xl font-serif font-bold text-yellow-400 mb-1 tracking-wide break-words">{petData.name?.toUpperCase()}</h2>
-                    <p className="text-yellow-200 font-serif text-sm sm:text-base md:text-lg mb-2">{petData.breed} • {petData.age}</p>
-                    <div className="flex flex-col sm:flex-row items-center justify-center sm:justify-start space-y-1 sm:space-y-0 sm:space-x-3 md:space-x-6 text-xs sm:text-sm mb-4">
-                      <div className="flex items-center space-x-1 sm:space-x-2">
-                        <div className="w-2 h-2 bg-yellow-400 rounded-full"></div>
-                        <span className="font-serif text-yellow-200">Weight: {petData.weight}</span>
-                      </div>
-                      <div className="flex items-center space-x-1 sm:space-x-2">
-                        <div className="w-2 h-2 bg-yellow-400 rounded-full"></div>
-                        <span className="font-serif text-yellow-200">{petData.badges?.length || 0} Certifications</span>
-                      </div>
+                  {/* Left side - Pet photo and info */}
+                  <div className="flex flex-col sm:flex-row items-center sm:items-start space-y-4 sm:space-y-0 sm:space-x-4 md:space-x-6 flex-1">
+                    <div className="w-24 h-24 sm:w-32 sm:h-32 md:w-40 md:h-40 lg:w-48 lg:h-48 rounded-lg overflow-hidden border-4 border-yellow-500/50 shadow-lg flex-shrink-0">
+                      <img 
+                        src={petData.photoUrl || "https://placehold.co/100x100?text=" + petData.name?.charAt(0)} 
+                        alt={petData.name}
+                        className="w-full h-full object-cover"
+                      />
                     </div>
-                    {/* Centered Globe Trotter section with larger logo */}
-                    <div className="text-center">
-                      <div className="mb-3 flex justify-center">
-                        <div className="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 rounded-xl flex items-center justify-center overflow-hidden bg-white/20 backdrop-blur-sm border-2 border-yellow-500/50 shadow-lg">
-                          <img 
-                            src="/lovable-uploads/1af9fe70-ed76-44c5-a1e1-1a058e497a10.png" 
-                            alt="Globe Trotter Logo"
-                            className="w-full h-full object-contain"
-                            onError={(e) => {
-                              console.error("Globe Trotter logo failed to load:", e);
-                              e.currentTarget.style.display = 'none';
-                            }}
-                            onLoad={() => console.log("Globe Trotter logo loaded successfully")}
-                          />
+                    <div className="flex-1 text-center sm:text-left">
+                      <h2 className="text-lg sm:text-xl md:text-3xl font-serif font-bold text-yellow-400 mb-1 tracking-wide break-words">{petData.name?.toUpperCase()}</h2>
+                      <p className="text-yellow-200 font-serif text-sm sm:text-base md:text-lg mb-2">{petData.breed} • {petData.age}</p>
+                      <div className="flex flex-col sm:flex-row items-center justify-center sm:justify-start space-y-1 sm:space-y-0 sm:space-x-3 md:space-x-6 text-xs sm:text-sm mb-4">
+                        <div className="flex items-center space-x-1 sm:space-x-2">
+                          <div className="w-2 h-2 bg-yellow-400 rounded-full"></div>
+                          <span className="font-serif text-yellow-200">Weight: {petData.weight}</span>
+                        </div>
+                        <div className="flex items-center space-x-1 sm:space-x-2">
+                          <div className="w-2 h-2 bg-yellow-400 rounded-full"></div>
+                          <span className="font-serif text-yellow-200">{petData.badges?.length || 0} Certifications</span>
                         </div>
                       </div>
-                      <p className="text-yellow-400 text-sm sm:text-base md:text-lg font-serif tracking-wide font-bold">GLOBE TROTTER</p>
-                      <p className="text-xs sm:text-sm text-yellow-300 font-mono">ID: {petData.petPassId}</p>
                     </div>
+                  </div>
+
+                  {/* Right side - Globe Trotter section */}
+                  <div className="flex flex-col items-center justify-center sm:min-w-[200px] md:min-w-[250px]">
+                    <div className="mb-3 flex justify-center">
+                      <div className="w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 lg:w-32 lg:h-32 rounded-xl flex items-center justify-center overflow-hidden bg-white/20 backdrop-blur-sm border-2 border-yellow-500/50 shadow-lg">
+                        <img 
+                          src="/lovable-uploads/1af9fe70-ed76-44c5-a1e1-1a058e497a10.png" 
+                          alt="Globe Trotter Logo"
+                          className="w-full h-full object-contain"
+                          onError={(e) => {
+                            console.error("Globe Trotter logo failed to load:", e);
+                            e.currentTarget.style.display = 'none';
+                          }}
+                          onLoad={() => console.log("Globe Trotter logo loaded successfully")}
+                        />
+                      </div>
+                    </div>
+                    <p className="text-yellow-400 text-sm sm:text-base md:text-lg font-serif tracking-wide font-bold">GLOBE TROTTER</p>
+                    <p className="text-xs sm:text-sm text-yellow-300 font-mono">ID: {petData.petPassId}</p>
                   </div>
                 </div>
                 

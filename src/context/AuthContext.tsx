@@ -24,17 +24,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     console.log("AuthProvider: Setting up auth state listener");
     
-    // Check active session
-    supabase.auth.getSession().then(({ data: { session }, error }) => {
-      console.log("AuthProvider: Initial session check", { session, error });
+    // Listen for auth changes first
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      console.log("AuthProvider: Auth state changed", { event, session });
       setSession(session);
       setUser(session?.user ?? null);
       setIsLoading(false);
     });
 
-    // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      console.log("AuthProvider: Auth state changed", { event, session });
+    // Check active session
+    supabase.auth.getSession().then(({ data: { session }, error }) => {
+      console.log("AuthProvider: Initial session check", { session, error });
       setSession(session);
       setUser(session?.user ?? null);
       setIsLoading(false);
@@ -46,7 +46,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     };
   }, []);
 
-  // Sign in with email and password
   const signIn = async (email: string, password: string) => {
     try {
       console.log("AuthProvider: Attempting sign in", { email });
@@ -74,7 +73,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  // Sign up with email and password
   const signUp = async (email: string, password: string, fullName: string) => {
     try {
       console.log("AuthProvider: Attempting sign up", { email, fullName });
@@ -119,7 +117,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  // Sign out
   const signOut = async () => {
     try {
       console.log("AuthProvider: Attempting sign out");

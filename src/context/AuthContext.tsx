@@ -22,21 +22,26 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const { toast } = useToast();
 
   useEffect(() => {
+    console.log("AuthProvider: Setting up auth state listener");
+    
     // Check active session
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    supabase.auth.getSession().then(({ data: { session }, error }) => {
+      console.log("AuthProvider: Initial session check", { session, error });
       setSession(session);
       setUser(session?.user ?? null);
       setIsLoading(false);
     });
 
     // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      console.log("AuthProvider: Auth state changed", { event, session });
       setSession(session);
       setUser(session?.user ?? null);
       setIsLoading(false);
     });
 
     return () => {
+      console.log("AuthProvider: Cleaning up auth subscription");
       subscription.unsubscribe();
     };
   }, []);
@@ -44,14 +49,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   // Sign in with email and password
   const signIn = async (email: string, password: string) => {
     try {
+      console.log("AuthProvider: Attempting sign in", { email });
       setIsLoading(true);
       const { error } = await supabase.auth.signInWithPassword({ email, password });
-      if (error) throw error;
+      if (error) {
+        console.error("AuthProvider: Sign in error", error);
+        throw error;
+      }
+      console.log("AuthProvider: Sign in successful");
       toast({
         title: "Welcome back!",
         description: "You have successfully signed in.",
       });
     } catch (error: any) {
+      console.error("AuthProvider: Sign in failed", error);
       toast({
         variant: "destructive",
         title: "Error signing in",
@@ -66,22 +77,37 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   // Sign up with email and password
   const signUp = async (email: string, password: string, fullName: string) => {
     try {
+      console.log("AuthProvider: Attempting sign up", { email, fullName });
       setIsLoading(true);
-      const { error } = await supabase.auth.signUp({ 
+      
+      const redirectUrl = `${window.location.origin}/`;
+      console.log("AuthProvider: Using redirect URL", redirectUrl);
+      
+      const { data, error } = await supabase.auth.signUp({ 
         email, 
         password,
         options: {
+          emailRedirectTo: redirectUrl,
           data: {
             full_name: fullName
           }
         }
       });
-      if (error) throw error;
+      
+      console.log("AuthProvider: Sign up response", { data, error });
+      
+      if (error) {
+        console.error("AuthProvider: Sign up error", error);
+        throw error;
+      }
+      
+      console.log("AuthProvider: Sign up successful", data);
       toast({
         title: "Account created!",
         description: "Please check your email for verification.",
       });
     } catch (error: any) {
+      console.error("AuthProvider: Sign up failed", error);
       toast({
         variant: "destructive",
         title: "Error signing up",
@@ -96,13 +122,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   // Sign out
   const signOut = async () => {
     try {
+      console.log("AuthProvider: Attempting sign out");
       setIsLoading(true);
       await supabase.auth.signOut();
+      console.log("AuthProvider: Sign out successful");
       toast({
         title: "Signed out",
         description: "You have been successfully signed out.",
       });
     } catch (error: any) {
+      console.error("AuthProvider: Sign out failed", error);
       toast({
         variant: "destructive",
         title: "Error signing out",

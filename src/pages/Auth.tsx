@@ -21,22 +21,51 @@ export default function Auth() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    console.log("Auth: Form submitted", { isSignIn, email, fullName });
+    
+    if (!email || !password) {
+      toast({
+        variant: "destructive",
+        title: "Missing information",
+        description: "Please fill in all required fields.",
+      });
+      return;
+    }
+    
+    if (!isSignIn && !fullName) {
+      toast({
+        variant: "destructive",
+        title: "Missing information",
+        description: "Please enter your full name.",
+      });
+      return;
+    }
+    
     setIsSubmitting(true);
     
     try {
       if (isSignIn) {
+        console.log("Auth: Attempting sign in");
         await signIn(email, password);
+        console.log("Auth: Sign in completed, navigating to home");
         navigate("/");
       } else {
+        console.log("Auth: Attempting sign up");
         await signUp(email, password, fullName);
+        console.log("Auth: Sign up completed");
         toast({
           title: "Check your email",
           description: "We've sent you a verification link.",
         });
+        // Don't auto-navigate after signup, let them verify email first
         setIsSignIn(true);
+        setEmail("");
+        setPassword("");
+        setFullName("");
       }
     } catch (error) {
-      console.error("Authentication error:", error);
+      console.error("Auth: Authentication error:", error);
     } finally {
       setIsSubmitting(false);
     }
@@ -107,6 +136,7 @@ export default function Auth() {
                     onChange={(e) => setPassword(e.target.value)}
                     required
                     minLength={6}
+                    placeholder={isSignIn ? "Enter your password" : "Minimum 6 characters"}
                   />
                 </div>
                 
@@ -124,7 +154,12 @@ export default function Auth() {
             <Button
               variant="link"
               className="w-full text-navy-800"
-              onClick={() => setIsSignIn(!isSignIn)}
+              onClick={() => {
+                setIsSignIn(!isSignIn);
+                setEmail("");
+                setPassword("");
+                setFullName("");
+              }}
             >
               {isSignIn
                 ? "Don't have an account? Sign Up"

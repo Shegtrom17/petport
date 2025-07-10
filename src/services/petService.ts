@@ -1,3 +1,4 @@
+
 import { supabase } from "@/integrations/supabase/client";
 import { Tables } from "@/integrations/supabase/types";
 
@@ -265,7 +266,7 @@ export async function createPet(petData: {
       throw new Error("User not authenticated");
     }
 
-    // Add user_id to pet data
+    // Add user_id to pet data and explicitly set pet_pass_id to null to avoid trigger issues
     const petDataWithUser = {
       name: petData.name,
       breed: petData.breed || null,
@@ -275,6 +276,7 @@ export async function createPet(petData: {
       microchip_id: petData.microchip_id || null,
       bio: petData.bio || null,
       notes: petData.notes || null,
+      pet_pass_id: null, // Explicitly set to null to avoid trigger conflicts
       user_id: user.id
     };
 

@@ -37,28 +37,38 @@ export default function AddPet() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    console.log("AddPet: Starting form submission");
+    console.log("AddPet: Pet data:", petData);
+    
     setIsSubmitting(true);
 
     try {
       // Ensure at least the name is provided
       if (!petData.name.trim()) {
+        console.log("AddPet: Name validation failed");
         toast({
           variant: "destructive",
           title: "Name is required",
           description: "Please provide a name for your pet."
         });
+        setIsSubmitting(false);
         return;
       }
 
+      console.log("AddPet: Calling createPet service");
       const petId = await createPet(petData);
+      console.log("AddPet: createPet returned:", petId);
       
       if (petId) {
+        console.log("AddPet: Pet created successfully with ID:", petId);
         toast({
           title: "Success!",
           description: `${petData.name} has been added to your pets.`,
         });
         navigate("/");
       } else {
+        console.log("AddPet: createPet returned null/undefined");
         toast({
           variant: "destructive",
           title: "Error",
@@ -66,11 +76,11 @@ export default function AddPet() {
         });
       }
     } catch (error) {
-      console.error("Error adding pet:", error);
+      console.error("AddPet: Error during pet creation:", error);
       toast({
         variant: "destructive",
         title: "Error",
-        description: "Something went wrong. Please try again."
+        description: error instanceof Error ? error.message : "Something went wrong. Please try again."
       });
     } finally {
       setIsSubmitting(false);

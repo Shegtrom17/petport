@@ -248,36 +248,64 @@ export async function createPet(petData: {
   notes?: string;
 }): Promise<string | null> {
   try {
+    console.log("createPet: Starting pet creation process");
+    console.log("createPet: Input data:", petData);
+    
     // Get the current user
-    const { data: { user } } = await supabase.auth.getUser();
+    const { data: { user }, error: userError } = await supabase.auth.getUser();
+    console.log("createPet: User check result:", { user: user?.id, error: userError });
+    
+    if (userError) {
+      console.error("createPet: Error getting user:", userError);
+      throw new Error(`Authentication error: ${userError.message}`);
+    }
+    
     if (!user) {
+      console.error("createPet: No user found");
       throw new Error("User not authenticated");
     }
 
     // Add user_id to pet data
     const petDataWithUser = {
-      ...petData,
+      name: petData.name,
+      breed: petData.breed || null,
+      species: petData.species || null,
+      age: petData.age || null,
+      weight: petData.weight || null,
+      microchip_id: petData.microchip_id || null,
+      bio: petData.bio || null,
+      notes: petData.notes || null,
       user_id: user.id
     };
+
+    console.log("createPet: Final data to insert:", petDataWithUser);
 
     const { data, error } = await supabase
       .from("pets")
       .insert([petDataWithUser])
-      .select();
+      .select()
+      .single();
+
+    console.log("createPet: Database response:", { data, error });
 
     if (error) {
-      console.error("Error creating pet:", error);
-      throw error;
+      console.error("createPet: Database error:", error);
+      throw new Error(`Database error: ${error.message}`);
     }
 
-    if (!data || data.length === 0) {
+    if (!data) {
+      console.error("createPet: No data returned from database");
       throw new Error("No data returned after creating pet");
     }
 
-    return data[0].id;
+    console.log("createPet: Pet created successfully with ID:", data.id);
+    return data.id;
   } catch (error) {
-    console.error("Error in createPet:", error);
-    return null;
+    console.error("createPet: Caught error:", error);
+    if (error instanceof Error) {
+      throw error;
+    }
+    throw new Error("Unknown error occurred while creating pet");
   }
 }
 

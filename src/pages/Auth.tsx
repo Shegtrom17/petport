@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { Button } from "@/components/ui/button";
@@ -54,15 +53,17 @@ export default function Auth() {
         console.log("Auth: Attempting sign up");
         await signUp(email, password, fullName);
         console.log("Auth: Sign up completed");
-        toast({
-          title: "Check your email",
-          description: "We've sent you a verification link.",
-        });
-        // Don't auto-navigate after signup, let them verify email first
-        setIsSignIn(true);
+        
+        // Reset form after successful signup
         setEmail("");
         setPassword("");
         setFullName("");
+        
+        // Small delay to let the auth state settle, then navigate if user is logged in
+        setTimeout(() => {
+          // If signup was successful and user is immediately logged in, navigate
+          navigate("/");
+        }, 1000);
       }
     } catch (error) {
       console.error("Auth: Authentication error:", error);

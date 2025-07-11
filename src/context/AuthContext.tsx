@@ -1,3 +1,4 @@
+
 import { createContext, useContext, useEffect, useState } from "react";
 import { Session, User } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
@@ -121,10 +122,27 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
       
       console.log("AuthProvider: Sign up successful", data);
-      toast({
-        title: "Account created!",
-        description: "Please check your email for verification.",
-      });
+      
+      // Check if the user is immediately confirmed (email confirmations disabled)
+      if (data.user && data.session) {
+        console.log("AuthProvider: User confirmed immediately, no email verification needed");
+        toast({
+          title: "Account created successfully!",
+          description: "Welcome to PetPass! You can now create your pet profiles.",
+        });
+      } else if (data.user && !data.session) {
+        console.log("AuthProvider: User needs email verification");
+        toast({
+          title: "Check your email",
+          description: "Please check your email for verification to complete signup.",
+        });
+      } else {
+        // Fallback message
+        toast({
+          title: "Account created!",
+          description: "You can now sign in to your account.",
+        });
+      }
     } catch (error: any) {
       console.error("AuthProvider: Sign up failed", error);
       toast({

@@ -28,7 +28,7 @@ const availableBadges = [
 ];
 
 const supportAnimalOptions = [
-  { value: "", label: "Not a support animal" },
+  { value: "none", label: "Not a support animal" },
   { value: "emotional-support", label: "Emotional Support Animal (ESA)" },
   { value: "service-animal", label: "Service Animal" },
   { value: "therapy-animal", label: "Therapy Animal" },
@@ -36,7 +36,9 @@ const supportAnimalOptions = [
 
 export const BadgeEditForm = ({ petData, onSave, onCancel }: BadgeEditFormProps) => {
   const [selectedBadges, setSelectedBadges] = useState<string[]>(petData.badges || []);
-  const [supportAnimalStatus, setSupportAnimalStatus] = useState(petData.supportAnimalStatus || "");
+  const [supportAnimalStatus, setSupportAnimalStatus] = useState(
+    petData.supportAnimalStatus || "none"
+  );
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
 
@@ -72,9 +74,12 @@ export const BadgeEditForm = ({ petData, onSave, onCancel }: BadgeEditFormProps)
         supportAnimalStatus: supportAnimalStatus
       });
 
+      // Convert "none" back to null for database storage
+      const statusToSave = supportAnimalStatus === "none" ? null : supportAnimalStatus;
+
       const success = await updateProfessionalData(petData.id, {
         badges: selectedBadges,
-        supportAnimalStatus: supportAnimalStatus || null,
+        supportAnimalStatus: statusToSave,
       });
 
       if (success) {

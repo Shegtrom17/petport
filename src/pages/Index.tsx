@@ -1,10 +1,11 @@
+
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { PlusCircle, LogOut } from "lucide-react";
+import { PlusCircle, LogOut, LogIn } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { PetProfileCard } from "@/components/PetProfileCard";
@@ -307,24 +308,37 @@ const Index = () => {
             
             {/* Right Side Controls */}
             <div className="flex items-center space-x-1 sm:space-x-2 md:space-x-3 flex-shrink-0">
-              <Button 
-                className="bg-gradient-to-r from-navy-900 to-navy-800 hover:from-navy-800 hover:to-navy-700 text-gold-500 border border-gold-500/30 text-xs sm:text-sm px-2 sm:px-3 py-1 sm:py-2 whitespace-nowrap"
-                onClick={() => navigate('/add-pet')}
-              >
-                <PlusCircle className="mr-1 h-3 w-3 sm:h-4 sm:w-4" /> 
-                <span className="hidden sm:inline">Add Pet</span>
-                <span className="sm:hidden">Add</span>
-              </Button>
-              <MobileNavigationMenu activeTab={activeTab} onTabChange={setActiveTab} />
-              <Button 
-                variant="outline" 
-                size="icon"
-                onClick={signOut}
-                title="Sign Out"
-                className="h-8 w-8 sm:h-10 sm:w-10"
-              >
-                <LogOut className="h-3 w-3 sm:h-4 sm:w-4" />
-              </Button>
+              {user ? (
+                <>
+                  <Button 
+                    className="bg-gradient-to-r from-navy-900 to-navy-800 hover:from-navy-800 hover:to-navy-700 text-gold-500 border border-gold-500/30 text-xs sm:text-sm px-2 sm:px-3 py-1 sm:py-2 whitespace-nowrap"
+                    onClick={() => navigate('/add-pet')}
+                  >
+                    <PlusCircle className="mr-1 h-3 w-3 sm:h-4 sm:w-4" /> 
+                    <span className="hidden sm:inline">Add Pet</span>
+                    <span className="sm:hidden">Add</span>
+                  </Button>
+                  <MobileNavigationMenu activeTab={activeTab} onTabChange={setActiveTab} />
+                  <Button 
+                    variant="outline" 
+                    size="icon"
+                    onClick={signOut}
+                    title="Sign Out"
+                    className="h-8 w-8 sm:h-10 sm:w-10"
+                  >
+                    <LogOut className="h-3 w-3 sm:h-4 sm:w-4" />
+                  </Button>
+                </>
+              ) : (
+                <Button 
+                  className="bg-gradient-to-r from-navy-900 to-navy-800 hover:from-navy-800 hover:to-navy-700 text-gold-500 border border-gold-500/30 text-xs sm:text-sm px-2 sm:px-3 py-1 sm:py-2 whitespace-nowrap"
+                  onClick={() => navigate('/auth')}
+                >
+                  <LogIn className="mr-1 h-3 w-3 sm:h-4 sm:w-4" /> 
+                  <span className="hidden sm:inline">Sign In</span>
+                  <span className="sm:hidden">Sign In</span>
+                </Button>
+              )}
             </div>
           </div>
           
@@ -347,7 +361,21 @@ const Index = () => {
 
       {/* Main Content */}
       <main className="max-w-4xl mx-auto px-3 sm:px-4 py-4 sm:py-6 lg:py-8">
-        {pets.length === 0 ? (
+        {!user ? (
+          <div className="text-center py-12 sm:py-20">
+            <div className="w-16 h-16 sm:w-20 sm:h-20 bg-white/70 rounded-full flex items-center justify-center mx-auto mb-4 sm:mb-6">
+              <LogIn className="h-8 w-8 sm:h-10 sm:w-10 text-navy-800/50" />
+            </div>
+            <h2 className="text-xl sm:text-2xl font-bold text-navy-800 mb-2 sm:mb-3">Welcome to PetPass</h2>
+            <p className="text-navy-600 mb-4 sm:mb-6 text-sm sm:text-base px-4">Sign in or create an account to manage your pet's digital passport!</p>
+            <Button 
+              className="bg-gradient-to-r from-navy-900 to-navy-800 hover:from-navy-800 hover:to-navy-700 text-gold-500 border border-gold-500/30"
+              onClick={() => navigate('/auth')}
+            >
+              <LogIn className="mr-2 h-4 w-4 sm:h-5 sm:w-5" /> Get Started
+            </Button>
+          </div>
+        ) : pets.length === 0 ? (
           <div className="text-center py-12 sm:py-20">
             <div className="w-16 h-16 sm:w-20 sm:h-20 bg-white/70 rounded-full flex items-center justify-center mx-auto mb-4 sm:mb-6">
               <PlusCircle className="h-8 w-8 sm:h-10 sm:w-10 text-navy-800/50" />

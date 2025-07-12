@@ -1,4 +1,5 @@
 
+
 import { createContext, useContext, useEffect, useState } from "react";
 import { Session, User } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
@@ -128,7 +129,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         console.log("AuthProvider: User confirmed immediately, no email verification needed");
         toast({
           title: "Account created successfully!",
-          description: "Welcome to PetPass! You can now create your pet profiles.",
+          description: "Welcome to PetPort! You can now create your pet profiles.",
         });
       } else if (data.user && !data.session) {
         console.log("AuthProvider: User needs email verification");

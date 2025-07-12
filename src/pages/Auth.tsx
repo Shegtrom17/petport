@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { Button } from "@/components/ui/button";
@@ -80,13 +81,13 @@ export default function Auth() {
             <div className="w-20 h-20 rounded-full bg-white/90 shadow-lg flex items-center justify-center mb-4">
               <img 
                 src="/lovable-uploads/1af9fe70-ed76-44c5-a1e1-1a058e497a10.png" 
-                alt="PetPass Logo"
+                alt="PetPort Logo"
                 className="w-16 h-16 object-contain"
               />
             </div>
           </div>
           <h1 className="text-3xl font-bold bg-gradient-to-r from-navy-900 to-gold-500 bg-clip-text text-transparent">
-            PetPass
+            PetPort
           </h1>
           <p className="text-gray-600">Digital Pet Passport</p>
         </div>

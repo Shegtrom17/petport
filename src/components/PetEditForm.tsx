@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
@@ -17,7 +16,7 @@ import {
   uploadDocument,
   updatePetBasicInfo
 } from "@/services/petService";
-import { Upload, FileText, Camera, Stethoscope, Phone, X, MapPin, Loader2 } from "lucide-react";
+import { Upload, FileText, Camera, Stethoscope, Phone, X, MapPin, Loader2, Eye } from "lucide-react";
 
 interface PetEditFormProps {
   petData: any;
@@ -28,16 +27,13 @@ interface PetEditFormProps {
 export const PetEditForm = ({ petData, onSave, onCancel }: PetEditFormProps) => {
   const { register, handleSubmit, watch, setValue, formState: { isDirty } } = useForm({
     defaultValues: {
-      // Basic info
       notes: petData.notes || "",
       state: petData.state || "",
       county: petData.county || "",
-      // Contact info
       vetContact: petData.vetContact || "",
       emergencyContact: petData.emergencyContact || "",
       secondEmergencyContact: petData.secondEmergencyContact || "",
       petCaretaker: petData.petCaretaker || "",
-      // Medical info
       medicalAlert: petData.medicalAlert || false,
       medicalConditions: petData.medicalConditions || "",
       medications: petData.medications?.join(", ") || "",
@@ -52,9 +48,37 @@ export const PetEditForm = ({ petData, onSave, onCancel }: PetEditFormProps) => 
   const [galleryCaption, setGalleryCaption] = useState("");
   const [document, setDocument] = useState<File | null>(null);
   const [documentType, setDocumentType] = useState("vaccination");
+  const [profilePreview, setProfilePreview] = useState<string | null>(null);
+  const [fullBodyPreview, setFullBodyPreview] = useState<string | null>(null);
   const { toast } = useToast();
 
   const medicalAlert = watch("medicalAlert");
+
+  const handleCameraCapture = (type: 'profile' | 'fullBody') => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/*';
+    input.capture = type === 'profile' ? 'user' : 'environment';
+    
+    input.onchange = (e) => {
+      const file = (e.target as HTMLInputElement).files?.[0];
+      if (file) {
+        if (type === 'profile') {
+          setProfilePhoto(file);
+          const reader = new FileReader();
+          reader.onload = () => setProfilePreview(reader.result as string);
+          reader.readAsDataURL(file);
+        } else {
+          setFullBodyPhoto(file);
+          const reader = new FileReader();
+          reader.onload = () => setFullBodyPreview(reader.result as string);
+          reader.readAsDataURL(file);
+        }
+      }
+    };
+    
+    input.click();
+  };
 
   const onSubmit = async (data: any) => {
     setIsLoading(true);
@@ -62,7 +86,6 @@ export const PetEditForm = ({ petData, onSave, onCancel }: PetEditFormProps) => 
     try {
       console.log("Starting form submission with data:", data);
 
-      // Update basic pet information (notes, state, county)
       const basicInfoSuccess = await updatePetBasicInfo(petData.id, {
         notes: data.notes,
         state: data.state,
@@ -74,7 +97,6 @@ export const PetEditForm = ({ petData, onSave, onCancel }: PetEditFormProps) => 
       }
       console.log("Basic info updated successfully");
 
-      // Update contacts - including emergency contacts
       const contactSuccess = await updatePetContacts(petData.id, {
         vet_contact: data.vetContact,
         emergency_contact: data.emergencyContact,
@@ -87,7 +109,6 @@ export const PetEditForm = ({ petData, onSave, onCancel }: PetEditFormProps) => 
       }
       console.log("Contacts updated successfully");
 
-      // Update medical information
       const medicalSuccess = await updatePetMedical(petData.id, {
         medical_alert: data.medicalAlert,
         medical_conditions: data.medicalConditions,
@@ -100,7 +121,6 @@ export const PetEditForm = ({ petData, onSave, onCancel }: PetEditFormProps) => 
       }
       console.log("Medical info updated successfully");
 
-      // Upload photos if provided
       if (profilePhoto || fullBodyPhoto) {
         console.log("Uploading photos...");
         const photoSuccess = await uploadPetPhotos(petData.id, {
@@ -114,7 +134,6 @@ export const PetEditForm = ({ petData, onSave, onCancel }: PetEditFormProps) => 
         console.log("Photos uploaded successfully!");
       }
 
-      // Upload gallery photo if provided
       if (galleryPhoto) {
         console.log("Uploading gallery photo...");
         const gallerySuccess = await uploadGalleryPhoto(petData.id, galleryPhoto, galleryCaption);
@@ -124,7 +143,6 @@ export const PetEditForm = ({ petData, onSave, onCancel }: PetEditFormProps) => 
         console.log("Gallery photo uploaded successfully!");
       }
 
-      // Upload document if provided
       if (document) {
         console.log("Uploading document...");
         const docSuccess = await uploadDocument(petData.id, document, documentType);
@@ -303,7 +321,7 @@ export const PetEditForm = ({ petData, onSave, onCancel }: PetEditFormProps) => 
           </CardContent>
         </Card>
 
-        {/* Photo Uploads */}
+        {/* Photo Uploads - Enhanced with Camera */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center space-x-2">
@@ -311,59 +329,118 @@ export const PetEditForm = ({ petData, onSave, onCancel }: PetEditFormProps) => 
               <span>Photo Management</span>
             </CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="profilePhoto">Profile Photo</Label>
-                <div className="flex items-center space-x-2">
-                  <Input
-                    id="profilePhoto"
-                    type="file"
-                    accept="image/*"
-                    onChange={(e) => {
-                      const file = e.target.files?.[0] || null;
-                      console.log("Profile photo selected:", file?.name);
-                      setProfilePhoto(file);
-                    }}
-                    disabled={isLoading}
-                  />
-                  {profilePhoto && (
+          <CardContent className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Profile Photo Section */}
+              <div className="space-y-4">
+                <Label>Profile Photo</Label>
+                <div className="flex flex-col space-y-3">
+                  <div className="flex space-x-2">
                     <Button
                       type="button"
                       variant="outline"
-                      size="sm"
-                      onClick={() => setProfilePhoto(null)}
+                      onClick={() => handleCameraCapture('profile')}
                       disabled={isLoading}
+                      className="flex-1"
                     >
-                      <X className="w-4 h-4" />
+                      <Camera className="w-4 h-4 mr-2" />
+                      Take Photo
                     </Button>
+                    <Input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0] || null;
+                        console.log("Profile photo selected:", file?.name);
+                        setProfilePhoto(file);
+                        if (file) {
+                          const reader = new FileReader();
+                          reader.onload = () => setProfilePreview(reader.result as string);
+                          reader.readAsDataURL(file);
+                        }
+                      }}
+                      disabled={isLoading}
+                      className="flex-1"
+                    />
+                  </div>
+                  {(profilePreview || profilePhoto) && (
+                    <div className="relative">
+                      <img 
+                        src={profilePreview || (profilePhoto ? URL.createObjectURL(profilePhoto) : '')} 
+                        alt="Profile preview" 
+                        className="w-full max-w-48 h-48 object-cover rounded-lg border-2 border-gray-200"
+                      />
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                          setProfilePhoto(null);
+                          setProfilePreview(null);
+                        }}
+                        disabled={isLoading}
+                        className="absolute top-2 right-2"
+                      >
+                        <X className="w-4 h-4" />
+                      </Button>
+                    </div>
                   )}
                 </div>
               </div>
-              <div>
-                <Label htmlFor="fullBodyPhoto">Full Body Photo</Label>
-                <div className="flex items-center space-x-2">
-                  <Input
-                    id="fullBodyPhoto"
-                    type="file"
-                    accept="image/*"
-                    onChange={(e) => {
-                      const file = e.target.files?.[0] || null;
-                      console.log("Full body photo selected:", file?.name);
-                      setFullBodyPhoto(file);
-                    }}
-                    disabled={isLoading}
-                  />
-                  {fullBodyPhoto && (
+
+              {/* Full Body Photo Section */}
+              <div className="space-y-4">
+                <Label>Full Body Photo</Label>
+                <div className="flex flex-col space-y-3">
+                  <div className="flex space-x-2">
                     <Button
                       type="button"
                       variant="outline"
-                      size="sm"
-                      onClick={() => setFullBodyPhoto(null)}
+                      onClick={() => handleCameraCapture('fullBody')}
                       disabled={isLoading}
+                      className="flex-1"
                     >
-                      <X className="w-4 h-4" />
+                      <Camera className="w-4 h-4 mr-2" />
+                      Take Photo
                     </Button>
+                    <Input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0] || null;
+                        console.log("Full body photo selected:", file?.name);
+                        setFullBodyPhoto(file);
+                        if (file) {
+                          const reader = new FileReader();
+                          reader.onload = () => setFullBodyPreview(reader.result as string);
+                          reader.readAsDataURL(file);
+                        }
+                      }}
+                      disabled={isLoading}
+                      className="flex-1"
+                    />
+                  </div>
+                  {(fullBodyPreview || fullBodyPhoto) && (
+                    <div className="relative">
+                      <img 
+                        src={fullBodyPreview || (fullBodyPhoto ? URL.createObjectURL(fullBodyPhoto) : '')} 
+                        alt="Full body preview" 
+                        className="w-full max-w-48 h-48 object-cover rounded-lg border-2 border-gray-200"
+                      />
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                          setFullBodyPhoto(null);
+                          setFullBodyPreview(null);
+                        }}
+                        disabled={isLoading}
+                        className="absolute top-2 right-2"
+                      >
+                        <X className="w-4 h-4" />
+                      </Button>
+                    </div>
                   )}
                 </div>
               </div>
@@ -371,26 +448,58 @@ export const PetEditForm = ({ petData, onSave, onCancel }: PetEditFormProps) => 
 
             <Separator />
 
+            {/* Gallery Photo Section */}
             <div>
               <Label htmlFor="galleryPhoto">Add Gallery Photo</Label>
               <div className="space-y-2">
-                <Input
-                  id="galleryPhoto"
-                  type="file"
-                  accept="image/*"
-                  onChange={(e) => {
-                    const file = e.target.files?.[0] || null;
-                    console.log("Gallery photo selected:", file?.name);
-                    setGalleryPhoto(file);
-                  }}
-                  disabled={isLoading}
-                />
+                <div className="flex space-x-2">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => {
+                      const input = document.createElement('input');
+                      input.type = 'file';
+                      input.accept = 'image/*';
+                      input.capture = 'environment';
+                      input.onchange = (e) => {
+                        const file = (e.target as HTMLInputElement).files?.[0];
+                        if (file) {
+                          console.log("Gallery photo captured:", file.name);
+                          setGalleryPhoto(file);
+                        }
+                      };
+                      input.click();
+                    }}
+                    disabled={isLoading}
+                    className="bg-blue-600 hover:bg-blue-700 text-white"
+                  >
+                    <Camera className="w-4 h-4 mr-2" />
+                    📸 Capture Moment
+                  </Button>
+                  <Input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0] || null;
+                      console.log("Gallery photo selected:", file?.name);
+                      setGalleryPhoto(file);
+                    }}
+                    disabled={isLoading}
+                    className="flex-1"
+                  />
+                </div>
                 <Input
                   placeholder="Photo caption (optional)"
                   value={galleryCaption}
                   onChange={(e) => setGalleryCaption(e.target.value)}
                   disabled={isLoading}
                 />
+                {galleryPhoto && (
+                  <div className="flex items-center space-x-2 text-sm text-green-600">
+                    <Eye className="w-4 h-4" />
+                    <span>Ready to upload: {galleryPhoto.name}</span>
+                  </div>
+                )}
               </div>
             </div>
           </CardContent>

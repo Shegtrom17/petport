@@ -1,8 +1,8 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Camera, Upload, Download, Plus, Eye } from "lucide-react";
+import { useState } from "react";
 
 interface GalleryPhoto {
   url: string;
@@ -17,6 +17,8 @@ interface PetGallerySectionProps {
 }
 
 export const PetGallerySection = ({ petData }: PetGallerySectionProps) => {
+  const [capturedPhotos, setCapturedPhotos] = useState<File[]>([]);
+
   const handleUploadPhoto = () => {
     console.log("Opening photo upload dialog...");
     // Photo upload would be implemented here
@@ -25,6 +27,25 @@ export const PetGallerySection = ({ petData }: PetGallerySectionProps) => {
   const handleDownloadGallery = () => {
     console.log("Downloading gallery as PDF...");
     // PDF generation would be implemented here
+  };
+
+  const handleCapturePhoto = () => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/*';
+    input.capture = 'environment';
+    
+    input.onchange = (e) => {
+      const file = (e.target as HTMLInputElement).files?.[0];
+      if (file) {
+        console.log("Gallery photo captured:", file.name);
+        setCapturedPhotos(prev => [...prev, file]);
+        // Here you would typically upload the photo to your gallery
+        // For now, we'll just add it to the local state
+      }
+    };
+    
+    input.click();
   };
 
   return (
@@ -57,7 +78,7 @@ export const PetGallerySection = ({ petData }: PetGallerySectionProps) => {
         </CardContent>
       </Card>
 
-      {/* Upload Area */}
+      {/* Upload Area with Camera Capture */}
       <Card className="border-0 shadow-lg bg-passport-section-bg backdrop-blur-sm">
         <CardHeader>
           <CardTitle className="flex items-center space-x-2">
@@ -72,11 +93,29 @@ export const PetGallerySection = ({ petData }: PetGallerySectionProps) => {
           >
             <Camera className="w-12 h-12 text-gray-400 mx-auto mb-4" />
             <p className="text-gray-600 mb-2">Click to upload photos or drag and drop</p>
-            <p className="text-sm text-gray-500">Supports JPG, PNG, HEIC up to 10MB each</p>
-            <Button className="mt-4 bg-gradient-to-r from-navy-900 to-navy-800 text-gold-500 border border-gold-500/30">
-              <Plus className="w-4 h-4 mr-2" />
-              Choose Files
-            </Button>
+            <p className="text-sm text-gray-500 mb-4">Supports JPG, PNG, HEIC up to 10MB each</p>
+            <div className="flex justify-center space-x-3">
+              <Button 
+                className="bg-gradient-to-r from-navy-900 to-navy-800 text-gold-500 border border-gold-500/30"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleUploadPhoto();
+                }}
+              >
+                <Plus className="w-4 h-4 mr-2" />
+                Choose Files
+              </Button>
+              <Button 
+                className="bg-blue-600 hover:bg-blue-700 text-white border-0"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleCapturePhoto();
+                }}
+              >
+                <Camera className="w-4 h-4 mr-2" />
+                📸 Capture Moment
+              </Button>
+            </div>
           </div>
         </CardContent>
       </Card>
@@ -90,15 +129,16 @@ export const PetGallerySection = ({ petData }: PetGallerySectionProps) => {
               <span>{petData.name}'s Photo Gallery</span>
             </div>
             <Badge variant="outline" className="border-navy-800 text-navy-800">
-              {petData.galleryPhotos?.length || 0} Photos
+              {(petData.galleryPhotos?.length || 0) + capturedPhotos.length} Photos
             </Badge>
           </CardTitle>
         </CardHeader>
         <CardContent>
-          {petData.galleryPhotos && petData.galleryPhotos.length > 0 ? (
+          {((petData.galleryPhotos && petData.galleryPhotos.length > 0) || capturedPhotos.length > 0) ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {petData.galleryPhotos.map((photo, index) => (
-                <div key={index} className="space-y-3">
+              {/* Existing gallery photos */}
+              {petData.galleryPhotos?.map((photo, index) => (
+                <div key={`existing-${index}`} className="space-y-3">
                   <div className="aspect-square rounded-lg overflow-hidden border-2 border-gray-200 shadow-md hover:shadow-lg transition-shadow">
                     <img 
                       src={photo.url} 
@@ -112,18 +152,47 @@ export const PetGallerySection = ({ petData }: PetGallerySectionProps) => {
                   </div>
                 </div>
               ))}
+              
+              {/* Newly captured photos */}
+              {capturedPhotos.map((photo, index) => (
+                <div key={`captured-${index}`} className="space-y-3">
+                  <div className="aspect-square rounded-lg overflow-hidden border-2 border-green-400 shadow-md hover:shadow-lg transition-shadow">
+                    <img 
+                      src={URL.createObjectURL(photo)} 
+                      alt={`${petData.name} captured photo ${index + 1}`}
+                      className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                    />
+                  </div>
+                  <div className="bg-green-50 p-3 rounded-lg border border-green-200">
+                    <p className="text-sm text-green-700 font-medium flex items-center">
+                      <Camera className="w-4 h-4 mr-2" />
+                      New Capture {index + 1}
+                    </p>
+                    <p className="text-xs text-green-600 mt-1">Ready to save</p>
+                  </div>
+                </div>
+              ))}
             </div>
           ) : (
             <div className="text-center py-12">
               <Camera className="w-16 h-16 text-gray-300 mx-auto mb-4" />
               <p className="text-gray-500 mb-4">No photos uploaded yet</p>
-              <Button 
-                onClick={handleUploadPhoto}
-                className="bg-gradient-to-r from-navy-900 to-navy-800 text-gold-500 border border-gold-500/30"
-              >
-                <Plus className="w-4 h-4 mr-2" />
-                Upload First Photo
-              </Button>
+              <div className="flex justify-center space-x-3">
+                <Button 
+                  onClick={handleUploadPhoto}
+                  className="bg-gradient-to-r from-navy-900 to-navy-800 text-gold-500 border border-gold-500/30"
+                >
+                  <Plus className="w-4 h-4 mr-2" />
+                  Upload First Photo
+                </Button>
+                <Button 
+                  onClick={handleCapturePhoto}
+                  className="bg-blue-600 hover:bg-blue-700 text-white"
+                >
+                  <Camera className="w-4 h-4 mr-2" />
+                  📸 Take Photo
+                </Button>
+              </div>
             </div>
           )}
         </CardContent>

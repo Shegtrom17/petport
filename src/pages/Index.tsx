@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -433,7 +432,7 @@ const Index = () => {
                 <div className="absolute top-0 right-0 w-16 h-16 sm:w-24 sm:h-24 md:w-32 md:h-32 bg-yellow-500/10 rounded-full -translate-y-8 sm:-translate-y-12 md:-translate-y-16 translate-x-8 sm:translate-x-12 md:translate-x-16"></div>
                 <div className="absolute bottom-0 left-0 w-12 h-12 sm:w-18 sm:h-18 md:w-24 md:h-24 bg-yellow-500/10 rounded-full translate-y-6 sm:translate-y-9 md:translate-y-12 -translate-x-6 sm:-translate-x-9 md:-translate-x-12"></div>
                 
-                {/* Mobile-first layout with Globe Trotter section on the right */}
+                {/* Mobile-first layout with PetPort section on the right */}
                 <div className="flex flex-col sm:flex-row items-center sm:items-start space-y-4 sm:space-y-0 sm:space-x-4 md:space-x-8 relative z-20">
                   {/* Left side - Pet photo and info */}
                   <div className="flex flex-col sm:flex-row items-center sm:items-start space-y-4 sm:space-y-0 sm:space-x-4 md:space-x-6 flex-1">
@@ -449,34 +448,34 @@ const Index = () => {
                       <p className="text-yellow-200 font-serif text-sm sm:text-base md:text-lg mb-2">{petData.breed} • {petData.age}</p>
                       <div className="flex flex-col sm:flex-row items-center justify-center sm:justify-start space-y-1 sm:space-y-0 sm:space-x-3 md:space-x-6 text-xs sm:text-sm mb-4">
                         <div className="flex items-center space-x-1 sm:space-x-2">
-                          <div className="w-2 h-2 bg-yellow-400 rounded-full"></div>
+                          <div className="w-1.5 h-1.5 bg-yellow-400 rounded-full"></div>
                           <span className="font-serif text-yellow-200">Weight: {petData.weight}</span>
                         </div>
                         <div className="flex items-center space-x-1 sm:space-x-2">
-                          <div className="w-2 h-2 bg-yellow-400 rounded-full"></div>
+                          <div className="w-1.5 h-1.5 bg-yellow-400 rounded-full"></div>
                           <span className="font-serif text-yellow-200">{petData.badges?.length || 0} Certifications</span>
                         </div>
                       </div>
                     </div>
                   </div>
 
-                  {/* Right side - Globe Trotter section */}
+                  {/* Right side - PetPort section */}
                   <div className="flex flex-col items-center justify-center sm:min-w-[200px] md:min-w-[250px]">
                     <div className="mb-3 flex justify-center">
                       <div className="w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 lg:w-32 lg:h-32 rounded-xl flex items-center justify-center overflow-hidden bg-white/20 backdrop-blur-sm border-2 border-yellow-500/50 shadow-lg">
                         <img 
-                          src="/lovable-uploads/1af9fe70-ed76-44c5-a1e1-1a058e497a10.png" 
-                          alt="Globe Trotter Logo"
+                          src="/lovable-uploads/f6a3519f-a6e7-4515-ad5c-e8dca27a8e64.png" 
+                          alt="PetPort Logo"
                           className="w-full h-full object-contain"
                           onError={(e) => {
-                            console.error("Globe Trotter logo failed to load:", e);
+                            console.error("PetPort logo failed to load:", e);
                             e.currentTarget.style.display = 'none';
                           }}
-                          onLoad={() => console.log("Globe Trotter logo loaded successfully")}
+                          onLoad={() => console.log("PetPort logo loaded successfully")}
                         />
                       </div>
                     </div>
-                    <p className="text-yellow-400 text-sm sm:text-base md:text-lg font-serif tracking-wide font-bold">GLOBE TROTTER</p>
+                    <p className="text-yellow-400 text-sm sm:text-base md:text-lg font-serif tracking-wide font-bold">PETPORT</p>
                     <p className="text-xs sm:text-sm text-yellow-300 font-mono">ID: {petData.petPassId}</p>
                   </div>
                 </div>

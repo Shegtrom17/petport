@@ -218,12 +218,10 @@ const Index = () => {
           width: '100%',
           height: '100%',
           backgroundImage: `
-            radial-gradient(circle at 25% 25%, rgba(101, 67, 33, 0.15) 1px, transparent 1px),
-            radial-gradient(circle at 75% 75%, rgba(139, 69, 19, 0.15) 1px, transparent 1px),
             linear-gradient(45deg, transparent 48%, rgba(160, 82, 45, 0.12) 49%, rgba(160, 82, 45, 0.12) 51%, transparent 52%)
           `,
-          backgroundSize: '12px 12px, 12px 12px, 8px 8px',
-          backgroundPosition: '0 0, 6px 6px, 0 0',
+          backgroundSize: '8px 8px',
+          backgroundPosition: '0 0',
           backgroundColor: 'rgba(222, 184, 135, 0.03)',
           zIndex: 0,
           pointerEvents: 'none'

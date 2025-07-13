@@ -209,7 +209,19 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 passport-map-container">
-      <div className="passport-map-bg" />
+      <div 
+        className="passport-map-bg"
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          backgroundColor: 'rgba(255, 0, 0, 0.5)',
+          zIndex: 0,
+          pointerEvents: 'none'
+        }}
+      />
       <PetHeader activeTab={activeTab} onTabChange={setActiveTab} />
 
       <InAppSharingModal

@@ -218,14 +218,14 @@ const Index = () => {
           width: '100%',
           height: '100%',
           backgroundImage: `
-            linear-gradient(135deg, rgba(255, 205, 221, 0.08), rgba(190, 210, 235, 0.12)),
-            repeating-linear-gradient(0deg, transparent, transparent 60px, rgba(148, 163, 184, 0.06) 60px, rgba(148, 163, 184, 0.06) 61px),
-            repeating-linear-gradient(90deg, transparent, transparent 60px, rgba(148, 163, 184, 0.06) 60px, rgba(148, 163, 184, 0.06) 61px),
-            radial-gradient(circle at 25% 25%, rgba(148, 163, 184, 0.04) 2px, transparent 2px),
-            radial-gradient(circle at 75% 75%, rgba(148, 163, 184, 0.04) 2px, transparent 2px)
+            radial-gradient(circle at 25% 25%, rgba(139, 69, 19, 0.08) 1px, transparent 1px),
+            radial-gradient(circle at 75% 75%, rgba(139, 69, 19, 0.08) 1px, transparent 1px),
+            linear-gradient(45deg, transparent 48%, rgba(101, 67, 33, 0.06) 49%, rgba(101, 67, 33, 0.06) 51%, transparent 52%),
+            linear-gradient(45deg, rgba(160, 82, 45, 0.04) 25%, transparent 25%),
+            linear-gradient(-45deg, rgba(160, 82, 45, 0.04) 25%, transparent 25%)
           `,
-          backgroundSize: '100% 100%, 120px 120px, 120px 120px, 200px 200px, 200px 200px',
-          backgroundPosition: 'center, 0 0, 0 0, 0 0, 60px 60px',
+          backgroundSize: '12px 12px, 12px 12px, 8px 8px, 6px 6px, 6px 6px',
+          backgroundPosition: '0 0, 6px 6px, 0 0, 0 0, 0 3px',
           zIndex: 0,
           pointerEvents: 'none'
         }}

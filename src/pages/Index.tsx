@@ -42,7 +42,6 @@ const Index = () => {
   const { signOut, user } = useAuth();
   const { toast } = useToast();
 
-  // Fetch documents for the selected pet
   const fetchDocuments = async (petId: string) => {
     try {
       const { data, error } = await supabase
@@ -62,14 +61,12 @@ const Index = () => {
     }
   };
 
-  // Fetch user's pets
   useEffect(() => {
     const loadPets = async () => {
       try {
         const userPets = await fetchUserPets();
         setPets(userPets);
         
-        // If there are pets, select the first one by default
         if (userPets.length > 0) {
           const petDetails = await fetchPetDetails(userPets[0].id);
           setSelectedPet(petDetails);
@@ -90,16 +87,15 @@ const Index = () => {
     loadPets();
   }, [toast]);
 
-  // Check for in-app sharing hash
   useEffect(() => {
     const handleHashChange = () => {
       if (window.location.hash === '#share-with-members') {
         setIsInAppSharingOpen(true);
-        window.location.hash = ''; // Clear the hash
+        window.location.hash = '';
       }
     };
 
-    handleHashChange(); // Check on mount
+    handleHashChange();
     window.addEventListener('hashchange', handleHashChange);
     
     return () => {
@@ -107,7 +103,6 @@ const Index = () => {
     };
   }, []);
 
-  // Function to select a pet and fetch its details
   const handleSelectPet = async (petId: string) => {
     try {
       setIsLoading(true);
@@ -126,14 +121,12 @@ const Index = () => {
     }
   };
 
-  // Function to refresh pet data after updates
   const handlePetUpdate = async () => {
     if (selectedPet?.id) {
       try {
         const updatedPetDetails = await fetchPetDetails(selectedPet.id);
         setSelectedPet(updatedPetDetails);
         
-        // Also refresh the pets list
         const userPets = await fetchUserPets();
         setPets(userPets);
         
@@ -147,14 +140,12 @@ const Index = () => {
     }
   };
 
-  // Function to refresh documents after changes
   const handleDocumentUpdate = async () => {
     if (selectedPet?.id) {
       await fetchDocuments(selectedPet.id);
     }
   };
 
-  // Use dummy data for now if no pets are found
   const petData = selectedPet || {
     name: "Luna",
     breed: "Golden Retriever", 
@@ -280,16 +271,14 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
-      {/* Header - Optimized for mobile */}
       <header className="bg-white/80 backdrop-blur-sm border-b border-blue-100 sticky top-0 z-50">
         <div className="max-w-4xl mx-auto px-3 sm:px-4 py-3 sm:py-4">
           <div className="flex items-center justify-between">
-            {/* Left Side - Logo and Title */}
             <div className="flex items-center space-x-2 sm:space-x-3 md:space-x-4 flex-1 min-w-0">
               <div className="w-10 h-10 sm:w-12 sm:h-12 md:w-16 md:h-16 lg:w-20 lg:h-20 flex-shrink-0">
                 <img 
-                  src="/lovable-uploads/d4e1e1f9-612c-48bb-8391-e7bce7658e8c.png" 
-                  alt="PetPass Logo"
+                  src="/lovable-uploads/450d05bf-750d-4e05-901d-1a8eb468f62b.png" 
+                  alt="PetPort Logo"
                   className="w-full h-full object-contain"
                   onError={(e) => {
                     console.error("Header logo failed to load:", e);
@@ -305,7 +294,6 @@ const Index = () => {
               </div>
             </div>
             
-            {/* Right Side Controls */}
             <div className="flex items-center space-x-1 sm:space-x-2 md:space-x-3 flex-shrink-0">
               {user ? (
                 <>
@@ -341,7 +329,6 @@ const Index = () => {
             </div>
           </div>
           
-          {/* Mobile Title - Show below logo on small screens */}
           <div className="sm:hidden mt-2 text-center">
             <h1 className="text-sm font-bold text-navy-900 tracking-wide">
               Digital Pet Passport
@@ -350,7 +337,6 @@ const Index = () => {
         </div>
       </header>
 
-      {/* In-App Sharing Modal */}
       <InAppSharingModal
         isOpen={isInAppSharingOpen}
         onClose={() => setIsInAppSharingOpen(false)}
@@ -358,7 +344,6 @@ const Index = () => {
         petName={petData.name}
       />
 
-      {/* Main Content */}
       <main className="max-w-4xl mx-auto px-3 sm:px-4 py-4 sm:py-6 lg:py-8">
         {!user ? (
           <div className="text-center py-12 sm:py-20">
@@ -390,7 +375,6 @@ const Index = () => {
           </div>
         ) : (
           <>
-            {/* Pet Selection (if multiple pets) - Mobile optimized */}
             {pets.length > 1 && (
               <div className="mb-4 sm:mb-6 overflow-x-auto pb-2">
                 <div className="flex space-x-2 sm:space-x-3 min-w-max">
@@ -425,16 +409,12 @@ const Index = () => {
               </div>
             )}
 
-            {/* Pet Header Card - Mobile optimized */}
             <Card className="mb-6 sm:mb-8 overflow-hidden border-0 shadow-xl bg-gradient-to-br from-navy-900 to-slate-800 text-white">
               <div className="bg-gradient-to-r from-navy-900 to-slate-800 p-4 sm:p-6 text-white relative overflow-hidden">
-                {/* Passport-style decorative elements */}
                 <div className="absolute top-0 right-0 w-16 h-16 sm:w-24 sm:h-24 md:w-32 md:h-32 bg-yellow-500/10 rounded-full -translate-y-8 sm:-translate-y-12 md:-translate-y-16 translate-x-8 sm:translate-x-12 md:translate-x-16"></div>
                 <div className="absolute bottom-0 left-0 w-12 h-12 sm:w-18 sm:h-18 md:w-24 md:h-24 bg-yellow-500/10 rounded-full translate-y-6 sm:translate-y-9 md:translate-y-12 -translate-x-6 sm:-translate-x-9 md:-translate-x-12"></div>
                 
-                {/* Mobile-first layout with PetPort section on the right */}
                 <div className="flex flex-col sm:flex-row items-center sm:items-start space-y-4 sm:space-y-0 sm:space-x-4 md:space-x-8 relative z-20">
-                  {/* Left side - Pet photo and info */}
                   <div className="flex flex-col sm:flex-row items-center sm:items-start space-y-4 sm:space-y-0 sm:space-x-4 md:space-x-6 flex-1">
                     <div className="w-24 h-24 sm:w-32 sm:h-32 md:w-40 md:h-40 lg:w-48 lg:h-48 rounded-lg overflow-hidden border-4 border-yellow-500/50 shadow-lg flex-shrink-0">
                       <img 
@@ -459,7 +439,6 @@ const Index = () => {
                     </div>
                   </div>
 
-                  {/* Right side - Globe Trotter section */}
                   <div className="flex flex-col items-center justify-center sm:min-w-[200px] md:min-w-[250px]">
                     <div className="mb-3 flex justify-center">
                       <div className="w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 lg:w-32 lg:h-32 rounded-xl flex items-center justify-center overflow-hidden border-2 border-yellow-500/50 shadow-lg">
@@ -480,17 +459,14 @@ const Index = () => {
                   </div>
                 </div>
                 
-                {/* Passport-style bottom border */}
                 <div className="absolute bottom-0 left-0 right-0 h-2 bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-400"></div>
               </div>
             </Card>
 
-            {/* Navigation - Mobile optimized with deeper gray-blue background */}
             <div className="mb-4 sm:mb-6">
               <NavigationTabs activeTab={activeTab} onTabChange={setActiveTab} />
             </div>
 
-            {/* Content Section */}
             <div className="space-y-4 sm:space-y-6">
               {renderTabContent()}
             </div>

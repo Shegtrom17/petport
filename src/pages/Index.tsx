@@ -227,7 +227,7 @@ const Index = () => {
           backgroundSize: 'contain, 8px 8px, 6px 6px, 6px 6px',
           backgroundPosition: 'center, 0 0, 0 0, 0 3px',
           backgroundRepeat: 'no-repeat, repeat, repeat, repeat',
-          opacity: 0.05,
+          opacity: 0.15,
           backgroundColor: 'rgba(222, 184, 135, 0.03)',
           zIndex: 0,
           pointerEvents: 'none'

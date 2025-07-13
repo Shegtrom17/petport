@@ -1,5 +1,6 @@
 
 import { Card } from "@/components/ui/card";
+import worldMapOutline from "@/assets/world-map-outline.png";
 
 interface PetPassportCardProps {
   petData: any;
@@ -9,6 +10,24 @@ export const PetPassportCard = ({ petData }: PetPassportCardProps) => {
   return (
     <Card className="mb-6 sm:mb-8 overflow-hidden border-0 shadow-xl bg-gradient-to-br from-navy-900 to-slate-800 text-white">
       <div className="bg-gradient-to-r from-navy-900 to-slate-800 p-4 sm:p-6 text-white relative overflow-hidden">
+        <div 
+          className="absolute inset-0"
+          style={{
+            backgroundImage: `
+              linear-gradient(to bottom, rgba(15, 23, 42, 0.85) 0%, rgba(15, 23, 42, 0.9) 100%),
+              url(${worldMapOutline}),
+              linear-gradient(45deg, transparent 48%, rgba(160, 82, 45, 0.08) 49%, rgba(160, 82, 45, 0.08) 51%, transparent 52%),
+              linear-gradient(45deg, rgba(205, 133, 63, 0.03) 25%, transparent 25%),
+              linear-gradient(-45deg, rgba(222, 184, 135, 0.03) 25%, transparent 25%)
+            `,
+            backgroundSize: '100% 100%, contain, 8px 8px, 6px 6px, 6px 6px',
+            backgroundPosition: 'center, center, 0 0, 0 0, 0 3px',
+            backgroundRepeat: 'no-repeat, no-repeat, repeat, repeat, repeat',
+            opacity: 0.15,
+            zIndex: 0,
+            pointerEvents: 'none'
+          }}
+        />
         <div className="absolute top-0 right-0 w-16 h-16 sm:w-24 sm:h-24 md:w-32 md:h-32 bg-yellow-500/10 rounded-full -translate-y-8 sm:-translate-y-12 md:-translate-y-16 translate-x-8 sm:translate-x-12 md:translate-x-16"></div>
         <div className="absolute bottom-0 left-0 w-12 h-12 sm:w-18 sm:h-18 md:w-24 md:h-24 bg-yellow-500/10 rounded-full translate-y-6 sm:translate-y-9 md:translate-y-12 -translate-x-6 sm:-translate-x-9 md:-translate-x-12"></div>
         

@@ -2,6 +2,7 @@
 import { Card } from "@/components/ui/card";
 import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea/dnd';
 import { getPetBackgroundColor } from "@/utils/petColors";
+import worldMapOutline from "@/assets/world-map-outline.png";
 
 interface Pet {
   id: string;
@@ -31,7 +32,26 @@ export const PetSelector = ({ pets, selectedPet, onSelectPet, onReorderPets }: P
   };
 
   return (
-    <div className="mb-4 sm:mb-6 overflow-x-auto pb-2">
+    <div className="mb-4 sm:mb-6 relative passport-map-container">
+      <div 
+        className="absolute inset-0 rounded-lg"
+        style={{
+          backgroundImage: `
+            linear-gradient(to bottom, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.3) 70%, rgba(255,255,255,0.1) 100%),
+            url(${worldMapOutline}),
+            linear-gradient(45deg, transparent 48%, rgba(160, 82, 45, 0.12) 49%, rgba(160, 82, 45, 0.12) 51%, transparent 52%),
+            linear-gradient(45deg, rgba(205, 133, 63, 0.04) 25%, transparent 25%),
+            linear-gradient(-45deg, rgba(222, 184, 135, 0.04) 25%, transparent 25%)
+          `,
+          backgroundSize: '100% 100%, contain, 8px 8px, 6px 6px, 6px 6px',
+          backgroundPosition: 'center, center, 0 0, 0 0, 0 3px',
+          backgroundRepeat: 'no-repeat, no-repeat, repeat, repeat, repeat',
+          opacity: 0.12,
+          zIndex: 0,
+          pointerEvents: 'none'
+        }}
+      />
+      <div className="overflow-x-auto pb-2 relative z-10">
       <DragDropContext onDragEnd={handleDragEnd}>
         <Droppable droppableId="pets" direction="horizontal">
           {(provided) => (
@@ -102,6 +122,7 @@ export const PetSelector = ({ pets, selectedPet, onSelectPet, onReorderPets }: P
           )}
         </Droppable>
       </DragDropContext>
+      </div>
     </div>
   );
 };

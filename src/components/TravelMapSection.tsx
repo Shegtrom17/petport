@@ -107,7 +107,7 @@ export const TravelMapSection = ({ petData, onUpdate }: TravelMapSectionProps) =
   return (
     <div className="space-y-4 sm:space-y-6">
       {/* Header with Stats */}
-      <Card className="border-0 shadow-xl bg-gradient-to-r from-navy-900 to-navy-800 text-white">
+      <Card className="border-0 shadow-xl bg-gradient-to-r from-navy-900 to-navy-800 text-white passport-texture-bg canvas">
         <CardContent className="p-4 sm:p-6">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 space-y-3 sm:space-y-0">
             <div className="w-full sm:w-auto">
@@ -177,7 +177,7 @@ export const TravelMapSection = ({ petData, onUpdate }: TravelMapSectionProps) =
       {locations.length > 0 ? (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4">
           {locations.map((location) => (
-            <Card key={location.id} className="border-0 shadow-lg bg-passport-section-bg backdrop-blur-sm hover:shadow-xl transition-shadow">
+            <Card key={location.id} className="border-0 shadow-lg bg-passport-section-bg backdrop-blur-sm hover:shadow-xl transition-shadow passport-texture-bg paper">
               <CardContent className="p-3 sm:p-4">
                 <div className="flex flex-col sm:flex-row items-center sm:items-start space-y-3 sm:space-y-0 sm:space-x-4">
                   {location.photo_url ? (

@@ -103,3 +103,79 @@ All colors MUST be HSL.
     @apply bg-background text-foreground;
   }
 }
+
+@layer utilities {
+  /* Passport-style texture utilities */
+  .texture-leather {
+    background-image: 
+      radial-gradient(circle at 25% 25%, hsl(var(--foreground)) 1px, transparent 1px),
+      radial-gradient(circle at 75% 75%, hsl(var(--foreground)) 1px, transparent 1px),
+      linear-gradient(45deg, transparent 48%, hsl(var(--foreground)) 49%, hsl(var(--foreground)) 51%, transparent 52%);
+    background-size: 12px 12px, 12px 12px, 8px 8px;
+    background-position: 0 0, 6px 6px, 0 0;
+    opacity: 0.03;
+  }
+
+  .texture-canvas {
+    background-image: 
+      linear-gradient(45deg, hsl(var(--foreground)) 25%, transparent 25%),
+      linear-gradient(-45deg, hsl(var(--foreground)) 25%, transparent 25%),
+      linear-gradient(45deg, transparent 75%, hsl(var(--foreground)) 75%),
+      linear-gradient(-45deg, transparent 75%, hsl(var(--foreground)) 75%);
+    background-size: 6px 6px;
+    background-position: 0 0, 0 3px, 3px -3px, -3px 0px;
+    opacity: 0.04;
+  }
+
+  .texture-paper {
+    background-image: 
+      repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        hsl(var(--foreground)) 2px,
+        hsl(var(--foreground)) 2.5px
+      ),
+      repeating-linear-gradient(
+        90deg,
+        transparent,
+        transparent 2px,
+        hsl(var(--foreground)) 2px,
+        hsl(var(--foreground)) 2.5px
+      );
+    background-size: 16px 16px;
+    opacity: 0.02;
+  }
+
+  .passport-texture-bg {
+    position: relative;
+  }
+
+  .passport-texture-bg::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .passport-texture-bg.leather::before {
+    @apply texture-leather;
+  }
+
+  .passport-texture-bg.canvas::before {
+    @apply texture-canvas;
+  }
+
+  .passport-texture-bg.paper::before {
+    @apply texture-paper;
+  }
+
+  .passport-texture-bg > * {
+    position: relative;
+    z-index: 1;
+  }
+}

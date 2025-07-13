@@ -459,7 +459,7 @@ const Index = () => {
                     </div>
                   </div>
 
-                  {/* Right side - PetPort section */}
+                  {/* Right side - Globe Trotter section */}
                   <div className="flex flex-col items-center justify-center sm:min-w-[200px] md:min-w-[250px]">
                     <div className="mb-3 flex justify-center">
                       <div className="w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 lg:w-32 lg:h-32 rounded-xl flex items-center justify-center overflow-hidden bg-white/20 backdrop-blur-sm border-2 border-yellow-500/50 shadow-lg">
@@ -475,7 +475,7 @@ const Index = () => {
                         />
                       </div>
                     </div>
-                    <p className="text-yellow-400 text-sm sm:text-base md:text-lg font-serif tracking-wide font-bold">PETPORT</p>
+                    <p className="text-yellow-400 text-sm sm:text-base md:text-lg font-serif tracking-wide font-bold">GLOBE TROTTER</p>
                     <p className="text-xs sm:text-sm text-yellow-300 font-mono">ID: {petData.petPassId}</p>
                   </div>
                 </div>

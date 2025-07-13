@@ -464,7 +464,7 @@ const Index = () => {
                     <div className="mb-3 flex justify-center">
                       <div className="w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 lg:w-32 lg:h-32 rounded-xl flex items-center justify-center overflow-hidden bg-white/20 backdrop-blur-sm border-2 border-yellow-500/50 shadow-lg">
                         <img 
-                          src="/lovable-uploads/f6a3519f-a6e7-4515-ad5c-e8dca27a8e64.png" 
+                          src="/lovable-uploads/1af9fe70-ed76-44c5-a1e1-1a058e497a10.png" 
                           alt="PetPort Logo"
                           className="w-full h-full object-contain"
                           onError={(e) => {

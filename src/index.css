@@ -113,7 +113,7 @@ All colors MUST be HSL.
       linear-gradient(45deg, transparent 48%, hsl(var(--foreground)) 49%, hsl(var(--foreground)) 51%, transparent 52%);
     background-size: 12px 12px, 12px 12px, 8px 8px;
     background-position: 0 0, 6px 6px, 0 0;
-    opacity: 0.03;
+    opacity: 0.06;
   }
 
   .texture-canvas {
@@ -124,7 +124,7 @@ All colors MUST be HSL.
       linear-gradient(-45deg, transparent 75%, hsl(var(--foreground)) 75%);
     background-size: 6px 6px;
     background-position: 0 0, 0 3px, 3px -3px, -3px 0px;
-    opacity: 0.04;
+    opacity: 0.08;
   }
 
   .texture-paper {
@@ -144,7 +144,7 @@ All colors MUST be HSL.
         hsl(var(--foreground)) 2.5px
       );
     background-size: 16px 16px;
-    opacity: 0.02;
+    opacity: 0.05;
   }
 
   .passport-texture-bg {

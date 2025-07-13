@@ -32,7 +32,8 @@ const Index = () => {
     documents,
     handleSelectPet,
     handlePetUpdate,
-    handleDocumentUpdate
+    handleDocumentUpdate,
+    handleReorderPets
   } = usePetData();
 
   useEffect(() => {
@@ -220,6 +221,7 @@ const Index = () => {
               pets={pets}
               selectedPet={selectedPet}
               onSelectPet={handleSelectPet}
+              onReorderPets={handleReorderPets}
             />
 
             <PetPassportCard petData={petData} />

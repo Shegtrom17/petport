@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Share2, Facebook, Twitter, Copy, Check } from "lucide-react";
+import { Share2, Facebook, Copy, Check } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 interface SocialShareButtonsProps {
@@ -44,9 +44,9 @@ export const SocialShareButtons = ({ petName, petId, isMissingPet = false }: Soc
     window.open(facebookUrl, '_blank', 'width=600,height=400');
   };
 
-  const handleTwitterShare = () => {
-    const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`;
-    window.open(twitterUrl, '_blank', 'width=600,height=400');
+  const handleXShare = () => {
+    const xUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`;
+    window.open(xUrl, '_blank', 'width=600,height=400');
   };
 
   return (
@@ -84,11 +84,13 @@ export const SocialShareButtons = ({ petName, petId, isMissingPet = false }: Soc
           </Button>
           
           <Button
-            onClick={handleTwitterShare}
-            className="w-full bg-[#1DA1F2] hover:bg-[#1A91DA] text-white"
+            onClick={handleXShare}
+            className="w-full bg-black hover:bg-gray-800 text-white"
           >
-            <Twitter className="w-4 h-4 mr-2" />
-            Twitter
+            <svg className="w-4 h-4 mr-2" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+            </svg>
+            Share on X
           </Button>
         </div>
         

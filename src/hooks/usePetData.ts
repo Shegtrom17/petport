@@ -33,12 +33,14 @@ export const usePetData = () => {
   const loadPets = async () => {
     try {
       const userPets = await fetchUserPets();
-      setPets(userPets);
+      // Sort pets by creation date to ensure first pet stays first
+      const sortedPets = userPets.sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
+      setPets(sortedPets);
       
-      if (userPets.length > 0) {
-        const petDetails = await fetchPetDetails(userPets[0].id);
+      if (sortedPets.length > 0) {
+        const petDetails = await fetchPetDetails(sortedPets[0].id);
         setSelectedPet(petDetails);
-        await fetchDocuments(userPets[0].id);
+        await fetchDocuments(sortedPets[0].id);
       }
     } catch (error) {
       console.error("Error loading pets:", error);
@@ -77,7 +79,8 @@ export const usePetData = () => {
         setSelectedPet(updatedPetDetails);
         
         const userPets = await fetchUserPets();
-        setPets(userPets);
+        const sortedPets = userPets.sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
+        setPets(sortedPets);
         
         toast({
           title: "Success",
@@ -87,6 +90,10 @@ export const usePetData = () => {
         console.error("Error refreshing pet data:", error);
       }
     }
+  };
+
+  const handleReorderPets = (reorderedPets: any[]) => {
+    setPets(reorderedPets);
   };
 
   const handleDocumentUpdate = async () => {
@@ -106,6 +113,7 @@ export const usePetData = () => {
     documents,
     handleSelectPet,
     handlePetUpdate,
-    handleDocumentUpdate
+    handleDocumentUpdate,
+    handleReorderPets
   };
 };

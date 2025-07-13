@@ -37,95 +37,101 @@ export const QuickIDSection = ({ petData }: QuickIDSectionProps) => {
   };
 
   return (
-    <div className="space-y-4 sm:space-y-6">
-      {/* Quick ID Preview */}
-      <Card className="border-0 shadow-lg bg-passport-section-bg backdrop-blur-sm">
-        <CardHeader className="pb-3 sm:pb-6">
-          <CardTitle className="flex items-center space-x-2 text-base sm:text-lg">
-            <QrCode className="w-4 h-4 sm:w-5 sm:h-5 text-navy-900" />
-            <span>Emergency Quick ID Card</span>
+    <div className="space-y-6">
+      {/* Quick ID Preview with passport styling */}
+      <Card className="bg-[#f8f8f8] shadow-lg border-2 border-gold-500/30">
+        <CardHeader className="pb-4">
+          <CardTitle className="flex items-center space-x-2 text-xl font-serif text-navy-900 border-b-2 border-gold-500 pb-2">
+            <div className="w-8 h-8 bg-gold-500/20 rounded-full flex items-center justify-center">
+              <QrCode className="w-5 h-5 text-gold-600" />
+            </div>
+            <span>EMERGENCY IDENTIFICATION CARD</span>
           </CardTitle>
         </CardHeader>
-        <CardContent className="pt-0">
-          <div className="bg-gradient-to-r from-red-500 to-pink-600 p-4 sm:p-6 rounded-xl text-white mb-4 relative overflow-hidden">
-            {/* PetPass Logo on Quick ID */}
-            <div className="absolute top-2 left-2 sm:top-3 sm:left-3 flex items-center space-x-1 sm:space-x-2">
+        <CardContent>
+          <div className="bg-gradient-to-r from-red-500 to-pink-600 p-6 rounded-xl text-white mb-6 relative overflow-hidden">
+            {/* Passport-style decorative elements */}
+            <div className="absolute top-0 right-0 w-20 h-20 bg-white/10 rounded-full -translate-y-10 translate-x-10"></div>
+            <div className="absolute bottom-0 left-0 w-16 h-16 bg-white/10 rounded-full translate-y-8 -translate-x-8"></div>
+            
+            {/* PetPass Logo and branding */}
+            <div className="absolute top-3 left-3 flex items-center space-x-2">
               <img 
-                src="/lovable-uploads/61126f7b-5822-4f60-bf90-f595bb83b874.png" 
+                src="/lovable-uploads/fda1bf45-8aa7-4652-90b2-3814829f4c95.png" 
                 alt="PetPass Logo"
-                className="w-4 h-4 sm:w-6 sm:h-6 object-contain opacity-80"
+                className="w-6 h-6 object-contain opacity-80"
               />
-              <span className="text-xs font-bold opacity-80">PETPASS</span>
+              <span className="text-xs font-bold opacity-80 font-serif tracking-wide">PETPASS</span>
             </div>
 
-            {/* PetPass ID in top right */}
-            <div className="absolute top-2 right-2 sm:top-3 sm:right-3 text-xs font-mono bg-white/20 px-1.5 py-0.5 sm:px-2 sm:py-1 rounded">
-              {petData.petPassId}
+            {/* PetPass ID in top right with stamp design */}
+            <div className="absolute top-3 right-3 bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full border border-white/30">
+              <span className="text-xs font-mono font-bold">{petData.petPassId}</span>
             </div>
             
-            {/* Medical Alert Banner on Quick ID */}
+            {/* Medical Alert Banner */}
             {petData.medicalAlert && (
-              <div className="bg-black/30 backdrop-blur-sm p-2 sm:p-3 rounded-lg mb-3 sm:mb-4 border-2 border-white/50 mt-6 sm:mt-8">
-                <div className="flex items-center justify-center space-x-1 sm:space-x-2">
-                  <AlertTriangle className="w-4 h-4 sm:w-5 sm:h-5 animate-pulse" />
-                  <span className="font-bold text-xs sm:text-sm tracking-wide text-center">
+              <div className="bg-black/30 backdrop-blur-sm p-3 rounded-lg mb-4 border-2 border-white/50 mt-10">
+                <div className="flex items-center justify-center space-x-2">
+                  <AlertTriangle className="w-5 h-5 animate-pulse" />
+                  <span className="font-bold text-sm tracking-wide text-center">
                     MEDICAL ALERT: {petData.medicalConditions}
                   </span>
-                  <AlertTriangle className="w-4 h-4 sm:w-5 sm:h-5 animate-pulse" />
+                  <AlertTriangle className="w-5 h-5 animate-pulse" />
                 </div>
               </div>
             )}
             
-            {/* Support Animal Status Banner on Quick ID */}
+            {/* Support Animal Status Banner */}
             {petData.supportAnimalStatus && (
-              <div className="bg-white/20 backdrop-blur-sm p-2 sm:p-3 rounded-lg mb-3 sm:mb-4 border-2 border-white/30 mt-1 sm:mt-2">
-                <div className="flex items-center justify-center space-x-1 sm:space-x-2">
+              <div className="bg-white/20 backdrop-blur-sm p-3 rounded-lg mb-4 border-2 border-white/30 mt-2">
+                <div className="flex items-center justify-center space-x-2">
                   {(() => {
                     const IconComponent = getSupportAnimalIcon(petData.supportAnimalStatus);
-                    return <IconComponent className="w-4 h-4 sm:w-5 sm:h-5" />;
+                    return <IconComponent className="w-5 h-5" />;
                   })()}
-                  <span className="font-bold text-xs sm:text-sm tracking-wide text-center">
+                  <span className="font-bold text-sm tracking-wide text-center font-serif">
                     {petData.supportAnimalStatus.toUpperCase()}
                   </span>
                 </div>
               </div>
             )}
             
-            {/* Mobile-first layout */}
-            <div className="flex flex-col sm:flex-row items-center sm:items-start space-y-3 sm:space-y-0 sm:space-x-4">
-              <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full overflow-hidden border-4 border-white/30 flex-shrink-0">
+            {/* Main pet information with passport layout */}
+            <div className="flex items-center space-x-6 relative z-10">
+              <div className="w-20 h-20 rounded-lg overflow-hidden border-4 border-white/30 flex-shrink-0 shadow-lg">
                 <img 
                   src={petData.photoUrl} 
                   alt={petData.name}
                   className="w-full h-full object-cover"
                 />
               </div>
-              <div className="flex-1 text-center sm:text-left w-full">
-                <h3 className="text-xl sm:text-2xl font-bold mb-1">{petData.name}</h3>
-                <p className="text-red-100 mb-2 text-sm sm:text-base">{petData.breed} • {petData.age}</p>
+              <div className="flex-1">
+                <h3 className="text-2xl font-serif font-bold mb-1">{petData.name}</h3>
+                <p className="text-red-100 mb-3 font-serif">{petData.breed} • {petData.age}</p>
                 
-                <div className="space-y-1 sm:space-y-2 text-xs sm:text-sm">
-                  <div className="flex flex-col sm:flex-row items-center sm:items-start space-y-1 sm:space-y-0 sm:space-x-2">
-                    <div className="flex items-center space-x-1 sm:space-x-2">
-                      <Phone className="w-3 h-3 sm:w-4 sm:h-4" />
-                      <span className="font-medium">Primary: {petData.emergencyContact}</span>
-                    </div>
-                  </div>
-                  <div className="flex flex-col sm:flex-row items-center sm:items-start space-y-1 sm:space-y-0 sm:space-x-2">
-                    <div className="flex items-center space-x-1 sm:space-x-2">
-                      <Phone className="w-3 h-3 sm:w-4 sm:h-4" />
-                      <span className="font-medium">Secondary: {petData.secondEmergencyContact}</span>
+                <div className="space-y-2 text-sm">
+                  <div className="bg-red-600/30 p-3 rounded-lg">
+                    <div className="grid grid-cols-1 gap-2">
+                      <div className="flex items-center space-x-2">
+                        <Phone className="w-4 h-4" />
+                        <span className="font-medium">Primary: {petData.emergencyContact}</span>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <Phone className="w-4 h-4" />
+                        <span className="font-medium">Secondary: {petData.secondEmergencyContact}</span>
+                      </div>
                     </div>
                   </div>
                   
                   {petData.medications.length > 0 && (
-                    <div className="bg-red-600/30 p-2 sm:p-3 rounded-lg mt-2 sm:mt-0">
-                      <div className="flex items-center justify-center sm:justify-start space-x-1 sm:space-x-2 mb-1">
-                        <Pill className="w-3 h-3 sm:w-4 sm:h-4" />
-                        <span className="font-medium text-xs sm:text-sm">MEDICATIONS:</span>
+                    <div className="bg-red-600/30 p-3 rounded-lg">
+                      <div className="flex items-center space-x-2 mb-2">
+                        <Pill className="w-4 h-4" />
+                        <span className="font-medium text-sm">MEDICATIONS:</span>
                       </div>
                       {petData.medications.map((med, index) => (
-                        <p key={index} className="text-xs text-center sm:text-left sm:ml-6">• {med}</p>
+                        <p key={index} className="text-xs ml-6">• {med}</p>
                       ))}
                     </div>
                   )}
@@ -133,72 +139,98 @@ export const QuickIDSection = ({ petData }: QuickIDSectionProps) => {
               </div>
             </div>
             
-            <div className="mt-3 sm:mt-4 pt-3 sm:pt-4 border-t border-red-400/30">
-              <p className="text-xs sm:text-sm text-red-100 text-center sm:text-left">
-                <span className="font-medium">Special Notes:</span> {petData.notes}
+            <div className="mt-4 pt-4 border-t border-red-400/30">
+              <p className="text-sm text-red-100">
+                <span className="font-serif font-bold">Special Notes:</span> {petData.notes}
               </p>
             </div>
-          </div>
 
-          <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
-            <Button className="flex items-center justify-center space-x-2 bg-gradient-to-r from-navy-900 to-navy-800 text-gold-500 hover:from-navy-800 hover:to-navy-700 border border-gold-500/30 text-sm py-2">
-              <QrCode className="w-4 h-4" />
-              <span>Generate QR Code</span>
-            </Button>
-            <Button variant="outline" className="flex items-center justify-center space-x-2 border-navy-900 text-navy-900 hover:bg-navy-50 text-sm py-2">
-              <Download className="w-4 h-4" />
-              <span>Download PDF</span>
-            </Button>
-            <Button variant="outline" className="flex items-center justify-center space-x-2 border-navy-900 text-navy-900 hover:bg-navy-50 text-sm py-2">
-              <Share className="w-4 h-4" />
-              <span>Share Link</span>
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* QR Code Display */}
-      <Card className="border-0 shadow-lg bg-passport-section-bg backdrop-blur-sm">
-        <CardHeader className="pb-3 sm:pb-6">
-          <CardTitle className="text-base sm:text-lg">QR Code for Quick Access</CardTitle>
-        </CardHeader>
-        <CardContent className="text-center pt-0">
-          <div className="w-40 h-40 sm:w-48 sm:h-48 mx-auto bg-gray-100 rounded-lg flex items-center justify-center mb-4">
-            <div className="text-center text-gray-500">
-              <QrCode className="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-2" />
-              <p className="text-xs sm:text-sm">QR Code will appear here</p>
+            {/* Official stamp design */}
+            <div className="absolute bottom-3 right-3 w-16 h-16 border-2 border-white/50 rounded-full flex items-center justify-center bg-white/10 backdrop-blur-sm">
+              <div className="text-center">
+                <div className="text-xs font-bold">OFFICIAL</div>
+                <div className="text-xs">2025</div>
+              </div>
             </div>
           </div>
-          <p className="text-xs sm:text-sm text-gray-600 mb-4 px-2">
-            Scan this QR code to instantly access {petData.name}'s emergency information
-          </p>
-          <Badge variant="outline" className="text-xs">
-            Updates automatically when profile changes
-          </Badge>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <Button className="bg-gradient-to-r from-navy-900 to-navy-800 text-gold-500 hover:from-navy-800 hover:to-navy-700 border border-gold-500/30">
+              <QrCode className="w-4 h-4 mr-2" />
+              Generate QR Code
+            </Button>
+            <Button variant="outline" className="border-navy-900 text-navy-900 hover:bg-navy-50">
+              <Download className="w-4 h-4 mr-2" />
+              Download PDF
+            </Button>
+            <Button variant="outline" className="border-navy-900 text-navy-900 hover:bg-navy-50">
+              <Share className="w-4 h-4 mr-2" />
+              Share Link
+            </Button>
+          </div>
         </CardContent>
       </Card>
 
-      {/* Sharing Options */}
-      <Card className="border-0 shadow-lg bg-passport-section-bg backdrop-blur-sm">
-        <CardHeader className="pb-3 sm:pb-6">
-          <CardTitle className="text-base sm:text-lg">Share Emergency ID</CardTitle>
+      {/* QR Code Display with passport styling */}
+      <Card className="bg-[#f8f8f8] shadow-lg border-2 border-gold-500/30">
+        <CardHeader>
+          <CardTitle className="font-serif text-navy-900 border-b-2 border-gold-500 pb-2">
+            📱 QR CODE FOR QUICK ACCESS
+          </CardTitle>
         </CardHeader>
-        <CardContent className="pt-0">
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
-            <Button variant="outline" className="h-12 sm:h-16 flex flex-col items-center justify-center space-y-1 border-navy-800 text-navy-800 hover:bg-navy-50 text-xs sm:text-sm">
-              <Share className="w-4 h-4 sm:w-5 sm:h-5" />
-              <span>Social Media</span>
-            </Button>
-            <Button variant="outline" className="h-12 sm:h-16 flex flex-col items-center justify-center space-y-1 border-navy-800 text-navy-800 hover:bg-navy-50 text-xs sm:text-sm">
-              <Phone className="w-4 h-4 sm:w-5 sm:h-5" />
-              <span>Text Message</span>
-            </Button>
-            <Button variant="outline" className="h-12 sm:h-16 flex flex-col items-center justify-center space-y-1 border-navy-800 text-navy-800 hover:bg-navy-50 text-xs sm:text-sm">
-              <QrCode className="w-4 h-4 sm:w-5 sm:h-5" />
-              <span>Print QR Code</span>
-            </Button>
+        <CardContent className="text-center">
+          <div className="w-48 h-48 mx-auto bg-white rounded-lg flex items-center justify-center mb-4 border-4 border-gold-500/30 shadow-lg">
+            <div className="text-center text-navy-500">
+              <QrCode className="w-16 h-16 mx-auto mb-2" />
+              <p className="text-sm">QR Code will appear here</p>
+            </div>
           </div>
-          <p className="text-xs text-gray-500 mt-3 sm:mt-4 text-center px-2">
+          <p className="text-sm text-navy-600 mb-4">
+            Scan this QR code to instantly access {petData.name}'s emergency information
+          </p>
+          <div className="bg-gold-500/20 p-2 rounded-lg border border-gold-500/50">
+            <Badge variant="outline" className="border-gold-600 text-gold-700 font-serif">
+              Updates automatically when profile changes
+            </Badge>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Sharing Options with passport stamps */}
+      <Card className="bg-[#f8f8f8] shadow-lg border-2 border-gold-500/30">
+        <CardHeader>
+          <CardTitle className="font-serif text-navy-900 border-b-2 border-gold-500 pb-2">
+            📤 SHARE EMERGENCY ID
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div className="bg-white p-4 rounded-lg border border-gold-500/30 shadow-sm text-center">
+              <div className="w-12 h-12 bg-gold-500/20 rounded-full mx-auto mb-3 flex items-center justify-center">
+                <Share className="w-6 h-6 text-gold-600" />
+              </div>
+              <Button variant="outline" className="w-full border-navy-800 text-navy-800 hover:bg-navy-50">
+                Social Media
+              </Button>
+            </div>
+            <div className="bg-white p-4 rounded-lg border border-gold-500/30 shadow-sm text-center">
+              <div className="w-12 h-12 bg-gold-500/20 rounded-full mx-auto mb-3 flex items-center justify-center">
+                <Phone className="w-6 h-6 text-gold-600" />
+              </div>
+              <Button variant="outline" className="w-full border-navy-800 text-navy-800 hover:bg-navy-50">
+                Text Message
+              </Button>
+            </div>
+            <div className="bg-white p-4 rounded-lg border border-gold-500/30 shadow-sm text-center">
+              <div className="w-12 h-12 bg-gold-500/20 rounded-full mx-auto mb-3 flex items-center justify-center">
+                <QrCode className="w-6 h-6 text-gold-600" />
+              </div>
+              <Button variant="outline" className="w-full border-navy-800 text-navy-800 hover:bg-navy-50">
+                Print QR Code
+              </Button>
+            </div>
+          </div>
+          <p className="text-xs text-navy-500 mt-4 text-center font-serif">
             Perfect for dog tags, collars, or posting in your neighborhood
           </p>
         </CardContent>

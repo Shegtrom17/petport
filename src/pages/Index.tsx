@@ -218,20 +218,138 @@ const Index = () => {
       case "profile":
         console.log("Rendering profile tab");
         return (
-          <div className="space-y-6">
-            <SupportAnimalBanner status={petData.supportAnimalStatus} />
-            <PetProfileCard 
-              petData={petData} 
-            />
-            <PetPDFGenerator petId={selectedPet?.id || petData.id || ""} petName={petData.name} />
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Left Column - Pet Overview */}
+            <div className="space-y-4">
+              <Card className="bg-[#f8f8f8] shadow-md">
+                <CardContent className="p-6">
+                  <div className="flex flex-col items-center space-y-4">
+                    <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-gold-500/50 shadow-lg">
+                      <img 
+                        src={petData.photoUrl} 
+                        alt={petData.name}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    <div className="text-center">
+                      <h2 className="text-2xl font-serif font-bold text-navy-900 mb-1">{petData.name}</h2>
+                      <p className="text-navy-600 mb-2">{petData.breed} • {petData.age}</p>
+                      <div className="bg-gradient-to-r from-gold-500 to-gold-400 text-navy-900 px-4 py-2 rounded-full font-mono text-sm font-bold">
+                        {petData.petPassId}
+                      </div>
+                    </div>
+                    <div className="w-full border-t border-gold-500/30 pt-4">
+                      <h3 className="text-lg font-serif font-bold text-navy-900 mb-3 text-center border-b-2 border-gold-500 pb-1">Certifications</h3>
+                      <div className="grid grid-cols-2 gap-2">
+                        {petData.badges.slice(0, 4).map((badge, index) => (
+                          <div key={index} className="text-center">
+                            <div className="w-12 h-12 bg-gradient-to-br from-gold-400 to-gold-600 rounded-full mx-auto mb-1 flex items-center justify-center">
+                              <span className="text-xl">🏆</span>
+                            </div>
+                            <p className="text-xs text-navy-700 font-medium">{badge}</p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Support Animal Status */}
+              <SupportAnimalBanner status={petData.supportAnimalStatus} />
+            </div>
+
+            {/* Right Column - Main Actions */}
+            <div className="space-y-4">
+              {/* PDF Generation Card */}
+              <Card className="bg-[#f8f8f8] shadow-md">
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-lg font-serif text-navy-900 border-b-2 border-gold-500 pb-2">
+                    🛂 PASSPORT DOCUMENTS
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  <PetPDFGenerator petId={selectedPet?.id || petData.id || ""} petName={petData.name} />
+                </CardContent>
+              </Card>
+
+              {/* Quick Actions Card */}
+              <Card className="bg-[#f8f8f8] shadow-md">
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-lg font-serif text-navy-900 border-b-2 border-gold-500 pb-2">
+                    ⚡ QUICK ACTIONS
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  <Button 
+                    onClick={() => setActiveTab("documents")}
+                    className="w-full bg-gradient-to-r from-navy-900 to-navy-800 text-gold-500 hover:from-navy-800 hover:to-navy-700 border border-gold-500/30"
+                  >
+                    📄 Manage Documents
+                  </Button>
+                  <Button 
+                    onClick={() => setActiveTab("quickid")}
+                    variant="outline"
+                    className="w-full border-navy-900 text-navy-900 hover:bg-navy-50"
+                  >
+                    🆔 Emergency Quick ID
+                  </Button>
+                  <Button 
+                    onClick={() => setIsInAppSharingOpen(true)}
+                    variant="outline"
+                    className="w-full border-navy-900 text-navy-900 hover:bg-navy-50"
+                  >
+                    🔗 Share Profile
+                  </Button>
+                </CardContent>
+              </Card>
+
+              {/* Medical Alert Card */}
+              {petData.medicalAlert && (
+                <Card className="bg-gradient-to-r from-red-500 to-red-600 text-white shadow-lg">
+                  <CardContent className="p-4">
+                    <div className="text-center">
+                      <h3 className="text-lg font-bold mb-1">⚠️ MEDICAL ALERT</h3>
+                      <p className="text-red-100 text-sm">{petData.medicalConditions}</p>
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+            </div>
           </div>
         );
       case "care":
         console.log("Rendering CareInstructionsSection");
         return <CareInstructionsSection petData={petData} />;
       case "resume":
-        console.log("Rendering PetResumeSection");
-        return <PetResumeSection petData={petData} />;
+        console.log("Rendering PetResumeSection with integrated badges");
+        return (
+          <div className="space-y-6">
+            <PetResumeSection petData={petData} />
+            <Card className="bg-[#f8f8f8] shadow-md">
+              <CardHeader>
+                <CardTitle className="text-xl font-serif text-navy-900 border-b-2 border-gold-500 pb-2">
+                  🏆 VERIFIED ACHIEVEMENTS
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  {petData.badges.map((badge, index) => (
+                    <div key={index} className="text-center p-4 bg-white/50 rounded-lg border border-gold-500/30">
+                      <div className="w-16 h-16 bg-gradient-to-br from-gold-400 to-gold-600 rounded-full mx-auto mb-3 flex items-center justify-center shadow-lg transform rotate-3">
+                        <div className="w-12 h-12 bg-navy-800 rounded-full flex items-center justify-center">
+                          <span className="text-2xl">🐾</span>
+                        </div>
+                      </div>
+                      <p className="text-sm font-medium text-navy-900">{badge}</p>
+                      <div className="w-full h-1 bg-gold-500 rounded-full mt-2 opacity-50"></div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        );
       case "reviews":
         console.log("Rendering ReviewsSection");
         return <ReviewsSection petData={petData} />;
@@ -246,8 +364,9 @@ const Index = () => {
           onDocumentDeleted={handleDocumentUpdate}
         />;
       case "badges":
-        console.log("Rendering BadgesSection");
-        return <BadgesSection badges={petData.badges || []} petData={petData} />;
+        console.log("Rendering BadgesSection - redirecting to resume");
+        setActiveTab("resume");
+        return null;
       case "gallery":
         console.log("Rendering PetGallerySection");
         return <PetGallerySection petData={petData} />;
@@ -272,7 +391,7 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
       <header className="bg-white/80 backdrop-blur-sm border-b border-blue-100 sticky top-0 z-50">
-        <div className="max-w-4xl mx-auto px-3 sm:px-4 py-3 sm:py-4">
+        <div className="max-w-6xl mx-auto px-3 sm:px-4 py-3 sm:py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2 sm:space-x-3 md:space-x-4 flex-1 min-w-0">
               <div className="w-10 h-10 sm:w-12 sm:h-12 md:w-16 md:h-16 lg:w-20 lg:h-20 flex-shrink-0">
@@ -344,7 +463,7 @@ const Index = () => {
         petName={petData.name}
       />
 
-      <main className="max-w-4xl mx-auto px-3 sm:px-4 py-4 sm:py-6 lg:py-8">
+      <main className="max-w-6xl mx-auto px-3 sm:px-4 py-4 sm:py-6 lg:py-8">
         {!user ? (
           <div className="text-center py-12 sm:py-20">
             <div className="w-16 h-16 sm:w-20 sm:h-20 bg-white/70 rounded-full flex items-center justify-center mx-auto mb-4 sm:mb-6">

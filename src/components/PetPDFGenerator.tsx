@@ -111,39 +111,62 @@ export const PetPDFGenerator = ({ petId, petName }: PetPDFGeneratorProps) => {
   };
 
   return (
-    <Card className="border-2 border-amber-200 bg-gradient-to-br from-amber-50 to-orange-50">
-      <CardHeader>
-        <CardTitle className="flex items-center space-x-2 text-amber-800">
-          <FileText className="w-5 h-5" />
-          <span>Pet Profiles & Sharing</span>
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        <p className="text-sm text-amber-700">
-          Generate shareable documents and profiles for {petName}. Choose between emergency info or complete profile.
-        </p>
+    <div className="space-y-4">
+      {/* Passport-style header with circular pet photo */}
+      <div className="bg-gradient-to-r from-navy-900 to-slate-800 p-4 rounded-lg text-white relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-16 h-16 bg-gold-500/10 rounded-full -translate-y-8 translate-x-8"></div>
+        <div className="absolute bottom-0 left-0 w-12 h-12 bg-gold-500/10 rounded-full translate-y-6 -translate-x-6"></div>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+        <div className="flex items-center space-x-4 relative z-10">
+          <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-gold-500/50 flex-shrink-0">
+            <div className="w-full h-full bg-gold-500/20 flex items-center justify-center">
+              <FileText className="w-8 h-8 text-gold-500" />
+            </div>
+          </div>
+          <div>
+            <h3 className="text-xl font-serif font-bold text-gold-500 tracking-wide border-b-2 border-gold-500 pb-1 mb-2">
+              OFFICIAL DOCUMENTS
+            </h3>
+            <p className="text-gold-200 text-sm">Generate and share {petName}'s passport documents</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Document generation buttons in stamped boxes */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+        <div className="bg-white p-4 rounded-lg border-2 border-gold-500/30 shadow-sm relative">
+          <div className="absolute top-2 right-2 w-8 h-8 bg-gold-500/20 rounded-full flex items-center justify-center">
+            <span className="text-xs font-bold text-gold-600">1</span>
+          </div>
+          <h4 className="font-serif font-bold text-navy-900 mb-2 border-b border-gold-500/50 pb-1">Emergency Passport</h4>
+          <p className="text-sm text-navy-600 mb-3">Essential medical and contact information</p>
           <Button 
             onClick={() => handleGeneratePDF('emergency')}
             disabled={isGenerating}
             variant="outline"
-            className="w-full"
+            className="w-full border-navy-900 text-navy-900 hover:bg-navy-50"
           >
             {isGenerating ? (
               <Loader2 className="w-4 h-4 mr-2 animate-spin" />
             ) : (
               <FileText className="w-4 h-4 mr-2" />
             )}
-            Emergency Passport
+            Generate Emergency Passport
           </Button>
+        </div>
 
+        <div className="bg-white p-4 rounded-lg border-2 border-gold-500/30 shadow-sm relative">
+          <div className="absolute top-2 right-2 w-8 h-8 bg-gold-500/20 rounded-full flex items-center justify-center">
+            <span className="text-xs font-bold text-gold-600">2</span>
+          </div>
+          <h4 className="font-serif font-bold text-navy-900 mb-2 border-b border-gold-500/50 pb-1">Complete Profile</h4>
+          <p className="text-sm text-navy-600 mb-3">Full passport with all certifications</p>
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogTrigger asChild>
               <Button 
                 onClick={() => handleGeneratePDF('full')}
                 disabled={isGenerating}
-                className="w-full bg-amber-600 hover:bg-amber-700 text-white"
+                className="w-full bg-gradient-to-r from-gold-500 to-gold-400 text-navy-900 hover:from-gold-400 hover:to-gold-300"
               >
                 {isGenerating ? (
                   <>
@@ -153,30 +176,34 @@ export const PetPDFGenerator = ({ petId, petName }: PetPDFGeneratorProps) => {
                 ) : (
                   <>
                     <FileText className="w-4 h-4 mr-2" />
-                    Full Profile PDF
+                    Generate Full Profile
                   </>
                 )}
               </Button>
             </DialogTrigger>
             
-            <DialogContent className="max-w-md">
+            <DialogContent className="max-w-md bg-[#f8f8f8]">
               <DialogHeader>
-                <DialogTitle>Share {petName}'s Profile</DialogTitle>
+                <DialogTitle className="font-serif text-navy-900 border-b-2 border-gold-500 pb-2">
+                  📋 Share {petName}'s Profile
+                </DialogTitle>
               </DialogHeader>
               
               <div className="space-y-6">
                 {/* Public Profile Link */}
-                <div className="space-y-3">
-                  <h4 className="font-medium flex items-center gap-2">
-                    <ExternalLink className="w-4 h-4" />
+                <div className="bg-white p-4 rounded-lg border border-gold-500/30 shadow-sm">
+                  <h4 className="font-serif font-bold text-navy-900 mb-2 flex items-center gap-2">
+                    <div className="w-6 h-6 bg-gold-500/20 rounded-full flex items-center justify-center">
+                      <ExternalLink className="w-3 h-3 text-gold-600" />
+                    </div>
                     Public Profile Page
                   </h4>
-                  <p className="text-sm text-gray-600">Share a read-only online profile that anyone can view</p>
+                  <p className="text-sm text-navy-600 mb-3">Share a read-only online profile that anyone can view</p>
                   <Button
                     onClick={handleSharePublicProfile}
                     disabled={isSharing}
                     variant="outline"
-                    className="w-full"
+                    className="w-full border-navy-900 text-navy-900 hover:bg-navy-50"
                   >
                     {isSharing ? (
                       <Loader2 className="w-4 h-4 mr-2 animate-spin" />
@@ -189,13 +216,13 @@ export const PetPDFGenerator = ({ petId, petName }: PetPDFGeneratorProps) => {
 
                 {/* Emergency PDF */}
                 {emergencyPdfUrl && emergencyQrCodeUrl && (
-                  <div className="space-y-3">
-                    <h4 className="font-medium">Emergency Passport PDF</h4>
-                    <div className="text-center">
+                  <div className="bg-white p-4 rounded-lg border border-gold-500/30 shadow-sm">
+                    <h4 className="font-serif font-bold text-navy-900 mb-3">Emergency Passport PDF</h4>
+                    <div className="text-center mb-3">
                       <img 
                         src={emergencyQrCodeUrl} 
                         alt="Emergency PDF QR Code" 
-                        className="border-2 border-gray-300 rounded-lg mx-auto mb-2"
+                        className="border-2 border-gold-500/30 rounded-lg mx-auto"
                         style={{width: '120px', height: '120px'}}
                       />
                     </div>
@@ -204,6 +231,7 @@ export const PetPDFGenerator = ({ petId, petName }: PetPDFGeneratorProps) => {
                         onClick={() => handleDownload(emergencyPdfUrl, 'emergency')}
                         variant="outline"
                         size="sm"
+                        className="border-navy-900 text-navy-900"
                       >
                         <Download className="w-4 h-4 mr-1" />
                         Download
@@ -213,6 +241,7 @@ export const PetPDFGenerator = ({ petId, petName }: PetPDFGeneratorProps) => {
                         variant="outline"
                         size="sm"
                         disabled={isSharing}
+                        className="border-navy-900 text-navy-900"
                       >
                         <Share2 className="w-4 h-4 mr-1" />
                         Share
@@ -223,13 +252,13 @@ export const PetPDFGenerator = ({ petId, petName }: PetPDFGeneratorProps) => {
 
                 {/* Full Profile PDF */}
                 {fullPdfUrl && fullQrCodeUrl && (
-                  <div className="space-y-3">
-                    <h4 className="font-medium">Complete Profile PDF</h4>
-                    <div className="text-center">
+                  <div className="bg-white p-4 rounded-lg border border-gold-500/30 shadow-sm">
+                    <h4 className="font-serif font-bold text-navy-900 mb-3">Complete Profile PDF</h4>
+                    <div className="text-center mb-3">
                       <img 
                         src={fullQrCodeUrl} 
                         alt="Full Profile PDF QR Code" 
-                        className="border-2 border-gray-300 rounded-lg mx-auto mb-2"
+                        className="border-2 border-gold-500/30 rounded-lg mx-auto"
                         style={{width: '120px', height: '120px'}}
                       />
                     </div>
@@ -238,6 +267,7 @@ export const PetPDFGenerator = ({ petId, petName }: PetPDFGeneratorProps) => {
                         onClick={() => handleDownload(fullPdfUrl, 'full')}
                         variant="outline"
                         size="sm"
+                        className="border-navy-900 text-navy-900"
                       >
                         <Download className="w-4 h-4 mr-1" />
                         Download
@@ -247,6 +277,7 @@ export const PetPDFGenerator = ({ petId, petName }: PetPDFGeneratorProps) => {
                         variant="outline"
                         size="sm"
                         disabled={isSharing}
+                        className="border-navy-900 text-navy-900"
                       >
                         <Share2 className="w-4 h-4 mr-1" />
                         Share
@@ -256,15 +287,13 @@ export const PetPDFGenerator = ({ petId, petName }: PetPDFGeneratorProps) => {
                 )}
 
                 {/* In-App Sharing */}
-                <div className="border-t pt-3">
+                <div className="border-t border-gold-500/30 pt-4">
                   <Button
                     onClick={() => {
                       setIsDialogOpen(false);
-                      // Navigate to in-app sharing component
                       window.location.hash = 'share-with-members';
                     }}
-                    variant="default"
-                    className="w-full"
+                    className="w-full bg-gradient-to-r from-navy-900 to-navy-800 text-gold-500 hover:from-navy-800 hover:to-navy-700"
                   >
                     <Users className="w-4 h-4 mr-2" />
                     Share with PetPass Members
@@ -272,16 +301,17 @@ export const PetPDFGenerator = ({ petId, petName }: PetPDFGeneratorProps) => {
                 </div>
 
                 {/* Direct Links */}
-                <div className="text-xs text-gray-500 space-y-1">
-                  <p>Public Profile: {publicProfileUrl}</p>
-                  {emergencyPdfUrl && <p className="break-all">Emergency PDF: {emergencyPdfUrl}</p>}
-                  {fullPdfUrl && <p className="break-all">Full PDF: {fullPdfUrl}</p>}
+                <div className="text-xs text-navy-500 space-y-1 bg-navy-50 p-3 rounded-lg">
+                  <p className="font-medium">Direct Links:</p>
+                  <p className="break-all">Public: {publicProfileUrl}</p>
+                  {emergencyPdfUrl && <p className="break-all">Emergency: {emergencyPdfUrl}</p>}
+                  {fullPdfUrl && <p className="break-all">Full: {fullPdfUrl}</p>}
                 </div>
               </div>
             </DialogContent>
           </Dialog>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 };

@@ -46,7 +46,7 @@ export const PetSelector = ({ pets, selectedPet, onSelectPet, onReorderPets }: P
           backgroundSize: '100% 100%, contain, 8px 8px, 6px 6px, 6px 6px',
           backgroundPosition: 'center, center, 0 0, 0 0, 0 3px',
           backgroundRepeat: 'no-repeat, no-repeat, repeat, repeat, repeat',
-          opacity: 0.25,
+          opacity: 0.6,
           zIndex: 0,
           pointerEvents: 'none'
         }}

@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { MobileNavigationMenu } from "@/components/MobileNavigationMenu";
+import worldMapOutline from "@/assets/world-map-outline.png";
 
 interface PetHeaderProps {
   activeTab: string;
@@ -15,8 +16,26 @@ export const PetHeader = ({ activeTab, onTabChange }: PetHeaderProps) => {
   const { signOut, user } = useAuth();
 
   return (
-    <header className="bg-white/80 backdrop-blur-sm border-b border-blue-100 sticky top-0 z-50">
-      <div className="max-w-6xl mx-auto px-3 sm:px-4 py-3 sm:py-4">
+    <header className="bg-white/80 backdrop-blur-sm border-b border-blue-100 sticky top-0 z-50 relative passport-map-container">
+      <div 
+        className="absolute inset-0"
+        style={{
+          backgroundImage: `
+            linear-gradient(to bottom, rgba(255,255,255,0.85) 0%, rgba(255,255,255,0.5) 100%),
+            url(${worldMapOutline}),
+            linear-gradient(45deg, transparent 48%, rgba(160, 82, 45, 0.12) 49%, rgba(160, 82, 45, 0.12) 51%, transparent 52%),
+            linear-gradient(45deg, rgba(205, 133, 63, 0.04) 25%, transparent 25%),
+            linear-gradient(-45deg, rgba(222, 184, 135, 0.04) 25%, transparent 25%)
+          `,
+          backgroundSize: '100% 100%, contain, 8px 8px, 6px 6px, 6px 6px',
+          backgroundPosition: 'center, center, 0 0, 0 0, 0 3px',
+          backgroundRepeat: 'no-repeat, no-repeat, repeat, repeat, repeat',
+          opacity: 0.4,
+          zIndex: 0,
+          pointerEvents: 'none'
+        }}
+      />
+      <div className="max-w-6xl mx-auto px-3 sm:px-4 py-3 sm:py-4 relative z-10">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2 sm:space-x-3 md:space-x-4 flex-1 min-w-0">
             <div className="w-10 h-10 sm:w-12 sm:h-12 md:w-16 md:h-16 lg:w-20 lg:h-20 flex-shrink-0">

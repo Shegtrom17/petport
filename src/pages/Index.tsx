@@ -219,14 +219,15 @@ const Index = () => {
           width: '100%',
           height: '100%',
           backgroundImage: `
+            linear-gradient(to bottom, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.3) 70%, rgba(255,255,255,0.1) 100%),
             url(${worldMapOutline}),
             linear-gradient(45deg, transparent 48%, rgba(160, 82, 45, 0.12) 49%, rgba(160, 82, 45, 0.12) 51%, transparent 52%),
             linear-gradient(45deg, rgba(205, 133, 63, 0.04) 25%, transparent 25%),
             linear-gradient(-45deg, rgba(222, 184, 135, 0.04) 25%, transparent 25%)
           `,
-          backgroundSize: 'contain, 8px 8px, 6px 6px, 6px 6px',
-          backgroundPosition: 'center, 0 0, 0 0, 0 3px',
-          backgroundRepeat: 'no-repeat, repeat, repeat, repeat',
+          backgroundSize: '100% 100%, contain, 8px 8px, 6px 6px, 6px 6px',
+          backgroundPosition: 'center, center, 0 0, 0 0, 0 3px',
+          backgroundRepeat: 'no-repeat, no-repeat, repeat, repeat, repeat',
           opacity: 0.15,
           backgroundColor: 'rgba(222, 184, 135, 0.03)',
           zIndex: 0,

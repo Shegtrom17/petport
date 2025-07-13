@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { fetchPetDetails } from "@/services/petService";
 import { Heart, MapPin, Phone, Calendar, Star, Award, GraduationCap, Plane } from "lucide-react";
+import { SocialShareButtons } from "@/components/SocialShareButtons";
 
 const PublicProfile = () => {
   const { petId } = useParams<{ petId: string }>();
@@ -136,6 +137,15 @@ const PublicProfile = () => {
           </CardContent>
         </Card>
 
+        {/* Social Sharing */}
+        <div className="mb-6">
+          <SocialShareButtons 
+            petName={petData.name}
+            petId={petId || ""}
+            isMissingPet={false}
+          />
+        </div>
+
         {/* Support Animal Status */}
         {petData.supportAnimalStatus && (
           <Card className="mb-6 border-amber-200 bg-amber-50">
@@ -263,7 +273,6 @@ const PublicProfile = () => {
             </Card>
           )}
 
-          {/* Training */}
           {petData.training && petData.training.length > 0 && (
             <Card>
               <CardHeader>
@@ -286,7 +295,6 @@ const PublicProfile = () => {
             </Card>
           )}
 
-          {/* Travel History */}
           {petData.travel_locations && petData.travel_locations.length > 0 && (
             <Card>
               <CardHeader>
@@ -310,7 +318,6 @@ const PublicProfile = () => {
           )}
         </div>
 
-        {/* Gallery */}
         {petData.gallery_photos && petData.gallery_photos.length > 0 && (
           <Card className="mt-6">
             <CardHeader>

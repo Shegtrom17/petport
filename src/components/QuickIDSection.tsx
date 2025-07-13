@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { QrCode, Download, Share, Phone, Pill, Shield, Heart, Award, AlertTriangle } from "lucide-react";
+import { SocialShareButtons } from "@/components/SocialShareButtons";
 
 interface PetData {
   name: string;
@@ -18,6 +19,7 @@ interface PetData {
   medicalAlert: boolean;
   medicalConditions?: string;
   petPassId: string;
+  id?: string;
 }
 
 interface QuickIDSectionProps {
@@ -170,6 +172,13 @@ export const QuickIDSection = ({ petData }: QuickIDSectionProps) => {
           </div>
         </CardContent>
       </Card>
+
+      {/* Social Sharing for Emergency/Missing Pet */}
+      <SocialShareButtons 
+        petName={petData.name}
+        petId={petData.id || ""}
+        isMissingPet={true}
+      />
 
       {/* QR Code Display with passport styling */}
       <Card className="bg-[#f8f8f8] shadow-lg border-2 border-gold-500/30">

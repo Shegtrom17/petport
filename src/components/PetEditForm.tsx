@@ -1,409 +1,275 @@
-import { useState, useEffect } from "react";
+
+import React, { useState } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/hooks/use-toast";
-import { Camera, Upload } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
+import { Camera, Save, X } from "lucide-react";
 
-interface PetEditFormProps {
-  petId: string;
-  petData: any;
-  onUpdate: () => void;
-  onClose: () => void;
+interface PetData {
+  id: string;
+  name: string;
+  breed: string;
+  age: string;
+  weight: string;
+  microchipId: string;
+  petPassId: string;
+  photoUrl: string;
+  fullBodyPhotoUrl: string;
+  vetContact: string;
+  emergencyContact: string;
+  secondEmergencyContact: string;
+  petCaretaker: string;
+  lastVaccination: string;
+  badges: string[];
+  medications: string[];
+  notes: string;
+  state?: string;
+  county?: string;
+  species?: string;
+  supportAnimalStatus?: string | null;
+  medicalAlert: boolean;
+  medicalConditions?: string;
+  medicalEmergencyDocument?: string | null;
+  galleryPhotos?: Array<{ url: string; caption: string; }>;
 }
 
-export const PetEditForm = ({ petId, petData, onUpdate, onClose }: PetEditFormProps) => {
-  const [formData, setFormData] = useState({
-    name: petData?.name || "",
-    breed: petData?.breed || "",
-    species: petData?.species || "",
-    age: petData?.age || "",
-    weight: petData?.weight || "",
-    bio: petData?.bio || "",
-    notes: petData?.notes || "",
-    state: petData?.state || "",
-    county: petData?.county || "",
-    microchip_id: petData?.microchip_id || "",
-  });
-  
-  const [profilePhoto, setProfilePhoto] = useState<File | null>(null);
-  const [fullBodyPhoto, setFullBodyPhoto] = useState<File | null>(null);
-  const [profilePreview, setProfilePreview] = useState<string>("");
-  const [fullBodyPreview, setFullBodyPreview] = useState<string>("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const { toast } = useToast();
+interface PetEditFormProps {
+  petData: PetData;
+  onSave: () => void;
+  onCancel: () => void;
+}
 
-  useEffect(() => {
-    if (petData?.photoUrl) {
-      setProfilePreview(petData.photoUrl);
-    }
-    if (petData?.fullBodyPhotoUrl) {
-      setFullBodyPreview(petData.fullBodyPhotoUrl);
-    }
-  }, [petData]);
+export const PetEditForm = ({ petData, onSave, onCancel }: PetEditFormProps) => {
+  const [formData, setFormData] = useState(petData);
+  const [photoPreview, setPhotoPreview] = useState(petData.photoUrl);
+  const [fullBodyPreview, setFullBodyPreview] = useState(petData.fullBodyPhotoUrl);
 
-  const handleFilePreview = (file: File, setPreview: (url: string) => void) => {
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      if (e.target?.result) {
-        setPreview(e.target.result as string);
-      }
-    };
-    reader.readAsDataURL(file);
-  };
-
-  const handleProfilePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
+  const handlePhotoCapture = (event: React.ChangeEvent<HTMLInputElement>, type: 'profile' | 'fullBody') => {
+    const file = event.target.files?.[0];
     if (file) {
-      setProfilePhoto(file);
-      handleFilePreview(file, setProfilePreview);
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const result = e.target?.result as string;
+        if (type === 'profile') {
+          setPhotoPreview(result);
+          setFormData(prev => ({ ...prev, photoUrl: result }));
+        } else {
+          setFullBodyPreview(result);
+          setFormData(prev => ({ ...prev, fullBodyPhotoUrl: result }));
+        }
+      };
+      reader.readAsDataURL(file);
     }
   };
 
-  const handleFullBodyPhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setFullBodyPhoto(file);
-      handleFilePreview(file, setFullBodyPreview);
-    }
-  };
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-  };
-
-  const uploadPhoto = async (file: File, folder: string) => {
-    const fileExt = file.name.split('.').pop();
-    const fileName = `${folder}-${Date.now()}.${fileExt}`;
-    const filePath = `${petId}/${fileName}`;
-
-    const { error: uploadError } = await supabase.storage
-      .from('pet_photos')
-      .upload(filePath, file);
-
-    if (uploadError) {
-      console.error('Upload error:', uploadError);
-      throw uploadError;
-    }
-
-    const { data: { publicUrl } } = supabase.storage
-      .from('pet_photos')
-      .getPublicUrl(filePath);
-
-    return publicUrl;
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-
-    try {
-      // Update basic pet information
-      const { error: petError } = await supabase
-        .from('pets')
-        .update(formData)
-        .eq('id', petId);
-
-      if (petError) throw petError;
-
-      // Handle photo uploads
-      let profilePhotoUrl = profilePreview;
-      let fullBodyPhotoUrl = fullBodyPreview;
-
-      if (profilePhoto) {
-        profilePhotoUrl = await uploadPhoto(profilePhoto, 'profile');
-      }
-
-      if (fullBodyPhoto) {
-        fullBodyPhotoUrl = await uploadPhoto(fullBodyPhoto, 'full-body');
-      }
-
-      // Update or insert photo URLs
-      if (profilePhotoUrl || fullBodyPhotoUrl) {
-        const { error: photoError } = await supabase
-          .from('pet_photos')
-          .upsert({
-            pet_id: petId,
-            photo_url: profilePhotoUrl,
-            full_body_photo_url: fullBodyPhotoUrl,
-          });
-
-        if (photoError) throw photoError;
-      }
-
-      toast({
-        title: "Success!",
-        description: "Pet information updated successfully.",
-      });
-
-      onUpdate();
-      onClose();
-    } catch (error) {
-      console.error('Error updating pet:', error);
-      toast({
-        title: "Error",
-        description: "Failed to update pet information. Please try again.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsSubmitting(false);
-    }
+  const handleSave = () => {
+    console.log("Saving pet data:", formData);
+    onSave();
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-      <Card className="w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+    <div className="space-y-6">
+      <Card className="border-2 border-gold-500/30 bg-[#f8f8f8]">
         <CardHeader>
-          <CardTitle>Edit Pet Information</CardTitle>
+          <CardTitle className="text-xl font-serif text-navy-900 border-b-2 border-gold-500 pb-2">
+            Edit Pet Profile
+          </CardTitle>
         </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Photo Upload Sections */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Profile Photo */}
-              <div className="space-y-3">
-                <Label>Profile Photo</Label>
-                <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center">
-                  {profilePreview ? (
-                    <img 
-                      src={profilePreview} 
-                      alt="Profile preview" 
-                      className="w-32 h-32 object-cover rounded-full mx-auto mb-3"
-                    />
-                  ) : (
-                    <div className="w-32 h-32 bg-gray-100 rounded-full mx-auto mb-3 flex items-center justify-center">
-                      <Camera className="w-8 h-8 text-gray-400" />
-                    </div>
-                  )}
-                  
-                  <div className="space-y-2">
-                    <input
-                      type="file"
-                      accept="image/*"
-                      capture="user"
-                      onChange={handleProfilePhotoChange}
-                      id="profileCamera"
-                      className="hidden"
-                    />
-                    <Button 
-                      type="button"
-                      variant="outline" 
-                      size="sm"
-                      onClick={() => document.getElementById('profileCamera')?.click()}
-                      className="mr-2"
-                    >
-                      <Camera className="w-4 h-4 mr-2" />
-                      Take Photo
-                    </Button>
-                    
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={handleProfilePhotoChange}
-                      id="profileUpload"
-                      className="hidden"
-                    />
-                    <Button 
-                      type="button"
-                      variant="outline" 
-                      size="sm"
-                      onClick={() => document.getElementById('profileUpload')?.click()}
-                    >
-                      <Upload className="w-4 h-4 mr-2" />
-                      Upload
-                    </Button>
-                  </div>
-                </div>
-              </div>
-
-              {/* Full Body Photo */}
-              <div className="space-y-3">
-                <Label>Full Body Photo</Label>
-                <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center">
-                  {fullBodyPreview ? (
-                    <img 
-                      src={fullBodyPreview} 
-                      alt="Full body preview" 
-                      className="w-32 h-40 object-cover rounded-lg mx-auto mb-3"
-                    />
-                  ) : (
-                    <div className="w-32 h-40 bg-gray-100 rounded-lg mx-auto mb-3 flex items-center justify-center">
-                      <Camera className="w-8 h-8 text-gray-400" />
-                    </div>
-                  )}
-                  
-                  <div className="space-y-2">
-                    <input
-                      type="file"
-                      accept="image/*"
-                      capture="environment"
-                      onChange={handleFullBodyPhotoChange}
-                      id="fullBodyCamera"
-                      className="hidden"
-                    />
-                    <Button 
-                      type="button"
-                      variant="outline" 
-                      size="sm"
-                      onClick={() => document.getElementById('fullBodyCamera')?.click()}
-                      className="mr-2"
-                    >
-                      <Camera className="w-4 h-4 mr-2" />
-                      Take Photo
-                    </Button>
-                    
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={handleFullBodyPhotoChange}
-                      id="fullBodyUpload"
-                      className="hidden"
-                    />
-                    <Button 
-                      type="button"
-                      variant="outline" 
-                      size="sm"
-                      onClick={() => document.getElementById('fullBodyUpload')?.click()}
-                    >
-                      <Upload className="w-4 h-4 mr-2" />
-                      Upload
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Basic Information */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="name">Name *</Label>
-                <Input
-                  id="name"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleInputChange}
-                  required
-                />
-              </div>
-              <div>
-                <Label htmlFor="species">Species</Label>
-                <Input
-                  id="species"
-                  name="species"
-                  value={formData.species}
-                  onChange={handleInputChange}
-                  placeholder="e.g., Dog, Cat, Horse"
-                />
-              </div>
-              <div>
-                <Label htmlFor="breed">Breed</Label>
-                <Input
-                  id="breed"
-                  name="breed"
-                  value={formData.breed}
-                  onChange={handleInputChange}
-                />
-              </div>
-              <div>
-                <Label htmlFor="age">Age</Label>
-                <Input
-                  id="age"
-                  name="age"
-                  value={formData.age}
-                  onChange={handleInputChange}
-                  placeholder="e.g., 3 years, 8 months"
-                />
-              </div>
-              <div>
-                <Label htmlFor="weight">Weight</Label>
-                <Input
-                  id="weight"
-                  name="weight"
-                  value={formData.weight}
-                  onChange={handleInputChange}
-                  placeholder="e.g., 45 lbs, 20 kg"
-                />
-              </div>
-              <div>
-                <Label htmlFor="microchip_id">Microchip ID</Label>
-                <Input
-                  id="microchip_id"
-                  name="microchip_id"
-                  value={formData.microchip_id}
-                  onChange={handleInputChange}
-                />
-              </div>
-            </div>
-
-            {/* Location Information */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="state">State/Province</Label>
-                <Input
-                  id="state"
-                  name="state"
-                  value={formData.state}
-                  onChange={handleInputChange}
-                />
-              </div>
-              <div>
-                <Label htmlFor="county">County/Region</Label>
-                <Input
-                  id="county"
-                  name="county"
-                  value={formData.county}
-                  onChange={handleInputChange}
-                />
-              </div>
-            </div>
-
-            {/* Bio and Notes */}
+        <CardContent className="space-y-6">
+          {/* Basic Information */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <Label htmlFor="bio">Bio</Label>
-              <Textarea
-                id="bio"
-                name="bio"
-                value={formData.bio}
-                onChange={handleInputChange}
-                placeholder="Tell us about your pet's personality..."
-                rows={3}
+              <Label htmlFor="name">Pet Name</Label>
+              <Input
+                id="name"
+                value={formData.name}
+                onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
               />
             </div>
+            <div>
+              <Label htmlFor="breed">Breed</Label>
+              <Input
+                id="breed"
+                value={formData.breed}
+                onChange={(e) => setFormData(prev => ({ ...prev, breed: e.target.value }))}
+              />
+            </div>
+            <div>
+              <Label htmlFor="age">Age</Label>
+              <Input
+                id="age"
+                value={formData.age}
+                onChange={(e) => setFormData(prev => ({ ...prev, age: e.target.value }))}
+              />
+            </div>
+            <div>
+              <Label htmlFor="weight">Weight</Label>
+              <Input
+                id="weight"
+                value={formData.weight}
+                onChange={(e) => setFormData(prev => ({ ...prev, weight: e.target.value }))}
+              />
+            </div>
+          </div>
+
+          {/* Photo Upload Section */}
+          <div className="space-y-4">
+            <h3 className="text-lg font-serif text-navy-900">Pet Photos</h3>
             
-            <div>
-              <Label htmlFor="notes">Special Notes</Label>
-              <Textarea
-                id="notes"
-                name="notes"
-                value={formData.notes}
-                onChange={handleInputChange}
-                placeholder="Important information about your pet..."
-                rows={3}
-              />
+            {/* Profile Photo */}
+            <div className="space-y-2">
+              <Label>Profile Photo</Label>
+              <div className="flex items-center space-x-4">
+                <div className="w-24 h-24 rounded-full overflow-hidden border-2 border-gold-500/50">
+                  <img 
+                    src={photoPreview || "/placeholder.svg"} 
+                    alt="Profile preview"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <div>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    capture="user"
+                    onChange={(e) => handlePhotoCapture(e, 'profile')}
+                    id="profileCamera"
+                    className="hidden"
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => document.getElementById('profileCamera')?.click()}
+                    className="border-navy-900 text-navy-900"
+                  >
+                    <Camera className="w-4 h-4 mr-2" />
+                    Take New Photo
+                  </Button>
+                </div>
+              </div>
             </div>
 
-            {/* Form Actions */}
-            <div className="flex justify-end space-x-2 pt-4">
-              <Button 
-                type="button" 
-                variant="outline" 
-                onClick={onClose}
-                disabled={isSubmitting}
-              >
-                Cancel
-              </Button>
-              <Button type="submit" disabled={isSubmitting}>
-                {isSubmitting ? "Saving..." : "Save Changes"}
-              </Button>
+            {/* Full Body Photo */}
+            <div className="space-y-2">
+              <Label>Full Body Photo</Label>
+              <div className="flex items-center space-x-4">
+                <div className="w-24 h-16 rounded overflow-hidden border-2 border-gold-500/50">
+                  <img 
+                    src={fullBodyPreview || "/placeholder.svg"} 
+                    alt="Full body preview"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <div>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    capture="environment"
+                    onChange={(e) => handlePhotoCapture(e, 'fullBody')}
+                    id="fullBodyCamera"
+                    className="hidden"
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => document.getElementById('fullBodyCamera')?.click()}
+                    className="border-navy-900 text-navy-900"
+                  >
+                    <Camera className="w-4 h-4 mr-2" />
+                    Take New Photo
+                  </Button>
+                </div>
+              </div>
             </div>
-          </form>
+          </div>
+
+          {/* Contact Information */}
+          <div className="space-y-4">
+            <h3 className="text-lg font-serif text-navy-900">Contact Information</h3>
+            <div className="grid grid-cols-1 gap-4">
+              <div>
+                <Label htmlFor="emergencyContact">Primary Emergency Contact</Label>
+                <Input
+                  id="emergencyContact"
+                  value={formData.emergencyContact}
+                  onChange={(e) => setFormData(prev => ({ ...prev, emergencyContact: e.target.value }))}
+                />
+              </div>
+              <div>
+                <Label htmlFor="secondEmergencyContact">Secondary Emergency Contact</Label>
+                <Input
+                  id="secondEmergencyContact"
+                  value={formData.secondEmergencyContact}
+                  onChange={(e) => setFormData(prev => ({ ...prev, secondEmergencyContact: e.target.value }))}
+                />
+              </div>
+              <div>
+                <Label htmlFor="vetContact">Veterinarian Contact</Label>
+                <Input
+                  id="vetContact"
+                  value={formData.vetContact}
+                  onChange={(e) => setFormData(prev => ({ ...prev, vetContact: e.target.value }))}
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Medical Information */}
+          <div className="space-y-4">
+            <h3 className="text-lg font-serif text-navy-900">Medical Information</h3>
+            <div className="flex items-center space-x-2">
+              <Switch
+                id="medicalAlert"
+                checked={formData.medicalAlert}
+                onCheckedChange={(checked) => setFormData(prev => ({ ...prev, medicalAlert: checked }))}
+              />
+              <Label htmlFor="medicalAlert">Medical Alert</Label>
+            </div>
+            {formData.medicalAlert && (
+              <div>
+                <Label htmlFor="medicalConditions">Medical Conditions</Label>
+                <Textarea
+                  id="medicalConditions"
+                  value={formData.medicalConditions || ''}
+                  onChange={(e) => setFormData(prev => ({ ...prev, medicalConditions: e.target.value }))}
+                  placeholder="Describe any medical conditions or alerts..."
+                />
+              </div>
+            )}
+          </div>
+
+          {/* Notes */}
+          <div>
+            <Label htmlFor="notes">Behavioral Notes</Label>
+            <Textarea
+              id="notes"
+              value={formData.notes}
+              onChange={(e) => setFormData(prev => ({ ...prev, notes: e.target.value }))}
+              placeholder="Any special notes about your pet's behavior, preferences, etc."
+            />
+          </div>
+
+          {/* Action Buttons */}
+          <div className="flex justify-end space-x-3 pt-4 border-t border-gold-500/30">
+            <Button
+              onClick={onCancel}
+              variant="outline"
+              className="border-navy-900 text-navy-900"
+            >
+              <X className="w-4 h-4 mr-2" />
+              Cancel
+            </Button>
+            <Button
+              onClick={handleSave}
+              className="bg-gradient-to-r from-navy-900 to-navy-800 text-gold-500 hover:from-navy-800 hover:to-navy-700"
+            >
+              <Save className="w-4 h-4 mr-2" />
+              Save Changes
+            </Button>
+          </div>
         </CardContent>
       </Card>
     </div>

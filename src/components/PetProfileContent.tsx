@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { PetPDFGenerator } from "@/components/PetPDFGenerator";
 import { SupportAnimalBanner } from "@/components/SupportAnimalBanner";
+import { SocialShareButtons } from "@/components/SocialShareButtons";
 
 interface PetProfileContentProps {
   petData: any;
@@ -57,6 +58,13 @@ export const PetProfileContent = ({
 
         {/* Support Animal Status */}
         <SupportAnimalBanner status={petData.supportAnimalStatus} />
+
+        {/* Social Sharing */}
+        <SocialShareButtons 
+          petName={petData.name}
+          petId={selectedPet?.id || petData.id || ""}
+          isMissingPet={false}
+        />
       </div>
 
       {/* Right Column - Main Actions */}

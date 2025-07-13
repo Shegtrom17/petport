@@ -3,9 +3,11 @@ import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Heart, Clock, Pill, Coffee, Moon, AlertTriangle, Edit, Loader2 } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Heart, Clock, Pill, Coffee, Moon, AlertTriangle, Edit, Loader2, FileText, Download, QrCode, Share2, ExternalLink, Eye } from "lucide-react";
 import { CareInstructionsEditForm } from "@/components/CareInstructionsEditForm";
 import { fetchCareInstructions } from "@/services/careInstructionsService";
+import { generatePetPDF, generateQRCodeUrl, downloadPDF, shareProfile } from "@/services/pdfService";
 import { useToast } from "@/hooks/use-toast";
 
 interface CareInstructionsSectionProps {
@@ -21,6 +23,11 @@ export const CareInstructionsSection = ({ petData }: CareInstructionsSectionProp
   const [isEditing, setIsEditing] = useState(false);
   const [careData, setCareData] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
+  const [careShareDialogOpen, setCareShareDialogOpen] = useState(false);
+  const [carePdfUrl, setCarePdfUrl] = useState<string | null>(null);
+  const [careQrCodeUrl, setCareQrCodeUrl] = useState<string | null>(null);
+  const [isSharing, setIsSharing] = useState(false);
   const { toast } = useToast();
   const isHorse = petData.species?.toLowerCase() === 'horse';
 
@@ -60,6 +67,92 @@ export const CareInstructionsSection = ({ petData }: CareInstructionsSectionProp
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleGenerateCarePDF = async () => {
+    setIsGeneratingPDF(true);
+    try {
+      console.log('Starting care instructions PDF generation for pet:', petData.id);
+      
+      const result = await generatePetPDF(petData.id, 'care');
+      
+      if (result.success && result.pdfUrl) {
+        setCarePdfUrl(result.pdfUrl);
+        setCareQrCodeUrl(generateQRCodeUrl(result.pdfUrl));
+        setCareShareDialogOpen(true);
+        
+        toast({
+          title: "Care Instructions PDF Generated",
+          description: `${petData.name}'s care instructions PDF is ready to download and share.`,
+        });
+      } else {
+        throw new Error(result.error || 'Failed to generate care instructions PDF');
+      }
+    } catch (error) {
+      console.error('Care PDF generation error:', error);
+      toast({
+        title: "Error",
+        description: "Failed to generate care instructions PDF. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsGeneratingPDF(false);
+    }
+  };
+
+  const generateCarePublicUrl = (): string => {
+    const baseUrl = window.location.origin;
+    return `${baseUrl}/care/${petData.id}`;
+  };
+
+  const handleShareCareLink = async () => {
+    const careUrl = generateCarePublicUrl();
+    setIsSharing(true);
+    try {
+      const success = await shareProfile(careUrl, `${petData.name}'s Care Instructions`);
+      if (success) {
+        toast({
+          title: navigator.share ? "Shared Successfully" : "Link Copied",
+          description: navigator.share ? 
+            `${petData.name}'s care instructions have been shared.` : 
+            "Care instructions link copied to clipboard.",
+        });
+      } else {
+        throw new Error('Failed to share');
+      }
+    } catch (error) {
+      toast({
+        title: "Share Failed",
+        description: "Could not share the care instructions. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSharing(false);
+    }
+  };
+
+  const handleDownloadCarePDF = async () => {
+    if (!carePdfUrl) return;
+    
+    try {
+      const fileName = `PetPort_Care_Instructions_${petData.name}.pdf`;
+      await downloadPDF(carePdfUrl, fileName);
+      toast({
+        title: "Download Started",
+        description: `${petData.name}'s care instructions are being downloaded.`,
+      });
+    } catch (error) {
+      toast({
+        title: "Download Failed",
+        description: "Could not download the PDF. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleShareCarePDF = async () => {
+    if (!carePdfUrl) return;
+    await shareProfile(carePdfUrl, `${petData.name}'s Care Instructions PDF`);
   };
   
   if (isEditing) {
@@ -143,14 +236,132 @@ export const CareInstructionsSection = ({ petData }: CareInstructionsSectionProp
               <Heart className="w-5 h-5" />
               <span>Care Instructions for {petData.name}</span>
             </div>
-            <Button 
-              onClick={() => setIsEditing(true)}
-              variant="secondary" 
-              className="bg-white/20 hover:bg-white/30 text-white border-white/30"
-            >
-              <Edit className="w-4 h-4 mr-2" />
-              Edit Instructions
-            </Button>
+            <div className="flex space-x-2">
+              <Button 
+                onClick={() => setIsEditing(true)}
+                variant="secondary" 
+                className="bg-white/20 hover:bg-white/30 text-white border-white/30"
+              >
+                <Edit className="w-4 h-4 mr-2" />
+                Edit Instructions
+              </Button>
+              <Button
+                onClick={handleGenerateCarePDF}
+                disabled={isGeneratingPDF}
+                variant="secondary"
+                className="bg-sage-600 hover:bg-sage-700 text-white"
+              >
+                {isGeneratingPDF ? (
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                ) : (
+                  <FileText className="w-4 h-4 mr-2" />
+                )}
+                Download Care PDF
+              </Button>
+              <Dialog open={careShareDialogOpen} onOpenChange={setCareShareDialogOpen}>
+                <DialogTrigger asChild>
+                  <Button
+                    onClick={handleShareCareLink}
+                    disabled={isSharing}
+                    variant="secondary"
+                    className="bg-white/20 hover:bg-white/30 text-white border-white/30"
+                  >
+                    {isSharing ? (
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    ) : (
+                      <Share2 className="w-4 h-4 mr-2" />
+                    )}
+                    Share Care Plan
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="max-w-md bg-[#f8f8f8]">
+                  <DialogHeader>
+                    <DialogTitle className="font-serif text-navy-900 border-b-2 border-sage-500 pb-2">
+                      🌿 Share {petData.name}'s Care Instructions
+                    </DialogTitle>
+                  </DialogHeader>
+                  
+                  <div className="space-y-6">
+                    {/* Public Care Instructions Link */}
+                    <div className="bg-white p-4 rounded-lg border border-sage-500/30 shadow-sm">
+                      <h4 className="font-serif font-bold text-navy-900 mb-2 flex items-center gap-2">
+                        <div className="w-6 h-6 bg-sage-500/20 rounded-full flex items-center justify-center">
+                          <ExternalLink className="w-3 h-3 text-sage-600" />
+                        </div>
+                        Public Care Instructions
+                      </h4>
+                      <p className="text-sm text-navy-600 mb-3">Share detailed daily care info with pet sitters and caregivers</p>
+                      <Button
+                        onClick={handleShareCareLink}
+                        disabled={isSharing}
+                        variant="outline"
+                        className="w-full border-navy-900 text-navy-900 hover:bg-navy-50"
+                      >
+                        {isSharing ? (
+                          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                        ) : (
+                          <Share2 className="w-4 h-4 mr-2" />
+                        )}
+                        Get Shareable Link
+                      </Button>
+                    </div>
+
+                    {/* Care PDF */}
+                    {carePdfUrl && careQrCodeUrl && (
+                      <div className="bg-white p-4 rounded-lg border border-sage-500/30 shadow-sm">
+                        <h4 className="font-serif font-bold text-navy-900 mb-3">🌿 Care Instructions PDF</h4>
+                        <div className="text-center mb-3">
+                          <img 
+                            src={careQrCodeUrl} 
+                            alt="Care Instructions QR Code" 
+                            className="border-2 border-sage-500/30 rounded-lg mx-auto"
+                            style={{width: '120px', height: '120px'}}
+                          />
+                          <p className="text-xs text-sage-600 mt-2">Scan to view real-time care updates</p>
+                        </div>
+                        <div className="grid grid-cols-3 gap-2">
+                          <Button
+                            onClick={() => window.open(carePdfUrl, '_blank')}
+                            variant="outline"
+                            size="sm"
+                            className="border-sage-500 text-sage-600 hover:bg-sage-50 font-semibold"
+                          >
+                            <Eye className="w-4 h-4 mr-1" />
+                            View
+                          </Button>
+                          <Button
+                            onClick={handleDownloadCarePDF}
+                            variant="outline"
+                            size="sm"
+                            className="border-navy-900 text-navy-900 hover:bg-navy-50"
+                          >
+                            <Download className="w-4 h-4 mr-1" />
+                            Download
+                          </Button>
+                          <Button
+                            onClick={handleShareCarePDF}
+                            variant="outline"
+                            size="sm"
+                            disabled={isSharing}
+                            className="border-navy-900 text-navy-900 hover:bg-navy-50"
+                          >
+                            <Share2 className="w-4 h-4 mr-1" />
+                            Share
+                          </Button>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Direct Links */}
+                    <div className="text-xs text-navy-500 space-y-1 bg-navy-50 p-3 rounded-lg">
+                      <p className="font-medium">Direct Links:</p>
+                      <p className="break-all">Care: {generateCarePublicUrl()}</p>
+                      {carePdfUrl && <p className="break-all">PDF: {carePdfUrl}</p>}
+                    </div>
+                  </div>
+                </DialogContent>
+              </Dialog>
+            </div>
           </CardTitle>
         </CardHeader>
         <CardContent>

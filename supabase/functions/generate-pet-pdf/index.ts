@@ -47,6 +47,299 @@ interface ComprehensivePetData {
   documents: Array<{ name: string; type: string; file_url: string; size: string; upload_date: string; }>;
 }
 
+function generateCareInstructionsPDF(petData: ComprehensivePetData): string {
+  const isHorse = petData.species?.toLowerCase() === 'horse';
+  
+  return `
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>PetPort - Care Instructions for ${petData.name}</title>
+    <style>
+        body { 
+            font-family: 'Arial', sans-serif; 
+            margin: 20px; 
+            color: #333;
+            line-height: 1.6;
+        }
+        .header { 
+            text-align: center; 
+            border-bottom: 3px solid #16a34a; 
+            padding-bottom: 15px; 
+            margin-bottom: 25px;
+            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+            padding: 20px;
+            border-radius: 10px;
+        }
+        .pet-name { 
+            font-size: 28px; 
+            font-weight: bold; 
+            color: #16a34a; 
+            margin: 10px 0;
+        }
+        .pet-subtitle { 
+            font-size: 18px; 
+            color: #15803d; 
+            margin: 5px 0;
+        }
+        .section { 
+            margin-bottom: 25px; 
+            border: 1px solid #bbf7d0; 
+            padding: 20px; 
+            border-radius: 8px;
+            background: #f7fee7;
+        }
+        .section-title { 
+            font-size: 18px; 
+            font-weight: bold; 
+            color: #16a34a; 
+            margin-bottom: 15px; 
+            border-bottom: 2px solid #bbf7d0; 
+            padding-bottom: 8px;
+            display: flex;
+            align-items: center;
+        }
+        .section-icon {
+            margin-right: 10px;
+            font-size: 20px;
+        }
+        .emergency { 
+            background-color: #fef2f2; 
+            border-color: #ef4444;
+            border-width: 2px;
+        }
+        .emergency .section-title { 
+            color: #ef4444;
+        }
+        .grid { 
+            display: grid; 
+            grid-template-columns: 1fr 1fr; 
+            gap: 15px;
+        }
+        .field { 
+            margin-bottom: 10px;
+        }
+        .field-label { 
+            font-weight: bold; 
+            color: #15803d;
+            display: inline-block;
+            min-width: 140px;
+        }
+        .field-value { 
+            margin-left: 10px;
+            color: #111827;
+        }
+        .schedule-item, .routine-item, .care-item {
+            background-color: white;
+            padding: 12px;
+            border-radius: 6px;
+            margin: 8px 0;
+            border-left: 4px solid #16a34a;
+        }
+        .feeding-schedule {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border: 2px solid #f59e0b;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+        .medical-notes {
+            background: linear-gradient(135deg, #fef2f2 0%, #fecaca 100%);
+            border: 2px solid #ef4444;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+        .behavioral-notes {
+            background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+            border: 2px solid #3b82f6;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+        .footer {
+            margin-top: 40px;
+            text-align: center;
+            font-size: 12px;
+            color: #6b7280;
+            border-top: 2px solid #bbf7d0;
+            padding-top: 15px;
+        }
+        .qr-note {
+            background: #f0fdf4;
+            border: 1px solid #16a34a;
+            padding: 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            text-align: center;
+            margin: 20px 0;
+            color: #15803d;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🌿 ${petData.name} Care Instructions</h1>
+        <div class="pet-name">${petData.name}</div>
+        <div class="pet-subtitle">Use this guide for daily care, travel, or vet visits</div>
+        <div class="pet-subtitle">ID: ${petData.pet_pass_id} • ${petData.species ? petData.species.charAt(0).toUpperCase() + petData.species.slice(1) : ''} ${petData.breed ? '• ' + petData.breed : ''}</div>
+    </div>
+
+    <div class="qr-note">
+        📱 Scan the QR code to view real-time updates to ${petData.name}'s care plan via PetPort
+    </div>
+
+    <div class="section emergency">
+        <div class="section-title">
+            <span class="section-icon">🚨</span>Emergency Contacts
+        </div>
+        <div class="field">
+            <span class="field-label">Primary Emergency:</span>
+            <span class="field-value">${petData.emergency_contact || 'Not provided'}</span>
+        </div>
+        <div class="field">
+            <span class="field-label">Veterinarian:</span>
+            <span class="field-value">${petData.vet_contact || 'Not provided'}</span>
+        </div>
+        <div class="field">
+            <span class="field-label">Pet Caretaker:</span>
+            <span class="field-value">${petData.pet_caretaker || 'Not provided'}</span>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="section-title">
+            <span class="section-icon">☕</span>Feeding ${isHorse ? '& Turnout' : ''} Schedule
+        </div>
+        ${petData.care_instructions?.feeding_schedule ? `
+        <div class="feeding-schedule">
+            <h4>🕐 Custom Schedule</h4>
+            <p>${petData.care_instructions.feeding_schedule}</p>
+        </div>
+        ` : `
+        <div class="feeding-schedule">
+            <h4>🕐 ${isHorse ? 'Standard Horse' : 'Standard'} Feeding Schedule</h4>
+            ${isHorse ? `
+            <div class="schedule-item">⏰ 6:00 AM - Morning hay (2 flakes timothy) • Check water buckets</div>
+            <div class="schedule-item">⏰ 12:00 PM - Grain feed (2 lbs sweet feed) • Add supplements</div>
+            <div class="schedule-item">⏰ 6:00 PM - Evening hay (2 flakes) • Turn out or bring in from pasture</div>
+            ` : `
+            <div class="schedule-item">⏰ 7:00 AM - Morning feed (2 cups dry food + supplements) • Mix with warm water if preferred</div>
+            <div class="schedule-item">⏰ 12:00 PM - Light snack (Training treats only) • If active/training day</div>
+            <div class="schedule-item">⏰ 6:00 PM - Evening feed (2 cups dry food) • Fresh water always available</div>
+            `}
+        </div>
+        `}
+    </div>
+
+    ${petData.medications && petData.medications.length > 0 ? `
+    <div class="section">
+        <div class="section-title">
+            <span class="section-icon">💊</span>Medications & Health
+        </div>
+        <div class="medical-notes">
+            <h4>⚠️ Current Medications</h4>
+            ${petData.medications.map(med => `<div class="care-item">💊 ${med} - Administer as prescribed. Contact vet if missed doses or reactions occur.</div>`).join('')}
+        </div>
+        <div class="care-item">
+            <h4>📋 Health Monitoring Checklist</h4>
+            <ul>
+                <li>• Monitor appetite and water intake daily</li>
+                <li>• Watch for any behavioral changes</li>
+                <li>• Check for signs of distress or discomfort</li>
+                ${isHorse ? '<li>• Check hooves and legs for heat/swelling</li>' : ''}
+                <li>• Contact vet immediately if concerns arise</li>
+            </ul>
+        </div>
+    </div>
+    ` : ''}
+
+    <div class="section">
+        <div class="section-title">
+            <span class="section-icon">🌙</span>Daily Routine & Preferences
+        </div>
+        <div class="grid">
+            <div class="routine-item">
+                <h4>🌅 Morning Routine</h4>
+                ${petData.care_instructions?.morning_routine ? `
+                <p>${petData.care_instructions.morning_routine}</p>
+                ` : `
+                <ul>
+                    <li>• Wake up around 7:00 AM</li>
+                    <li>• ${isHorse ? 'Check water buckets and hay' : 'Potty break immediately'}</li>
+                    <li>• ${isHorse ? 'Quick health check' : 'Short walk before breakfast'}</li>
+                    <li>• Feeding time</li>
+                </ul>
+                `}
+            </div>
+            <div class="routine-item">
+                <h4>🌆 Evening Routine</h4>
+                ${petData.care_instructions?.evening_routine ? `
+                <p>${petData.care_instructions.evening_routine}</p>
+                ` : `
+                <ul>
+                    <li>• Dinner around 6:00 PM</li>
+                    <li>• ${isHorse ? 'Turn out or bring in from pasture' : 'Play time after dinner'}</li>
+                    <li>• ${isHorse ? 'Final hay feeding' : 'Final potty break at 10 PM'}</li>
+                    ${!isHorse ? '<li>• Bedtime routine - quiet time</li>' : ''}
+                </ul>
+                `}
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="section-title">
+            <span class="section-icon">⚠️</span>Important Notes & Preferences
+        </div>
+        <div class="medical-notes">
+            <h4>🚨 Allergies & Sensitivities</h4>
+            <p>${petData.care_instructions?.allergies || (isHorse 
+                ? "Sensitive to alfalfa - stick to timothy hay only. No moldy or dusty feed."
+                : "Sensitive to chicken - avoid all poultry-based treats and foods."
+            )}</p>
+        </div>
+        <div class="behavioral-notes">
+            <h4>🧠 Behavioral Notes</h4>
+            <p>${petData.care_instructions?.behavioral_notes || (isHorse
+                ? "Generally calm but can be anxious during storms. Provide extra hay for comfort."
+                : "Friendly with other dogs but needs slow introductions. Afraid of thunderstorms - provide comfort."
+            )}</p>
+        </div>
+        <div class="care-item">
+            <h4>❤️ Favorite Activities</h4>
+            <p>${petData.care_instructions?.favorite_activities || (isHorse
+                ? "Enjoys trail rides and groundwork. Loves grooming sessions."
+                : "Loves swimming, fetch, and puzzle toys. Great with children."
+            )}</p>
+        </div>
+    </div>
+
+    ${petData.bio ? `
+    <div class="section">
+        <div class="section-title">
+            <span class="section-icon">🌟</span>About ${petData.name}
+        </div>
+        <div class="care-item">
+            <p>${petData.bio}</p>
+        </div>
+    </div>
+    ` : ''}
+
+    <div class="footer">
+        <p><strong>PetPort Care Instructions for ${petData.name}</strong></p>
+        <p>Generated on ${new Date().toLocaleDateString()} • ID: ${petData.pet_pass_id}</p>
+        <p>📱 For real-time updates, visit: PetPort.com</p>
+        <p style="margin-top: 15px; font-style: italic;">
+            "Caring for pets with love, precision, and peace of mind."
+        </p>
+    </div>
+</body>
+</html>
+  `;
+}
+
 function generateFullPetProfilePDF(petData: ComprehensivePetData): string {
   const formatArray = (arr: any[], formatter: (item: any) => string) => {
     return arr && arr.length > 0 ? arr.map(formatter).join('') : '<p>No entries recorded.</p>';
@@ -635,9 +928,14 @@ Deno.serve(async (req) => {
     };
 
     // Generate HTML content based on type
-    const htmlContent = type === 'full' 
-      ? generateFullPetProfilePDF(comprehensivePetData)
-      : generateEmergencyProfilePDF(comprehensivePetData);
+    let htmlContent: string;
+    if (type === 'full') {
+      htmlContent = generateFullPetProfilePDF(comprehensivePetData);
+    } else if (type === 'care') {
+      htmlContent = generateCareInstructionsPDF(comprehensivePetData);
+    } else {
+      htmlContent = generateEmergencyProfilePDF(comprehensivePetData);
+    }
 
     // Store the HTML document
     const fileName = `${petId}/${type}-profile-${Date.now()}.html`;

@@ -132,7 +132,7 @@ All colors MUST be HSL.
       radial-gradient(circle at 80% 70%, rgba(148, 163, 184, 0.15) 2px, transparent 2px);
     background-size: 100% 100%, 80px 80px, 80px 80px, 120px 120px, 120px 120px;
     background-position: center, 0 0, 0 0, 0 0, 40px 40px;
-    opacity: 0.15;
+    opacity: 0.25;
     z-index: 0;
     pointer-events: none;
   }

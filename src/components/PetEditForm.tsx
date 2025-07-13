@@ -1,572 +1,411 @@
 import { useState, useEffect } from "react";
-import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Switch } from "@/components/ui/switch";
-import { Separator } from "@/components/ui/separator";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { 
-  updatePetContacts, 
-  updatePetMedical, 
-  uploadPetPhotos, 
-  uploadGalleryPhoto, 
-  uploadDocument,
-  updatePetBasicInfo
-} from "@/services/petService";
-import { Upload, FileText, Camera, Stethoscope, Phone, X, MapPin, Loader2, Eye } from "lucide-react";
+import { Camera, Upload } from "lucide-react";
 
 interface PetEditFormProps {
+  petId: string;
   petData: any;
-  onSave: () => void;
-  onCancel: () => void;
+  onUpdate: () => void;
+  onClose: () => void;
 }
 
-export const PetEditForm = ({ petData, onSave, onCancel }: PetEditFormProps) => {
-  const { register, handleSubmit, watch, setValue, formState: { isDirty } } = useForm({
-    defaultValues: {
-      notes: petData.notes || "",
-      state: petData.state || "",
-      county: petData.county || "",
-      vetContact: petData.vetContact || "",
-      emergencyContact: petData.emergencyContact || "",
-      secondEmergencyContact: petData.secondEmergencyContact || "",
-      petCaretaker: petData.petCaretaker || "",
-      medicalAlert: petData.medicalAlert || false,
-      medicalConditions: petData.medicalConditions || "",
-      medications: petData.medications?.join(", ") || "",
-      lastVaccination: petData.lastVaccination || "",
-    }
+export const PetEditForm = ({ petId, petData, onUpdate, onClose }: PetEditFormProps) => {
+  const [formData, setFormData] = useState({
+    name: petData?.name || "",
+    breed: petData?.breed || "",
+    species: petData?.species || "",
+    age: petData?.age || "",
+    weight: petData?.weight || "",
+    bio: petData?.bio || "",
+    notes: petData?.notes || "",
+    state: petData?.state || "",
+    county: petData?.county || "",
+    microchip_id: petData?.microchip_id || "",
   });
-
-  const [isLoading, setIsLoading] = useState(false);
+  
   const [profilePhoto, setProfilePhoto] = useState<File | null>(null);
   const [fullBodyPhoto, setFullBodyPhoto] = useState<File | null>(null);
-  const [galleryPhoto, setGalleryPhoto] = useState<File | null>(null);
-  const [galleryCaption, setGalleryCaption] = useState("");
-  const [document, setDocument] = useState<File | null>(null);
-  const [documentType, setDocumentType] = useState("vaccination");
-  const [profilePreview, setProfilePreview] = useState<string | null>(null);
-  const [fullBodyPreview, setFullBodyPreview] = useState<string | null>(null);
+  const [profilePreview, setProfilePreview] = useState<string>("");
+  const [fullBodyPreview, setFullBodyPreview] = useState<string>("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
 
-  const medicalAlert = watch("medicalAlert");
+  useEffect(() => {
+    if (petData?.photoUrl) {
+      setProfilePreview(petData.photoUrl);
+    }
+    if (petData?.fullBodyPhotoUrl) {
+      setFullBodyPreview(petData.fullBodyPhotoUrl);
+    }
+  }, [petData]);
 
-  const handleCameraCapture = (type: 'profile' | 'fullBody') => {
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.accept = 'image/*';
-    input.capture = type === 'profile' ? 'user' : 'environment';
-    
-    input.onchange = (e) => {
-      const file = (e.target as HTMLInputElement).files?.[0];
-      if (file) {
-        if (type === 'profile') {
-          setProfilePhoto(file);
-          const reader = new FileReader();
-          reader.onload = () => setProfilePreview(reader.result as string);
-          reader.readAsDataURL(file);
-        } else {
-          setFullBodyPhoto(file);
-          const reader = new FileReader();
-          reader.onload = () => setFullBodyPreview(reader.result as string);
-          reader.readAsDataURL(file);
-        }
+  const handleFilePreview = (file: File, setPreview: (url: string) => void) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      if (e.target?.result) {
+        setPreview(e.target.result as string);
       }
     };
-    
-    input.click();
+    reader.readAsDataURL(file);
   };
 
-  const onSubmit = async (data: any) => {
-    setIsLoading(true);
-    
+  const handleProfilePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setProfilePhoto(file);
+      handleFilePreview(file, setProfilePreview);
+    }
+  };
+
+  const handleFullBodyPhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setFullBodyPhoto(file);
+      handleFilePreview(file, setFullBodyPreview);
+    }
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const uploadPhoto = async (file: File, folder: string) => {
+    const fileExt = file.name.split('.').pop();
+    const fileName = `${folder}-${Date.now()}.${fileExt}`;
+    const filePath = `${petId}/${fileName}`;
+
+    const { error: uploadError } = await supabase.storage
+      .from('pet_photos')
+      .upload(filePath, file);
+
+    if (uploadError) {
+      console.error('Upload error:', uploadError);
+      throw uploadError;
+    }
+
+    const { data: { publicUrl } } = supabase.storage
+      .from('pet_photos')
+      .getPublicUrl(filePath);
+
+    return publicUrl;
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+
     try {
-      console.log("Starting form submission with data:", data);
+      // Update basic pet information
+      const { error: petError } = await supabase
+        .from('pets')
+        .update(formData)
+        .eq('id', petId);
 
-      const basicInfoSuccess = await updatePetBasicInfo(petData.id, {
-        notes: data.notes,
-        state: data.state,
-        county: data.county,
-      });
+      if (petError) throw petError;
 
-      if (!basicInfoSuccess) {
-        throw new Error("Failed to update basic information");
-      }
-      console.log("Basic info updated successfully");
+      // Handle photo uploads
+      let profilePhotoUrl = profilePreview;
+      let fullBodyPhotoUrl = fullBodyPreview;
 
-      const contactSuccess = await updatePetContacts(petData.id, {
-        vet_contact: data.vetContact,
-        emergency_contact: data.emergencyContact,
-        second_emergency_contact: data.secondEmergencyContact,
-        pet_caretaker: data.petCaretaker,
-      });
-
-      if (!contactSuccess) {
-        throw new Error("Failed to update contact information");
-      }
-      console.log("Contacts updated successfully");
-
-      const medicalSuccess = await updatePetMedical(petData.id, {
-        medical_alert: data.medicalAlert,
-        medical_conditions: data.medicalConditions,
-        medications: data.medications ? data.medications.split(",").map((m: string) => m.trim()).filter(m => m) : [],
-        last_vaccination: data.lastVaccination,
-      });
-
-      if (!medicalSuccess) {
-        throw new Error("Failed to update medical information");
-      }
-      console.log("Medical info updated successfully");
-
-      if (profilePhoto || fullBodyPhoto) {
-        console.log("Uploading photos...");
-        const photoSuccess = await uploadPetPhotos(petData.id, {
-          profilePhoto: profilePhoto || undefined,
-          fullBodyPhoto: fullBodyPhoto || undefined,
-        });
-
-        if (!photoSuccess) {
-          throw new Error("Failed to upload photos");
-        }
-        console.log("Photos uploaded successfully!");
+      if (profilePhoto) {
+        profilePhotoUrl = await uploadPhoto(profilePhoto, 'profile');
       }
 
-      if (galleryPhoto) {
-        console.log("Uploading gallery photo...");
-        const gallerySuccess = await uploadGalleryPhoto(petData.id, galleryPhoto, galleryCaption);
-        if (!gallerySuccess) {
-          throw new Error("Failed to upload gallery photo");
-        }
-        console.log("Gallery photo uploaded successfully!");
+      if (fullBodyPhoto) {
+        fullBodyPhotoUrl = await uploadPhoto(fullBodyPhoto, 'full-body');
       }
 
-      if (document) {
-        console.log("Uploading document...");
-        const docSuccess = await uploadDocument(petData.id, document, documentType);
-        if (!docSuccess) {
-          throw new Error("Failed to upload document");
-        }
-        console.log("Document uploaded successfully!");
+      // Update or insert photo URLs
+      if (profilePhotoUrl || fullBodyPhotoUrl) {
+        const { error: photoError } = await supabase
+          .from('pet_photos')
+          .upsert({
+            pet_id: petId,
+            photo_url: profilePhotoUrl,
+            full_body_photo_url: fullBodyPhotoUrl,
+          });
+
+        if (photoError) throw photoError;
       }
 
       toast({
-        title: "Success",
-        description: "Pet information updated successfully!",
+        title: "Success!",
+        description: "Pet information updated successfully.",
       });
 
-      onSave();
+      onUpdate();
+      onClose();
     } catch (error) {
-      console.error("Error updating pet:", error);
+      console.error('Error updating pet:', error);
       toast({
-        variant: "destructive",
         title: "Error",
-        description: error instanceof Error ? error.message : "Failed to update pet information",
+        description: "Failed to update pet information. Please try again.",
+        variant: "destructive",
       });
     } finally {
-      setIsLoading(false);
+      setIsSubmitting(false);
     }
   };
 
   return (
-    <div className="space-y-6">
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-        {/* Basic Information */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center space-x-2">
-              <MapPin className="w-5 h-5" />
-              <span>Basic Information</span>
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+      <Card className="w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+        <CardHeader>
+          <CardTitle>Edit Pet Information</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Photo Upload Sections */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Profile Photo */}
+              <div className="space-y-3">
+                <Label>Profile Photo</Label>
+                <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center">
+                  {profilePreview ? (
+                    <img 
+                      src={profilePreview} 
+                      alt="Profile preview" 
+                      className="w-32 h-32 object-cover rounded-full mx-auto mb-3"
+                    />
+                  ) : (
+                    <div className="w-32 h-32 bg-gray-100 rounded-full mx-auto mb-3 flex items-center justify-center">
+                      <Camera className="w-8 h-8 text-gray-400" />
+                    </div>
+                  )}
+                  
+                  <div className="space-y-2">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      capture="user"
+                      onChange={handleProfilePhotoChange}
+                      id="profileCamera"
+                      className="hidden"
+                    />
+                    <Button 
+                      type="button"
+                      variant="outline" 
+                      size="sm"
+                      onClick={() => document.getElementById('profileCamera')?.click()}
+                      className="mr-2"
+                    >
+                      <Camera className="w-4 h-4 mr-2" />
+                      Take Photo
+                    </Button>
+                    
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleProfilePhotoChange}
+                      id="profileUpload"
+                      className="hidden"
+                    />
+                    <Button 
+                      type="button"
+                      variant="outline" 
+                      size="sm"
+                      onClick={() => document.getElementById('profileUpload')?.click()}
+                    >
+                      <Upload className="w-4 h-4 mr-2" />
+                      Upload
+                    </Button>
+                  </div>
+                </div>
+              </div>
+
+              {/* Full Body Photo */}
+              <div className="space-y-3">
+                <Label>Full Body Photo</Label>
+                <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center">
+                  {fullBodyPreview ? (
+                    <img 
+                      src={fullBodyPreview} 
+                      alt="Full body preview" 
+                      className="w-32 h-40 object-cover rounded-lg mx-auto mb-3"
+                    />
+                  ) : (
+                    <div className="w-32 h-40 bg-gray-100 rounded-lg mx-auto mb-3 flex items-center justify-center">
+                      <Camera className="w-8 h-8 text-gray-400" />
+                    </div>
+                  )}
+                  
+                  <div className="space-y-2">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      capture="environment"
+                      onChange={handleFullBodyPhotoChange}
+                      id="fullBodyCamera"
+                      className="hidden"
+                    />
+                    <Button 
+                      type="button"
+                      variant="outline" 
+                      size="sm"
+                      onClick={() => document.getElementById('fullBodyCamera')?.click()}
+                      className="mr-2"
+                    >
+                      <Camera className="w-4 h-4 mr-2" />
+                      Take Photo
+                    </Button>
+                    
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleFullBodyPhotoChange}
+                      id="fullBodyUpload"
+                      className="hidden"
+                    />
+                    <Button 
+                      type="button"
+                      variant="outline" 
+                      size="sm"
+                      onClick={() => document.getElementById('fullBodyUpload')?.click()}
+                    >
+                      <Upload className="w-4 h-4 mr-2" />
+                      Upload
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Basic Information */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="state">State</Label>
+                <Label htmlFor="name">Name *</Label>
+                <Input
+                  id="name"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleInputChange}
+                  required
+                />
+              </div>
+              <div>
+                <Label htmlFor="species">Species</Label>
+                <Input
+                  id="species"
+                  name="species"
+                  value={formData.species}
+                  onChange={handleInputChange}
+                  placeholder="e.g., Dog, Cat, Horse"
+                />
+              </div>
+              <div>
+                <Label htmlFor="breed">Breed</Label>
+                <Input
+                  id="breed"
+                  name="breed"
+                  value={formData.breed}
+                  onChange={handleInputChange}
+                />
+              </div>
+              <div>
+                <Label htmlFor="age">Age</Label>
+                <Input
+                  id="age"
+                  name="age"
+                  value={formData.age}
+                  onChange={handleInputChange}
+                  placeholder="e.g., 3 years, 8 months"
+                />
+              </div>
+              <div>
+                <Label htmlFor="weight">Weight</Label>
+                <Input
+                  id="weight"
+                  name="weight"
+                  value={formData.weight}
+                  onChange={handleInputChange}
+                  placeholder="e.g., 45 lbs, 20 kg"
+                />
+              </div>
+              <div>
+                <Label htmlFor="microchip_id">Microchip ID</Label>
+                <Input
+                  id="microchip_id"
+                  name="microchip_id"
+                  value={formData.microchip_id}
+                  onChange={handleInputChange}
+                />
+              </div>
+            </div>
+
+            {/* Location Information */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="state">State/Province</Label>
                 <Input
                   id="state"
-                  {...register("state")}
-                  placeholder="California"
-                  disabled={isLoading}
+                  name="state"
+                  value={formData.state}
+                  onChange={handleInputChange}
                 />
               </div>
               <div>
-                <Label htmlFor="county">County</Label>
+                <Label htmlFor="county">County/Region</Label>
                 <Input
                   id="county"
-                  {...register("county")}
-                  placeholder="Los Angeles County"
-                  disabled={isLoading}
+                  name="county"
+                  value={formData.county}
+                  onChange={handleInputChange}
                 />
               </div>
             </div>
+
+            {/* Bio and Notes */}
             <div>
-              <Label htmlFor="notes">Notes</Label>
+              <Label htmlFor="bio">Bio</Label>
               <Textarea
-                id="notes"
-                {...register("notes")}
-                placeholder="Behavioral notes, special instructions, etc."
+                id="bio"
+                name="bio"
+                value={formData.bio}
+                onChange={handleInputChange}
+                placeholder="Tell us about your pet's personality..."
                 rows={3}
-                disabled={isLoading}
               />
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Contact Information */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center space-x-2">
-              <Phone className="w-5 h-5" />
-              <span>Contact Information</span>
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="vetContact">Veterinarian Contact</Label>
-                <Input
-                  id="vetContact"
-                  {...register("vetContact")}
-                  placeholder="Dr. Smith - (555) 123-4567"
-                  disabled={isLoading}
-                />
-              </div>
-              <div>
-                <Label htmlFor="petCaretaker">Pet Caretaker</Label>
-                <Input
-                  id="petCaretaker"
-                  {...register("petCaretaker")}
-                  placeholder="John Doe"
-                  disabled={isLoading}
-                />
-              </div>
-              <div>
-                <Label htmlFor="emergencyContact">Emergency Contact</Label>
-                <Input
-                  id="emergencyContact"
-                  {...register("emergencyContact")}
-                  placeholder="(555) 987-6543"
-                  disabled={isLoading}
-                />
-              </div>
-              <div>
-                <Label htmlFor="secondEmergencyContact">Second Emergency Contact</Label>
-                <Input
-                  id="secondEmergencyContact"
-                  {...register("secondEmergencyContact")}
-                  placeholder="(555) 456-7890"
-                  disabled={isLoading}
-                />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Medical Information */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center space-x-2">
-              <Stethoscope className="w-5 h-5" />
-              <span>Medical Information</span>
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex items-center space-x-2">
-              <Switch
-                id="medicalAlert"
-                checked={medicalAlert}
-                onCheckedChange={(checked) => setValue("medicalAlert", checked)}
-                disabled={isLoading}
-              />
-              <Label htmlFor="medicalAlert">Medical Alert</Label>
             </div>
             
-            {medicalAlert && (
-              <div>
-                <Label htmlFor="medicalConditions">Medical Conditions</Label>
-                <Textarea
-                  id="medicalConditions"
-                  {...register("medicalConditions")}
-                  placeholder="Describe any medical conditions..."
-                  disabled={isLoading}
-                />
-              </div>
-            )}
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="medications">Current Medications</Label>
-                <Textarea
-                  id="medications"
-                  {...register("medications")}
-                  placeholder="Medication 1, Medication 2, ..."
-                  rows={3}
-                  disabled={isLoading}
-                />
-                <p className="text-sm text-gray-500 mt-1">Separate medications with commas</p>
-              </div>
-              <div>
-                <Label htmlFor="lastVaccination">Last Vaccination</Label>
-                <Input
-                  id="lastVaccination"
-                  {...register("lastVaccination")}
-                  placeholder="March 2024"
-                  disabled={isLoading}
-                />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Photo Uploads - Enhanced with Camera */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center space-x-2">
-              <Camera className="w-5 h-5" />
-              <span>Photo Management</span>
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Profile Photo Section */}
-              <div className="space-y-4">
-                <Label>Profile Photo</Label>
-                <div className="flex flex-col space-y-3">
-                  <div className="flex space-x-2">
-                    <Button
-                      type="button"
-                      variant="outline"
-                      onClick={() => handleCameraCapture('profile')}
-                      disabled={isLoading}
-                      className="flex-1"
-                    >
-                      <Camera className="w-4 h-4 mr-2" />
-                      Take Photo
-                    </Button>
-                    <Input
-                      type="file"
-                      accept="image/*"
-                      onChange={(e) => {
-                        const file = e.target.files?.[0] || null;
-                        console.log("Profile photo selected:", file?.name);
-                        setProfilePhoto(file);
-                        if (file) {
-                          const reader = new FileReader();
-                          reader.onload = () => setProfilePreview(reader.result as string);
-                          reader.readAsDataURL(file);
-                        }
-                      }}
-                      disabled={isLoading}
-                      className="flex-1"
-                    />
-                  </div>
-                  {(profilePreview || profilePhoto) && (
-                    <div className="relative">
-                      <img 
-                        src={profilePreview || (profilePhoto ? URL.createObjectURL(profilePhoto) : '')} 
-                        alt="Profile preview" 
-                        className="w-full max-w-48 h-48 object-cover rounded-lg border-2 border-gray-200"
-                      />
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        onClick={() => {
-                          setProfilePhoto(null);
-                          setProfilePreview(null);
-                        }}
-                        disabled={isLoading}
-                        className="absolute top-2 right-2"
-                      >
-                        <X className="w-4 h-4" />
-                      </Button>
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              {/* Full Body Photo Section */}
-              <div className="space-y-4">
-                <Label>Full Body Photo</Label>
-                <div className="flex flex-col space-y-3">
-                  <div className="flex space-x-2">
-                    <Button
-                      type="button"
-                      variant="outline"
-                      onClick={() => handleCameraCapture('fullBody')}
-                      disabled={isLoading}
-                      className="flex-1"
-                    >
-                      <Camera className="w-4 h-4 mr-2" />
-                      Take Photo
-                    </Button>
-                    <Input
-                      type="file"
-                      accept="image/*"
-                      onChange={(e) => {
-                        const file = e.target.files?.[0] || null;
-                        console.log("Full body photo selected:", file?.name);
-                        setFullBodyPhoto(file);
-                        if (file) {
-                          const reader = new FileReader();
-                          reader.onload = () => setFullBodyPreview(reader.result as string);
-                          reader.readAsDataURL(file);
-                        }
-                      }}
-                      disabled={isLoading}
-                      className="flex-1"
-                    />
-                  </div>
-                  {(fullBodyPreview || fullBodyPhoto) && (
-                    <div className="relative">
-                      <img 
-                        src={fullBodyPreview || (fullBodyPhoto ? URL.createObjectURL(fullBodyPhoto) : '')} 
-                        alt="Full body preview" 
-                        className="w-full max-w-48 h-48 object-cover rounded-lg border-2 border-gray-200"
-                      />
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        onClick={() => {
-                          setFullBodyPhoto(null);
-                          setFullBodyPreview(null);
-                        }}
-                        disabled={isLoading}
-                        className="absolute top-2 right-2"
-                      >
-                        <X className="w-4 h-4" />
-                      </Button>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-
-            <Separator />
-
-            {/* Gallery Photo Section */}
             <div>
-              <Label htmlFor="galleryPhoto">Add Gallery Photo</Label>
-              <div className="space-y-2">
-                <div className="flex space-x-2">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={() => {
-                      const input = document.createElement('input');
-                      input.type = 'file';
-                      input.accept = 'image/*';
-                      input.capture = 'environment';
-                      input.onchange = (e) => {
-                        const file = (e.target as HTMLInputElement).files?.[0];
-                        if (file) {
-                          console.log("Gallery photo captured:", file.name);
-                          setGalleryPhoto(file);
-                        }
-                      };
-                      input.click();
-                    }}
-                    disabled={isLoading}
-                    className="bg-blue-600 hover:bg-blue-700 text-white"
-                  >
-                    <Camera className="w-4 h-4 mr-2" />
-                    📸 Capture Moment
-                  </Button>
-                  <Input
-                    type="file"
-                    accept="image/*"
-                    onChange={(e) => {
-                      const file = e.target.files?.[0] || null;
-                      console.log("Gallery photo selected:", file?.name);
-                      setGalleryPhoto(file);
-                    }}
-                    disabled={isLoading}
-                    className="flex-1"
-                  />
-                </div>
-                <Input
-                  placeholder="Photo caption (optional)"
-                  value={galleryCaption}
-                  onChange={(e) => setGalleryCaption(e.target.value)}
-                  disabled={isLoading}
-                />
-                {galleryPhoto && (
-                  <div className="flex items-center space-x-2 text-sm text-green-600">
-                    <Eye className="w-4 h-4" />
-                    <span>Ready to upload: {galleryPhoto.name}</span>
-                  </div>
-                )}
-              </div>
+              <Label htmlFor="notes">Special Notes</Label>
+              <Textarea
+                id="notes"
+                name="notes"
+                value={formData.notes}
+                onChange={handleInputChange}
+                placeholder="Important information about your pet..."
+                rows={3}
+              />
             </div>
-          </CardContent>
-        </Card>
 
-        {/* Document Upload */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center space-x-2">
-              <FileText className="w-5 h-5" />
-              <span>Document Upload</span>
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="document">Upload Document</Label>
-                <Input
-                  id="document"
-                  type="file"
-                  accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
-                  onChange={(e) => {
-                    const file = e.target.files?.[0] || null;
-                    console.log("Document selected:", file?.name);
-                    setDocument(file);
-                  }}
-                  disabled={isLoading}
-                />
-              </div>
-              <div>
-                <Label htmlFor="documentType">Document Type</Label>
-                <select
-                  id="documentType"
-                  value={documentType}
-                  onChange={(e) => setDocumentType(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  disabled={isLoading}
-                >
-                  <option value="vaccination">Vaccination Record</option>
-                  <option value="certificate">Certificate</option>
-                  <option value="medical">Medical Record</option>
-                  <option value="license">License</option>
-                  <option value="insurance">Insurance</option>
-                  <option value="other">Other</option>
-                </select>
-              </div>
+            {/* Form Actions */}
+            <div className="flex justify-end space-x-2 pt-4">
+              <Button 
+                type="button" 
+                variant="outline" 
+                onClick={onClose}
+                disabled={isSubmitting}
+              >
+                Cancel
+              </Button>
+              <Button type="submit" disabled={isSubmitting}>
+                {isSubmitting ? "Saving..." : "Save Changes"}
+              </Button>
             </div>
-          </CardContent>
-        </Card>
-
-        {/* Form Actions */}
-        <div className="flex justify-end space-x-4">
-          <Button type="button" variant="outline" onClick={onCancel} disabled={isLoading}>
-            Cancel
-          </Button>
-          <Button type="submit" disabled={isLoading}>
-            {isLoading ? (
-              <>
-                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                Saving...
-              </>
-            ) : (
-              "Save Changes"
-            )}
-          </Button>
-        </div>
-      </form>
+          </form>
+        </CardContent>
+      </Card>
     </div>
   );
 };

@@ -153,15 +153,14 @@ export const PetPDFGenerator = ({ petId, petName }: PetPDFGeneratorProps) => {
           <Button 
             onClick={() => handleGeneratePDF('emergency')}
             disabled={isGenerating}
-            variant="outline"
-            className="w-full border-gold-500 text-gold-600 hover:bg-gold-50 font-bold px-4 py-2"
+            className="w-full bg-gradient-to-r from-gold-500 to-gold-400 text-navy-900 hover:from-gold-400 hover:to-gold-300"
           >
             {isGenerating ? (
               <Loader2 className="w-4 h-4 mr-2 animate-spin" />
             ) : (
               <FileText className="w-4 h-4 mr-2" />
             )}
-            Generate Emergency Profile
+            Generate Emergency PDF
           </Button>
         </div>
 

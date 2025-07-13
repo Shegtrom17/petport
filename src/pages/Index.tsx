@@ -44,11 +44,17 @@ const Index = () => {
       }
     };
 
+    const handleNavigateToCare = () => {
+      setActiveTab("care");
+    };
+
     handleHashChange();
     window.addEventListener('hashchange', handleHashChange);
+    window.addEventListener('navigate-to-care', handleNavigateToCare);
     
     return () => {
       window.removeEventListener('hashchange', handleHashChange);
+      window.removeEventListener('navigate-to-care', handleNavigateToCare);
     };
   }, []);
 

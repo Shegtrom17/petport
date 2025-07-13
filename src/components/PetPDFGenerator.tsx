@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { FileText, Download, QrCode, Share2, Loader2, Users, ExternalLink } from "lucide-react";
+import { FileText, Download, QrCode, Share2, Loader2, Users, ExternalLink, Eye } from "lucide-react";
 import { generatePetPDF, generateQRCodeUrl, downloadPDF, generatePublicProfileUrl, shareProfile } from "@/services/pdfService";
 import { useToast } from "@/hooks/use-toast";
 
@@ -20,6 +20,8 @@ export const PetPDFGenerator = ({ petId, petName }: PetPDFGeneratorProps) => {
   const [fullQrCodeUrl, setFullQrCodeUrl] = useState<string | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isSharing, setIsSharing] = useState(false);
+  const [viewModalOpen, setViewModalOpen] = useState(false);
+  const [currentViewUrl, setCurrentViewUrl] = useState<string | null>(null);
   const { toast } = useToast();
 
   const publicProfileUrl = generatePublicProfileUrl(petId);
@@ -44,7 +46,7 @@ export const PetPDFGenerator = ({ petId, petName }: PetPDFGeneratorProps) => {
         
         toast({
           title: "PDF Generated Successfully",
-          description: `${petName}'s ${type === 'emergency' ? 'emergency passport' : 'complete profile'} PDF is ready to download and share.`,
+          description: `${petName}'s ${type === 'emergency' ? 'emergency profile' : 'complete profile'} PDF is ready to download and share.`,
         });
       } else {
         throw new Error(result.error || 'Failed to generate PDF');
@@ -65,7 +67,10 @@ export const PetPDFGenerator = ({ petId, petName }: PetPDFGeneratorProps) => {
     if (!url) return;
     
     try {
-      await downloadPDF(url, `${petName}-${type}-profile.html`);
+      const fileName = type === 'emergency' 
+        ? `PetPort_Emergency_Profile_${petName}.pdf`
+        : `PetPort_Complete_Profile_${petName}.pdf`;
+      await downloadPDF(url, fileName);
       toast({
         title: "Download Started",
         description: `Your pet's ${type} profile is being downloaded.`,
@@ -77,6 +82,11 @@ export const PetPDFGenerator = ({ petId, petName }: PetPDFGeneratorProps) => {
         variant: "destructive",
       });
     }
+  };
+
+  const handleViewPDF = (url: string) => {
+    setCurrentViewUrl(url);
+    setViewModalOpen(true);
   };
 
   const handleShare = async (url: string, type: string) => {
@@ -138,7 +148,7 @@ export const PetPDFGenerator = ({ petId, petName }: PetPDFGeneratorProps) => {
           <div className="absolute top-2 right-2 w-8 h-8 bg-gold-500/20 rounded-full flex items-center justify-center">
             <span className="text-xs font-bold text-gold-600">1</span>
           </div>
-          <h4 className="font-serif font-bold text-navy-900 mb-2 border-b border-gold-500/50 pb-1">Emergency Passport</h4>
+          <h4 className="font-serif font-bold text-navy-900 mb-2 border-b border-gold-500/50 pb-1">🚨 Emergency Profile</h4>
           <p className="text-sm text-navy-600 mb-3">Essential medical and contact information</p>
           <Button 
             onClick={() => handleGeneratePDF('emergency')}
@@ -151,7 +161,7 @@ export const PetPDFGenerator = ({ petId, petName }: PetPDFGeneratorProps) => {
             ) : (
               <FileText className="w-4 h-4 mr-2" />
             )}
-            Generate Emergency Passport
+            Generate Emergency Profile
           </Button>
         </div>
 
@@ -217,7 +227,7 @@ export const PetPDFGenerator = ({ petId, petName }: PetPDFGeneratorProps) => {
                 {/* Emergency PDF */}
                 {emergencyPdfUrl && emergencyQrCodeUrl && (
                   <div className="bg-white p-4 rounded-lg border border-gold-500/30 shadow-sm">
-                    <h4 className="font-serif font-bold text-navy-900 mb-3">Emergency Passport PDF</h4>
+                    <h4 className="font-serif font-bold text-navy-900 mb-3">🚨 Emergency Profile PDF</h4>
                     <div className="text-center mb-3">
                       <img 
                         src={emergencyQrCodeUrl} 
@@ -226,12 +236,21 @@ export const PetPDFGenerator = ({ petId, petName }: PetPDFGeneratorProps) => {
                         style={{width: '120px', height: '120px'}}
                       />
                     </div>
-                    <div className="grid grid-cols-2 gap-2">
+                    <div className="grid grid-cols-3 gap-2">
+                      <Button
+                        onClick={() => handleViewPDF(emergencyPdfUrl)}
+                        variant="outline"
+                        size="sm"
+                        className="border-gold-500 text-gold-600 hover:bg-gold-50 font-semibold"
+                      >
+                        <Eye className="w-4 h-4 mr-1" />
+                        View
+                      </Button>
                       <Button
                         onClick={() => handleDownload(emergencyPdfUrl, 'emergency')}
                         variant="outline"
                         size="sm"
-                        className="border-navy-900 text-navy-900"
+                        className="border-navy-900 text-navy-900 hover:bg-navy-50"
                       >
                         <Download className="w-4 h-4 mr-1" />
                         Download
@@ -241,7 +260,7 @@ export const PetPDFGenerator = ({ petId, petName }: PetPDFGeneratorProps) => {
                         variant="outline"
                         size="sm"
                         disabled={isSharing}
-                        className="border-navy-900 text-navy-900"
+                        className="border-navy-900 text-navy-900 hover:bg-navy-50"
                       >
                         <Share2 className="w-4 h-4 mr-1" />
                         Share
@@ -262,12 +281,21 @@ export const PetPDFGenerator = ({ petId, petName }: PetPDFGeneratorProps) => {
                         style={{width: '120px', height: '120px'}}
                       />
                     </div>
-                    <div className="grid grid-cols-2 gap-2">
+                    <div className="grid grid-cols-3 gap-2">
+                      <Button
+                        onClick={() => handleViewPDF(fullPdfUrl)}
+                        variant="outline"
+                        size="sm"
+                        className="border-gold-500 text-gold-600 hover:bg-gold-50 font-semibold"
+                      >
+                        <Eye className="w-4 h-4 mr-1" />
+                        View
+                      </Button>
                       <Button
                         onClick={() => handleDownload(fullPdfUrl, 'full')}
                         variant="outline"
                         size="sm"
-                        className="border-navy-900 text-navy-900"
+                        className="border-navy-900 text-navy-900 hover:bg-navy-50"
                       >
                         <Download className="w-4 h-4 mr-1" />
                         Download
@@ -277,7 +305,7 @@ export const PetPDFGenerator = ({ petId, petName }: PetPDFGeneratorProps) => {
                         variant="outline"
                         size="sm"
                         disabled={isSharing}
-                        className="border-navy-900 text-navy-900"
+                        className="border-navy-900 text-navy-900 hover:bg-navy-50"
                       >
                         <Share2 className="w-4 h-4 mr-1" />
                         Share
@@ -296,7 +324,7 @@ export const PetPDFGenerator = ({ petId, petName }: PetPDFGeneratorProps) => {
                     className="w-full bg-gradient-to-r from-navy-900 to-navy-800 text-gold-500 hover:from-navy-800 hover:to-navy-700"
                   >
                     <Users className="w-4 h-4 mr-2" />
-                    Share with PetPass Members
+                    Share with PetPort Members
                   </Button>
                 </div>
 
@@ -312,6 +340,26 @@ export const PetPDFGenerator = ({ petId, petName }: PetPDFGeneratorProps) => {
           </Dialog>
         </div>
       </div>
+
+      {/* PDF View Modal */}
+      <Dialog open={viewModalOpen} onOpenChange={setViewModalOpen}>
+        <DialogContent className="max-w-4xl h-[80vh] bg-white">
+          <DialogHeader>
+            <DialogTitle className="font-serif text-navy-900 border-b-2 border-gold-500 pb-2">
+              📋 Preview {petName}'s Profile
+            </DialogTitle>
+          </DialogHeader>
+          <div className="flex-1 overflow-hidden">
+            {currentViewUrl && (
+              <iframe
+                src={currentViewUrl}
+                className="w-full h-full border border-gray-200 rounded-lg"
+                title="PDF Viewer"
+              />
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

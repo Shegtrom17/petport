@@ -25,7 +25,7 @@ export const AuthenticationPrompt = ({ isSignedIn, hasPets }: AuthenticationProm
       
       {!isSignedIn ? (
         <>
-          <h2 className="text-xl sm:text-2xl font-bold text-navy-800 mb-2 sm:mb-3">Welcome to PetPass</h2>
+          <h2 className="text-xl sm:text-2xl font-bold text-navy-800 mb-2 sm:mb-3">Welcome to PetPort</h2>
           <p className="text-navy-600 mb-4 sm:mb-6 text-sm sm:text-base px-4">Sign in or create an account to manage your pet's digital passport!</p>
           <Button 
             className="bg-gradient-to-r from-navy-900 to-navy-800 hover:from-navy-800 hover:to-navy-700 text-gold-500 border border-gold-500/30"
@@ -37,7 +37,7 @@ export const AuthenticationPrompt = ({ isSignedIn, hasPets }: AuthenticationProm
       ) : (
         <>
           <h2 className="text-xl sm:text-2xl font-bold text-navy-800 mb-2 sm:mb-3">No pets found</h2>
-          <p className="text-navy-600 mb-4 sm:mb-6 text-sm sm:text-base px-4">You haven't added any pets yet. Create your first PetPass!</p>
+          <p className="text-navy-600 mb-4 sm:mb-6 text-sm sm:text-base px-4">You haven't added any pets yet. Create your first PetPort!</p>
           <Button 
             className="bg-gradient-to-r from-navy-900 to-navy-800 hover:from-navy-800 hover:to-navy-700 text-gold-500 border border-gold-500/30"
             onClick={() => navigate('/add-pet')}

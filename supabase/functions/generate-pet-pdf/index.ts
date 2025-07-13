@@ -57,7 +57,7 @@ function generateFullPetProfilePDF(petData: ComprehensivePetData): string {
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>PetPass - Complete Profile for ${petData.name}</title>
+    <title>PetPort - Complete Profile for ${petData.name}</title>
     <style>
         body { 
             font-family: 'Arial', sans-serif; 
@@ -216,7 +216,7 @@ function generateFullPetProfilePDF(petData: ComprehensivePetData): string {
 </head>
 <body>
     <div class="header">
-        <h1>🐾 PetPass Complete Profile</h1>
+        <h1>🐾 PetPort Complete Profile</h1>
         <div class="pet-name">${petData.name}</div>
         <div class="pet-subtitle">${petData.species ? petData.species.charAt(0).toUpperCase() + petData.species.slice(1) : ''} ${petData.breed ? '• ' + petData.breed : ''}</div>
         <div class="pet-subtitle">ID: ${petData.pet_pass_id} ${petData.microchip_id ? '• Microchip: ' + petData.microchip_id : ''}</div>
@@ -511,7 +511,7 @@ function generateFullPetProfilePDF(petData: ComprehensivePetData): string {
     ` : ''}
 
     <div class="footer">
-        <strong>🐾 PetPass Complete Profile</strong><br>
+        <strong>🐾 PetPort Complete Profile</strong><br>
         Generated on ${new Date().toLocaleDateString()} at ${new Date().toLocaleTimeString()}<br>
         This comprehensive document contains complete information for ${petData.name}'s care, emergencies, and activities.<br>
         <em>For updates or questions, please contact the pet owner.</em>
@@ -637,10 +637,10 @@ Deno.serve(async (req) => {
     // Generate HTML content based on type
     const htmlContent = type === 'full' 
       ? generateFullPetProfilePDF(comprehensivePetData)
-      : generatePetPDF(comprehensivePetData); // Fallback to existing emergency PDF
+      : generateEmergencyProfilePDF(comprehensivePetData);
 
     // Store the HTML document
-    const fileName = `${petId}/${type}-passport-${Date.now()}.html`;
+    const fileName = `${petId}/${type}-profile-${Date.now()}.html`;
     
     // Upload to Supabase Storage
     const { data: uploadData, error: uploadError } = await supabase.storage
@@ -691,6 +691,260 @@ Deno.serve(async (req) => {
   }
 });
 
+// Emergency Profile PDF with improved structure
+function generateEmergencyProfilePDF(petData: ComprehensivePetData): string {
+  return `
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>PetPort - Emergency Profile for ${petData.name}</title>
+    <style>
+        body { 
+            font-family: 'Arial', sans-serif; 
+            margin: 20px; 
+            color: #333;
+            line-height: 1.6;
+        }
+        .header { 
+            text-align: center; 
+            border-bottom: 3px solid #ef4444; 
+            padding-bottom: 15px; 
+            margin-bottom: 25px;
+            background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+            padding: 20px;
+            border-radius: 10px;
+        }
+        .pet-name { 
+            font-size: 28px; 
+            font-weight: bold; 
+            color: #ef4444; 
+            margin: 10px 0;
+        }
+        .pet-subtitle { 
+            font-size: 18px; 
+            color: #991b1b; 
+            margin: 5px 0;
+        }
+        .emergency-alert {
+            background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+            border: 3px solid #ef4444;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            margin: 25px 0;
+            color: #991b1b;
+        }
+        .medical-conditions {
+            background-color: #fef2f2; 
+            border: 3px solid #ef4444; 
+            color: #991b1b;
+            font-weight: bold;
+            text-align: center;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 8px;
+            font-size: 18px;
+        }
+        .section { 
+            margin-bottom: 25px; 
+            border: 2px solid #e2e8f0; 
+            padding: 20px; 
+            border-radius: 8px;
+            background: #fafafa;
+        }
+        .section.emergency { 
+            background-color: #fef2f2; 
+            border-color: #ef4444;
+            border-width: 3px;
+        }
+        .section-title { 
+            font-size: 18px; 
+            font-weight: bold; 
+            color: #2563eb; 
+            margin-bottom: 15px; 
+            border-bottom: 2px solid #e2e8f0; 
+            padding-bottom: 8px;
+            display: flex;
+            align-items: center;
+        }
+        .section.emergency .section-title { 
+            color: #ef4444;
+        }
+        .section-icon {
+            margin-right: 10px;
+            font-size: 20px;
+        }
+        .field { 
+            margin-bottom: 12px;
+        }
+        .field-label { 
+            font-weight: bold; 
+            color: #374151;
+            display: inline-block;
+            min-width: 140px;
+        }
+        .field-value { 
+            margin-left: 10px;
+            color: #111827;
+        }
+        .medications {
+            background-color: #fef2f2;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            border: 2px solid #ef4444;
+        }
+        .medication-item {
+            padding: 5px 0;
+            border-bottom: 1px solid #fee2e2;
+            font-weight: bold;
+            color: #991b1b;
+        }
+        .photo-section {
+            text-align: center;
+            margin: 25px 0;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            border: 2px solid #e2e8f0;
+        }
+        .photo {
+            max-width: 200px;
+            max-height: 200px;
+            border-radius: 10px;
+            border: 2px solid #d1d5db;
+            margin: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .footer {
+            margin-top: 40px;
+            text-align: center;
+            font-size: 12px;
+            color: #6b7280;
+            border-top: 2px solid #e2e8f0;
+            padding-top: 15px;
+        }
+        .qr-section {
+            text-align: center;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            border: 2px solid #2563eb;
+            margin: 25px 0;
+        }
+        .allergies-section {
+            background-color: #fef7cd;
+            border: 2px solid #f59e0b;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🚨 PetPort Emergency Profile</h1>
+        <div class="pet-name">${petData.name}</div>
+        <div class="pet-subtitle">${petData.species ? petData.species.charAt(0).toUpperCase() + petData.species.slice(1) : ''} ${petData.breed ? '• ' + petData.breed : ''}</div>
+        <div class="pet-subtitle">ID: ${petData.pet_pass_id} ${petData.microchip_id ? '• Microchip: ' + petData.microchip_id : ''}</div>
+    </div>
+
+    ${petData.photo_url ? `
+    <div class="photo-section">
+        <h3>📸 Pet Photo</h3>
+        <img src="${petData.photo_url}" alt="${petData.name}" class="photo" />
+    </div>
+    ` : ''}
+
+    ${petData.medical_alert && petData.medical_conditions ? `
+    <div class="medical-conditions">
+        <div style="font-size: 24px; margin-bottom: 10px;">⚠️ MEDICAL ALERT</div>
+        <div style="font-size: 20px; color: #dc2626;">${petData.medical_conditions}</div>
+    </div>
+    ` : ''}
+
+    <div class="section emergency">
+        <div class="section-title">
+            <span class="section-icon">🚨</span>Emergency Contacts
+        </div>
+        <div class="field">
+            <span class="field-label">Primary Emergency:</span>
+            <span class="field-value">${petData.emergency_contact || 'Not provided'}</span>
+        </div>
+        <div class="field">
+            <span class="field-label">Secondary Emergency:</span>
+            <span class="field-value">${petData.second_emergency_contact || 'Not provided'}</span>
+        </div>
+        <div class="field">
+            <span class="field-label">Veterinarian:</span>
+            <span class="field-value">${petData.vet_contact || 'Not provided'}</span>
+        </div>
+        <div class="field">
+            <span class="field-label">Pet Caretaker:</span>
+            <span class="field-value">${petData.pet_caretaker || 'Not provided'}</span>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="section-title">
+            <span class="section-icon">💊</span>Medical Information
+        </div>
+        ${petData.medications && petData.medications.length > 0 ? `
+        <div class="medications">
+            <h4 style="margin-top: 0; color: #991b1b;">Current Medications:</h4>
+            ${petData.medications.map(med => `<div class="medication-item">💊 ${med}</div>`).join('')}
+        </div>
+        ` : ''}
+        ${petData.care_instructions?.allergies ? `
+        <div class="allergies-section">
+            <h4 style="margin-top: 0; color: #92400e;">⚠️ Allergies & Sensitivities:</h4>
+            <div style="font-weight: bold; color: #92400e;">${petData.care_instructions.allergies}</div>
+        </div>
+        ` : ''}
+        <div class="field">
+            <span class="field-label">Last Vaccination:</span>
+            <span class="field-value">${petData.last_vaccination || 'Not recorded'}</span>
+        </div>
+    </div>
+
+    ${petData.care_instructions ? `
+    <div class="section">
+        <div class="section-title">
+            <span class="section-icon">📝</span>Essential Care Notes
+        </div>
+        ${petData.care_instructions.behavioral_notes ? `
+        <div class="field">
+            <span class="field-label">Behavioral Notes:</span>
+            <div class="field-value">${petData.care_instructions.behavioral_notes}</div>
+        </div>
+        ` : ''}
+        ${petData.care_instructions.feeding_schedule ? `
+        <div class="field">
+            <span class="field-label">Feeding Schedule:</span>
+            <div class="field-value">${petData.care_instructions.feeding_schedule}</div>
+        </div>
+        ` : ''}
+    </div>
+    ` : ''}
+
+    <div class="qr-section">
+        <h3>📱 Live Profile Access</h3>
+        <p>Scan QR code or visit: <strong>${window.location.origin}/profile/${petData.id}</strong></p>
+        <p><em>For most up-to-date information and full profile</em></p>
+    </div>
+
+    <div class="footer">
+        <strong>🚨 PetPort Emergency Profile</strong><br>
+        Generated on ${new Date().toLocaleDateString()} at ${new Date().toLocaleTimeString()}<br>
+        This document contains critical emergency information for ${petData.name}.<br>
+        <em>In case of emergency, contact the numbers listed above immediately.</em>
+    </div>
+</body>
+</html>
+  `;
+}
+
 // Keep existing generatePetPDF function for backward compatibility
 function generatePetPDF(petData: any): string {
   return `
@@ -698,7 +952,7 @@ function generatePetPDF(petData: any): string {
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>PetPass - ${petData.name}</title>
+    <title>PetPort - ${petData.name}</title>
     <style>
         body { 
             font-family: Arial, sans-serif; 
@@ -797,7 +1051,7 @@ function generatePetPDF(petData: any): string {
 </head>
 <body>
     <div class="header">
-        <h1>PetPass Emergency Passport</h1>
+        <h1>PetPort Emergency Passport</h1>
         <div class="pet-name">${petData.name}</div>
         <div class="pet-id">ID: ${petData.pet_pass_id}</div>
         <div class="pet-id">Microchip: ${petData.microchip_id}</div>

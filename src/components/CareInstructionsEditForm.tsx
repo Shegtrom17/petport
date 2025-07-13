@@ -129,6 +129,9 @@ export const CareInstructionsEditForm = ({ petData, onSave, onCancel }: CareInst
           <CardContent className="space-y-4">
             <div>
               <Label htmlFor="medications">Current Medications</Label>
+              <div className="text-xs text-amber-600 bg-amber-50 p-2 rounded-md mb-2 border border-amber-200">
+                ⚠️ Providing accurate medical details is highly recommended for emergencies.
+              </div>
               <Textarea
                 id="medications"
                 {...register("medications")}
@@ -140,6 +143,9 @@ export const CareInstructionsEditForm = ({ petData, onSave, onCancel }: CareInst
             </div>
             <div>
               <Label htmlFor="allergies">Allergies & Dietary Restrictions</Label>
+              <div className="text-xs text-amber-600 bg-amber-50 p-2 rounded-md mb-2 border border-amber-200">
+                ⚠️ Allergy information is crucial for emergency responders. Even "None" is helpful.
+              </div>
               <Textarea
                 id="allergies"
                 {...register("allergies")}

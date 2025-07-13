@@ -65,7 +65,17 @@ export const CareInstructionsSection = ({ petData }: CareInstructionsSectionProp
   if (isEditing) {
     return (
       <CareInstructionsEditForm
-        petData={petData}
+        petData={{
+          ...petData,
+          careInstructions: careData ? {
+            feedingSchedule: careData.feeding_schedule,
+            morningRoutine: careData.morning_routine,
+            eveningRoutine: careData.evening_routine,
+            allergies: careData.allergies,
+            behavioralNotes: careData.behavioral_notes,
+            favoriteActivities: careData.favorite_activities
+          } : {}
+        }}
         onSave={handleSave}
         onCancel={() => setIsEditing(false)}
       />

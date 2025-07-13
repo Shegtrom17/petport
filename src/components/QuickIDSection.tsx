@@ -56,17 +56,17 @@ export const QuickIDSection = ({ petData }: QuickIDSectionProps) => {
             <div className="absolute top-0 right-0 w-20 h-20 bg-white/10 rounded-full -translate-y-10 translate-x-10"></div>
             <div className="absolute bottom-0 left-0 w-16 h-16 bg-white/10 rounded-full translate-y-8 -translate-x-8"></div>
             
-            {/* PetPass Logo and branding */}
+            {/* PetPort Logo and branding */}
             <div className="absolute top-3 left-3 flex items-center space-x-2">
               <img 
                 src="/lovable-uploads/fda1bf45-8aa7-4652-90b2-3814829f4c95.png" 
-                alt="PetPass Logo"
+                alt="PetPort Logo"
                 className="w-6 h-6 object-contain opacity-80"
               />
-              <span className="text-xs font-bold opacity-80 font-serif tracking-wide">PETPASS</span>
+              <span className="text-xs font-bold opacity-80 font-serif tracking-wide">PETPORT</span>
             </div>
 
-            {/* PetPass ID in top right with stamp design */}
+            {/* PetPort ID in top right with stamp design */}
             <div className="absolute top-3 right-3 bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full border border-white/30">
               <span className="text-xs font-mono font-bold">{petData.petPassId}</span>
             </div>

@@ -97,13 +97,13 @@ export default function AddPet() {
               <div className="w-10 h-10 rounded-xl flex items-center justify-center overflow-hidden">
                 <img 
                   src="/lovable-uploads/1af9fe70-ed76-44c5-a1e1-1a058e497a10.png" 
-                  alt="PetPass Logo"
+                  alt="PetPort Logo"
                   className="w-full h-full object-contain"
                 />
               </div>
               <div>
                 <h1 className="text-2xl font-bold bg-gradient-to-r from-navy-900 to-gold-500 bg-clip-text text-transparent">
-                  PetPass
+                  PetPort
                 </h1>
                 <p className="text-sm text-gray-600">Digital Pet Passport</p>
               </div>
@@ -250,7 +250,7 @@ export default function AddPet() {
                   disabled={isSubmitting}
                   className="bg-gradient-to-r from-navy-900 to-navy-800 hover:from-navy-800 hover:to-navy-700 text-gold-500 border border-gold-500/30"
                 >
-                  {isSubmitting ? "Creating..." : "Create Pet Passport"}
+                  {isSubmitting ? "Creating..." : "Create Pet Port"}
                 </Button>
               </div>
             </form>

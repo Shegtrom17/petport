@@ -138,7 +138,7 @@ export const PetProfileCard = ({ petData, onUpdate }: PetProfileCardProps) => {
               </div>
             </div>
             <div className="text-xs text-slate-400 font-mono">
-              PetPass ID: {petData.petPassId}
+              PetPort ID: {petData.petPassId}
             </div>
           </div>
         </CardHeader>

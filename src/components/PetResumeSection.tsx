@@ -129,7 +129,7 @@ export const PetResumeSection = ({ petData, onUpdate }: PetResumeSectionProps) =
               <div>
                 <h2 className="text-2xl font-bold">Pet Resume</h2>
                 <p className="text-blue-100">Professional pet credentials & references</p>
-                <p className="text-xs text-blue-200 mt-1">PetPass ID: {petData.petPassId}</p>
+                <p className="text-xs text-blue-200 mt-1">PetPort ID: {petData.petPassId}</p>
               </div>
             </div>
             <div className="flex space-x-2">
@@ -226,7 +226,7 @@ export const PetResumeSection = ({ petData, onUpdate }: PetResumeSectionProps) =
                 <div className="flex items-center space-x-2">
                   <Shield className="w-4 h-4 text-blue-600" />
                   <div>
-                    <p className="text-sm font-semibold text-blue-900">PetPass ID</p>
+                    <p className="text-sm font-semibold text-blue-900">PetPort ID</p>
                     <p className="text-sm text-blue-700 font-mono">{petData.petPassId}</p>
                   </div>
                 </div>

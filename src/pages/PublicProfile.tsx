@@ -63,7 +63,8 @@ const PublicProfile = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 passport-texture-bg leather">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 passport-map-container">
+      <div className="passport-map-bg" />
       {/* Header */}
       <div className="bg-white shadow-sm border-b">
         <div className="max-w-4xl mx-auto px-4 py-6">

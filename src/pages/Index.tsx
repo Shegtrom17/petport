@@ -210,6 +210,22 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 passport-map-container">
       <div className="passport-map-bg" />
+      <div style={{
+        position: 'fixed',
+        top: '20px',
+        right: '20px',
+        width: '200px',
+        height: '50px',
+        backgroundColor: 'red',
+        color: 'white',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        zIndex: 9999,
+        fontWeight: 'bold'
+      }}>
+        BACKGROUND TEST
+      </div>
       <PetHeader activeTab={activeTab} onTabChange={setActiveTab} />
 
       <InAppSharingModal

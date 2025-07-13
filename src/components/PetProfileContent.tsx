@@ -19,7 +19,9 @@ export const PetProfileContent = ({
   setIsInAppSharingOpen 
 }: PetProfileContentProps) => {
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <div className="passport-map-container">
+      <div className="passport-map-bg" />
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
       {/* Left Column - Pet Overview */}
       <div className="space-y-4">
         <Card className="bg-[#f8f8f8] shadow-md">
@@ -129,6 +131,7 @@ export const PetProfileContent = ({
             </CardContent>
           </Card>
         )}
+      </div>
       </div>
     </div>
   );

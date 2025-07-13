@@ -1,6 +1,7 @@
 
 import { Card } from "@/components/ui/card";
 import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea/dnd';
+import { getPetBackgroundColor } from "@/utils/petColors";
 
 interface Pet {
   id: string;
@@ -54,12 +55,36 @@ export const PetSelector = ({ pets, selectedPet, onSelectPet, onReorderPets }: P
                       onClick={() => onSelectPet(pet.id)}
                     >
                       <div className="p-3 sm:p-4 flex items-center space-x-2 sm:space-x-3">
-                        <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gray-200 rounded-full overflow-hidden flex-shrink-0">
+                        <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full overflow-hidden flex-shrink-0 relative">
                           {pet.photoUrl ? (
-                            <img src={pet.photoUrl} alt={pet.name} className="w-full h-full object-cover" />
+                            <img 
+                              src={pet.photoUrl} 
+                              alt={pet.name} 
+                              className="w-full h-full object-cover filter brightness-105 border border-gold-200/30" 
+                              style={{ borderColor: 'rgba(212,175,55,0.3)' }}
+                            />
                           ) : (
-                            <div className="w-full h-full bg-navy-200 flex items-center justify-center text-sm sm:text-base">
-                              {pet.name?.charAt(0).toUpperCase()}
+                            <div 
+                              className="w-full h-full flex items-center justify-center text-navy-800 font-semibold relative overflow-hidden"
+                              style={{ 
+                                backgroundColor: getPetBackgroundColor(pet.name),
+                                background: `
+                                  radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(0,0,0,0.05) 100%),
+                                  repeating-linear-gradient(45deg, transparent 0%, rgba(0,0,0,0.05) 50%),
+                                  ${getPetBackgroundColor(pet.name)}
+                                `
+                              }}
+                            >
+                              <span className="text-lg sm:text-xl z-10 relative">
+                                {pet.name?.charAt(0).toUpperCase()}
+                              </span>
+                              {/* Optional subtle paw print watermark */}
+                              <div 
+                                className="absolute inset-0 flex items-center justify-center opacity-10 pointer-events-none"
+                                style={{ fontSize: '0.5rem' }}
+                              >
+                                🐾
+                              </div>
                             </div>
                           )}
                         </div>

@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -15,6 +16,7 @@ interface PetData {
   weight: string;
   microchipId: string;
   petPortId: string; // Keep as petPortId for component compatibility
+  petPassId: string; // Add missing petPassId property
   photoUrl: string;
   fullBodyPhotoUrl: string;
   vetContact: string;

@@ -242,6 +242,38 @@ export type Database = {
           },
         ]
       }
+      map_pins: {
+        Row: {
+          created_at: string | null
+          id: string
+          latitude: number
+          longitude: number
+          pet_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          latitude: number
+          longitude: number
+          pet_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          latitude?: number
+          longitude?: number
+          pet_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "map_pins_pet_id_fkey"
+            columns: ["pet_id"]
+            isOneToOne: false
+            referencedRelation: "pets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       medical: {
         Row: {
           created_at: string

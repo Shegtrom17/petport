@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 import { Tables } from "@/integrations/supabase/types";
 
@@ -101,6 +100,7 @@ export function transformPetData(pet: PetWithDetails): any {
 
 export async function fetchUserPets(): Promise<any[]> {
   try {
+    // Use the actual column names from the database schema
     const { data: pets, error } = await supabase
       .from("pets")
       .select("id, name, breed, species, age, weight, microchip_id, petport_id, bio, notes, state, county, created_at, updated_at, user_id")

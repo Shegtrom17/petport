@@ -805,3 +805,35 @@ export async function uploadDocument(petId: string, document: File, type: string
     return false;
   }
 }
+   // Added function to generate unique petport_id (fixes duplicate error)
+   function generateUniquePetPortId() {
+     const year = new Date().getFullYear().toString();
+     const uuid = crypto.randomUUID().replace(/-/g, '').substring(0, 8).toUpperCase();
+     return `PP-${year}-${uuid}`;
+   }
+
+   // Updated createPet with duplicate check (replace your existing createPet if present, or add this)
+   export async function createPet(petData: any) {  // Replace 'any' with PetWithDetails if you have it imported
+     let attempts = 0;
+     const maxAttempts = 10;
+     while (attempts < maxAttempts) {
+       const newId = generateUniquePetPortId();
+       const { data: existing, error: checkError } = await supabase
+         .from('pets')
+         .select('petport_id')
+         .eq('petport_id', newId)
+         .single();
+
+       if (checkError || !existing) {
+         // No duplicate – insert the pet
+         const { data: newPet, error } = await supabase
+           .from('pets')
+           .insert([{ ...petData, petport_id: newId }])
+           .select();
+         if (error) throw error;
+         return newPet;
+       }
+       attempts++;
+     }
+     throw new Error(`Could not generate unique PetPort ID after ${maxAttempts} attempts`);
+   }

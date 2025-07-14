@@ -1,3 +1,4 @@
+
 import { supabase } from "@/integrations/supabase/client";
 import { Tables } from "@/integrations/supabase/types";
 
@@ -100,10 +101,10 @@ export function transformPetData(pet: PetWithDetails): any {
 
 export async function fetchUserPets(): Promise<any[]> {
   try {
-    // Use the actual column names from the database schema
+    // Use the actual column names from the database schema - use pet_pass_id since that's what exists in DB
     const { data: pets, error } = await supabase
       .from("pets")
-      .select("id, name, breed, species, age, weight, microchip_id, petport_id, bio, notes, state, county, created_at, updated_at, user_id")
+      .select("id, name, breed, species, age, weight, microchip_id, pet_pass_id, bio, notes, state, county, created_at, updated_at, user_id")
       .order("created_at", { ascending: false });
 
     if (error) {
@@ -126,7 +127,7 @@ export async function fetchUserPets(): Promise<any[]> {
         age: pet.age,
         weight: pet.weight,
         microchip_id: pet.microchip_id,
-        petport_id: pet.petport_id,
+        petport_id: pet.pet_pass_id, // Map pet_pass_id to petport_id for transformation
         bio: pet.bio,
         notes: pet.notes,
         state: pet.state,
@@ -154,10 +155,10 @@ export async function fetchUserPets(): Promise<any[]> {
 
 export async function fetchPetDetails(petId: string): Promise<any | null> {
   try {
-    // First fetch the pet with all required fields
+    // First fetch the pet with all required fields - use pet_pass_id since that's what exists in DB
     const { data: pet, error } = await supabase
       .from("pets")
-      .select("id, name, breed, species, age, weight, microchip_id, petport_id, bio, notes, state, county, created_at, updated_at, user_id")
+      .select("id, name, breed, species, age, weight, microchip_id, pet_pass_id, bio, notes, state, county, created_at, updated_at, user_id")
       .eq("id", petId)
       .single();
 
@@ -211,7 +212,7 @@ export async function fetchPetDetails(petId: string): Promise<any | null> {
       age: pet.age,
       weight: pet.weight,
       microchip_id: pet.microchip_id,
-      petport_id: pet.petport_id,
+      petport_id: pet.pet_pass_id, // Map pet_pass_id to petport_id
       bio: pet.bio,
       notes: pet.notes,
       state: pet.state,

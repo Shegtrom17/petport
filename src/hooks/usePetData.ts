@@ -32,6 +32,7 @@ export const usePetData = () => {
 
   const loadPets = async () => {
     try {
+      setIsLoading(true);
       const userPets = await fetchUserPets();
       // Sort pets by creation date to ensure first pet stays first
       const sortedPets = userPets.sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
@@ -88,6 +89,11 @@ export const usePetData = () => {
         });
       } catch (error) {
         console.error("Error refreshing pet data:", error);
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "Could not refresh pet data. Please try again."
+        });
       }
     }
   };

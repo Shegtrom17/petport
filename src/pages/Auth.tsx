@@ -60,6 +60,12 @@ export default function Auth() {
         setPassword("");
         setFullName("");
         
+        // Show success message for signup
+        toast({
+          title: "Account created successfully!",
+          description: "Please check your email to confirm your account.",
+        });
+        
         // Small delay to let the auth state settle, then navigate if user is logged in
         setTimeout(() => {
           // If signup was successful and user is immediately logged in, navigate
@@ -68,6 +74,29 @@ export default function Auth() {
       }
     } catch (error) {
       console.error("Auth: Authentication error:", error);
+      
+      // Provide more specific error messages
+      if (error instanceof Error) {
+        if (error.message.includes('duplicate key') || error.message.includes('Pet Pass ID')) {
+          toast({
+            variant: "destructive",
+            title: "Account creation failed",
+            description: "There was an issue setting up your account. Please try again in a moment.",
+          });
+        } else if (error.message.includes('Invalid Token') || error.message.includes('signature')) {
+          toast({
+            variant: "destructive",
+            title: "Email confirmation failed",
+            description: "There was an issue with email confirmation. Please check your email settings or try again.",
+          });
+        } else {
+          toast({
+            variant: "destructive",
+            title: isSignIn ? "Sign in failed" : "Sign up failed",
+            description: error.message,
+          });
+        }
+      }
     } finally {
       setIsSubmitting(false);
     }

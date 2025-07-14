@@ -14,7 +14,7 @@ interface PetData {
   age: string;
   weight: string;
   microchipId: string;
-  petPortId: string;
+  petPortId: string; // Keep as petPortId for component compatibility
   photoUrl: string;
   fullBodyPhotoUrl: string;
   vetContact: string;

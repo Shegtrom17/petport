@@ -10,7 +10,7 @@ export type PetWithDetails = {
   age: string | null;
   weight: string | null;
   microchip_id: string | null;
-  petport_id: string | null;
+  pet_pass_id: string | null; // Use pet_pass_id as it exists in DB
   bio: string | null;
   notes: string | null;
   state: string | null;
@@ -39,7 +39,7 @@ export function transformPetData(pet: PetWithDetails): any {
     age: pet.age,
     weight: pet.weight,
     microchipId: pet.microchip_id,
-    petPortId: pet.petport_id,
+    petPortId: pet.pet_pass_id, // Map pet_pass_id to petPortId for component compatibility
     bio: pet.bio,
     notes: pet.notes,
     state: pet.state,
@@ -127,7 +127,7 @@ export async function fetchUserPets(): Promise<any[]> {
         age: pet.age,
         weight: pet.weight,
         microchip_id: pet.microchip_id,
-        petport_id: pet.pet_pass_id, // Map pet_pass_id to petport_id for transformation
+        pet_pass_id: pet.pet_pass_id, // Use pet_pass_id as it exists in DB
         bio: pet.bio,
         notes: pet.notes,
         state: pet.state,
@@ -212,7 +212,7 @@ export async function fetchPetDetails(petId: string): Promise<any | null> {
       age: pet.age,
       weight: pet.weight,
       microchip_id: pet.microchip_id,
-      petport_id: pet.pet_pass_id, // Map pet_pass_id to petport_id
+      pet_pass_id: pet.pet_pass_id, // Use pet_pass_id as it exists in DB
       bio: pet.bio,
       notes: pet.notes,
       state: pet.state,

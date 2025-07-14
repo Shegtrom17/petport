@@ -15,7 +15,7 @@ interface PetData {
   age: string;
   weight: string;
   microchipId: string;
-  petPassId: string;
+  petPortId: string;
   photoUrl: string;
   fullBodyPhotoUrl: string;
   vetContact: string;
@@ -138,7 +138,7 @@ export const PetProfileCard = ({ petData, onUpdate }: PetProfileCardProps) => {
               </div>
             </div>
             <div className="text-xs text-slate-400 font-mono">
-              PetPort ID: {petData.petPassId}
+              PetPort ID: {petData.petPortId}
             </div>
           </div>
         </CardHeader>

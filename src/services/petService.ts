@@ -9,7 +9,7 @@ export type PetWithDetails = {
   age: string | null;
   weight: string | null;
   microchip_id: string | null;
-  pet_pass_id: string | null; // Use pet_pass_id as it exists in DB
+  petport_id: string | null;  // Renamed from pet_pass_id for consistency
   bio: string | null;
   notes: string | null;
   state: string | null;
@@ -27,6 +27,7 @@ export type PetWithDetails = {
   travel_locations?: Tables<"travel_locations">[];
   documents?: Tables<"documents">[];
 };
+
 
 // Transform database data to component-expected format
 export function transformPetData(pet: PetWithDetails): any {

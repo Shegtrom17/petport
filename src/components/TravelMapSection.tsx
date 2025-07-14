@@ -6,9 +6,10 @@ import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { MapPin, Camera, Download, Share2, Calendar, Trophy, Edit } from "lucide-react";
 import { TravelEditForm } from "@/components/TravelEditForm";
-import { InteractiveTravelMap } from "@/components/InteractiveTravelMap";
+import { FreeInteractiveMap } from "@/components/FreeInteractiveMap";
 import { fetchPetDetails } from "@/services/petService";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 interface TravelLocation {
   id: string;
@@ -18,6 +19,14 @@ interface TravelLocation {
   date_visited?: string;
   photo_url?: string;
   notes?: string;
+}
+
+interface MapPin {
+  id: string;
+  lat: number;
+  lng: number;
+  petId: string;
+  createdAt: string;
 }
 
 interface TravelMapSectionProps {
@@ -32,6 +41,7 @@ interface TravelMapSectionProps {
 export const TravelMapSection = ({ petData, onUpdate }: TravelMapSectionProps) => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [locations, setLocations] = useState<TravelLocation[]>(petData.travel_locations || []);
+  const [mapPins, setMapPins] = useState<MapPin[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
 
@@ -40,14 +50,45 @@ export const TravelMapSection = ({ petData, onUpdate }: TravelMapSectionProps) =
     setLocations(petData.travel_locations || []);
   }, [petData.travel_locations]);
 
+  // Load map pins
+  useEffect(() => {
+    loadMapPins();
+  }, [petData.id]);
+
+  const loadMapPins = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('map_pins')
+        .select('*')
+        .eq('pet_id', petData.id)
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+
+      const pins = (data || []).map(pin => ({
+        id: pin.id,
+        lat: pin.latitude,
+        lng: pin.longitude,
+        petId: pin.pet_id,
+        createdAt: pin.created_at
+      }));
+
+      setMapPins(pins);
+    } catch (error) {
+      console.error('Error loading map pins:', error);
+    }
+  };
+
   const statesCount = locations.filter(loc => loc.type === 'state').length;
   const countriesCount = locations.filter(loc => loc.type === 'country').length;
+  const totalPins = mapPins.length;
 
   const getMilestonebadge = () => {
-    if (statesCount >= 25) return { text: 'Explorer Champion', color: 'from-purple-500 to-pink-600' };
-    if (statesCount >= 15) return { text: 'Travel Master', color: 'from-blue-500 to-purple-600' };
-    if (statesCount >= 10) return { text: 'Adventure Seeker', color: 'from-green-500 to-blue-600' };
-    if (statesCount >= 5) return { text: 'Travel Buddy', color: 'from-yellow-500 to-orange-600' };
+    const totalPlaces = statesCount + countriesCount + totalPins;
+    if (totalPlaces >= 25) return { text: 'Explorer Champion', color: 'from-purple-500 to-pink-600' };
+    if (totalPlaces >= 15) return { text: 'Travel Master', color: 'from-blue-500 to-purple-600' };
+    if (totalPlaces >= 10) return { text: 'Adventure Seeker', color: 'from-green-500 to-blue-600' };
+    if (totalPlaces >= 5) return { text: 'Travel Buddy', color: 'from-yellow-500 to-orange-600' };
     return { text: 'Getting Started', color: 'from-gray-400 to-gray-600' };
   };
 
@@ -105,8 +146,7 @@ export const TravelMapSection = ({ petData, onUpdate }: TravelMapSectionProps) =
   };
 
   return (
-    <div className="space-y-4 sm:space-y-6 passport-map-container">
-      <div className="passport-map-bg" />
+    <div className="space-y-4 sm:space-y-6">
       {/* Header with Stats */}
       <Card className="border-0 shadow-xl bg-gradient-to-r from-navy-900 to-navy-800 text-white">
         <CardContent className="p-4 sm:p-6">
@@ -125,20 +165,10 @@ export const TravelMapSection = ({ petData, onUpdate }: TravelMapSectionProps) =
                 <Edit className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
                 Edit
               </Button>
-              <div className="flex space-x-2 sm:space-x-0">
-                <Button onClick={handleDownload} variant="secondary" size="sm" className="flex-1 sm:flex-none text-xs sm:text-sm">
-                  <Download className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
-                  <span className="hidden sm:inline">Download</span>
-                </Button>
-                <Button onClick={handleShare} variant="secondary" size="sm" className="flex-1 sm:flex-none text-xs sm:text-sm">
-                  <Share2 className="w-3 h-3 sm:w-4 sm:h-4" />
-                  <span className="hidden sm:inline ml-2">Share</span>
-                </Button>
-              </div>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-4 gap-3 sm:gap-4">
             <div className="text-center p-3 sm:p-4 bg-white/10 rounded-lg backdrop-blur-sm">
               <div className="text-2xl sm:text-3xl font-bold text-yellow-400">{statesCount}</div>
               <div className="text-blue-100 text-sm sm:text-base">States Visited</div>
@@ -146,6 +176,10 @@ export const TravelMapSection = ({ petData, onUpdate }: TravelMapSectionProps) =
             <div className="text-center p-3 sm:p-4 bg-white/10 rounded-lg backdrop-blur-sm">
               <div className="text-2xl sm:text-3xl font-bold text-green-400">{countriesCount}</div>
               <div className="text-blue-100 text-sm sm:text-base">Countries Visited</div>
+            </div>
+            <div className="text-center p-3 sm:p-4 bg-white/10 rounded-lg backdrop-blur-sm">
+              <div className="text-2xl sm:text-3xl font-bold text-purple-400">{totalPins}</div>
+              <div className="text-blue-100 text-sm sm:text-base">Map Pins</div>
             </div>
             <div className="text-center p-3 sm:p-4 bg-white/10 rounded-lg backdrop-blur-sm">
               <Trophy className="w-6 h-6 sm:w-8 sm:h-8 text-yellow-400 mx-auto mb-1" />
@@ -171,8 +205,13 @@ export const TravelMapSection = ({ petData, onUpdate }: TravelMapSectionProps) =
         </DialogContent>
       </Dialog>
 
-      {/* Interactive Travel Map */}
-      <InteractiveTravelMap locations={locations} petName={petData.name} />
+      {/* Free Interactive Map */}
+      <FreeInteractiveMap 
+        petId={petData.id}
+        petName={petData.name}
+        pins={mapPins}
+        onPinsUpdate={loadMapPins}
+      />
 
       {/* Locations List */}
       {locations.length > 0 ? (
@@ -225,7 +264,7 @@ export const TravelMapSection = ({ petData, onUpdate }: TravelMapSectionProps) =
             <MapPin className="w-12 h-12 sm:w-16 sm:h-16 text-blue-400 mx-auto mb-4" />
             <h3 className="text-lg sm:text-xl font-semibold text-blue-900 mb-2">No Travel Locations Yet</h3>
             <p className="text-blue-700 mb-4 text-sm sm:text-base px-2">
-              Start recording the places you've visited with {petData.name}!
+              Start recording the places you've visited with {petData.name}! Use the map above to click and add pins, or add detailed locations below.
             </p>
             <Button 
               onClick={handleAddNewLocation}

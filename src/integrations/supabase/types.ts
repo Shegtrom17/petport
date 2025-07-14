@@ -364,8 +364,7 @@ export type Database = {
           microchip_id: string | null
           name: string
           notes: string | null
-          pet_pass_id: string | null
-          petpass_id: string | null
+          petport_id: string | null
           species: string | null
           state: string | null
           updated_at: string
@@ -382,8 +381,7 @@ export type Database = {
           microchip_id?: string | null
           name: string
           notes?: string | null
-          pet_pass_id?: string | null
-          petpass_id?: string | null
+          petport_id?: string | null
           species?: string | null
           state?: string | null
           updated_at?: string
@@ -400,8 +398,7 @@ export type Database = {
           microchip_id?: string | null
           name?: string
           notes?: string | null
-          pet_pass_id?: string | null
-          petpass_id?: string | null
+          petport_id?: string | null
           species?: string | null
           state?: string | null
           updated_at?: string
@@ -603,10 +600,6 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      generate_petpass_id: {
-        Args: Record<PropertyKey, never>
-        Returns: string
-      }
       handle_care_instructions_upsert: {
         Args: {
           _pet_id: string

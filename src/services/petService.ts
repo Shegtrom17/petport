@@ -28,7 +28,6 @@ export type PetWithDetails = {
   documents?: Tables<"documents">[];
 };
 
-
 // Transform database data to component-expected format
 export function transformPetData(pet: PetWithDetails): any {
   return {
@@ -806,6 +805,7 @@ export async function uploadDocument(petId: string, document: File, type: string
   }
 }
    // Added function to generate unique petport_id (fixes duplicate error)
+   import crypto from 'crypto';
    function generateUniquePetPortId() {
      const year = new Date().getFullYear().toString();
      const uuid = crypto.randomUUID().replace(/-/g, '').substring(0, 8).toUpperCase();

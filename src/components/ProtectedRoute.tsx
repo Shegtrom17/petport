@@ -8,8 +8,12 @@ export function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const location = useLocation();
 
   useEffect(() => {
-    // Log authentication status
-    console.log("Protected Route - Auth Status:", { user: !!user, isLoading, pathname: location.pathname });
+    console.log("Protected Route - Current location:", location.pathname);
+    console.log("Protected Route - Auth Status:", { 
+      user: !!user, 
+      isLoading, 
+      pathname: location.pathname 
+    });
   }, [user, isLoading, location.pathname]);
 
   // Show loading state
@@ -29,6 +33,5 @@ export function ProtectedRoute({ children }: { children: React.ReactNode }) {
   }
 
   console.log("Protected Route - User authenticated, rendering children");
-  // Render the protected content
   return <>{children}</>;
 }

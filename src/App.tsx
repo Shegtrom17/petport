@@ -37,7 +37,6 @@ const App = () => {
                 </ProtectedRoute>
               } />
               <Route path="/profile/:petId" element={<PublicProfile />} />
-              {/* Catch-all route for 404 */}
               <Route path="*" element={<NotFound />} />
             </Routes>
           </AuthProvider>

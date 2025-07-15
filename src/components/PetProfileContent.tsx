@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { PetPDFGenerator } from "@/components/PetPDFGenerator";
 import { SupportAnimalBanner } from "@/components/SupportAnimalBanner";
 import { SocialShareButtons } from "@/components/SocialShareButtons";
+import { ProfileEditButton } from "@/components/ProfileEditButton";
 
 interface PetProfileContentProps {
   petData: any;
@@ -22,6 +23,12 @@ export const PetProfileContent = ({
   const enhancedPetData = {
     ...petData,
     user_id: selectedPet?.user_id || petData.user_id
+  };
+
+  const handleProfileEdit = () => {
+    console.log("Profile edit clicked");
+    // Navigate to profile edit or open profile edit modal
+    setActiveTab("profile-edit");
   };
 
   return (
@@ -66,6 +73,14 @@ export const PetProfileContent = ({
 
         {/* Support Animal Status */}
         <SupportAnimalBanner status={enhancedPetData.supportAnimalStatus} />
+
+        {/* Profile Edit Button */}
+        <div className="flex justify-center">
+          <ProfileEditButton 
+            userId={enhancedPetData.user_id} 
+            onEdit={handleProfileEdit}
+          />
+        </div>
 
         {/* Social Sharing */}
         <SocialShareButtons 

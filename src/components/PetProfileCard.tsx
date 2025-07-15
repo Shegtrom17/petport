@@ -1,13 +1,16 @@
-
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { MapPin, Phone, FileText, Calendar, Pill, Image, Stethoscope, Clipboard, AlertTriangle, Upload, User, Camera, Edit } from "lucide-react";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
+import { MapPin, Phone, FileText, Calendar, Pill, Image, Stethoscope, Clipboard, AlertTriangle, Upload, User, Camera, Edit, Trash2 } from "lucide-react";
 import { SupportAnimalBanner } from "@/components/SupportAnimalBanner";
 import { PetEditForm } from "@/components/PetEditForm";
 import { PetPDFGenerator } from "@/components/PetPDFGenerator";
 import { useAuth } from "@/context/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
+import { useNavigate } from "react-router-dom";
 
 interface PetData {
   id: string;
@@ -16,8 +19,8 @@ interface PetData {
   age: string;
   weight: string;
   microchipId: string;
-  petPortId: string; // Keep as petPortId for component compatibility
-  petPassId: string; // Add missing petPassId property
+  petPortId: string;
+  petPassId: string;
   photoUrl: string;
   fullBodyPhotoUrl: string;
   vetContact: string;
@@ -36,7 +39,7 @@ interface PetData {
   medicalConditions?: string;
   medicalEmergencyDocument?: string | null;
   galleryPhotos?: Array<{ url: string; caption: string; }>;
-  user_id?: string; // Add user_id to check ownership
+  user_id?: string;
 }
 
 interface PetProfileCardProps {
@@ -46,7 +49,10 @@ interface PetProfileCardProps {
 
 export const PetProfileCard = ({ petData, onUpdate }: PetProfileCardProps) => {
   const [isEditing, setIsEditing] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
   const { user } = useAuth();
+  const { toast } = useToast();
+  const navigate = useNavigate();
 
   console.log("PetProfileCard rendered with petData:", petData);
   console.log("Is editing state:", isEditing);
@@ -70,6 +76,44 @@ export const PetProfileCard = ({ petData, onUpdate }: PetProfileCardProps) => {
     }
   };
 
+  const handleDeletePet = async () => {
+    if (!user?.id || !petData.id) return;
+
+    setIsDeleting(true);
+    try {
+      const { error } = await supabase
+        .from('pets')
+        .delete()
+        .eq('id', petData.id)
+        .eq('user_id', user.id);
+
+      if (error) {
+        console.error('Error deleting pet:', error);
+        toast({
+          title: "Error",
+          description: "Failed to delete pet. Please try again.",
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Success",
+          description: `${petData.name} has been deleted successfully.`,
+        });
+        // Navigate back to main page or pets list
+        navigate('/');
+      }
+    } catch (error) {
+      console.error('Error deleting pet:', error);
+      toast({
+        title: "Error",
+        description: "Failed to delete pet. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
   // Check if current user owns this pet
   const isOwner = user?.id === petData.user_id;
 
@@ -85,9 +129,9 @@ export const PetProfileCard = ({ petData, onUpdate }: PetProfileCardProps) => {
 
   return (
     <div className="space-y-6">
-      {/* Edit Button - Only show if user is the owner */}
+      {/* Edit and Delete Buttons - Only show if user is the owner */}
       {isOwner && (
-        <div className="flex justify-end mb-4">
+        <div className="flex justify-end gap-3 mb-4">
           <Button 
             onClick={() => {
               console.log("Edit button clicked!");
@@ -99,6 +143,37 @@ export const PetProfileCard = ({ petData, onUpdate }: PetProfileCardProps) => {
             <Edit className="w-5 h-5 mr-2" />
             Edit Pet Profile
           </Button>
+          
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button 
+                variant="destructive"
+                size="lg"
+                className="px-6 py-2 text-base font-medium shadow-lg"
+              >
+                <Trash2 className="w-5 h-5 mr-2" />
+                Delete Pet
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Delete {petData.name}?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  This action cannot be undone. This will permanently delete {petData.name}'s profile and all associated data including photos, documents, and medical records.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={handleDeletePet}
+                  disabled={isDeleting}
+                  className="bg-red-600 hover:bg-red-700"
+                >
+                  {isDeleting ? "Deleting..." : "Delete Pet"}
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </div>
       )}
 

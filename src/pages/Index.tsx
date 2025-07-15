@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import worldMapOutline from "@/assets/world-map-outline.png";
 import { NavigationTabs } from "@/components/NavigationTabs";
@@ -60,7 +59,11 @@ const Index = () => {
     };
   }, []);
 
-  const petData = selectedPet || {
+  // Enhanced petData with proper user_id from selectedPet or current user
+  const petData = selectedPet ? {
+    ...selectedPet,
+    user_id: selectedPet.user_id || user?.id // Ensure user_id is always set
+  } : {
     id: "sample-id",
     name: "Luna",
     breed: "Golden Retriever", 
@@ -127,8 +130,11 @@ const Index = () => {
         caption: "Left ear has small brown spot near tip"
       }
     ],
-    user_id: user?.id || "sample-user-id" // Ensure user_id is included
+    user_id: user?.id || "sample-user-id" // Ensure user_id is always set
   };
+
+  console.log("Index - Enhanced petData user_id:", petData.user_id);
+  console.log("Index - Current user:", user?.id);
 
   const renderTabContent = () => {
     switch (activeTab) {

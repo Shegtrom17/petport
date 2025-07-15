@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -102,4 +103,17 @@ All colors MUST be HSL.
   body {
     @apply bg-background text-foreground;
   }
+}
+
+/* CSS override for edit button visibility */
+.edit-button {
+  opacity: 1 !important;
+  z-index: 9999 !important;
+  position: relative !important;
+  display: block !important;
+  margin: 20px auto !important;
+  background-color: #007bff !important;
+  color: white !important;
+  padding: 10px 20px !important;
+  border-radius: 5px !important;
 }

@@ -600,6 +600,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      generate_petport_id: {
+        Args: Record<PropertyKey, never>
+        Returns: string
+      }
       handle_care_instructions_upsert: {
         Args: {
           _pet_id: string

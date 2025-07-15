@@ -40,6 +40,7 @@ interface PetData {
   medicalEmergencyDocument?: string | null;
   galleryPhotos?: Array<{ url: string; caption: string; }>;
   user_id?: string;
+  bio?: string;
 }
 
 interface PetProfileCardProps {
@@ -133,7 +134,10 @@ export const PetProfileCard = ({ petData, onUpdate }: PetProfileCardProps) => {
   if (isEditing) {
     return (
       <PetEditForm
-        petData={petData}
+        petData={{
+          ...petData,
+          bio: petData.bio || ""
+        }}
         onSave={handleEditSave}
         onCancel={() => setIsEditing(false)}
       />

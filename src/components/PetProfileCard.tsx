@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -58,6 +58,19 @@ export const PetProfileCard = ({ petData, onUpdate }: PetProfileCardProps) => {
   console.log("Is editing state:", isEditing);
   console.log("Current user:", user?.id);
   console.log("Pet user_id:", petData.user_id);
+
+  // Listen for the edit event from ProfileEditButton
+  useEffect(() => {
+    const handleEditEvent = () => {
+      console.log("Edit event received, entering edit mode");
+      setIsEditing(true);
+    };
+
+    window.addEventListener('start-pet-profile-edit', handleEditEvent);
+    return () => {
+      window.removeEventListener('start-pet-profile-edit', handleEditEvent);
+    };
+  }, []);
 
   const handleUploadMedicalDoc = () => {
     console.log("Opening medical document upload...");

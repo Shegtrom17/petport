@@ -26,9 +26,10 @@ export const PetProfileContent = ({
   };
 
   const handleProfileEdit = () => {
-    console.log("Profile edit clicked");
-    // Navigate to profile edit or open profile edit modal
-    setActiveTab("profile-edit");
+    console.log("Profile edit clicked - switching to profile edit mode");
+    // Instead of setting to a non-existent tab, we'll trigger the PetProfileCard edit mode
+    // by dispatching a custom event that the PetProfileCard can listen to
+    window.dispatchEvent(new CustomEvent('start-pet-profile-edit'));
   };
 
   return (

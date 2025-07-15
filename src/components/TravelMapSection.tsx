@@ -4,10 +4,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { MapPin, Camera, Download, Share2, Calendar, Trophy, Edit } from "lucide-react";
+import { MapPin, Camera, Trophy, Edit } from "lucide-react";
 import { TravelEditForm } from "@/components/TravelEditForm";
 import { FreeInteractiveMap } from "@/components/FreeInteractiveMap";
-import { InteractiveTravelMap } from "@/components/InteractiveTravelMap";
 import { fetchPetDetails } from "@/services/petService";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
@@ -97,22 +96,6 @@ export const TravelMapSection = ({ petData, onUpdate }: TravelMapSectionProps) =
   };
 
   const milestone = getMilestonebadge();
-
-  const handleDownload = () => {
-    console.log("Downloading travel map...");
-    toast({
-      title: "Feature Coming Soon",
-      description: "Travel map download will be available soon!",
-    });
-  };
-
-  const handleShare = () => {
-    console.log("Sharing travel map...");
-    toast({
-      title: "Feature Coming Soon", 
-      description: "Travel map sharing will be available soon!",
-    });
-  };
 
   const handleEditSave = async () => {
     setIsLoading(true);
@@ -211,17 +194,12 @@ export const TravelMapSection = ({ petData, onUpdate }: TravelMapSectionProps) =
         </DialogContent>
       </Dialog>
 
-      {/* Interactive Travel Map (Mapbox) - Pass locations as props */}
-      <InteractiveTravelMap 
-        locations={locations}
-        petName={petData.name}
-      />
-
-      {/* Free Interactive Map (for custom pins) */}
+      {/* Enhanced Free Interactive Map */}
       <FreeInteractiveMap 
         petId={petData.id}
         petName={petData.name}
         pins={mapPins}
+        locations={locations}
         onPinsUpdate={loadMapPins}
       />
 
@@ -256,7 +234,6 @@ export const TravelMapSection = ({ petData, onUpdate }: TravelMapSectionProps) =
                     
                     {location.date_visited && (
                       <div className="flex items-center justify-center sm:justify-start space-x-1 text-xs sm:text-sm text-gray-600 mb-2">
-                        <Calendar className="w-3 h-3 sm:w-4 sm:h-4" />
                         <span>{location.date_visited}</span>
                       </div>
                     )}

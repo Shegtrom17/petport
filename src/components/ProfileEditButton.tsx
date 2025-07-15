@@ -12,19 +12,29 @@ interface ProfileEditButtonProps {
 export const ProfileEditButton = ({ userId, onEdit }: ProfileEditButtonProps) => {
   const { user } = useAuth();
   
+  console.log("ProfileEditButton - Current user:", user?.id);
+  console.log("ProfileEditButton - Pet user_id:", userId);
+  
   // Only show if the current user is the profile owner
   const isOwner = user?.id === userId;
   
-  if (!isOwner) return null;
+  console.log("ProfileEditButton - isOwner:", isOwner);
+  
+  if (!isOwner) {
+    console.log("ProfileEditButton - Not owner, hiding button");
+    return null;
+  }
 
   return (
-    <Button 
-      onClick={onEdit}
-      className="bg-gradient-to-r from-navy-900 to-navy-800 hover:from-navy-800 hover:to-navy-700 text-gold-500 border border-gold-500/30 px-6 py-2 text-base font-medium shadow-lg"
-      size="lg"
-    >
-      <User className="w-5 h-5 mr-2" />
-      Edit Profile
-    </Button>
+    <div className="w-full max-w-md">
+      <Button 
+        onClick={onEdit}
+        className="w-full bg-gradient-to-r from-navy-900 to-navy-800 hover:from-navy-800 hover:to-navy-700 text-gold-500 border border-gold-500/30 px-8 py-3 text-lg font-bold shadow-xl hover:shadow-2xl transition-all transform hover:scale-105"
+        size="lg"
+      >
+        <Edit className="w-6 h-6 mr-3" />
+        Edit Profile
+      </Button>
+    </div>
   );
 };

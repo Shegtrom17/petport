@@ -34,6 +34,15 @@ export const PetProfileContent = ({
   return (
     <div className="passport-map-container">
       <div className="passport-map-bg" />
+      
+      {/* Prominent Edit Button at the Top */}
+      <div className="flex justify-center mb-6">
+        <ProfileEditButton 
+          userId={enhancedPetData.user_id} 
+          onEdit={handleProfileEdit}
+        />
+      </div>
+
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
       {/* Left Column - Pet Overview */}
       <div className="space-y-4">
@@ -73,14 +82,6 @@ export const PetProfileContent = ({
 
         {/* Support Animal Status */}
         <SupportAnimalBanner status={enhancedPetData.supportAnimalStatus} />
-
-        {/* Profile Edit Button */}
-        <div className="flex justify-center">
-          <ProfileEditButton 
-            userId={enhancedPetData.user_id} 
-            onEdit={handleProfileEdit}
-          />
-        </div>
 
         {/* Social Sharing */}
         <SocialShareButtons 

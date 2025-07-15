@@ -266,12 +266,18 @@ export async function createPet(petData: {
   notes?: string;
 }): Promise<string | null> {
   try {
+    console.log("=== CREATE PET DEBUG START ===");
     console.log("createPet: Starting pet creation process");
-    console.log("createPet: Input data:", petData);
+    console.log("createPet: Input data:", JSON.stringify(petData, null, 2));
     
-    // Get current authenticated user
+    // Step 1: Get current authenticated user
+    console.log("createPet: Step 1 - Getting authenticated user");
     const { data: { user }, error: userError } = await supabase.auth.getUser();
-    console.log("createPet: User authentication check:", { userId: user?.id, error: userError });
+    console.log("createPet: User authentication result:", { 
+      userId: user?.id, 
+      userEmail: user?.email,
+      error: userError 
+    });
     
     if (userError) {
       console.error("createPet: Authentication error:", userError);
@@ -283,7 +289,8 @@ export async function createPet(petData: {
       throw new Error("You must be logged in to create a pet");
     }
 
-    // Prepare pet data with user_id
+    // Step 2: Prepare pet data with user_id
+    console.log("createPet: Step 2 - Preparing pet data");
     const petDataWithUser = {
       name: petData.name,
       breed: petData.breed || null,
@@ -296,37 +303,98 @@ export async function createPet(petData: {
       user_id: user.id  // This is the critical field that links the pet to the user
     };
 
-    console.log("createPet: Final data to insert (with user_id):", petDataWithUser);
+    console.log("createPet: Final data to insert:", JSON.stringify(petDataWithUser, null, 2));
 
-    // Insert the pet - let the database trigger handle petport_id generation
+    // Step 3: Test database connection first
+    console.log("createPet: Step 3 - Testing database connection");
+    const { data: connectionTest, error: connectionError } = await supabase
+      .from("pets")
+      .select("count", { count: 'exact' })
+      .limit(1);
+    
+    console.log("createPet: Connection test result:", { 
+      connectionTest, 
+      connectionError,
+      canAccessPetsTable: !connectionError 
+    });
+
+    if (connectionError) {
+      console.error("createPet: Database connection failed:", connectionError);
+      throw new Error(`Database connection failed: ${connectionError.message}`);
+    }
+
+    // Step 4: Insert the pet
+    console.log("createPet: Step 4 - Inserting pet into database");
     const { data, error } = await supabase
       .from("pets")
       .insert([petDataWithUser])
       .select('*')
       .single();
 
-    console.log("createPet: Database insert response:", { data, error });
+    console.log("createPet: Database insert response:", { 
+      success: !error,
+      data: data ? {
+        id: data.id,
+        name: data.name,
+        user_id: data.user_id,
+        petport_id: data.petport_id,
+        created_at: data.created_at
+      } : null,
+      error: error 
+    });
 
     if (error) {
-      console.error("createPet: Database insertion error:", error);
+      console.error("createPet: Database insertion error details:", {
+        message: error.message,
+        details: error.details,
+        hint: error.hint,
+        code: error.code
+      });
       throw new Error(`Failed to create pet: ${error.message}`);
     }
 
     if (!data) {
       console.error("createPet: No data returned from database insert");
-      throw new Error("Pet creation failed - no data returned");
+      throw new Error("Pet creation failed - no data returned from database");
     }
 
-    console.log("createPet: Pet created successfully:", {
-      id: data.id,
-      name: data.name,
-      user_id: data.user_id,
-      petport_id: data.petport_id
+    // Step 5: Verify the pet was actually inserted by querying it back
+    console.log("createPet: Step 5 - Verifying pet was inserted");
+    const { data: verifyData, error: verifyError } = await supabase
+      .from("pets")
+      .select('id, name, user_id, petport_id, created_at')
+      .eq('id', data.id)
+      .single();
+
+    console.log("createPet: Verification query result:", {
+      found: !verifyError && verifyData,
+      verifyData: verifyData,
+      verifyError: verifyError
     });
+
+    // Step 6: Count total pets for this user
+    console.log("createPet: Step 6 - Counting user's total pets");
+    const { count, error: countError } = await supabase
+      .from("pets")
+      .select('*', { count: 'exact', head: true })
+      .eq('user_id', user.id);
+
+    console.log("createPet: User's total pets count:", { count, countError });
+
+    console.log("createPet: SUCCESS - Pet created with ID:", data.id);
+    console.log("=== CREATE PET DEBUG END ===");
 
     return data.id;
   } catch (error) {
+    console.error("=== CREATE PET ERROR ===");
     console.error("createPet: Unexpected error:", error);
+    console.error("createPet: Error type:", typeof error);
+    console.error("createPet: Error constructor:", error?.constructor?.name);
+    if (error instanceof Error) {
+      console.error("createPet: Error message:", error.message);
+      console.error("createPet: Error stack:", error.stack);
+    }
+    console.error("=== CREATE PET ERROR END ===");
     throw error;
   }
 }

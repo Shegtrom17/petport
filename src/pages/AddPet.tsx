@@ -38,8 +38,9 @@ export default function AddPet() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
+    console.log("=== ADD PET FORM SUBMISSION START ===");
     console.log("AddPet: Starting form submission");
-    console.log("AddPet: Pet data:", petData);
+    console.log("AddPet: Pet data:", JSON.stringify(petData, null, 2));
     
     setIsSubmitting(true);
 
@@ -61,26 +62,35 @@ export default function AddPet() {
       console.log("AddPet: createPet returned:", petId);
       
       if (petId) {
-        console.log("AddPet: Pet created successfully with ID:", petId);
+        console.log("AddPet: SUCCESS - Pet created with ID:", petId);
         toast({
           title: "Success!",
           description: `${petData.name} has been added to your pets.`,
         });
+        console.log("AddPet: Navigating to home page");
         navigate("/");
       } else {
-        console.log("AddPet: createPet returned null/undefined");
+        console.log("AddPet: ERROR - createPet returned null/undefined");
         toast({
           variant: "destructive",
           title: "Error",
-          description: "Failed to create pet. Please try again."
+          description: "Failed to create pet. Please check the console logs for details."
         });
       }
     } catch (error) {
+      console.error("=== ADD PET FORM ERROR ===");
       console.error("AddPet: Error during pet creation:", error);
+      console.error("AddPet: Error details:", {
+        message: error instanceof Error ? error.message : 'Unknown error',
+        type: typeof error,
+        constructor: error?.constructor?.name
+      });
+      console.error("=== ADD PET FORM ERROR END ===");
+      
       toast({
         variant: "destructive",
-        title: "Error",
-        description: error instanceof Error ? error.message : "Something went wrong. Please try again."
+        title: "Error Creating Pet",
+        description: error instanceof Error ? error.message : "Something went wrong. Please check the console logs and try again."
       });
     } finally {
       setIsSubmitting(false);

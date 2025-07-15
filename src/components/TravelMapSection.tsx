@@ -7,6 +7,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { MapPin, Camera, Download, Share2, Calendar, Trophy, Edit } from "lucide-react";
 import { TravelEditForm } from "@/components/TravelEditForm";
 import { FreeInteractiveMap } from "@/components/FreeInteractiveMap";
+import { InteractiveTravelMap } from "@/components/InteractiveTravelMap";
 import { fetchPetDetails } from "@/services/petService";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
@@ -47,6 +48,7 @@ export const TravelMapSection = ({ petData, onUpdate }: TravelMapSectionProps) =
 
   // Update locations when petData changes
   useEffect(() => {
+    console.log('TravelMapSection: Pet data updated, locations:', petData.travel_locations);
     setLocations(petData.travel_locations || []);
   }, [petData.travel_locations]);
 
@@ -57,6 +59,7 @@ export const TravelMapSection = ({ petData, onUpdate }: TravelMapSectionProps) =
 
   const loadMapPins = async () => {
     try {
+      console.log('Loading map pins for pet:', petData.id);
       const { data, error } = await supabase
         .from('map_pins')
         .select('*')
@@ -73,6 +76,7 @@ export const TravelMapSection = ({ petData, onUpdate }: TravelMapSectionProps) =
         createdAt: pin.created_at
       }));
 
+      console.log('Loaded map pins:', pins);
       setMapPins(pins);
     } catch (error) {
       console.error('Error loading map pins:', error);
@@ -113,9 +117,11 @@ export const TravelMapSection = ({ petData, onUpdate }: TravelMapSectionProps) =
   const handleEditSave = async () => {
     setIsLoading(true);
     try {
+      console.log('Refreshing pet data after edit...');
       // Refresh the pet data to get the latest travel locations
       const updatedPetData = await fetchPetDetails(petData.id);
       if (updatedPetData && updatedPetData.travel_locations) {
+        console.log('Updated travel locations:', updatedPetData.travel_locations);
         setLocations(updatedPetData.travel_locations);
       }
       
@@ -205,7 +211,13 @@ export const TravelMapSection = ({ petData, onUpdate }: TravelMapSectionProps) =
         </DialogContent>
       </Dialog>
 
-      {/* Free Interactive Map */}
+      {/* Interactive Travel Map (Mapbox) - Pass locations as props */}
+      <InteractiveTravelMap 
+        locations={locations}
+        petName={petData.name}
+      />
+
+      {/* Free Interactive Map (for custom pins) */}
       <FreeInteractiveMap 
         petId={petData.id}
         petName={petData.name}

@@ -98,10 +98,116 @@ export const InteractiveTravelMap = ({ locations, petName }: InteractiveTravelMa
   const [mapboxToken, setMapboxToken] = useState<string>('');
   const [showTokenInput, setShowTokenInput] = useState(true);
   const [mapInitialized, setMapInitialized] = useState(false);
+  const markersRef = useRef<mapboxgl.Marker[]>([]);
+
+  const getLocationCoordinates = (location: TravelLocation): [number, number] | null => {
+    const searchName = location.name.toLowerCase();
+    return locationCoordinates[searchName] || null;
+  };
+
+  const clearMarkers = () => {
+    markersRef.current.forEach(marker => marker.remove());
+    markersRef.current = [];
+  };
+
+  const addMarkersToMap = () => {
+    if (!map.current) return;
+
+    console.log('Adding markers for locations:', locations);
+    clearMarkers();
+
+    locations.forEach((location) => {
+      const coordinates = getLocationCoordinates(location);
+      console.log(`Location ${location.name} coordinates:`, coordinates);
+      
+      if (coordinates) {
+        // Create custom marker element
+        const el = document.createElement('div');
+        el.className = 'custom-marker';
+        el.style.cssText = `
+          width: 30px;
+          height: 30px;
+          background: ${location.type === 'country' ? '#22c55e' : '#3b82f6'};
+          border: 3px solid white;
+          border-radius: 50%;
+          cursor: pointer;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 12px;
+          color: white;
+          font-weight: bold;
+          z-index: 1000;
+        `;
+        el.innerHTML = location.type === 'country' ? '🌍' : '📍';
+
+        // Create popup with sanitized content
+        const popupContent = document.createElement('div');
+        popupContent.className = 'p-3 max-w-xs';
+        
+        const title = document.createElement('h3');
+        title.className = 'font-bold text-lg mb-2';
+        title.textContent = location.name;
+        popupContent.appendChild(title);
+
+        const details = document.createElement('div');
+        details.className = 'space-y-1 text-sm';
+        
+        const typeInfo = document.createElement('p');
+        typeInfo.innerHTML = `<strong>Type:</strong> ${location.type === 'country' ? 'Country' : 'State'}`;
+        details.appendChild(typeInfo);
+
+        if (location.code) {
+          const codeInfo = document.createElement('p');
+          codeInfo.innerHTML = `<strong>Code:</strong> ${location.code}`;
+          details.appendChild(codeInfo);
+        }
+
+        if (location.date_visited) {
+          const dateInfo = document.createElement('p');
+          dateInfo.innerHTML = `<strong>Visited:</strong> ${location.date_visited}`;
+          details.appendChild(dateInfo);
+        }
+
+        if (location.notes) {
+          const notesInfo = document.createElement('p');
+          notesInfo.innerHTML = `<strong>Notes:</strong> ${location.notes}`;
+          details.appendChild(notesInfo);
+        }
+
+        popupContent.appendChild(details);
+
+        if (location.photo_url) {
+          const img = document.createElement('img');
+          img.src = location.photo_url;
+          img.alt = location.name;
+          img.className = 'w-full h-20 object-cover rounded mt-2';
+          popupContent.appendChild(img);
+        }
+
+        const popup = new mapboxgl.Popup({ offset: 25 }).setDOMContent(popupContent);
+
+        // Add marker to map
+        const marker = new mapboxgl.Marker(el)
+          .setLngLat(coordinates)
+          .setPopup(popup)
+          .addTo(map.current!);
+
+        markersRef.current.push(marker);
+        console.log(`Added marker for ${location.name} at`, coordinates);
+      } else {
+        console.warn(`No coordinates found for location: ${location.name}`);
+      }
+    });
+
+    console.log(`Total markers added: ${markersRef.current.length}`);
+  };
 
   const initializeMap = () => {
     if (!mapContainer.current || !mapboxToken) return;
 
+    console.log('Initializing map with token:', mapboxToken.substring(0, 20) + '...');
     mapboxgl.accessToken = mapboxToken;
 
     map.current = new mapboxgl.Map({
@@ -125,63 +231,28 @@ export const InteractiveTravelMap = ({ locations, petName }: InteractiveTravelMa
           'space-color': 'rgb(11, 11, 25)',
           'star-intensity': 0.6
         });
+
+        // Add markers after style loads
+        addMarkersToMap();
       }
     });
 
-    // Add markers for each location
-    locations.forEach((location) => {
-      const coordinates = getLocationCoordinates(location);
-      if (coordinates) {
-        // Create custom marker element
-        const el = document.createElement('div');
-        el.className = 'custom-marker';
-        el.style.cssText = `
-          width: 30px;
-          height: 30px;
-          background: ${location.type === 'country' ? '#22c55e' : '#3b82f6'};
-          border: 3px solid white;
-          border-radius: 50%;
-          cursor: pointer;
-          box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-size: 12px;
-          color: white;
-          font-weight: bold;
-        `;
-        el.innerHTML = location.type === 'country' ? '🌍' : '📍';
-
-        // Create popup
-        const popup = new mapboxgl.Popup({ offset: 25 }).setHTML(`
-          <div class="p-3 max-w-xs">
-            <h3 class="font-bold text-lg mb-2">${location.name}</h3>
-            <div class="space-y-1 text-sm">
-              <p><strong>Type:</strong> ${location.type === 'country' ? 'Country' : 'State'}</p>
-              ${location.code ? `<p><strong>Code:</strong> ${location.code}</p>` : ''}
-              ${location.date_visited ? `<p><strong>Visited:</strong> ${location.date_visited}</p>` : ''}
-              ${location.notes ? `<p><strong>Notes:</strong> ${location.notes}</p>` : ''}
-            </div>
-            ${location.photo_url ? `<img src="${location.photo_url}" alt="${location.name}" class="w-full h-20 object-cover rounded mt-2">` : ''}
-          </div>
-        `);
-
-        // Add marker to map
-        new mapboxgl.Marker(el)
-          .setLngLat(coordinates)
-          .setPopup(popup)
-          .addTo(map.current!);
-      }
+    // Also add markers when map loads (fallback)
+    map.current.on('load', () => {
+      addMarkersToMap();
     });
 
     setMapInitialized(true);
     setShowTokenInput(false);
   };
 
-  const getLocationCoordinates = (location: TravelLocation): [number, number] | null => {
-    const searchName = location.name.toLowerCase();
-    return locationCoordinates[searchName] || null;
-  };
+  // Update markers when locations change
+  useEffect(() => {
+    if (mapInitialized && map.current) {
+      console.log('Locations updated, refreshing markers:', locations);
+      addMarkersToMap();
+    }
+  }, [locations, mapInitialized]);
 
   const handleTokenSubmit = () => {
     if (mapboxToken.trim()) {
@@ -260,11 +331,11 @@ export const InteractiveTravelMap = ({ locations, petName }: InteractiveTravelMa
               <div className="flex items-center space-x-4 text-sm">
                 <div className="flex items-center space-x-2">
                   <div className="w-3 h-3 bg-blue-500 rounded-full border border-white"></div>
-                  <span>States</span>
+                  <span>States ({locations.filter(l => l.type === 'state').length})</span>
                 </div>
                 <div className="flex items-center space-x-2">
                   <div className="w-3 h-3 bg-green-500 rounded-full border border-white"></div>
-                  <span>Countries</span>
+                  <span>Countries ({locations.filter(l => l.type === 'country').length})</span>
                 </div>
               </div>
             </div>
@@ -272,6 +343,9 @@ export const InteractiveTravelMap = ({ locations, petName }: InteractiveTravelMa
         </div>
         <div className="mt-4 text-center text-sm text-gray-600">
           <p>🗺️ Click on any pin to see travel details • {locations.length} locations mapped</p>
+          {locations.length === 0 && (
+            <p className="text-amber-600 mt-2">No travel locations found. Add some locations to see pins on the map!</p>
+          )}
         </div>
       </CardContent>
     </Card>

@@ -1,7 +1,6 @@
 
-import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Edit, User } from "lucide-react";
+import { Edit } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 
 interface ProfileEditButtonProps {
@@ -26,7 +25,7 @@ export const ProfileEditButton = ({ userId, onEdit }: ProfileEditButtonProps) =>
   }
 
   const handleClick = () => {
-    console.log("Edit button clicked - calling onEdit");
+    console.log("Edit Profile button clicked - calling onEdit");
     if (onEdit) {
       onEdit();
     }

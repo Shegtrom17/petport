@@ -89,5 +89,3 @@
     radial-gradient(circle at 75% 75%, rgba(255, 255, 255, 0.3) 0%, transparent 50%);
   z-index: -1;
 }
-
-/* Remove the conflicting CSS that was causing issues */

@@ -1,12 +1,13 @@
-
-import React, { useState } from 'react';
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Switch } from "@/components/ui/switch";
-import { Camera, Save, X } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/context/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
 
 interface PetData {
   id: string;
@@ -15,25 +16,19 @@ interface PetData {
   age: string;
   weight: string;
   microchipId: string;
-  petPassId: string;
-  photoUrl: string;
-  fullBodyPhotoUrl: string;
+  species: string;
+  state: string;
+  county: string;
+  notes: string;
   vetContact: string;
   emergencyContact: string;
   secondEmergencyContact: string;
   petCaretaker: string;
   lastVaccination: string;
-  badges: string[];
-  medications: string[];
-  notes: string;
-  state?: string;
-  county?: string;
-  species?: string;
-  supportAnimalStatus?: string | null;
-  medicalAlert: boolean;
-  medicalConditions?: string;
-  medicalEmergencyDocument?: string | null;
-  galleryPhotos?: Array<{ url: string; caption: string; }>;
+  medicalConditions: string;
+  supportAnimalStatus: string | null;
+  bio: string;
+  user_id?: string;
 }
 
 interface PetEditFormProps {
@@ -43,251 +38,210 @@ interface PetEditFormProps {
 }
 
 export const PetEditForm = ({ petData, onSave, onCancel }: PetEditFormProps) => {
-  const [formData, setFormData] = useState({
-    ...petData,
-    // Ensure no null values that cause React warnings
-    notes: petData.notes || '',
-    medicalConditions: petData.medicalConditions || '',
-    vetContact: petData.vetContact || '',
-    emergencyContact: petData.emergencyContact || '',
-    secondEmergencyContact: petData.secondEmergencyContact || '',
-    petCaretaker: petData.petCaretaker || '',
-    lastVaccination: petData.lastVaccination || '',
-    photoUrl: petData.photoUrl || '',
-    fullBodyPhotoUrl: petData.fullBodyPhotoUrl || '',
-    microchipId: petData.microchipId || '',
-    state: petData.state || '',
-    county: petData.county || ''
-  });
-  
-  const [photoPreview, setPhotoPreview] = useState(formData.photoUrl);
-  const [fullBodyPreview, setFullBodyPreview] = useState(formData.fullBodyPhotoUrl);
+  const { toast } = useToast();
+  const { user } = useAuth();
+  const [isSaving, setIsSaving] = useState(false);
 
-  const handlePhotoCapture = (event: React.ChangeEvent<HTMLInputElement>, type: 'profile' | 'fullBody') => {
-    const file = event.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const result = e.target?.result as string;
-        if (type === 'profile') {
-          setPhotoPreview(result);
-          setFormData(prev => ({ ...prev, photoUrl: result }));
-        } else {
-          setFullBodyPreview(result);
-          setFormData(prev => ({ ...prev, fullBodyPhotoUrl: result }));
-        }
-      };
-      reader.readAsDataURL(file);
+  const [formData, setFormData] = useState({
+    name: petData.name || "",
+    breed: petData.breed || "",
+    age: petData.age || "",
+    weight: petData.weight || "",
+    microchipId: petData.microchipId || "",
+    species: petData.species || "",
+    state: petData.state || "",
+    county: petData.county || "",
+    notes: petData.notes || "",
+    vetContact: petData.vetContact || "",
+    emergencyContact: petData.emergencyContact || "",
+    secondEmergencyContact: petData.secondEmergencyContact || "",
+    petCaretaker: petData.petCaretaker || "",
+    lastVaccination: petData.lastVaccination || "",
+    medicalConditions: petData.medicalConditions || "",
+    supportAnimalStatus: petData.supportAnimalStatus || "",
+    bio: petData.bio || ""
+  });
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setFormData(prevData => ({
+      ...prevData,
+      [name]: value
+    }));
+  };
+
+  const handleSelectChange = (name: string, value: string) => {
+    setFormData(prevData => ({
+      ...prevData,
+      [name]: value
+    }));
+  };
+
+  const handleSave = async () => {
+    if (!user?.id || !petData.id) return;
+
+    setIsSaving(true);
+    try {
+      const { error } = await supabase
+        .from('pets')
+        .update({
+          ...formData,
+          user_id: user.id
+        })
+        .eq('id', petData.id)
+        .eq('user_id', user.id);
+
+      if (error) {
+        console.error('Error updating pet:', error);
+        toast({
+          title: "Error",
+          description: "Failed to update pet. Please try again.",
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Success",
+          description: `${formData.name} has been updated successfully.`,
+        });
+        onSave();
+      }
+    } catch (error) {
+      console.error('Error updating pet:', error);
+      toast({
+        title: "Error",
+        description: "Failed to update pet. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSaving(false);
     }
   };
 
-  const handleSave = () => {
-    console.log("Saving pet data:", formData);
-    onSave();
-  };
-
   return (
-    <div className="space-y-6">
-      <Card className="border-2 border-gold-500/30 bg-[#f8f8f8]">
-        <CardHeader>
-          <CardTitle className="text-xl font-serif text-navy-900 border-b-2 border-gold-500 pb-2">
-            Edit Pet Profile
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          {/* Basic Information */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <Label htmlFor="name">Pet Name</Label>
-              <Input
-                id="name"
-                value={formData.name}
-                onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
-              />
-            </div>
-            <div>
-              <Label htmlFor="breed">Breed</Label>
-              <Input
-                id="breed"
-                value={formData.breed}
-                onChange={(e) => setFormData(prev => ({ ...prev, breed: e.target.value }))}
-              />
-            </div>
-            <div>
-              <Label htmlFor="age">Age</Label>
-              <Input
-                id="age"
-                value={formData.age}
-                onChange={(e) => setFormData(prev => ({ ...prev, age: e.target.value }))}
-              />
-            </div>
-            <div>
-              <Label htmlFor="weight">Weight</Label>
-              <Input
-                id="weight"
-                value={formData.weight}
-                onChange={(e) => setFormData(prev => ({ ...prev, weight: e.target.value }))}
-              />
-            </div>
-          </div>
-
-          {/* Photo Upload Section */}
-          <div className="space-y-4">
-            <h3 className="text-lg font-serif text-navy-900">Pet Photos</h3>
-            
-            {/* Profile Photo */}
-            <div className="space-y-2">
-              <Label>Profile Photo</Label>
-              <div className="flex items-center space-x-4">
-                <div className="w-24 h-24 rounded-full overflow-hidden border-2 border-gold-500/50">
-                  <img 
-                    src={photoPreview || "/placeholder.svg"} 
-                    alt="Profile preview"
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                <div>
-                  <input
-                    type="file"
-                    accept="image/*"
-                    capture="user"
-                    onChange={(e) => handlePhotoCapture(e, 'profile')}
-                    id="profileCamera"
-                    className="hidden"
-                  />
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={() => document.getElementById('profileCamera')?.click()}
-                    className="border-navy-900 text-navy-900"
-                  >
-                    <Camera className="w-4 h-4 mr-2" />
-                    Take New Photo
-                  </Button>
-                </div>
-              </div>
-            </div>
-
-            {/* Full Body Photo */}
-            <div className="space-y-2">
-              <Label>Full Body Photo</Label>
-              <div className="flex items-center space-x-4">
-                <div className="w-24 h-16 rounded overflow-hidden border-2 border-gold-500/50">
-                  <img 
-                    src={fullBodyPreview || "/placeholder.svg"} 
-                    alt="Full body preview"
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                <div>
-                  <input
-                    type="file"
-                    accept="image/*"
-                    capture="environment"
-                    onChange={(e) => handlePhotoCapture(e, 'fullBody')}
-                    id="fullBodyCamera"
-                    className="hidden"
-                  />
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={() => document.getElementById('fullBodyCamera')?.click()}
-                    className="border-navy-900 text-navy-900"
-                  >
-                    <Camera className="w-4 h-4 mr-2" />
-                    Take New Photo
-                  </Button>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Contact Information */}
-          <div className="space-y-4">
-            <h3 className="text-lg font-serif text-navy-900">Contact Information</h3>
-            <div className="grid grid-cols-1 gap-4">
-              <div>
-                <Label htmlFor="emergencyContact">Primary Emergency Contact</Label>
-                <Input
-                  id="emergencyContact"
-                  value={formData.emergencyContact}
-                  onChange={(e) => setFormData(prev => ({ ...prev, emergencyContact: e.target.value }))}
-                />
-              </div>
-              <div>
-                <Label htmlFor="secondEmergencyContact">Secondary Emergency Contact</Label>
-                <Input
-                  id="secondEmergencyContact"
-                  value={formData.secondEmergencyContact}
-                  onChange={(e) => setFormData(prev => ({ ...prev, secondEmergencyContact: e.target.value }))}
-                />
-              </div>
-              <div>
-                <Label htmlFor="vetContact">Veterinarian Contact</Label>
-                <Input
-                  id="vetContact"
-                  value={formData.vetContact}
-                  onChange={(e) => setFormData(prev => ({ ...prev, vetContact: e.target.value }))}
-                />
-              </div>
-            </div>
-          </div>
-
-          {/* Medical Information */}
-          <div className="space-y-4">
-            <h3 className="text-lg font-serif text-navy-900">Medical Information</h3>
-            <div className="flex items-center space-x-2">
-              <Switch
-                id="medicalAlert"
-                checked={formData.medicalAlert}
-                onCheckedChange={(checked) => setFormData(prev => ({ ...prev, medicalAlert: checked }))}
-              />
-              <Label htmlFor="medicalAlert">Medical Alert</Label>
-            </div>
-            {formData.medicalAlert && (
-              <div>
-                <Label htmlFor="medicalConditions">Medical Conditions</Label>
-                <Textarea
-                  id="medicalConditions"
-                  value={formData.medicalConditions}
-                  onChange={(e) => setFormData(prev => ({ ...prev, medicalConditions: e.target.value }))}
-                  placeholder="Describe any medical conditions or alerts..."
-                />
-              </div>
-            )}
-          </div>
-
-          {/* Notes */}
+    <Card className="bg-[#f8f8f8] shadow-md">
+      <CardHeader>
+        <CardTitle className="text-xl font-serif text-navy-900 border-b-2 border-gold-500 pb-2">
+          ✏️ Edit Pet Profile
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <Label htmlFor="notes">Behavioral Notes</Label>
-            <Textarea
-              id="notes"
-              value={formData.notes}
-              onChange={(e) => setFormData(prev => ({ ...prev, notes: e.target.value }))}
-              placeholder="Any special notes about your pet's behavior, preferences, etc."
-            />
+            <Label htmlFor="name">Pet Name</Label>
+            <Input type="text" id="name" name="name" value={formData.name} onChange={handleChange} />
           </div>
+          <div>
+            <Label htmlFor="breed">Breed</Label>
+            <Input type="text" id="breed" name="breed" value={formData.breed} onChange={handleChange} />
+          </div>
+        </div>
 
-          {/* Action Buttons */}
-          <div className="flex justify-end space-x-3 pt-4 border-t border-gold-500/30">
-            <Button
-              onClick={onCancel}
-              variant="outline"
-              className="border-navy-900 text-navy-900"
-            >
-              <X className="w-4 h-4 mr-2" />
-              Cancel
-            </Button>
-            <Button
-              onClick={handleSave}
-              className="bg-gradient-to-r from-navy-900 to-navy-800 text-gold-500 hover:from-navy-800 hover:to-navy-700"
-            >
-              <Save className="w-4 h-4 mr-2" />
-              Save Changes
-            </Button>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <Label htmlFor="age">Age</Label>
+            <Input type="text" id="age" name="age" value={formData.age} onChange={handleChange} />
           </div>
-        </CardContent>
-      </Card>
-    </div>
+          <div>
+            <Label htmlFor="weight">Weight</Label>
+            <Input type="text" id="weight" name="weight" value={formData.weight} onChange={handleChange} />
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <Label htmlFor="microchipId">Microchip ID</Label>
+            <Input type="text" id="microchipId" name="microchipId" value={formData.microchipId} onChange={handleChange} />
+          </div>
+          <div>
+            <Label htmlFor="species">Species</Label>
+            <Input type="text" id="species" name="species" value={formData.species} onChange={handleChange} />
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <Label htmlFor="state">State</Label>
+            <Input type="text" id="state" name="state" value={formData.state} onChange={handleChange} />
+          </div>
+          <div>
+            <Label htmlFor="county">County</Label>
+            <Input type="text" id="county" name="county" value={formData.county} onChange={handleChange} />
+          </div>
+        </div>
+
+        <div>
+          <Label htmlFor="notes">Behavioral Notes</Label>
+          <Textarea id="notes" name="notes" value={formData.notes} onChange={handleChange} />
+        </div>
+
+        <div>
+          <Label htmlFor="bio">Bio</Label>
+          <Textarea id="bio" name="bio" value={formData.bio} onChange={handleChange} />
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <Label htmlFor="vetContact">Veterinarian Contact</Label>
+            <Input type="text" id="vetContact" name="vetContact" value={formData.vetContact} onChange={handleChange} />
+          </div>
+          <div>
+            <Label htmlFor="emergencyContact">Emergency Contact</Label>
+            <Input type="text" id="emergencyContact" name="emergencyContact" value={formData.emergencyContact} onChange={handleChange} />
+          </div>
+        </div>
+
+        <div>
+          <Label htmlFor="secondEmergencyContact">Second Emergency Contact</Label>
+          <Input type="text" id="secondEmergencyContact" name="secondEmergencyContact" value={formData.secondEmergencyContact} onChange={handleChange} />
+        </div>
+
+        <div>
+          <Label htmlFor="petCaretaker">Pet Caretaker</Label>
+          <Input type="text" id="petCaretaker" name="petCaretaker" value={formData.petCaretaker} onChange={handleChange} />
+        </div>
+
+        <div>
+          <Label htmlFor="lastVaccination">Last Vaccination Date</Label>
+          <Input type="text" id="lastVaccination" name="lastVaccination" value={formData.lastVaccination} onChange={handleChange} />
+        </div>
+
+        <div>
+          <Label htmlFor="medicalConditions">Medical Conditions</Label>
+          <Textarea id="medicalConditions" name="medicalConditions" value={formData.medicalConditions} onChange={handleChange} />
+        </div>
+
+        <div>
+          <Label htmlFor="supportAnimalStatus">Support Animal Status</Label>
+          <Select onValueChange={(value) => handleSelectChange("supportAnimalStatus", value)}>
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="Select status" defaultValue={formData.supportAnimalStatus || ""}/>
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="Certified Therapy Dog">Certified Therapy Dog</SelectItem>
+              <SelectItem value="Emotional Support Animal">Emotional Support Animal</SelectItem>
+              <SelectItem value="Service Animal">Service Animal</SelectItem>
+              <SelectItem value="">None</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+        
+        <div className="flex space-x-4">
+          <Button 
+            onClick={handleSave}
+            disabled={isSaving}
+            className="flex-1 bg-gradient-to-r from-navy-900 to-navy-800 hover:from-navy-800 hover:to-navy-700 text-gold-500 border border-gold-500/30"
+          >
+            {isSaving ? "Saving..." : "Save Changes"}
+          </Button>
+          <Button 
+            onClick={onCancel}
+            variant="outline"
+            className="flex-1 border-navy-900 text-navy-900 hover:bg-navy-50"
+          >
+            Cancel
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
   );
 };

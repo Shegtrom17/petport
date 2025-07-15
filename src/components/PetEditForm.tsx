@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -58,7 +59,7 @@ export const PetEditForm = ({ petData, onSave, onCancel }: PetEditFormProps) => 
     petCaretaker: petData.petCaretaker || "",
     lastVaccination: petData.lastVaccination || "",
     medicalConditions: petData.medicalConditions || "",
-    supportAnimalStatus: petData.supportAnimalStatus || "",
+    supportAnimalStatus: petData.supportAnimalStatus || "none",
     bio: petData.bio || ""
   });
 
@@ -82,12 +83,16 @@ export const PetEditForm = ({ petData, onSave, onCancel }: PetEditFormProps) => 
 
     setIsSaving(true);
     try {
+      // Convert "none" back to null for database storage
+      const dataToSave = {
+        ...formData,
+        supportAnimalStatus: formData.supportAnimalStatus === "none" ? null : formData.supportAnimalStatus,
+        user_id: user.id
+      };
+
       const { error } = await supabase
         .from('pets')
-        .update({
-          ...formData,
-          user_id: user.id
-        })
+        .update(dataToSave)
         .eq('id', petData.id)
         .eq('user_id', user.id);
 
@@ -212,15 +217,18 @@ export const PetEditForm = ({ petData, onSave, onCancel }: PetEditFormProps) => 
 
         <div>
           <Label htmlFor="supportAnimalStatus">Support Animal Status</Label>
-          <Select onValueChange={(value) => handleSelectChange("supportAnimalStatus", value)}>
+          <Select 
+            value={formData.supportAnimalStatus}
+            onValueChange={(value) => handleSelectChange("supportAnimalStatus", value)}
+          >
             <SelectTrigger className="w-full">
-              <SelectValue placeholder="Select status" defaultValue={formData.supportAnimalStatus || ""}/>
+              <SelectValue placeholder="Select status" />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="Certified Therapy Dog">Certified Therapy Dog</SelectItem>
               <SelectItem value="Emotional Support Animal">Emotional Support Animal</SelectItem>
               <SelectItem value="Service Animal">Service Animal</SelectItem>
-              <SelectItem value="">None</SelectItem>
+              <SelectItem value="none">None</SelectItem>
             </SelectContent>
           </Select>
         </div>

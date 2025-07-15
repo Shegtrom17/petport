@@ -27,29 +27,49 @@ interface TravelEditFormProps {
   };
   onSave: () => void;
   onCancel: () => void;
+  mode?: 'edit' | 'add'; // New prop to distinguish between edit and add modes
 }
 
-export const TravelEditForm = ({ petData, onSave, onCancel }: TravelEditFormProps) => {
-  const { control, handleSubmit, register, setValue, watch } = useForm({
-    defaultValues: {
-      locations: petData.travel_locations && petData.travel_locations.length > 0 
-        ? petData.travel_locations.map(location => ({
-            name: location.name || "", 
-            type: location.type || "state", 
-            code: location.code || "", 
-            dateVisited: location.date_visited || "", 
-            photoUrl: location.photo_url || "", 
-            notes: location.notes || ""
-          }))
-        : [{ 
-            name: "", 
-            type: "state", 
-            code: "", 
-            dateVisited: "", 
-            photoUrl: "", 
-            notes: "" 
-          }]
+export const TravelEditForm = ({ petData, onSave, onCancel, mode = 'edit' }: TravelEditFormProps) => {
+  const getInitialValues = () => {
+    if (mode === 'add') {
+      // For add mode, start with one empty location
+      return {
+        locations: [{ 
+          name: "", 
+          type: "state", 
+          code: "", 
+          dateVisited: "", 
+          photoUrl: "", 
+          notes: "" 
+        }]
+      };
+    } else {
+      // For edit mode, load existing locations or one empty location
+      return {
+        locations: petData.travel_locations && petData.travel_locations.length > 0 
+          ? petData.travel_locations.map(location => ({
+              name: location.name || "", 
+              type: location.type || "state", 
+              code: location.code || "", 
+              dateVisited: location.date_visited || "", 
+              photoUrl: location.photo_url || "", 
+              notes: location.notes || ""
+            }))
+          : [{ 
+              name: "", 
+              type: "state", 
+              code: "", 
+              dateVisited: "", 
+              photoUrl: "", 
+              notes: "" 
+            }]
+      };
     }
+  };
+
+  const { control, handleSubmit, register, setValue, watch } = useForm({
+    defaultValues: getInitialValues()
   });
 
   const { fields: locationFields, append: appendLocation, remove: removeLocation } = useFieldArray({
@@ -78,15 +98,35 @@ export const TravelEditForm = ({ petData, onSave, onCancel }: TravelEditFormProp
 
       console.log("Saving travel locations:", formattedLocations);
       
-      const locationSuccess = await updateTravelLocations(petData.id, formattedLocations);
+      if (mode === 'add') {
+        // For add mode, merge with existing locations
+        const existingLocations = petData.travel_locations || [];
+        const allLocations = [...existingLocations.map(loc => ({
+          name: loc.name,
+          type: loc.type,
+          code: loc.code || null,
+          dateVisited: loc.date_visited || null,
+          photoUrl: loc.photo_url || null,
+          notes: loc.notes || null
+        })), ...formattedLocations];
+        
+        const locationSuccess = await updateTravelLocations(petData.id, allLocations);
+        
+        if (!locationSuccess) {
+          throw new Error("Failed to add travel locations");
+        }
+      } else {
+        // For edit mode, replace all locations
+        const locationSuccess = await updateTravelLocations(petData.id, formattedLocations);
 
-      if (!locationSuccess) {
-        throw new Error("Failed to update travel locations");
+        if (!locationSuccess) {
+          throw new Error("Failed to update travel locations");
+        }
       }
 
       toast({
         title: "Success",
-        description: "Travel locations updated successfully!",
+        description: mode === 'add' ? "Travel locations added successfully!" : "Travel locations updated successfully!",
       });
 
       onSave();
@@ -102,6 +142,8 @@ export const TravelEditForm = ({ petData, onSave, onCancel }: TravelEditFormProp
     }
   };
 
+  const formTitle = mode === 'add' ? 'Add Travel Locations' : 'Edit Travel Locations';
+
   return (
     <div className="space-y-4 sm:space-y-6">
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 sm:space-y-6">
@@ -109,7 +151,7 @@ export const TravelEditForm = ({ petData, onSave, onCancel }: TravelEditFormProp
           <CardHeader>
             <CardTitle className="flex items-center space-x-2 text-base sm:text-lg">
               <MapPin className="w-4 h-4 sm:w-5 sm:h-5" />
-              <span>Travel Locations</span>
+              <span>{formTitle}</span>
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -209,7 +251,7 @@ export const TravelEditForm = ({ petData, onSave, onCancel }: TravelEditFormProp
               className="w-full sm:w-auto text-sm"
             >
               <Plus className="w-4 h-4 mr-2" />
-              Add Location
+              Add Another Location
             </Button>
           </CardContent>
         </Card>
@@ -220,7 +262,7 @@ export const TravelEditForm = ({ petData, onSave, onCancel }: TravelEditFormProp
             Cancel
           </Button>
           <Button type="submit" disabled={isLoading} className="text-sm">
-            {isLoading ? "Saving..." : "Save Changes"}
+            {isLoading ? "Saving..." : (mode === 'add' ? "Add Locations" : "Save Changes")}
           </Button>
         </div>
       </form>

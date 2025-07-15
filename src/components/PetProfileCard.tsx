@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -55,19 +55,12 @@ export const PetProfileCard = ({ petData, onUpdate }: PetProfileCardProps) => {
   const { toast } = useToast();
   const navigate = useNavigate();
 
-  console.log("PetProfileCard rendered with petData:", petData);
-  console.log("Is editing state:", isEditing);
-  console.log("Current user:", user?.id);
-  console.log("Pet user_id:", petData?.user_id);
-
   const handleUploadMedicalDoc = () => {
     console.log("Opening medical document upload...");
-    // Document upload would be implemented here
   };
 
   const handleViewGallery = () => {
     console.log("Switching to gallery view...");
-    // This would trigger navigation to gallery tab
   };
 
   const handleEditSave = () => {
@@ -117,7 +110,7 @@ export const PetProfileCard = ({ petData, onUpdate }: PetProfileCardProps) => {
   // Check if current user owns this pet
   const isOwner = user?.id === petData?.user_id;
 
-  // Create safe petData with all required fields for PetEditForm
+  // Create safe petData for editing
   const safeEditData = {
     id: petData?.id || "",
     name: petData?.name || "",
@@ -156,10 +149,7 @@ export const PetProfileCard = ({ petData, onUpdate }: PetProfileCardProps) => {
       {isOwner && (
         <div className="flex justify-end gap-3 mb-4">
           <Button 
-            onClick={() => {
-              console.log("Edit button clicked!");
-              setIsEditing(true);
-            }}
+            onClick={() => setIsEditing(true)}
             className="bg-gradient-to-r from-navy-900 to-navy-800 hover:from-navy-800 hover:to-navy-700 text-gold-500 border border-gold-500/30 px-6 py-2 text-base font-medium shadow-lg"
             size="lg"
           >
@@ -203,7 +193,7 @@ export const PetProfileCard = ({ petData, onUpdate }: PetProfileCardProps) => {
       {/* Support Animal Status Banner */}
       <SupportAnimalBanner status={petData?.supportAnimalStatus || null} />
 
-      {/* PDF Generator Section - Navy blue styling */}
+      {/* PDF Generator Section */}
       <div className="bg-gradient-to-br from-navy-900 to-slate-800 p-6 rounded-xl border border-yellow-600/30 shadow-xl">
         <PetPDFGenerator petId={petData?.id || ""} petName={petData?.name || ""} />
       </div>
@@ -230,6 +220,92 @@ export const PetProfileCard = ({ petData, onUpdate }: PetProfileCardProps) => {
           </CardContent>
         </Card>
       )}
+
+      {/* Basic Information Card */}
+      <Card className="border-2 border-yellow-600 shadow-xl bg-gradient-to-br from-slate-800 to-slate-900 text-white">
+        <CardHeader>
+          <CardTitle className="flex items-center space-x-2 text-yellow-400">
+            <FileText className="w-5 h-5" />
+            <span className="tracking-wide">BASIC INFORMATION</span>
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <p className="text-yellow-400 text-sm font-semibold tracking-wide">NAME</p>
+              <p className="text-lg font-medium">{petData?.name || "Not specified"}</p>
+            </div>
+            <div>
+              <p className="text-yellow-400 text-sm font-semibold tracking-wide">BREED</p>
+              <p className="text-lg font-medium">{petData?.breed || "Not specified"}</p>
+            </div>
+            <div>
+              <p className="text-yellow-400 text-sm font-semibold tracking-wide">AGE</p>
+              <p className="text-lg font-medium">{petData?.age || "Not specified"}</p>
+            </div>
+            <div>
+              <p className="text-yellow-400 text-sm font-semibold tracking-wide">WEIGHT</p>
+              <p className="text-lg font-medium">{petData?.weight || "Not specified"}</p>
+            </div>
+          </div>
+          
+          {petData?.bio && (
+            <div className="bg-slate-700/30 p-4 rounded-lg border border-yellow-600/30">
+              <p className="text-yellow-400 text-sm font-semibold tracking-wide mb-2">BIO</p>
+              <p className="text-slate-200">{petData.bio}</p>
+            </div>
+          )}
+          
+          <div className="bg-slate-700/30 p-4 rounded-lg border border-yellow-600/30">
+            <p className="text-yellow-400 text-sm font-semibold tracking-wide mb-2">BEHAVIORAL NOTES</p>
+            <p className="text-slate-200">{petData?.notes || "No notes specified"}</p>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Photos Section */}
+      <Card className="border-2 border-yellow-600 shadow-xl bg-gradient-to-br from-slate-800 to-slate-900 text-white">
+        <CardHeader>
+          <CardTitle className="flex items-center justify-between text-yellow-400">
+            <div className="flex items-center space-x-2">
+              <Image className="w-5 h-5" />
+              <span className="tracking-wide">OFFICIAL PHOTOGRAPHS</span>
+            </div>
+            <Button 
+              onClick={handleViewGallery}
+              className="bg-gradient-to-r from-gold-500 to-gold-400 text-navy-900 hover:from-gold-400 hover:to-gold-300 border border-gold-500/50 shadow-md font-medium"
+              size="sm"
+            >
+              <Camera className="w-4 h-4 mr-2" />
+              View Gallery ({petData?.galleryPhotos?.length || 0})
+            </Button>
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-3">
+              <p className="text-yellow-400 text-sm font-semibold tracking-wide">PORTRAIT</p>
+              <div className="aspect-square rounded-lg overflow-hidden border-4 border-yellow-600/50 shadow-lg">
+                <img 
+                  src={petData?.photoUrl || "/placeholder.svg"} 
+                  alt={`${petData?.name || "Pet"} portrait`}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            </div>
+            <div className="space-y-3">
+              <p className="text-yellow-400 text-sm font-semibold tracking-wide">FULL PROFILE</p>
+              <div className="aspect-[4/3] rounded-lg overflow-hidden border-4 border-yellow-600/50 shadow-lg">
+                <img 
+                  src={petData?.fullBodyPhotoUrl || "/placeholder.svg"} 
+                  alt={`${petData?.name || "Pet"} full profile`}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Passport Header - Vet & Microchip Info */}
       <Card className="border-2 border-yellow-600 shadow-xl bg-gradient-to-br from-slate-800 to-navy-900 text-white relative overflow-hidden">
@@ -274,60 +350,6 @@ export const PetProfileCard = ({ petData, onUpdate }: PetProfileCardProps) => {
                  petData?.state ? petData.state : 
                  petData?.county ? petData.county : 'Not specified'}
               </p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Passport Photos Section */}
-      <Card className="border-2 border-yellow-600 shadow-xl bg-gradient-to-br from-slate-800 to-slate-900 text-white relative">
-        <CardHeader>
-          <CardTitle className="flex items-center justify-between text-yellow-400">
-            <div className="flex items-center space-x-2">
-              <Image className="w-5 h-5" />
-              <span className="tracking-wide">OFFICIAL PHOTOGRAPHS</span>
-            </div>
-            <Button 
-              onClick={handleViewGallery}
-              className="bg-gradient-to-r from-gold-500 to-gold-400 text-navy-900 hover:from-gold-400 hover:to-gold-300 border border-gold-500/50 shadow-md font-medium"
-              size="sm"
-            >
-              <Camera className="w-4 h-4 mr-2" />
-              View Gallery ({petData?.galleryPhotos?.length || 0})
-            </Button>
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <p className="text-yellow-400 text-sm font-semibold tracking-wide">PORTRAIT</p>
-                <div className="w-8 h-8 bg-yellow-500 rounded-full flex items-center justify-center">
-                  <span className="text-xs font-bold text-slate-900">1</span>
-                </div>
-              </div>
-              <div className="aspect-square rounded-lg overflow-hidden border-4 border-yellow-600/50 shadow-lg">
-                <img 
-                  src={petData?.photoUrl || "/placeholder.svg"} 
-                  alt={`${petData?.name || "Pet"} portrait`}
-                  className="w-full h-full object-cover"
-                />
-              </div>
-            </div>
-            <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <p className="text-yellow-400 text-sm font-semibold tracking-wide">FULL PROFILE</p>
-                <div className="w-8 h-8 bg-yellow-500 rounded-full flex items-center justify-center">
-                  <span className="text-xs font-bold text-slate-900">2</span>
-                </div>
-              </div>
-              <div className="aspect-[4/3] rounded-lg overflow-hidden border-4 border-yellow-600/50 shadow-lg">
-                <img 
-                  src={petData?.fullBodyPhotoUrl || "/placeholder.svg"} 
-                  alt={`${petData?.name || "Pet"} full profile`}
-                  className="w-full h-full object-cover"
-                />
-              </div>
             </div>
           </div>
         </CardContent>

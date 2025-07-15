@@ -19,7 +19,6 @@ export const PetProfileContent = ({
   setActiveTab, 
   setIsInAppSharingOpen 
 }: PetProfileContentProps) => {
-  // Ensure user_id is passed through to petData
   const enhancedPetData = {
     ...petData,
     user_id: selectedPet?.user_id || petData.user_id
@@ -27,7 +26,6 @@ export const PetProfileContent = ({
 
   const handleProfileEdit = () => {
     console.log("Profile edit clicked - switching to profile edit mode");
-    // Dispatch custom event that the PetProfileCard can listen to
     window.dispatchEvent(new CustomEvent('start-pet-profile-edit'));
   };
 
@@ -35,7 +33,7 @@ export const PetProfileContent = ({
     <div className="passport-map-container">
       <div className="passport-map-bg" />
       
-      {/* Prominent Edit Button at the Top */}
+      {/* Edit Button */}
       <div className="flex justify-center mb-6">
         <ProfileEditButton 
           userId={enhancedPetData.user_id} 
@@ -80,10 +78,8 @@ export const PetProfileContent = ({
             </CardContent>
           </Card>
 
-          {/* Support Animal Status */}
           <SupportAnimalBanner status={enhancedPetData.supportAnimalStatus} />
 
-          {/* Social Sharing */}
           <SocialShareButtons 
             petName={enhancedPetData.name}
             petId={selectedPet?.id || enhancedPetData.id || ""}
@@ -93,7 +89,6 @@ export const PetProfileContent = ({
 
         {/* Right Column - Main Actions */}
         <div className="space-y-4">
-          {/* PDF Generation Card */}
           <Card className="bg-[#f8f8f8] shadow-md">
             <CardHeader className="pb-3">
               <CardTitle className="text-lg font-serif text-navy-900 border-b-2 border-gold-500 pb-2">
@@ -105,7 +100,6 @@ export const PetProfileContent = ({
             </CardContent>
           </Card>
 
-          {/* Quick Actions Card */}
           <Card className="bg-[#f8f8f8] shadow-md">
             <CardHeader className="pb-3">
               <CardTitle className="text-lg font-serif text-navy-900 border-b-2 border-gold-500 pb-2">
@@ -136,7 +130,6 @@ export const PetProfileContent = ({
             </CardContent>
           </Card>
 
-          {/* Medical Alert Card */}
           {enhancedPetData.medicalAlert && (
             <Card className="bg-gradient-to-r from-red-500 to-red-600 text-white shadow-lg cursor-pointer transition-all hover:shadow-xl hover:scale-105 border-2 border-red-400 hover:border-red-300"
                   onClick={() => setActiveTab("care")}>

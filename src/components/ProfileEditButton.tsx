@@ -11,21 +11,14 @@ interface ProfileEditButtonProps {
 export const ProfileEditButton = ({ userId, onEdit }: ProfileEditButtonProps) => {
   const { user } = useAuth();
   
-  console.log("ProfileEditButton - Current user:", user?.id);
-  console.log("ProfileEditButton - Pet user_id:", userId);
-  
   // Only show if the current user is the profile owner
   const isOwner = user?.id === userId;
   
-  console.log("ProfileEditButton - isOwner:", isOwner);
-  
   if (!isOwner) {
-    console.log("ProfileEditButton - Not owner, hiding button");
     return null;
   }
 
   const handleClick = () => {
-    console.log("Edit Profile button clicked - calling onEdit");
     if (onEdit) {
       onEdit();
     }

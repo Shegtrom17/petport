@@ -32,16 +32,24 @@ export const usePetData = () => {
 
   const loadPets = async () => {
     try {
+      console.log("usePetData - Loading pets...");
       setIsLoading(true);
       const userPets = await fetchUserPets();
+      console.log("usePetData - Fetched pets:", userPets);
+      
       // Sort pets by creation date to ensure first pet stays first
       const sortedPets = userPets.sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
       setPets(sortedPets);
       
       if (sortedPets.length > 0) {
+        console.log("usePetData - Loading first pet details:", sortedPets[0].id);
         const petDetails = await fetchPetDetails(sortedPets[0].id);
+        console.log("usePetData - Fetched pet details:", petDetails);
         setSelectedPet(petDetails);
         await fetchDocuments(sortedPets[0].id);
+      } else {
+        console.log("usePetData - No pets found");
+        setSelectedPet(null);
       }
     } catch (error) {
       console.error("Error loading pets:", error);
@@ -57,8 +65,10 @@ export const usePetData = () => {
 
   const handleSelectPet = async (petId: string) => {
     try {
+      console.log("usePetData - Selecting pet:", petId);
       setIsLoading(true);
       const petDetails = await fetchPetDetails(petId);
+      console.log("usePetData - Selected pet details:", petDetails);
       setSelectedPet(petDetails);
       await fetchDocuments(petId);
     } catch (error) {
@@ -76,6 +86,7 @@ export const usePetData = () => {
   const handlePetUpdate = async () => {
     if (selectedPet?.id) {
       try {
+        console.log("usePetData - Updating pet:", selectedPet.id);
         const updatedPetDetails = await fetchPetDetails(selectedPet.id);
         setSelectedPet(updatedPetDetails);
         

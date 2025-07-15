@@ -49,6 +49,25 @@ interface PetProfileCardProps {
 }
 
 export const PetProfileCard = ({ petData, onUpdate }: PetProfileCardProps) => {
+  console.log("PetProfileCard - Received petData:", petData);
+  
+  // Safety check for missing or invalid petData
+  if (!petData || !petData.id) {
+    console.error("PetProfileCard - petData is missing or invalid:", petData);
+    return (
+      <Card className="border-2 border-red-500 bg-red-50">
+        <CardContent className="p-6">
+          <p className="text-center text-red-500 text-lg font-semibold">
+            Pet data not available.
+          </p>
+          <p className="text-center text-red-400 text-sm mt-2">
+            Please check your connection and try again.
+          </p>
+        </CardContent>
+      </Card>
+    );
+  }
+
   const [isEditing, setIsEditing] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const { user } = useAuth();

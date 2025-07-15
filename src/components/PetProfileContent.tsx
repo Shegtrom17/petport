@@ -19,6 +19,26 @@ export const PetProfileContent = ({
   setActiveTab, 
   setIsInAppSharingOpen 
 }: PetProfileContentProps) => {
+  console.log("PetProfileContent - Received petData:", petData);
+  console.log("PetProfileContent - Received selectedPet:", selectedPet);
+  
+  // Safety check for missing data
+  if (!petData) {
+    console.error("PetProfileContent - petData is missing");
+    return (
+      <Card className="border-2 border-red-500 bg-red-50">
+        <CardContent className="p-6">
+          <p className="text-center text-red-500 text-lg font-semibold">
+            Pet profile data not available.
+          </p>
+          <p className="text-center text-red-400 text-sm mt-2">
+            Please check your connection and try again.
+          </p>
+        </CardContent>
+      </Card>
+    );
+  }
+
   const enhancedPetData = {
     ...petData,
     user_id: selectedPet?.user_id || petData.user_id
@@ -50,15 +70,15 @@ export const PetProfileContent = ({
                 <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-gold-500/50 shadow-lg">
                   <img 
                     src={enhancedPetData.photoUrl || "/placeholder.svg"} 
-                    alt={enhancedPetData.name}
+                    alt={enhancedPetData.name || "Pet"}
                     className="w-full h-full object-cover"
                   />
                 </div>
                 <div className="text-center">
-                  <h2 className="text-2xl font-serif font-bold text-navy-900 mb-1">{enhancedPetData.name}</h2>
-                  <p className="text-navy-600 mb-2">{enhancedPetData.breed} • {enhancedPetData.age}</p>
+                  <h2 className="text-2xl font-serif font-bold text-navy-900 mb-1">{enhancedPetData.name || "Unknown Pet"}</h2>
+                  <p className="text-navy-600 mb-2">{enhancedPetData.breed || "Unknown Breed"} • {enhancedPetData.age || "Unknown Age"}</p>
                   <div className="bg-gradient-to-r from-gold-500 to-gold-400 text-navy-900 px-4 py-2 rounded-full font-mono text-sm font-bold">
-                    {enhancedPetData.petPassId}
+                    {enhancedPetData.petPassId || "No ID"}
                   </div>
                 </div>
                 <div className="w-full border-t border-gold-500/30 pt-4">
@@ -81,7 +101,7 @@ export const PetProfileContent = ({
           <SupportAnimalBanner status={enhancedPetData.supportAnimalStatus} />
 
           <SocialShareButtons 
-            petName={enhancedPetData.name}
+            petName={enhancedPetData.name || "Pet"}
             petId={selectedPet?.id || enhancedPetData.id || ""}
             isMissingPet={false}
           />
@@ -96,7 +116,7 @@ export const PetProfileContent = ({
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
-              <PetPDFGenerator petId={selectedPet?.id || enhancedPetData.id || ""} petName={enhancedPetData.name} />
+              <PetPDFGenerator petId={selectedPet?.id || enhancedPetData.id || ""} petName={enhancedPetData.name || "Pet"} />
             </CardContent>
           </Card>
 
@@ -136,7 +156,7 @@ export const PetProfileContent = ({
               <CardContent className="p-4">
                 <div className="text-center">
                   <h3 className="text-lg font-bold mb-1">⚠️ MEDICAL ALERT</h3>
-                  <p className="text-red-100 text-sm mb-2">{enhancedPetData.medicalConditions}</p>
+                  <p className="text-red-100 text-sm mb-2">{enhancedPetData.medicalConditions || "Medical conditions specified"}</p>
                   <div className="mt-3 pt-2 border-t border-red-400/50">
                     <p className="text-red-200 text-xs font-medium">
                       👆 Click to view full medical details

@@ -58,20 +58,7 @@ export const PetProfileCard = ({ petData, onUpdate }: PetProfileCardProps) => {
   console.log("PetProfileCard rendered with petData:", petData);
   console.log("Is editing state:", isEditing);
   console.log("Current user:", user?.id);
-  console.log("Pet user_id:", petData.user_id);
-
-  // Listen for the edit event from ProfileEditButton
-  useEffect(() => {
-    const handleEditEvent = () => {
-      console.log("Edit event received, entering edit mode");
-      setIsEditing(true);
-    };
-
-    window.addEventListener('start-pet-profile-edit', handleEditEvent);
-    return () => {
-      window.removeEventListener('start-pet-profile-edit', handleEditEvent);
-    };
-  }, []);
+  console.log("Pet user_id:", petData?.user_id);
 
   const handleUploadMedicalDoc = () => {
     console.log("Opening medical document upload...");
@@ -91,7 +78,7 @@ export const PetProfileCard = ({ petData, onUpdate }: PetProfileCardProps) => {
   };
 
   const handleDeletePet = async () => {
-    if (!user?.id || !petData.id) return;
+    if (!user?.id || !petData?.id) return;
 
     setIsDeleting(true);
     try {
@@ -113,7 +100,6 @@ export const PetProfileCard = ({ petData, onUpdate }: PetProfileCardProps) => {
           title: "Success",
           description: `${petData.name} has been deleted successfully.`,
         });
-        // Navigate back to main page or pets list
         navigate('/');
       }
     } catch (error) {
@@ -129,15 +115,35 @@ export const PetProfileCard = ({ petData, onUpdate }: PetProfileCardProps) => {
   };
 
   // Check if current user owns this pet
-  const isOwner = user?.id === petData.user_id;
+  const isOwner = user?.id === petData?.user_id;
+
+  // Create safe petData with all required fields for PetEditForm
+  const safeEditData = {
+    id: petData?.id || "",
+    name: petData?.name || "",
+    breed: petData?.breed || "",
+    age: petData?.age || "",
+    weight: petData?.weight || "",
+    microchipId: petData?.microchipId || "",
+    species: petData?.species || "",
+    state: petData?.state || "",
+    county: petData?.county || "",
+    notes: petData?.notes || "",
+    vetContact: petData?.vetContact || "",
+    emergencyContact: petData?.emergencyContact || "",
+    secondEmergencyContact: petData?.secondEmergencyContact || "",
+    petCaretaker: petData?.petCaretaker || "",
+    lastVaccination: petData?.lastVaccination || "",
+    medicalConditions: petData?.medicalConditions || "",
+    supportAnimalStatus: petData?.supportAnimalStatus || "",
+    bio: petData?.bio || "",
+    user_id: petData?.user_id || user?.id || ""
+  };
 
   if (isEditing) {
     return (
       <PetEditForm
-        petData={{
-          ...petData,
-          bio: petData.bio || ""
-        }}
+        petData={safeEditData}
         onSave={handleEditSave}
         onCancel={() => setIsEditing(false)}
       />
@@ -174,9 +180,9 @@ export const PetProfileCard = ({ petData, onUpdate }: PetProfileCardProps) => {
             </AlertDialogTrigger>
             <AlertDialogContent>
               <AlertDialogHeader>
-                <AlertDialogTitle>Delete {petData.name}?</AlertDialogTitle>
+                <AlertDialogTitle>Delete {petData?.name || "this pet"}?</AlertDialogTitle>
                 <AlertDialogDescription>
-                  This action cannot be undone. This will permanently delete {petData.name}'s profile and all associated data including photos, documents, and medical records.
+                  This action cannot be undone. This will permanently delete {petData?.name || "this pet"}'s profile and all associated data including photos, documents, and medical records.
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
@@ -195,15 +201,15 @@ export const PetProfileCard = ({ petData, onUpdate }: PetProfileCardProps) => {
       )}
 
       {/* Support Animal Status Banner */}
-      <SupportAnimalBanner status={petData.supportAnimalStatus || null} />
+      <SupportAnimalBanner status={petData?.supportAnimalStatus || null} />
 
       {/* PDF Generator Section - Navy blue styling */}
       <div className="bg-gradient-to-br from-navy-900 to-slate-800 p-6 rounded-xl border border-yellow-600/30 shadow-xl">
-        <PetPDFGenerator petId={petData.id} petName={petData.name} />
+        <PetPDFGenerator petId={petData?.id || ""} petName={petData?.name || ""} />
       </div>
 
       {/* Medical Alert Banner */}
-      {petData.medicalAlert && (
+      {petData?.medicalAlert && (
         <Card className="border-2 border-red-600 shadow-xl bg-gradient-to-r from-red-500 to-red-600 text-white relative overflow-hidden cursor-pointer transition-all hover:shadow-2xl hover:scale-[1.02] hover:border-red-400"
               onClick={() => window.dispatchEvent(new CustomEvent('navigate-to-care'))}>
           <div className="absolute inset-0 bg-black/10"></div>
@@ -212,7 +218,7 @@ export const PetProfileCard = ({ petData, onUpdate }: PetProfileCardProps) => {
               <AlertTriangle className="w-8 h-8 text-white animate-pulse" />
               <div className="text-center">
                 <h3 className="text-xl font-bold tracking-wide">MEDICAL ALERT</h3>
-                <p className="text-red-100 text-sm">{petData.medicalConditions}</p>
+                <p className="text-red-100 text-sm">{petData?.medicalConditions || "Medical conditions specified"}</p>
                 <div className="mt-2 pt-2 border-t border-red-400/50">
                   <p className="text-red-200 text-xs font-medium">
                     👆 Click to view full medical details
@@ -241,7 +247,7 @@ export const PetProfileCard = ({ petData, onUpdate }: PetProfileCardProps) => {
               </div>
             </div>
             <div className="text-xs text-slate-400 font-mono">
-              PetPort ID: {petData.petPortId}
+              PetPort ID: {petData?.petPortId || "Not specified"}
             </div>
           </div>
         </CardHeader>
@@ -249,24 +255,24 @@ export const PetProfileCard = ({ petData, onUpdate }: PetProfileCardProps) => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
               <p className="text-yellow-400 text-sm font-semibold tracking-wide">PRIMARY VETERINARIAN</p>
-              <p className="text-lg font-medium">{petData.vetContact || "Not specified"}</p>
+              <p className="text-lg font-medium">{petData?.vetContact || "Not specified"}</p>
             </div>
             <div className="space-y-2">
               <p className="text-yellow-400 text-sm font-semibold tracking-wide">MICROCHIP NUMBER</p>
               <p className="text-lg font-mono bg-slate-700/50 px-3 py-2 rounded border border-yellow-600/30">
-                {petData.microchipId || "Not specified"}
+                {petData?.microchipId || "Not specified"}
               </p>
             </div>
             <div className="space-y-2">
               <p className="text-yellow-400 text-sm font-semibold tracking-wide">PET CARETAKER</p>
-              <p className="text-lg font-medium">{petData.petCaretaker || "Not specified"}</p>
+              <p className="text-lg font-medium">{petData?.petCaretaker || "Not specified"}</p>
             </div>
             <div className="space-y-2">
               <p className="text-yellow-400 text-sm font-semibold tracking-wide">LOCATION</p>
               <p className="text-lg font-medium">
-                {petData.state && petData.county ? `${petData.county}, ${petData.state}` : 
-                 petData.state ? petData.state : 
-                 petData.county ? petData.county : 'Not specified'}
+                {petData?.state && petData?.county ? `${petData.county}, ${petData.state}` : 
+                 petData?.state ? petData.state : 
+                 petData?.county ? petData.county : 'Not specified'}
               </p>
             </div>
           </div>
@@ -287,7 +293,7 @@ export const PetProfileCard = ({ petData, onUpdate }: PetProfileCardProps) => {
               size="sm"
             >
               <Camera className="w-4 h-4 mr-2" />
-              View Gallery ({petData.galleryPhotos?.length || 0})
+              View Gallery ({petData?.galleryPhotos?.length || 0})
             </Button>
           </CardTitle>
         </CardHeader>
@@ -302,8 +308,8 @@ export const PetProfileCard = ({ petData, onUpdate }: PetProfileCardProps) => {
               </div>
               <div className="aspect-square rounded-lg overflow-hidden border-4 border-yellow-600/50 shadow-lg">
                 <img 
-                  src={petData.photoUrl || "/placeholder.svg"} 
-                  alt={`${petData.name} portrait`}
+                  src={petData?.photoUrl || "/placeholder.svg"} 
+                  alt={`${petData?.name || "Pet"} portrait`}
                   className="w-full h-full object-cover"
                 />
               </div>
@@ -317,8 +323,8 @@ export const PetProfileCard = ({ petData, onUpdate }: PetProfileCardProps) => {
               </div>
               <div className="aspect-[4/3] rounded-lg overflow-hidden border-4 border-yellow-600/50 shadow-lg">
                 <img 
-                  src={petData.fullBodyPhotoUrl || "/placeholder.svg"} 
-                  alt={`${petData.name} full profile`}
+                  src={petData?.fullBodyPhotoUrl || "/placeholder.svg"} 
+                  alt={`${petData?.name || "Pet"} full profile`}
                   className="w-full h-full object-cover"
                 />
               </div>
@@ -338,8 +344,14 @@ export const PetProfileCard = ({ petData, onUpdate }: PetProfileCardProps) => {
         <CardContent className="space-y-4">
           <div className="bg-slate-700/30 p-4 rounded-lg border border-yellow-600/30">
             <p className="text-yellow-400 text-sm font-semibold tracking-wide mb-2">BEHAVIORAL NOTES</p>
-            <p className="text-slate-200">{petData.notes || "No notes specified"}</p>
+            <p className="text-slate-200">{petData?.notes || "No notes specified"}</p>
           </div>
+          {petData?.bio && (
+            <div className="bg-slate-700/30 p-4 rounded-lg border border-yellow-600/30">
+              <p className="text-yellow-400 text-sm font-semibold tracking-wide mb-2">BIO</p>
+              <p className="text-slate-200">{petData.bio}</p>
+            </div>
+          )}
         </CardContent>
       </Card>
 
@@ -354,11 +366,11 @@ export const PetProfileCard = ({ petData, onUpdate }: PetProfileCardProps) => {
         <CardContent className="space-y-4">
           <div>
             <p className="text-gold-400 text-sm font-medium tracking-wide">Primary Emergency Contact</p>
-            <p className="text-lg font-medium text-white">{petData.emergencyContact || "Not specified"}</p>
+            <p className="text-lg font-medium text-white">{petData?.emergencyContact || "Not specified"}</p>
           </div>
           <div>
             <p className="text-gold-400 text-sm font-medium tracking-wide">Secondary Emergency Contact</p>
-            <p className="text-lg font-medium text-white">{petData.secondEmergencyContact || "Not specified"}</p>
+            <p className="text-lg font-medium text-white">{petData?.secondEmergencyContact || "Not specified"}</p>
           </div>
         </CardContent>
       </Card>
@@ -374,27 +386,27 @@ export const PetProfileCard = ({ petData, onUpdate }: PetProfileCardProps) => {
         <CardContent className="space-y-4">
           <div>
             <p className="text-gold-400 text-sm font-medium tracking-wide">Last Vaccination</p>
-            <p className="text-lg text-white font-medium">{petData.lastVaccination || "Not specified"}</p>
+            <p className="text-lg text-white font-medium">{petData?.lastVaccination || "Not specified"}</p>
           </div>
           
           {/* Medical Alert Section */}
           <div className="border-t border-yellow-600/30 pt-4">
             <div className="flex items-center justify-between mb-2">
               <p className="text-gold-400 text-sm font-medium tracking-wide">Medical Alerts</p>
-              {petData.medicalAlert && (
+              {petData?.medicalAlert && (
                 <Badge variant="destructive" className="bg-red-600">
                   <AlertTriangle className="w-3 h-3 mr-1" />
                   ALERT
                 </Badge>
               )}
             </div>
-            {petData.medicalAlert ? (
+            {petData?.medicalAlert ? (
               <div className="bg-red-900/30 border border-red-600/50 rounded-lg p-4">
                 <p className="text-red-300 font-medium mb-2">Medical Conditions:</p>
-                <p className="text-red-200">{petData.medicalConditions || "No conditions specified"}</p>
+                <p className="text-red-200">{petData?.medicalConditions || "No conditions specified"}</p>
                 
                 <div className="mt-4 flex items-center space-x-2">
-                  {petData.medicalEmergencyDocument ? (
+                  {petData?.medicalEmergencyDocument ? (
                     <Button size="sm" variant="outline" className="border-red-400 text-red-300 hover:bg-red-900/50">
                       <FileText className="w-4 h-4 mr-2" />
                       View Medical Document
@@ -417,7 +429,7 @@ export const PetProfileCard = ({ petData, onUpdate }: PetProfileCardProps) => {
             )}
           </div>
 
-          {petData.medications.length > 0 && (
+          {petData?.medications && petData.medications.length > 0 && (
             <div>
               <p className="text-gold-400 text-sm font-medium tracking-wide mb-2">Current Medications</p>
               <div className="space-y-2">
@@ -440,7 +452,7 @@ export const PetProfileCard = ({ petData, onUpdate }: PetProfileCardProps) => {
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {petData.badges.slice(0, 4).map((badge, index) => {
+            {petData?.badges?.slice(0, 4).map((badge, index) => {
               // Different icons for different badge types
               const getIcon = (badgeName: string) => {
                 if (badgeName.toLowerCase().includes('therapy') || badgeName.toLowerCase().includes('certified')) return '🏆';
@@ -461,9 +473,9 @@ export const PetProfileCard = ({ petData, onUpdate }: PetProfileCardProps) => {
                   <p className="text-center text-xs mt-2 text-slate-300">{badge}</p>
                 </div>
               );
-            })}
+            }) || []}
           </div>
-          {petData.badges.length > 4 && (
+          {petData?.badges && petData.badges.length > 4 && (
             <div className="text-center mt-4">
               <Badge variant="outline" className="border-yellow-600 text-yellow-400">
                 +{petData.badges.length - 4} more achievements

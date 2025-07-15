@@ -108,6 +108,49 @@ export const usePetData = () => {
     }
   };
 
+  const togglePetPublicVisibility = async (petId: string, isPublic: boolean) => {
+    try {
+      const { error } = await supabase
+        .from('pets')
+        .update({ is_public: isPublic })
+        .eq('id', petId);
+
+      if (error) {
+        console.error("Error updating pet visibility:", error);
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "Could not update pet visibility. Please try again."
+        });
+        return false;
+      }
+
+      // Update local state
+      setPets(pets => pets.map(pet => 
+        pet.id === petId ? { ...pet, is_public: isPublic } : pet
+      ));
+
+      if (selectedPet?.id === petId) {
+        setSelectedPet(prev => prev ? { ...prev, is_public: isPublic } : null);
+      }
+
+      toast({
+        title: "Success",
+        description: `Pet profile is now ${isPublic ? 'public' : 'private'}.`
+      });
+
+      return true;
+    } catch (error) {
+      console.error("Error updating pet visibility:", error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Could not update pet visibility. Please try again."
+      });
+      return false;
+    }
+  };
+
   useEffect(() => {
     loadPets();
   }, []);
@@ -120,6 +163,7 @@ export const usePetData = () => {
     handleSelectPet,
     handlePetUpdate,
     handleDocumentUpdate,
-    handleReorderPets
+    handleReorderPets,
+    togglePetPublicVisibility
   };
 };

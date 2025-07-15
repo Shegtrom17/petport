@@ -361,6 +361,7 @@ export type Database = {
           county: string | null
           created_at: string
           id: string
+          is_public: boolean
           microchip_id: string | null
           name: string
           notes: string | null
@@ -378,6 +379,7 @@ export type Database = {
           county?: string | null
           created_at?: string
           id?: string
+          is_public?: boolean
           microchip_id?: string | null
           name: string
           notes?: string | null
@@ -395,6 +397,7 @@ export type Database = {
           county?: string | null
           created_at?: string
           id?: string
+          is_public?: boolean
           microchip_id?: string | null
           name?: string
           notes?: string | null

@@ -18,6 +18,12 @@ export const PetProfileContent = ({
   setActiveTab, 
   setIsInAppSharingOpen 
 }: PetProfileContentProps) => {
+  // Ensure user_id is passed through to petData
+  const enhancedPetData = {
+    ...petData,
+    user_id: selectedPet?.user_id || petData.user_id
+  };
+
   return (
     <div className="passport-map-container">
       <div className="passport-map-bg" />
@@ -29,22 +35,22 @@ export const PetProfileContent = ({
             <div className="flex flex-col items-center space-y-4">
               <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-gold-500/50 shadow-lg">
                 <img 
-                  src={petData.photoUrl} 
-                  alt={petData.name}
+                  src={enhancedPetData.photoUrl} 
+                  alt={enhancedPetData.name}
                   className="w-full h-full object-cover"
                 />
               </div>
               <div className="text-center">
-                <h2 className="text-2xl font-serif font-bold text-navy-900 mb-1">{petData.name}</h2>
-                <p className="text-navy-600 mb-2">{petData.breed} • {petData.age}</p>
+                <h2 className="text-2xl font-serif font-bold text-navy-900 mb-1">{enhancedPetData.name}</h2>
+                <p className="text-navy-600 mb-2">{enhancedPetData.breed} • {enhancedPetData.age}</p>
                 <div className="bg-gradient-to-r from-gold-500 to-gold-400 text-navy-900 px-4 py-2 rounded-full font-mono text-sm font-bold">
-                  {petData.petPassId}
+                  {enhancedPetData.petPassId}
                 </div>
               </div>
               <div className="w-full border-t border-gold-500/30 pt-4">
                 <h3 className="text-lg font-serif font-bold text-navy-900 mb-3 text-center border-b-2 border-gold-500 pb-1">Certifications</h3>
                 <div className="grid grid-cols-2 gap-2">
-                  {petData.badges.slice(0, 4).map((badge: string, index: number) => (
+                  {enhancedPetData.badges.slice(0, 4).map((badge: string, index: number) => (
                     <div key={index} className="text-center">
                       <div className="w-12 h-12 bg-gradient-to-br from-gold-400 to-gold-600 rounded-full mx-auto mb-1 flex items-center justify-center">
                         <span className="text-xl">🏆</span>
@@ -59,12 +65,12 @@ export const PetProfileContent = ({
         </Card>
 
         {/* Support Animal Status */}
-        <SupportAnimalBanner status={petData.supportAnimalStatus} />
+        <SupportAnimalBanner status={enhancedPetData.supportAnimalStatus} />
 
         {/* Social Sharing */}
         <SocialShareButtons 
-          petName={petData.name}
-          petId={selectedPet?.id || petData.id || ""}
+          petName={enhancedPetData.name}
+          petId={selectedPet?.id || enhancedPetData.id || ""}
           isMissingPet={false}
         />
       </div>
@@ -79,7 +85,7 @@ export const PetProfileContent = ({
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
-            <PetPDFGenerator petId={selectedPet?.id || petData.id || ""} petName={petData.name} />
+            <PetPDFGenerator petId={selectedPet?.id || enhancedPetData.id || ""} petName={enhancedPetData.name} />
           </CardContent>
         </Card>
 
@@ -115,13 +121,13 @@ export const PetProfileContent = ({
         </Card>
 
         {/* Medical Alert Card */}
-        {petData.medicalAlert && (
+        {enhancedPetData.medicalAlert && (
           <Card className="bg-gradient-to-r from-red-500 to-red-600 text-white shadow-lg cursor-pointer transition-all hover:shadow-xl hover:scale-105 border-2 border-red-400 hover:border-red-300"
                 onClick={() => setActiveTab("care")}>
             <CardContent className="p-4">
               <div className="text-center">
                 <h3 className="text-lg font-bold mb-1">⚠️ MEDICAL ALERT</h3>
-                <p className="text-red-100 text-sm mb-2">{petData.medicalConditions}</p>
+                <p className="text-red-100 text-sm mb-2">{enhancedPetData.medicalConditions}</p>
                 <div className="mt-3 pt-2 border-t border-red-400/50">
                   <p className="text-red-200 text-xs font-medium">
                     👆 Click to view full medical details

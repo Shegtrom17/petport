@@ -17,6 +17,7 @@ import { PetPassportCard } from "@/components/PetPassportCard";
 import { PetSelector } from "@/components/PetSelector";
 import { AuthenticationPrompt } from "@/components/AuthenticationPrompt";
 import { PetProfileContent } from "@/components/PetProfileContent";
+import { PetProfileCard } from "@/components/PetProfileCard";
 import { usePetData } from "@/hooks/usePetData";
 
 const Index = () => {
@@ -60,12 +61,14 @@ const Index = () => {
   }, []);
 
   const petData = selectedPet || {
+    id: "sample-id",
     name: "Luna",
     breed: "Golden Retriever", 
     species: "dog",
     age: "3 years",
     weight: "65 lbs",
     microchipId: "985112001234567",
+    petPortId: "PP-2025-001",
     petPassId: "PP-2025-001",
     bio: "Luna is a gentle and loving Golden Retriever with an exceptional temperament. She's been professionally trained and has a calm, patient demeanor that makes her wonderful with children and other pets. Luna loves outdoor adventures, especially hiking and swimming, but is equally content relaxing at home. She's house-trained, leash-trained, and responds well to commands. Her favorite activities include fetch, long walks, and meeting new people at the dog park.",
     notes: "Friendly with other dogs, loves swimming, afraid of thunderstorms",
@@ -123,7 +126,8 @@ const Index = () => {
         url: "https://images.unsplash.com/photo-1552053831-71594a27632d?w=600&h=400&fit=crop",
         caption: "Left ear has small brown spot near tip"
       }
-    ]
+    ],
+    user_id: user?.id || "sample-user-id" // Ensure user_id is included
   };
 
   const renderTabContent = () => {
@@ -131,12 +135,18 @@ const Index = () => {
       case "profile":
         console.log("Rendering profile tab");
         return (
-          <PetProfileContent 
-            petData={petData}
-            selectedPet={selectedPet}
-            setActiveTab={setActiveTab}
-            setIsInAppSharingOpen={setIsInAppSharingOpen}
-          />
+          <div className="space-y-6">
+            <PetProfileContent 
+              petData={petData}
+              selectedPet={selectedPet}
+              setActiveTab={setActiveTab}
+              setIsInAppSharingOpen={setIsInAppSharingOpen}
+            />
+            <PetProfileCard 
+              petData={petData} 
+              onUpdate={handlePetUpdate}
+            />
+          </div>
         );
       case "care":
         console.log("Rendering CareInstructionsSection");

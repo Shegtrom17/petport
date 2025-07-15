@@ -7,6 +7,7 @@ import { MapPin, Phone, FileText, Calendar, Pill, Image, Stethoscope, Clipboard,
 import { SupportAnimalBanner } from "@/components/SupportAnimalBanner";
 import { PetEditForm } from "@/components/PetEditForm";
 import { PetPDFGenerator } from "@/components/PetPDFGenerator";
+import { useAuth } from "@/context/AuthContext";
 
 interface PetData {
   id: string;
@@ -35,6 +36,7 @@ interface PetData {
   medicalConditions?: string;
   medicalEmergencyDocument?: string | null;
   galleryPhotos?: Array<{ url: string; caption: string; }>;
+  user_id?: string; // Add user_id to check ownership
 }
 
 interface PetProfileCardProps {
@@ -44,9 +46,12 @@ interface PetProfileCardProps {
 
 export const PetProfileCard = ({ petData, onUpdate }: PetProfileCardProps) => {
   const [isEditing, setIsEditing] = useState(false);
+  const { user } = useAuth();
 
   console.log("PetProfileCard rendered with petData:", petData);
   console.log("Is editing state:", isEditing);
+  console.log("Current user:", user?.id);
+  console.log("Pet user_id:", petData.user_id);
 
   const handleUploadMedicalDoc = () => {
     console.log("Opening medical document upload...");
@@ -65,6 +70,9 @@ export const PetProfileCard = ({ petData, onUpdate }: PetProfileCardProps) => {
     }
   };
 
+  // Check if current user owns this pet
+  const isOwner = user?.id === petData.user_id;
+
   if (isEditing) {
     return (
       <PetEditForm
@@ -77,20 +85,22 @@ export const PetProfileCard = ({ petData, onUpdate }: PetProfileCardProps) => {
 
   return (
     <div className="space-y-6">
-      {/* Edit Button - Navy blue styling */}
-      <div className="flex justify-end mb-4">
-        <Button 
-          onClick={() => {
-            console.log("Edit button clicked!");
-            setIsEditing(true);
-          }}
-          className="bg-gradient-to-r from-navy-900 to-navy-800 hover:from-navy-800 hover:to-navy-700 text-gold-500 border border-gold-500/30 px-6 py-2 text-base font-medium shadow-lg"
-          size="lg"
-        >
-          <Edit className="w-5 h-5 mr-2" />
-          Edit Pet Profile
-        </Button>
-      </div>
+      {/* Edit Button - Only show if user is the owner */}
+      {isOwner && (
+        <div className="flex justify-end mb-4">
+          <Button 
+            onClick={() => {
+              console.log("Edit button clicked!");
+              setIsEditing(true);
+            }}
+            className="bg-gradient-to-r from-navy-900 to-navy-800 hover:from-navy-800 hover:to-navy-700 text-gold-500 border border-gold-500/30 px-6 py-2 text-base font-medium shadow-lg"
+            size="lg"
+          >
+            <Edit className="w-5 h-5 mr-2" />
+            Edit Pet Profile
+          </Button>
+        </div>
+      )}
 
       {/* Support Animal Status Banner */}
       <SupportAnimalBanner status={petData.supportAnimalStatus || null} />

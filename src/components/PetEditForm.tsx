@@ -43,9 +43,25 @@ interface PetEditFormProps {
 }
 
 export const PetEditForm = ({ petData, onSave, onCancel }: PetEditFormProps) => {
-  const [formData, setFormData] = useState(petData);
-  const [photoPreview, setPhotoPreview] = useState(petData.photoUrl);
-  const [fullBodyPreview, setFullBodyPreview] = useState(petData.fullBodyPhotoUrl);
+  const [formData, setFormData] = useState({
+    ...petData,
+    // Ensure no null values that cause React warnings
+    notes: petData.notes || '',
+    medicalConditions: petData.medicalConditions || '',
+    vetContact: petData.vetContact || '',
+    emergencyContact: petData.emergencyContact || '',
+    secondEmergencyContact: petData.secondEmergencyContact || '',
+    petCaretaker: petData.petCaretaker || '',
+    lastVaccination: petData.lastVaccination || '',
+    photoUrl: petData.photoUrl || '',
+    fullBodyPhotoUrl: petData.fullBodyPhotoUrl || '',
+    microchipId: petData.microchipId || '',
+    state: petData.state || '',
+    county: petData.county || ''
+  });
+  
+  const [photoPreview, setPhotoPreview] = useState(formData.photoUrl);
+  const [fullBodyPreview, setFullBodyPreview] = useState(formData.fullBodyPhotoUrl);
 
   const handlePhotoCapture = (event: React.ChangeEvent<HTMLInputElement>, type: 'profile' | 'fullBody') => {
     const file = event.target.files?.[0];
@@ -233,7 +249,7 @@ export const PetEditForm = ({ petData, onSave, onCancel }: PetEditFormProps) => 
                 <Label htmlFor="medicalConditions">Medical Conditions</Label>
                 <Textarea
                   id="medicalConditions"
-                  value={formData.medicalConditions || ''}
+                  value={formData.medicalConditions}
                   onChange={(e) => setFormData(prev => ({ ...prev, medicalConditions: e.target.value }))}
                   placeholder="Describe any medical conditions or alerts..."
                 />

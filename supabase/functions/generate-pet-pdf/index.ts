@@ -1,8 +1,11 @@
 
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.50.3'
 import { corsHeaders } from '../_shared/cors.ts'
 
 const OPENAI_API_KEY = Deno.env.get('OPENAI_API_KEY')
+const SUPABASE_URL = Deno.env.get('SUPABASE_URL')
+const SUPABASE_ANON_KEY = Deno.env.get('SUPABASE_ANON_KEY')
 
 // Rate limiting map (in production, use Redis or similar)
 const rateLimitMap = new Map<string, { count: number; resetTime: number }>()
@@ -40,12 +43,12 @@ serve(async (req) => {
 
   try {
     // Validate environment variables
-    if (!OPENAI_API_KEY) {
-      console.error('OpenAI API key not configured')
+    if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
+      console.error('Supabase environment variables not configured')
       return new Response(
-        JSON.stringify({ error: 'Service temporarily unavailable' }), 
+        JSON.stringify({ error: 'Service configuration error' }), 
         { 
-          status: 503, 
+          status: 500, 
           headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
         }
       )
@@ -75,9 +78,9 @@ serve(async (req) => {
     }
 
     // Parse and validate request body
-    let petData
+    let requestData
     try {
-      petData = await req.json()
+      requestData = await req.json()
     } catch (error) {
       return new Response(
         JSON.stringify({ error: 'Invalid JSON in request body' }),
@@ -88,10 +91,12 @@ serve(async (req) => {
       )
     }
 
+    const { petId, type = 'emergency' } = requestData
+
     // Validate required fields
-    if (!petData || !petData.name) {
+    if (!petId) {
       return new Response(
-        JSON.stringify({ error: 'Pet name is required' }),
+        JSON.stringify({ error: 'Pet ID is required' }),
         { 
           status: 400, 
           headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
@@ -99,7 +104,34 @@ serve(async (req) => {
       )
     }
 
-    // Sanitize all input data
+    // Initialize Supabase client
+    const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+
+    // Fetch pet data from database
+    const { data: petData, error: fetchError } = await supabase
+      .from('pets')
+      .select(`
+        *,
+        pet_photos (photo_url, full_body_photo_url),
+        professional_data (support_animal_status, badges),
+        medical (medical_alert, medical_conditions, medications),
+        contacts (emergency_contact, second_emergency_contact, vet_contact)
+      `)
+      .eq('id', petId)
+      .single()
+
+    if (fetchError || !petData) {
+      console.error('Error fetching pet data:', fetchError)
+      return new Response(
+        JSON.stringify({ error: 'Pet not found' }),
+        { 
+          status: 404, 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        }
+      )
+    }
+
+    // Sanitize pet data
     const sanitizedPetData = {
       name: sanitizeInput(petData.name),
       species: sanitizeInput(petData.species || ''),
@@ -107,73 +139,32 @@ serve(async (req) => {
       age: sanitizeInput(petData.age || ''),
       weight: sanitizeInput(petData.weight || ''),
       bio: sanitizeInput(petData.bio || ''),
-      emergencyContact: sanitizeInput(petData.emergencyContact || ''),
-      vetContact: sanitizeInput(petData.vetContact || ''),
-      medicalConditions: sanitizeInput(petData.medicalConditions || ''),
-      petPassId: sanitizeInput(petData.petPassId || '')
+      petport_id: sanitizeInput(petData.petport_id || ''),
+      emergency_contact: sanitizeInput(petData.contacts?.emergency_contact || ''),
+      second_emergency_contact: sanitizeInput(petData.contacts?.second_emergency_contact || ''),
+      vet_contact: sanitizeInput(petData.contacts?.vet_contact || ''),
+      medical_conditions: sanitizeInput(petData.medical?.medical_conditions || ''),
+      support_animal_status: sanitizeInput(petData.professional_data?.support_animal_status || ''),
+      medical_alert: petData.medical?.medical_alert || false,
+      medications: petData.medical?.medications || []
     }
 
-    // Create the PDF content using OpenAI
-    const prompt = `Create a professional pet passport document in PDF format for:
+    // Generate HTML content for PDF
+    const htmlContent = generatePetPassportHTML(sanitizedPetData, type)
+
+    // For now, return the HTML content - in production you'd convert this to PDF
+    const fileName = `${sanitizedPetData.name}_${type}_passport.pdf`
     
-Pet Name: ${sanitizedPetData.name}
-Species: ${sanitizedPetData.species}
-Breed: ${sanitizedPetData.breed}
-Age: ${sanitizedPetData.age}
-Weight: ${sanitizedPetData.weight}
-Bio: ${sanitizedPetData.bio}
-Pet Pass ID: ${sanitizedPetData.petPassId}
-
-Include emergency contact and veterinary information if provided.
-Make it official and professional looking.`
-
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${OPENAI_API_KEY}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: 'gpt-3.5-turbo',
-        messages: [
-          {
-            role: 'system',
-            content: 'You are a helpful assistant that creates professional pet passport documents.'
-          },
-          {
-            role: 'user',
-            content: prompt
-          }
-        ],
-        max_tokens: 1500,
-        temperature: 0.7
-      })
-    })
-
-    if (!response.ok) {
-      console.error('OpenAI API error:', response.status, response.statusText)
-      return new Response(
-        JSON.stringify({ error: 'Failed to generate PDF content' }),
-        { 
-          status: 500, 
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
-        }
-      )
-    }
-
-    const openAIData = await response.json()
-    
-    if (!openAIData.choices?.[0]?.message?.content) {
-      throw new Error('Invalid response from OpenAI')
-    }
-
-    const pdfContent = openAIData.choices[0].message.content
+    // Create a simple data URL for the PDF content
+    const pdfDataUrl = `data:text/html;base64,${btoa(htmlContent)}`
 
     return new Response(
       JSON.stringify({ 
         success: true, 
-        content: pdfContent,
-        petName: sanitizedPetData.name 
+        pdfUrl: pdfDataUrl,
+        fileName: fileName,
+        type: type,
+        petName: sanitizedPetData.name
       }),
       { 
         headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
@@ -191,3 +182,213 @@ Make it official and professional looking.`
     )
   }
 })
+
+function generatePetPassportHTML(petData: any, type: string): string {
+  const isEmergency = type === 'emergency'
+  
+  return `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="UTF-8">
+      <title>${petData.name} - Pet Passport</title>
+      <style>
+        body { 
+          font-family: 'Times New Roman', serif; 
+          margin: 20px; 
+          background: #f8f8f8;
+          color: #1a1a1a;
+        }
+        .passport-header { 
+          text-align: center; 
+          border-bottom: 3px solid #d4af37; 
+          padding-bottom: 20px; 
+          margin-bottom: 30px;
+        }
+        .passport-title { 
+          font-size: 24px; 
+          font-weight: bold; 
+          color: #1e3a8a;
+          margin-bottom: 10px;
+        }
+        .pet-id { 
+          font-size: 14px; 
+          color: #666; 
+          font-weight: bold;
+        }
+        .pet-info { 
+          display: flex; 
+          margin-bottom: 30px;
+        }
+        .pet-photo { 
+          width: 150px; 
+          height: 150px; 
+          border: 3px solid #d4af37; 
+          margin-right: 30px;
+          background: #e5e5e5;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 12px;
+          color: #666;
+        }
+        .pet-details { 
+          flex: 1;
+        }
+        .detail-row { 
+          margin-bottom: 10px;
+          display: flex;
+        }
+        .detail-label { 
+          font-weight: bold; 
+          width: 120px;
+          color: #1e3a8a;
+        }
+        .detail-value { 
+          flex: 1;
+        }
+        .emergency-section { 
+          background: #fee2e2; 
+          border: 2px solid #dc2626; 
+          padding: 20px; 
+          margin: 20px 0;
+          border-radius: 8px;
+        }
+        .emergency-title { 
+          color: #dc2626; 
+          font-size: 18px; 
+          font-weight: bold; 
+          margin-bottom: 15px;
+        }
+        .medical-alert { 
+          background: #fef3c7; 
+          border: 2px solid #f59e0b; 
+          padding: 15px; 
+          margin: 15px 0;
+          border-radius: 8px;
+        }
+        .section-title { 
+          font-size: 16px; 
+          font-weight: bold; 
+          color: #1e3a8a; 
+          margin: 20px 0 10px 0;
+          border-bottom: 1px solid #d4af37;
+          padding-bottom: 5px;
+        }
+        .stamp { 
+          position: absolute; 
+          top: 50px; 
+          right: 50px; 
+          border: 2px solid #d4af37; 
+          border-radius: 50%; 
+          width: 100px; 
+          height: 100px; 
+          display: flex; 
+          align-items: center; 
+          justify-content: center; 
+          font-size: 12px; 
+          font-weight: bold; 
+          color: #d4af37;
+          text-align: center;
+          line-height: 1.2;
+        }
+        .footer { 
+          text-align: center; 
+          margin-top: 40px; 
+          padding-top: 20px; 
+          border-top: 1px solid #d4af37; 
+          font-size: 12px; 
+          color: #666;
+        }
+      </style>
+    </head>
+    <body>
+      <div class="stamp">
+        OFFICIAL<br>
+        PETPORT<br>
+        ${new Date().getFullYear()}
+      </div>
+      
+      <div class="passport-header">
+        <div class="passport-title">
+          ${isEmergency ? 'EMERGENCY PET IDENTIFICATION' : 'OFFICIAL PET PASSPORT'}
+        </div>
+        <div class="pet-id">PetPort ID: ${petData.petport_id}</div>
+      </div>
+
+      <div class="pet-info">
+        <div class="pet-photo">
+          [Pet Photo]
+        </div>
+        <div class="pet-details">
+          <div class="detail-row">
+            <div class="detail-label">Name:</div>
+            <div class="detail-value">${petData.name}</div>
+          </div>
+          <div class="detail-row">
+            <div class="detail-label">Species:</div>
+            <div class="detail-value">${petData.species}</div>
+          </div>
+          <div class="detail-row">
+            <div class="detail-label">Breed:</div>
+            <div class="detail-value">${petData.breed}</div>
+          </div>
+          <div class="detail-row">
+            <div class="detail-label">Age:</div>
+            <div class="detail-value">${petData.age}</div>
+          </div>
+          <div class="detail-row">
+            <div class="detail-label">Weight:</div>
+            <div class="detail-value">${petData.weight}</div>
+          </div>
+          ${petData.support_animal_status ? `
+          <div class="detail-row">
+            <div class="detail-label">Status:</div>
+            <div class="detail-value">${petData.support_animal_status}</div>
+          </div>
+          ` : ''}
+        </div>
+      </div>
+
+      ${petData.medical_alert && petData.medical_conditions ? `
+      <div class="medical-alert">
+        <strong>⚠️ MEDICAL ALERT:</strong> ${petData.medical_conditions}
+      </div>
+      ` : ''}
+
+      <div class="emergency-section">
+        <div class="emergency-title">🚨 EMERGENCY CONTACTS</div>
+        <div class="detail-row">
+          <div class="detail-label">Primary:</div>
+          <div class="detail-value">${petData.emergency_contact}</div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-label">Secondary:</div>
+          <div class="detail-value">${petData.second_emergency_contact}</div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-label">Veterinarian:</div>
+          <div class="detail-value">${petData.vet_contact}</div>
+        </div>
+      </div>
+
+      ${petData.medications && petData.medications.length > 0 ? `
+      <div class="section-title">💊 MEDICATIONS</div>
+      <ul>
+        ${petData.medications.map((med: string) => `<li>${med}</li>`).join('')}
+      </ul>
+      ` : ''}
+
+      ${!isEmergency && petData.bio ? `
+      <div class="section-title">📝 ABOUT</div>
+      <p>${petData.bio}</p>
+      ` : ''}
+
+      <div class="footer">
+        Generated by PetPort • ${new Date().toLocaleDateString()}<br>
+        This document contains emergency contact information for ${petData.name}
+      </div>
+    </body>
+    </html>
+  `
+}

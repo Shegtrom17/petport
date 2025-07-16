@@ -3,9 +3,8 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.50.3'
 import { corsHeaders } from '../_shared/cors.ts'
 
-const OPENAI_API_KEY = Deno.env.get('OPENAI_API_KEY')
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL')
-const SUPABASE_ANON_KEY = Deno.env.get('SUPABASE_ANON_KEY')
+const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')
 
 // Rate limiting map (in production, use Redis or similar)
 const rateLimitMap = new Map<string, { count: number; resetTime: number }>()
@@ -43,10 +42,13 @@ serve(async (req) => {
 
   try {
     // Validate environment variables
-    if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
-      console.error('Supabase environment variables not configured')
+    if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
+      console.error('Missing environment variables:', { 
+        hasUrl: !!SUPABASE_URL, 
+        hasServiceKey: !!SUPABASE_SERVICE_ROLE_KEY 
+      })
       return new Response(
-        JSON.stringify({ error: 'Service configuration error' }), 
+        JSON.stringify({ error: 'Service configuration error - missing environment variables' }), 
         { 
           status: 500, 
           headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
@@ -82,6 +84,7 @@ serve(async (req) => {
     try {
       requestData = await req.json()
     } catch (error) {
+      console.error('JSON parsing error:', error)
       return new Response(
         JSON.stringify({ error: 'Invalid JSON in request body' }),
         { 
@@ -104,10 +107,12 @@ serve(async (req) => {
       )
     }
 
-    // Initialize Supabase client
-    const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+    console.log('Fetching pet data for ID:', petId, 'type:', type)
 
-    // Fetch pet data from database
+    // Initialize Supabase client with service role key to bypass RLS
+    const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY)
+
+    // Fetch pet data from database using .single() for proper error handling
     const { data: petData, error: fetchError } = await supabase
       .from('pets')
       .select(`
@@ -120,8 +125,31 @@ serve(async (req) => {
       .eq('id', petId)
       .single()
 
-    if (fetchError || !petData) {
+    if (fetchError) {
       console.error('Error fetching pet data:', fetchError)
+      
+      // Handle specific error cases
+      if (fetchError.code === 'PGRST116') {
+        return new Response(
+          JSON.stringify({ error: 'Pet not found or access denied' }),
+          { 
+            status: 404, 
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+          }
+        )
+      }
+      
+      return new Response(
+        JSON.stringify({ error: 'Database error: ' + fetchError.message }),
+        { 
+          status: 500, 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        }
+      )
+    }
+
+    if (!petData) {
+      console.error('No pet data returned for ID:', petId)
       return new Response(
         JSON.stringify({ error: 'Pet not found' }),
         { 
@@ -130,6 +158,8 @@ serve(async (req) => {
         }
       )
     }
+
+    console.log('Pet data fetched successfully:', petData.name)
 
     // Sanitize pet data
     const sanitizedPetData = {
@@ -158,6 +188,8 @@ serve(async (req) => {
     // Create a simple data URL for the PDF content
     const pdfDataUrl = `data:text/html;base64,${btoa(htmlContent)}`
 
+    console.log('PDF generated successfully for:', sanitizedPetData.name)
+
     return new Response(
       JSON.stringify({ 
         success: true, 
@@ -174,7 +206,7 @@ serve(async (req) => {
   } catch (error) {
     console.error('Error in generate-pet-pdf function:', error)
     return new Response(
-      JSON.stringify({ error: 'Internal server error' }),
+      JSON.stringify({ error: 'Internal server error: ' + error.message }),
       { 
         status: 500, 
         headers: { ...corsHeaders, 'Content-Type': 'application/json' } 

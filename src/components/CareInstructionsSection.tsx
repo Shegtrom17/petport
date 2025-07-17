@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -7,7 +6,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Heart, Clock, Pill, Coffee, Moon, AlertTriangle, Edit, Loader2, FileText, Download, QrCode, Share2, ExternalLink, Eye } from "lucide-react";
 import { CareInstructionsEditForm } from "@/components/CareInstructionsEditForm";
 import { fetchCareInstructions } from "@/services/careInstructionsService";
-import { generatePetPDF, generateQRCodeUrl, downloadPDF, shareProfile } from "@/services/pdfService";
+import { generatePetPDF, generateQRCodeUrl, downloadPDFBlob, shareProfile } from "@/services/pdfService";
 import { useToast } from "@/hooks/use-toast";
 
 interface CareInstructionsSectionProps {
@@ -25,7 +24,7 @@ export const CareInstructionsSection = ({ petData }: CareInstructionsSectionProp
   const [isLoading, setIsLoading] = useState(true);
   const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
   const [careShareDialogOpen, setCareShareDialogOpen] = useState(false);
-  const [carePdfUrl, setCarePdfUrl] = useState<string | null>(null);
+  const [carePdfBlob, setCarePdfBlob] = useState<Blob | null>(null);
   const [careQrCodeUrl, setCareQrCodeUrl] = useState<string | null>(null);
   const [isSharing, setIsSharing] = useState(false);
   const { toast } = useToast();
@@ -76,9 +75,11 @@ export const CareInstructionsSection = ({ petData }: CareInstructionsSectionProp
       
       const result = await generatePetPDF(petData.id, 'care');
       
-      if (result.success && result.pdfUrl) {
-        setCarePdfUrl(result.pdfUrl);
-        setCareQrCodeUrl(generateQRCodeUrl(result.pdfUrl));
+      if (result.success && result.pdfBlob) {
+        setCarePdfBlob(result.pdfBlob);
+        // Create a temporary URL for the QR code
+        const tempUrl = URL.createObjectURL(result.pdfBlob);
+        setCareQrCodeUrl(generateQRCodeUrl(tempUrl));
         setCareShareDialogOpen(true);
         
         toast({
@@ -132,11 +133,11 @@ export const CareInstructionsSection = ({ petData }: CareInstructionsSectionProp
   };
 
   const handleDownloadCarePDF = async () => {
-    if (!carePdfUrl) return;
+    if (!carePdfBlob) return;
     
     try {
       const fileName = `PetPort_Care_Instructions_${petData.name}.pdf`;
-      await downloadPDF(carePdfUrl, fileName);
+      await downloadPDFBlob(carePdfBlob, fileName);
       toast({
         title: "Download Started",
         description: `${petData.name}'s care instructions are being downloaded.`,
@@ -151,8 +152,9 @@ export const CareInstructionsSection = ({ petData }: CareInstructionsSectionProp
   };
 
   const handleShareCarePDF = async () => {
-    if (!carePdfUrl) return;
-    await shareProfile(carePdfUrl, `${petData.name}'s Care Instructions PDF`);
+    if (!carePdfBlob) return;
+    const tempUrl = URL.createObjectURL(carePdfBlob);
+    await shareProfile(tempUrl, `${petData.name}'s Care Instructions PDF`);
   };
   
   if (isEditing) {
@@ -307,7 +309,7 @@ export const CareInstructionsSection = ({ petData }: CareInstructionsSectionProp
                     </div>
 
                     {/* Care PDF */}
-                    {carePdfUrl && careQrCodeUrl && (
+                    {carePdfBlob && careQrCodeUrl && (
                       <div className="bg-white p-4 rounded-lg border border-sage-500/30 shadow-sm">
                         <h4 className="font-serif font-bold text-navy-900 mb-3">🌿 Care Instructions PDF</h4>
                         <div className="text-center mb-3">
@@ -321,7 +323,12 @@ export const CareInstructionsSection = ({ petData }: CareInstructionsSectionProp
                         </div>
                         <div className="grid grid-cols-3 gap-2">
                           <Button
-                            onClick={() => window.open(carePdfUrl, '_blank')}
+                            onClick={() => {
+                              if (carePdfBlob) {
+                                const url = URL.createObjectURL(carePdfBlob);
+                                window.open(url, '_blank');
+                              }
+                            }}
                             variant="outline"
                             size="sm"
                             className="border-sage-500 text-sage-600 hover:bg-sage-50 font-semibold"
@@ -356,7 +363,7 @@ export const CareInstructionsSection = ({ petData }: CareInstructionsSectionProp
                     <div className="text-xs text-navy-500 space-y-1 bg-navy-50 p-3 rounded-lg">
                       <p className="font-medium">Direct Links:</p>
                       <p className="break-all">Care: {generateCarePublicUrl()}</p>
-                      {carePdfUrl && <p className="break-all">PDF: {carePdfUrl}</p>}
+                      {carePdfBlob && <p className="break-all">PDF: Available after generation</p>}
                     </div>
                   </div>
                 </DialogContent>

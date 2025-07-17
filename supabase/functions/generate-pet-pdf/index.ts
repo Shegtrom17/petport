@@ -61,7 +61,7 @@ serve(async (req) => {
     // Initialize Supabase client
     const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY)
 
-    // Fetch pet data
+    // Fetch pet data - using correct field name 'user_id' not 'owner_id'
     const { data: petData, error: fetchError } = await supabase
       .from('pets')
       .select(`

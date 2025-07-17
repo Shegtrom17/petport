@@ -1,6 +1,7 @@
 
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.50.3'
+import { PDFDocument, rgb, StandardFonts } from 'https://esm.sh/pdf-lib@1.17.1'
 import { corsHeaders } from '../_shared/cors.ts'
 
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL')
@@ -32,21 +33,6 @@ const checkRateLimit = (clientId: string): boolean => {
 const sanitizeInput = (input: any): string => {
   if (typeof input !== 'string') return ''
   return input.replace(/[<>]/g, '').substring(0, 1000) // Basic sanitization and length limit
-}
-
-// Safe base64 encoding that handles UTF-8 characters
-const safeBase64Encode = (str: string): string => {
-  try {
-    // Use TextEncoder to properly handle UTF-8 characters
-    const encoder = new TextEncoder()
-    const data = encoder.encode(str)
-    return btoa(String.fromCharCode(...data))
-  } catch (error) {
-    console.error('Base64 encoding error:', error)
-    // Fallback: remove problematic characters and try again
-    const cleanStr = str.replace(/[^\x00-\x7F]/g, "")
-    return btoa(cleanStr)
-  }
 }
 
 serve(async (req) => {
@@ -194,29 +180,21 @@ serve(async (req) => {
       medications: petData.medical?.medications || []
     }
 
-    // Generate HTML content for PDF
-    const htmlContent = generatePetPassportHTML(sanitizedPetData, type)
+    // Generate PDF using pdf-lib
+    const pdfBytes = await generatePetPassportPDF(sanitizedPetData, type)
 
-    // For now, return the HTML content - in production you'd convert this to PDF
     const fileName = `${sanitizedPetData.name}_${type}_passport.pdf`
     
-    // Create a safe data URL for the PDF content using proper encoding
-    const pdfDataUrl = `data:text/html;base64,${safeBase64Encode(htmlContent)}`
-
     console.log('PDF generated successfully for:', sanitizedPetData.name)
 
-    return new Response(
-      JSON.stringify({ 
-        success: true, 
-        pdfUrl: pdfDataUrl,
-        fileName: fileName,
-        type: type,
-        petName: sanitizedPetData.name
-      }),
-      { 
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+    return new Response(pdfBytes, {
+      headers: {
+        ...corsHeaders,
+        'Content-Type': 'application/pdf',
+        'Content-Disposition': `attachment; filename="${fileName}"`,
+        'Content-Length': pdfBytes.length.toString(),
       }
-    )
+    })
 
   } catch (error) {
     console.error('Error in generate-pet-pdf function:', error)
@@ -230,212 +208,286 @@ serve(async (req) => {
   }
 })
 
-function generatePetPassportHTML(petData: any, type: string): string {
+async function generatePetPassportPDF(petData: any, type: string): Promise<Uint8Array> {
+  const pdfDoc = await PDFDocument.create()
+  
+  // Add a page
+  const page = pdfDoc.addPage([612, 792]) // Standard letter size
+  const { width, height } = page.getSize()
+  
+  // Get fonts
+  const boldFont = await pdfDoc.embedFont(StandardFonts.HelveticaBold)
+  const regularFont = await pdfDoc.embedFont(StandardFonts.Helvetica)
+  
   const isEmergency = type === 'emergency'
   
-  return `
-    <!DOCTYPE html>
-    <html>
-    <head>
-      <meta charset="UTF-8">
-      <title>${petData.name} - Pet Passport</title>
-      <style>
-        body { 
-          font-family: Arial, sans-serif; 
-          margin: 20px; 
-          background: #f8f8f8;
-          color: #1a1a1a;
-        }
-        .passport-header { 
-          text-align: center; 
-          border-bottom: 3px solid #d4af37; 
-          padding-bottom: 20px; 
-          margin-bottom: 30px;
-        }
-        .passport-title { 
-          font-size: 24px; 
-          font-weight: bold; 
-          color: #1e3a8a;
-          margin-bottom: 10px;
-        }
-        .pet-id { 
-          font-size: 14px; 
-          color: #666; 
-          font-weight: bold;
-        }
-        .pet-info { 
-          display: flex; 
-          margin-bottom: 30px;
-        }
-        .pet-photo { 
-          width: 150px; 
-          height: 150px; 
-          border: 3px solid #d4af37; 
-          margin-right: 30px;
-          background: #e5e5e5;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-size: 12px;
-          color: #666;
-        }
-        .pet-details { 
-          flex: 1;
-        }
-        .detail-row { 
-          margin-bottom: 10px;
-          display: flex;
-        }
-        .detail-label { 
-          font-weight: bold; 
-          width: 120px;
-          color: #1e3a8a;
-        }
-        .detail-value { 
-          flex: 1;
-        }
-        .emergency-section { 
-          background: #fee2e2; 
-          border: 2px solid #dc2626; 
-          padding: 20px; 
-          margin: 20px 0;
-          border-radius: 8px;
-        }
-        .emergency-title { 
-          color: #dc2626; 
-          font-size: 18px; 
-          font-weight: bold; 
-          margin-bottom: 15px;
-        }
-        .medical-alert { 
-          background: #fef3c7; 
-          border: 2px solid #f59e0b; 
-          padding: 15px; 
-          margin: 15px 0;
-          border-radius: 8px;
-        }
-        .section-title { 
-          font-size: 16px; 
-          font-weight: bold; 
-          color: #1e3a8a; 
-          margin: 20px 0 10px 0;
-          border-bottom: 1px solid #d4af37;
-          padding-bottom: 5px;
-        }
-        .stamp { 
-          position: absolute; 
-          top: 50px; 
-          right: 50px; 
-          border: 2px solid #d4af37; 
-          border-radius: 50%; 
-          width: 100px; 
-          height: 100px; 
-          display: flex; 
-          align-items: center; 
-          justify-content: center; 
-          font-size: 12px; 
-          font-weight: bold; 
-          color: #d4af37;
-          text-align: center;
-          line-height: 1.2;
-        }
-        .footer { 
-          text-align: center; 
-          margin-top: 40px; 
-          padding-top: 20px; 
-          border-top: 1px solid #d4af37; 
-          font-size: 12px; 
-          color: #666;
-        }
-      </style>
-    </head>
-    <body>
-      <div class="stamp">
-        OFFICIAL<br>
-        PETPORT<br>
-        ${new Date().getFullYear()}
-      </div>
+  // Colors
+  const titleColor = rgb(0.12, 0.23, 0.54) // Navy blue
+  const goldColor = rgb(0.83, 0.69, 0.22) // Gold
+  const redColor = rgb(0.86, 0.15, 0.15) // Red for emergencies
+  const blackColor = rgb(0, 0, 0)
+  
+  let yPosition = height - 60
+  
+  // Header
+  page.drawText(isEmergency ? 'EMERGENCY PET IDENTIFICATION' : 'OFFICIAL PET PASSPORT', {
+    x: 50,
+    y: yPosition,
+    size: 20,
+    font: boldFont,
+    color: titleColor,
+  })
+  
+  yPosition -= 30
+  
+  // PetPort ID
+  if (petData.petport_id) {
+    page.drawText(`PetPort ID: ${petData.petport_id}`, {
+      x: 50,
+      y: yPosition,
+      size: 12,
+      font: boldFont,
+      color: goldColor,
+    })
+  }
+  
+  yPosition -= 50
+  
+  // Pet Information Section
+  page.drawText('PET INFORMATION', {
+    x: 50,
+    y: yPosition,
+    size: 16,
+    font: boldFont,
+    color: titleColor,
+  })
+  
+  yPosition -= 30
+  
+  // Pet details
+  const petDetails = [
+    { label: 'Name:', value: petData.name },
+    { label: 'Species:', value: petData.species },
+    { label: 'Breed:', value: petData.breed },
+    { label: 'Age:', value: petData.age },
+    { label: 'Weight:', value: petData.weight },
+  ]
+  
+  if (petData.support_animal_status) {
+    petDetails.push({ label: 'Status:', value: petData.support_animal_status })
+  }
+  
+  for (const detail of petDetails) {
+    if (detail.value) {
+      page.drawText(detail.label, {
+        x: 70,
+        y: yPosition,
+        size: 12,
+        font: boldFont,
+        color: blackColor,
+      })
       
-      <div class="passport-header">
-        <div class="passport-title">
-          ${isEmergency ? 'EMERGENCY PET IDENTIFICATION' : 'OFFICIAL PET PASSPORT'}
-        </div>
-        <div class="pet-id">PetPort ID: ${petData.petport_id}</div>
-      </div>
-
-      <div class="pet-info">
-        <div class="pet-photo">
-          [Pet Photo]
-        </div>
-        <div class="pet-details">
-          <div class="detail-row">
-            <div class="detail-label">Name:</div>
-            <div class="detail-value">${petData.name}</div>
-          </div>
-          <div class="detail-row">
-            <div class="detail-label">Species:</div>
-            <div class="detail-value">${petData.species}</div>
-          </div>
-          <div class="detail-row">
-            <div class="detail-label">Breed:</div>
-            <div class="detail-value">${petData.breed}</div>
-          </div>
-          <div class="detail-row">
-            <div class="detail-label">Age:</div>
-            <div class="detail-value">${petData.age}</div>
-          </div>
-          <div class="detail-row">
-            <div class="detail-label">Weight:</div>
-            <div class="detail-value">${petData.weight}</div>
-          </div>
-          ${petData.support_animal_status ? `
-          <div class="detail-row">
-            <div class="detail-label">Status:</div>
-            <div class="detail-value">${petData.support_animal_status}</div>
-          </div>
-          ` : ''}
-        </div>
-      </div>
-
-      ${petData.medical_alert && petData.medical_conditions ? `
-      <div class="medical-alert">
-        <strong>MEDICAL ALERT:</strong> ${petData.medical_conditions}
-      </div>
-      ` : ''}
-
-      <div class="emergency-section">
-        <div class="emergency-title">EMERGENCY CONTACTS</div>
-        <div class="detail-row">
-          <div class="detail-label">Primary:</div>
-          <div class="detail-value">${petData.emergency_contact}</div>
-        </div>
-        <div class="detail-row">
-          <div class="detail-label">Secondary:</div>
-          <div class="detail-value">${petData.second_emergency_contact}</div>
-        </div>
-        <div class="detail-row">
-          <div class="detail-label">Veterinarian:</div>
-          <div class="detail-value">${petData.vet_contact}</div>
-        </div>
-      </div>
-
-      ${petData.medications && petData.medications.length > 0 ? `
-      <div class="section-title">MEDICATIONS</div>
-      <ul>
-        ${petData.medications.map((med: string) => `<li>${med}</li>`).join('')}
-      </ul>
-      ` : ''}
-
-      ${!isEmergency && petData.bio ? `
-      <div class="section-title">ABOUT</div>
-      <p>${petData.bio}</p>
-      ` : ''}
-
-      <div class="footer">
-        Generated by PetPort - ${new Date().toLocaleDateString()}<br>
-        This document contains emergency contact information for ${petData.name}
-      </div>
-    </body>
-    </html>
-  `
+      page.drawText(detail.value, {
+        x: 150,
+        y: yPosition,
+        size: 12,
+        font: regularFont,
+        color: blackColor,
+      })
+      
+      yPosition -= 20
+    }
+  }
+  
+  yPosition -= 30
+  
+  // Medical Alert Section
+  if (petData.medical_alert && petData.medical_conditions) {
+    page.drawRectangle({
+      x: 50,
+      y: yPosition - 15,
+      width: width - 100,
+      height: 40,
+      color: rgb(1, 0.95, 0.8), // Light yellow background
+      borderColor: rgb(0.96, 0.62, 0.06), // Orange border
+      borderWidth: 2,
+    })
+    
+    page.drawText('MEDICAL ALERT', {
+      x: 60,
+      y: yPosition,
+      size: 14,
+      font: boldFont,
+      color: redColor,
+    })
+    
+    yPosition -= 20
+    
+    page.drawText(petData.medical_conditions, {
+      x: 60,
+      y: yPosition,
+      size: 11,
+      font: regularFont,
+      color: blackColor,
+      maxWidth: width - 120,
+    })
+    
+    yPosition -= 40
+  }
+  
+  // Emergency Contacts Section
+  page.drawRectangle({
+    x: 50,
+    y: yPosition - 15,
+    width: width - 100,
+    height: 120,
+    color: rgb(0.99, 0.89, 0.89), // Light red background
+    borderColor: redColor,
+    borderWidth: 2,
+  })
+  
+  page.drawText('EMERGENCY CONTACTS', {
+    x: 60,
+    y: yPosition,
+    size: 16,
+    font: boldFont,
+    color: redColor,
+  })
+  
+  yPosition -= 25
+  
+  const contacts = [
+    { label: 'Primary:', value: petData.emergency_contact },
+    { label: 'Secondary:', value: petData.second_emergency_contact },
+    { label: 'Veterinarian:', value: petData.vet_contact },
+  ]
+  
+  for (const contact of contacts) {
+    if (contact.value) {
+      page.drawText(contact.label, {
+        x: 70,
+        y: yPosition,
+        size: 12,
+        font: boldFont,
+        color: blackColor,
+      })
+      
+      page.drawText(contact.value, {
+        x: 150,
+        y: yPosition,
+        size: 12,
+        font: regularFont,
+        color: blackColor,
+      })
+      
+      yPosition -= 20
+    }
+  }
+  
+  yPosition -= 40
+  
+  // Medications Section
+  if (petData.medications && petData.medications.length > 0) {
+    page.drawText('MEDICATIONS', {
+      x: 50,
+      y: yPosition,
+      size: 16,
+      font: boldFont,
+      color: titleColor,
+    })
+    
+    yPosition -= 25
+    
+    for (const medication of petData.medications) {
+      page.drawText(`• ${medication}`, {
+        x: 70,
+        y: yPosition,
+        size: 12,
+        font: regularFont,
+        color: blackColor,
+      })
+      yPosition -= 18
+    }
+    
+    yPosition -= 20
+  }
+  
+  // About Section (for full profile only)
+  if (!isEmergency && petData.bio) {
+    page.drawText('ABOUT', {
+      x: 50,
+      y: yPosition,
+      size: 16,
+      font: boldFont,
+      color: titleColor,
+    })
+    
+    yPosition -= 25
+    
+    page.drawText(petData.bio, {
+      x: 70,
+      y: yPosition,
+      size: 11,
+      font: regularFont,
+      color: blackColor,
+      maxWidth: width - 140,
+    })
+    
+    yPosition -= 40
+  }
+  
+  // Footer
+  const currentDate = new Date().toLocaleDateString()
+  page.drawText(`Generated by PetPort - ${currentDate}`, {
+    x: 50,
+    y: 50,
+    size: 10,
+    font: regularFont,
+    color: rgb(0.5, 0.5, 0.5),
+  })
+  
+  page.drawText(`This document contains emergency contact information for ${petData.name}`, {
+    x: 50,
+    y: 35,
+    size: 10,
+    font: regularFont,
+    color: rgb(0.5, 0.5, 0.5),
+  })
+  
+  // Official stamp circle
+  page.drawCircle({
+    x: width - 100,
+    y: height - 100,
+    size: 50,
+    borderColor: goldColor,
+    borderWidth: 3,
+  })
+  
+  page.drawText('OFFICIAL', {
+    x: width - 125,
+    y: height - 90,
+    size: 10,
+    font: boldFont,
+    color: goldColor,
+  })
+  
+  page.drawText('PETPORT', {
+    x: width - 125,
+    y: height - 105,
+    size: 10,
+    font: boldFont,
+    color: goldColor,
+  })
+  
+  page.drawText(new Date().getFullYear().toString(), {
+    x: width - 115,
+    y: height - 120,
+    size: 10,
+    font: boldFont,
+    color: goldColor,
+  })
+  
+  // Save the PDF as bytes
+  const pdfBytes = await pdfDoc.save()
+  return pdfBytes
 }

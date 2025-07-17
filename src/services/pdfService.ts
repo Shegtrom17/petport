@@ -2,7 +2,7 @@ import { supabase } from "@/integrations/supabase/client";
 
 export interface PDFGenerationResult {
   success: boolean;
-  pdfUrl?: string;
+  pdfBlob?: Blob;
   fileName?: string;
   error?: string;
   type?: string;
@@ -24,19 +24,21 @@ export async function generatePetPDF(petId: string, type: 'emergency' | 'full' |
       };
     }
 
-    console.log('PDF generation response:', data);
-
-    if (data?.success) {
+    // The response should now be a PDF blob
+    if (data instanceof ArrayBuffer || data instanceof Uint8Array) {
+      const pdfBlob = new Blob([data], { type: 'application/pdf' });
+      const fileName = `PetPort_${type}_Profile.pdf`;
+      
       return {
         success: true,
-        pdfUrl: data.pdfUrl,
-        fileName: data.fileName,
-        type: data.type
+        pdfBlob,
+        fileName,
+        type
       };
     } else {
       return {
         success: false,
-        error: data?.error || 'Unknown error occurred'
+        error: 'Invalid PDF response format'
       };
     }
   } catch (error) {
@@ -53,11 +55,8 @@ export function generateQRCodeUrl(url: string, size: number = 200): string {
   return `https://api.qrserver.com/v1/create-qr-code/?size=${size}x${size}&data=${encodedUrl}`;
 }
 
-export async function downloadPDF(url: string, filename: string): Promise<void> {
+export async function downloadPDFBlob(blob: Blob, filename: string): Promise<void> {
   try {
-    const response = await fetch(url);
-    const blob = await response.blob();
-    
     const downloadUrl = window.URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = downloadUrl;
@@ -66,6 +65,18 @@ export async function downloadPDF(url: string, filename: string): Promise<void> 
     link.click();
     document.body.removeChild(link);
     window.URL.revokeObjectURL(downloadUrl);
+  } catch (error) {
+    console.error('Error downloading PDF:', error);
+    throw new Error('Failed to download PDF');
+  }
+}
+
+// Keep existing functions for backward compatibility
+export async function downloadPDF(url: string, filename: string): Promise<void> {
+  try {
+    const response = await fetch(url);
+    const blob = await response.blob();
+    await downloadPDFBlob(blob, filename);
   } catch (error) {
     console.error('Error downloading PDF:', error);
     throw new Error('Failed to download PDF');

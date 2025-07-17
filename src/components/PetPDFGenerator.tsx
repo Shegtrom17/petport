@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { FileText, Download, QrCode, Share2, Loader2, Users, ExternalLink, Eye } from "lucide-react";
-import { generatePetPDF, generateQRCodeUrl, downloadPDF, generatePublicProfileUrl, shareProfile } from "@/services/pdfService";
+import { generatePetPDF, generateQRCodeUrl, downloadPDFBlob, generatePublicProfileUrl, shareProfile } from "@/services/pdfService";
 import { useToast } from "@/hooks/use-toast";
 
 interface PetPDFGeneratorProps {
@@ -17,14 +17,12 @@ export const PetPDFGenerator = ({ petId, petName }: PetPDFGeneratorProps) => {
   const [isGeneratingEmergency, setIsGeneratingEmergency] = useState(false);
   const [isGeneratingFull, setIsGeneratingFull] = useState(false);
   
-  const [emergencyPdfUrl, setEmergencyPdfUrl] = useState<string | null>(null);
-  const [fullPdfUrl, setFullPdfUrl] = useState<string | null>(null);
+  const [emergencyPdfBlob, setEmergencyPdfBlob] = useState<Blob | null>(null);
+  const [fullPdfBlob, setFullPdfBlob] = useState<Blob | null>(null);
   const [emergencyQrCodeUrl, setEmergencyQrCodeUrl] = useState<string | null>(null);
   const [fullQrCodeUrl, setFullQrCodeUrl] = useState<string | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isSharing, setIsSharing] = useState(false);
-  const [viewModalOpen, setViewModalOpen] = useState(false);
-  const [currentViewUrl, setCurrentViewUrl] = useState<string | null>(null);
   const { toast } = useToast();
 
   const publicProfileUrl = generatePublicProfileUrl(petId);
@@ -42,20 +40,23 @@ export const PetPDFGenerator = ({ petId, petName }: PetPDFGeneratorProps) => {
       
       const result = await generatePetPDF(petId, type);
       
-      if (result.success && result.pdfUrl) {
+      if (result.success && result.pdfBlob) {
         if (type === 'emergency') {
-          setEmergencyPdfUrl(result.pdfUrl);
-          setEmergencyQrCodeUrl(generateQRCodeUrl(result.pdfUrl));
+          setEmergencyPdfBlob(result.pdfBlob);
+          // For QR code, we'll create a temporary URL
+          const tempUrl = URL.createObjectURL(result.pdfBlob);
+          setEmergencyQrCodeUrl(generateQRCodeUrl(tempUrl));
         } else {
-          setFullPdfUrl(result.pdfUrl);
-          setFullQrCodeUrl(generateQRCodeUrl(result.pdfUrl));
+          setFullPdfBlob(result.pdfBlob);
+          const tempUrl = URL.createObjectURL(result.pdfBlob);
+          setFullQrCodeUrl(generateQRCodeUrl(tempUrl));
         }
         
         setIsDialogOpen(true);
         
         toast({
           title: "PDF Generated Successfully",
-          description: `${petName}'s ${type === 'emergency' ? 'emergency profile' : 'complete profile'} PDF is ready to download and share.`,
+          description: `${petName}'s ${type === 'emergency' ? 'emergency profile' : 'complete profile'} PDF is ready to download.`,
         });
       } else {
         throw new Error(result.error || 'Failed to generate PDF');
@@ -77,14 +78,14 @@ export const PetPDFGenerator = ({ petId, petName }: PetPDFGeneratorProps) => {
     }
   };
 
-  const handleDownload = async (url: string, type: 'emergency' | 'full') => {
-    if (!url) return;
+  const handleDownload = async (blob: Blob | null, type: 'emergency' | 'full') => {
+    if (!blob) return;
     
     try {
       const fileName = type === 'emergency' 
         ? `PetPort_Emergency_Profile_${petName}.pdf`
         : `PetPort_Complete_Profile_${petName}.pdf`;
-      await downloadPDF(url, fileName);
+      await downloadPDFBlob(blob, fileName);
       toast({
         title: "Download Started",
         description: `Your pet's ${type} profile is being downloaded.`,
@@ -96,11 +97,6 @@ export const PetPDFGenerator = ({ petId, petName }: PetPDFGeneratorProps) => {
         variant: "destructive",
       });
     }
-  };
-
-  const handleViewPDF = (url: string) => {
-    setCurrentViewUrl(url);
-    setViewModalOpen(true);
   };
 
   const handleShare = async (url: string, type: string) => {
@@ -239,90 +235,32 @@ export const PetPDFGenerator = ({ petId, petName }: PetPDFGeneratorProps) => {
             </div>
 
             {/* Emergency PDF */}
-            {emergencyPdfUrl && emergencyQrCodeUrl && (
+            {emergencyPdfBlob && (
               <div className="bg-white p-4 rounded-lg border border-gold-500/30 shadow-sm">
                 <h4 className="font-serif font-bold text-navy-900 mb-3">🚨 Emergency Profile PDF</h4>
-                <div className="text-center mb-3">
-                  <img 
-                    src={emergencyQrCodeUrl} 
-                    alt="Emergency PDF QR Code" 
-                    className="border-2 border-gold-500/30 rounded-lg mx-auto"
-                    style={{width: '120px', height: '120px'}}
-                  />
-                </div>
-                <div className="grid grid-cols-3 gap-2">
+                <div className="flex justify-center mb-3">
                   <Button
-                    onClick={() => handleViewPDF(emergencyPdfUrl)}
-                    variant="outline"
-                    size="sm"
-                    className="border-gold-500 text-gold-600 hover:bg-gold-50 font-semibold"
+                    onClick={() => handleDownload(emergencyPdfBlob, 'emergency')}
+                    className="bg-gradient-to-r from-gold-500 to-gold-400 text-navy-900 hover:from-gold-400 hover:to-gold-300"
                   >
-                    <Eye className="w-4 h-4 mr-1" />
-                    View
-                  </Button>
-                  <Button
-                    onClick={() => handleDownload(emergencyPdfUrl, 'emergency')}
-                    variant="outline"
-                    size="sm"
-                    className="border-navy-900 text-navy-900 hover:bg-navy-50"
-                  >
-                    <Download className="w-4 h-4 mr-1" />
-                    Download
-                  </Button>
-                  <Button
-                    onClick={() => handleShare(emergencyPdfUrl, 'emergency')}
-                    variant="outline"
-                    size="sm"
-                    disabled={isSharing}
-                    className="border-navy-900 text-navy-900 hover:bg-navy-50"
-                  >
-                    <Share2 className="w-4 h-4 mr-1" />
-                    Share
+                    <Download className="w-4 h-4 mr-2" />
+                    Download Emergency PDF
                   </Button>
                 </div>
               </div>
             )}
 
             {/* Full Profile PDF */}
-            {fullPdfUrl && fullQrCodeUrl && (
+            {fullPdfBlob && (
               <div className="bg-white p-4 rounded-lg border border-gold-500/30 shadow-sm">
                 <h4 className="font-serif font-bold text-navy-900 mb-3">Complete Profile PDF</h4>
-                <div className="text-center mb-3">
-                  <img 
-                    src={fullQrCodeUrl} 
-                    alt="Full Profile PDF QR Code" 
-                    className="border-2 border-gold-500/30 rounded-lg mx-auto"
-                    style={{width: '120px', height: '120px'}}
-                  />
-                </div>
-                <div className="grid grid-cols-3 gap-2">
+                <div className="flex justify-center mb-3">
                   <Button
-                    onClick={() => handleViewPDF(fullPdfUrl)}
-                    variant="outline"
-                    size="sm"
-                    className="border-gold-500 text-gold-600 hover:bg-gold-50 font-semibold"
+                    onClick={() => handleDownload(fullPdfBlob, 'full')}
+                    className="bg-gradient-to-r from-gold-500 to-gold-400 text-navy-900 hover:from-gold-400 hover:to-gold-300"
                   >
-                    <Eye className="w-4 h-4 mr-1" />
-                    View
-                  </Button>
-                  <Button
-                    onClick={() => handleDownload(fullPdfUrl, 'full')}
-                    variant="outline"
-                    size="sm"
-                    className="border-navy-900 text-navy-900 hover:bg-navy-50"
-                  >
-                    <Download className="w-4 h-4 mr-1" />
-                    Download
-                  </Button>
-                  <Button
-                    onClick={() => handleShare(fullPdfUrl, 'complete')}
-                    variant="outline"
-                    size="sm"
-                    disabled={isSharing}
-                    className="border-navy-900 text-navy-900 hover:bg-navy-50"
-                  >
-                    <Share2 className="w-4 h-4 mr-1" />
-                    Share
+                    <Download className="w-4 h-4 mr-2" />
+                    Download Complete PDF
                   </Button>
                 </div>
               </div>
@@ -341,34 +279,6 @@ export const PetPDFGenerator = ({ petId, petName }: PetPDFGeneratorProps) => {
                 Share with PetPort Members
               </Button>
             </div>
-
-            {/* Direct Links */}
-            <div className="text-xs text-navy-500 space-y-1 bg-navy-50 p-3 rounded-lg">
-              <p className="font-medium">Direct Links:</p>
-              <p className="break-all">Public: {publicProfileUrl}</p>
-              {emergencyPdfUrl && <p className="break-all">Emergency: {emergencyPdfUrl}</p>}
-              {fullPdfUrl && <p className="break-all">Full: {fullPdfUrl}</p>}
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
-
-      {/* PDF View Modal */}
-      <Dialog open={viewModalOpen} onOpenChange={setViewModalOpen}>
-        <DialogContent className="max-w-4xl h-[80vh] bg-white">
-          <DialogHeader>
-            <DialogTitle className="font-serif text-navy-900 border-b-2 border-gold-500 pb-2">
-              📋 Preview {petName}'s Profile
-            </DialogTitle>
-          </DialogHeader>
-          <div className="flex-1 overflow-hidden">
-            {currentViewUrl && (
-              <iframe
-                src={currentViewUrl}
-                className="w-full h-full border border-gray-200 rounded-lg"
-                title="PDF Viewer"
-              />
-            )}
           </div>
         </DialogContent>
       </Dialog>

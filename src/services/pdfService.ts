@@ -1,3 +1,4 @@
+
 import { supabase } from "@/integrations/supabase/client";
 
 export interface PDFGenerationResult {
@@ -24,10 +25,12 @@ export async function generatePetPDF(petId: string, type: 'emergency' | 'full' |
       };
     }
 
-    // The response should now be a PDF blob
+    // The response should be a PDF blob
     if (data instanceof ArrayBuffer || data instanceof Uint8Array) {
       const pdfBlob = new Blob([data], { type: 'application/pdf' });
       const fileName = `PetPort_${type}_Profile.pdf`;
+      
+      console.log('PDF blob created successfully, size:', pdfBlob.size);
       
       return {
         success: true,
@@ -36,6 +39,7 @@ export async function generatePetPDF(petId: string, type: 'emergency' | 'full' |
         type
       };
     } else {
+      console.error('Invalid PDF response format:', typeof data, data);
       return {
         success: false,
         error: 'Invalid PDF response format'

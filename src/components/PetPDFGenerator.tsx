@@ -1,9 +1,8 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { FileText, Download, QrCode, Share2, Loader2, Users, ExternalLink, Eye } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { FileText, Download, Share2, Loader2, Users, ExternalLink } from "lucide-react";
 import { generatePetPDF, generateQRCodeUrl, downloadPDFBlob, generatePublicProfileUrl, shareProfile } from "@/services/pdfService";
 import { useToast } from "@/hooks/use-toast";
 
@@ -52,11 +51,17 @@ export const PetPDFGenerator = ({ petId, petName }: PetPDFGeneratorProps) => {
           setFullQrCodeUrl(generateQRCodeUrl(tempUrl));
         }
         
+        // Automatically download the PDF
+        const fileName = type === 'emergency' 
+          ? `PetPort_Emergency_Profile_${petName}.pdf`
+          : `PetPort_Complete_Profile_${petName}.pdf`;
+        await downloadPDFBlob(result.pdfBlob, fileName);
+        
         setIsDialogOpen(true);
         
         toast({
           title: "PDF Generated Successfully",
-          description: `${petName}'s ${type === 'emergency' ? 'emergency profile' : 'complete profile'} PDF is ready to download.`,
+          description: `${petName}'s ${type === 'emergency' ? 'emergency profile' : 'complete profile'} PDF has been downloaded.`,
         });
       } else {
         throw new Error(result.error || 'Failed to generate PDF');

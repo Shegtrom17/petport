@@ -9,7 +9,7 @@ export interface PDFGenerationResult {
   type?: string;
 }
 
-export async function generatePetPDF(petId: string, type: 'emergency' | 'full' | 'care' = 'emergency'): Promise<PDFGenerationResult> {
+export async function generatePetPDF(petId: string, type: 'emergency' | 'full' = 'emergency'): Promise<PDFGenerationResult> {
   try {
     console.log('Generating PDF for pet:', petId, 'type:', type);
 

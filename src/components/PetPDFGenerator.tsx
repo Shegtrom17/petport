@@ -13,7 +13,10 @@ interface PetPDFGeneratorProps {
 }
 
 export const PetPDFGenerator = ({ petId, petName }: PetPDFGeneratorProps) => {
-  const [isGenerating, setIsGenerating] = useState(false);
+  // Separate loading states for each button
+  const [isGeneratingEmergency, setIsGeneratingEmergency] = useState(false);
+  const [isGeneratingFull, setIsGeneratingFull] = useState(false);
+  
   const [emergencyPdfUrl, setEmergencyPdfUrl] = useState<string | null>(null);
   const [fullPdfUrl, setFullPdfUrl] = useState<string | null>(null);
   const [emergencyQrCodeUrl, setEmergencyQrCodeUrl] = useState<string | null>(null);
@@ -27,7 +30,13 @@ export const PetPDFGenerator = ({ petId, petName }: PetPDFGeneratorProps) => {
   const publicProfileUrl = generatePublicProfileUrl(petId);
 
   const handleGeneratePDF = async (type: 'emergency' | 'full') => {
-    setIsGenerating(true);
+    // Set the appropriate loading state
+    if (type === 'emergency') {
+      setIsGeneratingEmergency(true);
+    } else {
+      setIsGeneratingFull(true);
+    }
+
     try {
       console.log(`Starting ${type} PDF generation for pet:`, petId);
       
@@ -59,7 +68,12 @@ export const PetPDFGenerator = ({ petId, petName }: PetPDFGeneratorProps) => {
         variant: "destructive",
       });
     } finally {
-      setIsGenerating(false);
+      // Clear the appropriate loading state
+      if (type === 'emergency') {
+        setIsGeneratingEmergency(false);
+      } else {
+        setIsGeneratingFull(false);
+      }
     }
   };
 
@@ -152,10 +166,10 @@ export const PetPDFGenerator = ({ petId, petName }: PetPDFGeneratorProps) => {
           <p className="text-sm text-navy-600 mb-3">Essential medical and contact information</p>
           <Button 
             onClick={() => handleGeneratePDF('emergency')}
-            disabled={isGenerating}
+            disabled={isGeneratingEmergency}
             className="w-full bg-gradient-to-r from-gold-500 to-gold-400 text-navy-900 hover:from-gold-400 hover:to-gold-300"
           >
-            {isGenerating ? (
+            {isGeneratingEmergency ? (
               <Loader2 className="w-4 h-4 mr-2 animate-spin" />
             ) : (
               <FileText className="w-4 h-4 mr-2" />
@@ -170,175 +184,174 @@ export const PetPDFGenerator = ({ petId, petName }: PetPDFGeneratorProps) => {
           </div>
           <h4 className="font-serif font-bold text-navy-900 mb-2 border-b border-gold-500/50 pb-1">Complete Profile</h4>
           <p className="text-sm text-navy-600 mb-3">Full passport with all certifications</p>
-          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-            <DialogTrigger asChild>
-              <Button 
-                onClick={() => handleGeneratePDF('full')}
-                disabled={isGenerating}
-                className="w-full bg-gradient-to-r from-gold-500 to-gold-400 text-navy-900 hover:from-gold-400 hover:to-gold-300"
-              >
-                {isGenerating ? (
-                  <>
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                    Generating...
-                  </>
-                ) : (
-                  <>
-                    <FileText className="w-4 h-4 mr-2" />
-                    Generate Full Profile
-                  </>
-                )}
-              </Button>
-            </DialogTrigger>
-            
-            <DialogContent className="max-w-md bg-[#f8f8f8]">
-              <DialogHeader>
-                <DialogTitle className="font-serif text-navy-900 border-b-2 border-gold-500 pb-2">
-                  📋 Share {petName}'s Profile
-                </DialogTitle>
-              </DialogHeader>
-              
-              <div className="space-y-6">
-                {/* Public Profile Link */}
-                <div className="bg-white p-4 rounded-lg border border-gold-500/30 shadow-sm">
-                  <h4 className="font-serif font-bold text-navy-900 mb-2 flex items-center gap-2">
-                    <div className="w-6 h-6 bg-gold-500/20 rounded-full flex items-center justify-center">
-                      <ExternalLink className="w-3 h-3 text-gold-600" />
-                    </div>
-                    Public Profile Page
-                  </h4>
-                  <p className="text-sm text-navy-600 mb-3">Share a read-only online profile that anyone can view</p>
-                  <Button
-                    onClick={handleSharePublicProfile}
-                    disabled={isSharing}
-                    variant="outline"
-                    className="w-full border-navy-900 text-navy-900 hover:bg-navy-50"
-                  >
-                    {isSharing ? (
-                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                    ) : (
-                      <Share2 className="w-4 h-4 mr-2" />
-                    )}
-                    Share Public Profile
-                  </Button>
-                </div>
-
-                {/* Emergency PDF */}
-                {emergencyPdfUrl && emergencyQrCodeUrl && (
-                  <div className="bg-white p-4 rounded-lg border border-gold-500/30 shadow-sm">
-                    <h4 className="font-serif font-bold text-navy-900 mb-3">🚨 Emergency Profile PDF</h4>
-                    <div className="text-center mb-3">
-                      <img 
-                        src={emergencyQrCodeUrl} 
-                        alt="Emergency PDF QR Code" 
-                        className="border-2 border-gold-500/30 rounded-lg mx-auto"
-                        style={{width: '120px', height: '120px'}}
-                      />
-                    </div>
-                    <div className="grid grid-cols-3 gap-2">
-                      <Button
-                        onClick={() => handleViewPDF(emergencyPdfUrl)}
-                        variant="outline"
-                        size="sm"
-                        className="border-gold-500 text-gold-600 hover:bg-gold-50 font-semibold"
-                      >
-                        <Eye className="w-4 h-4 mr-1" />
-                        View
-                      </Button>
-                      <Button
-                        onClick={() => handleDownload(emergencyPdfUrl, 'emergency')}
-                        variant="outline"
-                        size="sm"
-                        className="border-navy-900 text-navy-900 hover:bg-navy-50"
-                      >
-                        <Download className="w-4 h-4 mr-1" />
-                        Download
-                      </Button>
-                      <Button
-                        onClick={() => handleShare(emergencyPdfUrl, 'emergency')}
-                        variant="outline"
-                        size="sm"
-                        disabled={isSharing}
-                        className="border-navy-900 text-navy-900 hover:bg-navy-50"
-                      >
-                        <Share2 className="w-4 h-4 mr-1" />
-                        Share
-                      </Button>
-                    </div>
-                  </div>
-                )}
-
-                {/* Full Profile PDF */}
-                {fullPdfUrl && fullQrCodeUrl && (
-                  <div className="bg-white p-4 rounded-lg border border-gold-500/30 shadow-sm">
-                    <h4 className="font-serif font-bold text-navy-900 mb-3">Complete Profile PDF</h4>
-                    <div className="text-center mb-3">
-                      <img 
-                        src={fullQrCodeUrl} 
-                        alt="Full Profile PDF QR Code" 
-                        className="border-2 border-gold-500/30 rounded-lg mx-auto"
-                        style={{width: '120px', height: '120px'}}
-                      />
-                    </div>
-                    <div className="grid grid-cols-3 gap-2">
-                      <Button
-                        onClick={() => handleViewPDF(fullPdfUrl)}
-                        variant="outline"
-                        size="sm"
-                        className="border-gold-500 text-gold-600 hover:bg-gold-50 font-semibold"
-                      >
-                        <Eye className="w-4 h-4 mr-1" />
-                        View
-                      </Button>
-                      <Button
-                        onClick={() => handleDownload(fullPdfUrl, 'full')}
-                        variant="outline"
-                        size="sm"
-                        className="border-navy-900 text-navy-900 hover:bg-navy-50"
-                      >
-                        <Download className="w-4 h-4 mr-1" />
-                        Download
-                      </Button>
-                      <Button
-                        onClick={() => handleShare(fullPdfUrl, 'complete')}
-                        variant="outline"
-                        size="sm"
-                        disabled={isSharing}
-                        className="border-navy-900 text-navy-900 hover:bg-navy-50"
-                      >
-                        <Share2 className="w-4 h-4 mr-1" />
-                        Share
-                      </Button>
-                    </div>
-                  </div>
-                )}
-
-                {/* In-App Sharing */}
-                <div className="border-t border-gold-500/30 pt-4">
-                  <Button
-                    onClick={() => {
-                      setIsDialogOpen(false);
-                      window.location.hash = 'share-with-members';
-                    }}
-                    className="w-full bg-gradient-to-r from-navy-900 to-navy-800 text-gold-500 hover:from-navy-800 hover:to-navy-700"
-                  >
-                    <Users className="w-4 h-4 mr-2" />
-                    Share with PetPort Members
-                  </Button>
-                </div>
-
-                {/* Direct Links */}
-                <div className="text-xs text-navy-500 space-y-1 bg-navy-50 p-3 rounded-lg">
-                  <p className="font-medium">Direct Links:</p>
-                  <p className="break-all">Public: {publicProfileUrl}</p>
-                  {emergencyPdfUrl && <p className="break-all">Emergency: {emergencyPdfUrl}</p>}
-                  {fullPdfUrl && <p className="break-all">Full: {fullPdfUrl}</p>}
-                </div>
-              </div>
-            </DialogContent>
-          </Dialog>
+          <Button 
+            onClick={() => handleGeneratePDF('full')}
+            disabled={isGeneratingFull}
+            className="w-full bg-gradient-to-r from-gold-500 to-gold-400 text-navy-900 hover:from-gold-400 hover:to-gold-300"
+          >
+            {isGeneratingFull ? (
+              <>
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                Generating...
+              </>
+            ) : (
+              <>
+                <FileText className="w-4 h-4 mr-2" />
+                Generate Full Profile
+              </>
+            )}
+          </Button>
         </div>
       </div>
+
+      {/* Dialog for sharing options */}
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogContent className="max-w-md bg-[#f8f8f8]">
+          <DialogHeader>
+            <DialogTitle className="font-serif text-navy-900 border-b-2 border-gold-500 pb-2">
+              📋 Share {petName}'s Profile
+            </DialogTitle>
+          </DialogHeader>
+          
+          <div className="space-y-6">
+            {/* Public Profile Link */}
+            <div className="bg-white p-4 rounded-lg border border-gold-500/30 shadow-sm">
+              <h4 className="font-serif font-bold text-navy-900 mb-2 flex items-center gap-2">
+                <div className="w-6 h-6 bg-gold-500/20 rounded-full flex items-center justify-center">
+                  <ExternalLink className="w-3 h-3 text-gold-600" />
+                </div>
+                Public Profile Page
+              </h4>
+              <p className="text-sm text-navy-600 mb-3">Share a read-only online profile that anyone can view</p>
+              <Button
+                onClick={handleSharePublicProfile}
+                disabled={isSharing}
+                variant="outline"
+                className="w-full border-navy-900 text-navy-900 hover:bg-navy-50"
+              >
+                {isSharing ? (
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                ) : (
+                  <Share2 className="w-4 h-4 mr-2" />
+                )}
+                Share Public Profile
+              </Button>
+            </div>
+
+            {/* Emergency PDF */}
+            {emergencyPdfUrl && emergencyQrCodeUrl && (
+              <div className="bg-white p-4 rounded-lg border border-gold-500/30 shadow-sm">
+                <h4 className="font-serif font-bold text-navy-900 mb-3">🚨 Emergency Profile PDF</h4>
+                <div className="text-center mb-3">
+                  <img 
+                    src={emergencyQrCodeUrl} 
+                    alt="Emergency PDF QR Code" 
+                    className="border-2 border-gold-500/30 rounded-lg mx-auto"
+                    style={{width: '120px', height: '120px'}}
+                  />
+                </div>
+                <div className="grid grid-cols-3 gap-2">
+                  <Button
+                    onClick={() => handleViewPDF(emergencyPdfUrl)}
+                    variant="outline"
+                    size="sm"
+                    className="border-gold-500 text-gold-600 hover:bg-gold-50 font-semibold"
+                  >
+                    <Eye className="w-4 h-4 mr-1" />
+                    View
+                  </Button>
+                  <Button
+                    onClick={() => handleDownload(emergencyPdfUrl, 'emergency')}
+                    variant="outline"
+                    size="sm"
+                    className="border-navy-900 text-navy-900 hover:bg-navy-50"
+                  >
+                    <Download className="w-4 h-4 mr-1" />
+                    Download
+                  </Button>
+                  <Button
+                    onClick={() => handleShare(emergencyPdfUrl, 'emergency')}
+                    variant="outline"
+                    size="sm"
+                    disabled={isSharing}
+                    className="border-navy-900 text-navy-900 hover:bg-navy-50"
+                  >
+                    <Share2 className="w-4 h-4 mr-1" />
+                    Share
+                  </Button>
+                </div>
+              </div>
+            )}
+
+            {/* Full Profile PDF */}
+            {fullPdfUrl && fullQrCodeUrl && (
+              <div className="bg-white p-4 rounded-lg border border-gold-500/30 shadow-sm">
+                <h4 className="font-serif font-bold text-navy-900 mb-3">Complete Profile PDF</h4>
+                <div className="text-center mb-3">
+                  <img 
+                    src={fullQrCodeUrl} 
+                    alt="Full Profile PDF QR Code" 
+                    className="border-2 border-gold-500/30 rounded-lg mx-auto"
+                    style={{width: '120px', height: '120px'}}
+                  />
+                </div>
+                <div className="grid grid-cols-3 gap-2">
+                  <Button
+                    onClick={() => handleViewPDF(fullPdfUrl)}
+                    variant="outline"
+                    size="sm"
+                    className="border-gold-500 text-gold-600 hover:bg-gold-50 font-semibold"
+                  >
+                    <Eye className="w-4 h-4 mr-1" />
+                    View
+                  </Button>
+                  <Button
+                    onClick={() => handleDownload(fullPdfUrl, 'full')}
+                    variant="outline"
+                    size="sm"
+                    className="border-navy-900 text-navy-900 hover:bg-navy-50"
+                  >
+                    <Download className="w-4 h-4 mr-1" />
+                    Download
+                  </Button>
+                  <Button
+                    onClick={() => handleShare(fullPdfUrl, 'complete')}
+                    variant="outline"
+                    size="sm"
+                    disabled={isSharing}
+                    className="border-navy-900 text-navy-900 hover:bg-navy-50"
+                  >
+                    <Share2 className="w-4 h-4 mr-1" />
+                    Share
+                  </Button>
+                </div>
+              </div>
+            )}
+
+            {/* In-App Sharing */}
+            <div className="border-t border-gold-500/30 pt-4">
+              <Button
+                onClick={() => {
+                  setIsDialogOpen(false);
+                  window.location.hash = 'share-with-members';
+                }}
+                className="w-full bg-gradient-to-r from-navy-900 to-navy-800 text-gold-500 hover:from-navy-800 hover:to-navy-700"
+              >
+                <Users className="w-4 h-4 mr-2" />
+                Share with PetPort Members
+              </Button>
+            </div>
+
+            {/* Direct Links */}
+            <div className="text-xs text-navy-500 space-y-1 bg-navy-50 p-3 rounded-lg">
+              <p className="font-medium">Direct Links:</p>
+              <p className="break-all">Public: {publicProfileUrl}</p>
+              {emergencyPdfUrl && <p className="break-all">Emergency: {emergencyPdfUrl}</p>}
+              {fullPdfUrl && <p className="break-all">Full: {fullPdfUrl}</p>}
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       {/* PDF View Modal */}
       <Dialog open={viewModalOpen} onOpenChange={setViewModalOpen}>

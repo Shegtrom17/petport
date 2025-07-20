@@ -53,13 +53,6 @@ export const PetProfileContent = ({
     <div className="passport-map-container">
       <div className="passport-map-bg" />
       
-      {/* Edit Button */}
-      <div className="flex justify-center mb-6">
-        <ProfileEditButton 
-          userId={enhancedPetData.user_id} 
-          onEdit={handleProfileEdit}
-        />
-      </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Left Column - Pet Overview */}

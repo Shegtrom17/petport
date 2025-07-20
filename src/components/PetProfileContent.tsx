@@ -1,6 +1,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { AlertTriangle } from "lucide-react";
 import { PetPDFGenerator } from "@/components/PetPDFGenerator";
 import { SupportAnimalBanner } from "@/components/SupportAnimalBanner";
 import { SocialShareButtons } from "@/components/SocialShareButtons";
@@ -142,6 +143,29 @@ export const PetProfileContent = ({
               </Button>
             </CardContent>
           </Card>
+
+          {/* Medical Alert Banner */}
+          {enhancedPetData?.medicalAlert && (
+            <Card className="border-2 border-red-600 shadow-xl bg-gradient-to-r from-red-500 to-red-600 text-white relative overflow-hidden cursor-pointer transition-all hover:shadow-2xl hover:scale-[1.02] hover:border-red-400"
+                  onClick={() => window.dispatchEvent(new CustomEvent('navigate-to-care'))}>
+              <div className="absolute inset-0 bg-black/10"></div>
+              <CardContent className="p-4 relative">
+                <div className="flex items-center justify-center space-x-3">
+                  <AlertTriangle className="w-8 h-8 text-white animate-pulse" />
+                  <div className="text-center">
+                    <h3 className="text-xl font-bold tracking-wide">MEDICAL ALERT</h3>
+                    <p className="text-red-100 text-sm">{enhancedPetData?.medicalConditions || "Medical conditions specified"}</p>
+                    <div className="mt-2 pt-2 border-t border-red-400/50">
+                      <p className="text-red-200 text-xs font-medium">
+                        👆 Click to view full medical details
+                      </p>
+                    </div>
+                  </div>
+                  <AlertTriangle className="w-8 h-8 text-white animate-pulse" />
+                </div>
+              </CardContent>
+            </Card>
+          )}
 
 
         </div>

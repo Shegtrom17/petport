@@ -226,7 +226,20 @@ export const PetProfileContent = ({
               {enhancedPetData?.petCaretaker && (
                 <div className="p-3 bg-gradient-to-r from-navy-900 to-navy-800 text-gold-500 rounded-lg border border-gold-500/30">
                   <p className="text-gold-400 text-sm font-semibold tracking-wide mb-1">PET CARETAKER</p>
-                  <p className="font-medium">{enhancedPetData.petCaretaker}</p>
+                  {(() => {
+                    const phoneNumber = extractPhoneNumber(enhancedPetData.petCaretaker);
+                    return phoneNumber ? (
+                      <a 
+                        href={`tel:${formatPhoneForTel(phoneNumber)}`}
+                        className="font-medium flex items-center gap-2 hover:text-gold-300 transition-colors duration-200 cursor-pointer"
+                      >
+                        <Phone className="w-4 h-4" />
+                        {enhancedPetData.petCaretaker}
+                      </a>
+                    ) : (
+                      <p className="font-medium">{enhancedPetData.petCaretaker}</p>
+                    );
+                  })()}
                 </div>
               )}
               

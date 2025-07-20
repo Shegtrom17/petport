@@ -128,13 +128,15 @@ export const PetGallerySection = ({ petData }: PetGallerySectionProps) => {
       <Card className="border-0 shadow-lg bg-passport-section-bg backdrop-blur-sm">
         <CardHeader>
           <CardTitle className="flex items-center justify-between">
-            <div className="flex items-center space-x-2">
-              <Eye className="w-5 h-5 text-blue-600" />
-              <span>{petData.name}'s Photo Gallery</span>
+            <div className="flex items-center justify-between w-full">
+              <div className="flex items-center space-x-2">
+                <Eye className="w-5 h-5 text-blue-600" />
+                <span>{petData.name}'s Photo Gallery</span>
+              </div>
+              <Badge variant="outline" className="border-navy-800 text-navy-800 text-xs px-2 py-1">
+                {(petData.galleryPhotos?.length || 0) + capturedPhotos.length} Photos
+              </Badge>
             </div>
-            <Badge variant="outline" className="border-navy-800 text-navy-800">
-              {(petData.galleryPhotos?.length || 0) + capturedPhotos.length} Photos
-            </Badge>
           </CardTitle>
         </CardHeader>
         <CardContent>

@@ -240,6 +240,12 @@ export const PetProfileCard = ({ petData, onUpdate }: PetProfileCardProps) => {
               <p className="text-yellow-400 text-sm font-semibold tracking-wide">WEIGHT</p>
               <p className="text-lg font-medium">{petData?.weight || "Not specified"}</p>
             </div>
+            <div className="md:col-span-2">
+              <p className="text-yellow-400 text-sm font-semibold tracking-wide">MICROCHIP NUMBER</p>
+              <p className="text-lg font-mono bg-slate-700/50 px-3 py-2 rounded border border-yellow-600/30">
+                {petData?.microchipId || "Not specified"}
+              </p>
+            </div>
           </div>
           
           {petData?.bio && (
@@ -343,12 +349,6 @@ export const PetProfileCard = ({ petData, onUpdate }: PetProfileCardProps) => {
             <div className="space-y-2">
               <p className="text-yellow-400 text-sm font-semibold tracking-wide">PRIMARY VETERINARIAN</p>
               <p className="text-lg font-medium">{petData?.vetContact || "Not specified"}</p>
-            </div>
-            <div className="space-y-2">
-              <p className="text-yellow-400 text-sm font-semibold tracking-wide">MICROCHIP NUMBER</p>
-              <p className="text-lg font-mono bg-slate-700/50 px-3 py-2 rounded border border-yellow-600/30">
-                {petData?.microchipId || "Not specified"}
-              </p>
             </div>
             <div className="space-y-2">
               <p className="text-yellow-400 text-sm font-semibold tracking-wide">PET CARETAKER</p>

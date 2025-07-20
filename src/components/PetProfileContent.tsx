@@ -79,14 +79,14 @@ export const PetProfileContent = ({
             <CardHeader>
               <CardTitle className="flex items-center justify-between text-yellow-400">
                 <div className="flex items-center space-x-2">
-                  <span className="tracking-wide">📷 OFFICIAL PHOTOGRAPHS</span>
+                  <span className="tracking-wide">OFFICIAL PHOTOGRAPHS</span>
                 </div>
                 <Button 
                   onClick={() => setActiveTab("gallery")}
-                  className="bg-gradient-to-r from-gold-500 to-gold-400 text-navy-900 hover:from-gold-400 hover:to-gold-300 border border-gold-500/50 shadow-md font-medium"
+                  className="bg-gradient-to-r from-gold-500 to-gold-400 text-navy-900 hover:from-gold-400 hover:to-gold-300 border border-gold-500/50 shadow-md font-medium text-xs sm:text-sm px-2 py-1"
                   size="sm"
                 >
-                  📸 View Gallery ({enhancedPetData?.galleryPhotos?.length || 0})
+                  View Gallery ({enhancedPetData?.galleryPhotos?.length || 0})
                 </Button>
               </CardTitle>
             </CardHeader>

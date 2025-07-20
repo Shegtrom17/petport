@@ -31,7 +31,6 @@ export const ProfileEditButton = ({ userId, onEdit }: ProfileEditButtonProps) =>
         className="w-full bg-gradient-to-r from-navy-900 to-navy-800 hover:from-navy-800 hover:to-navy-700 text-gold-500 border border-gold-500/30 px-4 sm:px-8 py-2 sm:py-3 text-sm sm:text-lg font-bold shadow-xl hover:shadow-2xl transition-all transform hover:scale-105"
         size="lg"
       >
-        <Edit className="w-4 h-4 mr-2" />
         <span>Edit Profile</span>
       </Button>
     </div>

@@ -158,7 +158,7 @@ const Index = () => {
         console.log("Rendering CareInstructionsSection");
         return <CareInstructionsSection petData={petData} />;
       case "resume":
-        console.log("Rendering PetResumeSection with integrated badges");
+        console.log("Rendering PetResumeSection with integrated badges and reviews");
         return (
           <div className="space-y-6">
             <PetResumeSection petData={petData} />
@@ -184,11 +184,9 @@ const Index = () => {
                 </div>
               </CardContent>
             </Card>
+            <ReviewsSection petData={petData} />
           </div>
         );
-      case "reviews":
-        console.log("Rendering ReviewsSection");
-        return <ReviewsSection petData={petData} />;
       case "travel":
         console.log("Rendering TravelMapSection");
         return <TravelMapSection petData={petData} />;

@@ -12,7 +12,6 @@ export const NavigationTabs = ({ activeTab, onTabChange, isMobile = false }: Nav
   const tabs = [
     { id: "profile", label: "Profile", icon: FileText },
     { id: "resume", label: "Pet Resume", icon: Badge },
-    { id: "reviews", label: "Reviews", icon: Users },
     { id: "travel", label: "Travel Map", icon: MapPin },
     { id: "documents", label: "Documents", icon: FileText },
     { id: "badges", label: "Badges", icon: Award },

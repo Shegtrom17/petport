@@ -212,10 +212,6 @@ export const PetProfileCard = ({ petData, onUpdate }: PetProfileCardProps) => {
       {/* Support Animal Status Banner */}
       <SupportAnimalBanner status={petData?.supportAnimalStatus || null} />
 
-      {/* PDF Generator Section */}
-      <div className="bg-gradient-to-br from-navy-900 to-slate-800 p-6 rounded-xl border border-yellow-600/30 shadow-xl">
-        <PetPDFGenerator petId={petData?.id || ""} petName={petData?.name || ""} />
-      </div>
 
       {/* Medical Alert Banner */}
       {petData?.medicalAlert && (

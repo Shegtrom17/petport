@@ -143,22 +143,6 @@ export const PetProfileContent = ({
             </CardContent>
           </Card>
 
-          {enhancedPetData.medicalAlert && (
-            <Card className="bg-gradient-to-r from-red-500 to-red-600 text-white shadow-lg cursor-pointer transition-all hover:shadow-xl hover:scale-105 border-2 border-red-400 hover:border-red-300"
-                  onClick={() => setActiveTab("care")}>
-              <CardContent className="p-4">
-                <div className="text-center">
-                  <h3 className="text-lg font-bold mb-1">⚠️ MEDICAL ALERT</h3>
-                  <p className="text-red-100 text-sm mb-2">{enhancedPetData.medicalConditions || "Medical conditions specified"}</p>
-                  <div className="mt-3 pt-2 border-t border-red-400/50">
-                    <p className="text-red-200 text-xs font-medium">
-                      👆 Click to view full medical details
-                    </p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          )}
 
         </div>
       </div>

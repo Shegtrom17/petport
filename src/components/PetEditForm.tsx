@@ -233,18 +233,19 @@ export const PetEditForm = ({ petData, onSave, onCancel }: PetEditFormProps) => 
           </Select>
         </div>
         
-        <div className="flex space-x-4">
+        <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4">
           <Button 
             onClick={handleSave}
             disabled={isSaving}
-            className="flex-1 bg-gradient-to-r from-navy-900 to-navy-800 hover:from-navy-800 hover:to-navy-700 text-gold-500 border border-gold-500/30"
+            className="flex-1 bg-gradient-to-r from-navy-900 to-navy-800 hover:from-navy-800 hover:to-navy-700 text-gold-500 border border-gold-500/30 px-3 sm:px-4 py-2 text-sm sm:text-base"
           >
-            {isSaving ? "Saving..." : "Save Changes"}
+            <span className="hidden sm:inline">{isSaving ? "Saving..." : "Save Changes"}</span>
+            <span className="sm:hidden">{isSaving ? "Saving..." : "Save"}</span>
           </Button>
           <Button 
             onClick={onCancel}
             variant="outline"
-            className="flex-1 border-navy-900 text-navy-900 hover:bg-navy-50"
+            className="flex-1 border-navy-900 text-navy-900 hover:bg-navy-50 px-3 sm:px-4 py-2 text-sm sm:text-base"
           >
             Cancel
           </Button>

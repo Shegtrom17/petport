@@ -64,14 +64,16 @@ export const PetGallerySection = ({ petData }: PetGallerySectionProps) => {
                 </p>
               </div>
             </div>
-            <div className="flex space-x-2">
-              <Button onClick={handleUploadPhoto} variant="secondary" size="sm">
-                <Plus className="w-4 h-4 mr-2" />
-                Add Photo
+            <div className="flex space-x-1 sm:space-x-2">
+              <Button onClick={handleUploadPhoto} variant="secondary" size="sm" className="px-2 sm:px-3 py-1 sm:py-2 text-xs sm:text-sm">
+                <Plus className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
+                <span className="hidden sm:inline">Add Photo</span>
+                <span className="sm:hidden">Add</span>
               </Button>
-              <Button onClick={handleDownloadGallery} variant="secondary" size="sm">
-                <Download className="w-4 h-4 mr-2" />
-                Download PDF
+              <Button onClick={handleDownloadGallery} variant="secondary" size="sm" className="px-2 sm:px-3 py-1 sm:py-2 text-xs sm:text-sm">
+                <Download className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
+                <span className="hidden sm:inline">Download PDF</span>
+                <span className="sm:hidden">PDF</span>
               </Button>
             </div>
           </div>
@@ -94,26 +96,28 @@ export const PetGallerySection = ({ petData }: PetGallerySectionProps) => {
             <Camera className="w-12 h-12 text-gray-400 mx-auto mb-4" />
             <p className="text-gray-600 mb-2">Click to upload photos or drag and drop</p>
             <p className="text-sm text-gray-500 mb-4">Supports JPG, PNG, HEIC up to 10MB each</p>
-            <div className="flex justify-center space-x-3">
+            <div className="flex justify-center space-x-2 sm:space-x-3">
               <Button 
-                className="bg-gradient-to-r from-navy-900 to-navy-800 text-gold-500 border border-gold-500/30"
+                className="bg-gradient-to-r from-navy-900 to-navy-800 text-gold-500 border border-gold-500/30 px-2 sm:px-4 py-1 sm:py-2 text-xs sm:text-sm"
                 onClick={(e) => {
                   e.stopPropagation();
                   handleUploadPhoto();
                 }}
               >
-                <Plus className="w-4 h-4 mr-2" />
-                Choose Files
+                <Plus className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
+                <span className="hidden sm:inline">Choose Files</span>
+                <span className="sm:hidden">Upload</span>
               </Button>
               <Button 
-                className="bg-blue-600 hover:bg-blue-700 text-white border-0"
+                className="bg-blue-600 hover:bg-blue-700 text-white border-0 px-2 sm:px-4 py-1 sm:py-2 text-xs sm:text-sm"
                 onClick={(e) => {
                   e.stopPropagation();
                   handleCapturePhoto();
                 }}
               >
-                <Camera className="w-4 h-4 mr-2" />
-                📸 Capture Moment
+                <Camera className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
+                <span className="hidden sm:inline">📸 Capture Moment</span>
+                <span className="sm:hidden">📸 Capture</span>
               </Button>
             </div>
           </div>
@@ -177,20 +181,22 @@ export const PetGallerySection = ({ petData }: PetGallerySectionProps) => {
             <div className="text-center py-12">
               <Camera className="w-16 h-16 text-gray-300 mx-auto mb-4" />
               <p className="text-gray-500 mb-4">No photos uploaded yet</p>
-              <div className="flex justify-center space-x-3">
+              <div className="flex justify-center space-x-2 sm:space-x-3">
                 <Button 
                   onClick={handleUploadPhoto}
-                  className="bg-gradient-to-r from-navy-900 to-navy-800 text-gold-500 border border-gold-500/30"
+                  className="bg-gradient-to-r from-navy-900 to-navy-800 text-gold-500 border border-gold-500/30 px-2 sm:px-4 py-1 sm:py-2 text-xs sm:text-sm"
                 >
-                  <Plus className="w-4 h-4 mr-2" />
-                  Upload First Photo
+                  <Plus className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
+                  <span className="hidden sm:inline">Upload First Photo</span>
+                  <span className="sm:hidden">Upload</span>
                 </Button>
                 <Button 
                   onClick={handleCapturePhoto}
-                  className="bg-blue-600 hover:bg-blue-700 text-white"
+                  className="bg-blue-600 hover:bg-blue-700 text-white px-2 sm:px-4 py-1 sm:py-2 text-xs sm:text-sm"
                 >
-                  <Camera className="w-4 h-4 mr-2" />
-                  📸 Take Photo
+                  <Camera className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
+                  <span className="hidden sm:inline">📸 Take Photo</span>
+                  <span className="sm:hidden">📸 Photo</span>
                 </Button>
               </div>
             </div>

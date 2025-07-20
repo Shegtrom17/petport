@@ -301,18 +301,21 @@ export const QuickIDSection = ({ petData }: QuickIDSectionProps) => {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-            <Button className="bg-gradient-to-r from-navy-900 to-navy-800 text-gold-500 hover:from-navy-800 hover:to-navy-700 border border-gold-500/30">
-              <QrCode className="w-4 h-4 mr-2" />
-              Generate QR Code
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-3">
+            <Button className="bg-gradient-to-r from-navy-900 to-navy-800 text-gold-500 hover:from-navy-800 hover:to-navy-700 border border-gold-500/30 px-2 sm:px-4 py-2 text-xs sm:text-sm">
+              <QrCode className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
+              <span className="hidden sm:inline">Generate QR Code</span>
+              <span className="sm:hidden">QR Code</span>
             </Button>
-            <Button variant="outline" className="border-navy-900 text-navy-900 hover:bg-navy-50">
-              <Download className="w-4 h-4 mr-2" />
-              Download PDF
+            <Button variant="outline" className="border-navy-900 text-navy-900 hover:bg-navy-50 px-2 sm:px-4 py-2 text-xs sm:text-sm">
+              <Download className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
+              <span className="hidden sm:inline">Download PDF</span>
+              <span className="sm:hidden">PDF</span>
             </Button>
-            <Button variant="outline" className="border-navy-900 text-navy-900 hover:bg-navy-50">
-              <Share className="w-4 h-4 mr-2" />
-              Share Link
+            <Button variant="outline" className="border-navy-900 text-navy-900 hover:bg-navy-50 px-2 sm:px-4 py-2 text-xs sm:text-sm">
+              <Share className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
+              <span className="hidden sm:inline">Share Link</span>
+              <span className="sm:hidden">Share</span>
             </Button>
           </div>
         </CardContent>
@@ -363,24 +366,27 @@ export const QuickIDSection = ({ petData }: QuickIDSectionProps) => {
               <div className="w-12 h-12 bg-gold-500/20 rounded-full mx-auto mb-3 flex items-center justify-center">
                 <Share className="w-6 h-6 text-gold-600" />
               </div>
-              <Button variant="outline" className="w-full border-navy-800 text-navy-800 hover:bg-navy-50">
-                Social Media
+              <Button variant="outline" className="w-full border-navy-800 text-navy-800 hover:bg-navy-50 px-2 sm:px-4 py-1 sm:py-2 text-xs sm:text-sm">
+                <span className="hidden sm:inline">Social Media</span>
+                <span className="sm:hidden">Social</span>
               </Button>
             </div>
             <div className="bg-white p-4 rounded-lg border border-gold-500/30 shadow-sm text-center">
               <div className="w-12 h-12 bg-gold-500/20 rounded-full mx-auto mb-3 flex items-center justify-center">
                 <Phone className="w-6 h-6 text-gold-600" />
               </div>
-              <Button variant="outline" className="w-full border-navy-800 text-navy-800 hover:bg-navy-50">
-                Text Message
+              <Button variant="outline" className="w-full border-navy-800 text-navy-800 hover:bg-navy-50 px-2 sm:px-4 py-1 sm:py-2 text-xs sm:text-sm">
+                <span className="hidden sm:inline">Text Message</span>
+                <span className="sm:hidden">Text</span>
               </Button>
             </div>
             <div className="bg-white p-4 rounded-lg border border-gold-500/30 shadow-sm text-center">
               <div className="w-12 h-12 bg-gold-500/20 rounded-full mx-auto mb-3 flex items-center justify-center">
                 <QrCode className="w-6 h-6 text-gold-600" />
               </div>
-              <Button variant="outline" className="w-full border-navy-800 text-navy-800 hover:bg-navy-50">
-                Print QR Code
+              <Button variant="outline" className="w-full border-navy-800 text-navy-800 hover:bg-navy-50 px-2 sm:px-4 py-1 sm:py-2 text-xs sm:text-sm">
+                <span className="hidden sm:inline">Print QR Code</span>
+                <span className="sm:hidden">Print</span>
               </Button>
             </div>
           </div>

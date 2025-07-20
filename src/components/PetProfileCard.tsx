@@ -286,9 +286,10 @@ export const PetProfileCard = ({ petData, onUpdate }: PetProfileCardProps) => {
                 
                 <div className="mt-4 flex items-center space-x-2">
                   {petData?.medicalEmergencyDocument ? (
-                    <Button size="sm" variant="outline" className="border-red-400 text-red-300 hover:bg-red-900/50">
-                      <FileText className="w-4 h-4 mr-2" />
-                      View Medical Document
+                    <Button size="sm" variant="outline" className="border-red-400 text-red-300 hover:bg-red-900/50 px-2 sm:px-3 py-1 sm:py-2 text-xs sm:text-sm">
+                      <FileText className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
+                      <span className="hidden sm:inline">View Medical Document</span>
+                      <span className="sm:hidden">Medical Doc</span>
                     </Button>
                   ) : (
                     <Button 

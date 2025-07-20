@@ -28,11 +28,12 @@ export const ProfileEditButton = ({ userId, onEdit }: ProfileEditButtonProps) =>
     <div className="w-full max-w-md">
       <Button 
         onClick={handleClick}
-        className="w-full bg-gradient-to-r from-navy-900 to-navy-800 hover:from-navy-800 hover:to-navy-700 text-gold-500 border border-gold-500/30 px-8 py-3 text-lg font-bold shadow-xl hover:shadow-2xl transition-all transform hover:scale-105"
+        className="w-full bg-gradient-to-r from-navy-900 to-navy-800 hover:from-navy-800 hover:to-navy-700 text-gold-500 border border-gold-500/30 px-4 sm:px-8 py-2 sm:py-3 text-sm sm:text-lg font-bold shadow-xl hover:shadow-2xl transition-all transform hover:scale-105"
         size="lg"
       >
-        <Edit className="w-6 h-6 mr-3" />
-        Edit Profile
+        <Edit className="w-4 h-4 sm:w-6 sm:h-6 mr-2 sm:mr-3" />
+        <span className="hidden sm:inline">Edit Profile</span>
+        <span className="sm:hidden">Edit</span>
       </Button>
     </div>
   );

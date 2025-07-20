@@ -275,12 +275,12 @@ export const DocumentsSection = ({ petId, documents, onDocumentDeleted }: Docume
                       </p>
                     </div>
                   </div>
-                  <div className="flex items-center space-x-2 flex-shrink-0">
-                    <Button variant="ghost" size="sm" className="hover:bg-navy-50 text-navy-800">
-                      <Eye className="w-4 h-4" />
+                  <div className="flex items-center space-x-1 sm:space-x-2 flex-shrink-0">
+                    <Button variant="ghost" size="sm" className="hover:bg-navy-50 text-navy-800 px-1 sm:px-2 text-xs sm:text-sm">
+                      <Eye className="w-3 h-3 sm:w-4 sm:h-4" />
                     </Button>
-                    <Button variant="ghost" size="sm" className="hover:bg-navy-50 text-navy-800">
-                      <Download className="w-4 h-4" />
+                    <Button variant="ghost" size="sm" className="hover:bg-navy-50 text-navy-800 px-1 sm:px-2 text-xs sm:text-sm">
+                      <Download className="w-3 h-3 sm:w-4 sm:h-4" />
                     </Button>
                     <Button 
                       variant="ghost" 

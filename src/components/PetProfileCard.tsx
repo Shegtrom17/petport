@@ -83,12 +83,61 @@ export const PetProfileCard = ({ petData, onUpdate }: PetProfileCardProps) => {
     console.log("Switching to gallery view...");
   };
 
-  const handleEditSave = () => {
-    setIsEditing(false);
-    if (onUpdate) {
-      onUpdate();
+  const handleEditSave = async (updatedData: PetData) => {
+    try {
+      const { error } = await supabase
+        .from('pets')
+        .update({
+          name: updatedData.name,
+          breed: updatedData.breed,
+          age: updatedData.age,
+          weight: updatedData.weight,
+          microchipId: updatedData.microchipId,
+          species: updatedData.species,
+          state: updatedData.state,
+          county: updatedData.county,
+          notes: updatedData.notes,
+          vetContact: updatedData.vetContact,
+          emergencyContact: updatedData.emergencyContact,
+          secondEmergencyContact: updatedData.secondEmergencyContact,
+          petCaretaker: updatedData.petCaretaker,
+          lastVaccination: updatedData.lastVaccination,
+          medicalConditions: updatedData.medicalConditions,
+          supportAnimalStatus: updatedData.supportAnimalStatus,
+          bio: updatedData.bio
+        })
+        .eq('id', updatedData.id)
+        .eq('user_id', user?.id);
+
+      if (error) {
+        console.error('Error updating pet:', error);
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "Failed to update pet. Please try again.",
+        });
+        return;
+      }
+
+      toast({
+        title: "Success",
+        description: "Pet profile updated successfully!",
+      });
+
+      setIsEditing(false);
+      if (onUpdate) {
+        onUpdate();
+      }
+    } catch (error) {
+      console.error('Error updating pet:', error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to update pet. Please try again.",
+      });
     }
   };
+
 
   const handleDeletePet = async () => {
     if (!user?.id || !petData?.id) return;

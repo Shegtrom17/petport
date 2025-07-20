@@ -5,6 +5,7 @@ import { QuickIDSection } from "@/components/QuickIDSection";
 import { CareInstructionsSection } from "@/components/CareInstructionsSection";
 import { PetResumeSection } from "@/components/PetResumeSection";
 import { ReviewsSection } from "@/components/ReviewsSection";
+import { CertificationSection } from "@/components/CertificationSection";
 import { TravelMapSection } from "@/components/TravelMapSection";
 import { DocumentsSection } from "@/components/DocumentsSection";
 import { PetGallerySection } from "@/components/PetGallerySection";
@@ -184,6 +185,7 @@ const Index = () => {
                 </div>
               </CardContent>
             </Card>
+            <CertificationSection petData={petData} />
             <ReviewsSection petData={petData} />
           </div>
         );

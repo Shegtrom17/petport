@@ -6,6 +6,7 @@ import { PetPDFGenerator } from "@/components/PetPDFGenerator";
 import { SupportAnimalBanner } from "@/components/SupportAnimalBanner";
 import { SocialShareButtons } from "@/components/SocialShareButtons";
 import { ProfileEditButton } from "@/components/ProfileEditButton";
+import { CertificationBanner } from "@/components/CertificationBanner";
 
 interface PetProfileContentProps {
   petData: any;
@@ -121,6 +122,9 @@ export const PetProfileContent = ({
               </CardContent>
             </Card>
           )}
+
+          {/* Certification Banner - Compact display */}
+          <CertificationBanner certificationData={enhancedPetData?.certificationData} />
         </div>
 
         {/* Right Column - Main Actions */}

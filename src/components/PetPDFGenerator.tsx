@@ -2,9 +2,12 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { FileText, Download, Share2, Loader2, Users, ExternalLink } from "lucide-react";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { FileText, Download, Share2, Loader2, Users, ExternalLink, LogIn, AlertTriangle } from "lucide-react";
 import { generatePetPDF, generateQRCodeUrl, downloadPDFBlob, generatePublicProfileUrl, shareProfile } from "@/services/pdfService";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/context/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 interface PetPDFGeneratorProps {
   petId: string;
@@ -12,6 +15,10 @@ interface PetPDFGeneratorProps {
 }
 
 export const PetPDFGenerator = ({ petId, petName }: PetPDFGeneratorProps) => {
+  // Auth state
+  const { user, isLoading: authLoading } = useAuth();
+  const navigate = useNavigate();
+  
   // Separate loading states for each button
   const [isGeneratingEmergency, setIsGeneratingEmergency] = useState(false);
   const [isGeneratingFull, setIsGeneratingFull] = useState(false);
@@ -22,11 +29,21 @@ export const PetPDFGenerator = ({ petId, petName }: PetPDFGeneratorProps) => {
   const [fullQrCodeUrl, setFullQrCodeUrl] = useState<string | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isSharing, setIsSharing] = useState(false);
+  const [authError, setAuthError] = useState<string | null>(null);
   const { toast } = useToast();
 
   const publicProfileUrl = generatePublicProfileUrl(petId);
 
   const handleGeneratePDF = async (type: 'emergency' | 'full') => {
+    // Clear any previous auth errors
+    setAuthError(null);
+    
+    // Check authentication first
+    if (!user) {
+      setAuthError("You must be signed in to generate PDF documents.");
+      return;
+    }
+
     // Set the appropriate loading state
     if (type === 'emergency') {
       setIsGeneratingEmergency(true);
@@ -64,15 +81,31 @@ export const PetPDFGenerator = ({ petId, petName }: PetPDFGeneratorProps) => {
           description: `${petName}'s ${type === 'emergency' ? 'emergency profile' : 'complete profile'} PDF has been downloaded.`,
         });
       } else {
-        throw new Error(result.error || 'Failed to generate PDF');
+        // Handle specific error cases
+        const errorMessage = result.error || 'Failed to generate PDF';
+        if (errorMessage.includes('unauthorized') || errorMessage.includes('authentication')) {
+          setAuthError("Your session has expired. Please sign in again to generate PDFs.");
+        } else {
+          toast({
+            title: "Generation Failed",
+            description: errorMessage,
+            variant: "destructive",
+          });
+        }
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('PDF generation error:', error);
-      toast({
-        title: "Error",
-        description: "Failed to generate PDF. Please try again.",
-        variant: "destructive",
-      });
+      
+      // Handle authentication errors
+      if (error?.message?.includes('unauthorized') || error?.message?.includes('JWT')) {
+        setAuthError("Authentication error. Please sign in again to generate PDFs.");
+      } else {
+        toast({
+          title: "Error",
+          description: error?.message || "Failed to generate PDF. Please try again.",
+          variant: "destructive",
+        });
+      }
     } finally {
       // Clear the appropriate loading state
       if (type === 'emergency') {
@@ -157,6 +190,46 @@ export const PetPDFGenerator = ({ petId, petName }: PetPDFGeneratorProps) => {
         </div>
       </div>
 
+      {/* Authentication Alert */}
+      {authError && (
+        <Alert variant="destructive">
+          <AlertTriangle className="h-4 w-4" />
+          <AlertTitle>Authentication Required</AlertTitle>
+          <AlertDescription className="mt-2">
+            {authError}
+            <Button
+              onClick={() => navigate('/auth')}
+              variant="outline"
+              size="sm"
+              className="mt-2 ml-0 border-red-300 text-red-700 hover:bg-red-50"
+            >
+              <LogIn className="w-4 h-4 mr-2" />
+              Sign In
+            </Button>
+          </AlertDescription>
+        </Alert>
+      )}
+
+      {/* Auth Status Info */}
+      {!user && !authLoading && !authError && (
+        <Alert>
+          <LogIn className="h-4 w-4" />
+          <AlertTitle>Sign In Required</AlertTitle>
+          <AlertDescription className="mt-2">
+            You must be signed in to generate and download PDF documents.
+            <Button
+              onClick={() => navigate('/auth')}
+              variant="outline"
+              size="sm"
+              className="mt-2 ml-0"
+            >
+              <LogIn className="w-4 h-4 mr-2" />
+              Sign In to Continue
+            </Button>
+          </AlertDescription>
+        </Alert>
+      )}
+
       {/* Document generation buttons in stamped boxes */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         <div className="bg-white p-4 rounded-lg border-2 border-gold-500/30 shadow-sm relative">
@@ -167,15 +240,17 @@ export const PetPDFGenerator = ({ petId, petName }: PetPDFGeneratorProps) => {
           <p className="text-sm text-navy-600 mb-3">Essential medical and contact information</p>
           <Button 
             onClick={() => handleGeneratePDF('emergency')}
-            disabled={isGeneratingEmergency}
-            className="w-full bg-gradient-to-r from-gold-500 to-gold-400 text-navy-900 hover:from-gold-400 hover:to-gold-300"
+            disabled={isGeneratingEmergency || authLoading || (!user && !authError)}
+            className="w-full bg-gradient-to-r from-gold-500 to-gold-400 text-navy-900 hover:from-gold-400 hover:to-gold-300 disabled:opacity-50"
           >
             {isGeneratingEmergency ? (
               <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+            ) : !user ? (
+              <LogIn className="w-4 h-4 mr-2" />
             ) : (
               <FileText className="w-4 h-4 mr-2" />
             )}
-            Generate Emergency PDF
+            {!user ? 'Sign In to Generate' : 'Generate Emergency PDF'}
           </Button>
         </div>
 
@@ -187,13 +262,18 @@ export const PetPDFGenerator = ({ petId, petName }: PetPDFGeneratorProps) => {
           <p className="text-sm text-navy-600 mb-3">Full passport with all certifications</p>
           <Button 
             onClick={() => handleGeneratePDF('full')}
-            disabled={isGeneratingFull}
-            className="w-full bg-gradient-to-r from-gold-500 to-gold-400 text-navy-900 hover:from-gold-400 hover:to-gold-300"
+            disabled={isGeneratingFull || authLoading || (!user && !authError)}
+            className="w-full bg-gradient-to-r from-gold-500 to-gold-400 text-navy-900 hover:from-gold-400 hover:to-gold-300 disabled:opacity-50"
           >
             {isGeneratingFull ? (
               <>
                 <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                 Generating...
+              </>
+            ) : !user ? (
+              <>
+                <LogIn className="w-4 h-4 mr-2" />
+                Sign In to Generate
               </>
             ) : (
               <>

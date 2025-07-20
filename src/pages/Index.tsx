@@ -159,32 +159,10 @@ const Index = () => {
         console.log("Rendering CareInstructionsSection");
         return <CareInstructionsSection petData={petData} />;
       case "resume":
-        console.log("Rendering PetResumeSection with integrated badges and reviews");
+        console.log("Rendering PetResumeSection with integrated certifications and reviews");
         return (
           <div className="space-y-6">
             <PetResumeSection petData={petData} />
-            <Card className="bg-[#f8f8f8] shadow-md">
-              <CardHeader>
-                <CardTitle className="text-xl font-serif text-navy-900 border-b-2 border-gold-500 pb-2">
-                  🏆 VERIFIED ACHIEVEMENTS
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  {petData.badges.map((badge: string, index: number) => (
-                    <div key={index} className="text-center p-4 bg-white/50 rounded-lg border border-gold-500/30">
-                      <div className="w-16 h-16 bg-gradient-to-br from-gold-400 to-gold-600 rounded-full mx-auto mb-3 flex items-center justify-center shadow-lg transform rotate-3">
-                        <div className="w-12 h-12 bg-navy-800 rounded-full flex items-center justify-center">
-                          <span className="text-2xl">🐾</span>
-                        </div>
-                      </div>
-                      <p className="text-sm font-medium text-navy-900">{badge}</p>
-                      <div className="w-full h-1 bg-gold-500 rounded-full mt-2 opacity-50"></div>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
             <CertificationSection petData={petData} />
             <ReviewsSection petData={petData} />
           </div>
@@ -199,10 +177,6 @@ const Index = () => {
           documents={documents} 
           onDocumentDeleted={handleDocumentUpdate}
         />;
-      case "badges":
-        console.log("Rendering BadgesSection - redirecting to resume");
-        setActiveTab("resume");
-        return null;
       case "gallery":
         console.log("Rendering PetGallerySection");
         return <PetGallerySection petData={petData} />;

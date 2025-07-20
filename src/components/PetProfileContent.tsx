@@ -116,6 +116,54 @@ export const PetProfileContent = ({
           <Card className="bg-[#f8f8f8] shadow-md">
             <CardHeader className="pb-3">
               <CardTitle className="text-lg font-serif text-navy-900 border-b-2 border-gold-500 pb-2">
+                📋 CONTACT & IDENTIFICATION
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {enhancedPetData?.emergencyContact && (
+                <div className="p-3 bg-gradient-to-r from-navy-900 to-navy-800 text-gold-500 rounded-lg border border-gold-500/30">
+                  <p className="text-gold-400 text-sm font-semibold tracking-wide mb-1">PRIMARY EMERGENCY CONTACT</p>
+                  <p className="font-medium">{enhancedPetData.emergencyContact}</p>
+                </div>
+              )}
+              
+              {enhancedPetData?.secondEmergencyContact && (
+                <div className="p-3 bg-gradient-to-r from-navy-900 to-navy-800 text-gold-500 rounded-lg border border-gold-500/30">
+                  <p className="text-gold-400 text-sm font-semibold tracking-wide mb-1">SECONDARY EMERGENCY CONTACT</p>
+                  <p className="font-medium">{enhancedPetData.secondEmergencyContact}</p>
+                </div>
+              )}
+              
+              {enhancedPetData?.vetContact && (
+                <div className="p-3 bg-gradient-to-r from-navy-900 to-navy-800 text-gold-500 rounded-lg border border-gold-500/30">
+                  <p className="text-gold-400 text-sm font-semibold tracking-wide mb-1">VETERINARIAN CONTACT</p>
+                  <p className="font-medium">{enhancedPetData.vetContact}</p>
+                </div>
+              )}
+              
+              {enhancedPetData?.petCaretaker && (
+                <div className="p-3 bg-gradient-to-r from-navy-900 to-navy-800 text-gold-500 rounded-lg border border-gold-500/30">
+                  <p className="text-gold-400 text-sm font-semibold tracking-wide mb-1">PET CARETAKER</p>
+                  <p className="font-medium">{enhancedPetData.petCaretaker}</p>
+                </div>
+              )}
+              
+              {(enhancedPetData?.county || enhancedPetData?.state) && (
+                <div className="p-3 bg-gradient-to-r from-navy-900 to-navy-800 text-gold-500 rounded-lg border border-gold-500/30">
+                  <p className="text-gold-400 text-sm font-semibold tracking-wide mb-1">LOCATION</p>
+                  <p className="font-medium">
+                    {enhancedPetData.county && `${enhancedPetData.county} County`}
+                    {enhancedPetData.county && enhancedPetData.state && ', '}
+                    {enhancedPetData.state}
+                  </p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          <Card className="bg-[#f8f8f8] shadow-md">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-lg font-serif text-navy-900 border-b-2 border-gold-500 pb-2">
                 ⚡ QUICK ACTIONS
               </CardTitle>
             </CardHeader>

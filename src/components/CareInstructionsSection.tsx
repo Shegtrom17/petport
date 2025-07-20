@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Heart, Clock, Pill, Coffee, Moon, AlertTriangle, Edit, Loader2, FileText, Download, QrCode, Share2, ExternalLink, Eye } from "lucide-react";
+import { Heart, Clock, Pill, Coffee, Moon, AlertTriangle, Edit, Loader2, FileText, Download, QrCode, Share2, ExternalLink, Eye, Phone } from "lucide-react";
 import { CareInstructionsEditForm } from "@/components/CareInstructionsEditForm";
 import { fetchCareInstructions } from "@/services/careInstructionsService";
 import { generatePetPDF, generateQRCodeUrl, downloadPDFBlob, shareProfile } from "@/services/pdfService";
@@ -15,8 +15,25 @@ interface CareInstructionsSectionProps {
     name: string;
     species?: string;
     medications: string[];
+    emergencyContact?: string;
+    secondEmergencyContact?: string;
+    vetContact?: string;
+    petCaretaker?: string;
   };
 }
+
+// Helper function to extract phone number and create tel link
+const extractPhoneNumber = (contactString: string) => {
+  if (!contactString) return null;
+  
+  // Extract phone number using regex - handles various formats
+  const phoneMatch = contactString.match(/\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}/);
+  return phoneMatch ? phoneMatch[0].replace(/[^\d]/g, '') : null;
+};
+
+const formatPhoneForTel = (phone: string) => {
+  return `+1${phone}`; // Assuming US numbers, adjust as needed
+};
 
 export const CareInstructionsSection = ({ petData }: CareInstructionsSectionProps) => {
   const [isEditing, setIsEditing] = useState(false);
@@ -221,6 +238,99 @@ export const CareInstructionsSection = ({ petData }: CareInstructionsSectionProp
 
   return (
     <div className="space-y-6">
+      {/* Quick Contacts Section */}
+      <Card className="border-0 shadow-lg bg-gradient-to-r from-slate-600 to-slate-700 text-white">
+        <CardHeader>
+          <CardTitle className="flex items-center space-x-2">
+            <Phone className="w-5 h-5 text-gold-400" />
+            <span>Quick Contacts</span>
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {petData.emergencyContact && (
+              <div className="p-3 bg-red-600/30 rounded-lg border border-red-500/30">
+                <p className="text-red-100 text-sm font-semibold tracking-wide mb-1">PRIMARY EMERGENCY</p>
+                {(() => {
+                  const phoneNumber = extractPhoneNumber(petData.emergencyContact);
+                  return phoneNumber ? (
+                    <a 
+                      href={`tel:${formatPhoneForTel(phoneNumber)}`}
+                      className="font-medium flex items-center gap-2 hover:text-red-200 transition-colors duration-200 cursor-pointer"
+                    >
+                      <Phone className="w-4 h-4" />
+                      {petData.emergencyContact}
+                    </a>
+                  ) : (
+                    <p className="font-medium">{petData.emergencyContact}</p>
+                  );
+                })()}
+              </div>
+            )}
+            
+            {petData.secondEmergencyContact && (
+              <div className="p-3 bg-red-600/30 rounded-lg border border-red-500/30">
+                <p className="text-red-100 text-sm font-semibold tracking-wide mb-1">SECONDARY EMERGENCY</p>
+                {(() => {
+                  const phoneNumber = extractPhoneNumber(petData.secondEmergencyContact);
+                  return phoneNumber ? (
+                    <a 
+                      href={`tel:${formatPhoneForTel(phoneNumber)}`}
+                      className="font-medium flex items-center gap-2 hover:text-red-200 transition-colors duration-200 cursor-pointer"
+                    >
+                      <Phone className="w-4 h-4" />
+                      {petData.secondEmergencyContact}
+                    </a>
+                  ) : (
+                    <p className="font-medium">{petData.secondEmergencyContact}</p>
+                  );
+                })()}
+              </div>
+            )}
+            
+            {petData.vetContact && (
+              <div className="p-3 bg-blue-600/30 rounded-lg border border-blue-500/30">
+                <p className="text-blue-100 text-sm font-semibold tracking-wide mb-1">VETERINARIAN</p>
+                {(() => {
+                  const phoneNumber = extractPhoneNumber(petData.vetContact);
+                  return phoneNumber ? (
+                    <a 
+                      href={`tel:${formatPhoneForTel(phoneNumber)}`}
+                      className="font-medium flex items-center gap-2 hover:text-blue-200 transition-colors duration-200 cursor-pointer"
+                    >
+                      <Phone className="w-4 h-4" />
+                      {petData.vetContact}
+                    </a>
+                  ) : (
+                    <p className="font-medium">{petData.vetContact}</p>
+                  );
+                })()}
+              </div>
+            )}
+            
+            {petData.petCaretaker && (
+              <div className="p-3 bg-green-600/30 rounded-lg border border-green-500/30">
+                <p className="text-green-100 text-sm font-semibold tracking-wide mb-1">PET CARETAKER</p>
+                {(() => {
+                  const phoneNumber = extractPhoneNumber(petData.petCaretaker);
+                  return phoneNumber ? (
+                    <a 
+                      href={`tel:${formatPhoneForTel(phoneNumber)}`}
+                      className="font-medium flex items-center gap-2 hover:text-green-200 transition-colors duration-200 cursor-pointer"
+                    >
+                      <Phone className="w-4 h-4" />
+                      {petData.petCaretaker}
+                    </a>
+                  ) : (
+                    <p className="font-medium">{petData.petCaretaker}</p>
+                  );
+                })()}
+              </div>
+            )}
+          </div>
+        </CardContent>
+      </Card>
+
       {/* Documentation Note */}
       <Card className="border-0 shadow-lg bg-blue-50 border-l-4 border-blue-500">
         <CardContent className="p-4">

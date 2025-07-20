@@ -20,7 +20,22 @@ interface PetData {
   medicalConditions?: string;
   petPassId: string;
   id?: string;
+  vetContact?: string;
+  petCaretaker?: string;
 }
+
+// Helper function to extract phone number and create tel link
+const extractPhoneNumber = (contactString: string) => {
+  if (!contactString) return null;
+  
+  // Extract phone number using regex - handles various formats
+  const phoneMatch = contactString.match(/\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}/);
+  return phoneMatch ? phoneMatch[0].replace(/[^\d]/g, '') : null;
+};
+
+const formatPhoneForTel = (phone: string) => {
+  return `+1${phone}`; // Assuming US numbers, adjust as needed
+};
 
 interface QuickIDSectionProps {
   petData: PetData;
@@ -40,6 +55,108 @@ export const QuickIDSection = ({ petData }: QuickIDSectionProps) => {
 
   return (
     <div className="space-y-6">
+      {/* Emergency Priority Contacts */}
+      <Card className="bg-red-600 shadow-lg border-2 border-red-700">
+        <CardHeader>
+          <CardTitle className="flex items-center space-x-2 text-xl font-serif text-white">
+            <AlertTriangle className="w-6 h-6 animate-pulse" />
+            <span>EMERGENCY PRIORITY CONTACTS</span>
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {petData.emergencyContact && (
+              <div className="p-4 bg-red-700/50 rounded-lg border-2 border-red-500">
+                <p className="text-red-100 text-xs font-bold tracking-wide mb-2">🚨 PRIORITY 1</p>
+                <p className="text-white text-sm font-semibold mb-1">PRIMARY EMERGENCY</p>
+                {(() => {
+                  const phoneNumber = extractPhoneNumber(petData.emergencyContact);
+                  return phoneNumber ? (
+                    <a 
+                      href={`tel:${formatPhoneForTel(phoneNumber)}`}
+                      className="text-white font-bold text-lg flex items-center gap-2 hover:text-red-200 transition-colors duration-200 cursor-pointer"
+                    >
+                      <Phone className="w-5 h-5" />
+                      {petData.emergencyContact}
+                    </a>
+                  ) : (
+                    <p className="text-white font-bold text-lg">{petData.emergencyContact}</p>
+                  );
+                })()}
+              </div>
+            )}
+            
+            {petData.secondEmergencyContact && (
+              <div className="p-4 bg-red-700/50 rounded-lg border-2 border-red-500">
+                <p className="text-red-100 text-xs font-bold tracking-wide mb-2">🚨 PRIORITY 2</p>
+                <p className="text-white text-sm font-semibold mb-1">SECONDARY EMERGENCY</p>
+                {(() => {
+                  const phoneNumber = extractPhoneNumber(petData.secondEmergencyContact);
+                  return phoneNumber ? (
+                    <a 
+                      href={`tel:${formatPhoneForTel(phoneNumber)}`}
+                      className="text-white font-bold text-lg flex items-center gap-2 hover:text-red-200 transition-colors duration-200 cursor-pointer"
+                    >
+                      <Phone className="w-5 h-5" />
+                      {petData.secondEmergencyContact}
+                    </a>
+                  ) : (
+                    <p className="text-white font-bold text-lg">{petData.secondEmergencyContact}</p>
+                  );
+                })()}
+              </div>
+            )}
+            
+            {petData.vetContact && (
+              <div className="p-4 bg-blue-700/50 rounded-lg border-2 border-blue-500">
+                <p className="text-blue-100 text-xs font-bold tracking-wide mb-2">🏥 MEDICAL</p>
+                <p className="text-white text-sm font-semibold mb-1">VETERINARIAN</p>
+                {(() => {
+                  const phoneNumber = extractPhoneNumber(petData.vetContact);
+                  return phoneNumber ? (
+                    <a 
+                      href={`tel:${formatPhoneForTel(phoneNumber)}`}
+                      className="text-white font-bold text-lg flex items-center gap-2 hover:text-blue-200 transition-colors duration-200 cursor-pointer"
+                    >
+                      <Phone className="w-5 h-5" />
+                      {petData.vetContact}
+                    </a>
+                  ) : (
+                    <p className="text-white font-bold text-lg">{petData.vetContact}</p>
+                  );
+                })()}
+              </div>
+            )}
+            
+            {petData.petCaretaker && (
+              <div className="p-4 bg-green-700/50 rounded-lg border-2 border-green-500">
+                <p className="text-green-100 text-xs font-bold tracking-wide mb-2">👤 CAREGIVER</p>
+                <p className="text-white text-sm font-semibold mb-1">PET CARETAKER</p>
+                {(() => {
+                  const phoneNumber = extractPhoneNumber(petData.petCaretaker);
+                  return phoneNumber ? (
+                    <a 
+                      href={`tel:${formatPhoneForTel(phoneNumber)}`}
+                      className="text-white font-bold text-lg flex items-center gap-2 hover:text-green-200 transition-colors duration-200 cursor-pointer"
+                    >
+                      <Phone className="w-5 h-5" />
+                      {petData.petCaretaker}
+                    </a>
+                  ) : (
+                    <p className="text-white font-bold text-lg">{petData.petCaretaker}</p>
+                  );
+                })()}
+              </div>
+            )}
+          </div>
+          <div className="mt-4 p-2 bg-red-800/30 rounded-lg border border-red-500/50">
+            <p className="text-red-100 text-xs text-center font-serif">
+              📞 Tap any number to call immediately • Keep this ID accessible at all times
+            </p>
+          </div>
+        </CardContent>
+      </Card>
+
       {/* Quick ID Preview with passport styling */}
       <Card className="bg-[#f8f8f8] shadow-lg border-2 border-gold-500/30">
         <CardHeader className="pb-4">

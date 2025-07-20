@@ -56,49 +56,48 @@ export const PetProfileContent = ({
       
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Left Column - Pet Overview */}
+        {/* Left Column - Official Photographs */}
         <div className="space-y-4">
-          <Card className="bg-[#f8f8f8] shadow-md">
-            <CardContent className="p-6">
-              <div className="flex flex-col items-center space-y-4">
-                <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-gold-500/50 shadow-lg">
-                  <img 
-                    src={enhancedPetData.photoUrl || "/placeholder.svg"} 
-                    alt={enhancedPetData.name || "Pet"}
-                    className="w-full h-full object-cover"
-                  />
+          <Card className="border-2 border-yellow-600 shadow-xl bg-gradient-to-br from-slate-800 to-slate-900 text-white">
+            <CardHeader>
+              <CardTitle className="flex items-center justify-between text-yellow-400">
+                <div className="flex items-center space-x-2">
+                  <span className="tracking-wide">📷 OFFICIAL PHOTOGRAPHS</span>
                 </div>
-                <div className="text-center">
-                  <h2 className="text-2xl font-serif font-bold text-navy-900 mb-1">{enhancedPetData.name || "Unknown Pet"}</h2>
-                  <p className="text-navy-600 mb-2">{enhancedPetData.breed || "Unknown Breed"} • {enhancedPetData.age || "Unknown Age"}</p>
-                  <div className="bg-gradient-to-r from-gold-500 to-gold-400 text-navy-900 px-4 py-2 rounded-full font-mono text-sm font-bold">
-                    {enhancedPetData.petPassId || "No ID"}
+                <Button 
+                  onClick={() => setActiveTab("gallery")}
+                  className="bg-gradient-to-r from-gold-500 to-gold-400 text-navy-900 hover:from-gold-400 hover:to-gold-300 border border-gold-500/50 shadow-md font-medium"
+                  size="sm"
+                >
+                  📸 View Gallery ({enhancedPetData?.galleryPhotos?.length || 0})
+                </Button>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 gap-6">
+                <div className="space-y-3">
+                  <p className="text-yellow-400 text-sm font-semibold tracking-wide">PORTRAIT</p>
+                  <div className="aspect-square rounded-lg overflow-hidden border-4 border-yellow-600/50 shadow-lg">
+                    <img 
+                      src={enhancedPetData?.photoUrl || "/placeholder.svg"} 
+                      alt={`${enhancedPetData?.name || "Pet"} portrait`}
+                      className="w-full h-full object-cover"
+                    />
                   </div>
                 </div>
-                <div className="w-full border-t border-gold-500/30 pt-4">
-                  <h3 className="text-lg font-serif font-bold text-navy-900 mb-3 text-center border-b-2 border-gold-500 pb-1">Certifications</h3>
-                  <div className="grid grid-cols-2 gap-2">
-                    {enhancedPetData.badges?.slice(0, 4).map((badge: string, index: number) => (
-                      <div key={index} className="text-center">
-                        <div className="w-12 h-12 bg-gradient-to-br from-gold-400 to-gold-600 rounded-full mx-auto mb-1 flex items-center justify-center">
-                          <span className="text-xl">🏆</span>
-                        </div>
-                        <p className="text-xs text-navy-700 font-medium">{badge}</p>
-                      </div>
-                    )) || []}
+                <div className="space-y-3">
+                  <p className="text-yellow-400 text-sm font-semibold tracking-wide">FULL PROFILE</p>
+                  <div className="aspect-[4/3] rounded-lg overflow-hidden border-4 border-yellow-600/50 shadow-lg">
+                    <img 
+                      src={enhancedPetData?.fullBodyPhotoUrl || "/placeholder.svg"} 
+                      alt={`${enhancedPetData?.name || "Pet"} full profile`}
+                      className="w-full h-full object-cover"
+                    />
                   </div>
                 </div>
               </div>
             </CardContent>
           </Card>
-
-          <SupportAnimalBanner status={enhancedPetData.supportAnimalStatus} />
-
-          <SocialShareButtons 
-            petName={enhancedPetData.name || "Pet"}
-            petId={selectedPet?.id || enhancedPetData.id || ""}
-            isMissingPet={false}
-          />
         </div>
 
         {/* Right Column - Main Actions */}

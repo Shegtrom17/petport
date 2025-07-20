@@ -213,49 +213,6 @@ export const PetProfileCard = ({ petData, onUpdate }: PetProfileCardProps) => {
       {/* Support Animal Status Banner */}
       <SupportAnimalBanner status={petData?.supportAnimalStatus || null} />
 
-      {/* Official Photographs Section - Moved to top for better identification */}
-      <Card className="border-2 border-yellow-600 shadow-xl bg-gradient-to-br from-slate-800 to-slate-900 text-white">
-        <CardHeader>
-          <CardTitle className="flex items-center justify-between text-yellow-400">
-            <div className="flex items-center space-x-2">
-              <Image className="w-5 h-5" />
-              <span className="tracking-wide">OFFICIAL PHOTOGRAPHS</span>
-            </div>
-            <Button 
-              onClick={handleViewGallery}
-              className="bg-gradient-to-r from-gold-500 to-gold-400 text-navy-900 hover:from-gold-400 hover:to-gold-300 border border-gold-500/50 shadow-md font-medium"
-              size="sm"
-            >
-              <Camera className="w-4 h-4 mr-2" />
-              View Gallery ({petData?.galleryPhotos?.length || 0})
-            </Button>
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="space-y-3">
-              <p className="text-yellow-400 text-sm font-semibold tracking-wide">PORTRAIT</p>
-              <div className="aspect-square rounded-lg overflow-hidden border-4 border-yellow-600/50 shadow-lg">
-                <img 
-                  src={petData?.photoUrl || "/placeholder.svg"} 
-                  alt={`${petData?.name || "Pet"} portrait`}
-                  className="w-full h-full object-cover"
-                />
-              </div>
-            </div>
-            <div className="space-y-3">
-              <p className="text-yellow-400 text-sm font-semibold tracking-wide">FULL PROFILE</p>
-              <div className="aspect-[4/3] rounded-lg overflow-hidden border-4 border-yellow-600/50 shadow-lg">
-                <img 
-                  src={petData?.fullBodyPhotoUrl || "/placeholder.svg"} 
-                  alt={`${petData?.name || "Pet"} full profile`}
-                  className="w-full h-full object-cover"
-                />
-              </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
 
       {/* Basic Information Card - Moved up for better flow */}
       <Card className="border-2 border-yellow-600 shadow-xl bg-gradient-to-br from-slate-800 to-slate-900 text-white">

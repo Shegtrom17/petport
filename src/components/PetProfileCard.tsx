@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { MapPin, Phone, FileText, Calendar, Pill, Image, Stethoscope, Clipboard, AlertTriangle, Upload, User, Camera, Edit, Trash2 } from "lucide-react";
+import { SocialShareButtons } from "@/components/SocialShareButtons";
 import { SupportAnimalBanner } from "@/components/SupportAnimalBanner";
 import { PetEditForm } from "@/components/PetEditForm";
 import { PetPDFGenerator } from "@/components/PetPDFGenerator";
@@ -212,6 +213,91 @@ export const PetProfileCard = ({ petData, onUpdate }: PetProfileCardProps) => {
       {/* Support Animal Status Banner */}
       <SupportAnimalBanner status={petData?.supportAnimalStatus || null} />
 
+      {/* Official Photographs Section - Moved to top for better identification */}
+      <Card className="border-2 border-yellow-600 shadow-xl bg-gradient-to-br from-slate-800 to-slate-900 text-white">
+        <CardHeader>
+          <CardTitle className="flex items-center justify-between text-yellow-400">
+            <div className="flex items-center space-x-2">
+              <Image className="w-5 h-5" />
+              <span className="tracking-wide">OFFICIAL PHOTOGRAPHS</span>
+            </div>
+            <Button 
+              onClick={handleViewGallery}
+              className="bg-gradient-to-r from-gold-500 to-gold-400 text-navy-900 hover:from-gold-400 hover:to-gold-300 border border-gold-500/50 shadow-md font-medium"
+              size="sm"
+            >
+              <Camera className="w-4 h-4 mr-2" />
+              View Gallery ({petData?.galleryPhotos?.length || 0})
+            </Button>
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-3">
+              <p className="text-yellow-400 text-sm font-semibold tracking-wide">PORTRAIT</p>
+              <div className="aspect-square rounded-lg overflow-hidden border-4 border-yellow-600/50 shadow-lg">
+                <img 
+                  src={petData?.photoUrl || "/placeholder.svg"} 
+                  alt={`${petData?.name || "Pet"} portrait`}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            </div>
+            <div className="space-y-3">
+              <p className="text-yellow-400 text-sm font-semibold tracking-wide">FULL PROFILE</p>
+              <div className="aspect-[4/3] rounded-lg overflow-hidden border-4 border-yellow-600/50 shadow-lg">
+                <img 
+                  src={petData?.fullBodyPhotoUrl || "/placeholder.svg"} 
+                  alt={`${petData?.name || "Pet"} full profile`}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Basic Information Card - Moved up for better flow */}
+      <Card className="border-2 border-yellow-600 shadow-xl bg-gradient-to-br from-slate-800 to-slate-900 text-white">
+        <CardHeader>
+          <CardTitle className="flex items-center space-x-2 text-yellow-400">
+            <FileText className="w-5 h-5" />
+            <span className="tracking-wide">BASIC INFORMATION</span>
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <p className="text-yellow-400 text-sm font-semibold tracking-wide">NAME</p>
+              <p className="text-lg font-medium">{petData?.name || "Not specified"}</p>
+            </div>
+            <div>
+              <p className="text-yellow-400 text-sm font-semibold tracking-wide">BREED</p>
+              <p className="text-lg font-medium">{petData?.breed || "Not specified"}</p>
+            </div>
+            <div>
+              <p className="text-yellow-400 text-sm font-semibold tracking-wide">AGE</p>
+              <p className="text-lg font-medium">{petData?.age || "Not specified"}</p>
+            </div>
+            <div>
+              <p className="text-yellow-400 text-sm font-semibold tracking-wide">WEIGHT</p>
+              <p className="text-lg font-medium">{petData?.weight || "Not specified"}</p>
+            </div>
+          </div>
+          
+          {petData?.bio && (
+            <div className="bg-slate-700/30 p-4 rounded-lg border border-yellow-600/30">
+              <p className="text-yellow-400 text-sm font-semibold tracking-wide mb-2">BIO</p>
+              <p className="text-slate-200">{petData.bio}</p>
+            </div>
+          )}
+          
+          <div className="bg-slate-700/30 p-4 rounded-lg border border-yellow-600/30">
+            <p className="text-yellow-400 text-sm font-semibold tracking-wide mb-2">BEHAVIORAL NOTES</p>
+            <p className="text-slate-200">{petData?.notes || "No notes specified"}</p>
+          </div>
+        </CardContent>
+      </Card>
 
     {/* Health Information - Navy blue styling */}
       <Card className="border-2 border-yellow-600/30 shadow-xl bg-gradient-to-br from-navy-900 to-slate-800 text-white">
@@ -272,91 +358,6 @@ export const PetProfileCard = ({ petData, onUpdate }: PetProfileCardProps) => {
               </div>
             </div>
           )}
-        </CardContent>
-      </Card>
-      {/* Basic Information Card */}
-      <Card className="border-2 border-yellow-600 shadow-xl bg-gradient-to-br from-slate-800 to-slate-900 text-white">
-        <CardHeader>
-          <CardTitle className="flex items-center space-x-2 text-yellow-400">
-            <FileText className="w-5 h-5" />
-            <span className="tracking-wide">BASIC INFORMATION</span>
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <p className="text-yellow-400 text-sm font-semibold tracking-wide">NAME</p>
-              <p className="text-lg font-medium">{petData?.name || "Not specified"}</p>
-            </div>
-            <div>
-              <p className="text-yellow-400 text-sm font-semibold tracking-wide">BREED</p>
-              <p className="text-lg font-medium">{petData?.breed || "Not specified"}</p>
-            </div>
-            <div>
-              <p className="text-yellow-400 text-sm font-semibold tracking-wide">AGE</p>
-              <p className="text-lg font-medium">{petData?.age || "Not specified"}</p>
-            </div>
-            <div>
-              <p className="text-yellow-400 text-sm font-semibold tracking-wide">WEIGHT</p>
-              <p className="text-lg font-medium">{petData?.weight || "Not specified"}</p>
-            </div>
-          </div>
-          
-          {petData?.bio && (
-            <div className="bg-slate-700/30 p-4 rounded-lg border border-yellow-600/30">
-              <p className="text-yellow-400 text-sm font-semibold tracking-wide mb-2">BIO</p>
-              <p className="text-slate-200">{petData.bio}</p>
-            </div>
-          )}
-          
-          <div className="bg-slate-700/30 p-4 rounded-lg border border-yellow-600/30">
-            <p className="text-yellow-400 text-sm font-semibold tracking-wide mb-2">BEHAVIORAL NOTES</p>
-            <p className="text-slate-200">{petData?.notes || "No notes specified"}</p>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Photos Section */}
-      <Card className="border-2 border-yellow-600 shadow-xl bg-gradient-to-br from-slate-800 to-slate-900 text-white">
-        <CardHeader>
-          <CardTitle className="flex items-center justify-between text-yellow-400">
-            <div className="flex items-center space-x-2">
-              <Image className="w-5 h-5" />
-              <span className="tracking-wide">OFFICIAL PHOTOGRAPHS</span>
-            </div>
-            <Button 
-              onClick={handleViewGallery}
-              className="bg-gradient-to-r from-gold-500 to-gold-400 text-navy-900 hover:from-gold-400 hover:to-gold-300 border border-gold-500/50 shadow-md font-medium"
-              size="sm"
-            >
-              <Camera className="w-4 h-4 mr-2" />
-              View Gallery ({petData?.galleryPhotos?.length || 0})
-            </Button>
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="space-y-3">
-              <p className="text-yellow-400 text-sm font-semibold tracking-wide">PORTRAIT</p>
-              <div className="aspect-square rounded-lg overflow-hidden border-4 border-yellow-600/50 shadow-lg">
-                <img 
-                  src={petData?.photoUrl || "/placeholder.svg"} 
-                  alt={`${petData?.name || "Pet"} portrait`}
-                  className="w-full h-full object-cover"
-                />
-              </div>
-            </div>
-            <div className="space-y-3">
-              <p className="text-yellow-400 text-sm font-semibold tracking-wide">FULL PROFILE</p>
-              <div className="aspect-[4/3] rounded-lg overflow-hidden border-4 border-yellow-600/50 shadow-lg">
-                <img 
-                  src={petData?.fullBodyPhotoUrl || "/placeholder.svg"} 
-                  alt={`${petData?.name || "Pet"} full profile`}
-                  className="w-full h-full object-cover"
-                />
-              </div>
-            </div>
-          </div>
         </CardContent>
       </Card>
 
@@ -429,7 +430,7 @@ export const PetProfileCard = ({ petData, onUpdate }: PetProfileCardProps) => {
       </Card>
 
 
-      {/* Passport-style Badges with New Icons */}
+      {/* Passport-style Badges with New Icons - Moved to after emergency contacts for better flow */}
       <Card className="border-2 border-yellow-600 shadow-xl bg-gradient-to-br from-slate-800 to-slate-900 text-white">
         <CardHeader>
           <CardTitle className="text-yellow-400 tracking-wide">CERTIFIED ACHIEVEMENTS</CardTitle>
@@ -468,6 +469,9 @@ export const PetProfileCard = ({ petData, onUpdate }: PetProfileCardProps) => {
           )}
         </CardContent>
       </Card>
+
+      {/* Share Profile Section - Moved to bottom */}
+      <SocialShareButtons petName={petData?.name || "Pet"} petId={petData?.id || ""} />
     </div>
   );
 };

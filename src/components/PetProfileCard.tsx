@@ -239,7 +239,67 @@ export const PetProfileCard = ({ petData, onUpdate }: PetProfileCardProps) => {
           </CardContent>
         </Card>
       )}
+    {/* Health Information - Navy blue styling */}
+      <Card className="border-2 border-yellow-600/30 shadow-xl bg-gradient-to-br from-navy-900 to-slate-800 text-white">
+        <CardHeader>
+          <CardTitle className="flex items-center space-x-2 text-gold-500">
+            <Calendar className="w-5 h-5" />
+            <span className="tracking-wide">HEALTH INFORMATION</span>
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div>
+            <p className="text-gold-400 text-sm font-medium tracking-wide">Last Vaccination</p>
+            <p className="text-lg text-white font-medium">{petData?.lastVaccination || "Not specified"}</p>
+          </div>
+          
+          {/* Medical Alert Section */}
+          <div className="border-t border-yellow-600/30 pt-4">
 
+            {petData?.medicalAlert ? (
+              <div className="bg-red-900/30 border border-red-600/50 rounded-lg p-4">
+                <p className="text-red-300 font-medium mb-2">Medical Conditions:</p>
+                <p className="text-red-200">{petData?.medicalConditions || "No conditions specified"}</p>
+                
+                <div className="mt-4 flex items-center space-x-2">
+                  {petData?.medicalEmergencyDocument ? (
+                    <Button size="sm" variant="outline" className="border-red-400 text-red-300 hover:bg-red-900/50">
+                      <FileText className="w-4 h-4 mr-2" />
+                      View Medical Document
+                    </Button>
+                  ) : (
+                    <Button 
+                      onClick={handleUploadMedicalDoc}
+                      size="sm" 
+                      variant="outline" 
+                      className="border-red-400 text-red-300 hover:bg-red-900/50"
+                    >
+                      <Upload className="w-4 h-4 mr-2" />
+                      Upload Medical Document
+                    </Button>
+                  )}
+                </div>
+              </div>
+            ) : (
+              <p className="text-slate-400 italic">No medical alerts</p>
+            )}
+          </div>
+
+          {petData?.medications && petData.medications.length > 0 && (
+            <div>
+              <p className="text-gold-400 text-sm font-medium tracking-wide mb-2">Current Medications</p>
+              <div className="space-y-2">
+                {petData.medications.map((medication, index) => (
+                  <div key={index} className="flex items-center space-x-2 bg-navy-800/50 p-3 rounded-lg border border-yellow-600/30">
+                    <Pill className="w-4 h-4 text-gold-400" />
+                    <span className="text-white">{medication}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </CardContent>
+      </Card>
       {/* Basic Information Card */}
       <Card className="border-2 border-yellow-600 shadow-xl bg-gradient-to-br from-slate-800 to-slate-900 text-white">
         <CardHeader>
@@ -374,28 +434,6 @@ export const PetProfileCard = ({ petData, onUpdate }: PetProfileCardProps) => {
         </CardContent>
       </Card>
 
-      {/* Passport Basic Information */}
-      <Card className="border-2 border-yellow-600 shadow-xl bg-gradient-to-br from-slate-800 to-slate-900 text-white">
-        <CardHeader>
-          <CardTitle className="flex items-center space-x-2 text-yellow-400">
-            <FileText className="w-5 h-5" />
-            <span className="tracking-wide">IDENTIFICATION DETAILS</span>
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="bg-slate-700/30 p-4 rounded-lg border border-yellow-600/30">
-            <p className="text-yellow-400 text-sm font-semibold tracking-wide mb-2">BEHAVIORAL NOTES</p>
-            <p className="text-slate-200">{petData?.notes || "No notes specified"}</p>
-          </div>
-          {petData?.bio && (
-            <div className="bg-slate-700/30 p-4 rounded-lg border border-yellow-600/30">
-              <p className="text-yellow-400 text-sm font-semibold tracking-wide mb-2">BIO</p>
-              <p className="text-slate-200">{petData.bio}</p>
-            </div>
-          )}
-        </CardContent>
-      </Card>
-
       {/* Emergency Contacts - Navy blue styling */}
       <Card className="border-2 border-yellow-600/30 shadow-xl bg-gradient-to-br from-navy-900 to-slate-800 text-white">
         <CardHeader>
@@ -416,75 +454,6 @@ export const PetProfileCard = ({ petData, onUpdate }: PetProfileCardProps) => {
         </CardContent>
       </Card>
 
-      {/* Health Information - Navy blue styling */}
-      <Card className="border-2 border-yellow-600/30 shadow-xl bg-gradient-to-br from-navy-900 to-slate-800 text-white">
-        <CardHeader>
-          <CardTitle className="flex items-center space-x-2 text-gold-500">
-            <Calendar className="w-5 h-5" />
-            <span className="tracking-wide">HEALTH INFORMATION</span>
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div>
-            <p className="text-gold-400 text-sm font-medium tracking-wide">Last Vaccination</p>
-            <p className="text-lg text-white font-medium">{petData?.lastVaccination || "Not specified"}</p>
-          </div>
-          
-          {/* Medical Alert Section */}
-          <div className="border-t border-yellow-600/30 pt-4">
-            <div className="flex items-center justify-between mb-2">
-              <p className="text-gold-400 text-sm font-medium tracking-wide">Medical Alerts</p>
-              {petData?.medicalAlert && (
-                <Badge variant="destructive" className="bg-red-600">
-                  <AlertTriangle className="w-3 h-3 mr-1" />
-                  ALERT
-                </Badge>
-              )}
-            </div>
-            {petData?.medicalAlert ? (
-              <div className="bg-red-900/30 border border-red-600/50 rounded-lg p-4">
-                <p className="text-red-300 font-medium mb-2">Medical Conditions:</p>
-                <p className="text-red-200">{petData?.medicalConditions || "No conditions specified"}</p>
-                
-                <div className="mt-4 flex items-center space-x-2">
-                  {petData?.medicalEmergencyDocument ? (
-                    <Button size="sm" variant="outline" className="border-red-400 text-red-300 hover:bg-red-900/50">
-                      <FileText className="w-4 h-4 mr-2" />
-                      View Medical Document
-                    </Button>
-                  ) : (
-                    <Button 
-                      onClick={handleUploadMedicalDoc}
-                      size="sm" 
-                      variant="outline" 
-                      className="border-red-400 text-red-300 hover:bg-red-900/50"
-                    >
-                      <Upload className="w-4 h-4 mr-2" />
-                      Upload Medical Document
-                    </Button>
-                  )}
-                </div>
-              </div>
-            ) : (
-              <p className="text-slate-400 italic">No medical alerts</p>
-            )}
-          </div>
-
-          {petData?.medications && petData.medications.length > 0 && (
-            <div>
-              <p className="text-gold-400 text-sm font-medium tracking-wide mb-2">Current Medications</p>
-              <div className="space-y-2">
-                {petData.medications.map((medication, index) => (
-                  <div key={index} className="flex items-center space-x-2 bg-navy-800/50 p-3 rounded-lg border border-yellow-600/30">
-                    <Pill className="w-4 h-4 text-gold-400" />
-                    <span className="text-white">{medication}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-        </CardContent>
-      </Card>
 
       {/* Passport-style Badges with New Icons */}
       <Card className="border-2 border-yellow-600 shadow-xl bg-gradient-to-br from-slate-800 to-slate-900 text-white">

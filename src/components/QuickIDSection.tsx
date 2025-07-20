@@ -115,14 +115,42 @@ export const QuickIDSection = ({ petData }: QuickIDSectionProps) => {
                 <div className="space-y-2 text-sm">
                   <div className="bg-red-600/30 p-3 rounded-lg">
                     <div className="grid grid-cols-1 gap-2">
-                      <div className="flex items-center space-x-2">
-                        <Phone className="w-4 h-4" />
-                        <span className="font-medium">Primary: {petData.emergencyContact}</span>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <Phone className="w-4 h-4" />
-                        <span className="font-medium">Secondary: {petData.secondEmergencyContact}</span>
-                      </div>
+                      {petData.emergencyContact && (() => {
+                        const phoneNumber = petData.emergencyContact.match(/\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}/)?.[0]?.replace(/[^\d]/g, '');
+                        return (
+                          <div className="flex items-center space-x-2">
+                            <Phone className="w-4 h-4" />
+                            {phoneNumber ? (
+                              <a 
+                                href={`tel:+1${phoneNumber}`}
+                                className="font-medium hover:text-red-200 transition-colors duration-200 cursor-pointer"
+                              >
+                                Primary: {petData.emergencyContact}
+                              </a>
+                            ) : (
+                              <span className="font-medium">Primary: {petData.emergencyContact}</span>
+                            )}
+                          </div>
+                        );
+                      })()}
+                      {petData.secondEmergencyContact && (() => {
+                        const phoneNumber = petData.secondEmergencyContact.match(/\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}/)?.[0]?.replace(/[^\d]/g, '');
+                        return (
+                          <div className="flex items-center space-x-2">
+                            <Phone className="w-4 h-4" />
+                            {phoneNumber ? (
+                              <a 
+                                href={`tel:+1${phoneNumber}`}
+                                className="font-medium hover:text-red-200 transition-colors duration-200 cursor-pointer"
+                              >
+                                Secondary: {petData.secondEmergencyContact}
+                              </a>
+                            ) : (
+                              <span className="font-medium">Secondary: {petData.secondEmergencyContact}</span>
+                            )}
+                          </div>
+                        );
+                      })()}
                     </div>
                   </div>
                   

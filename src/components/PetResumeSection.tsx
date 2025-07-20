@@ -7,6 +7,22 @@ import { Download, Share2, QrCode, Star, Shield, Heart, Phone, Mail, Award, Aler
 import { SupportAnimalBanner } from "@/components/SupportAnimalBanner";
 import { PetResumeEditForm } from "@/components/PetResumeEditForm";
 
+// Helper function to extract phone number and create tel link
+const extractPhoneNumber = (contactString: string) => {
+  if (!contactString) return null;
+  
+  // Extract phone number using regex - supports various formats
+  const phoneMatch = contactString.match(/\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}/);
+  if (phoneMatch) {
+    return phoneMatch[0].replace(/[^\d]/g, ''); // Remove non-digit characters
+  }
+  return null;
+};
+
+const formatPhoneForTel = (phone: string) => {
+  return `+1${phone}`; // Assuming US numbers, adjust as needed
+};
+
 interface PetResumeSectionProps {
   petData: {
     id: string;
@@ -206,21 +222,60 @@ export const PetResumeSection = ({ petData, onUpdate }: PetResumeSectionProps) =
                   <Phone className="w-4 h-4 text-blue-600" />
                   <div>
                     <p className="text-sm font-semibold text-blue-900">Veterinarian</p>
-                    <p className="text-sm text-blue-700">{petData.vetContact}</p>
+                    {(() => {
+                      const phoneNumber = extractPhoneNumber(petData.vetContact);
+                      return phoneNumber ? (
+                        <a 
+                          href={`tel:${formatPhoneForTel(phoneNumber)}`}
+                          className="text-sm text-blue-700 hover:text-blue-900 transition-colors duration-200 cursor-pointer flex items-center gap-1"
+                        >
+                          <Phone className="w-3 h-3" />
+                          {petData.vetContact}
+                        </a>
+                      ) : (
+                        <p className="text-sm text-blue-700">{petData.vetContact}</p>
+                      );
+                    })()}
                   </div>
                 </div>
                 <div className="flex items-center space-x-2">
                   <Mail className="w-4 h-4 text-blue-600" />
                   <div>
                     <p className="text-sm font-semibold text-blue-900">Primary Emergency</p>
-                    <p className="text-sm text-blue-700">{petData.emergencyContact}</p>
+                    {(() => {
+                      const phoneNumber = extractPhoneNumber(petData.emergencyContact);
+                      return phoneNumber ? (
+                        <a 
+                          href={`tel:${formatPhoneForTel(phoneNumber)}`}
+                          className="text-sm text-blue-700 hover:text-blue-900 transition-colors duration-200 cursor-pointer flex items-center gap-1"
+                        >
+                          <Phone className="w-3 h-3" />
+                          {petData.emergencyContact}
+                        </a>
+                      ) : (
+                        <p className="text-sm text-blue-700">{petData.emergencyContact}</p>
+                      );
+                    })()}
                   </div>
                 </div>
                 <div className="flex items-center space-x-2">
                   <Phone className="w-4 h-4 text-blue-600" />
                   <div>
                     <p className="text-sm font-semibold text-blue-900">Secondary Emergency</p>
-                    <p className="text-sm text-blue-700">{petData.secondEmergencyContact}</p>
+                    {(() => {
+                      const phoneNumber = extractPhoneNumber(petData.secondEmergencyContact);
+                      return phoneNumber ? (
+                        <a 
+                          href={`tel:${formatPhoneForTel(phoneNumber)}`}
+                          className="text-sm text-blue-700 hover:text-blue-900 transition-colors duration-200 cursor-pointer flex items-center gap-1"
+                        >
+                          <Phone className="w-3 h-3" />
+                          {petData.secondEmergencyContact}
+                        </a>
+                      ) : (
+                        <p className="text-sm text-blue-700">{petData.secondEmergencyContact}</p>
+                      );
+                    })()}
                   </div>
                 </div>
                 <div className="flex items-center space-x-2">

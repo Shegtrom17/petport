@@ -324,67 +324,6 @@ export const PetProfileCard = ({ petData, onUpdate }: PetProfileCardProps) => {
         </CardContent>
       </Card>
 
-      {/* Passport Header - Vet & Microchip Info */}
-      <Card className="border-2 border-yellow-600 shadow-xl bg-gradient-to-br from-slate-800 to-navy-900 text-white relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-32 h-32 bg-yellow-500/10 rounded-full -translate-y-16 translate-x-16"></div>
-        <div className="absolute bottom-0 left-0 w-24 h-24 bg-yellow-500/10 rounded-full translate-y-12 -translate-x-12"></div>
-        <CardHeader className="relative">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <div className="w-12 h-12 bg-gradient-to-r from-yellow-400 to-yellow-600 rounded-full flex items-center justify-center">
-                <Stethoscope className="w-6 h-6 text-slate-900" />
-              </div>
-              <div>
-                <CardTitle className="text-yellow-400 text-lg font-bold tracking-wide">VETERINARY CONTACT</CardTitle>
-                <p className="text-slate-300 text-sm">Emergency Medical Information</p>
-              </div>
-            </div>
-            <div className="text-xs text-slate-400 font-mono">
-              PetPort ID: {petData?.petPortId || "Not specified"}
-            </div>
-          </div>
-        </CardHeader>
-        <CardContent className="relative">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="space-y-2">
-              <p className="text-yellow-400 text-sm font-semibold tracking-wide">PRIMARY VETERINARIAN</p>
-              <p className="text-lg font-medium">{petData?.vetContact || "Not specified"}</p>
-            </div>
-            <div className="space-y-2">
-              <p className="text-yellow-400 text-sm font-semibold tracking-wide">PET CARETAKER</p>
-              <p className="text-lg font-medium">{petData?.petCaretaker || "Not specified"}</p>
-            </div>
-            <div className="space-y-2">
-              <p className="text-yellow-400 text-sm font-semibold tracking-wide">LOCATION</p>
-              <p className="text-lg font-medium">
-                {petData?.state && petData?.county ? `${petData.county}, ${petData.state}` : 
-                 petData?.state ? petData.state : 
-                 petData?.county ? petData.county : 'Not specified'}
-              </p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Emergency Contacts - Navy blue styling */}
-      <Card className="border-2 border-yellow-600/30 shadow-xl bg-gradient-to-br from-navy-900 to-slate-800 text-white">
-        <CardHeader>
-          <CardTitle className="flex items-center space-x-2 text-gold-500">
-            <Phone className="w-5 h-5" />
-            <span className="tracking-wide">EMERGENCY CONTACTS</span>
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div>
-            <p className="text-gold-400 text-sm font-medium tracking-wide">Primary Emergency Contact</p>
-            <p className="text-lg font-medium text-white">{petData?.emergencyContact || "Not specified"}</p>
-          </div>
-          <div>
-            <p className="text-gold-400 text-sm font-medium tracking-wide">Secondary Emergency Contact</p>
-            <p className="text-lg font-medium text-white">{petData?.secondEmergencyContact || "Not specified"}</p>
-          </div>
-        </CardContent>
-      </Card>
 
 
       {/* Passport-style Badges with New Icons - Moved to after emergency contacts for better flow */}

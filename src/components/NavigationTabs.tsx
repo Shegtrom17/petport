@@ -1,6 +1,6 @@
 
 import { Button } from "@/components/ui/button";
-import { FileText, Badge, Star, Heart, MapPin, Camera } from "lucide-react";
+import { FileText, Badge, Star, Heart, MapPin, Camera, Shield } from "lucide-react";
 
 interface NavigationTabsProps {
   activeTab: string;
@@ -10,13 +10,13 @@ interface NavigationTabsProps {
 
 export const NavigationTabs = ({ activeTab, onTabChange, isMobile = false }: NavigationTabsProps) => {
   const tabs = [
-    { id: "profile", label: "Profile", icon: FileText },
-    { id: "resume", label: "Pet Resume", icon: Badge },
-    { id: "travel", label: "Travel Map", icon: MapPin },
-    { id: "documents", label: "Documents", icon: FileText },
-    { id: "care", label: "Care Instructions", icon: Heart },
-    { id: "quickid", label: "Quick ID", icon: Star },
-    { id: "gallery", label: "Photo Gallery", icon: Camera },
+    { id: "profile", label: "PASSPORT INFO", icon: FileText },
+    { id: "care", label: "CARE & HANDLING", icon: Heart },
+    { id: "documents", label: "OFFICIAL DOCUMENTS", icon: FileText },
+    { id: "resume", label: "CREDENTIALS & HISTORY", icon: Badge },
+    { id: "travel", label: "GLOBAL JOURNEYS", icon: MapPin },
+    { id: "gallery", label: "PORTRAIT GALLERY", icon: Camera },
+    { id: "quickid", label: "EMERGENCY ID", icon: Shield },
   ];
 
   if (isMobile) {

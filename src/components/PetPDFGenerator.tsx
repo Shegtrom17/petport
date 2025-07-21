@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { FileText, Download, Share2, Loader2, Users, ExternalLink, LogIn, AlertTriangle } from "lucide-react";
-import { generatePetPDF, generateQRCodeUrl, downloadPDFBlob, generatePublicProfileUrl, shareProfile } from "@/services/pdfService";
+import { generatePetPDF, generateQRCodeUrl, downloadPDFBlob, generatePublicProfileUrl, shareProfileOptimized } from "@/services/pdfService";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/context/AuthContext";
 import { useNavigate } from "react-router-dom";
@@ -139,31 +139,34 @@ export const PetPDFGenerator = ({ petId, petName }: PetPDFGeneratorProps) => {
 
   const handleShare = async (url: string, type: string) => {
     if (!url) return;
-
+    
     setIsSharing(true);
     try {
-      const title = `${petName}'s Pet Profile`;
-      const description = `Check out ${petName}'s complete pet profile`;
-      const success = await shareProfile(url, title, description);
+      const contentType = type === 'emergency' ? 'emergency' : 'profile';
+      const result = await shareProfileOptimized(url, petName, contentType);
       
-      if (success) {
-        toast({
-          title: navigator.share ? "Profile Shared" : "Link Copied",
-          description: navigator.share ? 
-            `${petName}'s ${type} profile has been shared successfully.` : 
-            `${type} profile link has been copied to your clipboard.`,
-        });
+      if (result.success) {
+        if (result.shared) {
+          toast({
+            title: "Profile Shared! 📱",
+            description: `${petName}'s ${type} profile shared successfully.`,
+          });
+        } else {
+          toast({
+            title: "Link Copied! 📋",
+            description: `${type} profile link copied - share with anyone!`,
+          });
+        }
       } else {
-        toast({
-          title: "Unable to Share",
-          description: `We couldn't share ${petName}'s profile. Please try copying the link manually.`,
-          variant: "destructive",
-        });
+        if (result.error === 'Share cancelled') {
+          return; // Don't show error for user cancellation
+        }
+        throw new Error(result.error || 'Sharing failed');
       }
     } catch (error) {
       toast({
-        title: "Share Failed",
-        description: "Could not share the profile. Please try again.",
+        title: "Unable to Share",
+        description: "Please try again or copy the link manually.",
         variant: "destructive",
       });
     } finally {

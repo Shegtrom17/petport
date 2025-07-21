@@ -93,35 +93,80 @@ export function generatePublicProfileUrl(petId: string): string {
   return `${baseUrl}/profile/${petId}`;
 }
 
-// Share profile functionality
-export async function shareProfile(url: string, title: string, description: string = ''): Promise<boolean> {
-  if (navigator.share) {
+// Enhanced mobile PWA sharing functionality
+export interface ShareResult {
+  success: boolean;
+  shared: boolean; // true if actually shared, false if copied to clipboard
+  error?: string;
+}
+
+export async function shareProfile(url: string, title: string, description: string = ''): Promise<ShareResult> {
+  // Check if native sharing is available (mobile PWA)
+  if (navigator.share && navigator.canShare && navigator.canShare({ title, text: description, url })) {
     try {
       await navigator.share({
         title: title,
         text: description,
         url: url,
       });
-      return true;
-    } catch (error) {
-      console.error('Error sharing:', error);
-      // If native sharing fails, fall back to clipboard
-      try {
-        await navigator.clipboard.writeText(url);
-        return true;
-      } catch (clipboardError) {
-        console.error('Error copying to clipboard:', clipboardError);
-        return false;
+      console.log('Content shared successfully via native share');
+      return { success: true, shared: true };
+    } catch (error: any) {
+      console.error('Native sharing failed:', error);
+      
+      // If user cancelled share, don't treat as error
+      if (error.name === 'AbortError') {
+        return { success: false, shared: false, error: 'Share cancelled' };
       }
-    }
-  } else {
-    // Fallback: copy to clipboard
-    try {
-      await navigator.clipboard.writeText(url);
-      return true;
-    } catch (error) {
-      console.error('Error copying to clipboard:', error);
-      return false;
+      
+      // Fall back to clipboard for other errors
+      return await fallbackToClipboard(url);
     }
   }
+  
+  // Fallback for desktop or when native sharing not available
+  return await fallbackToClipboard(url);
+}
+
+async function fallbackToClipboard(url: string): Promise<ShareResult> {
+  try {
+    await navigator.clipboard.writeText(url);
+    console.log('Link copied to clipboard');
+    return { success: true, shared: false };
+  } catch (error) {
+    console.error('Failed to copy to clipboard:', error);
+    return { success: false, shared: false, error: 'Unable to copy link' };
+  }
+}
+
+// Enhanced sharing with better mobile experience
+export async function shareProfileOptimized(
+  url: string, 
+  petName: string, 
+  contentType: 'profile' | 'care' | 'emergency' = 'profile',
+  isMissingPet: boolean = false
+): Promise<ShareResult> {
+  let title: string;
+  let description: string;
+  
+  // Optimize content for different sharing contexts
+  switch (contentType) {
+    case 'care':
+      title = `${petName}'s Care Instructions`;
+      description = isMissingPet 
+        ? `🚨 MISSING: ${petName} - Care instructions for safe return`
+        : `Care instructions for ${petName} - feeding, medication, emergency contacts`;
+      break;
+    case 'emergency':
+      title = `${petName}'s Emergency Info`;
+      description = `Emergency contact & medical info for ${petName}`;
+      break;
+    default:
+      title = isMissingPet ? `🚨 MISSING PET: ${petName}` : `${petName}'s Profile`;
+      description = isMissingPet 
+        ? `Help bring ${petName} home! Complete profile with photos & contact info`
+        : `Meet ${petName}! View their complete profile, photos, and information`;
+  }
+  
+  return await shareProfile(url, title, description);
 }

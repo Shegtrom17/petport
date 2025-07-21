@@ -6,7 +6,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Heart, Clock, Pill, Coffee, Moon, AlertTriangle, Edit, Loader2, FileText, Download, QrCode, Share2, ExternalLink, Eye, Phone } from "lucide-react";
 import { CareInstructionsEditForm } from "@/components/CareInstructionsEditForm";
 import { fetchCareInstructions } from "@/services/careInstructionsService";
-import { generatePetPDF, generateQRCodeUrl, downloadPDFBlob, shareProfile } from "@/services/pdfService";
+import { generatePetPDF, generateQRCodeUrl, downloadPDFBlob, shareProfile, shareProfileOptimized } from "@/services/pdfService";
 import { useToast } from "@/hooks/use-toast";
 
 interface CareInstructionsSectionProps {
@@ -127,29 +127,31 @@ export const CareInstructionsSection = ({ petData }: CareInstructionsSectionProp
     const careUrl = generateCarePublicUrl();
     setIsSharing(true);
     try {
-      const title = `${petData.name}'s Care Instructions`;
-      const description = `Access detailed care instructions for ${petData.name}`;
-      const success = await shareProfile(careUrl, title, description);
+      const result = await shareProfileOptimized(careUrl, petData.name, 'care');
       
-      if (success) {
-        toast({
-          title: navigator.share ? "Care Instructions Shared" : "Link Copied",
-          description: navigator.share ? 
-            `${petData.name}'s care instructions have been shared successfully.` : 
-            "Care instructions link has been copied to your clipboard.",
-        });
+      if (result.success) {
+        if (result.shared) {
+          toast({
+            title: "Care Instructions Shared! 📱",
+            description: `${petData.name}'s care instructions shared successfully.`,
+          });
+        } else {
+          toast({
+            title: "Link Copied! 📋",
+            description: "Care instructions link copied - share with caretakers!",
+          });
+        }
       } else {
-        toast({
-          title: "Unable to Share",
-          description: "We couldn't share the care instructions. Please try copying the link manually.",
-          variant: "destructive",
-        });
+        if (result.error === 'Share cancelled') {
+          return; // Don't show error for user cancellation
+        }
+        throw new Error(result.error || 'Sharing failed');
       }
     } catch (error) {
-      console.error('Share error:', error);
+      console.error('Failed to share care instructions:', error);
       toast({
-        title: "Share Failed",
-        description: "There was an error sharing the care instructions. Please try again or copy the link manually.",
+        title: "Unable to Share",
+        description: "Please try again or copy the link manually.",
         variant: "destructive",
       });
     } finally {

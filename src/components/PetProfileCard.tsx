@@ -130,7 +130,6 @@ const handleEditSave = async (updatedData: PetData) => {
   }
 };
 
-
   const handleDeletePet = async () => {
     if (!user?.id || !petData?.id) return;
 

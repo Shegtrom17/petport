@@ -17,24 +17,33 @@ interface PetData {
   age: string;
   weight: string;
   microchipId: string;
-  species: string;
-  state: string;
-  county: string;
-  notes: string;
+  petPortId: string;
+  petPassId: string;
+  photoUrl: string;
+  fullBodyPhotoUrl: string;
   vetContact: string;
   emergencyContact: string;
   secondEmergencyContact: string;
   petCaretaker: string;
   lastVaccination: string;
-  medicalConditions: string;
-  supportAnimalStatus: string | null;
-  bio: string;
+  badges: string[];
+  medications: string[];
+  notes: string;
+  state?: string;
+  county?: string;
+  species?: string;
+  supportAnimalStatus?: string | null;
+  medicalAlert: boolean;
+  medicalConditions?: string;
+  medicalEmergencyDocument?: string | null;
+  galleryPhotos?: Array<{ url: string; caption: string; }>;
   user_id?: string;
+  bio?: string;
 }
 
 interface PetEditFormProps {
   petData: PetData;
-  onSave: () => void;
+  onSave: (updatedData: PetData) => void;
   onCancel: () => void;
 }
 
@@ -78,48 +87,31 @@ export const PetEditForm = ({ petData, onSave, onCancel }: PetEditFormProps) => 
     }));
   };
 
-  const handleSave = async () => {
-    if (!user?.id || !petData.id) return;
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
 
-    setIsSaving(true);
-    try {
-      // Convert "none" back to null for database storage
-      const dataToSave = {
-        ...formData,
-        supportAnimalStatus: formData.supportAnimalStatus === "none" ? null : formData.supportAnimalStatus,
-        user_id: user.id
-      };
+    const updatedData: PetData = {
+      ...petData,
+      name: formData.name,
+      breed: formData.breed,
+      age: formData.age,
+      weight: formData.weight,
+      microchipId: formData.microchipId,
+      species: formData.species || "",
+      state: formData.state || "",
+      county: formData.county || "",
+      notes: formData.notes,
+      vetContact: formData.vetContact,
+      emergencyContact: formData.emergencyContact,
+      secondEmergencyContact: formData.secondEmergencyContact,
+      petCaretaker: formData.petCaretaker,
+      lastVaccination: formData.lastVaccination,
+      medicalConditions: formData.medicalConditions || "",
+      supportAnimalStatus: formData.supportAnimalStatus === "none" ? null : formData.supportAnimalStatus,
+      bio: formData.bio || ""
+    };
 
-      const { error } = await supabase
-        .from('pets')
-        .update(dataToSave)
-        .eq('id', petData.id)
-        .eq('user_id', user.id);
-
-      if (error) {
-        console.error('Error updating pet:', error);
-        toast({
-          title: "Error",
-          description: "Failed to update pet. Please try again.",
-          variant: "destructive",
-        });
-      } else {
-        toast({
-          title: "Success",
-          description: `${formData.name} has been updated successfully.`,
-        });
-        onSave();
-      }
-    } catch (error) {
-      console.error('Error updating pet:', error);
-      toast({
-        title: "Error",
-        description: "Failed to update pet. Please try again.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsSaving(false);
-    }
+    onSave(updatedData);
   };
 
   return (
@@ -235,7 +227,7 @@ export const PetEditForm = ({ petData, onSave, onCancel }: PetEditFormProps) => 
         
         <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4">
           <Button 
-            onClick={handleSave}
+            onClick={handleSubmit}
             disabled={isSaving}
             className="flex-1 bg-gradient-to-r from-navy-900 to-navy-800 hover:from-navy-800 hover:to-navy-700 text-gold-500 border border-gold-500/30 px-3 sm:px-4 py-2 text-sm sm:text-base"
           >

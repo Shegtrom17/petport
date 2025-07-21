@@ -180,13 +180,17 @@ export const PetProfileCard = ({ petData, onUpdate }: PetProfileCardProps) => {
   const isOwner = user?.id === petData?.user_id;
 
   // Create safe petData for editing
-  const safeEditData = {
+  const safeEditData: PetData = {
     id: petData?.id || "",
     name: petData?.name || "",
     breed: petData?.breed || "",
     age: petData?.age || "",
     weight: petData?.weight || "",
     microchipId: petData?.microchipId || "",
+    petPortId: petData?.petPortId || "",
+    petPassId: petData?.petPassId || "",
+    photoUrl: petData?.photoUrl || "",
+    fullBodyPhotoUrl: petData?.fullBodyPhotoUrl || "",
     species: petData?.species || "",
     state: petData?.state || "",
     county: petData?.county || "",
@@ -196,9 +200,14 @@ export const PetProfileCard = ({ petData, onUpdate }: PetProfileCardProps) => {
     secondEmergencyContact: petData?.secondEmergencyContact || "",
     petCaretaker: petData?.petCaretaker || "",
     lastVaccination: petData?.lastVaccination || "",
+    badges: petData?.badges || [],
+    medications: petData?.medications || [],
+    medicalAlert: petData?.medicalAlert || false,
     medicalConditions: petData?.medicalConditions || "",
+    medicalEmergencyDocument: petData?.medicalEmergencyDocument || null,
     supportAnimalStatus: petData?.supportAnimalStatus || "",
     bio: petData?.bio || "",
+    galleryPhotos: petData?.galleryPhotos || [],
     user_id: petData?.user_id || user?.id || ""
   };
 

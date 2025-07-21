@@ -367,14 +367,16 @@ serve(async (req) => {
     // Save the PDF as bytes
     const pdfBytes = await pdfDoc.save()
     
-    console.log('PDF generated successfully for:', petData.name)
+    console.log('PDF generated successfully for:', petData.name, 'Size:', pdfBytes.length, 'bytes')
 
+    // Ensure binary data is properly transmitted
     return new Response(pdfBytes, {
       headers: {
         ...corsHeaders,
         'Content-Type': 'application/pdf',
         'Content-Disposition': `attachment; filename="${petData.name}_${type}_passport.pdf"`,
         'Content-Length': pdfBytes.length.toString(),
+        'Cache-Control': 'no-cache',
       }
     })
 

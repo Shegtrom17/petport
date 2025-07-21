@@ -127,21 +127,29 @@ export const CareInstructionsSection = ({ petData }: CareInstructionsSectionProp
     const careUrl = generateCarePublicUrl();
     setIsSharing(true);
     try {
-      const success = await shareProfile(careUrl, `${petData.name}'s Care Instructions`);
+      const title = `${petData.name}'s Care Instructions`;
+      const description = `Access detailed care instructions for ${petData.name}`;
+      const success = await shareProfile(careUrl, title, description);
+      
       if (success) {
         toast({
-          title: navigator.share ? "Shared Successfully" : "Link Copied",
+          title: navigator.share ? "Care Instructions Shared" : "Link Copied",
           description: navigator.share ? 
-            `${petData.name}'s care instructions have been shared.` : 
-            "Care instructions link copied to clipboard.",
+            `${petData.name}'s care instructions have been shared successfully.` : 
+            "Care instructions link has been copied to your clipboard.",
         });
       } else {
-        throw new Error('Failed to share');
+        toast({
+          title: "Unable to Share",
+          description: "We couldn't share the care instructions. Please try copying the link manually.",
+          variant: "destructive",
+        });
       }
     } catch (error) {
+      console.error('Share error:', error);
       toast({
         title: "Share Failed",
-        description: "Could not share the care instructions. Please try again.",
+        description: "There was an error sharing the care instructions. Please try again or copy the link manually.",
         variant: "destructive",
       });
     } finally {
@@ -171,7 +179,9 @@ export const CareInstructionsSection = ({ petData }: CareInstructionsSectionProp
   const handleShareCarePDF = async () => {
     if (!carePdfBlob) return;
     const tempUrl = URL.createObjectURL(carePdfBlob);
-    await shareProfile(tempUrl, `${petData.name}'s Care Instructions PDF`);
+    const title = `${petData.name}'s Care Instructions PDF`;
+    const description = `Care instructions PDF for ${petData.name}`;
+    await shareProfile(tempUrl, title, description);
   };
   
   if (isEditing) {

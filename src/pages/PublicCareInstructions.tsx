@@ -1,251 +1,245 @@
-import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
-import { fetchPetDetails } from "@/services/petService";
-import { fetchCareInstructions } from "@/services/careInstructionsService";
-import { Heart, Clock, Pill, Coffee, Moon, AlertTriangle } from "lucide-react";
+import { Clock, Heart, AlertTriangle, Phone, MapPin } from "lucide-react";
+import { fetchPetDetails } from '@/services/petService';
+import { fetchCareInstructions } from '@/services/careInstructionsService';
+
+interface Pet {
+  id: string;
+  name: string;
+  breed: string;
+  species: string;
+  age: string;
+  weight: string;
+  state: string;
+  county: string;
+  is_public: boolean;
+}
+
+interface CareData {
+  feeding_schedule?: string;
+  morning_routine?: string;
+  evening_routine?: string;
+  allergies?: string;
+  behavioral_notes?: string;
+  favorite_activities?: string;
+}
 
 const PublicCareInstructions = () => {
-  const { petId } = useParams<{ petId: string }>();
-  const [petData, setPetData] = useState<any>(null);
-  const [careData, setCareData] = useState<any>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const { petId } = useParams();
+  const [pet, setPet] = useState<Pet | null>(null);
+  const [careData, setCareData] = useState<CareData | null>(null);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const loadData = async () => {
+    const fetchData = async () => {
       if (!petId) {
-        setError("Pet ID not provided");
-        setIsLoading(false);
+        setError('Pet ID is missing');
+        setLoading(false);
         return;
       }
 
       try {
-        const [petDetails, careInstructions] = await Promise.all([
-          fetchPetDetails(petId),
-          fetchCareInstructions(petId)
-        ]);
+        setLoading(true);
         
-        if (petDetails) {
-          setPetData(petDetails);
-          setCareData(careInstructions);
-        } else {
-          setError("Pet profile not found");
+        // Fetch pet details
+        const petDetails = await fetchPetDetails(petId);
+        if (!petDetails) {
+          setError('Pet profile not found');
+          setLoading(false);
+          return;
         }
+
+        // Check if pet profile is public
+        if (!petDetails.is_public) {
+          setError('This pet profile is not publicly accessible');
+          setLoading(false);
+          return;
+        }
+
+        setPet(petDetails);
+
+        // Fetch care instructions
+        const careInstructions = await fetchCareInstructions(petId);
+        setCareData(careInstructions);
+
       } catch (err) {
-        console.error("Error loading data:", err);
-        setError("Failed to load pet care instructions");
+        console.error('Error fetching data:', err);
+        setError('Failed to load care instructions');
       } finally {
-        setIsLoading(false);
+        setLoading(false);
       }
     };
 
-    loadData();
+    fetchData();
   }, [petId]);
 
-  if (isLoading) {
+  if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-sage-50 to-cream-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-sage-600 mx-auto mb-4"></div>
-          <p>Loading care instructions...</p>
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-sage-600 mx-auto mb-4"></div>
+          <p className="text-sage-600">Loading care instructions...</p>
         </div>
       </div>
     );
   }
 
-  if (error || !petData) {
+  if (error || !pet) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-800 mb-2">Care Instructions Not Found</h1>
-          <p className="text-gray-600">{error || "The requested care instructions could not be found."}</p>
-        </div>
+      <div className="min-h-screen bg-gradient-to-br from-sage-50 to-cream-50 flex items-center justify-center">
+        <Card className="max-w-md w-full mx-4">
+          <CardContent className="pt-6 text-center">
+            <AlertTriangle className="w-12 h-12 text-amber-500 mx-auto mb-4" />
+            <h2 className="text-xl font-semibold text-navy-900 mb-2">
+              {error || 'Care Instructions Not Available'}
+            </h2>
+            <p className="text-navy-600">
+              {error === 'Pet ID is missing' && 'The pet ID is missing from the URL.'}
+              {error === 'Pet profile not found' && 'The pet profile you\'re looking for doesn\'t exist.'}
+              {error === 'This pet profile is not publicly accessible' && 'This pet\'s care instructions are private.'}
+              {error === 'Failed to load care instructions' && 'There was an error loading the care instructions. Please try again later.'}
+            </p>
+          </CardContent>
+        </Card>
       </div>
     );
   }
 
-  const isHorse = petData.species?.toLowerCase() === 'horse';
+  const extractPhoneNumber = (contactString: string): string | null => {
+    if (!contactString) return null;
+    const phoneMatch = contactString.match(/\(?\d{3}\)?\s?-?\d{3}-?\d{4}/);
+    return phoneMatch ? phoneMatch[0] : null;
+  };
+
+  const formatPhoneForTel = (phone: string): string => {
+    return phone.replace(/\D/g, '');
+  };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-sage-50 to-green-100">
-      <div className="bg-white shadow-sm border-b">
-        <div className="max-w-4xl mx-auto px-4 py-6">
-          <div className="flex items-center space-x-4">
-            <div className="w-16 h-16 bg-sage-100 rounded-full flex items-center justify-center">
-              <span className="text-2xl">🌿</span>
-            </div>
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900">Care Instructions for {petData.name}</h1>
-              <p className="text-gray-600">Daily care guide for pet sitters and caregivers</p>
-            </div>
+    <div className="min-h-screen bg-gradient-to-br from-sage-50 to-cream-50">
+      <div className="container mx-auto px-4 py-8 max-w-4xl">
+        {/* Header */}
+        <div className="text-center mb-8">
+          <h1 className="text-3xl font-serif font-bold text-navy-900 mb-2">
+            {pet.name}'s Care Instructions
+          </h1>
+          <div className="flex items-center justify-center gap-2 text-navy-600 mb-4">
+            {pet.breed && <Badge variant="secondary">{pet.breed}</Badge>}
+            {pet.species && <Badge variant="secondary">{pet.species}</Badge>}
+            {pet.age && <Badge variant="secondary">{pet.age}</Badge>}
           </div>
+          {(pet.state || pet.county) && (
+            <div className="flex items-center justify-center gap-1 text-sm text-navy-500">
+              <MapPin className="w-4 h-4" />
+              <span>{[pet.county, pet.state].filter(Boolean).join(', ')}</span>
+            </div>
+          )}
         </div>
-      </div>
 
-      <div className="max-w-4xl mx-auto px-4 py-8">
-        {/* Pet Header */}
-        <Card className="mb-8">
-          <CardContent className="p-8">
-            <div className="flex flex-col md:flex-row items-center md:items-start space-y-6 md:space-y-0 md:space-x-8">
-              {petData.photoUrl && (
-                <div className="flex-shrink-0">
-                  <img 
-                    src={petData.photoUrl} 
-                    alt={petData.name}
-                    className="w-48 h-48 object-cover rounded-full border-4 border-sage-200"
-                  />
-                </div>
-              )}
-              <div className="flex-1 text-center md:text-left">
-                <h1 className="text-4xl font-bold text-gray-900 mb-2">{petData.name}</h1>
-                <p className="text-xl text-gray-600 mb-4">
-                  {petData.species && petData.species.charAt(0).toUpperCase() + petData.species.slice(1)}
-                  {petData.breed && ` • ${petData.breed}`}
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Emergency Contacts */}
-        <Card className="border-0 shadow-lg bg-red-50 border-l-4 border-red-500 mb-6">
-          <CardHeader>
-            <CardTitle className="flex items-center space-x-2 text-red-700">
-              <AlertTriangle className="w-5 h-5" />
-              <span>Emergency Contacts</span>
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            {petData.emergencyContact && (
-              <p><strong>Primary Emergency:</strong> {petData.emergencyContact}</p>
-            )}
-            {petData.vetContact && (
-              <p><strong>Veterinarian:</strong> {petData.vetContact}</p>
-            )}
-          </CardContent>
-        </Card>
-
-        {/* Feeding Schedule */}
-        <Card className="border-0 shadow-lg bg-passport-section-bg backdrop-blur-sm mb-6">
-          <CardHeader>
-            <CardTitle className="flex items-center space-x-2">
-              <Coffee className="w-5 h-5 text-orange-600" />
-              <span>{isHorse ? 'Feeding & Turnout Schedule' : 'Feeding Schedule'}</span>
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            {careData?.feeding_schedule ? (
-              <div className="p-4 bg-orange-50 rounded-lg border-l-4 border-orange-500">
-                <h4 className="font-medium text-orange-700 mb-2">Custom Schedule</h4>
-                <p>{careData.feeding_schedule}</p>
-              </div>
-            ) : (
-              <div className="space-y-3">
-                <p className="text-sm text-gray-600 mb-3">Standard schedule:</p>
-                {isHorse ? (
-                  <>
-                    <div className="p-3 bg-orange-50 rounded-lg border-l-4 border-orange-500">
-                      <Badge variant="outline" className="text-orange-700 border-orange-300 mb-2">6:00 AM</Badge>
-                      <p>Morning hay - 2 flakes timothy • Check water buckets</p>
-                    </div>
-                    <div className="p-3 bg-orange-50 rounded-lg border-l-4 border-orange-500">
-                      <Badge variant="outline" className="text-orange-700 border-orange-300 mb-2">12:00 PM</Badge>
-                      <p>Grain feed - 2 lbs sweet feed • Add supplements</p>
-                    </div>
-                  </>
-                ) : (
-                  <>
-                    <div className="p-3 bg-orange-50 rounded-lg border-l-4 border-orange-500">
-                      <Badge variant="outline" className="text-orange-700 border-orange-300 mb-2">7:00 AM</Badge>
-                      <p>Morning feed - 2 cups dry food + supplements</p>
-                    </div>
-                    <div className="p-3 bg-orange-50 rounded-lg border-l-4 border-orange-500">
-                      <Badge variant="outline" className="text-orange-700 border-orange-300 mb-2">6:00 PM</Badge>
-                      <p>Evening feed - 2 cups dry food</p>
-                    </div>
-                  </>
+        <div className="grid gap-6">
+          {/* Emergency Contacts */}
+          {(careData?.feeding_schedule || careData?.morning_routine || careData?.evening_routine) && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-navy-900">
+                  <Phone className="w-5 h-5 text-sage-600" />
+                  Daily Care Schedule
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {careData.morning_routine && (
+                  <div>
+                    <h4 className="font-medium text-navy-800 mb-2 flex items-center gap-2">
+                      <Clock className="w-4 h-4" />
+                      Morning Routine
+                    </h4>
+                    <p className="text-navy-600 leading-relaxed whitespace-pre-wrap">
+                      {careData.morning_routine}
+                    </p>
+                  </div>
                 )}
-              </div>
-            )}
-          </CardContent>
-        </Card>
-
-        {/* Daily Routines */}
-        <Card className="border-0 shadow-lg bg-passport-section-bg backdrop-blur-sm mb-6">
-          <CardHeader>
-            <CardTitle className="flex items-center space-x-2">
-              <Moon className="w-5 h-5 text-purple-600" />
-              <span>Daily Routine & Preferences</span>
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="p-4 bg-purple-50 rounded-lg">
-                <h4 className="font-medium text-purple-900 mb-2">Morning Routine</h4>
-                <p className="text-sm text-purple-800">
-                  {careData?.morning_routine || (isHorse 
-                    ? "Check water buckets and hay, quick health check, feeding time"
-                    : "Potty break immediately, short walk before breakfast, feeding time"
-                  )}
-                </p>
-              </div>
-              <div className="p-4 bg-indigo-50 rounded-lg">
-                <h4 className="font-medium text-indigo-900 mb-2">Evening Routine</h4>
-                <p className="text-sm text-indigo-800">
-                  {careData?.evening_routine || (isHorse
-                    ? "Turn out or bring in from pasture, final hay feeding"
-                    : "Play time after dinner, final potty break at 10 PM, bedtime routine"
-                  )}
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Important Notes */}
-        <Card className="border-0 shadow-lg bg-passport-section-bg backdrop-blur-sm border-l-4 border-amber-500 mb-6">
-          <CardHeader>
-            <CardTitle className="flex items-center space-x-2 text-amber-700">
-              <AlertTriangle className="w-5 h-5" />
-              <span>Important Care Notes</span>
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            <div className="p-3 bg-red-50 rounded border border-red-200">
-              <h4 className="font-medium text-red-900 mb-1">Allergies & Sensitivities</h4>
-              <p className="text-sm text-red-800">
-                {careData?.allergies || (isHorse 
-                  ? "Sensitive to alfalfa - stick to timothy hay only"
-                  : "Sensitive to chicken - avoid poultry-based treats"
+                
+                {careData.feeding_schedule && (
+                  <div>
+                    <h4 className="font-medium text-navy-800 mb-2 flex items-center gap-2">
+                      <Heart className="w-4 h-4" />
+                      Feeding Schedule
+                    </h4>
+                    <p className="text-navy-600 leading-relaxed whitespace-pre-wrap">
+                      {careData.feeding_schedule}
+                    </p>
+                  </div>
                 )}
-              </p>
-            </div>
-            <div className="p-3 bg-blue-50 rounded border border-blue-200">
-              <h4 className="font-medium text-blue-900 mb-1">Behavioral Notes</h4>
-              <p className="text-sm text-blue-800">
-                {careData?.behavioral_notes || (isHorse
-                  ? "Generally calm but can be anxious during storms"
-                  : "Friendly but needs slow introductions to new pets"
-                )}
-              </p>
-            </div>
-            <div className="p-3 bg-green-50 rounded border border-green-200">
-              <h4 className="font-medium text-green-900 mb-1">Favorite Activities</h4>
-              <p className="text-sm text-green-800">
-                {careData?.favorite_activities || (isHorse
-                  ? "Enjoys trail rides and grooming sessions"
-                  : "Loves fetch, swimming, and puzzle toys"
-                )}
-              </p>
-            </div>
-          </CardContent>
-        </Card>
 
-        <div className="mt-12 text-center text-gray-500 text-sm">
-          <p>Care instructions for {petData.name} • Generated by PetPort</p>
-          <p className="mt-2">📱 For real-time updates, visit the full PetPort profile</p>
+                {careData.evening_routine && (
+                  <div>
+                    <h4 className="font-medium text-navy-800 mb-2 flex items-center gap-2">
+                      <Clock className="w-4 h-4" />
+                      Evening Routine
+                    </h4>
+                    <p className="text-navy-600 leading-relaxed whitespace-pre-wrap">
+                      {careData.evening_routine}
+                    </p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Important Notes */}
+          {(careData?.allergies || careData?.behavioral_notes || careData?.favorite_activities) && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-navy-900">
+                  <AlertTriangle className="w-5 h-5 text-amber-600" />
+                  Important Notes
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {careData.allergies && (
+                  <div>
+                    <h4 className="font-medium text-navy-800 mb-2">Allergies & Sensitivities</h4>
+                    <div className="bg-amber-50 border border-amber-200 rounded-lg p-3">
+                      <p className="text-amber-800 leading-relaxed whitespace-pre-wrap">
+                        {careData.allergies}
+                      </p>
+                    </div>
+                  </div>
+                )}
+
+                {careData.behavioral_notes && (
+                  <div>
+                    <h4 className="font-medium text-navy-800 mb-2">Behavioral Notes</h4>
+                    <p className="text-navy-600 leading-relaxed whitespace-pre-wrap">
+                      {careData.behavioral_notes}
+                    </p>
+                  </div>
+                )}
+
+                {careData.favorite_activities && (
+                  <div>
+                    <h4 className="font-medium text-navy-800 mb-2">Favorite Activities</h4>
+                    <p className="text-navy-600 leading-relaxed whitespace-pre-wrap">
+                      {careData.favorite_activities}
+                    </p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          )}
+        </div>
+
+        {/* Footer */}
+        <div className="mt-12 text-center">
+          <Separator className="mb-6" />
+          <p className="text-sm text-navy-500">
+            This care information is provided by {pet.name}'s owner via PetPort
+          </p>
         </div>
       </div>
     </div>

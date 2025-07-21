@@ -94,18 +94,25 @@ export function generatePublicProfileUrl(petId: string): string {
 }
 
 // Share profile functionality
-export async function shareProfile(url: string, petName: string): Promise<boolean> {
+export async function shareProfile(url: string, title: string, description: string = ''): Promise<boolean> {
   if (navigator.share) {
     try {
       await navigator.share({
-        title: `${petName}'s Pet Profile`,
-        text: `Check out ${petName}'s complete pet profile`,
+        title: title,
+        text: description,
         url: url,
       });
       return true;
     } catch (error) {
       console.error('Error sharing:', error);
-      return false;
+      // If native sharing fails, fall back to clipboard
+      try {
+        await navigator.clipboard.writeText(url);
+        return true;
+      } catch (clipboardError) {
+        console.error('Error copying to clipboard:', clipboardError);
+        return false;
+      }
     }
   } else {
     // Fallback: copy to clipboard

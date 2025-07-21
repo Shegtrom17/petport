@@ -142,16 +142,23 @@ export const PetPDFGenerator = ({ petId, petName }: PetPDFGeneratorProps) => {
 
     setIsSharing(true);
     try {
-      const success = await shareProfile(url, petName);
+      const title = `${petName}'s Pet Profile`;
+      const description = `Check out ${petName}'s complete pet profile`;
+      const success = await shareProfile(url, title, description);
+      
       if (success) {
         toast({
-          title: navigator.share ? "Shared Successfully" : "Link Copied",
+          title: navigator.share ? "Profile Shared" : "Link Copied",
           description: navigator.share ? 
-            `${petName}'s ${type} profile has been shared.` : 
-            `${type} profile link copied to clipboard.`,
+            `${petName}'s ${type} profile has been shared successfully.` : 
+            `${type} profile link has been copied to your clipboard.`,
         });
       } else {
-        throw new Error('Failed to share');
+        toast({
+          title: "Unable to Share",
+          description: `We couldn't share ${petName}'s profile. Please try copying the link manually.`,
+          variant: "destructive",
+        });
       }
     } catch (error) {
       toast({

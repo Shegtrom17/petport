@@ -10,6 +10,7 @@ import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import AddPet from "./pages/AddPet";
 import PublicProfile from "./pages/PublicProfile";
+import PublicCareInstructions from "./pages/PublicCareInstructions";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -37,6 +38,7 @@ const App = () => {
                 </ProtectedRoute>
               } />
               <Route path="/profile/:petId" element={<PublicProfile />} />
+              <Route path="/care/:petId" element={<PublicCareInstructions />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </AuthProvider>

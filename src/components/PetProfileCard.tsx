@@ -15,33 +15,21 @@ import { useNavigate } from "react-router-dom";
 
 interface PetData {
   id: string;
+  user_id: string;
   name: string;
   breed: string;
+  species: string;
   age: string;
   weight: string;
-  microchipId: string;
-  petPortId: string;
-  petPassId: string;
-  photoUrl: string;
-  fullBodyPhotoUrl: string;
-  vetContact: string;
-  emergencyContact: string;
-  secondEmergencyContact: string;
-  petCaretaker: string;
-  lastVaccination: string;
-  badges: string[];
-  medications: string[];
+  microchip_id: string;
+  petport_id: string;
+  bio: string;
   notes: string;
-  state?: string;
-  county?: string;
-  species?: string;
-  supportAnimalStatus?: string | null;
-  medicalAlert: boolean;
-  medicalConditions?: string;
-  medicalEmergencyDocument?: string | null;
-  galleryPhotos?: Array<{ url: string; caption: string; }>;
-  user_id?: string;
-  bio?: string;
+  state: string;
+  county: string;
+  is_public: boolean;
+  created_at: string;
+  updated_at: string;
 }
 
 interface PetProfileCardProps {
@@ -85,9 +73,6 @@ export const PetProfileCard = ({ petData, onUpdate }: PetProfileCardProps) => {
 
 const handleEditSave = async (updatedData: PetData) => {
   try {
-    // Add a loading state
-    setIsEditing(false);
-
     const { error } = await supabase
       .from('pets')
       .update({
@@ -95,37 +80,41 @@ const handleEditSave = async (updatedData: PetData) => {
         breed: updatedData.breed,
         age: updatedData.age,
         weight: updatedData.weight,
-        microchipId: updatedData.microchipId,
-        species: updatedData.species || "",
-        state: updatedData.state || "",
-        county: updatedData.county || "",
-        notes: updatedData.notes || "",
-        vetContact: updatedData.vetContact || "",
-        emergencyContact: updatedData.emergencyContact || "",
-        secondEmergencyContact: updatedData.secondEmergencyContact || "",
-        petCaretaker: updatedData.petCaretaker || "",
-        lastVaccination: updatedData.lastVaccination || "",
-        medicalConditions: updatedData.medicalConditions || "",
-        supportAnimalStatus: updatedData.supportAnimalStatus,
-        bio: updatedData.bio || ""
+        microchip_id: updatedData.microchip_id,
+        species: updatedData.species,
+        state: updatedData.state,
+        county: updatedData.county,
+        notes: updatedData.notes,
+        bio: updatedData.bio
       })
       .eq('id', updatedData.id)
-      .single();
+      .eq('user_id', user?.id);
 
-    if (error) throw error;
+    if (error) {
+      console.error('Error updating pet:', error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to update pet. Please try again.",
+      });
+      return;
+    }
 
     toast({
       title: "Success",
-      description: "Pet profile updated successfully!"
+      description: "Pet profile updated successfully!",
     });
 
-    if (onUpdate) onUpdate();
+    setIsEditing(false);
+    if (onUpdate) {
+      onUpdate();
+    }
   } catch (error) {
     console.error('Error updating pet:', error);
     toast({
       variant: "destructive",
       title: "Error",
-      description: "Failed to update pet. Please try again."
+      description: "Failed to update pet. Please try again.",
     });
   }
 };
@@ -173,33 +162,21 @@ const handleEditSave = async (updatedData: PetData) => {
   // Create safe petData for editing
   const safeEditData: PetData = {
     id: petData?.id || "",
+    user_id: petData?.user_id || user?.id || "",
     name: petData?.name || "",
     breed: petData?.breed || "",
+    species: petData?.species || "",
     age: petData?.age || "",
     weight: petData?.weight || "",
-    microchipId: petData?.microchipId || "",
-    petPortId: petData?.petPortId || "",
-    petPassId: petData?.petPassId || "",
-    photoUrl: petData?.photoUrl || "",
-    fullBodyPhotoUrl: petData?.fullBodyPhotoUrl || "",
-    species: petData?.species || "",
+    microchip_id: petData?.microchip_id || "",
+    petport_id: petData?.petport_id || "",
+    bio: petData?.bio || "",
+    notes: petData?.notes || "",
     state: petData?.state || "",
     county: petData?.county || "",
-    notes: petData?.notes || "",
-    vetContact: petData?.vetContact || "",
-    emergencyContact: petData?.emergencyContact || "",
-    secondEmergencyContact: petData?.secondEmergencyContact || "",
-    petCaretaker: petData?.petCaretaker || "",
-    lastVaccination: petData?.lastVaccination || "",
-    badges: petData?.badges || [],
-    medications: petData?.medications || [],
-    medicalAlert: petData?.medicalAlert || false,
-    medicalConditions: petData?.medicalConditions || "",
-    medicalEmergencyDocument: petData?.medicalEmergencyDocument || null,
-    supportAnimalStatus: petData?.supportAnimalStatus || "",
-    bio: petData?.bio || "",
-    galleryPhotos: petData?.galleryPhotos || [],
-    user_id: petData?.user_id || user?.id || ""
+    is_public: petData?.is_public || false,
+    created_at: petData?.created_at || "",
+    updated_at: petData?.updated_at || ""
   };
 
   if (isEditing) {
@@ -259,8 +236,8 @@ const handleEditSave = async (updatedData: PetData) => {
         </div>
       )}
 
-      {/* Support Animal Status Banner */}
-      <SupportAnimalBanner status={petData?.supportAnimalStatus || null} />
+      {/* Support Animal Status Banner - Commented out since not in pets table */}
+      {/* <SupportAnimalBanner status={petData?.supportAnimalStatus || null} /> */}
 
 
       {/* Basic Information Card - Moved up for better flow */}
@@ -292,7 +269,7 @@ const handleEditSave = async (updatedData: PetData) => {
             <div className="md:col-span-2">
               <p className="text-yellow-400 text-sm font-semibold tracking-wide">MICROCHIP NUMBER</p>
               <p className="text-lg font-mono bg-slate-700/50 px-3 py-2 rounded border border-yellow-600/30">
-                {petData?.microchipId || "Not specified"}
+                {petData?.microchip_id || "Not specified"}
               </p>
             </div>
           </div>
@@ -311,8 +288,8 @@ const handleEditSave = async (updatedData: PetData) => {
         </CardContent>
       </Card>
 
-    {/* Health Information - Navy blue styling */}
-      <Card className="border-2 border-yellow-600/30 shadow-xl bg-gradient-to-br from-navy-900 to-slate-800 text-white">
+    {/* Health Information - Navy blue styling - Commented out since not in pets table */}
+      {/* <Card className="border-2 border-yellow-600/30 shadow-xl bg-gradient-to-br from-navy-900 to-slate-800 text-white">
         <CardHeader>
           <CardTitle className="flex items-center space-x-2 text-gold-500">
             <Calendar className="w-5 h-5" />
@@ -320,101 +297,21 @@ const handleEditSave = async (updatedData: PetData) => {
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div>
-            <p className="text-gold-400 text-sm font-medium tracking-wide">Last Vaccination</p>
-            <p className="text-lg text-white font-medium">{petData?.lastVaccination || "Not specified"}</p>
-          </div>
-          
-          {/* Medical Alert Section */}
-          <div className="border-t border-yellow-600/30 pt-4">
-
-            {petData?.medicalAlert ? (
-              <div className="bg-red-900/30 border border-red-600/50 rounded-lg p-4">
-                <p className="text-red-300 font-medium mb-2">Medical Conditions:</p>
-                <p className="text-red-200">{petData?.medicalConditions || "No conditions specified"}</p>
-                
-                <div className="mt-4 flex items-center space-x-2">
-                  {petData?.medicalEmergencyDocument ? (
-                    <Button size="sm" variant="outline" className="border-red-400 text-red-300 hover:bg-red-900/50 px-2 sm:px-3 py-1 sm:py-2 text-xs sm:text-sm">
-                      <FileText className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
-                      <span className="hidden sm:inline">View Medical Document</span>
-                      <span className="sm:hidden">Medical Doc</span>
-                    </Button>
-                  ) : (
-                    <Button 
-                      onClick={handleUploadMedicalDoc}
-                      size="sm" 
-                      variant="outline" 
-                      className="border-red-400 text-red-300 hover:bg-red-900/50"
-                    >
-                      <Upload className="w-4 h-4 mr-2" />
-                      Upload Medical Document
-                    </Button>
-                  )}
-                </div>
-              </div>
-            ) : (
-              <p className="text-slate-400 italic">No medical alerts</p>
-            )}
-          </div>
-
-          {petData?.medications && petData.medications.length > 0 && (
-            <div>
-              <p className="text-gold-400 text-sm font-medium tracking-wide mb-2">Current Medications</p>
-              <div className="space-y-2">
-                {petData.medications.map((medication, index) => (
-                  <div key={index} className="flex items-center space-x-2 bg-navy-800/50 p-3 rounded-lg border border-yellow-600/30">
-                    <Pill className="w-4 h-4 text-gold-400" />
-                    <span className="text-white">{medication}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
+          Health info fields removed - data not in pets table
         </CardContent>
-      </Card>
+      </Card> */}
 
 
 
-      {/* Passport-style Badges with New Icons - Moved to after emergency contacts for better flow */}
-      <Card className="border-2 border-yellow-600 shadow-xl bg-gradient-to-br from-slate-800 to-slate-900 text-white">
+      {/* Passport-style Badges - Commented out since not in pets table */}
+      {/* <Card className="border-2 border-yellow-600 shadow-xl bg-gradient-to-br from-slate-800 to-slate-900 text-white">
         <CardHeader>
           <CardTitle className="text-yellow-400 tracking-wide">CERTIFIED ACHIEVEMENTS</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {petData?.badges?.slice(0, 4).map((badge, index) => {
-              // Different icons for different badge types
-              const getIcon = (badgeName: string) => {
-                if (badgeName.toLowerCase().includes('therapy') || badgeName.toLowerCase().includes('certified')) return '🏆';
-                if (badgeName.toLowerCase().includes('kids') || badgeName.toLowerCase().includes('child')) return '🐾';
-                if (badgeName.toLowerCase().includes('trained') || badgeName.toLowerCase().includes('behaved')) return '🦴';
-                return '🌍';
-              };
-
-              return (
-                <div key={index} className="relative">
-                  <div className="w-20 h-20 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-full mx-auto flex items-center justify-center transform rotate-3 shadow-lg">
-                    <div className="w-16 h-16 bg-slate-800 rounded-full flex items-center justify-center">
-                      <span className="text-2xl">
-                        {getIcon(badge)}
-                      </span>
-                    </div>
-                  </div>
-                  <p className="text-center text-xs mt-2 text-slate-300">{badge}</p>
-                </div>
-              );
-            }) || []}
-          </div>
-          {petData?.badges && petData.badges.length > 4 && (
-            <div className="text-center mt-4">
-              <Badge variant="outline" className="border-yellow-600 text-yellow-400">
-                +{petData.badges.length - 4} more achievements
-              </Badge>
-            </div>
-          )}
+          Badge info removed - data not in pets table
         </CardContent>
-      </Card>
+      </Card> */}
 
       {/* Share Profile Section - Moved to bottom */}
       <SocialShareButtons petName={petData?.name || "Pet"} petId={petData?.id || ""} />

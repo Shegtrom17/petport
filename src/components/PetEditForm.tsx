@@ -12,33 +12,21 @@ import { supabase } from "@/integrations/supabase/client";
 
 interface PetData {
   id: string;
+  user_id: string;
   name: string;
   breed: string;
+  species: string;
   age: string;
   weight: string;
-  microchipId: string;
-  petPortId: string;
-  petPassId: string;
-  photoUrl: string;
-  fullBodyPhotoUrl: string;
-  vetContact: string;
-  emergencyContact: string;
-  secondEmergencyContact: string;
-  petCaretaker: string;
-  lastVaccination: string;
-  badges: string[];
-  medications: string[];
+  microchip_id: string;
+  petport_id: string;
+  bio: string;
   notes: string;
-  state?: string;
-  county?: string;
-  species?: string;
-  supportAnimalStatus?: string | null;
-  medicalAlert: boolean;
-  medicalConditions?: string;
-  medicalEmergencyDocument?: string | null;
-  galleryPhotos?: Array<{ url: string; caption: string; }>;
-  user_id?: string;
-  bio?: string;
+  state: string;
+  county: string;
+  is_public: boolean;
+  created_at: string;
+  updated_at: string;
 }
 
 interface PetEditFormProps {
@@ -57,18 +45,11 @@ export const PetEditForm = ({ petData, onSave, onCancel }: PetEditFormProps) => 
     breed: petData.breed || "",
     age: petData.age || "",
     weight: petData.weight || "",
-    microchipId: petData.microchipId || "",
+    microchip_id: petData.microchip_id || "",
     species: petData.species || "",
     state: petData.state || "",
     county: petData.county || "",
     notes: petData.notes || "",
-    vetContact: petData.vetContact || "",
-    emergencyContact: petData.emergencyContact || "",
-    secondEmergencyContact: petData.secondEmergencyContact || "",
-    petCaretaker: petData.petCaretaker || "",
-    lastVaccination: petData.lastVaccination || "",
-    medicalConditions: petData.medicalConditions || "",
-    supportAnimalStatus: petData.supportAnimalStatus || "none",
     bio: petData.bio || ""
   });
 
@@ -90,17 +71,21 @@ export const PetEditForm = ({ petData, onSave, onCancel }: PetEditFormProps) => 
 const handleSubmit = async (e: React.FormEvent) => {
   e.preventDefault();
 
-  const updatedPetData: PetData = {
-    ...petData, // Spread existing data
-    ...formData, // Override with new form data
-    // Ensure required fields have fallbacks
-    species: formData.species || "",
-    state: formData.state || "",
-    county: formData.county || "",
-    supportAnimalStatus: formData.supportAnimalStatus || null
+  const updatedData = {
+    ...petData,
+    name: formData.name,
+    breed: formData.breed,
+    age: formData.age,
+    weight: formData.weight,
+    microchip_id: formData.microchip_id,
+    species: formData.species,
+    state: formData.state,
+    county: formData.county,
+    notes: formData.notes,
+    bio: formData.bio
   };
 
-  onSave(updatedPetData);
+  onSave(updatedData);
 };
 
 
@@ -136,8 +121,8 @@ const handleSubmit = async (e: React.FormEvent) => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <Label htmlFor="microchipId">Microchip ID</Label>
-            <Input type="text" id="microchipId" name="microchipId" value={formData.microchipId} onChange={handleChange} />
+            <Label htmlFor="microchip_id">Microchip ID</Label>
+            <Input type="text" id="microchip_id" name="microchip_id" value={formData.microchip_id} onChange={handleChange} />
           </div>
           <div>
             <Label htmlFor="species">Species</Label>
@@ -164,55 +149,6 @@ const handleSubmit = async (e: React.FormEvent) => {
         <div>
           <Label htmlFor="bio">Bio</Label>
           <Textarea id="bio" name="bio" value={formData.bio} onChange={handleChange} />
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <Label htmlFor="vetContact">Veterinarian Contact</Label>
-            <Input type="text" id="vetContact" name="vetContact" value={formData.vetContact} onChange={handleChange} />
-          </div>
-          <div>
-            <Label htmlFor="emergencyContact">Emergency Contact</Label>
-            <Input type="text" id="emergencyContact" name="emergencyContact" value={formData.emergencyContact} onChange={handleChange} />
-          </div>
-        </div>
-
-        <div>
-          <Label htmlFor="secondEmergencyContact">Second Emergency Contact</Label>
-          <Input type="text" id="secondEmergencyContact" name="secondEmergencyContact" value={formData.secondEmergencyContact} onChange={handleChange} />
-        </div>
-
-        <div>
-          <Label htmlFor="petCaretaker">Pet Caretaker</Label>
-          <Input type="text" id="petCaretaker" name="petCaretaker" value={formData.petCaretaker} onChange={handleChange} />
-        </div>
-
-        <div>
-          <Label htmlFor="lastVaccination">Last Vaccination Date</Label>
-          <Input type="text" id="lastVaccination" name="lastVaccination" value={formData.lastVaccination} onChange={handleChange} />
-        </div>
-
-        <div>
-          <Label htmlFor="medicalConditions">Medical Conditions</Label>
-          <Textarea id="medicalConditions" name="medicalConditions" value={formData.medicalConditions} onChange={handleChange} />
-        </div>
-
-        <div>
-          <Label htmlFor="supportAnimalStatus">Support Animal Status</Label>
-          <Select 
-            value={formData.supportAnimalStatus}
-            onValueChange={(value) => handleSelectChange("supportAnimalStatus", value)}
-          >
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder="Select status" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="Certified Therapy Dog">Certified Therapy Dog</SelectItem>
-              <SelectItem value="Emotional Support Animal">Emotional Support Animal</SelectItem>
-              <SelectItem value="Service Animal">Service Animal</SelectItem>
-              <SelectItem value="none">None</SelectItem>
-            </SelectContent>
-          </Select>
         </div>
         
         <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4">

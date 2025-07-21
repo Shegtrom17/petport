@@ -11,82 +11,27 @@ export interface PDFGenerationResult {
 
 export async function generatePetPDF(petId: string, type: 'emergency' | 'full' = 'emergency'): Promise<PDFGenerationResult> {
   try {
-    console.log('Generating PDF for pet:', petId, 'type:', type);
-
-    // Call edge function and get raw response
     const response = await supabase.functions.invoke('generate-pet-pdf', {
       body: { petId, type }
     });
 
     if (response.error) {
-      console.error('Error calling PDF generation function:', response.error);
       return {
         success: false,
         error: response.error.message || 'Failed to generate PDF'
       };
     }
 
-    // Check if we have valid PDF data
-    let pdfData: Uint8Array | null = null;
-    
-    console.log('Raw response.data type:', typeof response.data);
-    console.log('Raw response.data:', response.data?.constructor?.name);
-    console.log('Is ArrayBuffer?', response.data instanceof ArrayBuffer);
-    console.log('Is Uint8Array?', response.data instanceof Uint8Array);
-    console.log('Is Blob?', response.data instanceof Blob);
-    console.log('Response data length/size:', response.data?.length || response.data?.size || 'unknown');
-    
-    if (response.data) {
-      // Handle different response formats
-      if (response.data instanceof ArrayBuffer) {
-        pdfData = new Uint8Array(response.data);
-      } else if (response.data instanceof Uint8Array) {
-        pdfData = response.data;
-      } else if (response.data instanceof Blob) {
-        const arrayBuffer = await response.data.arrayBuffer();
-        pdfData = new Uint8Array(arrayBuffer);
-      } else if (typeof response.data === 'string') {
-        // If it's base64 encoded
-        try {
-          const binaryString = atob(response.data);
-          pdfData = new Uint8Array(binaryString.length);
-          for (let i = 0; i < binaryString.length; i++) {
-            pdfData[i] = binaryString.charCodeAt(i);
-          }
-        } catch (e) {
-          console.error('Failed to decode base64 PDF data:', e);
-          return {
-            success: false,
-            error: 'Invalid PDF data encoding'
-          };
-        }
-      }
-    }
-
-    // Validate PDF data
-    if (!pdfData || pdfData.length === 0) {
-      console.error('No PDF data received');
+    if (!response.data) {
       return {
         success: false,
         error: 'No PDF data received'
       };
     }
 
-    // Check for PDF header (should start with %PDF)
-    const pdfHeader = String.fromCharCode(...pdfData.slice(0, 4));
-    if (pdfHeader !== '%PDF') {
-      console.error('Invalid PDF header:', pdfHeader, 'First bytes:', Array.from(pdfData.slice(0, 10)));
-      return {
-        success: false,
-        error: 'Invalid PDF format - missing PDF header'
-      };
-    }
-
-    // Create blob and return success
-    const pdfBlob = new Blob([pdfData], { type: 'application/pdf' });
+    // Create blob from response data
+    const pdfBlob = new Blob([response.data], { type: 'application/pdf' });
     const fileName = `PetPort_${type}_Profile.pdf`;
-    
-    console.log('PDF blob created successfully, size:', pdfBlob.size, 'bytes');
     
     return {
       success: true,
@@ -96,7 +41,6 @@ export async function generatePetPDF(petId: string, type: 'emergency' | 'full' =
     };
 
   } catch (error) {
-    console.error('Error in generatePetPDF:', error);
     return {
       success: false,
       error: error instanceof Error ? error.message : 'Failed to generate PDF'

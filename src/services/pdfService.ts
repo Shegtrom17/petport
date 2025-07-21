@@ -29,6 +29,13 @@ export async function generatePetPDF(petId: string, type: 'emergency' | 'full' =
     // Check if we have valid PDF data
     let pdfData: Uint8Array | null = null;
     
+    console.log('Raw response.data type:', typeof response.data);
+    console.log('Raw response.data:', response.data?.constructor?.name);
+    console.log('Is ArrayBuffer?', response.data instanceof ArrayBuffer);
+    console.log('Is Uint8Array?', response.data instanceof Uint8Array);
+    console.log('Is Blob?', response.data instanceof Blob);
+    console.log('Response data length/size:', response.data?.length || response.data?.size || 'unknown');
+    
     if (response.data) {
       // Handle different response formats
       if (response.data instanceof ArrayBuffer) {

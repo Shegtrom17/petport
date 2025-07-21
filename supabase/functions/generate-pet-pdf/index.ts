@@ -369,13 +369,19 @@ serve(async (req) => {
     
     console.log('PDF generated successfully for:', petData.name, 'Size:', pdfBytes.length, 'bytes')
 
-    // Ensure binary data is properly transmitted
-    return new Response(pdfBytes, {
+    // Encode PDF bytes as base64 for safe transmission
+    const base64PDF = btoa(String.fromCharCode(...pdfBytes))
+    
+    console.log('PDF encoded to base64, length:', base64PDF.length)
+
+    // Return base64-encoded PDF data
+    return new Response(JSON.stringify({ 
+      pdfData: base64PDF,
+      fileName: `${petData.name}_${type}_passport.pdf`
+    }), {
       headers: {
         ...corsHeaders,
-        'Content-Type': 'application/pdf',
-        'Content-Disposition': `attachment; filename="${petData.name}_${type}_passport.pdf"`,
-        'Content-Length': pdfBytes.length.toString(),
+        'Content-Type': 'application/json',
         'Cache-Control': 'no-cache',
       }
     })

@@ -22,16 +22,24 @@ export async function generatePetPDF(petId: string, type: 'emergency' | 'full' =
       };
     }
 
-    if (!response.data) {
+    if (!response.data || !response.data.pdfData) {
       return {
         success: false,
         error: 'No PDF data received'
       };
     }
 
-    // Create blob from response data
-    const pdfBlob = new Blob([response.data], { type: 'application/pdf' });
-    const fileName = `PetPort_${type}_Profile.pdf`;
+    // Decode base64 PDF data back to binary
+    const base64Data = response.data.pdfData;
+    const binaryString = atob(base64Data);
+    const pdfBytes = new Uint8Array(binaryString.length);
+    for (let i = 0; i < binaryString.length; i++) {
+      pdfBytes[i] = binaryString.charCodeAt(i);
+    }
+
+    // Create blob from binary data
+    const pdfBlob = new Blob([pdfBytes], { type: 'application/pdf' });
+    const fileName = response.data.fileName || `PetPort_${type}_Profile.pdf`;
     
     return {
       success: true,

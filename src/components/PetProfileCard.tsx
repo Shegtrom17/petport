@@ -83,60 +83,52 @@ export const PetProfileCard = ({ petData, onUpdate }: PetProfileCardProps) => {
     console.log("Switching to gallery view...");
   };
 
-  const handleEditSave = async (updatedData: PetData) => {
-    try {
-      const { error } = await supabase
-        .from('pets')
-        .update({
-          name: updatedData.name,
-          breed: updatedData.breed,
-          age: updatedData.age,
-          weight: updatedData.weight,
-          microchipId: updatedData.microchipId,
-          species: updatedData.species,
-          state: updatedData.state,
-          county: updatedData.county,
-          notes: updatedData.notes,
-          vetContact: updatedData.vetContact,
-          emergencyContact: updatedData.emergencyContact,
-          secondEmergencyContact: updatedData.secondEmergencyContact,
-          petCaretaker: updatedData.petCaretaker,
-          lastVaccination: updatedData.lastVaccination,
-          medicalConditions: updatedData.medicalConditions,
-          supportAnimalStatus: updatedData.supportAnimalStatus,
-          bio: updatedData.bio
-        })
-        .eq('id', updatedData.id)
-        .eq('user_id', user?.id);
+const handleEditSave = async (updatedData: PetData) => {
+  try {
+    // Add a loading state
+    setIsEditing(false);
 
-      if (error) {
-        console.error('Error updating pet:', error);
-        toast({
-          variant: "destructive",
-          title: "Error",
-          description: "Failed to update pet. Please try again.",
-        });
-        return;
-      }
+    const { error } = await supabase
+      .from('pets')
+      .update({
+        name: updatedData.name,
+        breed: updatedData.breed,
+        age: updatedData.age,
+        weight: updatedData.weight,
+        microchipId: updatedData.microchipId,
+        species: updatedData.species || "",
+        state: updatedData.state || "",
+        county: updatedData.county || "",
+        notes: updatedData.notes || "",
+        vetContact: updatedData.vetContact || "",
+        emergencyContact: updatedData.emergencyContact || "",
+        secondEmergencyContact: updatedData.secondEmergencyContact || "",
+        petCaretaker: updatedData.petCaretaker || "",
+        lastVaccination: updatedData.lastVaccination || "",
+        medicalConditions: updatedData.medicalConditions || "",
+        supportAnimalStatus: updatedData.supportAnimalStatus,
+        bio: updatedData.bio || ""
+      })
+      .eq('id', updatedData.id)
+      .single();
 
-      toast({
-        title: "Success",
-        description: "Pet profile updated successfully!",
-      });
+    if (error) throw error;
 
-      setIsEditing(false);
-      if (onUpdate) {
-        onUpdate();
-      }
-    } catch (error) {
-      console.error('Error updating pet:', error);
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Failed to update pet. Please try again.",
-      });
-    }
-  };
+    toast({
+      title: "Success",
+      description: "Pet profile updated successfully!"
+    });
+
+    if (onUpdate) onUpdate();
+  } catch (error) {
+    console.error('Error updating pet:', error);
+    toast({
+      variant: "destructive",
+      title: "Error",
+      description: "Failed to update pet. Please try again."
+    });
+  }
+};
 
 
   const handleDeletePet = async () => {

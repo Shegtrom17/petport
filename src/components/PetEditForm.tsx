@@ -87,32 +87,22 @@ export const PetEditForm = ({ petData, onSave, onCancel }: PetEditFormProps) => 
     }));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
 
-    const updatedData: PetData = {
-      ...petData,
-      name: formData.name,
-      breed: formData.breed,
-      age: formData.age,
-      weight: formData.weight,
-      microchipId: formData.microchipId,
-      species: formData.species || "",
-      state: formData.state || "",
-      county: formData.county || "",
-      notes: formData.notes,
-      vetContact: formData.vetContact,
-      emergencyContact: formData.emergencyContact,
-      secondEmergencyContact: formData.secondEmergencyContact,
-      petCaretaker: formData.petCaretaker,
-      lastVaccination: formData.lastVaccination,
-      medicalConditions: formData.medicalConditions || "",
-      supportAnimalStatus: formData.supportAnimalStatus === "none" ? null : formData.supportAnimalStatus,
-      bio: formData.bio || ""
-    };
-
-    onSave(updatedData);
+  const updatedPetData: PetData = {
+    ...petData, // Spread existing data
+    ...formData, // Override with new form data
+    // Ensure required fields have fallbacks
+    species: formData.species || "",
+    state: formData.state || "",
+    county: formData.county || "",
+    supportAnimalStatus: formData.supportAnimalStatus || null
   };
+
+  onSave(updatedPetData);
+};
+
 
   return (
     <Card className="bg-[#f8f8f8] shadow-md">

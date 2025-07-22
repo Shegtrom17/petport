@@ -737,7 +737,7 @@ serve(async (req) => {
         currentY -= 30
         
         for (const badge of petData.professional_data.badges) {
-          currentPage.drawText(`✓ ${badge}`, {
+          currentPage.drawText(`• ${badge}`, {
             x: 70,
             y: currentY,
             size: 12,

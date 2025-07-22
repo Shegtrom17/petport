@@ -187,36 +187,47 @@ serve(async (req) => {
     
     // Medical Alert Section
     if (petData.medical?.medical_alert && petData.medical?.medical_conditions) {
+      // Calculate text height for proper box sizing
+      const alertText = petData.medical.medical_conditions
+      const textWidth = width - 140 // Account for padding
+      const lines = Math.ceil(regularFont.widthOfTextAtSize(alertText, 11) / textWidth)
+      const textHeight = lines * 14 // 14px line height
+      const boxHeight = Math.max(textHeight + 35, 50) // Minimum 50px height
+      
       page.drawRectangle({
         x: 50,
-        y: yPosition - 15,
+        y: yPosition - boxHeight + 20,
         width: width - 100,
-        height: 40,
+        height: boxHeight,
         color: rgb(1, 0.95, 0.8), // Light yellow background
         borderColor: rgb(0.96, 0.62, 0.06), // Orange border
         borderWidth: 2,
       })
       
+      // Center the title text horizontally
+      const titleWidth = boldFont.widthOfTextAtSize('MEDICAL ALERT', 14)
+      const titleX = 50 + (width - 100 - titleWidth) / 2
+      
       page.drawText('MEDICAL ALERT', {
-        x: 60,
-        y: yPosition,
+        x: titleX,
+        y: yPosition - 5,
         size: 14,
         font: boldFont,
         color: redColor,
       })
       
-      yPosition -= 20
+      yPosition -= 25
       
-      page.drawText(petData.medical.medical_conditions, {
-        x: 60,
+      page.drawText(alertText, {
+        x: 70,
         y: yPosition,
         size: 11,
         font: regularFont,
         color: blackColor,
-        maxWidth: width - 120,
+        maxWidth: width - 140,
       })
       
-      yPosition -= 40
+      yPosition -= (boxHeight - 15)
     }
     
     // Emergency Contacts Section - Compact layout

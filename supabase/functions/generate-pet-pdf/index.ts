@@ -146,31 +146,53 @@ serve(async (req) => {
     
     yPosition -= 50
     
-    // Add photos if available
-    const photoSpace = 120 // Space reserved for photos
-    if (photoData) {
-      console.log('Processing photos for Emergency PDF:', photoData)
-      
-      try {
-        let photoX = width - 200 // Position from right edge
-        
-        // Profile photo
-        if (photoData.photo_url) {
-          try {
-            const photoResponse = await fetch(photoData.photo_url)
-            if (photoResponse.ok) {
-              const photoBytes = await photoResponse.arrayBuffer()
-              const isJpg = photoData.photo_url.toLowerCase().includes('.jpg') || photoData.photo_url.toLowerCase().includes('.jpeg')
-              const photoImage = isJpg 
-                ? await pdfDoc.embedJpg(new Uint8Array(photoBytes))
-                : await pdfDoc.embedPng(new Uint8Array(photoBytes))
-              
-              page.drawImage(photoImage, {
-                x: photoX,
-                y: yPosition - 90,
-                width: 80,
-                height: 80,
-              })
+  // Add photos if available
+if (photoData) {
+  try {
+    // Profile photo - left side
+    if (photoData.photo_url) {
+      const photoResponse = await fetch(photoData.photo_url)
+      if (photoResponse.ok) {
+        const photoBytes = await photoResponse.arrayBuffer()
+        const isJpg = photoData.photo_url.toLowerCase().includes('.jpg')
+        const photoImage = isJpg 
+          ? await pdfDoc.embedJpg(new Uint8Array(photoBytes))
+          : await pdfDoc.embedPng(new Uint8Array(photoBytes))
+
+        // Position on left side
+        page.drawImage(photoImage, {
+          x: 50,  // Left margin
+          y: height - 150,  // From top
+          width: 100,
+          height: 100
+        })
+      }
+    }
+
+    // Full body photo - right side
+    if (photoData.full_body_photo_url) {
+      const bodyPhotoResponse = await fetch(photoData.full_body_photo_url)
+      if (bodyPhotoResponse.ok) {
+        const bodyPhotoBytes = await bodyPhotoResponse.arrayBuffer()
+        const isJpg = photoData.full_body_photo_url.toLowerCase().includes('.jpg')
+        const bodyPhotoImage = isJpg 
+          ? await pdfDoc.embedJpg(new Uint8Array(bodyPhotoBytes))
+          : await pdfDoc.embedPng(new Uint8Array(bodyPhotoBytes))
+
+        // Position on right side
+        page.drawImage(bodyPhotoImage, {
+          x: width - 150,  // Right margin
+          y: height - 150,  // From top
+          width: 100,
+          height: 100
+        })
+      }
+    }
+  } catch (error) {
+    console.log('Error processing photos:', error)
+  }
+}
+
               
               page.drawText('Profile Photo', {
                 x: photoX,

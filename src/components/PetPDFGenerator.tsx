@@ -3,8 +3,8 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { FileText, Download, Share2, Loader2, Users, ExternalLink, LogIn, AlertTriangle } from "lucide-react";
-import { generatePetPDF, generateQRCodeUrl, downloadPDFBlob, generatePublicProfileUrl, shareProfileOptimized } from "@/services/pdfService";
+import { FileText, Download, Share2, Loader2, Users, ExternalLink, LogIn, AlertTriangle, Eye } from "lucide-react";
+import { generatePetPDF, generateQRCodeUrl, downloadPDFBlob, viewPDFBlob, generatePublicProfileUrl, shareProfileOptimized } from "@/services/pdfService";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/context/AuthContext";
 import { useNavigate } from "react-router-dom";
@@ -132,6 +132,27 @@ export const PetPDFGenerator = ({ petId, petName }: PetPDFGeneratorProps) => {
       toast({
         title: "Download Failed",
         description: "Could not download the PDF. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleView = async (blob: Blob | null, type: 'emergency' | 'full') => {
+    if (!blob) return;
+    
+    try {
+      const fileName = type === 'emergency' 
+        ? `PetPort_Emergency_Profile_${petName}.pdf`
+        : `PetPort_Complete_Profile_${petName}.pdf`;
+      await viewPDFBlob(blob, fileName);
+      toast({
+        title: "PDF Opened",
+        description: `${petName}'s ${type} profile opened in new tab.`,
+      });
+    } catch (error) {
+      toast({
+        title: "View Failed",
+        description: error instanceof Error ? error.message : "Could not view the PDF. Please try again.",
         variant: "destructive",
       });
     }
@@ -333,13 +354,21 @@ export const PetPDFGenerator = ({ petId, petName }: PetPDFGeneratorProps) => {
             {emergencyPdfBlob && (
               <div className="bg-white p-4 rounded-lg border border-gold-500/30 shadow-sm">
                 <h4 className="font-serif font-bold text-navy-900 mb-3">🚨 Emergency Profile PDF</h4>
-                <div className="flex justify-center mb-3">
+                <div className="flex flex-col sm:flex-row gap-2 justify-center mb-3">
+                  <Button
+                    onClick={() => handleView(emergencyPdfBlob, 'emergency')}
+                    variant="outline"
+                    className="border-gold-500 text-gold-600 hover:bg-gold-50"
+                  >
+                    <Eye className="w-4 h-4 mr-2" />
+                    View PDF
+                  </Button>
                   <Button
                     onClick={() => handleDownload(emergencyPdfBlob, 'emergency')}
                     className="bg-gradient-to-r from-gold-500 to-gold-400 text-navy-900 hover:from-gold-400 hover:to-gold-300"
                   >
                     <Download className="w-4 h-4 mr-2" />
-                    Download Emergency PDF
+                    Download PDF
                   </Button>
                 </div>
               </div>
@@ -349,13 +378,21 @@ export const PetPDFGenerator = ({ petId, petName }: PetPDFGeneratorProps) => {
             {fullPdfBlob && (
               <div className="bg-white p-4 rounded-lg border border-gold-500/30 shadow-sm">
                 <h4 className="font-serif font-bold text-navy-900 mb-3">Complete Profile PDF</h4>
-                <div className="flex justify-center mb-3">
+                <div className="flex flex-col sm:flex-row gap-2 justify-center mb-3">
+                  <Button
+                    onClick={() => handleView(fullPdfBlob, 'full')}
+                    variant="outline"
+                    className="border-gold-500 text-gold-600 hover:bg-gold-50"
+                  >
+                    <Eye className="w-4 h-4 mr-2" />
+                    View PDF
+                  </Button>
                   <Button
                     onClick={() => handleDownload(fullPdfBlob, 'full')}
                     className="bg-gradient-to-r from-gold-500 to-gold-400 text-navy-900 hover:from-gold-400 hover:to-gold-300"
                   >
                     <Download className="w-4 h-4 mr-2" />
-                    Download Complete PDF
+                    Download PDF
                   </Button>
                 </div>
               </div>

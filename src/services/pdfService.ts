@@ -77,6 +77,25 @@ export async function downloadPDFBlob(blob: Blob, filename: string): Promise<voi
   }
 }
 
+export async function viewPDFBlob(blob: Blob, filename: string): Promise<void> {
+  try {
+    const viewUrl = window.URL.createObjectURL(blob);
+    const newWindow = window.open(viewUrl, '_blank');
+    
+    if (!newWindow) {
+      throw new Error('Popup blocked. Please allow popups to view PDF.');
+    }
+    
+    // Clean up the URL after a short delay to allow the window to load
+    setTimeout(() => {
+      window.URL.revokeObjectURL(viewUrl);
+    }, 1000);
+  } catch (error) {
+    console.error('Error viewing PDF:', error);
+    throw new Error('Failed to view PDF');
+  }
+}
+
 // Keep existing functions for backward compatibility
 export async function downloadPDF(url: string, filename: string): Promise<void> {
   try {

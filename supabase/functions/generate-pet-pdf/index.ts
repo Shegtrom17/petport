@@ -219,12 +219,22 @@ serve(async (req) => {
       yPosition -= 40
     }
     
-    // Emergency Contacts Section
+    // Emergency Contacts Section - Compact layout
+    const contacts = [
+      { label: 'Primary:', value: petData.contacts?.emergency_contact || '' },
+      { label: 'Secondary:', value: petData.contacts?.second_emergency_contact || '' },
+      { label: 'Veterinarian:', value: petData.contacts?.vet_contact || '' },
+    ]
+    
+    // Calculate actual contacts to show
+    const validContacts = contacts.filter(contact => contact.value)
+    const contactsHeight = Math.max(validContacts.length * 16 + 35, 60) // Minimum 60px height
+    
     page.drawRectangle({
       x: 50,
-      y: yPosition - 15,
+      y: yPosition - contactsHeight + 20,
       width: width - 100,
-      height: 120,
+      height: contactsHeight,
       color: rgb(0.99, 0.89, 0.89), // Light red background
       borderColor: redColor,
       borderWidth: 2,
@@ -233,42 +243,34 @@ serve(async (req) => {
     page.drawText('EMERGENCY CONTACTS', {
       x: 60,
       y: yPosition,
-      size: 16,
+      size: 14,
       font: boldFont,
       color: redColor,
     })
     
-    yPosition -= 25
+    yPosition -= 20
     
-    const contacts = [
-      { label: 'Primary:', value: petData.contacts?.emergency_contact || '' },
-      { label: 'Secondary:', value: petData.contacts?.second_emergency_contact || '' },
-      { label: 'Veterinarian:', value: petData.contacts?.vet_contact || '' },
-    ]
-    
-    for (const contact of contacts) {
-      if (contact.value) {
-        page.drawText(contact.label, {
-          x: 70,
-          y: yPosition,
-          size: 12,
-          font: boldFont,
-          color: blackColor,
-        })
-        
-        page.drawText(contact.value, {
-          x: 150,
-          y: yPosition,
-          size: 12,
-          font: regularFont,
-          color: blackColor,
-        })
-        
-        yPosition -= 20
-      }
+    for (const contact of validContacts) {
+      page.drawText(contact.label, {
+        x: 70,
+        y: yPosition,
+        size: 11,
+        font: boldFont,
+        color: blackColor,
+      })
+      
+      page.drawText(contact.value, {
+        x: 140,
+        y: yPosition,
+        size: 11,
+        font: regularFont,
+        color: blackColor,
+      })
+      
+      yPosition -= 16
     }
     
-    yPosition -= 40
+    yPosition -= 20
     
     // Medications Section
     if (petData.medical?.medications && petData.medical.medications.length > 0) {

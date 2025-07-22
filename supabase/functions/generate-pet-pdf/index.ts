@@ -96,10 +96,12 @@ serve(async (req) => {
     console.log('Care instructions data:', JSON.stringify(petData.care_instructions, null, 2))
     console.log('Pet photos data:', JSON.stringify(petData.pet_photos, null, 2))
     
-    // Extract photo data properly
-    const photoData = petData.pet_photos && petData.pet_photos.length > 0 ? petData.pet_photos[0] : null
-    console.log('Profile photo URL:', photoData?.photo_url)
-    console.log('Full body photo URL:', photoData?.full_body_photo_url)
+    // Extract photo data consistently
+    const photoData = {
+      photo_url: petData.pet_photos?.[0]?.photo_url || null,
+      full_body_photo_url: petData.pet_photos?.[0]?.full_body_photo_url || null
+    }
+    console.log('Photo data:', photoData)
 
     // Generate PDF using pdf-lib
     const pdfDoc = await PDFDocument.create()

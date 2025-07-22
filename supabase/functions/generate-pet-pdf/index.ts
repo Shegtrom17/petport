@@ -94,14 +94,19 @@ serve(async (req) => {
 
     console.log('Pet data fetched successfully:', petData.name)
     console.log('Care instructions data:', JSON.stringify(petData.care_instructions, null, 2))
-    console.log('Pet photos data:', JSON.stringify(petData.pet_photos, null, 2))
+    console.log('Pet photos raw data from query:', JSON.stringify(petData.pet_photos, null, 2))
     
     // Extract photo data consistently
     const photoData = {
       photo_url: petData.pet_photos?.[0]?.photo_url || null,
       full_body_photo_url: petData.pet_photos?.[0]?.full_body_photo_url || null
     }
-    console.log('Photo data:', photoData)
+    console.log('✅ Extracted photo data:', JSON.stringify(photoData, null, 2))
+    console.log('🔍 Photo URLs check:')
+    console.log('  - Profile photo URL exists:', !!photoData.photo_url)
+    console.log('  - Full body photo URL exists:', !!photoData.full_body_photo_url)
+    console.log('  - Profile photo URL:', photoData.photo_url)
+    console.log('  - Full body photo URL:', photoData.full_body_photo_url)
 
     // Generate PDF using pdf-lib
     const pdfDoc = await PDFDocument.create()
@@ -151,11 +156,18 @@ if (photoData) {
   try {
     // Profile photo - left side
     if (photoData.photo_url) {
-      console.log('Loading profile photo from:', photoData.photo_url);
+      console.log('🖼️ Processing profile photo...');
+      console.log('  - Original URL:', photoData.photo_url);
+      
       const photoUrl = photoData.photo_url.startsWith('http') 
         ? photoData.photo_url 
         : `${SUPABASE_URL}/storage/v1/object/public/${photoData.photo_url}`;
+      
+      console.log('  - Final URL:', photoUrl);
+      console.log('  - URL starts with http:', photoData.photo_url.startsWith('http'));
+      console.log('  - SUPABASE_URL:', SUPABASE_URL);
         
+      console.log('📡 Fetching profile photo...');
       const photoResponse = await fetch(photoUrl, {
         headers: {
           'Accept': 'image/*',
@@ -163,12 +175,19 @@ if (photoData) {
         }
       });
 
+      console.log('📊 Profile photo fetch response:');
+      console.log('  - Status:', photoResponse.status);
+      console.log('  - Status text:', photoResponse.statusText);
+      console.log('  - Headers:', [...photoResponse.headers.entries()]);
+
       if (!photoResponse.ok) {
-        console.error('Photo fetch failed:', photoResponse.status);
+        console.error('❌ Profile photo fetch failed:', photoResponse.status, photoResponse.statusText);
+        console.error('  - URL attempted:', photoUrl);
         return;
       }
 
       const photoBytes = new Uint8Array(await photoResponse.arrayBuffer());
+      console.log('📦 Emergency PDF profile photo binary data size:', photoBytes.length, 'bytes');
       const isJpg = photoData.photo_url.toLowerCase().includes('.jpg')
       const photoImage = isJpg 
         ? await pdfDoc.embedJpg(photoBytes)
@@ -185,11 +204,17 @@ if (photoData) {
 
     // Full body photo - right side
     if (photoData.full_body_photo_url) {
-      console.log('Loading full body photo from:', photoData.full_body_photo_url);
+      console.log('🖼️ Processing full body photo...');
+      console.log('  - Original URL:', photoData.full_body_photo_url);
+      
       const photoUrl = photoData.full_body_photo_url.startsWith('http') 
         ? photoData.full_body_photo_url 
         : `${SUPABASE_URL}/storage/v1/object/public/${photoData.full_body_photo_url}`;
         
+      console.log('  - Final URL:', photoUrl);
+      console.log('  - URL starts with http:', photoData.full_body_photo_url.startsWith('http'));
+        
+      console.log('📡 Fetching full body photo...');
       const photoResponse = await fetch(photoUrl, {
         headers: {
           'Accept': 'image/*',
@@ -197,12 +222,19 @@ if (photoData) {
         }
       });
 
+      console.log('📊 Full body photo fetch response:');
+      console.log('  - Status:', photoResponse.status);
+      console.log('  - Status text:', photoResponse.statusText);
+      console.log('  - Headers:', [...photoResponse.headers.entries()]);
+
       if (!photoResponse.ok) {
-        console.error('Photo fetch failed:', photoResponse.status);
+        console.error('❌ Full body photo fetch failed:', photoResponse.status, photoResponse.statusText);
+        console.error('  - URL attempted:', photoUrl);
         return;
       }
 
       const photoBytes = new Uint8Array(await photoResponse.arrayBuffer());
+      console.log('📦 Emergency PDF full body photo binary data size:', photoBytes.length, 'bytes');
       const isJpg = photoData.full_body_photo_url.toLowerCase().includes('.jpg')
       const bodyPhotoImage = isJpg 
         ? await pdfDoc.embedJpg(photoBytes)
@@ -424,11 +456,18 @@ if (photoData) {
   try {
     // Profile photo - left side
     if (photoData.photo_url) {
-      console.log('Loading profile photo for full PDF from:', photoData.photo_url);
+      console.log('🖼️ Processing profile photo for FULL PDF...');
+      console.log('  - Original URL:', photoData.photo_url);
+      
       const photoUrl = photoData.photo_url.startsWith('http') 
         ? photoData.photo_url 
         : `${SUPABASE_URL}/storage/v1/object/public/${photoData.photo_url}`;
         
+      console.log('  - Final URL:', photoUrl);
+      console.log('  - URL starts with http:', photoData.photo_url.startsWith('http'));
+      console.log('  - SUPABASE_URL:', SUPABASE_URL);
+        
+      console.log('📡 Fetching profile photo for full PDF...');
       const photoResponse = await fetch(photoUrl, {
         headers: {
           'Accept': 'image/*',
@@ -436,12 +475,19 @@ if (photoData) {
         }
       });
 
+      console.log('📊 Full PDF profile photo fetch response:');
+      console.log('  - Status:', photoResponse.status);
+      console.log('  - Status text:', photoResponse.statusText);
+      console.log('  - Headers:', [...photoResponse.headers.entries()]);
+
       if (!photoResponse.ok) {
-        console.error('Photo fetch failed:', photoResponse.status);
+        console.error('❌ Full PDF profile photo fetch failed:', photoResponse.status, photoResponse.statusText);
+        console.error('  - URL attempted:', photoUrl);
         return;
       }
 
       const photoBytes = new Uint8Array(await photoResponse.arrayBuffer());
+      console.log('📦 Profile photo binary data size:', photoBytes.length, 'bytes');
       const isJpg = photoData.photo_url.toLowerCase().includes('.jpg')
       const photoImage = isJpg 
         ? await pdfDoc.embedJpg(photoBytes)
@@ -465,11 +511,17 @@ if (photoData) {
 
     // Full body photo - right side
     if (photoData.full_body_photo_url) {
-      console.log('Loading full body photo for full PDF from:', photoData.full_body_photo_url);
+      console.log('🖼️ Processing full body photo for FULL PDF...');
+      console.log('  - Original URL:', photoData.full_body_photo_url);
+      
       const photoUrl = photoData.full_body_photo_url.startsWith('http') 
         ? photoData.full_body_photo_url 
         : `${SUPABASE_URL}/storage/v1/object/public/${photoData.full_body_photo_url}`;
         
+      console.log('  - Final URL:', photoUrl);
+      console.log('  - URL starts with http:', photoData.full_body_photo_url.startsWith('http'));
+        
+      console.log('📡 Fetching full body photo for full PDF...');
       const photoResponse = await fetch(photoUrl, {
         headers: {
           'Accept': 'image/*',
@@ -477,12 +529,19 @@ if (photoData) {
         }
       });
 
+      console.log('📊 Full PDF full body photo fetch response:');
+      console.log('  - Status:', photoResponse.status);
+      console.log('  - Status text:', photoResponse.statusText);
+      console.log('  - Headers:', [...photoResponse.headers.entries()]);
+
       if (!photoResponse.ok) {
-        console.error('Photo fetch failed:', photoResponse.status);
+        console.error('❌ Full PDF full body photo fetch failed:', photoResponse.status, photoResponse.statusText);
+        console.error('  - URL attempted:', photoUrl);
         return;
       }
 
       const photoBytes = new Uint8Array(await photoResponse.arrayBuffer());
+      console.log('📦 Full PDF full body photo binary data size:', photoBytes.length, 'bytes');
       const isJpg = photoData.full_body_photo_url.toLowerCase().includes('.jpg')
       const bodyPhotoImage = isJpg 
         ? await pdfDoc.embedJpg(photoBytes)

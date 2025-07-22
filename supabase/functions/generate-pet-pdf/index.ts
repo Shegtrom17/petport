@@ -61,15 +61,22 @@ serve(async (req) => {
     // Initialize Supabase client
     const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY)
 
-    // Fetch pet data - using correct field name 'user_id' not 'owner_id'
+    // Fetch pet data with all related tables for full profile
     const { data: petData, error: fetchError } = await supabase
       .from('pets')
       .select(`
         *,
         pet_photos (photo_url, full_body_photo_url),
         professional_data (support_animal_status, badges),
-        medical (medical_alert, medical_conditions, medications),
-        contacts (emergency_contact, second_emergency_contact, vet_contact)
+        medical (medical_alert, medical_conditions, medications, last_vaccination),
+        contacts (emergency_contact, second_emergency_contact, vet_contact, pet_caretaker),
+        care_instructions (feeding_schedule, morning_routine, evening_routine, allergies, behavioral_notes, favorite_activities),
+        experiences (activity, contact, description),
+        achievements (title, description),
+        training (course, facility, phone, completed),
+        reviews (reviewer_name, rating, text, date, location, type),
+        travel_locations (name, type, code, date_visited, notes),
+        documents (name, type, file_url, size)
       `)
       .eq('id', petId)
       .single()
@@ -289,28 +296,457 @@ serve(async (req) => {
       yPosition -= 20
     }
     
-    // About Section (for full profile only)
-    if (!isEmergency && petData.bio) {
-      page.drawText('ABOUT', {
-        x: 50,
-        y: yPosition,
-        size: 16,
-        font: boldFont,
-        color: titleColor,
-      })
+    // FULL PROFILE ADDITIONAL CONTENT
+    if (!isEmergency) {
+      // Create additional pages for full profile
+      let currentPage = page
+      let currentY = yPosition
       
-      yPosition -= 25
+      // Helper function to add new page if needed
+      const addNewPageIfNeeded = (requiredSpace = 100) => {
+        if (currentY < requiredSpace) {
+          currentPage = pdfDoc.addPage([612, 792])
+          currentY = height - 60
+        }
+      }
       
-      page.drawText(petData.bio, {
-        x: 70,
-        y: yPosition,
-        size: 11,
-        font: regularFont,
-        color: blackColor,
-        maxWidth: width - 140,
-      })
+      // About Section
+      if (petData.bio) {
+        addNewPageIfNeeded(100)
+        currentPage.drawText('ABOUT', {
+          x: 50,
+          y: currentY,
+          size: 16,
+          font: boldFont,
+          color: titleColor,
+        })
+        
+        currentY -= 25
+        
+        const bioLines = petData.bio.match(/.{1,80}(\s|$)/g) || [petData.bio]
+        for (const line of bioLines) {
+          currentPage.drawText(line.trim(), {
+            x: 70,
+            y: currentY,
+            size: 11,
+            font: regularFont,
+            color: blackColor,
+          })
+          currentY -= 15
+        }
+        
+        currentY -= 20
+      }
       
-      yPosition -= 40
+      // Care Instructions Section
+      if (petData.care_instructions && petData.care_instructions.length > 0) {
+        const care = petData.care_instructions[0]
+        addNewPageIfNeeded(200)
+        
+        currentPage.drawText('CARE INSTRUCTIONS', {
+          x: 50,
+          y: currentY,
+          size: 16,
+          font: boldFont,
+          color: titleColor,
+        })
+        
+        currentY -= 30
+        
+        const careItems = [
+          { label: 'Feeding Schedule:', value: care.feeding_schedule },
+          { label: 'Morning Routine:', value: care.morning_routine },
+          { label: 'Evening Routine:', value: care.evening_routine },
+          { label: 'Allergies:', value: care.allergies },
+          { label: 'Behavioral Notes:', value: care.behavioral_notes },
+          { label: 'Favorite Activities:', value: care.favorite_activities },
+        ]
+        
+        for (const item of careItems) {
+          if (item.value) {
+            addNewPageIfNeeded(60)
+            currentPage.drawText(item.label, {
+              x: 70,
+              y: currentY,
+              size: 12,
+              font: boldFont,
+              color: blackColor,
+            })
+            currentY -= 18
+            
+            const lines = item.value.match(/.{1,70}(\s|$)/g) || [item.value]
+            for (const line of lines) {
+              currentPage.drawText(line.trim(), {
+                x: 80,
+                y: currentY,
+                size: 11,
+                font: regularFont,
+                color: blackColor,
+              })
+              currentY -= 15
+            }
+            currentY -= 10
+          }
+        }
+        
+        currentY -= 20
+      }
+      
+      // Training & Certifications Section
+      if (petData.training && petData.training.length > 0) {
+        addNewPageIfNeeded(100)
+        
+        currentPage.drawText('TRAINING & CERTIFICATIONS', {
+          x: 50,
+          y: currentY,
+          size: 16,
+          font: boldFont,
+          color: titleColor,
+        })
+        
+        currentY -= 30
+        
+        for (const training of petData.training) {
+          addNewPageIfNeeded(60)
+          currentPage.drawText(`• ${training.course}`, {
+            x: 70,
+            y: currentY,
+            size: 12,
+            font: boldFont,
+            color: blackColor,
+          })
+          currentY -= 18
+          
+          if (training.facility) {
+            currentPage.drawText(`  Facility: ${training.facility}`, {
+              x: 80,
+              y: currentY,
+              size: 11,
+              font: regularFont,
+              color: blackColor,
+            })
+            currentY -= 15
+          }
+          
+          if (training.completed) {
+            currentPage.drawText(`  Completed: ${training.completed}`, {
+              x: 80,
+              y: currentY,
+              size: 11,
+              font: regularFont,
+              color: blackColor,
+            })
+            currentY -= 15
+          }
+          
+          currentY -= 10
+        }
+        
+        currentY -= 20
+      }
+      
+      // Achievements Section
+      if (petData.achievements && petData.achievements.length > 0) {
+        addNewPageIfNeeded(100)
+        
+        currentPage.drawText('ACHIEVEMENTS', {
+          x: 50,
+          y: currentY,
+          size: 16,
+          font: boldFont,
+          color: titleColor,
+        })
+        
+        currentY -= 30
+        
+        for (const achievement of petData.achievements) {
+          addNewPageIfNeeded(60)
+          currentPage.drawText(`• ${achievement.title}`, {
+            x: 70,
+            y: currentY,
+            size: 12,
+            font: boldFont,
+            color: blackColor,
+          })
+          currentY -= 18
+          
+          if (achievement.description) {
+            const lines = achievement.description.match(/.{1,70}(\s|$)/g) || [achievement.description]
+            for (const line of lines) {
+              currentPage.drawText(`  ${line.trim()}`, {
+                x: 80,
+                y: currentY,
+                size: 11,
+                font: regularFont,
+                color: blackColor,
+              })
+              currentY -= 15
+            }
+          }
+          
+          currentY -= 10
+        }
+        
+        currentY -= 20
+      }
+      
+      // Experiences Section
+      if (petData.experiences && petData.experiences.length > 0) {
+        addNewPageIfNeeded(100)
+        
+        currentPage.drawText('EXPERIENCES', {
+          x: 50,
+          y: currentY,
+          size: 16,
+          font: boldFont,
+          color: titleColor,
+        })
+        
+        currentY -= 30
+        
+        for (const experience of petData.experiences) {
+          addNewPageIfNeeded(60)
+          currentPage.drawText(`• ${experience.activity}`, {
+            x: 70,
+            y: currentY,
+            size: 12,
+            font: boldFont,
+            color: blackColor,
+          })
+          currentY -= 18
+          
+          if (experience.contact) {
+            currentPage.drawText(`  Contact: ${experience.contact}`, {
+              x: 80,
+              y: currentY,
+              size: 11,
+              font: regularFont,
+              color: blackColor,
+            })
+            currentY -= 15
+          }
+          
+          if (experience.description) {
+            const lines = experience.description.match(/.{1,70}(\s|$)/g) || [experience.description]
+            for (const line of lines) {
+              currentPage.drawText(`  ${line.trim()}`, {
+                x: 80,
+                y: currentY,
+                size: 11,
+                font: regularFont,
+                color: blackColor,
+              })
+              currentY -= 15
+            }
+          }
+          
+          currentY -= 10
+        }
+        
+        currentY -= 20
+      }
+      
+      // Reviews Section
+      if (petData.reviews && petData.reviews.length > 0) {
+        addNewPageIfNeeded(100)
+        
+        currentPage.drawText('REVIEWS & REFERENCES', {
+          x: 50,
+          y: currentY,
+          size: 16,
+          font: boldFont,
+          color: titleColor,
+        })
+        
+        currentY -= 30
+        
+        for (const review of petData.reviews) {
+          addNewPageIfNeeded(100)
+          currentPage.drawText(`${review.reviewer_name} - ${review.rating}/5 stars`, {
+            x: 70,
+            y: currentY,
+            size: 12,
+            font: boldFont,
+            color: blackColor,
+          })
+          currentY -= 18
+          
+          if (review.location && review.date) {
+            currentPage.drawText(`${review.location} - ${review.date}`, {
+              x: 70,
+              y: currentY,
+              size: 10,
+              font: regularFont,
+              color: rgb(0.4, 0.4, 0.4),
+            })
+            currentY -= 15
+          }
+          
+          if (review.text) {
+            const lines = review.text.match(/.{1,70}(\s|$)/g) || [review.text]
+            for (const line of lines) {
+              currentPage.drawText(`"${line.trim()}"`, {
+                x: 80,
+                y: currentY,
+                size: 11,
+                font: regularFont,
+                color: blackColor,
+              })
+              currentY -= 15
+            }
+          }
+          
+          currentY -= 15
+        }
+        
+        currentY -= 20
+      }
+      
+      // Travel History Section
+      if (petData.travel_locations && petData.travel_locations.length > 0) {
+        addNewPageIfNeeded(100)
+        
+        currentPage.drawText('TRAVEL HISTORY', {
+          x: 50,
+          y: currentY,
+          size: 16,
+          font: boldFont,
+          color: titleColor,
+        })
+        
+        currentY -= 30
+        
+        for (const location of petData.travel_locations) {
+          addNewPageIfNeeded(40)
+          currentPage.drawText(`• ${location.name}`, {
+            x: 70,
+            y: currentY,
+            size: 12,
+            font: boldFont,
+            color: blackColor,
+          })
+          currentY -= 18
+          
+          const details = []
+          if (location.type && location.code) details.push(`${location.type.toUpperCase()}: ${location.code}`)
+          if (location.date_visited) details.push(`Visited: ${location.date_visited}`)
+          
+          if (details.length > 0) {
+            currentPage.drawText(`  ${details.join(' - ')}`, {
+              x: 80,
+              y: currentY,
+              size: 11,
+              font: regularFont,
+              color: blackColor,
+            })
+            currentY -= 15
+          }
+          
+          if (location.notes) {
+            currentPage.drawText(`  Notes: ${location.notes}`, {
+              x: 80,
+              y: currentY,
+              size: 11,
+              font: regularFont,
+              color: blackColor,
+            })
+            currentY -= 15
+          }
+          
+          currentY -= 10
+        }
+        
+        currentY -= 20
+      }
+      
+      // Medical History Section (Extended)
+      if (petData.medical?.last_vaccination) {
+        addNewPageIfNeeded(60)
+        
+        currentPage.drawText('MEDICAL HISTORY', {
+          x: 50,
+          y: currentY,
+          size: 16,
+          font: boldFont,
+          color: titleColor,
+        })
+        
+        currentY -= 30
+        
+        currentPage.drawText(`Last Vaccination: ${petData.medical.last_vaccination}`, {
+          x: 70,
+          y: currentY,
+          size: 12,
+          font: regularFont,
+          color: blackColor,
+        })
+        
+        currentY -= 30
+      }
+      
+      // Documents Section
+      if (petData.documents && petData.documents.length > 0) {
+        addNewPageIfNeeded(100)
+        
+        currentPage.drawText('DOCUMENTS ON FILE', {
+          x: 50,
+          y: currentY,
+          size: 16,
+          font: boldFont,
+          color: titleColor,
+        })
+        
+        currentY -= 30
+        
+        for (const document of petData.documents) {
+          addNewPageIfNeeded(30)
+          currentPage.drawText(`• ${document.name}`, {
+            x: 70,
+            y: currentY,
+            size: 11,
+            font: regularFont,
+            color: blackColor,
+          })
+          currentY -= 15
+          
+          currentPage.drawText(`  Type: ${document.type.toUpperCase()}`, {
+            x: 80,
+            y: currentY,
+            size: 10,
+            font: regularFont,
+            color: rgb(0.4, 0.4, 0.4),
+          })
+          currentY -= 15
+        }
+        
+        currentY -= 20
+      }
+      
+      // Professional Badges
+      if (petData.professional_data?.badges && petData.professional_data.badges.length > 0) {
+        addNewPageIfNeeded(80)
+        
+        currentPage.drawText('PROFESSIONAL CERTIFICATIONS', {
+          x: 50,
+          y: currentY,
+          size: 16,
+          font: boldFont,
+          color: titleColor,
+        })
+        
+        currentY -= 30
+        
+        for (const badge of petData.professional_data.badges) {
+          currentPage.drawText(`✓ ${badge}`, {
+            x: 70,
+            y: currentY,
+            size: 12,
+            font: regularFont,
+            color: rgb(0.1, 0.6, 0.1),
+          })
+          currentY -= 20
+        }
+      }
     }
     
     // Footer

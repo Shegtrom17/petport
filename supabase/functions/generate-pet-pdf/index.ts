@@ -146,101 +146,81 @@ serve(async (req) => {
     
     yPosition -= 50
     
-  // Add photos if available
+  // Add photos if available for Emergency PDF
 if (photoData) {
   try {
     // Profile photo - left side
     if (photoData.photo_url) {
-      const photoResponse = await fetch(photoData.photo_url)
-      if (photoResponse.ok) {
-        const photoBytes = await photoResponse.arrayBuffer()
-        const isJpg = photoData.photo_url.toLowerCase().includes('.jpg')
-        const photoImage = isJpg 
-          ? await pdfDoc.embedJpg(new Uint8Array(photoBytes))
-          : await pdfDoc.embedPng(new Uint8Array(photoBytes))
+      console.log('Loading profile photo from:', photoData.photo_url);
+      const photoUrl = photoData.photo_url.startsWith('http') 
+        ? photoData.photo_url 
+        : `${SUPABASE_URL}/storage/v1/object/public/${photoData.photo_url}`;
+        
+      const photoResponse = await fetch(photoUrl, {
+        headers: {
+          'Accept': 'image/*',
+          'Cache-Control': 'no-cache'
+        }
+      });
 
-        // Position on left side
-        page.drawImage(photoImage, {
-          x: 50,  // Left margin
-          y: height - 150,  // From top
-          width: 100,
-          height: 100
-        })
+      if (!photoResponse.ok) {
+        console.error('Photo fetch failed:', photoResponse.status);
+        return;
       }
+
+      const photoBytes = new Uint8Array(await photoResponse.arrayBuffer());
+      const isJpg = photoData.photo_url.toLowerCase().includes('.jpg')
+      const photoImage = isJpg 
+        ? await pdfDoc.embedJpg(photoBytes)
+        : await pdfDoc.embedPng(photoBytes)
+
+      // Position on left side
+      page.drawImage(photoImage, {
+        x: 50,  // Left margin
+        y: height - 150,  // From top
+        width: 100,
+        height: 100
+      })
     }
 
     // Full body photo - right side
     if (photoData.full_body_photo_url) {
-      const bodyPhotoResponse = await fetch(photoData.full_body_photo_url)
-      if (bodyPhotoResponse.ok) {
-        const bodyPhotoBytes = await bodyPhotoResponse.arrayBuffer()
-        const isJpg = photoData.full_body_photo_url.toLowerCase().includes('.jpg')
-        const bodyPhotoImage = isJpg 
-          ? await pdfDoc.embedJpg(new Uint8Array(bodyPhotoBytes))
-          : await pdfDoc.embedPng(new Uint8Array(bodyPhotoBytes))
+      console.log('Loading full body photo from:', photoData.full_body_photo_url);
+      const photoUrl = photoData.full_body_photo_url.startsWith('http') 
+        ? photoData.full_body_photo_url 
+        : `${SUPABASE_URL}/storage/v1/object/public/${photoData.full_body_photo_url}`;
+        
+      const photoResponse = await fetch(photoUrl, {
+        headers: {
+          'Accept': 'image/*',
+          'Cache-Control': 'no-cache'
+        }
+      });
 
-        // Position on right side
-        page.drawImage(bodyPhotoImage, {
-          x: width - 150,  // Right margin
-          y: height - 150,  // From top
-          width: 100,
-          height: 100
-        })
+      if (!photoResponse.ok) {
+        console.error('Photo fetch failed:', photoResponse.status);
+        return;
       }
+
+      const photoBytes = new Uint8Array(await photoResponse.arrayBuffer());
+      const isJpg = photoData.full_body_photo_url.toLowerCase().includes('.jpg')
+      const bodyPhotoImage = isJpg 
+        ? await pdfDoc.embedJpg(photoBytes)
+        : await pdfDoc.embedPng(photoBytes)
+
+      // Position on right side
+      page.drawImage(bodyPhotoImage, {
+        x: width - 150,  // Right margin
+        y: height - 150,  // From top
+        width: 100,
+        height: 100
+      })
     }
   } catch (error) {
     console.log('Error processing photos:', error)
   }
 }
 
-              
-              page.drawText('Profile Photo', {
-                x: photoX,
-                y: yPosition - 100,
-                size: 8,
-                font: regularFont,
-                color: rgb(0.5, 0.5, 0.5),
-              })
-            }
-          } catch (error) {
-            console.log('Could not load profile photo:', error.message)
-          }
-        }
-        
-        // Full body photo
-        if (photoData.full_body_photo_url) {
-          try {
-            const bodyPhotoResponse = await fetch(photoData.full_body_photo_url)
-            if (bodyPhotoResponse.ok) {
-              const bodyPhotoBytes = await bodyPhotoResponse.arrayBuffer()
-              const isJpg = photoData.full_body_photo_url.toLowerCase().includes('.jpg') || photoData.full_body_photo_url.toLowerCase().includes('.jpeg')
-              const bodyPhotoImage = isJpg 
-                ? await pdfDoc.embedJpg(new Uint8Array(bodyPhotoBytes))
-                : await pdfDoc.embedPng(new Uint8Array(bodyPhotoBytes))
-              
-              page.drawImage(bodyPhotoImage, {
-                x: photoX + 100,
-                y: yPosition - 90,
-                width: 80,
-                height: 80,
-              })
-              
-              page.drawText('Full Body Photo', {
-                x: photoX + 100,
-                y: yPosition - 100,
-                size: 8,
-                font: regularFont,
-                color: rgb(0.5, 0.5, 0.5),
-              })
-            }
-          } catch (error) {
-            console.log('Could not load full body photo:', error.message)
-          }
-        }
-      } catch (error) {
-        console.log('Error processing photos:', error.message)
-      }
-    }
     
     // Pet Information Section
     page.drawText('PET INFORMATION', {
@@ -444,56 +424,84 @@ if (photoData) {
   try {
     // Profile photo - left side
     if (photoData.photo_url) {
-      const photoResponse = await fetch(photoData.photo_url)
-      if (photoResponse.ok) {
-        const photoBytes = await photoResponse.arrayBuffer()
-        const isJpg = photoData.photo_url.toLowerCase().includes('.jpg')
-        const photoImage = isJpg 
-          ? await pdfDoc.embedJpg(new Uint8Array(photoBytes))
-          : await pdfDoc.embedPng(new Uint8Array(photoBytes))
+      console.log('Loading profile photo for full PDF from:', photoData.photo_url);
+      const photoUrl = photoData.photo_url.startsWith('http') 
+        ? photoData.photo_url 
+        : `${SUPABASE_URL}/storage/v1/object/public/${photoData.photo_url}`;
+        
+      const photoResponse = await fetch(photoUrl, {
+        headers: {
+          'Accept': 'image/*',
+          'Cache-Control': 'no-cache'
+        }
+      });
 
-        currentPage.drawImage(photoImage, {
-          x: 50,
-          y: currentY - 120,
-          width: 200,
-          height: 200
-        })
-
-        currentPage.drawText('Official Profile Photo', {
-          x: 80,
-          y: currentY - 140,
-          size: 12,
-          font: boldFont,
-          color: blackColor,
-        })
+      if (!photoResponse.ok) {
+        console.error('Photo fetch failed:', photoResponse.status);
+        return;
       }
+
+      const photoBytes = new Uint8Array(await photoResponse.arrayBuffer());
+      const isJpg = photoData.photo_url.toLowerCase().includes('.jpg')
+      const photoImage = isJpg 
+        ? await pdfDoc.embedJpg(photoBytes)
+        : await pdfDoc.embedPng(photoBytes)
+
+      currentPage.drawImage(photoImage, {
+        x: 50,
+        y: currentY - 120,
+        width: 200,
+        height: 200
+      })
+
+      currentPage.drawText('Official Profile Photo', {
+        x: 80,
+        y: currentY - 140,
+        size: 12,
+        font: boldFont,
+        color: blackColor,
+      })
     }
 
     // Full body photo - right side
     if (photoData.full_body_photo_url) {
-      const bodyPhotoResponse = await fetch(photoData.full_body_photo_url)
-      if (bodyPhotoResponse.ok) {
-        const bodyPhotoBytes = await bodyPhotoResponse.arrayBuffer()
-        const isJpg = photoData.full_body_photo_url.toLowerCase().includes('.jpg')
-        const bodyPhotoImage = isJpg 
-          ? await pdfDoc.embedJpg(new Uint8Array(bodyPhotoBytes))
-          : await pdfDoc.embedPng(new Uint8Array(bodyPhotoBytes))
+      console.log('Loading full body photo for full PDF from:', photoData.full_body_photo_url);
+      const photoUrl = photoData.full_body_photo_url.startsWith('http') 
+        ? photoData.full_body_photo_url 
+        : `${SUPABASE_URL}/storage/v1/object/public/${photoData.full_body_photo_url}`;
+        
+      const photoResponse = await fetch(photoUrl, {
+        headers: {
+          'Accept': 'image/*',
+          'Cache-Control': 'no-cache'
+        }
+      });
 
-        currentPage.drawImage(bodyPhotoImage, {
-          x: width - 250,
-          y: currentY - 120,
-          width: 200,
-          height: 200
-        })
-
-        currentPage.drawText('Full Body Identification', {
-          x: width - 220,
-          y: currentY - 140,
-          size: 12,
-          font: boldFont,
-          color: blackColor,
-        })
+      if (!photoResponse.ok) {
+        console.error('Photo fetch failed:', photoResponse.status);
+        return;
       }
+
+      const photoBytes = new Uint8Array(await photoResponse.arrayBuffer());
+      const isJpg = photoData.full_body_photo_url.toLowerCase().includes('.jpg')
+      const bodyPhotoImage = isJpg 
+        ? await pdfDoc.embedJpg(photoBytes)
+        : await pdfDoc.embedPng(photoBytes)
+
+      currentPage.drawImage(bodyPhotoImage, {
+        x: width - 250,
+        y: currentY - 120,
+        width: 200,
+        height: 200
+      })
+
+      currentPage.drawText('Full Body Identification', {
+        x: width - 220,
+        y: currentY - 140,
+        size: 12,
+        font: boldFont,
+        color: blackColor,
+      })
     }
 
     currentY -= 250  // Move down past photos

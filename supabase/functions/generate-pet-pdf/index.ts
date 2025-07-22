@@ -93,6 +93,7 @@ serve(async (req) => {
     }
 
     console.log('Pet data fetched successfully:', petData.name)
+    console.log('Care instructions data:', JSON.stringify(petData.care_instructions, null, 2))
 
     // Generate PDF using pdf-lib
     const pdfDoc = await PDFDocument.create()
@@ -352,8 +353,9 @@ serve(async (req) => {
       }
       
       // Care Instructions Section
-      if (petData.care_instructions && petData.care_instructions.length > 0) {
-        const care = petData.care_instructions[0]
+      if (petData.care_instructions) {
+        // care_instructions is an object, not an array
+        const care = Array.isArray(petData.care_instructions) ? petData.care_instructions[0] : petData.care_instructions
         addNewPageIfNeeded(300)
         
         currentPage.drawText('CARE INSTRUCTIONS', {

@@ -354,7 +354,7 @@ serve(async (req) => {
       // Care Instructions Section
       if (petData.care_instructions && petData.care_instructions.length > 0) {
         const care = petData.care_instructions[0]
-        addNewPageIfNeeded(200)
+        addNewPageIfNeeded(300)
         
         currentPage.drawText('CARE INSTRUCTIONS', {
           x: 50,
@@ -364,22 +364,49 @@ serve(async (req) => {
           color: titleColor,
         })
         
-        currentY -= 30
+        currentY -= 35
         
-        const careItems = [
-          { label: 'Feeding Schedule:', value: care.feeding_schedule },
-          { label: 'Morning Routine:', value: care.morning_routine },
-          { label: 'Evening Routine:', value: care.evening_routine },
-          { label: 'Allergies:', value: care.allergies },
-          { label: 'Behavioral Notes:', value: care.behavioral_notes },
-          { label: 'Favorite Activities:', value: care.favorite_activities },
-        ]
+        // Feeding Schedule subsection
+        if (care.feeding_schedule) {
+          addNewPageIfNeeded(80)
+          currentPage.drawText('Feeding Schedule', {
+            x: 70,
+            y: currentY,
+            size: 13,
+            font: boldFont,
+            color: rgb(0.2, 0.4, 0.7),
+          })
+          currentY -= 20
+          
+          const feedingLines = care.feeding_schedule.match(/.{1,65}(\s|$)/g) || [care.feeding_schedule]
+          for (const line of feedingLines) {
+            currentPage.drawText(`• ${line.trim()}`, {
+              x: 90,
+              y: currentY,
+              size: 11,
+              font: regularFont,
+              color: blackColor,
+            })
+            currentY -= 15
+          }
+          currentY -= 15
+        }
         
-        for (const item of careItems) {
-          if (item.value) {
-            addNewPageIfNeeded(60)
-            currentPage.drawText(item.label, {
-              x: 70,
+        // Daily Routine subsection
+        if (care.morning_routine || care.evening_routine) {
+          addNewPageIfNeeded(100)
+          currentPage.drawText('Daily Routine', {
+            x: 70,
+            y: currentY,
+            size: 13,
+            font: boldFont,
+            color: rgb(0.2, 0.4, 0.7),
+          })
+          currentY -= 20
+          
+          if (care.morning_routine) {
+            currentPage.drawText('Morning Routine:', {
+              x: 90,
               y: currentY,
               size: 12,
               font: boldFont,
@@ -387,10 +414,10 @@ serve(async (req) => {
             })
             currentY -= 18
             
-            const lines = item.value.match(/.{1,70}(\s|$)/g) || [item.value]
-            for (const line of lines) {
-              currentPage.drawText(line.trim(), {
-                x: 80,
+            const morningLines = care.morning_routine.match(/.{1,60}(\s|$)/g) || [care.morning_routine]
+            for (const line of morningLines) {
+              currentPage.drawText(`• ${line.trim()}`, {
+                x: 110,
                 y: currentY,
                 size: 11,
                 font: regularFont,
@@ -400,6 +427,119 @@ serve(async (req) => {
             }
             currentY -= 10
           }
+          
+          if (care.evening_routine) {
+            currentPage.drawText('Evening Routine:', {
+              x: 90,
+              y: currentY,
+              size: 12,
+              font: boldFont,
+              color: blackColor,
+            })
+            currentY -= 18
+            
+            const eveningLines = care.evening_routine.match(/.{1,60}(\s|$)/g) || [care.evening_routine]
+            for (const line of eveningLines) {
+              currentPage.drawText(`• ${line.trim()}`, {
+                x: 110,
+                y: currentY,
+                size: 11,
+                font: regularFont,
+                color: blackColor,
+              })
+              currentY -= 15
+            }
+            currentY -= 10
+          }
+          
+          if (care.favorite_activities) {
+            currentPage.drawText('Regular Activities:', {
+              x: 90,
+              y: currentY,
+              size: 12,
+              font: boldFont,
+              color: blackColor,
+            })
+            currentY -= 18
+            
+            const activityLines = care.favorite_activities.match(/.{1,60}(\s|$)/g) || [care.favorite_activities]
+            for (const line of activityLines) {
+              currentPage.drawText(`• ${line.trim()}`, {
+                x: 110,
+                y: currentY,
+                size: 11,
+                font: regularFont,
+                color: blackColor,
+              })
+              currentY -= 15
+            }
+            currentY -= 10
+          }
+          
+          currentY -= 15
+        }
+        
+        // Emergency Important Notes subsection
+        if (care.allergies || care.behavioral_notes) {
+          addNewPageIfNeeded(100)
+          currentPage.drawText('Emergency Important Notes', {
+            x: 70,
+            y: currentY,
+            size: 13,
+            font: boldFont,
+            color: rgb(0.7, 0.2, 0.2),
+          })
+          currentY -= 20
+          
+          if (care.allergies) {
+            currentPage.drawText('Food Restrictions & Allergies:', {
+              x: 90,
+              y: currentY,
+              size: 12,
+              font: boldFont,
+              color: blackColor,
+            })
+            currentY -= 18
+            
+            const allergyLines = care.allergies.match(/.{1,60}(\s|$)/g) || [care.allergies]
+            for (const line of allergyLines) {
+              currentPage.drawText(`⚠ ${line.trim()}`, {
+                x: 110,
+                y: currentY,
+                size: 11,
+                font: regularFont,
+                color: rgb(0.7, 0.2, 0.2),
+              })
+              currentY -= 15
+            }
+            currentY -= 10
+          }
+          
+          if (care.behavioral_notes) {
+            currentPage.drawText('Special Needs & Important Warnings:', {
+              x: 90,
+              y: currentY,
+              size: 12,
+              font: boldFont,
+              color: blackColor,
+            })
+            currentY -= 18
+            
+            const behaviorLines = care.behavioral_notes.match(/.{1,60}(\s|$)/g) || [care.behavioral_notes]
+            for (const line of behaviorLines) {
+              currentPage.drawText(`⚠ ${line.trim()}`, {
+                x: 110,
+                y: currentY,
+                size: 11,
+                font: regularFont,
+                color: rgb(0.7, 0.2, 0.2),
+              })
+              currentY -= 15
+            }
+            currentY -= 10
+          }
+          
+          currentY -= 15
         }
         
         currentY -= 20

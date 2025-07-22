@@ -138,6 +138,80 @@ serve(async (req) => {
     
     yPosition -= 50
     
+    // Add photos if available
+    const photoSpace = 120 // Space reserved for photos
+    if (petData.pet_photos && petData.pet_photos.length > 0) {
+      const photos = Array.isArray(petData.pet_photos) ? petData.pet_photos[0] : petData.pet_photos
+      
+      try {
+        let photoX = width - 200 // Position from right edge
+        
+        // Profile photo
+        if (photos.photo_url) {
+          try {
+            const photoResponse = await fetch(photos.photo_url)
+            if (photoResponse.ok) {
+              const photoBytes = await photoResponse.arrayBuffer()
+              const isJpg = photos.photo_url.toLowerCase().includes('.jpg') || photos.photo_url.toLowerCase().includes('.jpeg')
+              const photoImage = isJpg 
+                ? await pdfDoc.embedJpg(new Uint8Array(photoBytes))
+                : await pdfDoc.embedPng(new Uint8Array(photoBytes))
+              
+              page.drawImage(photoImage, {
+                x: photoX,
+                y: yPosition - 90,
+                width: 80,
+                height: 80,
+              })
+              
+              page.drawText('Profile Photo', {
+                x: photoX,
+                y: yPosition - 100,
+                size: 8,
+                font: regularFont,
+                color: rgb(0.5, 0.5, 0.5),
+              })
+            }
+          } catch (error) {
+            console.log('Could not load profile photo:', error.message)
+          }
+        }
+        
+        // Full body photo
+        if (photos.full_body_photo_url) {
+          try {
+            const bodyPhotoResponse = await fetch(photos.full_body_photo_url)
+            if (bodyPhotoResponse.ok) {
+              const bodyPhotoBytes = await bodyPhotoResponse.arrayBuffer()
+              const isJpg = photos.full_body_photo_url.toLowerCase().includes('.jpg') || photos.full_body_photo_url.toLowerCase().includes('.jpeg')
+              const bodyPhotoImage = isJpg 
+                ? await pdfDoc.embedJpg(new Uint8Array(bodyPhotoBytes))
+                : await pdfDoc.embedPng(new Uint8Array(bodyPhotoBytes))
+              
+              page.drawImage(bodyPhotoImage, {
+                x: photoX + 100,
+                y: yPosition - 90,
+                width: 80,
+                height: 80,
+              })
+              
+              page.drawText('Full Body Photo', {
+                x: photoX + 100,
+                y: yPosition - 100,
+                size: 8,
+                font: regularFont,
+                color: rgb(0.5, 0.5, 0.5),
+              })
+            }
+          } catch (error) {
+            console.log('Could not load full body photo:', error.message)
+          }
+        }
+      } catch (error) {
+        console.log('Error processing photos:', error.message)
+      }
+    }
+    
     // Pet Information Section
     page.drawText('PET INFORMATION', {
       x: 50,
@@ -321,6 +395,93 @@ serve(async (req) => {
         if (currentY < requiredSpace) {
           currentPage = pdfDoc.addPage([612, 792])
           currentY = height - 60
+        }
+      }
+      
+      // Photos Section for Full PDF
+      if (petData.pet_photos && petData.pet_photos.length > 0) {
+        const photos = Array.isArray(petData.pet_photos) ? petData.pet_photos[0] : petData.pet_photos
+        
+        addNewPageIfNeeded(180)
+        currentPage.drawText('PHOTOS', {
+          x: 50,
+          y: currentY,
+          size: 16,
+          font: boldFont,
+          color: titleColor,
+        })
+        
+        currentY -= 40
+        
+        try {
+          let photoX = 70 // Start from left side for full PDF
+          
+          // Profile photo
+          if (photos.photo_url) {
+            try {
+              const photoResponse = await fetch(photos.photo_url)
+              if (photoResponse.ok) {
+                const photoBytes = await photoResponse.arrayBuffer()
+                const isJpg = photos.photo_url.toLowerCase().includes('.jpg') || photos.photo_url.toLowerCase().includes('.jpeg')
+                const photoImage = isJpg 
+                  ? await pdfDoc.embedJpg(new Uint8Array(photoBytes))
+                  : await pdfDoc.embedPng(new Uint8Array(photoBytes))
+                
+                currentPage.drawImage(photoImage, {
+                  x: photoX,
+                  y: currentY - 120,
+                  width: 100,
+                  height: 100,
+                })
+                
+                currentPage.drawText('Profile Photo', {
+                  x: photoX + 10,
+                  y: currentY - 135,
+                  size: 10,
+                  font: boldFont,
+                  color: blackColor,
+                })
+              }
+            } catch (error) {
+              console.log('Could not load profile photo for full PDF:', error.message)
+            }
+          }
+          
+          // Full body photo
+          if (photos.full_body_photo_url) {
+            try {
+              const bodyPhotoResponse = await fetch(photos.full_body_photo_url)
+              if (bodyPhotoResponse.ok) {
+                const bodyPhotoBytes = await bodyPhotoResponse.arrayBuffer()
+                const isJpg = photos.full_body_photo_url.toLowerCase().includes('.jpg') || photos.full_body_photo_url.toLowerCase().includes('.jpeg')
+                const bodyPhotoImage = isJpg 
+                  ? await pdfDoc.embedJpg(new Uint8Array(bodyPhotoBytes))
+                  : await pdfDoc.embedPng(new Uint8Array(bodyPhotoBytes))
+                
+                currentPage.drawImage(bodyPhotoImage, {
+                  x: photoX + 150,
+                  y: currentY - 120,
+                  width: 100,
+                  height: 100,
+                })
+                
+                currentPage.drawText('Full Body Photo', {
+                  x: photoX + 160,
+                  y: currentY - 135,
+                  size: 10,
+                  font: boldFont,
+                  color: blackColor,
+                })
+              }
+            } catch (error) {
+              console.log('Could not load full body photo for full PDF:', error.message)
+            }
+          }
+          
+          currentY -= 160
+        } catch (error) {
+          console.log('Error processing photos for full PDF:', error.message)
+          currentY -= 40
         }
       }
       

@@ -1207,21 +1207,15 @@ if (photoData) {
     
     console.log('PDF generated successfully for:', petData.name, 'Size:', pdfBytes.length, 'bytes')
 
-    // Encode PDF bytes as base64 for safe transmission
-    const base64PDF = btoa(String.fromCharCode(...pdfBytes))
-    
-    console.log('PDF encoded to base64, length:', base64PDF.length)
-
-    // Return base64-encoded PDF data (matching client expectations)
-    return new Response(JSON.stringify({ 
-      pdfData: base64PDF,
-      fileName: `${petData.name}_${type}_passport.pdf`
-    }), {
+    // Return PDF directly with inline headers for viewing
+    return new Response(pdfBytes, {
       headers: {
         ...corsHeaders,
-        'Content-Type': 'application/json',
-        'Cache-Control': 'no-cache',
-      }
+        'Content-Type': 'application/pdf',
+        'Content-Disposition': `inline; filename="${petData.name}_${type}_profile.pdf"`,
+        'Content-Length': pdfBytes.length.toString(),
+      },
+      status: 200,
     })
 
   } catch (error) {

@@ -505,7 +505,7 @@ serve(async (req) => {
             
             const allergyLines = care.allergies.match(/.{1,60}(\s|$)/g) || [care.allergies]
             for (const line of allergyLines) {
-              currentPage.drawText(`⚠ ${line.trim()}`, {
+              currentPage.drawText(`! ${line.trim()}`, {
                 x: 110,
                 y: currentY,
                 size: 11,
@@ -529,7 +529,7 @@ serve(async (req) => {
             
             const behaviorLines = care.behavioral_notes.match(/.{1,60}(\s|$)/g) || [care.behavioral_notes]
             for (const line of behaviorLines) {
-              currentPage.drawText(`⚠ ${line.trim()}`, {
+              currentPage.drawText(`! ${line.trim()}`, {
                 x: 110,
                 y: currentY,
                 size: 11,
@@ -965,14 +965,16 @@ serve(async (req) => {
     
     console.log('PDF encoded to base64, length:', base64PDF.length)
 
-    // Return PDF bytes directly
-    return new Response(pdfBytes, {
+    // Return base64-encoded PDF data (matching client expectations)
+    return new Response(JSON.stringify({ 
+      pdfData: base64PDF,
+      fileName: `${petData.name}_${type}_passport.pdf`
+    }), {
       headers: {
-        'Content-Type': 'application/pdf',
-        'Content-Disposition': `attachment; filename="${petData.name}_${type}_passport.pdf"`,
-        'Content-Length': pdfBytes.length.toString()
-      },
-      status: 200
+        ...corsHeaders,
+        'Content-Type': 'application/json',
+        'Cache-Control': 'no-cache',
+      }
     })
 
   } catch (error) {

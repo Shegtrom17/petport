@@ -94,6 +94,12 @@ serve(async (req) => {
 
     console.log('Pet data fetched successfully:', petData.name)
     console.log('Care instructions data:', JSON.stringify(petData.care_instructions, null, 2))
+    console.log('Pet photos data:', JSON.stringify(petData.pet_photos, null, 2))
+    
+    // Extract photo data properly
+    const photoData = petData.pet_photos && petData.pet_photos.length > 0 ? petData.pet_photos[0] : null
+    console.log('Profile photo URL:', photoData?.photo_url)
+    console.log('Full body photo URL:', photoData?.full_body_photo_url)
 
     // Generate PDF using pdf-lib
     const pdfDoc = await PDFDocument.create()
@@ -140,19 +146,19 @@ serve(async (req) => {
     
     // Add photos if available
     const photoSpace = 120 // Space reserved for photos
-    if (petData.pet_photos && petData.pet_photos.length > 0) {
-      const photos = Array.isArray(petData.pet_photos) ? petData.pet_photos[0] : petData.pet_photos
+    if (photoData) {
+      console.log('Processing photos for Emergency PDF:', photoData)
       
       try {
         let photoX = width - 200 // Position from right edge
         
         // Profile photo
-        if (photos.photo_url) {
+        if (photoData.photo_url) {
           try {
-            const photoResponse = await fetch(photos.photo_url)
+            const photoResponse = await fetch(photoData.photo_url)
             if (photoResponse.ok) {
               const photoBytes = await photoResponse.arrayBuffer()
-              const isJpg = photos.photo_url.toLowerCase().includes('.jpg') || photos.photo_url.toLowerCase().includes('.jpeg')
+              const isJpg = photoData.photo_url.toLowerCase().includes('.jpg') || photoData.photo_url.toLowerCase().includes('.jpeg')
               const photoImage = isJpg 
                 ? await pdfDoc.embedJpg(new Uint8Array(photoBytes))
                 : await pdfDoc.embedPng(new Uint8Array(photoBytes))
@@ -178,12 +184,12 @@ serve(async (req) => {
         }
         
         // Full body photo
-        if (photos.full_body_photo_url) {
+        if (photoData.full_body_photo_url) {
           try {
-            const bodyPhotoResponse = await fetch(photos.full_body_photo_url)
+            const bodyPhotoResponse = await fetch(photoData.full_body_photo_url)
             if (bodyPhotoResponse.ok) {
               const bodyPhotoBytes = await bodyPhotoResponse.arrayBuffer()
-              const isJpg = photos.full_body_photo_url.toLowerCase().includes('.jpg') || photos.full_body_photo_url.toLowerCase().includes('.jpeg')
+              const isJpg = photoData.full_body_photo_url.toLowerCase().includes('.jpg') || photoData.full_body_photo_url.toLowerCase().includes('.jpeg')
               const bodyPhotoImage = isJpg 
                 ? await pdfDoc.embedJpg(new Uint8Array(bodyPhotoBytes))
                 : await pdfDoc.embedPng(new Uint8Array(bodyPhotoBytes))
@@ -399,8 +405,8 @@ serve(async (req) => {
       }
       
       // Photos Section for Full PDF
-      if (petData.pet_photos && petData.pet_photos.length > 0) {
-        const photos = Array.isArray(petData.pet_photos) ? petData.pet_photos[0] : petData.pet_photos
+      if (photoData) {
+        console.log('Processing photos for Full Profile PDF:', photoData)
         
         addNewPageIfNeeded(180)
         currentPage.drawText('PHOTOS', {
@@ -417,12 +423,12 @@ serve(async (req) => {
           let photoX = 70 // Start from left side for full PDF
           
           // Profile photo
-          if (photos.photo_url) {
+          if (photoData.photo_url) {
             try {
-              const photoResponse = await fetch(photos.photo_url)
+              const photoResponse = await fetch(photoData.photo_url)
               if (photoResponse.ok) {
                 const photoBytes = await photoResponse.arrayBuffer()
-                const isJpg = photos.photo_url.toLowerCase().includes('.jpg') || photos.photo_url.toLowerCase().includes('.jpeg')
+                const isJpg = photoData.photo_url.toLowerCase().includes('.jpg') || photoData.photo_url.toLowerCase().includes('.jpeg')
                 const photoImage = isJpg 
                   ? await pdfDoc.embedJpg(new Uint8Array(photoBytes))
                   : await pdfDoc.embedPng(new Uint8Array(photoBytes))
@@ -448,12 +454,12 @@ serve(async (req) => {
           }
           
           // Full body photo
-          if (photos.full_body_photo_url) {
+          if (photoData.full_body_photo_url) {
             try {
-              const bodyPhotoResponse = await fetch(photos.full_body_photo_url)
+              const bodyPhotoResponse = await fetch(photoData.full_body_photo_url)
               if (bodyPhotoResponse.ok) {
                 const bodyPhotoBytes = await bodyPhotoResponse.arrayBuffer()
-                const isJpg = photos.full_body_photo_url.toLowerCase().includes('.jpg') || photos.full_body_photo_url.toLowerCase().includes('.jpeg')
+                const isJpg = photoData.full_body_photo_url.toLowerCase().includes('.jpg') || photoData.full_body_photo_url.toLowerCase().includes('.jpeg')
                 const bodyPhotoImage = isJpg 
                   ? await pdfDoc.embedJpg(new Uint8Array(bodyPhotoBytes))
                   : await pdfDoc.embedPng(new Uint8Array(bodyPhotoBytes))

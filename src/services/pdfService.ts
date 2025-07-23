@@ -47,7 +47,9 @@ export async function generatePetPDF(petId: string, type: 'emergency' | 'full' =
     console.log('  - Is response.data Uint8Array?', response.data instanceof Uint8Array)
 
     // Convert the response data to a blob
-    const pdfBlob = new Blob([response.data], { type: 'application/pdf' });
+    const pdfBlob = new Blob([response.data], { 
+      type: 'application/pdf' 
+    });
     console.log('📦 CLIENT: Created PDF blob:')
     console.log('  - Blob size:', pdfBlob.size)
     console.log('  - Blob type:', pdfBlob.type)

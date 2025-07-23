@@ -1216,15 +1216,14 @@ if (photoData) {
     console.log('  - PDF signature check (should start with %PDF):', 
       String.fromCharCode(...pdfBytes.slice(0, 4)))
     
-    // ✅ FIX: Return PDF bytes as ArrayBuffer which Supabase client handles correctly
-    console.log('🔧 RETURNING PDF AS ARRAYBUFFER FOR SUPABASE CLIENT')
-    
+    // ✅ FIXED: Return PDF with proper headers for inline viewing
     return new Response(pdfBytes.buffer, {
       headers: {
-        ...corsHeaders,
         'Content-Type': 'application/pdf',
-      },
-      status: 200,
+        'Content-Disposition': `inline; filename="${petData.name}_${type}_profile.pdf"`,
+        'Content-Length': pdfBytes.length.toString(),
+        ...corsHeaders
+      }
     })
 
   } catch (error) {

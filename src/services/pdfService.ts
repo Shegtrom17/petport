@@ -102,19 +102,40 @@ export async function downloadPDFBlob(blob: Blob, filename: string): Promise<voi
 
 export async function viewPDFBlob(blob: Blob, filename: string): Promise<void> {
   try {
-    const viewUrl = window.URL.createObjectURL(blob);
-    const newWindow = window.open(viewUrl, '_blank');
+    console.log('📖 Starting PDF view process...');
+    console.log('  - Blob size:', blob.size);
+    console.log('  - Blob type:', blob.type);
     
-    if (!newWindow) {
-      throw new Error('Popup blocked. Please allow popups to view PDF.');
+    // Create object URL from blob
+    const viewUrl = window.URL.createObjectURL(blob);
+    console.log('  - Created blob URL:', viewUrl);
+    
+    // Try to open in new window first
+    const newWindow = window.open();
+    if (newWindow) {
+      console.log('  - Opening PDF in new window');
+      newWindow.location.href = viewUrl;
+    } else {
+      console.log('  - Popup blocked, using fallback method');
+      // Fallback if popup blocked - create temporary link
+      const a = document.createElement('a');
+      a.href = viewUrl;
+      a.target = '_blank';
+      a.rel = 'noopener noreferrer';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
     }
     
-    // Clean up the URL after a short delay to allow the window to load
+    // Clean up the URL after allowing time for the window to load
     setTimeout(() => {
+      console.log('  - Cleaning up blob URL');
       window.URL.revokeObjectURL(viewUrl);
     }, 1000);
+    
+    console.log('✅ PDF view process completed successfully');
   } catch (error) {
-    console.error('Error viewing PDF:', error);
+    console.error('❌ Error viewing PDF:', error);
     throw new Error('Failed to view PDF');
   }
 }

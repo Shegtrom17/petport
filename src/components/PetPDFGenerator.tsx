@@ -241,7 +241,10 @@ export const PetPDFGenerator = ({ petId, petName }: PetPDFGeneratorProps) => {
           <h4 className="font-serif font-bold text-navy-900 mb-2 border-b border-gold-500/50 pb-1">🚨 Emergency Profile</h4>
           <p className="text-sm text-navy-600 mb-3">Essential medical and contact information</p>
           <Button 
-            onClick={() => handleGeneratePDF('emergency', 'view')}
+            onClick={() => {
+              setIsGeneratingEmergency(true);
+              handleGeneratePDF('emergency', 'view');
+            }}
             disabled={isGeneratingEmergency || authLoading || (!user && !authError)}
             className="w-full bg-gradient-to-r from-gold-500 to-gold-400 text-navy-900 hover:from-gold-400 hover:to-gold-300 disabled:opacity-50"
           >
@@ -263,7 +266,10 @@ export const PetPDFGenerator = ({ petId, petName }: PetPDFGeneratorProps) => {
           <h4 className="font-serif font-bold text-navy-900 mb-2 border-b border-gold-500/50 pb-1">Complete Profile</h4>
           <p className="text-sm text-navy-600 mb-3">Full passport with all certifications</p>
           <Button 
-            onClick={() => handleGeneratePDF('full', 'view')}
+            onClick={() => {
+              setIsGeneratingFull(true);
+              handleGeneratePDF('full', 'view');
+            }}
             disabled={isGeneratingFull || authLoading || (!user && !authError)}
             className="w-full bg-gradient-to-r from-gold-500 to-gold-400 text-navy-900 hover:from-gold-400 hover:to-gold-300 disabled:opacity-50"
           >

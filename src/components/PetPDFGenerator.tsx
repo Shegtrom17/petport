@@ -333,7 +333,11 @@ export const PetPDFGenerator = ({ petId, petName }: PetPDFGeneratorProps) => {
                 <h4 className="font-serif font-bold text-navy-900 mb-3">🚨 Emergency Profile PDF</h4>
                 <div className="flex flex-col sm:flex-row gap-2 justify-center mb-3">
                   <Button
-                    onClick={() => handleView(emergencyPdfBlob, 'emergency')}
+                    onClick={() => {
+                      const url = URL.createObjectURL(emergencyPdfBlob);
+                      window.open(url, '_blank')?.focus();
+                      URL.revokeObjectURL(url);
+                    }}
                     variant="outline"
                     className="border-gold-500 text-gold-600 hover:bg-gold-50"
                   >
@@ -357,7 +361,11 @@ export const PetPDFGenerator = ({ petId, petName }: PetPDFGeneratorProps) => {
                 <h4 className="font-serif font-bold text-navy-900 mb-3">Complete Profile PDF</h4>
                 <div className="flex flex-col sm:flex-row gap-2 justify-center mb-3">
                   <Button
-                    onClick={() => handleView(fullPdfBlob, 'full')}
+                    onClick={() => {
+                      const url = URL.createObjectURL(fullPdfBlob);
+                      window.open(url, '_blank')?.focus();
+                      URL.revokeObjectURL(url);
+                    }}
                     variant="outline"
                     className="border-gold-500 text-gold-600 hover:bg-gold-50"
                   >

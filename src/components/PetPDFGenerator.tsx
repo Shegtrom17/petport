@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { FileText, Download, Share2, Loader2, Users, ExternalLink, LogIn, AlertTriangle, Eye } from "lucide-react";
-import { generatePetPDF, generateQRCodeUrl, downloadPDFBlob, viewPDFBlob, generatePublicProfileUrl, shareProfileOptimized } from "@/services/pdfService";
+import { generatePetPDF, generateQRCodeUrl, generatePublicProfileUrl, shareProfileOptimized } from "@/services/pdfService";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/context/AuthContext";
 import { useNavigate } from "react-router-dom";
@@ -87,47 +87,6 @@ export const PetPDFGenerator = ({ petId, petName }: PetPDFGeneratorProps) => {
     }
   };
 
-  const handleDownload = async (blob: Blob | null, type: 'emergency' | 'full') => {
-    if (!blob) return;
-    
-    try {
-      const fileName = type === 'emergency' 
-        ? `PetPort_Emergency_Profile_${petName}.pdf`
-        : `PetPort_Complete_Profile_${petName}.pdf`;
-      await downloadPDFBlob(blob, fileName);
-      toast({
-        title: "Download Started",
-        description: `Your pet's ${type} profile is being downloaded.`,
-      });
-    } catch (error) {
-      toast({
-        title: "Download Failed",
-        description: "Could not download the PDF. Please try again.",
-        variant: "destructive",
-      });
-    }
-  };
-
-  const handleView = async (blob: Blob | null, type: 'emergency' | 'full') => {
-    if (!blob) return;
-    
-    try {
-      const fileName = type === 'emergency' 
-        ? `PetPort_Emergency_Profile_${petName}.pdf`
-        : `PetPort_Complete_Profile_${petName}.pdf`;
-      await viewPDFBlob(blob, fileName);
-      toast({
-        title: "PDF Opened",
-        description: `${petName}'s ${type} profile opened in new tab.`,
-      });
-    } catch (error) {
-      toast({
-        title: "View Failed",
-        description: error instanceof Error ? error.message : "Could not view the PDF. Please try again.",
-        variant: "destructive",
-      });
-    }
-  };
 
   const handleShare = async (url: string, type: string) => {
     if (!url) return;
@@ -345,7 +304,16 @@ export const PetPDFGenerator = ({ petId, petName }: PetPDFGeneratorProps) => {
                     View PDF
                   </Button>
                   <Button
-                    onClick={() => handleDownload(emergencyPdfBlob, 'emergency')}
+                    onClick={() => {
+                      const fileName = `PetPort_Emergency_Profile_${petName}.pdf`;
+                      const a = document.createElement('a');
+                      a.href = URL.createObjectURL(emergencyPdfBlob);
+                      a.download = fileName;
+                      document.body.appendChild(a);
+                      a.click();
+                      document.body.removeChild(a);
+                      URL.revokeObjectURL(a.href);
+                    }}
                     className="bg-gradient-to-r from-gold-500 to-gold-400 text-navy-900 hover:from-gold-400 hover:to-gold-300"
                   >
                     <Download className="w-4 h-4 mr-2" />
@@ -373,7 +341,16 @@ export const PetPDFGenerator = ({ petId, petName }: PetPDFGeneratorProps) => {
                     View PDF
                   </Button>
                   <Button
-                    onClick={() => handleDownload(fullPdfBlob, 'full')}
+                    onClick={() => {
+                      const fileName = `PetPort_Complete_Profile_${petName}.pdf`;
+                      const a = document.createElement('a');
+                      a.href = URL.createObjectURL(fullPdfBlob);
+                      a.download = fileName;
+                      document.body.appendChild(a);
+                      a.click();
+                      document.body.removeChild(a);
+                      URL.revokeObjectURL(a.href);
+                    }}
                     className="bg-gradient-to-r from-gold-500 to-gold-400 text-navy-900 hover:from-gold-400 hover:to-gold-300"
                   >
                     <Download className="w-4 h-4 mr-2" />

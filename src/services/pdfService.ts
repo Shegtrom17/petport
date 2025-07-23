@@ -11,11 +11,21 @@ export interface PDFGenerationResult {
 
 export async function generatePetPDF(petId: string, type: 'emergency' | 'full' = 'emergency'): Promise<PDFGenerationResult> {
   try {
+    console.log('🔧 CLIENT: Starting PDF generation for pet:', petId, 'type:', type)
+    
     const response = await supabase.functions.invoke('generate-pet-pdf', {
       body: { petId, type }
     });
 
+    console.log('📡 CLIENT: Raw response from edge function:')
+    console.log('  - Response object:', response)
+    console.log('  - Response error:', response.error)
+    console.log('  - Response data type:', typeof response.data)
+    console.log('  - Response data constructor:', response.data?.constructor?.name)
+    console.log('  - Response data length/size:', response.data?.length || response.data?.size)
+
     if (response.error) {
+      console.error('❌ CLIENT: Edge function returned error:', response.error)
       return {
         success: false,
         error: response.error.message || 'Failed to generate PDF'
@@ -24,15 +34,26 @@ export async function generatePetPDF(petId: string, type: 'emergency' | 'full' =
 
     // The response data is now a blob directly from the edge function
     if (!response.data) {
+      console.error('❌ CLIENT: No PDF data received from edge function')
       return {
         success: false,
         error: 'No PDF data received'
       };
     }
 
+    console.log('🔧 CLIENT: Processing response data...')
+    console.log('  - Is response.data a Blob?', response.data instanceof Blob)
+    console.log('  - Is response.data ArrayBuffer?', response.data instanceof ArrayBuffer)
+    console.log('  - Is response.data Uint8Array?', response.data instanceof Uint8Array)
+
     // Convert the response data to a blob
     const pdfBlob = new Blob([response.data], { type: 'application/pdf' });
+    console.log('📦 CLIENT: Created PDF blob:')
+    console.log('  - Blob size:', pdfBlob.size)
+    console.log('  - Blob type:', pdfBlob.type)
+    
     const fileName = `PetPort_${type}_Profile.pdf`;
+    console.log('✅ CLIENT: PDF generation successful, filename:', fileName)
     
     return {
       success: true,
@@ -42,6 +63,7 @@ export async function generatePetPDF(petId: string, type: 'emergency' | 'full' =
     };
 
   } catch (error) {
+    console.error('❌ CLIENT: Error in generatePetPDF:', error)
     return {
       success: false,
       error: error instanceof Error ? error.message : 'Failed to generate PDF'

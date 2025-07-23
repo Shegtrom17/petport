@@ -1206,17 +1206,44 @@ if (photoData) {
     const pdfBytes = await pdfDoc.save()
     
     console.log('PDF generated successfully for:', petData.name, 'Size:', pdfBytes.length, 'bytes')
+    
+    // 🔍 INSPECTION: Check PDF bytes generation
+    console.log('📊 PDF BYTES INSPECTION:')
+    console.log('  - PDF byte array type:', typeof pdfBytes)
+    console.log('  - PDF byte array length:', pdfBytes.length)
+    console.log('  - PDF byte array constructor:', pdfBytes.constructor.name)
+    console.log('  - First 10 bytes:', Array.from(pdfBytes.slice(0, 10)))
+    console.log('  - PDF signature check (should start with %PDF):', 
+      String.fromCharCode(...pdfBytes.slice(0, 4)))
+    
+    // 🔍 INSPECTION: Prepare response headers
+    const responseHeaders = {
+      ...corsHeaders,
+      'Content-Type': 'application/pdf',
+      'Content-Disposition': `inline; filename="${petData.name}_${type}_profile.pdf"`,
+      'Content-Length': pdfBytes.length.toString(),
+    }
+    
+    console.log('📤 RESPONSE HEADERS INSPECTION:')
+    console.log('  - All headers:', JSON.stringify(responseHeaders, null, 2))
+    console.log('  - Content-Type:', responseHeaders['Content-Type'])
+    console.log('  - Content-Disposition:', responseHeaders['Content-Disposition'])
+    console.log('  - Content-Length:', responseHeaders['Content-Length'])
+    console.log('  - CORS headers included:', !!responseHeaders['Access-Control-Allow-Origin'])
 
     // Return PDF directly with inline headers for viewing
-    return new Response(pdfBytes, {
-      headers: {
-        ...corsHeaders,
-        'Content-Type': 'application/pdf',
-        'Content-Disposition': `inline; filename="${petData.name}_${type}_profile.pdf"`,
-        'Content-Length': pdfBytes.length.toString(),
-      },
+    const response = new Response(pdfBytes, {
+      headers: responseHeaders,
       status: 200,
     })
+    
+    console.log('🚀 RESPONSE OBJECT INSPECTION:')
+    console.log('  - Response status:', response.status)
+    console.log('  - Response type:', response.type)
+    console.log('  - Response body readable:', response.body !== null)
+    console.log('  - Response headers accessible:', response.headers.get('Content-Type'))
+    
+    return response
 
   } catch (error) {
     console.error('Error in generate-pet-pdf function:', error)

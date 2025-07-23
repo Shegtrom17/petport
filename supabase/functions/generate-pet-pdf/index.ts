@@ -1216,34 +1216,16 @@ if (photoData) {
     console.log('  - PDF signature check (should start with %PDF):', 
       String.fromCharCode(...pdfBytes.slice(0, 4)))
     
-    // 🔍 INSPECTION: Prepare response headers
-    const responseHeaders = {
-      ...corsHeaders,
-      'Content-Type': 'application/pdf',
-      'Content-Disposition': `inline; filename="${petData.name}_${type}_profile.pdf"`,
-      'Content-Length': pdfBytes.length.toString(),
-    }
+    // ✅ FIX: Return PDF bytes as ArrayBuffer which Supabase client handles correctly
+    console.log('🔧 RETURNING PDF AS ARRAYBUFFER FOR SUPABASE CLIENT')
     
-    console.log('📤 RESPONSE HEADERS INSPECTION:')
-    console.log('  - All headers:', JSON.stringify(responseHeaders, null, 2))
-    console.log('  - Content-Type:', responseHeaders['Content-Type'])
-    console.log('  - Content-Disposition:', responseHeaders['Content-Disposition'])
-    console.log('  - Content-Length:', responseHeaders['Content-Length'])
-    console.log('  - CORS headers included:', !!responseHeaders['Access-Control-Allow-Origin'])
-
-    // Return PDF directly with inline headers for viewing
-    const response = new Response(pdfBytes, {
-      headers: responseHeaders,
+    return new Response(pdfBytes.buffer, {
+      headers: {
+        ...corsHeaders,
+        'Content-Type': 'application/pdf',
+      },
       status: 200,
     })
-    
-    console.log('🚀 RESPONSE OBJECT INSPECTION:')
-    console.log('  - Response status:', response.status)
-    console.log('  - Response type:', response.type)
-    console.log('  - Response body readable:', response.body !== null)
-    console.log('  - Response headers accessible:', response.headers.get('Content-Type'))
-    
-    return response
 
   } catch (error) {
     console.error('Error in generate-pet-pdf function:', error)

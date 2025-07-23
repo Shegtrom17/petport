@@ -46,10 +46,16 @@ export async function generatePetPDF(petId: string, type: 'emergency' | 'full' =
     console.log('  - Is response.data ArrayBuffer?', response.data instanceof ArrayBuffer)
     console.log('  - Is response.data Uint8Array?', response.data instanceof Uint8Array)
 
-    // Convert the response data to a blob
-    const pdfBlob = new Blob([response.data], { 
-      type: 'application/pdf' 
-    });
+    // Convert the response data to a blob - handle different data types
+    let pdfBlob: Blob;
+    if (response.data instanceof Blob) {
+      pdfBlob = response.data;
+    } else if (response.data instanceof ArrayBuffer) {
+      pdfBlob = new Blob([response.data], { type: 'application/pdf' });
+    } else {
+      // If it's raw binary data, convert it
+      pdfBlob = new Blob([new Uint8Array(response.data)], { type: 'application/pdf' });
+    }
     console.log('📦 CLIENT: Created PDF blob:')
     console.log('  - Blob size:', pdfBlob.size)
     console.log('  - Blob type:', pdfBlob.type)

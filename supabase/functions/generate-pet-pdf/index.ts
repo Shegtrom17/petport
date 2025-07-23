@@ -66,7 +66,6 @@ serve(async (req) => {
       .from('pets')
       .select(`
         *,
-        pet_photos (photo_url, full_body_photo_url),
         professional_data (support_animal_status, badges),
         medical (medical_alert, medical_conditions, medications, last_vaccination),
         contacts (emergency_contact, second_emergency_contact, vet_contact, pet_caretaker),
@@ -94,19 +93,6 @@ serve(async (req) => {
 
     console.log('Pet data fetched successfully:', petData.name)
     console.log('Care instructions data:', JSON.stringify(petData.care_instructions, null, 2))
-    console.log('Pet photos raw data from query:', JSON.stringify(petData.pet_photos, null, 2))
-    
-    // Extract photo data consistently
-    const photoData = {
-      photo_url: petData.pet_photos?.[0]?.photo_url || null,
-      full_body_photo_url: petData.pet_photos?.[0]?.full_body_photo_url || null
-    }
-    console.log('✅ Extracted photo data:', JSON.stringify(photoData, null, 2))
-    console.log('🔍 Photo URLs check:')
-    console.log('  - Profile photo URL exists:', !!photoData.photo_url)
-    console.log('  - Full body photo URL exists:', !!photoData.full_body_photo_url)
-    console.log('  - Profile photo URL:', photoData.photo_url)
-    console.log('  - Full body photo URL:', photoData.full_body_photo_url)
 
     // Generate PDF using pdf-lib
     const pdfDoc = await PDFDocument.create()
@@ -150,108 +136,6 @@ serve(async (req) => {
     }
     
     yPosition -= 50
-    
-  // Add photos if available for Emergency PDF
-if (photoData) {
-  try {
-    // Profile photo - left side
-    if (photoData.photo_url) {
-      console.log('🖼️ Processing profile photo...');
-      console.log('  - Original URL:', photoData.photo_url);
-      
-      const photoUrl = photoData.photo_url.startsWith('http') 
-        ? photoData.photo_url 
-        : `${SUPABASE_URL}/storage/v1/object/public/${photoData.photo_url}`;
-      
-      console.log('  - Final URL:', photoUrl);
-      console.log('  - URL starts with http:', photoData.photo_url.startsWith('http'));
-      console.log('  - SUPABASE_URL:', SUPABASE_URL);
-        
-      console.log('📡 Fetching profile photo...');
-      const photoResponse = await fetch(photoUrl, {
-        headers: {
-          'Accept': 'image/*',
-          'Cache-Control': 'no-cache'
-        }
-      });
-
-      console.log('📊 Profile photo fetch response:');
-      console.log('  - Status:', photoResponse.status);
-      console.log('  - Status text:', photoResponse.statusText);
-      console.log('  - Headers:', [...photoResponse.headers.entries()]);
-
-      if (!photoResponse.ok) {
-        console.error('❌ Profile photo fetch failed:', photoResponse.status, photoResponse.statusText);
-        console.error('  - URL attempted:', photoUrl);
-        return;
-      }
-
-      const photoBytes = new Uint8Array(await photoResponse.arrayBuffer());
-      console.log('📦 Emergency PDF profile photo binary data size:', photoBytes.length, 'bytes');
-      const isJpg = photoData.photo_url.toLowerCase().includes('.jpg')
-      const photoImage = isJpg 
-        ? await pdfDoc.embedJpg(photoBytes)
-        : await pdfDoc.embedPng(photoBytes)
-
-      // Position on left side
-      page.drawImage(photoImage, {
-        x: 50,  // Left margin
-        y: height - 150,  // From top
-        width: 100,
-        height: 100
-      })
-    }
-
-    // Full body photo - right side
-    if (photoData.full_body_photo_url) {
-      console.log('🖼️ Processing full body photo...');
-      console.log('  - Original URL:', photoData.full_body_photo_url);
-      
-      const photoUrl = photoData.full_body_photo_url.startsWith('http') 
-        ? photoData.full_body_photo_url 
-        : `${SUPABASE_URL}/storage/v1/object/public/${photoData.full_body_photo_url}`;
-        
-      console.log('  - Final URL:', photoUrl);
-      console.log('  - URL starts with http:', photoData.full_body_photo_url.startsWith('http'));
-        
-      console.log('📡 Fetching full body photo...');
-      const photoResponse = await fetch(photoUrl, {
-        headers: {
-          'Accept': 'image/*',
-          'Cache-Control': 'no-cache'
-        }
-      });
-
-      console.log('📊 Full body photo fetch response:');
-      console.log('  - Status:', photoResponse.status);
-      console.log('  - Status text:', photoResponse.statusText);
-      console.log('  - Headers:', [...photoResponse.headers.entries()]);
-
-      if (!photoResponse.ok) {
-        console.error('❌ Full body photo fetch failed:', photoResponse.status, photoResponse.statusText);
-        console.error('  - URL attempted:', photoUrl);
-        return;
-      }
-
-      const photoBytes = new Uint8Array(await photoResponse.arrayBuffer());
-      console.log('📦 Emergency PDF full body photo binary data size:', photoBytes.length, 'bytes');
-      const isJpg = photoData.full_body_photo_url.toLowerCase().includes('.jpg')
-      const bodyPhotoImage = isJpg 
-        ? await pdfDoc.embedJpg(photoBytes)
-        : await pdfDoc.embedPng(photoBytes)
-
-      // Position on right side
-      page.drawImage(bodyPhotoImage, {
-        x: width - 150,  // Right margin
-        y: height - 150,  // From top
-        width: 100,
-        height: 100
-      })
-    }
-  } catch (error) {
-    console.log('Error processing photos:', error)
-  }
-}
 
     
     // Pet Information Section
@@ -439,136 +323,6 @@ if (photoData) {
           currentY = height - 60
         }
       }
-      
-     // Photos Section for Full PDF
-if (photoData) {
-  addNewPageIfNeeded(200)  // Make sure we have room for photos
-  currentPage.drawText('IDENTIFICATION PHOTOS', {
-    x: 50,
-    y: currentY,
-    size: 16,
-    font: boldFont,
-    color: titleColor,
-  })
-
-  currentY -= 40
-
-  try {
-    // Profile photo - left side
-    if (photoData.photo_url) {
-      console.log('🖼️ Processing profile photo for FULL PDF...');
-      console.log('  - Original URL:', photoData.photo_url);
-      
-      const photoUrl = photoData.photo_url.startsWith('http') 
-        ? photoData.photo_url 
-        : `${SUPABASE_URL}/storage/v1/object/public/${photoData.photo_url}`;
-        
-      console.log('  - Final URL:', photoUrl);
-      console.log('  - URL starts with http:', photoData.photo_url.startsWith('http'));
-      console.log('  - SUPABASE_URL:', SUPABASE_URL);
-        
-      console.log('📡 Fetching profile photo for full PDF...');
-      const photoResponse = await fetch(photoUrl, {
-        headers: {
-          'Accept': 'image/*',
-          'Cache-Control': 'no-cache'
-        }
-      });
-
-      console.log('📊 Full PDF profile photo fetch response:');
-      console.log('  - Status:', photoResponse.status);
-      console.log('  - Status text:', photoResponse.statusText);
-      console.log('  - Headers:', [...photoResponse.headers.entries()]);
-
-      if (!photoResponse.ok) {
-        console.error('❌ Full PDF profile photo fetch failed:', photoResponse.status, photoResponse.statusText);
-        console.error('  - URL attempted:', photoUrl);
-        return;
-      }
-
-      const photoBytes = new Uint8Array(await photoResponse.arrayBuffer());
-      console.log('📦 Profile photo binary data size:', photoBytes.length, 'bytes');
-      const isJpg = photoData.photo_url.toLowerCase().includes('.jpg')
-      const photoImage = isJpg 
-        ? await pdfDoc.embedJpg(photoBytes)
-        : await pdfDoc.embedPng(photoBytes)
-
-      currentPage.drawImage(photoImage, {
-        x: 50,
-        y: currentY - 120,
-        width: 200,
-        height: 200
-      })
-
-      currentPage.drawText('Official Profile Photo', {
-        x: 80,
-        y: currentY - 140,
-        size: 12,
-        font: boldFont,
-        color: blackColor,
-      })
-    }
-
-    // Full body photo - right side
-    if (photoData.full_body_photo_url) {
-      console.log('🖼️ Processing full body photo for FULL PDF...');
-      console.log('  - Original URL:', photoData.full_body_photo_url);
-      
-      const photoUrl = photoData.full_body_photo_url.startsWith('http') 
-        ? photoData.full_body_photo_url 
-        : `${SUPABASE_URL}/storage/v1/object/public/${photoData.full_body_photo_url}`;
-        
-      console.log('  - Final URL:', photoUrl);
-      console.log('  - URL starts with http:', photoData.full_body_photo_url.startsWith('http'));
-        
-      console.log('📡 Fetching full body photo for full PDF...');
-      const photoResponse = await fetch(photoUrl, {
-        headers: {
-          'Accept': 'image/*',
-          'Cache-Control': 'no-cache'
-        }
-      });
-
-      console.log('📊 Full PDF full body photo fetch response:');
-      console.log('  - Status:', photoResponse.status);
-      console.log('  - Status text:', photoResponse.statusText);
-      console.log('  - Headers:', [...photoResponse.headers.entries()]);
-
-      if (!photoResponse.ok) {
-        console.error('❌ Full PDF full body photo fetch failed:', photoResponse.status, photoResponse.statusText);
-        console.error('  - URL attempted:', photoUrl);
-        return;
-      }
-
-      const photoBytes = new Uint8Array(await photoResponse.arrayBuffer());
-      console.log('📦 Full PDF full body photo binary data size:', photoBytes.length, 'bytes');
-      const isJpg = photoData.full_body_photo_url.toLowerCase().includes('.jpg')
-      const bodyPhotoImage = isJpg 
-        ? await pdfDoc.embedJpg(photoBytes)
-        : await pdfDoc.embedPng(photoBytes)
-
-      currentPage.drawImage(bodyPhotoImage, {
-        x: width - 250,
-        y: currentY - 120,
-        width: 200,
-        height: 200
-      })
-
-      currentPage.drawText('Full Body Identification', {
-        x: width - 220,
-        y: currentY - 140,
-        size: 12,
-        font: boldFont,
-        color: blackColor,
-      })
-    }
-
-    currentY -= 250  // Move down past photos
-  } catch (error) {
-    console.log('Error processing photos for full PDF:', error)
-    currentY -= 40
-  }
-}
 
       
       // About Section
@@ -1216,13 +970,15 @@ if (photoData) {
     console.log('  - PDF signature check (should start with %PDF):', 
       String.fromCharCode(...pdfBytes.slice(0, 4)))
     
-    // ✅ FIXED: Return PDF with proper headers for inline viewing
-    return new Response(pdfBytes.buffer, {
+    // Return JSON response with PDF data for client-side processing
+    return new Response(JSON.stringify({
+      success: true,
+      pdfBytes: Array.from(pdfBytes), // Convert to array for JSON transport
+      fileName: `${petData.name}_${type}_profile.pdf`
+    }), {
       headers: {
-        'Content-Type': 'application/pdf',
-        'Content-Disposition': `inline; filename="${petData.name}_${type}_profile.pdf"`,
-        'Content-Length': pdfBytes.length.toString(),
-        ...corsHeaders
+        ...corsHeaders,
+        'Content-Type': 'application/json'
       }
     })
 

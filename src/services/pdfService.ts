@@ -32,7 +32,7 @@ export async function generatePetPDF(petId: string, type: 'emergency' | 'full' =
       };
     }
 
-    // The response data is now a blob directly from the edge function
+    // The response data is now JSON with PDF bytes array from the edge function
     if (!response.data) {
       console.error('❌ CLIENT: No PDF data received from edge function')
       return {
@@ -42,11 +42,34 @@ export async function generatePetPDF(petId: string, type: 'emergency' | 'full' =
     }
 
     console.log('🔧 CLIENT: Processing response data...')
-    console.log('  - Is response.data a Blob?', response.data instanceof Blob)
-    console.log('  - Is response.data ArrayBuffer?', response.data instanceof ArrayBuffer)
-    console.log('  - Is response.data Uint8Array?', response.data instanceof Uint8Array)
+    console.log('  - Response data type:', typeof response.data)
+    console.log('  - Response data structure:', response.data)
 
-    // Convert the response data to a blob - handle different data types
+    // Handle JSON response with pdfBytes array
+    if (response.data.success && response.data.pdfBytes) {
+      console.log('  - Found JSON response with pdfBytes array')
+      console.log('  - PDF bytes array length:', response.data.pdfBytes.length)
+      
+      // Convert the pdfBytes array back to Uint8Array, then to Blob
+      const pdfBytesArray = new Uint8Array(response.data.pdfBytes);
+      const pdfBlob = new Blob([pdfBytesArray], { type: 'application/pdf' });
+      
+      console.log('📦 CLIENT: Created PDF blob from JSON:')
+      console.log('  - Blob size:', pdfBlob.size)
+      console.log('  - Blob type:', pdfBlob.type)
+      
+      const fileName = response.data.fileName || `PetPort_${type}_Profile.pdf`;
+      console.log('✅ CLIENT: PDF generation successful, filename:', fileName)
+      
+      return {
+        success: true,
+        pdfBlob,
+        fileName,
+        type
+      };
+    }
+
+    // Fallback for legacy blob responses (shouldn't happen with text-only version)
     let pdfBlob: Blob;
     if (response.data instanceof Blob) {
       pdfBlob = response.data;
@@ -56,7 +79,8 @@ export async function generatePetPDF(petId: string, type: 'emergency' | 'full' =
       // If it's raw binary data, convert it
       pdfBlob = new Blob([new Uint8Array(response.data)], { type: 'application/pdf' });
     }
-    console.log('📦 CLIENT: Created PDF blob:')
+    
+    console.log('📦 CLIENT: Created PDF blob (fallback):')
     console.log('  - Blob size:', pdfBlob.size)
     console.log('  - Blob type:', pdfBlob.type)
     

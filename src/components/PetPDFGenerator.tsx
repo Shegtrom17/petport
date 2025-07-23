@@ -34,17 +34,14 @@ export const PetPDFGenerator = ({ petId, petName }: PetPDFGeneratorProps) => {
 
   const publicProfileUrl = generatePublicProfileUrl(petId);
 
-  const handleGeneratePDF = async (type: 'emergency' | 'full') => {
-    // Clear any previous auth errors
+  const handleGeneratePDF = async (type: 'emergency' | 'full', action: 'view' | 'download') => {
     setAuthError(null);
-    
-    // Check authentication first
+
     if (!user) {
       setAuthError("You must be signed in to generate PDF documents.");
       return;
     }
 
-    // Set the appropriate loading state
     if (type === 'emergency') {
       setIsGeneratingEmergency(true);
     } else {
@@ -52,62 +49,36 @@ export const PetPDFGenerator = ({ petId, petName }: PetPDFGeneratorProps) => {
     }
 
     try {
-      console.log(`Starting ${type} PDF generation for pet:`, petId);
-      
       const result = await generatePetPDF(petId, type);
-      
+
       if (result.success && result.pdfBlob) {
-        if (type === 'emergency') {
-          setEmergencyPdfBlob(result.pdfBlob);
-          // For QR code, we'll create a temporary URL
-          const tempUrl = URL.createObjectURL(result.pdfBlob);
-          setEmergencyQrCodeUrl(generateQRCodeUrl(tempUrl));
+        if (action === 'view') {
+          // Just show dialog for viewing
+          if (type === 'emergency') {
+            setEmergencyPdfBlob(result.pdfBlob);
+          } else {
+            setFullPdfBlob(result.pdfBlob);
+          }
+          setIsDialogOpen(true);
         } else {
-          setFullPdfBlob(result.pdfBlob);
-          const tempUrl = URL.createObjectURL(result.pdfBlob);
-          setFullQrCodeUrl(generateQRCodeUrl(tempUrl));
-        }
-        
-        // Automatically download the PDF
-        const fileName = type === 'emergency' 
-          ? `PetPort_Emergency_Profile_${petName}.pdf`
-          : `PetPort_Complete_Profile_${petName}.pdf`;
-        await downloadPDFBlob(result.pdfBlob, fileName);
-        
-        setIsDialogOpen(true);
-        
-        toast({
-          title: "PDF Generated Successfully",
-          description: `${petName}'s ${type === 'emergency' ? 'emergency profile' : 'complete profile'} PDF has been downloaded.`,
-        });
-      } else {
-        // Handle specific error cases
-        const errorMessage = result.error || 'Failed to generate PDF';
-        if (errorMessage.includes('unauthorized') || errorMessage.includes('authentication')) {
-          setAuthError("Your session has expired. Please sign in again to generate PDFs.");
-        } else {
-          toast({
-            title: "Generation Failed",
-            description: errorMessage,
-            variant: "destructive",
-          });
+          // Direct download
+          const fileName = `${petName}_${type}_profile.pdf`;
+          const a = document.createElement('a');
+          a.href = URL.createObjectURL(result.pdfBlob);
+          a.download = fileName;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
         }
       }
-    } catch (error: any) {
+    } catch (error) {
       console.error('PDF generation error:', error);
-      
-      // Handle authentication errors
-      if (error?.message?.includes('unauthorized') || error?.message?.includes('JWT')) {
-        setAuthError("Authentication error. Please sign in again to generate PDFs.");
-      } else {
-        toast({
-          title: "Error",
-          description: error?.message || "Failed to generate PDF. Please try again.",
-          variant: "destructive",
-        });
-      }
+      toast({
+        title: "Error",
+        description: "Failed to generate PDF. Please try again.",
+        variant: "destructive",
+      });
     } finally {
-      // Clear the appropriate loading state
       if (type === 'emergency') {
         setIsGeneratingEmergency(false);
       } else {

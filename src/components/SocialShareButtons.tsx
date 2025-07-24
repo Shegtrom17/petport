@@ -15,6 +15,7 @@ interface SocialShareButtonsProps {
 export const SocialShareButtons = ({ petName, petId, isMissingPet = false }: SocialShareButtonsProps) => {
   const [isSharing, setIsSharing] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [showOptions, setShowOptions] = useState(false);
   const { toast } = useToast();
   
   const shareUrl = `${window.location.origin}/profile/${petId}`;
@@ -107,63 +108,89 @@ export const SocialShareButtons = ({ petName, petId, isMissingPet = false }: Soc
         </p>
         
         <div className="space-y-3">
-          {/* Primary Mobile Share Button */}
-          <Button
-            onClick={handleNativeShare}
-            disabled={isSharing}
-            className={`w-full h-12 text-base font-semibold ${
-              isMissingPet 
-                ? 'bg-red-600 hover:bg-red-700 text-white' 
-                : 'bg-primary hover:bg-primary/90 text-primary-foreground'
-            }`}
-          >
-            {isSharing ? (
-              <>
-                <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent mr-2" />
-                Sharing...
-              </>
-            ) : (
-              <>
-                <Smartphone className="w-5 h-5 mr-2" />
-                {isMissingPet ? `Share ${petName}'s Missing Alert` : `Share ${petName}'s Profile`}
-              </>
-            )}
-          </Button>
-          
-          {/* Secondary Options */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+          {!showOptions ? (
+            /* Show Options Button */
             <Button
-              onClick={handleCopyLink}
-              variant="outline"
-              size="sm"
-              className={`w-full ${isMissingPet ? 'border-red-600 text-red-700 hover:bg-red-50' : 'border-primary text-primary hover:bg-primary/5'}`}
+              onClick={() => setShowOptions(true)}
+              className={`w-full h-12 text-base font-semibold ${
+                isMissingPet 
+                  ? 'bg-red-600 hover:bg-red-700 text-white' 
+                  : 'bg-primary hover:bg-primary/90 text-primary-foreground'
+              }`}
             >
-              {copied ? <Check className="w-4 h-4 mr-1" /> : <Copy className="w-4 h-4 mr-1" />}
-              {copied ? 'Copied!' : 'Copy Link'}
+              <Share2 className="w-5 h-5 mr-2" />
+              {isMissingPet ? `Share ${petName}'s Missing Alert` : `Share ${petName}'s Profile`}
             </Button>
-            
-            <Button
-              onClick={handleFacebookShare}
-              variant="outline"
-              size="sm"
-              className="w-full bg-[#1877F2] hover:bg-[#166FE5] text-white border-[#1877F2]"
-            >
-              <Facebook className="w-4 h-4 mr-1" />
-              Facebook
-            </Button>
-            
-            <Button
-              onClick={handleXShare}
-              variant="outline"
-              size="sm"
-              className="w-full bg-black hover:bg-gray-800 text-white border-black"
-            >
-              <svg className="w-4 h-4 mr-1" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
-              </svg>
-              X/Twitter
-            </Button>
-          </div>
+          ) : (
+            <>
+              {/* Primary Mobile Share Button */}
+              <Button
+                onClick={handleNativeShare}
+                disabled={isSharing}
+                className={`w-full h-12 text-base font-semibold ${
+                  isMissingPet 
+                    ? 'bg-red-600 hover:bg-red-700 text-white' 
+                    : 'bg-primary hover:bg-primary/90 text-primary-foreground'
+                }`}
+              >
+                {isSharing ? (
+                  <>
+                    <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent mr-2" />
+                    Sharing...
+                  </>
+                ) : (
+                  <>
+                    <Smartphone className="w-5 h-5 mr-2" />
+                    Quick Share
+                  </>
+                )}
+              </Button>
+              
+              {/* Secondary Options */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                <Button
+                  onClick={handleCopyLink}
+                  variant="outline"
+                  size="sm"
+                  className={`w-full ${isMissingPet ? 'border-red-600 text-red-700 hover:bg-red-50' : 'border-primary text-primary hover:bg-primary/5'}`}
+                >
+                  {copied ? <Check className="w-4 h-4 mr-1" /> : <Copy className="w-4 h-4 mr-1" />}
+                  {copied ? 'Copied!' : 'Copy Link'}
+                </Button>
+                
+                <Button
+                  onClick={handleFacebookShare}
+                  variant="outline"
+                  size="sm"
+                  className="w-full bg-[#1877F2] hover:bg-[#166FE5] text-white border-[#1877F2]"
+                >
+                  <Facebook className="w-4 h-4 mr-1" />
+                  Facebook
+                </Button>
+                
+                <Button
+                  onClick={handleXShare}
+                  variant="outline"
+                  size="sm"
+                  className="w-full bg-black hover:bg-gray-800 text-white border-black"
+                >
+                  <svg className="w-4 h-4 mr-1" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                  </svg>
+                  X/Twitter
+                </Button>
+              </div>
+              
+              <Button
+                onClick={() => setShowOptions(false)}
+                variant="ghost"
+                size="sm"
+                className="w-full text-muted-foreground"
+              >
+                ← Back to options
+              </Button>
+            </>
+          )}
         </div>
         
         <div className={`text-xs ${isMissingPet ? 'text-red-600' : 'text-navy-500'} text-center p-2 rounded ${isMissingPet ? 'bg-red-100' : 'bg-gold-100'} border ${isMissingPet ? 'border-red-200' : 'border-gold-200'}`}>

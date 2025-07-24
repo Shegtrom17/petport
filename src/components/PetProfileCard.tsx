@@ -21,7 +21,7 @@ interface PetData {
   species: string;
   age: string;
   weight: string;
-  microchip_id: string;
+  microchipId: string;
   petport_id: string;
   bio: string;
   notes: string;
@@ -128,7 +128,7 @@ const handleEditSave = () => {
     species: petData?.species || "",
     age: petData?.age || "",
     weight: petData?.weight || "",
-    microchip_id: petData?.microchip_id || "",
+    microchipId: petData?.microchipId || "",
     petport_id: petData?.petport_id || "",
     bio: petData?.bio || "",
     notes: petData?.notes || "",
@@ -229,7 +229,7 @@ const handleEditSave = () => {
             <div className="md:col-span-2">
               <p className="text-yellow-400 text-sm font-semibold tracking-wide">MICROCHIP NUMBER</p>
               <p className="text-lg font-mono bg-slate-700/50 px-3 py-2 rounded border border-yellow-600/30">
-                {petData?.microchip_id || "Not specified"}
+                {petData?.microchipId || "Not specified"}
               </p>
             </div>
           </div>

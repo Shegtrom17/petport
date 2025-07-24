@@ -19,7 +19,7 @@ interface PetData {
   species: string;
   age: string;
   weight: string;
-  microchip_id: string;
+  microchipId: string;
   petport_id: string;
   bio: string;
   notes: string;
@@ -46,7 +46,7 @@ export const PetEditForm = ({ petData, onSave, onCancel }: PetEditFormProps) => 
     breed: petData.breed || "",
     age: petData.age || "",
     weight: petData.weight || "",
-    microchip_id: petData.microchip_id || "",
+    microchipId: petData.microchipId || "",
     species: petData.species || "",
     state: petData.state || "",
     county: petData.county || "",
@@ -101,7 +101,7 @@ const handleSubmit = async (e: React.FormEvent) => {
       species: formData.species.trim(),
       age: formData.age.trim(),
       weight: formData.weight.trim(),
-      microchip_id: formData.microchip_id.trim(),
+      microchip_id: formData.microchipId.trim(),
       bio: formData.bio.trim(),
       notes: formData.notes.trim(),
       state: formData.state.trim(),
@@ -165,8 +165,8 @@ const handleSubmit = async (e: React.FormEvent) => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <Label htmlFor="microchip_id">Microchip ID</Label>
-            <Input type="text" id="microchip_id" name="microchip_id" value={formData.microchip_id} onChange={handleChange} />
+            <Label htmlFor="microchipId">Microchip ID</Label>
+            <Input type="text" id="microchipId" name="microchipId" value={formData.microchipId} onChange={handleChange} />
           </div>
           <div>
             <Label htmlFor="species">Species</Label>

@@ -30,6 +30,11 @@ interface PetData {
   is_public: boolean;
   created_at: string;
   updated_at: string;
+  // Contact information
+  vetContact?: string;
+  emergencyContact?: string;
+  secondEmergencyContact?: string;
+  petCaretaker?: string;
 }
 
 interface PetProfileCardProps {
@@ -136,7 +141,12 @@ const handleEditSave = () => {
     county: petData?.county || "",
     is_public: petData?.is_public || false,
     created_at: petData?.created_at || "",
-    updated_at: petData?.updated_at || ""
+    updated_at: petData?.updated_at || "",
+    // Contact information
+    vetContact: petData?.vetContact || "",
+    emergencyContact: petData?.emergencyContact || "",
+    secondEmergencyContact: petData?.secondEmergencyContact || "",
+    petCaretaker: petData?.petCaretaker || ""
   };
 
   if (isEditing) {

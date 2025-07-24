@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/context/AuthContext";
-import { updatePetBasicInfo } from "@/services/petService";
+import { updatePetBasicInfo, updatePetContacts } from "@/services/petService";
 import { Loader2 } from "lucide-react";
 
 interface PetData {
@@ -28,6 +28,11 @@ interface PetData {
   is_public: boolean;
   created_at: string;
   updated_at: string;
+  // Contact information
+  vetContact?: string;
+  emergencyContact?: string;
+  secondEmergencyContact?: string;
+  petCaretaker?: string;
 }
 
 interface PetEditFormProps {
@@ -51,7 +56,12 @@ export const PetEditForm = ({ petData, onSave, onCancel }: PetEditFormProps) => 
     state: petData.state || "",
     county: petData.county || "",
     notes: petData.notes || "",
-    bio: petData.bio || ""
+    bio: petData.bio || "",
+    // Contact information
+    vetContact: petData.vetContact || "",
+    emergencyContact: petData.emergencyContact || "",
+    secondEmergencyContact: petData.secondEmergencyContact || "",
+    petCaretaker: petData.petCaretaker || ""
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -108,10 +118,21 @@ const handleSubmit = async (e: React.FormEvent) => {
       county: formData.county.trim(),
     };
 
-    // Call service layer to update pet
-    const success = await updatePetBasicInfo(petData.id, updateData);
+    // Call service layer to update pet basic info
+    const basicUpdateSuccess = await updatePetBasicInfo(petData.id, updateData);
 
-    if (success) {
+    // Prepare contact data
+    const contactData = {
+      vet_contact: formData.vetContact.trim(),
+      emergency_contact: formData.emergencyContact.trim(),
+      second_emergency_contact: formData.secondEmergencyContact.trim(),
+      pet_caretaker: formData.petCaretaker.trim(),
+    };
+
+    // Call service layer to update pet contacts
+    const contactUpdateSuccess = await updatePetContacts(petData.id, contactData);
+
+    if (basicUpdateSuccess && contactUpdateSuccess) {
       toast({
         title: "Success",
         description: "Pet profile updated successfully!",
@@ -193,6 +214,61 @@ const handleSubmit = async (e: React.FormEvent) => {
         <div>
           <Label htmlFor="bio">Bio</Label>
           <Textarea id="bio" name="bio" value={formData.bio} onChange={handleChange} />
+        </div>
+
+        {/* Contact Information Section */}
+        <div className="border-t pt-6">
+          <h3 className="text-lg font-serif text-navy-900 mb-4">Contact Information</h3>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            <div>
+              <Label htmlFor="emergencyContact">Primary Emergency Contact</Label>
+              <Input 
+                type="text" 
+                id="emergencyContact" 
+                name="emergencyContact" 
+                value={formData.emergencyContact} 
+                onChange={handleChange}
+                placeholder="Name and phone number" 
+              />
+            </div>
+            <div>
+              <Label htmlFor="secondEmergencyContact">Secondary Emergency Contact</Label>
+              <Input 
+                type="text" 
+                id="secondEmergencyContact" 
+                name="secondEmergencyContact" 
+                value={formData.secondEmergencyContact} 
+                onChange={handleChange}
+                placeholder="Name and phone number" 
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <Label htmlFor="vetContact">Veterinarian Contact</Label>
+              <Input 
+                type="text" 
+                id="vetContact" 
+                name="vetContact" 
+                value={formData.vetContact} 
+                onChange={handleChange}
+                placeholder="Vet name and phone number" 
+              />
+            </div>
+            <div>
+              <Label htmlFor="petCaretaker">Pet Caretaker</Label>
+              <Input 
+                type="text" 
+                id="petCaretaker" 
+                name="petCaretaker" 
+                value={formData.petCaretaker} 
+                onChange={handleChange}
+                placeholder="Caretaker name and contact" 
+              />
+            </div>
+          </div>
         </div>
         
         <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4">

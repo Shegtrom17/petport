@@ -360,27 +360,29 @@ export const CareInstructionsSection = ({ petData }: CareInstructionsSectionProp
               <Heart className="w-5 h-5" />
               <span>Care Instructions for {petData.name}</span>
             </div>
-            <div className="flex space-x-2">
+            <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2">
               <Button 
                 onClick={() => setIsEditing(true)}
                 variant="secondary" 
-                className="bg-white/20 hover:bg-white/30 text-white border-white/30"
+                className="bg-white/20 hover:bg-white/30 text-white border-white/30 text-xs sm:text-sm px-2 sm:px-4 py-1 sm:py-2"
               >
-                <Edit className="w-4 h-4 mr-2" />
-                Edit Instructions
+                <Edit className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
+                <span className="hidden sm:inline">Edit Instructions</span>
+                <span className="sm:hidden">Edit</span>
               </Button>
               <Button
                 onClick={handleGenerateCarePDF}
                 disabled={isGeneratingPDF}
                 variant="secondary"
-                className="bg-sage-600 hover:bg-sage-700 text-white"
+                className="bg-sage-600 hover:bg-sage-700 text-white text-xs sm:text-sm px-2 sm:px-4 py-1 sm:py-2"
               >
                 {isGeneratingPDF ? (
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  <Loader2 className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 animate-spin" />
                 ) : (
-                  <FileText className="w-4 h-4 mr-2" />
+                  <FileText className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
                 )}
-                Download Care PDF
+                <span className="hidden sm:inline">Download Care PDF</span>
+                <span className="sm:hidden">PDF</span>
               </Button>
               <Dialog open={careShareDialogOpen} onOpenChange={setCareShareDialogOpen}>
                 <DialogTrigger asChild>
@@ -388,19 +390,20 @@ export const CareInstructionsSection = ({ petData }: CareInstructionsSectionProp
                     onClick={handleShareCareLink}
                     disabled={isSharing}
                     variant="secondary"
-                    className="bg-white/20 hover:bg-white/30 text-white border-white/30"
+                    className="bg-white/20 hover:bg-white/30 text-white border-white/30 text-xs sm:text-sm px-2 sm:px-4 py-1 sm:py-2"
                   >
                     {isSharing ? (
-                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      <Loader2 className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 animate-spin" />
                     ) : (
-                      <Share2 className="w-4 h-4 mr-2" />
+                      <Share2 className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
                     )}
-                    Share Care Plan
+                    <span className="hidden sm:inline">Share Care Plan</span>
+                    <span className="sm:hidden">Share</span>
                   </Button>
                 </DialogTrigger>
                 <DialogContent className="max-w-md bg-[#f8f8f8]">
                   <DialogHeader>
-                    <DialogTitle className="font-serif text-navy-900 border-b-2 border-sage-500 pb-2">
+                    <DialogTitle className="text-navy-900 border-b-2 border-sage-500 pb-2 font-bold">
                       🌿 Share {petData.name}'s Care Instructions
                     </DialogTitle>
                   </DialogHeader>
@@ -408,7 +411,7 @@ export const CareInstructionsSection = ({ petData }: CareInstructionsSectionProp
                   <div className="space-y-6">
                     {/* Public Care Instructions Link */}
                     <div className="bg-white p-4 rounded-lg border border-sage-500/30 shadow-sm">
-                      <h4 className="font-serif font-bold text-navy-900 mb-2 flex items-center gap-2">
+                      <h4 className="font-bold text-navy-900 mb-2 flex items-center gap-2">
                         <div className="w-6 h-6 bg-sage-500/20 rounded-full flex items-center justify-center">
                           <ExternalLink className="w-3 h-3 text-sage-600" />
                         </div>
@@ -433,7 +436,7 @@ export const CareInstructionsSection = ({ petData }: CareInstructionsSectionProp
                     {/* Care PDF */}
                     {carePdfBlob && careQrCodeUrl && (
                       <div className="bg-white p-4 rounded-lg border border-sage-500/30 shadow-sm">
-                        <h4 className="font-serif font-bold text-navy-900 mb-3">🌿 Care Instructions PDF</h4>
+                        <h4 className="font-bold text-navy-900 mb-3">🌿 Care Instructions PDF</h4>
                         <div className="text-center mb-3">
                           <img 
                             src={careQrCodeUrl} 

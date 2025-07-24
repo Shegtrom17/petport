@@ -58,9 +58,9 @@ export const QuickIDSection = ({ petData }: QuickIDSectionProps) => {
       {/* Emergency Priority Contacts */}
       <Card className="bg-red-600 shadow-lg border-2 border-red-700">
         <CardHeader>
-          <CardTitle className="flex items-center space-x-2 text-xl font-serif text-white">
-            <AlertTriangle className="w-6 h-6 animate-pulse" />
-            <span>EMERGENCY PRIORITY CONTACTS</span>
+          <CardTitle className="flex items-center space-x-2 text-lg sm:text-xl text-white font-bold">
+            <AlertTriangle className="w-5 h-5 sm:w-6 sm:h-6 animate-pulse" />
+            <span className="text-sm sm:text-base md:text-lg">EMERGENCY PRIORITY CONTACTS</span>
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -150,7 +150,7 @@ export const QuickIDSection = ({ petData }: QuickIDSectionProps) => {
             )}
           </div>
           <div className="mt-4 p-2 bg-red-800/30 rounded-lg border border-red-500/50">
-            <p className="text-red-100 text-xs text-center font-serif">
+            <p className="text-red-100 text-xs text-center">
               📞 Tap any number to call immediately • Keep this ID accessible at all times
             </p>
           </div>
@@ -160,7 +160,7 @@ export const QuickIDSection = ({ petData }: QuickIDSectionProps) => {
       {/* Quick ID Preview with passport styling */}
       <Card className="bg-[#f8f8f8] shadow-lg border-2 border-gold-500/30">
         <CardHeader className="pb-4">
-          <CardTitle className="flex items-center space-x-2 text-xl font-serif text-navy-900 border-b-2 border-gold-500 pb-2">
+          <CardTitle className="flex items-center space-x-2 text-lg sm:text-xl text-navy-900 border-b-2 border-gold-500 pb-2 font-bold">
             <div className="w-8 h-8 bg-gold-500/20 rounded-full flex items-center justify-center">
               <QrCode className="w-5 h-5 text-gold-600" />
             </div>
@@ -180,7 +180,7 @@ export const QuickIDSection = ({ petData }: QuickIDSectionProps) => {
                 alt="PetPort Logo"
                 className="w-6 h-6 object-contain opacity-80"
               />
-              <span className="text-xs font-bold opacity-80 font-serif tracking-wide">PETPORT</span>
+              <span className="text-xs font-bold opacity-80 tracking-wide">PETPORT</span>
             </div>
 
             {/* PetPort ID in top right with stamp design */}
@@ -209,7 +209,7 @@ export const QuickIDSection = ({ petData }: QuickIDSectionProps) => {
                     const IconComponent = getSupportAnimalIcon(petData.supportAnimalStatus);
                     return <IconComponent className="w-5 h-5" />;
                   })()}
-                  <span className="font-bold text-sm tracking-wide text-center font-serif">
+                  <span className="font-bold text-sm tracking-wide text-center">
                     {petData.supportAnimalStatus.toUpperCase()}
                   </span>
                 </div>
@@ -226,8 +226,8 @@ export const QuickIDSection = ({ petData }: QuickIDSectionProps) => {
                 />
               </div>
               <div className="flex-1">
-                <h3 className="text-2xl font-serif font-bold mb-1">{petData.name}</h3>
-                <p className="text-red-100 mb-3 font-serif">{petData.breed} • {petData.age}</p>
+                <h3 className="text-xl sm:text-2xl font-bold mb-1">{petData.name}</h3>
+                <p className="text-red-100 mb-3 text-sm sm:text-base">{petData.breed} • {petData.age}</p>
                 
                 <div className="space-y-2 text-sm">
                   <div className="bg-red-600/30 p-3 rounded-lg">
@@ -288,7 +288,7 @@ export const QuickIDSection = ({ petData }: QuickIDSectionProps) => {
             
             <div className="mt-4 pt-4 border-t border-red-400/30">
               <p className="text-sm text-red-100">
-                <span className="font-serif font-bold">Special Notes:</span> {petData.notes}
+                <span className="font-bold">Special Notes:</span> {petData.notes}
               </p>
             </div>
 
@@ -331,7 +331,7 @@ export const QuickIDSection = ({ petData }: QuickIDSectionProps) => {
       {/* QR Code Display with passport styling */}
       <Card className="bg-[#f8f8f8] shadow-lg border-2 border-gold-500/30">
         <CardHeader>
-          <CardTitle className="font-serif text-navy-900 border-b-2 border-gold-500 pb-2">
+          <CardTitle className="text-navy-900 border-b-2 border-gold-500 pb-2 font-bold">
             📱 QR CODE FOR QUICK ACCESS
           </CardTitle>
         </CardHeader>
@@ -346,7 +346,7 @@ export const QuickIDSection = ({ petData }: QuickIDSectionProps) => {
             Scan this QR code to instantly access {petData.name}'s emergency information
           </p>
           <div className="bg-gold-500/20 p-2 rounded-lg border border-gold-500/50">
-            <Badge variant="outline" className="border-gold-600 text-gold-700 font-serif">
+            <Badge variant="outline" className="border-gold-600 text-gold-700">
               Updates automatically when profile changes
             </Badge>
           </div>
@@ -356,7 +356,7 @@ export const QuickIDSection = ({ petData }: QuickIDSectionProps) => {
       {/* Sharing Options with passport stamps */}
       <Card className="bg-[#f8f8f8] shadow-lg border-2 border-gold-500/30">
         <CardHeader>
-          <CardTitle className="font-serif text-navy-900 border-b-2 border-gold-500 pb-2">
+          <CardTitle className="text-navy-900 border-b-2 border-gold-500 pb-2 font-bold">
             📤 SHARE EMERGENCY ID
           </CardTitle>
         </CardHeader>
@@ -390,7 +390,7 @@ export const QuickIDSection = ({ petData }: QuickIDSectionProps) => {
               </Button>
             </div>
           </div>
-          <p className="text-xs text-navy-500 mt-4 text-center font-serif">
+          <p className="text-xs text-navy-500 mt-4 text-center">
             Perfect for dog tags, collars, or posting in your neighborhood
           </p>
         </CardContent>

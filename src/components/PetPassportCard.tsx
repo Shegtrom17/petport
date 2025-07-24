@@ -23,16 +23,16 @@ export const PetPassportCard = ({ petData }: PetPassportCardProps) => {
               />
             </div>
             <div className="flex-1 text-center sm:text-left">
-              <h2 className="text-lg sm:text-xl md:text-3xl font-serif font-bold text-yellow-400 mb-1 tracking-wide break-words">{petData.name?.toUpperCase()}</h2>
-              <p className="text-yellow-200 font-serif text-sm sm:text-base md:text-lg mb-2">{petData.breed} • {petData.age}</p>
+              <h2 className="text-lg sm:text-xl md:text-3xl font-bold text-yellow-400 mb-1 tracking-wide break-words">{petData.name?.toUpperCase()}</h2>
+              <p className="text-yellow-200 text-sm sm:text-base md:text-lg mb-2">{petData.breed} • {petData.age}</p>
               <div className="flex flex-col sm:flex-row items-center justify-center sm:justify-start space-y-1 sm:space-y-0 sm:space-x-3 md:space-x-6 text-xs sm:text-sm mb-4">
                 <div className="flex items-center space-x-1 sm:space-x-2">
                   <div className="w-1.5 h-1.5 bg-yellow-400 rounded-full"></div>
-                  <span className="font-serif text-yellow-200">Weight: {petData.weight}</span>
+                  <span className="text-yellow-200">Weight: {petData.weight}</span>
                 </div>
                 <div className="flex items-center space-x-1 sm:space-x-2">
                   <div className="w-1.5 h-1.5 bg-yellow-400 rounded-full"></div>
-                  <span className="font-serif text-yellow-200">{petData.badges?.length || 0} Certifications</span>
+                  <span className="text-yellow-200">{petData.badges?.length || 0} Certifications</span>
                 </div>
               </div>
             </div>
@@ -53,7 +53,7 @@ export const PetPassportCard = ({ petData }: PetPassportCardProps) => {
                 />
               </div>
             </div>
-            <p className="text-yellow-400 text-sm sm:text-base md:text-lg font-serif tracking-wide font-bold">GLOBE TROTTER</p>
+            <p className="text-yellow-400 text-sm sm:text-base md:text-lg tracking-wide font-bold">GLOBE TROTTER</p>
             <p className="text-xs sm:text-sm text-yellow-300 font-mono">ID: {petData.petPassId}</p>
           </div>
         </div>

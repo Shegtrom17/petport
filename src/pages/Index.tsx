@@ -148,6 +148,7 @@ const Index = () => {
               selectedPet={selectedPet}
               setActiveTab={setActiveTab}
               setIsInAppSharingOpen={setIsInAppSharingOpen}
+              onPhotoUpdate={handlePetUpdate}
             />
             <PetProfileCard 
               petData={petData} 

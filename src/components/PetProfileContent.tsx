@@ -1,18 +1,23 @@
 
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { AlertTriangle, Phone } from "lucide-react";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
+import { AlertTriangle, Phone, Trash2, Upload, Loader2 } from "lucide-react";
 import { PetPDFGenerator } from "@/components/PetPDFGenerator";
 import { SupportAnimalBanner } from "@/components/SupportAnimalBanner";
 import { SocialShareButtons } from "@/components/SocialShareButtons";
 import { ProfileEditButton } from "@/components/ProfileEditButton";
 import { CertificationBanner } from "@/components/CertificationBanner";
+import { deleteOfficialPhoto, replaceOfficialPhoto } from "@/services/petService";
+import { useToast } from "@/hooks/use-toast";
 
 interface PetProfileContentProps {
   petData: any;
   selectedPet: any;
   setActiveTab: (tab: string) => void;
   setIsInAppSharingOpen: (open: boolean) => void;
+  onPhotoUpdate?: () => void;
 }
 
 // Helper function to extract phone number and create tel link
@@ -35,10 +40,17 @@ export const PetProfileContent = ({
   petData, 
   selectedPet, 
   setActiveTab, 
-  setIsInAppSharingOpen 
+  setIsInAppSharingOpen,
+  onPhotoUpdate 
 }: PetProfileContentProps) => {
   console.log("PetProfileContent - Received petData:", petData);
   console.log("PetProfileContent - Received selectedPet:", selectedPet);
+  
+  const [photoLoading, setPhotoLoading] = useState<{ profile: boolean; fullBody: boolean }>({
+    profile: false,
+    fullBody: false
+  });
+  const { toast } = useToast();
   
   // Safety check for missing data
   if (!petData) {
@@ -67,6 +79,85 @@ export const PetProfileContent = ({
     window.dispatchEvent(new CustomEvent('start-pet-profile-edit'));
   };
 
+  const handleDeletePhoto = async (photoType: 'profile' | 'fullBody') => {
+    if (!selectedPet?.id && !enhancedPetData?.id) {
+      toast({
+        title: "Error",
+        description: "Pet ID not found",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    const petId = selectedPet?.id || enhancedPetData.id;
+    setPhotoLoading(prev => ({ ...prev, [photoType]: true }));
+
+    try {
+      const success = await deleteOfficialPhoto(petId, photoType);
+      if (success) {
+        toast({
+          title: "Success",
+          description: `${photoType === 'profile' ? 'Portrait' : 'Full profile'} photo deleted successfully`
+        });
+        onPhotoUpdate?.();
+      } else {
+        throw new Error("Failed to delete photo");
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: `Failed to delete ${photoType === 'profile' ? 'portrait' : 'full profile'} photo`,
+        variant: "destructive"
+      });
+    } finally {
+      setPhotoLoading(prev => ({ ...prev, [photoType]: false }));
+    }
+  };
+
+  const handleUploadPhoto = (photoType: 'profile' | 'fullBody') => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/*';
+    input.onchange = async (e) => {
+      const file = (e.target as HTMLInputElement).files?.[0];
+      if (!file) return;
+
+      if (!selectedPet?.id && !enhancedPetData?.id) {
+        toast({
+          title: "Error",
+          description: "Pet ID not found",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      const petId = selectedPet?.id || enhancedPetData.id;
+      setPhotoLoading(prev => ({ ...prev, [photoType]: true }));
+
+      try {
+        const success = await replaceOfficialPhoto(petId, file, photoType);
+        if (success) {
+          toast({
+            title: "Success",
+            description: `${photoType === 'profile' ? 'Portrait' : 'Full profile'} photo updated successfully`
+          });
+          onPhotoUpdate?.();
+        } else {
+          throw new Error("Failed to upload photo");
+        }
+      } catch (error) {
+        toast({
+          title: "Error",
+          description: `Failed to upload ${photoType === 'profile' ? 'portrait' : 'full profile'} photo`,
+          variant: "destructive"
+        });
+      } finally {
+        setPhotoLoading(prev => ({ ...prev, [photoType]: false }));
+      }
+    };
+    input.click();
+  };
+
   return (
     <div className="passport-map-container">
       <div className="passport-map-bg" />
@@ -93,23 +184,125 @@ export const PetProfileContent = ({
             <CardContent>
               <div className="grid grid-cols-1 gap-6">
                 <div className="space-y-3">
-                  <p className="text-yellow-400 text-sm font-semibold tracking-wide">PORTRAIT</p>
-                  <div className="aspect-square rounded-lg overflow-hidden border-4 border-yellow-600/50 shadow-lg">
+                  <div className="flex justify-between items-center">
+                    <p className="text-yellow-400 text-sm font-semibold tracking-wide">PORTRAIT</p>
+                    <div className="flex gap-2">
+                      <Button
+                        onClick={() => handleUploadPhoto('profile')}
+                        disabled={photoLoading.profile}
+                        size="sm"
+                        className="bg-blue-600 hover:bg-blue-700 text-white"
+                      >
+                        {photoLoading.profile ? (
+                          <Loader2 className="w-3 h-3 animate-spin" />
+                        ) : (
+                          <Upload className="w-3 h-3" />
+                        )}
+                      </Button>
+                      {enhancedPetData?.photoUrl && enhancedPetData.photoUrl !== "/placeholder.svg" && (
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                            <Button
+                              disabled={photoLoading.profile}
+                              size="sm"
+                              variant="destructive"
+                            >
+                              <Trash2 className="w-3 h-3" />
+                            </Button>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>Delete Portrait Photo?</AlertDialogTitle>
+                              <AlertDialogDescription>
+                                This action cannot be undone. The portrait photo will be permanently deleted.
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>Cancel</AlertDialogCancel>
+                              <AlertDialogAction
+                                onClick={() => handleDeletePhoto('profile')}
+                                className="bg-red-600 hover:bg-red-700"
+                              >
+                                Delete
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
+                      )}
+                    </div>
+                  </div>
+                  <div className="aspect-square rounded-lg overflow-hidden border-4 border-yellow-600/50 shadow-lg relative">
                     <img 
                       src={enhancedPetData?.photoUrl || "/placeholder.svg"} 
                       alt={`${enhancedPetData?.name || "Pet"} portrait`}
                       className="w-full h-full object-cover"
                     />
+                    {photoLoading.profile && (
+                      <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+                        <Loader2 className="w-8 h-8 text-white animate-spin" />
+                      </div>
+                    )}
                   </div>
                 </div>
                 <div className="space-y-3">
-                  <p className="text-yellow-400 text-sm font-semibold tracking-wide">FULL PROFILE</p>
-                  <div className="aspect-[4/3] rounded-lg overflow-hidden border-4 border-yellow-600/50 shadow-lg">
+                  <div className="flex justify-between items-center">
+                    <p className="text-yellow-400 text-sm font-semibold tracking-wide">FULL PROFILE</p>
+                    <div className="flex gap-2">
+                      <Button
+                        onClick={() => handleUploadPhoto('fullBody')}
+                        disabled={photoLoading.fullBody}
+                        size="sm"
+                        className="bg-blue-600 hover:bg-blue-700 text-white"
+                      >
+                        {photoLoading.fullBody ? (
+                          <Loader2 className="w-3 h-3 animate-spin" />
+                        ) : (
+                          <Upload className="w-3 h-3" />
+                        )}
+                      </Button>
+                      {enhancedPetData?.fullBodyPhotoUrl && enhancedPetData.fullBodyPhotoUrl !== "/placeholder.svg" && (
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                            <Button
+                              disabled={photoLoading.fullBody}
+                              size="sm"
+                              variant="destructive"
+                            >
+                              <Trash2 className="w-3 h-3" />
+                            </Button>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>Delete Full Profile Photo?</AlertDialogTitle>
+                              <AlertDialogDescription>
+                                This action cannot be undone. The full profile photo will be permanently deleted.
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>Cancel</AlertDialogCancel>
+                              <AlertDialogAction
+                                onClick={() => handleDeletePhoto('fullBody')}
+                                className="bg-red-600 hover:bg-red-700"
+                              >
+                                Delete
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
+                      )}
+                    </div>
+                  </div>
+                  <div className="aspect-[4/3] rounded-lg overflow-hidden border-4 border-yellow-600/50 shadow-lg relative">
                     <img 
                       src={enhancedPetData?.fullBodyPhotoUrl || "/placeholder.svg"} 
                       alt={`${enhancedPetData?.name || "Pet"} full profile`}
                       className="w-full h-full object-cover"
                     />
+                    {photoLoading.fullBody && (
+                      <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+                        <Loader2 className="w-8 h-8 text-white animate-spin" />
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>

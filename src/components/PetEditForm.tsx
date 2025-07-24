@@ -8,7 +8,8 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/context/AuthContext";
-import { supabase } from "@/integrations/supabase/client";
+import { updatePetBasicInfo } from "@/services/petService";
+import { Loader2 } from "lucide-react";
 
 interface PetData {
   id: string;
@@ -31,7 +32,7 @@ interface PetData {
 
 interface PetEditFormProps {
   petData: PetData;
-  onSave: (updatedData: PetData) => void;
+  onSave: () => void;
   onCancel: () => void;
 }
 
@@ -70,22 +71,65 @@ export const PetEditForm = ({ petData, onSave, onCancel }: PetEditFormProps) => 
 
 const handleSubmit = async (e: React.FormEvent) => {
   e.preventDefault();
+  
+  if (!petData?.id) {
+    toast({
+      variant: "destructive",
+      title: "Error",
+      description: "Pet ID is missing. Cannot save changes.",
+    });
+    return;
+  }
 
-  const updatedData = {
-    ...petData,
-    name: formData.name,
-    breed: formData.breed,
-    age: formData.age,
-    weight: formData.weight,
-    microchip_id: formData.microchip_id,
-    species: formData.species,
-    state: formData.state,
-    county: formData.county,
-    notes: formData.notes,
-    bio: formData.bio
-  };
+  setIsSaving(true);
 
-  onSave(updatedData);
+  try {
+    // Basic validation
+    if (!formData.name.trim()) {
+      toast({
+        variant: "destructive",
+        title: "Validation Error",
+        description: "Pet name is required.",
+      });
+      return;
+    }
+
+    // Prepare update data with only changed fields
+    const updateData = {
+      name: formData.name.trim(),
+      breed: formData.breed.trim(),
+      species: formData.species.trim(),
+      age: formData.age.trim(),
+      weight: formData.weight.trim(),
+      microchip_id: formData.microchip_id.trim(),
+      bio: formData.bio.trim(),
+      notes: formData.notes.trim(),
+      state: formData.state.trim(),
+      county: formData.county.trim(),
+    };
+
+    // Call service layer to update pet
+    const success = await updatePetBasicInfo(petData.id, updateData);
+
+    if (success) {
+      toast({
+        title: "Success",
+        description: "Pet profile updated successfully!",
+      });
+      onSave(); // Trigger parent to refresh data
+    } else {
+      throw new Error("Update failed");
+    }
+  } catch (error) {
+    console.error("Error updating pet:", error);
+    toast({
+      variant: "destructive",
+      title: "Error",
+      description: "Failed to update pet profile. Please try again.",
+    });
+  } finally {
+    setIsSaving(false);
+  }
 };
 
 
@@ -157,12 +201,14 @@ const handleSubmit = async (e: React.FormEvent) => {
             disabled={isSaving}
             className="flex-1 bg-gradient-to-r from-navy-900 to-navy-800 hover:from-navy-800 hover:to-navy-700 text-gold-500 border border-gold-500/30 px-3 sm:px-4 py-2 text-sm sm:text-base"
           >
+            {isSaving && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
             <span className="hidden sm:inline">{isSaving ? "Saving..." : "Save Changes"}</span>
             <span className="sm:hidden">{isSaving ? "Saving..." : "Save"}</span>
           </Button>
           <Button 
             onClick={onCancel}
             variant="outline"
+            disabled={isSaving}
             className="flex-1 border-navy-900 text-navy-900 hover:bg-navy-50 px-3 sm:px-4 py-2 text-sm sm:text-base"
           >
             Cancel

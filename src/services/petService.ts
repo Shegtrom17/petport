@@ -400,6 +400,13 @@ export async function createPet(petData: {
 }
 
 export async function updatePetBasicInfo(petId: string, basicData: {
+  name?: string;
+  breed?: string;
+  species?: string;
+  age?: string;
+  weight?: string;
+  microchip_id?: string;
+  bio?: string;
   notes?: string;
   state?: string;
   county?: string;

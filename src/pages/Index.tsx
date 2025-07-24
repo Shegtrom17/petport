@@ -123,10 +123,12 @@ const Index = () => {
     ],
     gallery_photos: [
       {
+        id: "sample-gallery-1",
         url: "https://images.unsplash.com/photo-1583337130417-3346a1be7dee?w=600&h=400&fit=crop",
         caption: "Distinctive white chest marking - heart-shaped pattern"
       },
       {
+        id: "sample-gallery-2",
         url: "https://images.unsplash.com/photo-1552053831-71594a27632d?w=600&h=400&fit=crop",
         caption: "Left ear has small brown spot near tip"
       }
@@ -180,7 +182,7 @@ const Index = () => {
         />;
       case "gallery":
         console.log("Rendering PetGallerySection");
-        return <PetGallerySection petData={petData} />;
+        return <PetGallerySection petData={petData} onUpdate={handlePetUpdate} />;
       case "quickid":
         console.log("Rendering QuickIDSection");
         return <QuickIDSection petData={petData} />;

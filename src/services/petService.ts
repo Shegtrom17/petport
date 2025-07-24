@@ -822,6 +822,79 @@ export async function uploadGalleryPhoto(petId: string, photo: File, caption?: s
   }
 }
 
+export async function uploadMultipleGalleryPhotos(
+  petId: string, 
+  photos: File[], 
+  captions: string[] = []
+): Promise<{ success: boolean; uploaded: number; failed: number }> {
+  let uploaded = 0;
+  let failed = 0;
+
+  for (let i = 0; i < photos.length; i++) {
+    const photo = photos[i];
+    const caption = captions[i] || '';
+    
+    try {
+      const success = await uploadGalleryPhoto(petId, photo, caption);
+      if (success) {
+        uploaded++;
+      } else {
+        failed++;
+      }
+    } catch (error) {
+      console.error(`Failed to upload photo ${i + 1}:`, error);
+      failed++;
+    }
+  }
+
+  return { success: failed === 0, uploaded, failed };
+}
+
+export async function deleteGalleryPhoto(photoId: string, photoUrl: string): Promise<boolean> {
+  try {
+    // Delete from storage first
+    const deletedFromStorage = await deletePhotoFromStorage(photoUrl);
+    if (!deletedFromStorage) {
+      console.warn("Failed to delete photo from storage, continuing with database deletion");
+    }
+
+    // Delete from database
+    const { error } = await supabase
+      .from('gallery_photos')
+      .delete()
+      .eq('id', photoId);
+
+    if (error) {
+      console.error("Error deleting gallery photo from database:", error);
+      throw error;
+    }
+
+    return true;
+  } catch (error) {
+    console.error("Error in deleteGalleryPhoto:", error);
+    return false;
+  }
+}
+
+export async function updateGalleryPhotoCaption(photoId: string, caption: string): Promise<boolean> {
+  try {
+    const { error } = await supabase
+      .from('gallery_photos')
+      .update({ caption: caption.trim() || null })
+      .eq('id', photoId);
+
+    if (error) {
+      console.error("Error updating gallery photo caption:", error);
+      throw error;
+    }
+
+    return true;
+  } catch (error) {
+    console.error("Error in updateGalleryPhotoCaption:", error);
+    return false;
+  }
+}
+
 export async function deletePhotoFromStorage(photoUrl: string): Promise<boolean> {
   try {
     if (!photoUrl || photoUrl === "/placeholder.svg") {

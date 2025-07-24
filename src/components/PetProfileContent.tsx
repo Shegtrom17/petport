@@ -340,7 +340,7 @@ export const PetProfileContent = ({
         <div className="space-y-4">
           <Card className="bg-[#f8f8f8] shadow-md">
             <CardHeader className="pb-3">
-              <CardTitle className="text-lg font-serif text-navy-900 border-b-2 border-gold-500 pb-2">
+              <CardTitle className="text-lg font-bold text-navy-900 border-b-2 border-gold-500 pb-2">
                 🛂 PASSPORT DOCUMENTS
               </CardTitle>
             </CardHeader>
@@ -351,7 +351,7 @@ export const PetProfileContent = ({
 
           <Card className="bg-[#f8f8f8] shadow-md">
             <CardHeader className="pb-3">
-              <CardTitle className="text-lg font-serif text-navy-900 border-b-2 border-gold-500 pb-2">
+              <CardTitle className="text-lg font-bold text-navy-900 border-b-2 border-gold-500 pb-2">
                 📋 CONTACT & IDENTIFICATION
               </CardTitle>
             </CardHeader>
@@ -451,7 +451,7 @@ export const PetProfileContent = ({
 
           <Card className="bg-[#f8f8f8] shadow-md">
             <CardHeader className="pb-3">
-              <CardTitle className="text-lg font-serif text-navy-900 border-b-2 border-gold-500 pb-2">
+              <CardTitle className="text-lg font-bold text-navy-900 border-b-2 border-gold-500 pb-2">
                 ⚡ QUICK ACTIONS
               </CardTitle>
             </CardHeader>

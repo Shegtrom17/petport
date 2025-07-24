@@ -23,12 +23,41 @@ interface DocumentsSectionProps {
 
 export const DocumentsSection = ({ petId, documents, onDocumentDeleted }: DocumentsSectionProps) => {
   const [deletingDocId, setDeletingDocId] = useState<string | null>(null);
+  const [viewingDocId, setViewingDocId] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const { toast } = useToast();
   
   // Refs for the hidden file inputs
   const cameraInputRef = useRef<HTMLInputElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleViewDocument = async (doc: Document) => {
+    setViewingDocId(doc.id);
+    
+    try {
+      // Open document in new tab
+      const newWindow = window.open(doc.file_url, '_blank');
+      
+      if (!newWindow) {
+        throw new Error('Popup blocked or failed to open');
+      }
+      
+      toast({
+        title: "Success",
+        description: `Opening ${doc.name}...`,
+      });
+      
+    } catch (error) {
+      console.error("Error viewing document:", error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to open document. Please try again.",
+      });
+    } finally {
+      setViewingDocId(null);
+    }
+  };
 
   const handleDeleteDocument = async (doc: Document) => {
     setDeletingDocId(doc.id);
@@ -276,10 +305,30 @@ export const DocumentsSection = ({ petId, documents, onDocumentDeleted }: Docume
                     </div>
                   </div>
                   <div className="flex items-center space-x-1 sm:space-x-2 flex-shrink-0">
-                    <Button variant="ghost" size="sm" className="hover:bg-navy-50 text-navy-800 px-1 sm:px-2 text-xs sm:text-sm">
-                      <Eye className="w-3 h-3 sm:w-4 sm:h-4" />
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      className="hover:bg-navy-50 text-navy-800 px-1 sm:px-2 text-xs sm:text-sm"
+                      onClick={() => handleViewDocument(doc)}
+                      disabled={viewingDocId === doc.id}
+                    >
+                      {viewingDocId === doc.id ? (
+                        <Loader2 className="w-3 h-3 sm:w-4 sm:h-4 animate-spin" />
+                      ) : (
+                        <Eye className="w-3 h-3 sm:w-4 sm:h-4" />
+                      )}
                     </Button>
-                    <Button variant="ghost" size="sm" className="hover:bg-navy-50 text-navy-800 px-1 sm:px-2 text-xs sm:text-sm">
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      className="hover:bg-navy-50 text-navy-800 px-1 sm:px-2 text-xs sm:text-sm"
+                      onClick={() => {
+                        const link = document.createElement('a');
+                        link.href = doc.file_url;
+                        link.download = doc.name;
+                        link.click();
+                      }}
+                    >
                       <Download className="w-3 h-3 sm:w-4 sm:h-4" />
                     </Button>
                     <Button 

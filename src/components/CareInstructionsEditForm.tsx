@@ -9,6 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { updateCareInstructions } from "@/services/careInstructionsService";
 import { Clock, Heart, AlertTriangle, Activity, Pill, Loader2 } from "lucide-react";
+import { sanitizeText } from "@/utils/inputSanitizer";
 
 interface CareInstructionsEditFormProps {
   petData: any;
@@ -41,13 +42,13 @@ export const CareInstructionsEditForm = ({ petData, onSave, onCancel }: CareInst
       console.log("Submitting care instructions form with data:", data);
 
       const success = await updateCareInstructions(petData.id, {
-        feedingSchedule: data.feedingSchedule,
-        morningRoutine: data.morningRoutine,
-        eveningRoutine: data.eveningRoutine,
-        allergies: data.allergies,
-        behavioralNotes: data.behavioralNotes,
-        favoriteActivities: data.favoriteActivities,
-        medications: data.medications,
+        feedingSchedule: sanitizeText(data.feedingSchedule),
+        morningRoutine: sanitizeText(data.morningRoutine),
+        eveningRoutine: sanitizeText(data.eveningRoutine),
+        allergies: sanitizeText(data.allergies),
+        behavioralNotes: sanitizeText(data.behavioralNotes),
+        favoriteActivities: sanitizeText(data.favoriteActivities),
+        medications: sanitizeText(data.medications),
       });
 
       if (success) {

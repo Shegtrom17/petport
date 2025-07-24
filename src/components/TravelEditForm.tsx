@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useToast } from "@/hooks/use-toast";
 import { updateTravelLocations } from "@/services/petService";
 import { Plus, Trash2, MapPin } from "lucide-react";
+import { sanitizeText } from "@/utils/inputSanitizer";
 
 interface TravelEditFormProps {
   petData: {
@@ -88,12 +89,12 @@ export const TravelEditForm = ({ petData, onSave, onCancel, mode = 'edit' }: Tra
       const formattedLocations = data.locations
         .filter((location: any) => location.name.trim() !== "")
         .map((location: any) => ({
-          name: location.name,
+          name: sanitizeText(location.name),
           type: location.type,
-          code: location.code || null,
-          dateVisited: location.dateVisited || null,
-          photoUrl: location.photoUrl || null,
-          notes: location.notes || null
+          code: sanitizeText(location.code) || null,
+          dateVisited: sanitizeText(location.dateVisited) || null,
+          photoUrl: sanitizeText(location.photoUrl) || null,
+          notes: sanitizeText(location.notes) || null
         }));
 
       console.log("Saving travel locations:", formattedLocations);
@@ -102,12 +103,12 @@ export const TravelEditForm = ({ petData, onSave, onCancel, mode = 'edit' }: Tra
         // For add mode, merge with existing locations
         const existingLocations = petData.travel_locations || [];
         const allLocations = [...existingLocations.map(loc => ({
-          name: loc.name,
+          name: sanitizeText(loc.name),
           type: loc.type,
-          code: loc.code || null,
-          dateVisited: loc.date_visited || null,
-          photoUrl: loc.photo_url || null,
-          notes: loc.notes || null
+          code: sanitizeText(loc.code) || null,
+          dateVisited: sanitizeText(loc.date_visited) || null,
+          photoUrl: sanitizeText(loc.photo_url) || null,
+          notes: sanitizeText(loc.notes) || null
         })), ...formattedLocations];
         
         const locationSuccess = await updateTravelLocations(petData.id, allLocations);

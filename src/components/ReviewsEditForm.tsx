@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useToast } from "@/hooks/use-toast";
 import { updatePetReviews } from "@/services/petService";
 import { Plus, Trash2, Star, Loader2 } from "lucide-react";
+import { sanitizeText } from "@/utils/inputSanitizer";
 
 interface ReviewsEditFormProps {
   petData: {
@@ -58,10 +59,18 @@ export const ReviewsEditForm = ({ petData, onSave, onCancel }: ReviewsEditFormPr
     try {
       console.log("Submitting reviews data:", data);
       
-      // Filter out empty reviews and ensure required fields
-      const validReviews = data.reviews.filter((review: any) => 
-        review.reviewerName.trim() !== "" && review.rating
-      );
+      // Filter out empty reviews and ensure required fields, sanitize all inputs
+      const validReviews = data.reviews
+        .filter((review: any) => review.reviewerName.trim() !== "" && review.rating)
+        .map((review: any) => ({
+          reviewerName: sanitizeText(review.reviewerName),
+          reviewerContact: sanitizeText(review.reviewerContact) || null,
+          rating: review.rating,
+          text: sanitizeText(review.text) || null,
+          date: sanitizeText(review.date) || null,
+          location: sanitizeText(review.location) || null,
+          type: review.type
+        }));
 
       console.log("Valid reviews to save:", validReviews);
 

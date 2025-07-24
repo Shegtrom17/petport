@@ -10,6 +10,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/context/AuthContext";
 import { updatePetBasicInfo, updatePetContacts } from "@/services/petService";
 import { Loader2 } from "lucide-react";
+import { sanitizeText, validateTextLength, containsSuspiciousContent } from "@/utils/inputSanitizer";
 
 interface PetData {
   id: string;
@@ -66,6 +67,28 @@ export const PetEditForm = ({ petData, onSave, onCancel }: PetEditFormProps) => 
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
+    
+    // Security: Check for suspicious content
+    if (containsSuspiciousContent(value)) {
+      toast({
+        variant: "destructive",
+        title: "Invalid Input",
+        description: "The input contains invalid characters. Please remove any script tags or suspicious content.",
+      });
+      return;
+    }
+    
+    // Security: Validate text length (max 1000 chars for most fields, 5000 for bio/notes)
+    const maxLength = (name === 'bio' || name === 'notes') ? 5000 : 1000;
+    if (!validateTextLength(value, maxLength)) {
+      toast({
+        variant: "destructive", 
+        title: "Input Too Long",
+        description: `${name} must be less than ${maxLength} characters.`,
+      });
+      return;
+    }
+    
     setFormData(prevData => ({
       ...prevData,
       [name]: value
@@ -104,29 +127,29 @@ const handleSubmit = async (e: React.FormEvent) => {
       return;
     }
 
-    // Prepare update data with only changed fields
+    // Prepare update data with only changed fields - sanitize all inputs
     const updateData = {
-      name: formData.name.trim(),
-      breed: formData.breed.trim(),
-      species: formData.species.trim(),
-      age: formData.age.trim(),
-      weight: formData.weight.trim(),
-      microchip_id: formData.microchipId.trim(),
-      bio: formData.bio.trim(),
-      notes: formData.notes.trim(),
-      state: formData.state.trim(),
-      county: formData.county.trim(),
+      name: sanitizeText(formData.name.trim()),
+      breed: sanitizeText(formData.breed.trim()),
+      species: sanitizeText(formData.species.trim()),
+      age: sanitizeText(formData.age.trim()),
+      weight: sanitizeText(formData.weight.trim()),
+      microchip_id: sanitizeText(formData.microchipId.trim()),
+      bio: sanitizeText(formData.bio.trim()),
+      notes: sanitizeText(formData.notes.trim()),
+      state: sanitizeText(formData.state.trim()),
+      county: sanitizeText(formData.county.trim()),
     };
 
     // Call service layer to update pet basic info
     const basicUpdateSuccess = await updatePetBasicInfo(petData.id, updateData);
 
-    // Prepare contact data
+    // Prepare contact data - sanitize all inputs
     const contactData = {
-      vet_contact: formData.vetContact.trim(),
-      emergency_contact: formData.emergencyContact.trim(),
-      second_emergency_contact: formData.secondEmergencyContact.trim(),
-      pet_caretaker: formData.petCaretaker.trim(),
+      vet_contact: sanitizeText(formData.vetContact.trim()),
+      emergency_contact: sanitizeText(formData.emergencyContact.trim()),
+      second_emergency_contact: sanitizeText(formData.secondEmergencyContact.trim()),
+      pet_caretaker: sanitizeText(formData.petCaretaker.trim()),
     };
 
     // Call service layer to update pet contacts

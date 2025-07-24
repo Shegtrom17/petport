@@ -140,7 +140,7 @@ export const PetPDFGenerator = ({ petId, petName }: PetPDFGeneratorProps) => {
             </div>
           </div>
           <div>
-            <h3 className="text-xl font-serif font-bold text-gold-500 tracking-wide border-b-2 border-gold-500 pb-1 mb-2">
+            <h3 className="text-xl font-bold text-gold-500 tracking-wide border-b-2 border-gold-500 pb-1 mb-2">
               OFFICIAL DOCUMENTS
             </h3>
             <p className="text-gold-200 text-sm">Generate and share {petName}'s passport documents</p>
@@ -194,7 +194,7 @@ export const PetPDFGenerator = ({ petId, petName }: PetPDFGeneratorProps) => {
           <div className="absolute top-2 right-2 w-8 h-8 bg-gold-500/20 rounded-full flex items-center justify-center">
             <span className="text-xs font-bold text-gold-600">1</span>
           </div>
-          <h4 className="font-serif font-bold text-navy-900 mb-2 border-b border-gold-500/50 pb-1">🚨 Emergency Profile</h4>
+          <h4 className="font-bold text-navy-900 mb-2 border-b border-gold-500/50 pb-1">🚨 Emergency Profile</h4>
           <p className="text-sm text-navy-600 mb-3">Essential medical and contact information</p>
           <Button 
             onClick={() => showPdfOptions('emergency')}
@@ -214,7 +214,7 @@ export const PetPDFGenerator = ({ petId, petName }: PetPDFGeneratorProps) => {
           <div className="absolute top-2 right-2 w-8 h-8 bg-gold-500/20 rounded-full flex items-center justify-center">
             <span className="text-xs font-bold text-gold-600">2</span>
           </div>
-          <h4 className="font-serif font-bold text-navy-900 mb-2 border-b border-gold-500/50 pb-1">Complete Profile</h4>
+          <h4 className="font-bold text-navy-900 mb-2 border-b border-gold-500/50 pb-1">Complete Profile</h4>
           <p className="text-sm text-navy-600 mb-3">Full passport with all certifications</p>
           <Button 
             onClick={() => showPdfOptions('full')}
@@ -240,7 +240,7 @@ export const PetPDFGenerator = ({ petId, petName }: PetPDFGeneratorProps) => {
       <Dialog open={isOptionsDialogOpen} onOpenChange={setIsOptionsDialogOpen}>
         <DialogContent className="max-w-md bg-[#f8f8f8]">
           <DialogHeader>
-            <DialogTitle className="font-serif text-navy-900 border-b-2 border-gold-500 pb-2">
+            <DialogTitle className="font-bold text-navy-900 border-b-2 border-gold-500 pb-2">
               📋 {selectedPdfType === 'emergency' ? '🚨 Emergency' : 'Complete'} Profile Options
             </DialogTitle>
           </DialogHeader>
@@ -285,7 +285,7 @@ export const PetPDFGenerator = ({ petId, petName }: PetPDFGeneratorProps) => {
             {generatedPdfBlob && !isGenerating && (
               <div className="space-y-4">
                 <div className="bg-white p-4 rounded-lg border border-gold-500/30 shadow-sm">
-                  <h4 className="font-serif font-bold text-navy-900 mb-3">
+                  <h4 className="font-bold text-navy-900 mb-3">
                     {selectedPdfType === 'emergency' ? '🚨 Emergency Profile PDF' : 'Complete Profile PDF'}
                   </h4>
                   <div className="flex flex-col sm:flex-row gap-2 justify-center mb-3">

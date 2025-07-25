@@ -38,11 +38,6 @@ const LostPet = () => {
 
   // Find the pet data
   const currentPet = petId ? pets.find(p => p.id === petId) || selectedPet : selectedPet;
-  
-  // Redirect if no pet found
-  if (!currentPet && pets.length > 0) {
-    return <Navigate to="/" replace />;
-  }
 
   useEffect(() => {
     if (currentPet?.id) {
@@ -50,6 +45,11 @@ const LostPet = () => {
       handleSelectPet(currentPet.id);
     }
   }, [currentPet?.id]);
+
+  // Redirect if no pet found - after all hooks
+  if (!currentPet && pets.length > 0) {
+    return <Navigate to="/" replace />;
+  }
 
   const loadLostPetData = async (petId: string) => {
     try {

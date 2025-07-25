@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { MapPin, Camera, Trophy, Edit, Plus } from "lucide-react";
 import { TravelEditForm } from "@/components/TravelEditForm";
-import { FreeInteractiveMap } from "@/components/FreeInteractiveMap";
+import { EnhancedInteractiveMap } from "@/components/EnhancedInteractiveMap";
 import { fetchPetDetails } from "@/services/petService";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
@@ -26,6 +26,10 @@ interface MapPin {
   lat: number;
   lng: number;
   petId: string;
+  title?: string;
+  description?: string;
+  category?: string;
+  travel_location_id?: string;
   createdAt: string;
 }
 
@@ -74,6 +78,10 @@ export const TravelMapSection = ({ petData, onUpdate }: TravelMapSectionProps) =
         lat: pin.latitude,
         lng: pin.longitude,
         petId: pin.pet_id,
+        title: pin.title,
+        description: pin.description,
+        category: pin.category,
+        travel_location_id: pin.travel_location_id,
         createdAt: pin.created_at
       }));
 
@@ -228,8 +236,8 @@ export const TravelMapSection = ({ petData, onUpdate }: TravelMapSectionProps) =
         </DialogContent>
       </Dialog>
 
-      {/* Enhanced Free Interactive Map */}
-      <FreeInteractiveMap 
+      {/* Enhanced Interactive Map */}
+      <EnhancedInteractiveMap 
         petId={petData.id}
         petName={petData.name}
         pins={mapPins}

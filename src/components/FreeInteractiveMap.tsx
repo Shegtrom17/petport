@@ -13,6 +13,10 @@ interface MapPin {
   lat: number;
   lng: number;
   petId: string;
+  title?: string;
+  description?: string;
+  category?: string;
+  travel_location_id?: string;
   createdAt: string;
 }
 

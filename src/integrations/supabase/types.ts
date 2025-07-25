@@ -244,25 +244,40 @@ export type Database = {
       }
       map_pins: {
         Row: {
+          category: string | null
           created_at: string | null
+          description: string | null
           id: string
           latitude: number
           longitude: number
           pet_id: string
+          title: string | null
+          travel_location_id: string | null
+          updated_at: string | null
         }
         Insert: {
+          category?: string | null
           created_at?: string | null
+          description?: string | null
           id?: string
           latitude: number
           longitude: number
           pet_id: string
+          title?: string | null
+          travel_location_id?: string | null
+          updated_at?: string | null
         }
         Update: {
+          category?: string | null
           created_at?: string | null
+          description?: string | null
           id?: string
           latitude?: number
           longitude?: number
           pet_id?: string
+          title?: string | null
+          travel_location_id?: string | null
+          updated_at?: string | null
         }
         Relationships: [
           {
@@ -270,6 +285,13 @@ export type Database = {
             columns: ["pet_id"]
             isOneToOne: false
             referencedRelation: "pets"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "map_pins_travel_location_id_fkey"
+            columns: ["travel_location_id"]
+            isOneToOne: false
+            referencedRelation: "travel_locations"
             referencedColumns: ["id"]
           },
         ]

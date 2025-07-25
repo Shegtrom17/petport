@@ -68,4 +68,18 @@
   body {
     @apply bg-background text-foreground;
   }
+
+  /* Emergency/Alert Colors */
+  :root {
+    --emergency: 0 84% 60%;
+    --emergency-foreground: 0 0% 98%;
+    --alert: 16 100% 66%;
+    --alert-foreground: 0 0% 98%;
+    --missing: 0 72% 51%;
+    --missing-foreground: 0 0% 98%;
+    
+    /* Gradients */
+    --gradient-emergency: linear-gradient(135deg, hsl(var(--emergency)), hsl(var(--missing)));
+    --gradient-alert: linear-gradient(135deg, hsl(var(--alert)), hsl(var(--emergency)));
+  }
 }

@@ -46,6 +46,8 @@ serve(async (req) => {
     // Parse request body
     const { petId, type = 'emergency' } = await req.json()
 
+    console.log(`Generating PDF for pet ${petId}, type: ${type}`)
+
     if (!petId) {
       return new Response(
         JSON.stringify({ error: 'Pet ID is required' }),
@@ -75,7 +77,8 @@ serve(async (req) => {
         training (course, facility, phone, completed),
         reviews (reviewer_name, rating, text, date, location, type),
         travel_locations (name, type, code, date_visited, notes),
-        documents (name, type, file_url, size)
+        documents (name, type, file_url, size),
+        lost_pet_data (is_missing, last_seen_location, last_seen_date, last_seen_time, distinctive_features, reward_amount, finder_instructions, emergency_notes)
       `)
       .eq('id', petId)
       .single()
@@ -104,6 +107,7 @@ serve(async (req) => {
     const regularFont = await pdfDoc.embedFont(StandardFonts.Helvetica)
     
     const isEmergency = type === 'emergency'
+    const isLostPet = type === 'lost_pet'
     
     // Colors
     const titleColor = rgb(0.12, 0.23, 0.54) // Navy blue
@@ -113,14 +117,44 @@ serve(async (req) => {
     
     let yPosition = height - 60
     
-    // Header
-    page.drawText(isEmergency ? 'EMERGENCY PET IDENTIFICATION' : 'OFFICIAL PET PASSPORT', {
-      x: 50,
-      y: yPosition,
-      size: 20,
-      font: boldFont,
-      color: titleColor,
-    })
+    // Header - Special handling for lost pet
+    if (isLostPet) {
+      // Red emergency banner for lost pets
+      page.drawRectangle({
+        x: 0,
+        y: height - 100,
+        width: width,
+        height: 100,
+        color: rgb(0.9, 0, 0),
+      })
+      
+      page.drawText('🚨 MISSING PET ALERT 🚨', {
+        x: width / 2 - 120,
+        y: height - 40,
+        size: 24,
+        font: boldFont,
+        color: rgb(1, 1, 1),
+      })
+      
+      page.drawText(`${petData.name} - ${petData.breed || 'Pet'}`, {
+        x: width / 2 - 100,
+        y: height - 70,
+        size: 18,
+        font: boldFont,
+        color: rgb(1, 1, 1),
+      })
+      
+      yPosition = height - 120
+    } else {
+      // Standard header
+      page.drawText(isEmergency ? 'EMERGENCY PET IDENTIFICATION' : 'OFFICIAL PET PASSPORT', {
+        x: 50,
+        y: yPosition,
+        size: 20,
+        font: boldFont,
+        color: titleColor,
+      })
+    }
     
     yPosition -= 30
     

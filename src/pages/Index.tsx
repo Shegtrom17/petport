@@ -10,6 +10,7 @@ import { TravelMapSection } from "@/components/TravelMapSection";
 import { DocumentsSection } from "@/components/DocumentsSection";
 import { PetGallerySection } from "@/components/PetGallerySection";
 import { InAppSharingModal } from "@/components/InAppSharingModal";
+import LostPet from "./LostPet";
 import { useAuth } from "@/context/AuthContext";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { PetHeader } from "@/components/PetHeader";
@@ -186,6 +187,9 @@ const Index = () => {
       case "quickid":
         console.log("Rendering QuickIDSection");
         return <QuickIDSection petData={petData} />;
+      case "lostpet":
+        console.log("Rendering LostPet");
+        return <LostPet />;
       default:
         return <div>Tab not found</div>;
     }

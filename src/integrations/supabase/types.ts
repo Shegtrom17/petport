@@ -242,6 +242,54 @@ export type Database = {
           },
         ]
       }
+      lost_pet_data: {
+        Row: {
+          contact_priority: string | null
+          created_at: string
+          distinctive_features: string | null
+          emergency_notes: string | null
+          finder_instructions: string | null
+          id: string
+          is_missing: boolean
+          last_seen_date: string | null
+          last_seen_location: string | null
+          last_seen_time: string | null
+          pet_id: string
+          reward_amount: string | null
+          updated_at: string
+        }
+        Insert: {
+          contact_priority?: string | null
+          created_at?: string
+          distinctive_features?: string | null
+          emergency_notes?: string | null
+          finder_instructions?: string | null
+          id?: string
+          is_missing?: boolean
+          last_seen_date?: string | null
+          last_seen_location?: string | null
+          last_seen_time?: string | null
+          pet_id: string
+          reward_amount?: string | null
+          updated_at?: string
+        }
+        Update: {
+          contact_priority?: string | null
+          created_at?: string
+          distinctive_features?: string | null
+          emergency_notes?: string | null
+          finder_instructions?: string | null
+          id?: string
+          is_missing?: boolean
+          last_seen_date?: string | null
+          last_seen_location?: string | null
+          last_seen_time?: string | null
+          pet_id?: string
+          reward_amount?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       map_pins: {
         Row: {
           category: string | null
@@ -653,6 +701,21 @@ export type Database = {
       }
       handle_gallery_photo_upload: {
         Args: { _pet_id: string; _url: string; _caption?: string }
+        Returns: string
+      }
+      handle_lost_pet_data_upsert: {
+        Args: {
+          _pet_id: string
+          _is_missing?: boolean
+          _last_seen_location?: string
+          _last_seen_date?: string
+          _last_seen_time?: string
+          _distinctive_features?: string
+          _reward_amount?: string
+          _finder_instructions?: string
+          _contact_priority?: string
+          _emergency_notes?: string
+        }
         Returns: string
       }
       handle_photo_upload: {

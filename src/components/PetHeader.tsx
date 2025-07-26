@@ -10,9 +10,10 @@ import worldMapOutline from "@/assets/world-map-outline.png";
 interface PetHeaderProps {
   activeTab: string;
   onTabChange: (tab: string) => void;
+  selectedPetId?: string;
 }
 
-export const PetHeader = ({ activeTab, onTabChange }: PetHeaderProps) => {
+export const PetHeader = ({ activeTab, onTabChange, selectedPetId }: PetHeaderProps) => {
   const navigate = useNavigate();
   const { signOut, user } = useAuth();
 
@@ -61,7 +62,10 @@ export const PetHeader = ({ activeTab, onTabChange }: PetHeaderProps) => {
           <div className="flex items-center space-x-1 sm:space-x-2 md:space-x-3 flex-shrink-0">
             {user ? (
               <>
-                <LostPetButton className="text-xs sm:text-sm px-2 sm:px-3 py-1 sm:py-2" />
+                <LostPetButton 
+                  petId={selectedPetId} 
+                  className="text-xs sm:text-sm px-2 sm:px-3 py-1 sm:py-2" 
+                />
                 <Button 
                   className="bg-gradient-to-r from-navy-900 to-navy-800 hover:from-navy-800 hover:to-navy-700 text-gold-500 border border-gold-500/30 text-xs sm:text-sm px-2 sm:px-3 py-1 sm:py-2 whitespace-nowrap"
                   onClick={() => navigate('/add-pet')}

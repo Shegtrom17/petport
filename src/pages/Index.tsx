@@ -207,7 +207,11 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
-      <PetHeader activeTab={activeTab} onTabChange={setActiveTab} />
+      <PetHeader 
+        activeTab={activeTab} 
+        onTabChange={setActiveTab} 
+        selectedPetId={selectedPet?.id || petData.id}
+      />
 
       <InAppSharingModal
         isOpen={isInAppSharingOpen}

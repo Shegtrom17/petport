@@ -16,8 +16,7 @@ export const NavigationTabs = ({ activeTab, onTabChange, isMobile = false }: Nav
     { id: "resume", label: "CREDENTIALS & HISTORY", icon: Badge },
     { id: "travel", label: "GLOBAL JOURNEYS", icon: MapPin },
     { id: "gallery", label: "PORTRAIT GALLERY", icon: Camera },
-    { id: "quickid", label: "EMERGENCY ID", icon: Shield },
-    { id: "lostpet", label: "LOST PET ALERT", icon: Search },
+    { id: "quickid", label: "LOST PET", icon: Shield },
   ];
 
   if (isMobile) {

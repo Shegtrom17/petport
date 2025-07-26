@@ -4,12 +4,13 @@ import { supabase } from "@/integrations/supabase/client";
 export interface PDFGenerationResult {
   success: boolean;
   pdfBlob?: Blob;
+  blob?: Blob; // Alias for compatibility
   fileName?: string;
   error?: string;
   type?: string;
 }
 
-export async function generatePetPDF(petId: string, type: 'emergency' | 'full' = 'emergency'): Promise<PDFGenerationResult> {
+export async function generatePetPDF(petId: string, type: 'emergency' | 'full' | 'lost_pet' = 'emergency'): Promise<PDFGenerationResult> {
   try {
     console.log('🔧 CLIENT: Starting PDF generation for pet:', petId, 'type:', type)
     
@@ -64,6 +65,7 @@ export async function generatePetPDF(petId: string, type: 'emergency' | 'full' =
       return {
         success: true,
         pdfBlob,
+        blob: pdfBlob, // Add alias for compatibility
         fileName,
         type
       };
@@ -90,6 +92,7 @@ export async function generatePetPDF(petId: string, type: 'emergency' | 'full' =
     return {
       success: true,
       pdfBlob,
+      blob: pdfBlob, // Add alias for compatibility
       fileName,
       type
     };
@@ -186,6 +189,7 @@ export function generatePublicProfileUrl(petId: string): string {
 export interface ShareResult {
   success: boolean;
   shared: boolean; // true if actually shared, false if copied to clipboard
+  message?: string; // Add message for compatibility
   error?: string;
 }
 
@@ -199,7 +203,7 @@ export async function shareProfile(url: string, title: string, description: stri
         url: url,
       });
       console.log('Content shared successfully via native share');
-      return { success: true, shared: true };
+      return { success: true, shared: true, message: 'Shared successfully' };
     } catch (error: any) {
       console.error('Native sharing failed:', error);
       
@@ -221,7 +225,7 @@ async function fallbackToClipboard(url: string): Promise<ShareResult> {
   try {
     await navigator.clipboard.writeText(url);
     console.log('Link copied to clipboard');
-    return { success: true, shared: false };
+    return { success: true, shared: false, message: 'Link copied to clipboard' };
   } catch (error) {
     console.error('Failed to copy to clipboard:', error);
     return { success: false, shared: false, error: 'Unable to copy link' };

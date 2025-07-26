@@ -77,12 +77,11 @@ serve(async (req) => {
         training (course, facility, phone, completed),
         reviews (reviewer_name, rating, text, date, location, type),
         travel_locations (name, type, code, date_visited, notes),
-        documents (name, type, file_url, size)
+        documents (name, type, file_url, size),
+        lost_pet_data (is_missing, last_seen_location, last_seen_date, last_seen_time, distinctive_features, reward_amount, finder_instructions, emergency_notes)
       `)
       .eq('id', petId)
       .single()
-
-    // Note: Lost pet data functionality will be added after migration is completed
 
     if (fetchError || !petData) {
       console.error('Error fetching pet data:', fetchError)

@@ -16,6 +16,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { SocialShareButtons } from "@/components/SocialShareButtons";
 import { PetPDFGenerator } from "@/components/PetPDFGenerator";
+import { LostPetPDFGenerator } from "@/components/LostPetPDFGenerator";
 
 const LostPet = () => {
   const { petId } = useParams();
@@ -490,13 +491,29 @@ const LostPet = () => {
         {/* PDF Generation */}
         <Card className="bg-white shadow-xl">
           <CardHeader>
-            <CardTitle className="text-xl">Professional Lost Pet Materials</CardTitle>
+            <CardTitle className="text-xl">Missing Pet Flyer & Documents</CardTitle>
+            <p className="text-sm text-muted-foreground">Generate professional documents to help find your pet</p>
           </CardHeader>
-          <CardContent>
-            <PetPDFGenerator 
-              petId={currentPet.id || ""} 
-              petName={currentPet.name} 
-            />
+          <CardContent className="space-y-4">
+            {/* Lost Pet Flyer - Primary action */}
+            <div className="bg-red-50 border-2 border-red-200 p-4 rounded-lg">
+              <h3 className="font-semibold text-red-800 mb-2">🚨 Missing Pet Flyer</h3>
+              <p className="text-sm text-red-700 mb-3">Generate a comprehensive flyer with all essential information for finding your pet</p>
+              <LostPetPDFGenerator 
+                petId={currentPet.id || ""} 
+                petName={currentPet.name}
+                isActive={lostPetData.is_missing}
+              />
+            </div>
+            
+            {/* Standard Documents */}
+            <div className="border-t pt-4">
+              <h3 className="font-semibold mb-2">Standard Pet Documents</h3>
+              <PetPDFGenerator 
+                petId={currentPet.id || ""} 
+                petName={currentPet.name} 
+              />
+            </div>
           </CardContent>
         </Card>
 

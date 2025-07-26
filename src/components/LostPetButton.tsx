@@ -38,7 +38,7 @@ export const LostPetButton = ({ petId, isMissing = false, className = "" }: Lost
     try {
       setIsGenerating(true);
       
-      const result = await generatePetPDF(petId, 'emergency');
+      const result = await generatePetPDF(petId, 'lost_pet');
       
       if (result.success && result.blob) {
         await downloadPDFBlob(result.blob, result.fileName);

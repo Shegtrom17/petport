@@ -58,10 +58,10 @@ serve(async (req) => {
       )
     }
 
-    if (type && !['emergency', 'full'].includes(type)) {
+    if (type && !['emergency', 'full', 'lost_pet'].includes(type)) {
       return new Response(
         JSON.stringify({ 
-          error: 'Type must be either "emergency" or "full"',
+          error: 'Type must be either "emergency", "full", or "lost_pet"',
           pdfBytes: null,
           filename: null 
         }),
@@ -91,7 +91,10 @@ serve(async (req) => {
         training (course, facility, phone, completed),
         reviews (reviewer_name, rating, text, date, location, type),
         travel_locations (name, type, code, date_visited, notes),
-        documents (name, type, file_url, size)
+        documents (name, type, file_url, size),
+        lost_pet_data (is_missing, last_seen_location, last_seen_date, last_seen_time, distinctive_features, reward_amount, finder_instructions, contact_priority, emergency_notes),
+        pet_photos (photo_url, full_body_photo_url),
+        gallery_photos (url, caption)
       `)
       .eq('id', petId)
       .single()
@@ -124,14 +127,270 @@ serve(async (req) => {
     const regularFont = await pdfDoc.embedFont(StandardFonts.Helvetica)
     
     const isEmergency = type === 'emergency'
+    const isLostPetFlyer = type === 'lost_pet'
     
     // Colors
     const titleColor = rgb(0.12, 0.23, 0.54) // Navy blue
     const goldColor = rgb(0.83, 0.69, 0.22) // Gold
     const redColor = rgb(0.86, 0.15, 0.15) // Red for emergencies
     const blackColor = rgb(0, 0, 0)
+    const whiteColor = rgb(1, 1, 1)
     
     let yPosition = height - 60
+    
+    // MISSING PET FLYER LAYOUT
+    if (isLostPetFlyer) {
+      // Large MISSING banner
+      page.drawRectangle({
+        x: 0,
+        y: height - 100,
+        width: width,
+        height: 100,
+        color: redColor,
+      })
+      
+      page.drawText('MISSING PET', {
+        x: width / 2 - 120,
+        y: height - 60,
+        size: 36,
+        font: boldFont,
+        color: whiteColor,
+      })
+      
+      yPosition = height - 120
+      
+      // Pet basic info in large text
+      page.drawText(`${petData.name} - ${petData.breed} ${petData.species}`, {
+        x: 50,
+        y: yPosition,
+        size: 20,
+        font: boldFont,
+        color: blackColor,
+      })
+      
+      yPosition -= 40
+      
+      // Missing pet specific information
+      if (petData.lost_pet_data && petData.lost_pet_data.length > 0) {
+        const lostData = petData.lost_pet_data[0]
+        
+        if (lostData.last_seen_location) {
+          page.drawText('LAST SEEN:', {
+            x: 50,
+            y: yPosition,
+            size: 16,
+            font: boldFont,
+            color: redColor,
+          })
+          
+          page.drawText(lostData.last_seen_location, {
+            x: 150,
+            y: yPosition,
+            size: 14,
+            font: regularFont,
+            color: blackColor,
+          })
+          
+          yPosition -= 30
+        }
+        
+        if (lostData.last_seen_date) {
+          const date = new Date(lostData.last_seen_date).toLocaleDateString()
+          page.drawText(`Date: ${date}`, {
+            x: 50,
+            y: yPosition,
+            size: 14,
+            font: boldFont,
+            color: blackColor,
+          })
+          
+          if (lostData.last_seen_time) {
+            page.drawText(`Time: ${lostData.last_seen_time}`, {
+              x: 250,
+              y: yPosition,
+              size: 14,
+              font: boldFont,
+              color: blackColor,
+            })
+          }
+          
+          yPosition -= 30
+        }
+        
+        if (lostData.distinctive_features) {
+          page.drawText('DISTINCTIVE FEATURES:', {
+            x: 50,
+            y: yPosition,
+            size: 14,
+            font: boldFont,
+            color: blackColor,
+          })
+          
+          yPosition -= 20
+          
+          page.drawText(lostData.distinctive_features, {
+            x: 50,
+            y: yPosition,
+            size: 12,
+            font: regularFont,
+            color: blackColor,
+          })
+          
+          yPosition -= 30
+        }
+        
+        if (lostData.reward_amount) {
+          page.drawText('REWARD:', {
+            x: 50,
+            y: yPosition,
+            size: 16,
+            font: boldFont,
+            color: redColor,
+          })
+          
+          page.drawText(lostData.reward_amount, {
+            x: 130,
+            y: yPosition,
+            size: 16,
+            font: boldFont,
+            color: redColor,
+          })
+          
+          yPosition -= 40
+        }
+      }
+      
+      // Pet details for identification
+      const petDetails = [
+        { label: 'Species:', value: petData.species || '' },
+        { label: 'Breed:', value: petData.breed || '' },
+        { label: 'Age:', value: petData.age || '' },
+        { label: 'Weight:', value: petData.weight || '' },
+        { label: 'Microchip:', value: petData.microchip_id || '' },
+      ]
+      
+      page.drawText('PET DETAILS:', {
+        x: 50,
+        y: yPosition,
+        size: 14,
+        font: boldFont,
+        color: blackColor,
+      })
+      
+      yPosition -= 25
+      
+      for (const detail of petDetails) {
+        if (detail.value) {
+          page.drawText(`${detail.label} ${detail.value}`, {
+            x: 50,
+            y: yPosition,
+            size: 12,
+            font: regularFont,
+            color: blackColor,
+          })
+          
+          yPosition -= 20
+        }
+      }
+      
+      yPosition -= 20
+      
+      // Emergency contacts in large bold text
+      if (petData.contacts) {
+        page.drawText('PLEASE CONTACT:', {
+          x: 50,
+          y: yPosition,
+          size: 16,
+          font: boldFont,
+          color: redColor,
+        })
+        
+        yPosition -= 30
+        
+        const contactDetails = [
+          { label: 'PRIMARY:', value: petData.contacts.emergency_contact },
+          { label: 'SECONDARY:', value: petData.contacts.second_emergency_contact },
+          { label: 'VET:', value: petData.contacts.vet_contact },
+        ]
+        
+        for (const contact of contactDetails) {
+          if (contact.value) {
+            page.drawText(contact.label, {
+              x: 50,
+              y: yPosition,
+              size: 14,
+              font: boldFont,
+              color: blackColor,
+            })
+            
+            page.drawText(contact.value, {
+              x: 150,
+              y: yPosition,
+              size: 14,
+              font: boldFont,
+              color: blackColor,
+            })
+            
+            yPosition -= 25
+          }
+        }
+      }
+      
+      // Medical alert if applicable
+      if (petData.medical?.medical_alert) {
+        yPosition -= 20
+        
+        page.drawRectangle({
+          x: 40,
+          y: yPosition - 10,
+          width: width - 80,
+          height: 40,
+          color: redColor,
+        })
+        
+        page.drawText('⚠️ MEDICAL ALERT - NEEDS MEDICATION', {
+          x: 50,
+          y: yPosition,
+          size: 16,
+          font: boldFont,
+          color: whiteColor,
+        })
+        
+        yPosition -= 50
+        
+        if (petData.medical.medical_conditions) {
+          page.drawText(petData.medical.medical_conditions, {
+            x: 50,
+            y: yPosition,
+            size: 12,
+            font: boldFont,
+            color: blackColor,
+          })
+          
+          yPosition -= 30
+        }
+      }
+      
+      // Footer for flyer
+      yPosition = 80
+      page.drawText('Do not chase - may run further. Please call immediately if seen.', {
+        x: 50,
+        y: yPosition,
+        size: 12,
+        font: boldFont,
+        color: redColor,
+      })
+      
+      yPosition -= 30
+      page.drawText(`Pet ID: ${petData.petport_id || 'N/A'} | Generated: ${new Date().toLocaleDateString()}`, {
+        x: 50,
+        y: yPosition,
+        size: 10,
+        font: regularFont,
+        color: blackColor,
+      })
+      
+    } else {
     
     // Header
     page.drawText(isEmergency ? 'EMERGENCY PET IDENTIFICATION' : 'OFFICIAL PET PASSPORT', {

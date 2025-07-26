@@ -1024,6 +1024,8 @@ serve(async (req) => {
       color: goldColor,
     })
 
+    } // Close the else block for non-lost-pet PDFs
+
     // Save the PDF as bytes
     const pdfBytes = await pdfDoc.save()
     

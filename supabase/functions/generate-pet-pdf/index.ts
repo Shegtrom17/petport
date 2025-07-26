@@ -263,7 +263,7 @@ serve(async (req) => {
       yPosition -= 30
 
       if (petData.medical.medical_alert) {
-        page.drawText('⚠️ MEDICAL ALERT', {
+        page.drawText('! MEDICAL ALERT', {
           x: 50,
           y: yPosition,
           size: 14,

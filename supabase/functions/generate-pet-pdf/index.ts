@@ -9,19 +9,18 @@ const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-  'Access-Control-Allow-Methods': 'POST, GET, OPTIONS, PUT, DELETE',
 }
 
 serve(async (req) => {
-  // Handle CORS preflight
+  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
-    return new Response('ok', { headers: corsHeaders })
+    return new Response(null, { headers: corsHeaders });
   }
 
   try {
     // Validate environment variables
     if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
-      console.error('Missing environment variables')
+      console.error('Missing required environment variables')
       return new Response(
         JSON.stringify({ error: 'Service configuration error' }), 
         { 
@@ -42,14 +41,16 @@ serve(async (req) => {
       )
     }
 
-    // Parse request body
+    // Parse the request body to get petId and type (emergency or full)
     const { petId, type = 'emergency' } = await req.json()
-
-    console.log(`Generating PDF for pet ${petId}, type: ${type}`)
-
+    
     if (!petId) {
       return new Response(
-        JSON.stringify({ error: 'Pet ID is required' }),
+        JSON.stringify({ 
+          error: 'Pet ID is required',
+          pdfBytes: null,
+          filename: null 
+        }),
         { 
           status: 400, 
           headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
@@ -57,9 +58,13 @@ serve(async (req) => {
       )
     }
 
-    if (type && !['emergency', 'full', 'lost_pet'].includes(type)) {
+    if (type && !['emergency', 'full'].includes(type)) {
       return new Response(
-        JSON.stringify({ error: 'Type must be emergency, full, or lost_pet' }),
+        JSON.stringify({ 
+          error: 'Type must be either "emergency" or "full"',
+          pdfBytes: null,
+          filename: null 
+        }),
         { 
           status: 400, 
           headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
@@ -86,10 +91,7 @@ serve(async (req) => {
         training (course, facility, phone, completed),
         reviews (reviewer_name, rating, text, date, location, type),
         travel_locations (name, type, code, date_visited, notes),
-        documents (name, type, file_url, size),
-        lost_pet_data (is_missing, last_seen_location, last_seen_date, last_seen_time, distinctive_features, reward_amount, finder_instructions, emergency_notes),
-        pet_photos (photo_url, full_body_photo_url),
-        gallery_photos (url, caption)
+        documents (name, type, file_url, size)
       `)
       .eq('id', petId)
       .single()
@@ -97,7 +99,11 @@ serve(async (req) => {
     if (fetchError || !petData) {
       console.error('Error fetching pet data:', fetchError)
       return new Response(
-        JSON.stringify({ error: 'Pet not found' }),
+        JSON.stringify({ 
+          error: 'Pet not found',
+          pdfBytes: null,
+          filename: null 
+        }),
         { 
           status: 404, 
           headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
@@ -106,6 +112,7 @@ serve(async (req) => {
     }
 
     console.log('Pet data fetched successfully:', petData.name)
+    console.log('Care instructions data:', JSON.stringify(petData.care_instructions, null, 2))
 
     // Generate PDF using pdf-lib
     const pdfDoc = await PDFDocument.create()
@@ -117,7 +124,6 @@ serve(async (req) => {
     const regularFont = await pdfDoc.embedFont(StandardFonts.Helvetica)
     
     const isEmergency = type === 'emergency'
-    const isLostPet = type === 'lost_pet'
     
     // Colors
     const titleColor = rgb(0.12, 0.23, 0.54) // Navy blue
@@ -127,44 +133,14 @@ serve(async (req) => {
     
     let yPosition = height - 60
     
-    // Header - Special handling for lost pet
-    if (isLostPet) {
-      // Red emergency banner for lost pets
-      page.drawRectangle({
-        x: 0,
-        y: height - 100,
-        width: width,
-        height: 100,
-        color: rgb(0.9, 0, 0),
-      })
-      
-      page.drawText('🚨 MISSING PET ALERT 🚨', {
-        x: width / 2 - 120,
-        y: height - 40,
-        size: 24,
-        font: boldFont,
-        color: rgb(1, 1, 1),
-      })
-      
-      page.drawText(`${petData.name} - ${petData.breed || 'Pet'}`, {
-        x: width / 2 - 100,
-        y: height - 70,
-        size: 18,
-        font: boldFont,
-        color: rgb(1, 1, 1),
-      })
-      
-      yPosition = height - 120
-    } else {
-      // Standard header
-      page.drawText(isEmergency ? 'EMERGENCY PET IDENTIFICATION' : 'OFFICIAL PET PASSPORT', {
-        x: 50,
-        y: yPosition,
-        size: 20,
-        font: boldFont,
-        color: titleColor,
-      })
-    }
+    // Header
+    page.drawText(isEmergency ? 'EMERGENCY PET IDENTIFICATION' : 'OFFICIAL PET PASSPORT', {
+      x: 50,
+      y: yPosition,
+      size: 20,
+      font: boldFont,
+      color: titleColor,
+    })
     
     yPosition -= 30
     
@@ -181,6 +157,7 @@ serve(async (req) => {
     
     yPosition -= 50
 
+    
     // Pet Information Section
     page.drawText('PET INFORMATION', {
       x: 50,
@@ -200,10 +177,6 @@ serve(async (req) => {
       { label: 'Age:', value: petData.age || '' },
       { label: 'Weight:', value: petData.weight || '' },
     ]
-    
-    if (petData.microchip_id) {
-      petDetails.push({ label: 'Microchip ID:', value: petData.microchip_id })
-    }
     
     if (petData.professional_data?.support_animal_status) {
       petDetails.push({ label: 'Status:', value: petData.professional_data.support_animal_status })
@@ -343,73 +316,7 @@ serve(async (req) => {
       }
     }
 
-    // Lost Pet Specific Information
-    if (isLostPet && petData.lost_pet_data) {
-      yPosition -= 20
-      
-      page.drawText('MISSING PET DETAILS', {
-        x: 50,
-        y: yPosition,
-        size: 16,
-        font: boldFont,
-        color: redColor,
-      })
-      
-      yPosition -= 30
-
-      const lostDetails = [
-        { label: 'Last Seen Location:', value: petData.lost_pet_data.last_seen_location },
-        { label: 'Last Seen Date:', value: petData.lost_pet_data.last_seen_date ? new Date(petData.lost_pet_data.last_seen_date).toLocaleDateString() : null },
-        { label: 'Last Seen Time:', value: petData.lost_pet_data.last_seen_time },
-        { label: 'Distinctive Features:', value: petData.lost_pet_data.distinctive_features },
-        { label: 'Reward Offered:', value: petData.lost_pet_data.reward_amount },
-      ]
-      
-      for (const detail of lostDetails) {
-        if (detail.value) {
-          page.drawText(`${detail.label}`, {
-            x: 50,
-            y: yPosition,
-            size: 12,
-            font: boldFont,
-            color: blackColor,
-          })
-          
-          page.drawText(detail.value, {
-            x: 200,
-            y: yPosition,
-            size: 12,
-            font: regularFont,
-            color: blackColor,
-          })
-          
-          yPosition -= 20
-        }
-      }
-
-      if (petData.lost_pet_data.finder_instructions) {
-        yPosition -= 10
-        page.drawText('If Found - Instructions:', {
-          x: 50,
-          y: yPosition,
-          size: 12,
-          font: boldFont,
-          color: redColor,
-        })
-        
-        page.drawText(petData.lost_pet_data.finder_instructions, {
-          x: 50,
-          y: yPosition - 15,
-          size: 11,
-          font: regularFont,
-          color: blackColor,
-        })
-        
-        yPosition -= 40
-      }
-    }
-
-    // Bio section (for non-emergency PDFs or lost pet with space)
+    // Bio section (for non-emergency PDFs)
     if (!isEmergency && petData.bio) {
       yPosition -= 20
       
@@ -432,6 +339,13 @@ serve(async (req) => {
       })
       
       yPosition -= 40
+    }
+
+    // Dynamically add new pages if content overflows (for full profiles)
+    if (type === 'full' && yPosition < 150) {
+      // Add a new page if we're running out of space
+      const newPage = pdfDoc.addPage([612, 792])
+      yPosition = height - 60 // Reset position for new page
     }
 
     // Care Instructions (for full profiles)
@@ -467,42 +381,370 @@ serve(async (req) => {
             color: blackColor,
           })
           
-          // Handle longer text with wrapping
-          const maxWidth = 400
-          const words = detail.value.split(' ')
-          let line = ''
-          let lineY = yPosition - 15
-          
-          for (const word of words) {
-            const testLine = line + (line ? ' ' : '') + word
-            if (testLine.length * 6 > maxWidth && line) {
-              page.drawText(line, {
+          // Handle longer text with basic wrapping
+          const maxChars = 70
+          if (detail.value.length > maxChars) {
+            const words = detail.value.split(' ')
+            let line = ''
+            let lineNumber = 0
+            
+            for (const word of words) {
+              if ((line + word).length > maxChars) {
+                page.drawText(line, {
+                  x: 50,
+                  y: yPosition - 15 - (lineNumber * 12),
+                  size: 11,
+                  font: regularFont,
+                  color: blackColor,
+                })
+                line = word + ' '
+                lineNumber++
+              } else {
+                line += word + ' '
+              }
+            }
+            
+            if (line.trim()) {
+              page.drawText(line.trim(), {
                 x: 50,
-                y: lineY,
+                y: yPosition - 15 - (lineNumber * 12),
                 size: 11,
                 font: regularFont,
                 color: blackColor,
               })
-              line = word
-              lineY -= 15
-            } else {
-              line = testLine
+              lineNumber++
             }
-          }
-          
-          if (line) {
-            page.drawText(line, {
+            
+            yPosition -= 15 + (lineNumber * 12) + 10
+          } else {
+            page.drawText(detail.value, {
               x: 50,
-              y: lineY,
+              y: yPosition - 15,
               size: 11,
               font: regularFont,
               color: blackColor,
             })
+            yPosition -= 30
           }
-          
-          yPosition = lineY - 25
         }
       }
+    }
+
+    // Training Records (for full profiles)
+    if (type === 'full' && petData.training && petData.training.length > 0) {
+      yPosition -= 20
+      
+      page.drawText('TRAINING RECORDS', {
+        x: 50,
+        y: yPosition,
+        size: 16,
+        font: boldFont,
+        color: titleColor,
+      })
+      
+      yPosition -= 30
+      
+      petData.training.forEach((training: any) => {
+        page.drawText(`Course: ${training.course}`, {
+          x: 50,
+          y: yPosition,
+          size: 12,
+          font: boldFont,
+          color: blackColor,
+        })
+        yPosition -= 15
+        
+        if (training.facility) {
+          page.drawText(`Facility: ${training.facility}`, {
+            x: 50,
+            y: yPosition,
+            size: 11,
+            font: regularFont,
+            color: blackColor,
+          })
+          yPosition -= 15
+        }
+        
+        if (training.completed) {
+          page.drawText(`Completed: ${training.completed}`, {
+            x: 50,
+            y: yPosition,
+            size: 11,
+            font: regularFont,
+            color: blackColor,
+          })
+          yPosition -= 15
+        }
+        
+        yPosition -= 10
+      })
+    }
+
+    // Achievements (for full profiles)
+    if (type === 'full' && petData.achievements && petData.achievements.length > 0) {
+      yPosition -= 20
+      
+      page.drawText('ACHIEVEMENTS', {
+        x: 50,
+        y: yPosition,
+        size: 16,
+        font: boldFont,
+        color: titleColor,
+      })
+      
+      yPosition -= 30
+      
+      petData.achievements.forEach((achievement: any) => {
+        page.drawText(`🏆 ${achievement.title}`, {
+          x: 50,
+          y: yPosition,
+          size: 12,
+          font: boldFont,
+          color: blackColor,
+        })
+        yPosition -= 15
+        
+        if (achievement.description) {
+          page.drawText(achievement.description, {
+            x: 50,
+            y: yPosition,
+            size: 11,
+            font: regularFont,
+            color: blackColor,
+          })
+          yPosition -= 15
+        }
+        
+        yPosition -= 10
+      })
+    }
+
+    // Experiences (for full profiles)
+    if (type === 'full' && petData.experiences && petData.experiences.length > 0) {
+      yPosition -= 20
+      
+      page.drawText('EXPERIENCES', {
+        x: 50,
+        y: yPosition,
+        size: 16,
+        font: boldFont,
+        color: titleColor,
+      })
+      
+      yPosition -= 30
+      
+      petData.experiences.forEach((experience: any) => {
+        page.drawText(`Activity: ${experience.activity}`, {
+          x: 50,
+          y: yPosition,
+          size: 12,
+          font: boldFont,
+          color: blackColor,
+        })
+        yPosition -= 15
+        
+        if (experience.description) {
+          page.drawText(experience.description, {
+            x: 50,
+            y: yPosition,
+            size: 11,
+            font: regularFont,
+            color: blackColor,
+          })
+          yPosition -= 15
+        }
+        
+        if (experience.contact) {
+          page.drawText(`Contact: ${experience.contact}`, {
+            x: 50,
+            y: yPosition,
+            size: 11,
+            font: regularFont,
+            color: blackColor,
+          })
+          yPosition -= 15
+        }
+        
+        yPosition -= 10
+      })
+    }
+
+    // Reviews (for full profiles)
+    if (type === 'full' && petData.reviews && petData.reviews.length > 0) {
+      yPosition -= 20
+      
+      page.drawText('REVIEWS', {
+        x: 50,
+        y: yPosition,
+        size: 16,
+        font: boldFont,
+        color: titleColor,
+      })
+      
+      yPosition -= 30
+      
+      petData.reviews.forEach((review: any) => {
+        const stars = '⭐'.repeat(review.rating || 0)
+        page.drawText(`${stars} - ${review.reviewer_name}`, {
+          x: 50,
+          y: yPosition,
+          size: 12,
+          font: boldFont,
+          color: blackColor,
+        })
+        yPosition -= 15
+        
+        if (review.text) {
+          page.drawText(review.text, {
+            x: 50,
+            y: yPosition,
+            size: 11,
+            font: regularFont,
+            color: blackColor,
+          })
+          yPosition -= 15
+        }
+        
+        if (review.date) {
+          page.drawText(`Date: ${review.date}`, {
+            x: 50,
+            y: yPosition,
+            size: 10,
+            font: regularFont,
+            color: blackColor,
+          })
+          yPosition -= 15
+        }
+        
+        yPosition -= 10
+      })
+    }
+
+    // Travel History (for full profiles)
+    if (type === 'full' && petData.travel_locations && petData.travel_locations.length > 0) {
+      yPosition -= 20
+      
+      page.drawText('TRAVEL HISTORY', {
+        x: 50,
+        y: yPosition,
+        size: 16,
+        font: boldFont,
+        color: titleColor,
+      })
+      
+      yPosition -= 30
+      
+      petData.travel_locations.forEach((location: any) => {
+        page.drawText(`📍 ${location.name} (${location.type})`, {
+          x: 50,
+          y: yPosition,
+          size: 12,
+          font: boldFont,
+          color: blackColor,
+        })
+        yPosition -= 15
+        
+        if (location.date_visited) {
+          page.drawText(`Visited: ${location.date_visited}`, {
+            x: 50,
+            y: yPosition,
+            size: 11,
+            font: regularFont,
+            color: blackColor,
+          })
+          yPosition -= 15
+        }
+        
+        if (location.notes) {
+          page.drawText(location.notes, {
+            x: 50,
+            y: yPosition,
+            size: 11,
+            font: regularFont,
+            color: blackColor,
+          })
+          yPosition -= 15
+        }
+        
+        yPosition -= 10
+      })
+    }
+
+    // Medical History (for full profiles)
+    if (type === 'full' && petData.medical && petData.medical.last_vaccination) {
+      yPosition -= 20
+      
+      page.drawText('MEDICAL HISTORY', {
+        x: 50,
+        y: yPosition,
+        size: 16,
+        font: boldFont,
+        color: titleColor,
+      })
+      
+      yPosition -= 30
+      
+      page.drawText(`Last Vaccination: ${petData.medical.last_vaccination}`, {
+        x: 50,
+        y: yPosition,
+        size: 12,
+        font: regularFont,
+        color: blackColor,
+      })
+      
+      yPosition -= 30
+    }
+
+    // Documents (for full profiles)
+    if (type === 'full' && petData.documents && petData.documents.length > 0) {
+      yPosition -= 20
+      
+      page.drawText('DOCUMENTS', {
+        x: 50,
+        y: yPosition,
+        size: 16,
+        font: boldFont,
+        color: titleColor,
+      })
+      
+      yPosition -= 30
+      
+      petData.documents.forEach((doc: any) => {
+        page.drawText(`📄 ${doc.name} (${doc.type})`, {
+          x: 50,
+          y: yPosition,
+          size: 12,
+          font: regularFont,
+          color: blackColor,
+        })
+        yPosition -= 20
+      })
+    }
+
+    // Professional certifications (for full profiles)
+    if (type === 'full' && petData.professional_data?.badges && petData.professional_data.badges.length > 0) {
+      yPosition -= 20
+      
+      page.drawText('PROFESSIONAL CERTIFICATIONS', {
+        x: 50,
+        y: yPosition,
+        size: 16,
+        font: boldFont,
+        color: titleColor,
+      })
+      
+      yPosition -= 30
+      
+      petData.professional_data.badges.forEach((badge: string) => {
+        page.drawText(`🏅 ${badge}`, {
+          x: 50,
+          y: yPosition,
+          size: 12,
+          font: regularFont,
+          color: blackColor,
+        })
+        yPosition -= 20
+      })
     }
 
     // Footer
@@ -527,6 +769,15 @@ serve(async (req) => {
     const pdfBytes = await pdfDoc.save()
     
     console.log('PDF generated successfully for:', petData.name, 'Size:', pdfBytes.length, 'bytes')
+    
+    // 🔍 INSPECTION: Check PDF bytes generation
+    console.log('📊 PDF BYTES INSPECTION:')
+    console.log('  - PDF byte array type:', typeof pdfBytes)
+    console.log('  - PDF byte array length:', pdfBytes.length)
+    console.log('  - PDF byte array constructor:', pdfBytes.constructor.name)
+    console.log('  - First 10 bytes:', Array.from(pdfBytes.slice(0, 10)))
+    console.log('  - PDF signature check (should start with %PDF):', 
+      String.fromCharCode(...pdfBytes.slice(0, 4)))
     
     // Return JSON response with PDF data for client-side processing
     return new Response(JSON.stringify({

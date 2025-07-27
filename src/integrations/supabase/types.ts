@@ -93,6 +93,48 @@ export type Database = {
           },
         ]
       }
+      certifications: {
+        Row: {
+          certification_number: string | null
+          created_at: string
+          expiry_date: string | null
+          id: string
+          issue_date: string | null
+          issuer: string | null
+          notes: string | null
+          pet_id: string
+          status: string
+          type: string
+          updated_at: string
+        }
+        Insert: {
+          certification_number?: string | null
+          created_at?: string
+          expiry_date?: string | null
+          id?: string
+          issue_date?: string | null
+          issuer?: string | null
+          notes?: string | null
+          pet_id: string
+          status?: string
+          type: string
+          updated_at?: string
+        }
+        Update: {
+          certification_number?: string | null
+          created_at?: string
+          expiry_date?: string | null
+          id?: string
+          issue_date?: string | null
+          issuer?: string | null
+          notes?: string | null
+          pet_id?: string
+          status?: string
+          type?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       contacts: {
         Row: {
           created_at: string

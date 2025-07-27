@@ -27,6 +27,7 @@ export type PetWithDetails = {
   reviews?: Tables<"reviews">[];
   travel_locations?: Tables<"travel_locations">[];
   documents?: Tables<"documents">[];
+  certifications?: Tables<"certifications">[];
 };
 
 // Transform database data to component-expected format
@@ -96,7 +97,8 @@ export function transformPetData(pet: PetWithDetails): any {
       notes: location.notes
     })) || [],
     documents: pet.documents || [],
-    gallery_photos: pet.gallery_photos || []
+    gallery_photos: pet.gallery_photos || [],
+    certifications: pet.certifications || []
   };
 }
 
@@ -163,7 +165,8 @@ export async function fetchUserPets(): Promise<any[]> {
         training: [],
         reviews: [],
         travel_locations: [],
-        documents: []
+        documents: [],
+        certifications: []
       };
       return transformPetData(petWithDetails);
     });
@@ -198,7 +201,8 @@ export async function fetchPetDetails(petId: string): Promise<any | null> {
       trainingResponse,
       reviewsResponse,
       travelResponse,
-      documentsResponse
+      documentsResponse,
+      certificationsResponse
     ] = await Promise.all([
       supabase.from("contacts").select("*").eq("pet_id", petId).order("updated_at", { ascending: false }).limit(1).maybeSingle(),
       supabase.from("medical").select("*").eq("pet_id", petId).order("updated_at", { ascending: false }).limit(1).maybeSingle(),
@@ -211,7 +215,8 @@ export async function fetchPetDetails(petId: string): Promise<any | null> {
       supabase.from("training").select("*").eq("pet_id", petId),
       supabase.from("reviews").select("*").eq("pet_id", petId),
       supabase.from("travel_locations").select("*").eq("pet_id", petId),
-      supabase.from("documents").select("*").eq("pet_id", petId)
+      supabase.from("documents").select("*").eq("pet_id", petId),
+      supabase.from("certifications").select("*").eq("pet_id", petId)
     ]);
 
     if (contactsResponse.error) console.error("Error fetching contacts:", contactsResponse.error);
@@ -244,7 +249,8 @@ export async function fetchPetDetails(petId: string): Promise<any | null> {
       training: trainingResponse.data || [],
       reviews: reviewsResponse.data || [],
       travel_locations: travelResponse.data || [],
-      documents: documentsResponse.data || []
+      documents: documentsResponse.data || [],
+      certifications: certificationsResponse.data || []
     };
 
     console.log("Fetched pet with details:", petWithDetails);

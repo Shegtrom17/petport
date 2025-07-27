@@ -14,7 +14,8 @@ import { useToast } from "@/hooks/use-toast";
 interface CertificationSectionProps {
   petData: {
     id: string;
-    certificationData?: {
+    certifications?: Array<{
+      id?: string;
       type?: string;
       status?: string;
       issuer?: string;
@@ -22,7 +23,7 @@ interface CertificationSectionProps {
       issue_date?: string;
       expiry_date?: string;
       notes?: string;
-    };
+    }>;
   };
   onUpdate?: () => void;
 }
@@ -31,14 +32,18 @@ export const CertificationSection = ({ petData, onUpdate }: CertificationSection
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
+  
+  // Get the first certification or create empty object
+  const currentCertification = petData.certifications?.[0] || {};
+  
   const [formData, setFormData] = useState({
-    type: petData.certificationData?.type || '',
-    status: petData.certificationData?.status || 'active',
-    issuer: petData.certificationData?.issuer || '',
-    certification_number: petData.certificationData?.certification_number || '',
-    issue_date: petData.certificationData?.issue_date || '',
-    expiry_date: petData.certificationData?.expiry_date || '',
-    notes: petData.certificationData?.notes || ''
+    type: currentCertification.type || '',
+    status: currentCertification.status || 'active',
+    issuer: currentCertification.issuer || '',
+    certification_number: currentCertification.certification_number || '',
+    issue_date: currentCertification.issue_date || '',
+    expiry_date: currentCertification.expiry_date || '',
+    notes: currentCertification.notes || ''
   });
 
   const handleSave = async () => {
@@ -55,18 +60,8 @@ export const CertificationSection = ({ petData, onUpdate }: CertificationSection
     try {
       console.log("Saving certification data:", formData);
 
-      // Check if professional_data exists for this pet
-      const { data: existingData, error: fetchError } = await supabase
-        .from('professional_data')
-        .select('*')
-        .eq('pet_id', petData.id)
-        .single();
-
-      if (fetchError && fetchError.code !== 'PGRST116') {
-        throw fetchError;
-      }
-
       const certificationData = {
+        pet_id: petData.id,
         type: formData.type,
         status: formData.status,
         issuer: formData.issuer,
@@ -76,32 +71,26 @@ export const CertificationSection = ({ petData, onUpdate }: CertificationSection
         notes: formData.notes
       };
 
-      if (existingData) {
-        // Update existing record
+      if (currentCertification.id) {
+        // Update existing certification
         const { error } = await supabase
-          .from('professional_data')
-          .update({ 
-            certification_data: certificationData,
-            updated_at: new Date().toISOString()
-          })
-          .eq('pet_id', petData.id);
+          .from('certifications')
+          .update(certificationData)
+          .eq('id', currentCertification.id);
 
         if (error) throw error;
       } else {
-        // Create new record
+        // Create new certification
         const { error } = await supabase
-          .from('professional_data')
-          .insert({
-            pet_id: petData.id,
-            certification_data: certificationData
-          });
+          .from('certifications')
+          .insert(certificationData);
 
         if (error) throw error;
       }
 
       toast({
         title: "Success",
-        description: "Certification data saved successfully",
+        description: "Certification saved successfully",
       });
 
       setIsEditModalOpen(false);
@@ -109,10 +98,10 @@ export const CertificationSection = ({ petData, onUpdate }: CertificationSection
         onUpdate();
       }
     } catch (error) {
-      console.error('Error saving certification data:', error);
+      console.error('Error saving certification:', error);
       toast({
         title: "Error",
-        description: "Failed to save certification data",
+        description: "Failed to save certification",
         variant: "destructive",
       });
     } finally {
@@ -167,74 +156,74 @@ export const CertificationSection = ({ petData, onUpdate }: CertificationSection
         </CardTitle>
       </CardHeader>
       <CardContent>
-        {petData.certificationData?.type ? (
+        {currentCertification.type ? (
           <div className="space-y-6">
             {/* Main Certification Display */}
             <div className="bg-gradient-to-br from-purple-50 to-indigo-50 border-2 border-purple-200 rounded-lg p-6">
               <div className="flex items-start justify-between mb-4">
                 <div>
                   <h3 className="text-2xl font-bold text-purple-800 mb-2">
-                    {petData.certificationData.type}
+                    {currentCertification.type}
                   </h3>
                   <Badge 
                     variant="outline" 
-                    className={`${getStatusColor(petData.certificationData.status || 'active')} font-semibold`}
+                    className={`${getStatusColor(currentCertification.status || 'active')} font-semibold`}
                   >
-                    {(petData.certificationData.status || 'active').toUpperCase()}
+                    {(currentCertification.status || 'active').toUpperCase()}
                   </Badge>
                 </div>
                 <Shield className="w-12 h-12 text-purple-600" />
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {petData.certificationData.issuer && (
+                {currentCertification.issuer && (
                   <div className="flex items-center space-x-3 p-3 bg-white/80 rounded-lg">
                     <Building className="w-5 h-5 text-purple-600" />
                     <div>
                       <p className="text-sm font-semibold text-purple-900">Issuing Organization</p>
-                      <p className="text-purple-700">{petData.certificationData.issuer}</p>
+                      <p className="text-purple-700">{currentCertification.issuer}</p>
                     </div>
                   </div>
                 )}
 
-                {petData.certificationData.certification_number && (
+                {currentCertification.certification_number && (
                   <div className="flex items-center space-x-3 p-3 bg-white/80 rounded-lg">
                     <Hash className="w-5 h-5 text-purple-600" />
                     <div>
                       <p className="text-sm font-semibold text-purple-900">Certification Number</p>
-                      <p className="text-purple-700 font-mono">{petData.certificationData.certification_number}</p>
+                      <p className="text-purple-700 font-mono">{currentCertification.certification_number}</p>
                     </div>
                   </div>
                 )}
 
-                {petData.certificationData.issue_date && (
+                {currentCertification.issue_date && (
                   <div className="flex items-center space-x-3 p-3 bg-white/80 rounded-lg">
                     <Calendar className="w-5 h-5 text-purple-600" />
                     <div>
                       <p className="text-sm font-semibold text-purple-900">Issue Date</p>
-                      <p className="text-purple-700">{formatDate(petData.certificationData.issue_date)}</p>
+                      <p className="text-purple-700">{formatDate(currentCertification.issue_date)}</p>
                     </div>
                   </div>
                 )}
 
-                {petData.certificationData.expiry_date && (
+                {currentCertification.expiry_date && (
                   <div className="flex items-center space-x-3 p-3 bg-white/80 rounded-lg">
                     <Calendar className="w-5 h-5 text-purple-600" />
                     <div>
                       <p className="text-sm font-semibold text-purple-900">Expiry Date</p>
-                      <p className="text-purple-700">{formatDate(petData.certificationData.expiry_date)}</p>
+                      <p className="text-purple-700">{formatDate(currentCertification.expiry_date)}</p>
                     </div>
                   </div>
                 )}
               </div>
 
-              {petData.certificationData.notes && (
+              {currentCertification.notes && (
                 <div className="mt-4 p-3 bg-white/80 rounded-lg">
                   <div className="flex items-start space-x-3">
                     <FileText className="w-5 h-5 text-purple-600 mt-0.5" />
                     <div>
                       <p className="text-sm font-semibold text-purple-900 mb-1">Additional Notes</p>
-                      <p className="text-purple-700 text-sm leading-relaxed">{petData.certificationData.notes}</p>
+                      <p className="text-purple-700 text-sm leading-relaxed">{currentCertification.notes}</p>
                     </div>
                   </div>
                 </div>

@@ -144,16 +144,16 @@ const LostPet = () => {
 
   if (!currentPet) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-red-50 via-orange-50 to-yellow-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-red-50 via-[#F5F0E0] to-yellow-50 flex items-center justify-center">
         <div className="text-lg text-red-800">No pet selected</div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-red-50 via-orange-50 to-yellow-50">
+    <div className="min-h-screen bg-gradient-to-br from-red-50 via-[#F5F0E0] to-yellow-50">
       {/* Emergency Header */}
-      <div className={`bg-gradient-to-r ${lostPetData.is_missing ? 'from-red-600 to-red-700' : 'from-mustard to-mustard'} text-white py-6 px-4 shadow-lg`}>
+      <div className={`bg-gradient-to-r ${lostPetData.is_missing ? 'from-red-600 to-red-700' : 'from-[#B8860B] to-[#B8860B]'} text-white py-6 px-4 shadow-lg`}>
         <div className="max-w-6xl mx-auto">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
@@ -208,8 +208,8 @@ const LostPet = () => {
         )}
 
         {/* Pet Information Card */}
-        <Card className="bg-white shadow-xl border-2 border-mustard/30">
-          <CardHeader className="bg-gradient-to-r from-mustard to-mustard text-white">
+        <Card className="bg-white shadow-xl border-2 border-[#B8860B]/30">
+          <CardHeader className="bg-gradient-to-r from-[#B8860B] to-[#B8860B] text-white">
             <CardTitle className="text-xl flex items-center space-x-3">
               <img 
                 src={currentPet.photoUrl || "/placeholder.svg"} 
@@ -218,7 +218,7 @@ const LostPet = () => {
               />
               <div>
                 <h3 className="text-2xl font-bold">{currentPet.name}</h3>
-                <p className="text-orange-100">{currentPet.breed} • {currentPet.age}</p>
+                <p className="text-[#E6D89C]">{currentPet.breed} • {currentPet.age}</p>
               </div>
             </CardTitle>
           </CardHeader>
@@ -252,9 +252,9 @@ const LostPet = () => {
                     <p className="ml-6">{currentPet.emergency_contact || 'Not set'}</p>
                   </div>
                   {currentPet.second_emergency_contact && (
-                    <div className="bg-orange-50 p-3 rounded-lg">
+                    <div className="bg-[#F5F0E0] p-3 rounded-lg">
                       <div className="flex items-center space-x-2">
-                        <Phone className="w-4 h-4 text-orange-600" />
+                        <Phone className="w-4 h-4 text-[#B8860B]" />
                         <strong>Secondary:</strong>
                       </div>
                       <p className="ml-6">{currentPet.second_emergency_contact}</p>
@@ -412,9 +412,9 @@ const LostPet = () => {
                     )}
 
                     {(lostPetData.last_seen_date || lostPetData.last_seen_time) && (
-                      <div className="bg-orange-50 p-4 rounded-lg">
+                      <div className="bg-[#F5F0E0] p-4 rounded-lg">
                         <div className="flex items-center space-x-2 mb-2">
-                          <Clock className="w-5 h-5 text-orange-600" />
+                          <Clock className="w-5 h-5 text-[#B8860B]" />
                           <strong>Last Seen:</strong>
                         </div>
                         <p className="ml-7">

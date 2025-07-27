@@ -166,9 +166,9 @@ const Index = () => {
         console.log("Rendering PetResumeSection with integrated certifications and reviews");
         return (
           <div className="space-y-6">
-            <PetResumeSection petData={petData} />
-            <CertificationSection petData={petData} />
-            <ReviewsSection petData={petData} />
+            <PetResumeSection petData={petData} onUpdate={handlePetUpdate} />
+            <CertificationSection petData={petData} onUpdate={handlePetUpdate} />
+            <ReviewsSection petData={petData} onUpdate={handlePetUpdate} />
           </div>
         );
       case "travel":

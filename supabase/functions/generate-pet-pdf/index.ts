@@ -191,16 +191,142 @@ serve(async (req) => {
       
       yPosition = height - 120
       
-      // Pet basic info in large text
+      // Add optimized photos section
+      if (photosData) {
+        console.log('Adding photos to Missing Pet Flyer...')
+        try {
+          const photoHeight = 108 // 1.5 inches at 72 DPI
+          const photoWidth = 144 // 2 inches at 72 DPI
+          const photoSpacing = 20
+          const leftPhotoX = 50
+          const rightPhotoX = leftPhotoX + photoWidth + photoSpacing
+          
+          let photosAdded = 0
+          
+          // Try to add first photo (main photo)
+          if (photosData.photo_url && photosAdded < 2) {
+            try {
+              console.log('Loading main photo:', photosData.photo_url)
+              const photoResponse = await fetch(photosData.photo_url)
+              if (photoResponse.ok) {
+                const photoBytes = await photoResponse.arrayBuffer()
+                const photoImage = await pdfDoc.embedJpg(new Uint8Array(photoBytes))
+                
+                // Calculate dimensions to maintain aspect ratio
+                const { width: imgWidth, height: imgHeight } = photoImage.scale(1)
+                const scale = Math.min(photoWidth / imgWidth, photoHeight / imgHeight)
+                const scaledWidth = imgWidth * scale
+                const scaledHeight = imgHeight * scale
+                
+                page.drawImage(photoImage, {
+                  x: leftPhotoX + (photoWidth - scaledWidth) / 2,
+                  y: yPosition - photoHeight + (photoHeight - scaledHeight) / 2,
+                  width: scaledWidth,
+                  height: scaledHeight,
+                })
+                photosAdded++
+                console.log('Main photo added successfully')
+              }
+            } catch (photoError) {
+              console.log('Failed to load main photo:', photoError.message)
+            }
+          }
+          
+          // Try to add second photo (full body photo)
+          if (photosData.full_body_photo_url && photosAdded < 2) {
+            try {
+              console.log('Loading full body photo:', photosData.full_body_photo_url)
+              const photoResponse = await fetch(photosData.full_body_photo_url)
+              if (photoResponse.ok) {
+                const photoBytes = await photoResponse.arrayBuffer()
+                const photoImage = await pdfDoc.embedJpg(new Uint8Array(photoBytes))
+                
+                // Calculate dimensions to maintain aspect ratio
+                const { width: imgWidth, height: imgHeight } = photoImage.scale(1)
+                const scale = Math.min(photoWidth / imgWidth, photoHeight / imgHeight)
+                const scaledWidth = imgWidth * scale
+                const scaledHeight = imgHeight * scale
+                
+                const xPosition = photosAdded === 0 ? leftPhotoX : rightPhotoX
+                
+                page.drawImage(photoImage, {
+                  x: xPosition + (photoWidth - scaledWidth) / 2,
+                  y: yPosition - photoHeight + (photoHeight - scaledHeight) / 2,
+                  width: scaledWidth,
+                  height: scaledHeight,
+                })
+                photosAdded++
+                console.log('Full body photo added successfully')
+              }
+            } catch (photoError) {
+              console.log('Failed to load full body photo:', photoError.message)
+            }
+          }
+          
+          // Add photo placeholders if no photos could be loaded
+          if (photosAdded === 0) {
+            console.log('No photos loaded, adding placeholders')
+            // Draw placeholder rectangles
+            page.drawRectangle({
+              x: leftPhotoX,
+              y: yPosition - photoHeight,
+              width: photoWidth,
+              height: photoHeight,
+              borderColor: blackColor,
+              borderWidth: 2,
+            })
+            
+            page.drawRectangle({
+              x: rightPhotoX,
+              y: yPosition - photoHeight,
+              width: photoWidth,
+              height: photoHeight,
+              borderColor: blackColor,
+              borderWidth: 2,
+            })
+            
+            // Add placeholder text
+            page.drawText('PHOTO', {
+              x: leftPhotoX + photoWidth/2 - 30,
+              y: yPosition - photoHeight/2,
+              size: 16,
+              font: boldFont,
+              color: blackColor,
+            })
+            
+            page.drawText('PHOTO', {
+              x: rightPhotoX + photoWidth/2 - 30,
+              y: yPosition - photoHeight/2,
+              size: 16,
+              font: boldFont,
+              color: blackColor,
+            })
+          }
+          
+          // Adjust yPosition to account for photos
+          yPosition -= (photoHeight + 30)
+          
+        } catch (photoSectionError) {
+          console.error('Error in photo section:', photoSectionError)
+          // Continue without photos if there's an error
+          yPosition -= 20
+        }
+      } else {
+        console.log('No photo data available')
+        // Add smaller spacing if no photos
+        yPosition -= 20
+      }
+      
+      // Pet basic info in slightly smaller text to accommodate photos
       page.drawText(`${petData.name} - ${petData.breed || 'Unknown Breed'} ${petData.species || 'Pet'}`, {
         x: 50,
         y: yPosition,
-        size: 20,
+        size: 18,
         font: boldFont,
         color: blackColor,
       })
       
-      yPosition -= 40
+      yPosition -= 35
       
       // Missing pet specific information
       if (lostPetData) {
@@ -223,7 +349,7 @@ serve(async (req) => {
             color: blackColor,
           })
           
-          yPosition -= 30
+          yPosition -= 25
         }
         
         if (lostPetData.last_seen_date) {
@@ -246,7 +372,7 @@ serve(async (req) => {
             })
           }
           
-          yPosition -= 30
+          yPosition -= 25
         }
         
         if (lostPetData.distinctive_features) {
@@ -258,7 +384,7 @@ serve(async (req) => {
             color: blackColor,
           })
           
-          yPosition -= 20
+          yPosition -= 18
           
           page.drawText(lostPetData.distinctive_features, {
             x: 50,
@@ -268,7 +394,7 @@ serve(async (req) => {
             color: blackColor,
           })
           
-          yPosition -= 30
+          yPosition -= 25
         }
         
         if (lostPetData.reward_amount) {

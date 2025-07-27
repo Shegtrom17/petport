@@ -749,10 +749,21 @@ serve(async (req) => {
               const qrImage = await pdfDoc.embedPng(new Uint8Array(qrImageBytes))
               console.log('QR image embedded successfully')
               
-              // Position QR code in bottom-right corner
-              const qrSize = 100
-              const qrX = width - qrSize - 40
-              const qrY = 100
+              // Position QR code prominently in top-right corner with more space
+              const qrSize = 120  // Made larger
+              const qrX = width - qrSize - 20  // More space from edge
+              const qrY = height - qrSize - 50  // Position from top instead of bottom
+              
+              // Add a white background behind QR code for visibility
+              page.drawRectangle({
+                x: qrX - 10,
+                y: qrY - 35,
+                width: qrSize + 20,
+                height: qrSize + 45,
+                color: rgb(1, 1, 1), // White background
+                borderColor: rgb(0, 0, 0), // Black border
+                borderWidth: 1,
+              })
               
               page.drawImage(qrImage, {
                 x: qrX,
@@ -761,19 +772,19 @@ serve(async (req) => {
                 height: qrSize,
               })
               
-              // Add text below QR code
-              page.drawText('Scan for latest updates', {
-                x: qrX - 10,
+              // Add text below QR code with better positioning
+              page.drawText('Scan for latest info', {
+                x: qrX + 5,
                 y: qrY - 15,
-                size: 10,
+                size: 11,
                 font: regularFont,
                 color: blackColor,
               })
               
               page.drawText('& sharing options', {
-                x: qrX - 5,
+                x: qrX + 8,
                 y: qrY - 30,
-                size: 10,
+                size: 11,
                 font: regularFont,
                 color: blackColor,
               })

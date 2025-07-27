@@ -211,8 +211,8 @@ export const QuickIDSection = ({ petData }: QuickIDSectionProps) => {
       )}
 
       {/* Pet Basic Information */}
-      <Card className="bg-white shadow-xl border-2 border-orange-200">
-        <CardHeader className="bg-gradient-to-r from-orange-500 to-red-500 text-white">
+      <Card className="bg-white shadow-xl border-2 border-gold-300">
+        <CardHeader className="bg-gradient-to-r from-gold-500 to-gold-400 text-white">
           <CardTitle className="text-xl flex items-center space-x-3">
             <img 
               src={petData.photoUrl || "/placeholder.svg"} 
@@ -221,7 +221,7 @@ export const QuickIDSection = ({ petData }: QuickIDSectionProps) => {
             />
             <div>
               <h3 className="text-2xl font-bold">{petData.name}</h3>
-              <p className="text-orange-100">{petData.breed} • {petData.age}</p>
+              <p className="text-gold-100">{petData.breed} • {petData.age}</p>
             </div>
           </CardTitle>
         </CardHeader>
@@ -255,9 +255,9 @@ export const QuickIDSection = ({ petData }: QuickIDSectionProps) => {
                   <p className="ml-6">{petData.emergencyContact || 'Not set'}</p>
                 </div>
                 {petData.secondEmergencyContact && (
-                  <div className="bg-orange-50 p-3 rounded-lg">
+                  <div className="bg-gold-300/20 p-3 rounded-lg">
                     <div className="flex items-center space-x-2">
-                      <Phone className="w-4 h-4 text-orange-600" />
+                      <Phone className="w-4 h-4 text-gold-500" />
                       <strong>Secondary:</strong>
                     </div>
                     <p className="ml-6">{petData.secondEmergencyContact}</p>
@@ -427,9 +427,9 @@ export const QuickIDSection = ({ petData }: QuickIDSectionProps) => {
                   )}
 
                   {(lostPetData.last_seen_date || lostPetData.last_seen_time) && (
-                    <div className="bg-orange-50 p-4 rounded-lg">
+                    <div className="bg-gold-300/20 p-4 rounded-lg">
                       <div className="flex items-center space-x-2 mb-2">
-                        <Clock className="w-5 h-5 text-orange-600" />
+                        <Clock className="w-5 h-5 text-gold-500" />
                         <strong>Last Seen:</strong>
                       </div>
                       <p className="ml-7">

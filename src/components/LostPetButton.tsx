@@ -91,7 +91,7 @@ export const LostPetButton = ({ petId, petName = "Pet", isMissing = false, class
         className={`bg-gradient-to-r ${
           isMissing 
             ? 'from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 border-2 border-red-500' 
-            : 'from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600'
+            : 'from-gold-500 to-gold-400 hover:from-gold-400 hover:to-gold-300'
         } text-white shadow-lg hover:shadow-xl transition-all ${className}`}
       >
         {isMissing ? (

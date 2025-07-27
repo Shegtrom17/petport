@@ -4,7 +4,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Star, Plus, Share2, Mail, MapPin, Calendar, User, Edit } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Star, Plus, Share2, Mail, MapPin, Calendar, User, Edit, Send, X } from "lucide-react";
 import { ReviewsEditForm } from "@/components/ReviewsEditForm";
 import { useToast } from "@/hooks/use-toast";
 
@@ -30,6 +33,13 @@ interface ReviewsSectionProps {
 
 export const ReviewsSection = ({ petData, onUpdate }: ReviewsSectionProps) => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isRequestModalOpen, setIsRequestModalOpen] = useState(false);
+  const [requestForm, setRequestForm] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    message: ''
+  });
   const { toast } = useToast();
 
   // Use actual reviews from petData or show empty state
@@ -51,11 +61,35 @@ export const ReviewsSection = ({ petData, onUpdate }: ReviewsSectionProps) => {
   };
 
   const handleRequestReview = () => {
-    console.log("Sending review request for pet:", petData.name);
+    setIsRequestModalOpen(true);
+  };
+
+  const handleSendReviewRequest = () => {
+    if (!requestForm.name.trim() || (!requestForm.email.trim() && !requestForm.phone.trim())) {
+      toast({
+        title: "Missing Information",
+        description: "Please provide a name and either an email or phone number.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    console.log("Sending review request:", {
+      petName: petData.name,
+      petId: petData.id,
+      recipient: requestForm
+    });
+
+    // Here you would implement the actual sending logic
+    // For now, we'll just show a success message and reset the form
     toast({
       title: "Review Request Sent",
-      description: `A review request has been sent for ${petData.name}. The reviewer will receive an email invitation.`,
+      description: `A review request has been sent to ${requestForm.name} for ${petData.name}.`,
     });
+
+    // Reset form and close modal
+    setRequestForm({ name: '', email: '', phone: '', message: '' });
+    setIsRequestModalOpen(false);
   };
 
   const handleShareReviews = () => {
@@ -246,6 +280,81 @@ export const ReviewsSection = ({ petData, onUpdate }: ReviewsSectionProps) => {
           </Button>
         </CardContent>
       </Card>
+
+      {/* Review Request Modal */}
+      <Dialog open={isRequestModalOpen} onOpenChange={setIsRequestModalOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Request a Review for {petData.name}</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <Label htmlFor="recipient-name">Reviewer Name *</Label>
+              <Input
+                id="recipient-name"
+                placeholder="e.g., Sarah Johnson"
+                value={requestForm.name}
+                onChange={(e) => setRequestForm({...requestForm, name: e.target.value})}
+              />
+            </div>
+            
+            <div>
+              <Label htmlFor="recipient-email">Email Address</Label>
+              <Input
+                id="recipient-email"
+                type="email"
+                placeholder="e.g., sarah@example.com"
+                value={requestForm.email}
+                onChange={(e) => setRequestForm({...requestForm, email: e.target.value})}
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="recipient-phone">Phone Number</Label>
+              <Input
+                id="recipient-phone"
+                type="tel"
+                placeholder="e.g., (555) 123-4567"
+                value={requestForm.phone}
+                onChange={(e) => setRequestForm({...requestForm, phone: e.target.value})}
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="custom-message">Custom Message (Optional)</Label>
+              <Textarea
+                id="custom-message"
+                placeholder="Hi Sarah! Could you please leave a review about your experience with Luna? Thanks!"
+                value={requestForm.message}
+                onChange={(e) => setRequestForm({...requestForm, message: e.target.value})}
+                rows={3}
+              />
+            </div>
+
+            <p className="text-sm text-gray-600">
+              * Either email or phone number is required
+            </p>
+
+            <div className="flex gap-2 pt-4">
+              <Button 
+                variant="outline" 
+                onClick={() => setIsRequestModalOpen(false)}
+                className="flex-1"
+              >
+                <X className="w-4 h-4 mr-2" />
+                Cancel
+              </Button>
+              <Button 
+                onClick={handleSendReviewRequest}
+                className="flex-1 bg-blue-600 hover:bg-blue-700"
+              >
+                <Send className="w-4 h-4 mr-2" />
+                Send Request
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

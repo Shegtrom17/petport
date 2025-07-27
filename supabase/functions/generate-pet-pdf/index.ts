@@ -92,7 +92,7 @@ serve(async (req) => {
         reviews (reviewer_name, rating, text, date, location, type),
         travel_locations (name, type, code, date_visited, notes),
         documents (name, type, file_url, size),
-        
+        lost_pet_data (is_missing, last_seen_location, last_seen_date, last_seen_time, distinctive_features, reward_amount, finder_instructions, contact_priority, emergency_notes),
         pet_photos (photo_url, full_body_photo_url),
         gallery_photos (url, caption)
       `)
@@ -457,7 +457,7 @@ serve(async (req) => {
           yPosition -= 25
         }
         
-        // REWARD INFORMATION - Prominent Display
+        // REWARD INFORMATION - Prominent Display (NO EMOJI)
         if (lostData.reward_amount) {
           page.drawRectangle({
             x: 40,
@@ -467,7 +467,7 @@ serve(async (req) => {
             color: rgb(1, 0.9, 0.8), // Light orange background
           })
           
-          page.drawText('💰 REWARD OFFERED:', {
+          page.drawText('*** REWARD OFFERED ***', {
             x: 50,
             y: yPosition,
             size: 14,
@@ -476,7 +476,7 @@ serve(async (req) => {
           })
           
           page.drawText(lostData.reward_amount, {
-            x: 200,
+            x: 250,
             y: yPosition,
             size: 14,
             font: boldFont,
@@ -573,6 +573,226 @@ serve(async (req) => {
           
           yPosition -= 30
         }
+      }
+      
+      // Check if we need PAGE 2 for more information
+      if (yPosition < 100) {
+        // CREATE PAGE 2 - Additional Information
+        const page2 = pdfDoc.addPage([612, 792])
+        let page2Y = 750
+        
+        // PAGE 2 HEADER
+        page2.drawRectangle({
+          x: 0,
+          y: page2Y - 50,
+          width: width,
+          height: 50,
+          color: redColor,
+        })
+        
+        page2.drawText('MISSING PET - PAGE 2', {
+          x: width / 2 - 120,
+          y: page2Y - 30,
+          size: 24,
+          font: boldFont,
+          color: whiteColor,
+        })
+        
+        page2Y -= 80
+        
+        // PET CARE INFORMATION ON PAGE 2
+        if (petData.care_instructions) {
+          page2.drawText('PET CARE INFORMATION:', {
+            x: 50,
+            y: page2Y,
+            size: 16,
+            font: boldFont,
+            color: redColor,
+          })
+          
+          page2Y -= 30
+          
+          const careInfo = petData.care_instructions
+          
+          if (careInfo.allergies) {
+            page2.drawText('ALLERGIES & MEDICAL:', {
+              x: 50,
+              y: page2Y,
+              size: 12,
+              font: boldFont,
+              color: blackColor,
+            })
+            
+            page2Y -= 20
+            page2.drawText(careInfo.allergies, {
+              x: 50,
+              y: page2Y,
+              size: 11,
+              font: regularFont,
+              color: blackColor,
+            })
+            
+            page2Y -= 40
+          }
+          
+          if (careInfo.behavioral_notes) {
+            page2.drawText('BEHAVIORAL NOTES:', {
+              x: 50,
+              y: page2Y,
+              size: 12,
+              font: boldFont,
+              color: blackColor,
+            })
+            
+            page2Y -= 20
+            page2.drawText(careInfo.behavioral_notes, {
+              x: 50,
+              y: page2Y,
+              size: 11,
+              font: regularFont,
+              color: blackColor,
+            })
+            
+            page2Y -= 40
+          }
+          
+          if (careInfo.favorite_activities) {
+            page2.drawText('FAVORITE ACTIVITIES:', {
+              x: 50,
+              y: page2Y,
+              size: 12,
+              font: boldFont,
+              color: blackColor,
+            })
+            
+            page2Y -= 20
+            page2.drawText(careInfo.favorite_activities, {
+              x: 50,
+              y: page2Y,
+              size: 11,
+              font: regularFont,
+              color: blackColor,
+            })
+            
+            page2Y -= 40
+          }
+        }
+        
+        // MEDICAL INFORMATION ON PAGE 2
+        if (petData.medical) {
+          page2.drawText('MEDICAL INFORMATION:', {
+            x: 50,
+            y: page2Y,
+            size: 16,
+            font: boldFont,
+            color: redColor,
+          })
+          
+          page2Y -= 30
+          
+          if (petData.medical.medical_conditions) {
+            page2.drawText('MEDICAL CONDITIONS:', {
+              x: 50,
+              y: page2Y,
+              size: 12,
+              font: boldFont,
+              color: blackColor,
+            })
+            
+            page2Y -= 20
+            page2.drawText(petData.medical.medical_conditions, {
+              x: 50,
+              y: page2Y,
+              size: 11,
+              font: regularFont,
+              color: blackColor,
+            })
+            
+            page2Y -= 30
+          }
+          
+          if (petData.medical.medications && petData.medical.medications.length > 0) {
+            page2.drawText('MEDICATIONS:', {
+              x: 50,
+              y: page2Y,
+              size: 12,
+              font: boldFont,
+              color: blackColor,
+            })
+            
+            page2Y -= 20
+            petData.medical.medications.forEach((med: string) => {
+              page2.drawText(`• ${med}`, {
+                x: 50,
+                y: page2Y,
+                size: 11,
+                font: regularFont,
+                color: blackColor,
+              })
+              page2Y -= 18
+            })
+            
+            page2Y -= 20
+          }
+        }
+        
+        // ADDITIONAL CONTACTS ON PAGE 2
+        if (petData.contacts) {
+          page2.drawText('ADDITIONAL CONTACTS:', {
+            x: 50,
+            y: page2Y,
+            size: 16,
+            font: boldFont,
+            color: redColor,
+          })
+          
+          page2Y -= 30
+          
+          if (petData.contacts.pet_caretaker) {
+            page2.drawText('PET CARETAKER:', {
+              x: 50,
+              y: page2Y,
+              size: 12,
+              font: boldFont,
+              color: blackColor,
+            })
+            
+            page2.drawText(petData.contacts.pet_caretaker, {
+              x: 180,
+              y: page2Y,
+              size: 12,
+              font: regularFont,
+              color: blackColor,
+            })
+            
+            page2Y -= 25
+          }
+        }
+        
+        // PAGE 2 FOOTER - URGENT NOTICE
+        page2.drawRectangle({
+          x: 40,
+          y: 50,
+          width: width - 80,
+          height: 60,
+          color: redColor,
+        })
+        
+        page2.drawText('*** URGENT: PLEASE SHARE THIS FLYER ***', {
+          x: 80,
+          y: 90,
+          size: 16,
+          font: boldFont,
+          color: whiteColor,
+        })
+        
+        page2.drawText('Time is critical - every hour matters!', {
+          x: 120,
+          y: 65,
+          size: 12,
+          font: regularFont,
+          color: whiteColor,
+        })
       }
       
       // Pet details for identification

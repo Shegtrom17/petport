@@ -74,8 +74,13 @@ serve(async (req) => {
 
     console.log('Generating PDF for pet:', petId, 'type:', type)
 
-    // Initialize Supabase client
-    const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY)
+    // Initialize Supabase client with service role (bypasses RLS)
+    const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, {
+      auth: {
+        autoRefreshToken: false,
+        persistSession: false,
+      },
+    })
 
     // Fetch pet data with all related tables for full profile
     const { data: petData, error: fetchError } = await supabase

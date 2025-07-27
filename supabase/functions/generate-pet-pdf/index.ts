@@ -348,7 +348,7 @@ serve(async (req) => {
           color: redColor,
         })
         
-        page.drawText('⚠️ MEDICAL ALERT - NEEDS MEDICATION', {
+        page.drawText('*** MEDICAL ALERT - NEEDS MEDICATION ***', {
           x: 50,
           y: yPosition,
           size: 16,

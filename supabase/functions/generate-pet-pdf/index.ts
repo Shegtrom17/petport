@@ -729,23 +729,68 @@ serve(async (req) => {
         }
       }
 
-      // Footer
-      yPosition = 50
-      page.drawText(`Generated on: ${new Date().toLocaleDateString()}`, {
-        x: 50,
-        y: yPosition,
-        size: 10,
-        font: regularFont,
-        color: rgb(0.83, 0.69, 0.22), // Gold
-      })
+        // QR Code for Missing Pet Flyers
+        if (type === 'lost_pet') {
+          const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(`${Deno.env.get('SITE_URL') || 'http://localhost:3000'}/missing-pet/${petId}`)}`
+          
+          try {
+            const qrResponse = await fetch(qrCodeUrl)
+            if (qrResponse.ok) {
+              const qrImageBytes = await qrResponse.arrayBuffer()
+              const qrImage = await pdfDoc.embedPng(new Uint8Array(qrImageBytes))
+              
+              // Position QR code in bottom-right corner
+              const qrSize = 100
+              const qrX = width - qrSize - 40
+              const qrY = 100
+              
+              page.drawImage(qrImage, {
+                x: qrX,
+                y: qrY,
+                width: qrSize,
+                height: qrSize,
+              })
+              
+              // Add text below QR code
+              page.drawText('Scan for latest updates', {
+                x: qrX - 10,
+                y: qrY - 15,
+                size: 10,
+                font: regularFont,
+                color: blackColor,
+              })
+              
+              page.drawText('& sharing options', {
+                x: qrX - 5,
+                y: qrY - 30,
+                size: 10,
+                font: regularFont,
+                color: blackColor,
+              })
+            }
+          } catch (qrError) {
+            console.log('Failed to add QR code:', qrError.message)
+            // Continue without QR code if it fails
+          }
+        }
 
-      page.drawText('PetPort™ Official Document', {
-        x: width - 200,
-        y: yPosition,
-        size: 10,
-        font: boldFont,
-        color: rgb(0.83, 0.69, 0.22), // Gold
-      })
+        // Footer
+        yPosition = 50
+        page.drawText(`Generated on: ${new Date().toLocaleDateString()}`, {
+          x: 50,
+          y: yPosition,
+          size: 10,
+          font: regularFont,
+          color: rgb(0.83, 0.69, 0.22), // Gold
+        })
+
+        page.drawText('PetPort™ Official Document', {
+          x: width - 200,
+          y: yPosition,
+          size: 10,
+          font: boldFont,
+          color: rgb(0.83, 0.69, 0.22), // Gold
+        })
     }
 
     // Save the PDF as bytes

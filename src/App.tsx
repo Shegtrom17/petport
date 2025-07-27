@@ -12,6 +12,7 @@ import AddPet from "./pages/AddPet";
 import LostPet from "./pages/LostPet";
 import PublicProfile from "./pages/PublicProfile";
 import PublicCareInstructions from "./pages/PublicCareInstructions";
+import PublicMissingPet from "./pages/PublicMissingPet";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -45,6 +46,7 @@ const App = () => {
               } />
               <Route path="/profile/:petId" element={<PublicProfile />} />
               <Route path="/care/:petId" element={<PublicCareInstructions />} />
+              <Route path="/missing-pet/:petId" element={<PublicMissingPet />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </AuthProvider>

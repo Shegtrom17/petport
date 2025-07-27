@@ -726,6 +726,10 @@ export type Database = {
         }
         Returns: string
       }
+      is_pet_missing: {
+        Args: { pet_uuid: string }
+        Returns: boolean
+      }
     }
     Enums: {
       [_ in never]: never

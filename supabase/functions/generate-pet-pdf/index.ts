@@ -731,13 +731,23 @@ serve(async (req) => {
 
         // QR Code for Missing Pet Flyers
         if (type === 'lost_pet') {
-          const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(`${Deno.env.get('SITE_URL') || 'http://localhost:3000'}/missing-pet/${petId}`)}`
+          console.log('Generating QR code for missing pet...')
+          const siteUrl = Deno.env.get('SITE_URL') || 'https://c2db7d2d-7448-4eaf-945e-d804d3aeaccc.lovableproject.com'
+          const missingPetUrl = `${siteUrl}/missing-pet/${petId}`
+          console.log('QR code target URL:', missingPetUrl)
+          const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(missingPetUrl)}`
+          console.log('QR service URL:', qrCodeUrl)
           
           try {
+            console.log('Fetching QR image from service...')
             const qrResponse = await fetch(qrCodeUrl)
+            console.log('QR service response status:', qrResponse.status)
+            
             if (qrResponse.ok) {
               const qrImageBytes = await qrResponse.arrayBuffer()
+              console.log('QR image bytes received:', qrImageBytes.byteLength)
               const qrImage = await pdfDoc.embedPng(new Uint8Array(qrImageBytes))
+              console.log('QR image embedded successfully')
               
               // Position QR code in bottom-right corner
               const qrSize = 100
@@ -767,9 +777,13 @@ serve(async (req) => {
                 font: regularFont,
                 color: blackColor,
               })
+              
+              console.log('QR code added to PDF successfully')
+            } else {
+              console.error('QR service returned error:', qrResponse.status, await qrResponse.text())
             }
           } catch (qrError) {
-            console.log('Failed to add QR code:', qrError.message)
+            console.error('Failed to add QR code:', qrError.message, qrError.stack)
             // Continue without QR code if it fails
           }
         }

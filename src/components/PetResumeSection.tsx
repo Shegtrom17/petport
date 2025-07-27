@@ -421,45 +421,6 @@ export const PetResumeSection = ({ petData, onUpdate }: PetResumeSectionProps) =
         </Card>
       )}
 
-      {/* Earned Badges with New Icons */}
-      <Card className="border-0 shadow-xl bg-white/90 backdrop-blur-sm">
-        <CardHeader>
-          <CardTitle className="flex items-center space-x-2">
-            <Shield className="w-5 h-5 text-blue-600" />
-            <span>Certified Achievements</span>
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {petData.badges.map((badge, index) => {
-              // Different icons for different badge types using emojis
-              const getIcon = (badgeName: string) => {
-                if (badgeName.toLowerCase().includes('therapy') || badgeName.toLowerCase().includes('certified')) return '🏆';
-                if (badgeName.toLowerCase().includes('kids') || badgeName.toLowerCase().includes('child')) return '🐾';
-                if (badgeName.toLowerCase().includes('trained') || badgeName.toLowerCase().includes('behaved')) return '🦴';
-                return '🌍';
-              };
-
-              return (
-                <div
-                  key={index}
-                  className="flex flex-col items-center p-4 bg-gradient-to-br from-blue-50 to-purple-50 rounded-lg border-2 border-blue-200 transform hover:scale-105 transition-transform"
-                >
-                  <div className="w-12 h-12 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center mb-2 text-2xl">
-                    {getIcon(badge)}
-                  </div>
-                  <Badge 
-                    variant="secondary" 
-                    className="bg-gradient-to-r from-blue-500 to-purple-600 text-white text-xs font-bold border-2 border-yellow-400"
-                  >
-                    {badge}
-                  </Badge>
-                </div>
-              );
-            })}
-          </div>
-        </CardContent>
-      </Card>
     </div>
   );
 };

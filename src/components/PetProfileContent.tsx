@@ -467,7 +467,7 @@ export const PetProfileContent = ({
                 variant="outline"
                 className="w-full border-navy-900 text-navy-900 hover:bg-navy-50"
               >
-                🆔 Emergency Quick ID
+                🆔 Lost Pet
               </Button>
               <Button 
                 onClick={() => setIsInAppSharingOpen(true)}

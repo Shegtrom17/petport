@@ -86,6 +86,10 @@ export default {
 					DEFAULT: 'hsl(var(--missing))',
 					foreground: 'hsl(var(--missing-foreground))',
 				},
+				mustard: {
+					DEFAULT: 'hsl(var(--mustard))',
+					foreground: 'hsl(var(--mustard-foreground))',
+				},
 				passport: {
 					navy: '#0A1F44',
 					'light-navy': '#203864',

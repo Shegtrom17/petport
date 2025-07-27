@@ -153,7 +153,7 @@ const LostPet = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-red-50 via-orange-50 to-yellow-50">
       {/* Emergency Header */}
-      <div className={`bg-gradient-to-r ${lostPetData.is_missing ? 'from-red-600 to-red-700' : 'from-orange-500 to-red-500'} text-white py-6 px-4 shadow-lg`}>
+      <div className={`bg-gradient-to-r ${lostPetData.is_missing ? 'from-red-600 to-red-700' : 'from-mustard to-mustard'} text-white py-6 px-4 shadow-lg`}>
         <div className="max-w-6xl mx-auto">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
@@ -166,7 +166,7 @@ const LostPet = () => {
               </div>
               <div>
                 <h1 className="text-2xl md:text-3xl font-bold">
-                  {lostPetData.is_missing ? 'MISSING PET ALERT' : 'Lost Pet Management'}
+                  {lostPetData.is_missing ? 'MISSING PET ALERT' : 'Missing Pet Info'}
                 </h1>
                 <p className="text-red-100">
                   {lostPetData.is_missing ? 'Help bring them home safely' : 'Prepare for emergencies'}
@@ -208,8 +208,8 @@ const LostPet = () => {
         )}
 
         {/* Pet Information Card */}
-        <Card className="bg-white shadow-xl border-2 border-orange-200">
-          <CardHeader className="bg-gradient-to-r from-orange-500 to-red-500 text-white">
+        <Card className="bg-white shadow-xl border-2 border-mustard/30">
+          <CardHeader className="bg-gradient-to-r from-mustard to-mustard text-white">
             <CardTitle className="text-xl flex items-center space-x-3">
               <img 
                 src={currentPet.photoUrl || "/placeholder.svg"} 

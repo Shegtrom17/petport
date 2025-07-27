@@ -77,9 +77,12 @@
     --alert-foreground: 0 0% 98%;
     --missing: 0 72% 51%;
     --missing-foreground: 0 0% 98%;
+    --mustard: 48 85% 45%;
+    --mustard-foreground: 0 0% 98%;
     
     /* Gradients */
     --gradient-emergency: linear-gradient(135deg, hsl(var(--emergency)), hsl(var(--missing)));
     --gradient-alert: linear-gradient(135deg, hsl(var(--alert)), hsl(var(--emergency)));
+    --gradient-mustard: linear-gradient(135deg, hsl(var(--mustard)), hsl(48 85% 55%));
   }
 }

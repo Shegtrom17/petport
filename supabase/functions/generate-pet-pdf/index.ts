@@ -404,6 +404,89 @@ serve(async (req) => {
       if (petData.lost_pet_data && petData.lost_pet_data.length > 0) {
         const lostData = petData.lost_pet_data[0]
         
+        // LAST SEEN INFORMATION - Most Critical
+        if (lostData.last_seen_location) {
+          page.drawText('LAST SEEN LOCATION:', {
+            x: 50,
+            y: yPosition,
+            size: 14,
+            font: boldFont,
+            color: redColor,
+          })
+          
+          yPosition -= 20
+          page.drawText(lostData.last_seen_location, {
+            x: 50,
+            y: yPosition,
+            size: 12,
+            font: regularFont,
+            color: blackColor,
+          })
+          
+          yPosition -= 25
+        }
+        
+        // LAST SEEN DATE & TIME
+        if (lostData.last_seen_date || lostData.last_seen_time) {
+          page.drawText('LAST SEEN DATE & TIME:', {
+            x: 50,
+            y: yPosition,
+            size: 14,
+            font: boldFont,
+            color: redColor,
+          })
+          
+          yPosition -= 20
+          let dateTimeText = ''
+          if (lostData.last_seen_date) {
+            const date = new Date(lostData.last_seen_date).toLocaleDateString()
+            dateTimeText += `Date: ${date}`
+          }
+          if (lostData.last_seen_time) {
+            dateTimeText += `${dateTimeText ? ' | ' : ''}Time: ${lostData.last_seen_time}`
+          }
+          
+          page.drawText(dateTimeText, {
+            x: 50,
+            y: yPosition,
+            size: 12,
+            font: regularFont,
+            color: blackColor,
+          })
+          
+          yPosition -= 25
+        }
+        
+        // REWARD INFORMATION - Prominent Display
+        if (lostData.reward_amount) {
+          page.drawRectangle({
+            x: 40,
+            y: yPosition - 15,
+            width: width - 80,
+            height: 35,
+            color: rgb(1, 0.9, 0.8), // Light orange background
+          })
+          
+          page.drawText('💰 REWARD OFFERED:', {
+            x: 50,
+            y: yPosition,
+            size: 14,
+            font: boldFont,
+            color: redColor,
+          })
+          
+          page.drawText(lostData.reward_amount, {
+            x: 200,
+            y: yPosition,
+            size: 14,
+            font: boldFont,
+            color: redColor,
+          })
+          
+          yPosition -= 40
+        }
+        
+        // DISTINCTIVE FEATURES
         if (lostData.distinctive_features) {
           page.drawText('DISTINCTIVE FEATURES:', {
             x: 50,
@@ -425,13 +508,36 @@ serve(async (req) => {
           yPosition -= 30
         }
         
-        if (lostData.finder_instructions) {
-          page.drawText('FINDER INSTRUCTIONS:', {
+        // CONTACT PRIORITY INSTRUCTIONS
+        if (lostData.contact_priority) {
+          page.drawText('CONTACT PRIORITY:', {
             x: 50,
             y: yPosition,
             size: 12,
             font: boldFont,
+            color: redColor,
+          })
+          
+          yPosition -= 20
+          page.drawText(lostData.contact_priority, {
+            x: 50,
+            y: yPosition,
+            size: 11,
+            font: regularFont,
             color: blackColor,
+          })
+          
+          yPosition -= 30
+        }
+        
+        // FINDER INSTRUCTIONS
+        if (lostData.finder_instructions) {
+          page.drawText('IF FOUND - IMPORTANT:', {
+            x: 50,
+            y: yPosition,
+            size: 12,
+            font: boldFont,
+            color: redColor,
           })
           
           yPosition -= 20
@@ -446,8 +552,9 @@ serve(async (req) => {
           yPosition -= 30
         }
         
+        // EMERGENCY NOTES
         if (lostData.emergency_notes) {
-          page.drawText('EMERGENCY NOTES:', {
+          page.drawText('*** EMERGENCY NOTES ***', {
             x: 50,
             y: yPosition,
             size: 12,

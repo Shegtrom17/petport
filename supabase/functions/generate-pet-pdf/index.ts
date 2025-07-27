@@ -92,7 +92,7 @@ serve(async (req) => {
         reviews (reviewer_name, rating, text, date, location, type),
         travel_locations (name, type, code, date_visited, notes),
         documents (name, type, file_url, size),
-        lost_pet_data (is_missing, last_seen_location, last_seen_date, last_seen_time, distinctive_features, reward_amount, finder_instructions, contact_priority, emergency_notes),
+        
         pet_photos (photo_url, full_body_photo_url),
         gallery_photos (url, caption)
       `)

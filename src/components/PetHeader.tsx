@@ -11,9 +11,10 @@ interface PetHeaderProps {
   activeTab: string;
   onTabChange: (tab: string) => void;
   selectedPetId?: string;
+  selectedPetName?: string;
 }
 
-export const PetHeader = ({ activeTab, onTabChange, selectedPetId }: PetHeaderProps) => {
+export const PetHeader = ({ activeTab, onTabChange, selectedPetId, selectedPetName }: PetHeaderProps) => {
   const navigate = useNavigate();
   const { signOut, user } = useAuth();
 
@@ -64,6 +65,7 @@ export const PetHeader = ({ activeTab, onTabChange, selectedPetId }: PetHeaderPr
               <>
                 <LostPetButton 
                   petId={selectedPetId} 
+                  petName={selectedPetName}
                   className="text-xs sm:text-sm px-2 sm:px-3 py-1 sm:py-2" 
                 />
                 <Button 

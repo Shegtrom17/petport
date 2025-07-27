@@ -153,7 +153,7 @@ const LostPet = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-red-50 via-[#F5F0E0] to-yellow-50">
       {/* Emergency Header */}
-      <div className={`bg-gradient-to-r ${lostPetData.is_missing ? 'from-red-600 to-red-700' : 'from-[#B8860B] to-[#B8860B]'} text-white py-6 px-4 shadow-lg`}>
+      <div className={`bg-gradient-to-r ${lostPetData.is_missing ? 'from-red-600 to-red-700' : 'from-yellow-700 to-yellow-800'} text-white py-6 px-4 shadow-lg`}>
         <div className="max-w-6xl mx-auto">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
@@ -208,8 +208,8 @@ const LostPet = () => {
         )}
 
         {/* Pet Information Card */}
-        <Card className="bg-white shadow-xl border-2 border-[#B8860B]/30">
-          <CardHeader className="bg-gradient-to-r from-[#B8860B] to-[#B8860B] text-white">
+        <Card className="bg-white shadow-xl border-2 border-yellow-600">
+          <CardHeader className="bg-gradient-to-r from-yellow-700 to-yellow-800 text-white">
             <CardTitle className="text-xl flex items-center space-x-3">
               <img 
                 src={currentPet.photoUrl || "/placeholder.svg"} 
@@ -252,9 +252,9 @@ const LostPet = () => {
                     <p className="ml-6">{currentPet.emergency_contact || 'Not set'}</p>
                   </div>
                   {currentPet.second_emergency_contact && (
-                    <div className="bg-[#F5F0E0] p-3 rounded-lg">
+                    <div className="bg-yellow-50 p-3 rounded-lg">
                       <div className="flex items-center space-x-2">
-                        <Phone className="w-4 h-4 text-[#B8860B]" />
+                        <Phone className="w-4 h-4 text-yellow-700" />
                         <strong>Secondary:</strong>
                       </div>
                       <p className="ml-6">{currentPet.second_emergency_contact}</p>

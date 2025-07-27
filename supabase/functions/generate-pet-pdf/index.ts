@@ -260,6 +260,214 @@ serve(async (req) => {
         }
       }
       
+      // PHOTOS SECTION - Critical for identification
+      yPosition -= 30
+      page.drawText('PHOTOS FOR IDENTIFICATION:', {
+        x: 50,
+        y: yPosition,
+        size: 16,
+        font: boldFont,
+        color: redColor,
+      })
+      
+      yPosition -= 30
+      
+      // Display main pet photos if available
+      if (petData.pet_photos && petData.pet_photos.length > 0) {
+        const photos = petData.pet_photos[0]
+        let photoX = 50
+        
+        if (photos.photo_url) {
+          try {
+            const photoResponse = await fetch(photos.photo_url)
+            if (photoResponse.ok) {
+              const photoBytes = await photoResponse.arrayBuffer()
+              const photo = await pdfDoc.embedJpg(new Uint8Array(photoBytes))
+              
+              page.drawImage(photo, {
+                x: photoX,
+                y: yPosition - 120,
+                width: 120,
+                height: 120,
+              })
+              
+              page.drawText('Main Photo', {
+                x: photoX,
+                y: yPosition - 140,
+                size: 10,
+                font: boldFont,
+                color: blackColor,
+              })
+              
+              photoX += 140
+            }
+          } catch (error) {
+            console.log('Could not load main photo:', error)
+          }
+        }
+        
+        if (photos.full_body_photo_url) {
+          try {
+            const photoResponse = await fetch(photos.full_body_photo_url)
+            if (photoResponse.ok) {
+              const photoBytes = await photoResponse.arrayBuffer()
+              const photo = await pdfDoc.embedJpg(new Uint8Array(photoBytes))
+              
+              page.drawImage(photo, {
+                x: photoX,
+                y: yPosition - 120,
+                width: 120,
+                height: 120,
+              })
+              
+              page.drawText('Full Body Photo', {
+                x: photoX,
+                y: yPosition - 140,
+                size: 10,
+                font: boldFont,
+                color: blackColor,
+              })
+            }
+          } catch (error) {
+            console.log('Could not load full body photo:', error)
+          }
+        }
+        
+        yPosition -= 160
+      }
+      
+      // RECENT PHOTOS GALLERY
+      if (petData.gallery_photos && petData.gallery_photos.length > 0) {
+        yPosition -= 20
+        page.drawText('RECENT PHOTOS:', {
+          x: 50,
+          y: yPosition,
+          size: 14,
+          font: boldFont,
+          color: blackColor,
+        })
+        
+        yPosition -= 30
+        let galleryX = 50
+        let photoCount = 0
+        
+        for (const galleryPhoto of petData.gallery_photos.slice(0, 3)) { // Show up to 3 recent photos
+          try {
+            const photoResponse = await fetch(galleryPhoto.url)
+            if (photoResponse.ok) {
+              const photoBytes = await photoResponse.arrayBuffer()
+              const photo = await pdfDoc.embedJpg(new Uint8Array(photoBytes))
+              
+              page.drawImage(photo, {
+                x: galleryX,
+                y: yPosition - 80,
+                width: 80,
+                height: 80,
+              })
+              
+              if (galleryPhoto.caption) {
+                page.drawText(galleryPhoto.caption.substring(0, 12), {
+                  x: galleryX,
+                  y: yPosition - 95,
+                  size: 8,
+                  font: regularFont,
+                  color: blackColor,
+                })
+              }
+              
+              galleryX += 90
+              photoCount++
+              
+              if (photoCount >= 3) break
+            }
+          } catch (error) {
+            console.log('Could not load gallery photo:', error)
+          }
+        }
+        
+        yPosition -= 110
+      }
+      
+      // MISSING PET INFORMATION SECTION
+      yPosition -= 20
+      page.drawText('MISSING PET INFORMATION:', {
+        x: 50,
+        y: yPosition,
+        size: 16,
+        font: boldFont,
+        color: redColor,
+      })
+      
+      yPosition -= 25
+      
+      // Add lost pet specific data
+      if (petData.lost_pet_data && petData.lost_pet_data.length > 0) {
+        const lostData = petData.lost_pet_data[0]
+        
+        if (lostData.distinctive_features) {
+          page.drawText('DISTINCTIVE FEATURES:', {
+            x: 50,
+            y: yPosition,
+            size: 12,
+            font: boldFont,
+            color: blackColor,
+          })
+          
+          yPosition -= 20
+          page.drawText(lostData.distinctive_features, {
+            x: 50,
+            y: yPosition,
+            size: 11,
+            font: regularFont,
+            color: blackColor,
+          })
+          
+          yPosition -= 30
+        }
+        
+        if (lostData.finder_instructions) {
+          page.drawText('FINDER INSTRUCTIONS:', {
+            x: 50,
+            y: yPosition,
+            size: 12,
+            font: boldFont,
+            color: blackColor,
+          })
+          
+          yPosition -= 20
+          page.drawText(lostData.finder_instructions, {
+            x: 50,
+            y: yPosition,
+            size: 11,
+            font: regularFont,
+            color: blackColor,
+          })
+          
+          yPosition -= 30
+        }
+        
+        if (lostData.emergency_notes) {
+          page.drawText('EMERGENCY NOTES:', {
+            x: 50,
+            y: yPosition,
+            size: 12,
+            font: boldFont,
+            color: redColor,
+          })
+          
+          yPosition -= 20
+          page.drawText(lostData.emergency_notes, {
+            x: 50,
+            y: yPosition,
+            size: 11,
+            font: regularFont,
+            color: blackColor,
+          })
+          
+          yPosition -= 30
+        }
+      }
+      
       // Pet details for identification
       const petDetails = [
         { label: 'Species:', value: petData.species || '' },

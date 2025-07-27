@@ -8,6 +8,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 interface CertificationSectionProps {
   petData: {
@@ -27,6 +29,8 @@ interface CertificationSectionProps {
 
 export const CertificationSection = ({ petData, onUpdate }: CertificationSectionProps) => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const { toast } = useToast();
   const [formData, setFormData] = useState({
     type: petData.certificationData?.type || '',
     status: petData.certificationData?.status || 'active',
@@ -37,12 +41,82 @@ export const CertificationSection = ({ petData, onUpdate }: CertificationSection
     notes: petData.certificationData?.notes || ''
   });
 
-  const handleSave = () => {
-    // In a real implementation, this would save to Supabase
-    console.log("Saving certification data:", formData);
-    setIsEditModalOpen(false);
-    if (onUpdate) {
-      onUpdate();
+  const handleSave = async () => {
+    if (!formData.type.trim()) {
+      toast({
+        title: "Error",
+        description: "Please select a certification type",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      console.log("Saving certification data:", formData);
+
+      // Check if professional_data exists for this pet
+      const { data: existingData, error: fetchError } = await supabase
+        .from('professional_data')
+        .select('*')
+        .eq('pet_id', petData.id)
+        .single();
+
+      if (fetchError && fetchError.code !== 'PGRST116') {
+        throw fetchError;
+      }
+
+      const certificationData = {
+        type: formData.type,
+        status: formData.status,
+        issuer: formData.issuer,
+        certification_number: formData.certification_number,
+        issue_date: formData.issue_date,
+        expiry_date: formData.expiry_date,
+        notes: formData.notes
+      };
+
+      if (existingData) {
+        // Update existing record
+        const { error } = await supabase
+          .from('professional_data')
+          .update({ 
+            certification_data: certificationData,
+            updated_at: new Date().toISOString()
+          })
+          .eq('pet_id', petData.id);
+
+        if (error) throw error;
+      } else {
+        // Create new record
+        const { error } = await supabase
+          .from('professional_data')
+          .insert({
+            pet_id: petData.id,
+            certification_data: certificationData
+          });
+
+        if (error) throw error;
+      }
+
+      toast({
+        title: "Success",
+        description: "Certification data saved successfully",
+      });
+
+      setIsEditModalOpen(false);
+      if (onUpdate) {
+        onUpdate();
+      }
+    } catch (error) {
+      console.error('Error saving certification data:', error);
+      toast({
+        title: "Error",
+        description: "Failed to save certification data",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -282,10 +356,11 @@ export const CertificationSection = ({ petData, onUpdate }: CertificationSection
               </Button>
               <Button 
                 onClick={handleSave}
+                disabled={isLoading}
                 className="bg-purple-600 hover:bg-purple-700 text-white"
               >
                 <Check className="w-4 h-4 mr-2" />
-                Save Certification
+                {isLoading ? "Saving..." : "Save Certification"}
               </Button>
             </div>
           </div>

@@ -44,16 +44,15 @@ export default function PublicMissingPet() {
     try {
       setIsLoading(true);
       
-      // Fetch pet basic info - must be public
+      // Fetch pet basic info - no longer requires is_public, only missing status
       const { data: petInfo, error: petError } = await supabase
         .from('pets')
-        .select('id, name, breed, species, age, is_public')
+        .select('id, name, breed, species, age')
         .eq('id', id)
-        .eq('is_public', true)
         .single();
 
       if (petError || !petInfo) {
-        setError('Missing pet not found or not public');
+        setError('Pet not found');
         return;
       }
 

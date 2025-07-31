@@ -69,6 +69,13 @@ export const LostPetButton = ({ petId, petName = "Pet", isMissing = false, class
           });
           
           setIsOptionsDialogOpen(false);
+        } else if (action === 'view') {
+          // Open in new tab
+          const url = URL.createObjectURL(result.blob);
+          window.open(url, '_blank')?.focus();
+          URL.revokeObjectURL(url);
+          
+          setIsOptionsDialogOpen(false);
         }
         
         toast({

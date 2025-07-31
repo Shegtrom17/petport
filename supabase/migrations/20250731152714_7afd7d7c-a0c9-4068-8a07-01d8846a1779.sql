@@ -1,0 +1,2 @@
+-- First, let's fix the complete PDF by updating the edge function to fetch ALL data
+-- No database changes needed, just need to update the edge function

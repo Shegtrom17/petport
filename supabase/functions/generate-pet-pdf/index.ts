@@ -132,13 +132,29 @@ serve(async (req) => {
       { data: medicalData },
       { data: lostPetData },
       { data: careData },
-      { data: photosData }
+      { data: photosData },
+      { data: achievementsData },
+      { data: trainingData },
+      { data: reviewsData },
+      { data: experiencesData },
+      { data: travelData },
+      { data: galleryData },
+      { data: certificationsData },
+      { data: professionalData }
     ] = await Promise.all([
       supabase.from('contacts').select('*').eq('pet_id', petId).maybeSingle(),
       supabase.from('medical').select('*').eq('pet_id', petId).maybeSingle(),
       supabase.from('lost_pet_data').select('*').eq('pet_id', petId).maybeSingle(),
       supabase.from('care_instructions').select('*').eq('pet_id', petId).maybeSingle(),
-      supabase.from('pet_photos').select('*').eq('pet_id', petId).maybeSingle()
+      supabase.from('pet_photos').select('*').eq('pet_id', petId).maybeSingle(),
+      supabase.from('achievements').select('*').eq('pet_id', petId),
+      supabase.from('training').select('*').eq('pet_id', petId),
+      supabase.from('reviews').select('*').eq('pet_id', petId),
+      supabase.from('experiences').select('*').eq('pet_id', petId),
+      supabase.from('travel_locations').select('*').eq('pet_id', petId),
+      supabase.from('gallery_photos').select('*').eq('pet_id', petId),
+      supabase.from('certifications').select('*').eq('pet_id', petId),
+      supabase.from('professional_data').select('*').eq('pet_id', petId).maybeSingle()
     ])
 
     console.log('Additional data fetched:', {
@@ -146,7 +162,15 @@ serve(async (req) => {
       hasMedical: !!medicalData,
       hasLostData: !!lostPetData,
       hasCare: !!careData,
-      hasPhotos: !!photosData
+      hasPhotos: !!photosData,
+      hasAchievements: !!achievementsData?.length,
+      hasTraining: !!trainingData?.length,
+      hasReviews: !!reviewsData?.length,
+      hasExperiences: !!experiencesData?.length,
+      hasTravel: !!travelData?.length,
+      hasGallery: !!galleryData?.length,
+      hasCertifications: !!certificationsData?.length,
+      hasProfessional: !!professionalData
     })
 
     // Generate PDF using pdf-lib
@@ -727,6 +751,361 @@ serve(async (req) => {
           
           yPosition -= 15 + (medicalData.medications.length * 15) + 10
         }
+      }
+
+      // Add new page for "full" type PDF with all additional sections
+      if (type === 'full') {
+        // Add second page for complete profile
+        const page2 = pdfDoc.addPage([612, 792])
+        let yPos2 = height - 60
+        
+        // Page 2 Header
+        page2.drawText('COMPLETE PET PROFILE - PAGE 2', {
+          x: 50,
+          y: yPos2,
+          size: 18,
+          font: boldFont,
+          color: titleColor,
+        })
+        yPos2 -= 40
+
+        // Care Instructions
+        if (careData) {
+          page2.drawText('CARE INSTRUCTIONS', {
+            x: 50,
+            y: yPos2,
+            size: 16,
+            font: boldFont,
+            color: titleColor,
+          })
+          yPos2 -= 25
+
+          if (careData.feeding_schedule) {
+            page2.drawText('Feeding Schedule:', {
+              x: 50,
+              y: yPos2,
+              size: 12,
+              font: boldFont,
+              color: blackColor,
+            })
+            page2.drawText(careData.feeding_schedule, {
+              x: 50,
+              y: yPos2 - 15,
+              size: 11,
+              font: regularFont,
+              color: blackColor,
+            })
+            yPos2 -= 35
+          }
+
+          if (careData.morning_routine) {
+            page2.drawText('Morning Routine:', {
+              x: 50,
+              y: yPos2,
+              size: 12,
+              font: boldFont,
+              color: blackColor,
+            })
+            page2.drawText(careData.morning_routine, {
+              x: 50,
+              y: yPos2 - 15,
+              size: 11,
+              font: regularFont,
+              color: blackColor,
+            })
+            yPos2 -= 35
+          }
+
+          if (careData.evening_routine) {
+            page2.drawText('Evening Routine:', {
+              x: 50,
+              y: yPos2,
+              size: 12,
+              font: boldFont,
+              color: blackColor,
+            })
+            page2.drawText(careData.evening_routine, {
+              x: 50,
+              y: yPos2 - 15,
+              size: 11,
+              font: regularFont,
+              color: blackColor,
+            })
+            yPos2 -= 35
+          }
+        }
+
+        // Professional Data & Certifications
+        if (professionalData || (certificationsData && certificationsData.length > 0)) {
+          page2.drawText('PROFESSIONAL CREDENTIALS', {
+            x: 50,
+            y: yPos2,
+            size: 16,
+            font: boldFont,
+            color: titleColor,
+          })
+          yPos2 -= 25
+
+          if (professionalData?.support_animal_status) {
+            page2.drawText(`Support Animal Status: ${professionalData.support_animal_status}`, {
+              x: 50,
+              y: yPos2,
+              size: 12,
+              font: boldFont,
+              color: blackColor,
+            })
+            yPos2 -= 20
+          }
+
+          if (certificationsData && certificationsData.length > 0) {
+            page2.drawText('Certifications:', {
+              x: 50,
+              y: yPos2,
+              size: 12,
+              font: boldFont,
+              color: blackColor,
+            })
+            yPos2 -= 15
+
+            certificationsData.forEach((cert: any) => {
+              page2.drawText(`• ${cert.type} - ${cert.status} (${cert.issuer || 'N/A'})`, {
+                x: 50,
+                y: yPos2,
+                size: 11,
+                font: regularFont,
+                color: blackColor,
+              })
+              yPos2 -= 15
+            })
+            yPos2 -= 10
+          }
+        }
+
+        // Training & Achievements
+        if ((trainingData && trainingData.length > 0) || (achievementsData && achievementsData.length > 0)) {
+          page2.drawText('TRAINING & ACHIEVEMENTS', {
+            x: 50,
+            y: yPos2,
+            size: 16,
+            font: boldFont,
+            color: titleColor,
+          })
+          yPos2 -= 25
+
+          if (trainingData && trainingData.length > 0) {
+            page2.drawText('Training:', {
+              x: 50,
+              y: yPos2,
+              size: 12,
+              font: boldFont,
+              color: blackColor,
+            })
+            yPos2 -= 15
+
+            trainingData.forEach((training: any) => {
+              page2.drawText(`• ${training.course} at ${training.facility || 'N/A'} - ${training.completed || 'In Progress'}`, {
+                x: 50,
+                y: yPos2,
+                size: 11,
+                font: regularFont,
+                color: blackColor,
+              })
+              yPos2 -= 15
+            })
+            yPos2 -= 10
+          }
+
+          if (achievementsData && achievementsData.length > 0) {
+            page2.drawText('Achievements:', {
+              x: 50,
+              y: yPos2,
+              size: 12,
+              font: boldFont,
+              color: blackColor,
+            })
+            yPos2 -= 15
+
+            achievementsData.forEach((achievement: any) => {
+              page2.drawText(`• ${achievement.title} - ${achievement.description || 'N/A'}`, {
+                x: 50,
+                y: yPos2,
+                size: 11,
+                font: regularFont,
+                color: blackColor,
+              })
+              yPos2 -= 15
+            })
+            yPos2 -= 10
+          }
+        }
+
+        // Add third page for reviews and travel
+        if (yPos2 < 200 || (reviewsData && reviewsData.length > 0) || (travelData && travelData.length > 0)) {
+          const page3 = pdfDoc.addPage([612, 792])
+          let yPos3 = height - 60
+          
+          page3.drawText('COMPLETE PET PROFILE - PAGE 3', {
+            x: 50,
+            y: yPos3,
+            size: 18,
+            font: boldFont,
+            color: titleColor,
+          })
+          yPos3 -= 40
+
+          // Reviews Section
+          if (reviewsData && reviewsData.length > 0) {
+            page3.drawText('REVIEWS & TESTIMONIALS', {
+              x: 50,
+              y: yPos3,
+              size: 16,
+              font: boldFont,
+              color: titleColor,
+            })
+            yPos3 -= 25
+
+            reviewsData.forEach((review: any, index: number) => {
+              if (index < 3) { // Limit to 3 reviews per page
+                page3.drawText(`⭐ ${review.rating}/5 - ${review.reviewer_name}`, {
+                  x: 50,
+                  y: yPos3,
+                  size: 12,
+                  font: boldFont,
+                  color: blackColor,
+                })
+                yPos3 -= 15
+
+                if (review.text) {
+                  page3.drawText(`"${review.text}"`, {
+                    x: 50,
+                    y: yPos3,
+                    size: 11,
+                    font: regularFont,
+                    color: blackColor,
+                  })
+                  yPos3 -= 15
+                }
+
+                page3.drawText(`${review.type || 'General'} | ${review.location || 'N/A'} | ${review.date || 'N/A'}`, {
+                  x: 50,
+                  y: yPos3,
+                  size: 10,
+                  font: regularFont,
+                  color: rgb(0.5, 0.5, 0.5),
+                })
+                yPos3 -= 25
+              }
+            })
+          }
+
+          // Travel History
+          if (travelData && travelData.length > 0) {
+            page3.drawText('TRAVEL HISTORY', {
+              x: 50,
+              y: yPos3,
+              size: 16,
+              font: boldFont,
+              color: titleColor,
+            })
+            yPos3 -= 25
+
+            travelData.forEach((location: any) => {
+              page3.drawText(`✈ ${location.name} (${location.type})`, {
+                x: 50,
+                y: yPos3,
+                size: 12,
+                font: boldFont,
+                color: blackColor,
+              })
+              yPos3 -= 15
+
+              if (location.date_visited) {
+                page3.drawText(`Visited: ${location.date_visited}`, {
+                  x: 50,
+                  y: yPos3,
+                  size: 11,
+                  font: regularFont,
+                  color: blackColor,
+                })
+                yPos3 -= 15
+              }
+
+              if (location.notes) {
+                page3.drawText(location.notes, {
+                  x: 50,
+                  y: yPos3,
+                  size: 10,
+                  font: regularFont,
+                  color: rgb(0.5, 0.5, 0.5),
+                })
+                yPos3 -= 20
+              }
+            })
+          }
+
+          // Experience Section
+          if (experiencesData && experiencesData.length > 0) {
+            page3.drawText('EXPERIENCE', {
+              x: 50,
+              y: yPos3,
+              size: 16,
+              font: boldFont,
+              color: titleColor,
+            })
+            yPos3 -= 25
+
+            experiencesData.forEach((exp: any) => {
+              page3.drawText(`• ${exp.activity}`, {
+                x: 50,
+                y: yPos3,
+                size: 12,
+                font: boldFont,
+                color: blackColor,
+              })
+              yPos3 -= 15
+
+              if (exp.description) {
+                page3.drawText(exp.description, {
+                  x: 50,
+                  y: yPos3,
+                  size: 11,
+                  font: regularFont,
+                  color: blackColor,
+                })
+                yPos3 -= 15
+              }
+
+              if (exp.contact) {
+                page3.drawText(`Contact: ${exp.contact}`, {
+                  x: 50,
+                  y: yPos3,
+                  size: 10,
+                  font: regularFont,
+                  color: rgb(0.5, 0.5, 0.5),
+                })
+                yPos3 -= 20
+              }
+            })
+          }
+
+          // Footer for page 3
+          page3.drawText('PetPort™ Complete Profile', {
+            x: width - 200,
+            y: 50,
+            size: 10,
+            font: boldFont,
+            color: rgb(0.83, 0.69, 0.22),
+          })
+        }
+
+        // Footer for page 2
+        page2.drawText('PetPort™ Complete Profile', {
+          x: width - 200,
+          y: 50,
+          size: 10,
+          font: boldFont,
+          color: rgb(0.83, 0.69, 0.22),
+        })
       }
 
       // QR Code for Missing Pet Flyers - DRAW FIRST to avoid being covered

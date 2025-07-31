@@ -74,6 +74,7 @@ export const LostPetButton = ({ petId, petName = "Pet", isMissing = false, class
       }
     } catch (error) {
       console.error('PDF generation error:', error);
+      setGeneratedPdfBlob(null);
       toast({
         title: "Error",
         description: "Failed to generate missing pet flyer. Please try again.",

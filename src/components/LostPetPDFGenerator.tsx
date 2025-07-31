@@ -48,6 +48,8 @@ export const LostPetPDFGenerator = ({ petId, petName, isActive }: LostPetPDFGene
       }
     } catch (error) {
       console.error('Error generating lost pet PDF:', error);
+      setPdfBlob(null);
+      setShowDialog(false);
       toast({
         title: "Generation Failed", 
         description: "Could not generate the lost pet flyer. Please try again.",

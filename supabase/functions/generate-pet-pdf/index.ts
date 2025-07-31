@@ -968,7 +968,7 @@ serve(async (req) => {
 
             reviewsData.forEach((review: any, index: number) => {
               if (index < 3) { // Limit to 3 reviews per page
-                page3.drawText(`⭐ ${review.rating}/5 - ${review.reviewer_name}`, {
+                page3.drawText(`* ${review.rating}/5 - ${review.reviewer_name}`, {
                   x: 50,
                   y: yPos3,
                   size: 12,

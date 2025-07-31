@@ -283,8 +283,6 @@ const handleEditSave = () => {
         </CardContent>
       </Card> */}
 
-      {/* Share Profile Section - Moved to bottom */}
-      <SocialShareButtons petName={petData?.name || "Pet"} petId={petData?.id || ""} />
     </div>
   );
 };

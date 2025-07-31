@@ -161,51 +161,6 @@ const handleEditSave = () => {
 
   return (
     <div className="space-y-6">
-      {/* Edit and Delete Buttons - Only show if user is the owner */}
-      {isOwner && (
-        <div className="flex justify-end gap-3 mb-4">
-          <Button 
-            onClick={() => setIsEditing(true)}
-            className="bg-gradient-to-r from-navy-900 to-navy-800 hover:from-navy-800 hover:to-navy-700 text-gold-500 border border-gold-500/30 px-3 sm:px-6 py-2 text-sm sm:text-base font-medium shadow-lg"
-            size="lg"
-          >
-            <Edit className="w-4 h-4 sm:w-5 sm:h-5 mr-1 sm:mr-2" />
-            Edit Profile
-          </Button>
-          
-          <AlertDialog>
-            <AlertDialogTrigger asChild>
-              <Button 
-                variant="destructive"
-                size="lg"
-                className="px-6 py-2 text-base font-medium shadow-lg"
-              >
-                <Trash2 className="w-5 h-5 mr-2" />
-                Delete Pet
-              </Button>
-            </AlertDialogTrigger>
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>Delete {petData?.name || "this pet"}?</AlertDialogTitle>
-                <AlertDialogDescription>
-                  This action cannot be undone. This will permanently delete {petData?.name || "this pet"}'s profile and all associated data including photos, documents, and medical records.
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                <AlertDialogAction
-                  onClick={handleDeletePet}
-                  disabled={isDeleting}
-                  className="bg-red-600 hover:bg-red-700"
-                >
-                  {isDeleting ? "Deleting..." : "Delete Pet"}
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
-        </div>
-      )}
-
       {/* Support Animal Status Banner - Commented out since not in pets table */}
       {/* <SupportAnimalBanner status={petData?.supportAnimalStatus || null} /> */}
 

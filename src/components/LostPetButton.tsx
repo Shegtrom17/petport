@@ -70,11 +70,18 @@ export const LostPetButton = ({ petId, petName = "Pet", isMissing = false, class
           
           setIsOptionsDialogOpen(false);
         }
-        // If action is 'view', keep dialog open to show PDF options
+        
+        toast({
+          title: "Missing Pet Flyer Generated",
+          description: "Your lost pet flyer is ready to download or share",
+        });
+      } else {
+        throw new Error(result.error || 'Failed to generate PDF');
       }
     } catch (error) {
       console.error('PDF generation error:', error);
       setGeneratedPdfBlob(null);
+      setIsOptionsDialogOpen(false);
       toast({
         title: "Error",
         description: "Failed to generate missing pet flyer. Please try again.",

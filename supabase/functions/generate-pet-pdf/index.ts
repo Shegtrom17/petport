@@ -753,8 +753,89 @@ serve(async (req) => {
         }
       }
 
-      // Add new page for "full" type PDF with all additional sections
+      
+      // QR Code for Missing Pet Flyers - DRAW FIRST to avoid being covered
+      if (type === 'lost_pet') {
+        console.log('Generating QR code for missing pet...')
+        const siteUrl = Deno.env.get('SITE_URL') || 'https://c2db7d2d-7448-4eaf-945e-d804d3aeaccc.lovableproject.com'
+        const missingPetUrl = `${siteUrl}/missing-pet/${petId}`
+        console.log('QR code target URL:', missingPetUrl)
+        const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(missingPetUrl)}`
+        console.log('QR service URL:', qrCodeUrl)
+        
+        try {
+          console.log('Fetching QR image from service...')
+          const qrResponse = await fetch(qrCodeUrl)
+          console.log('QR service response status:', qrResponse.status)
+          
+          if (qrResponse.ok) {
+            const qrImageBytes = await qrResponse.arrayBuffer()
+            console.log('QR image bytes received:', qrImageBytes.byteLength)
+            const qrImage = await pdfDoc.embedPng(new Uint8Array(qrImageBytes))
+            console.log('QR image embedded successfully')
+            
+            // Position QR code in bottom-right corner with GUARANTEED visibility
+            const qrSize = 100
+            const qrX = width - qrSize - 30
+            const qrY = 120  // Well above footer
+            
+            // Draw bright background for maximum visibility  
+            page.drawRectangle({
+              x: qrX - 15,
+              y: qrY - 45,
+              width: qrSize + 30,
+              height: qrSize + 60,
+              color: rgb(1, 1, 1), // White background
+              borderColor: rgb(1, 0, 0), // RED border for visibility
+              borderWidth: 2,
+            })
+            
+            // Draw QR code
+            page.drawImage(qrImage, {
+              x: qrX,
+              y: qrY,
+              width: qrSize,
+              height: qrSize,
+            })
+            
+            // Add large, visible text
+            page.drawText('SCAN ME!', {
+              x: qrX + 15,
+              y: qrY + qrSize + 10,
+              size: 14,
+              font: boldFont,
+              color: rgb(1, 0, 0), // RED text
+            })
+            
+            page.drawText('For latest info', {
+              x: qrX + 5,
+              y: qrY - 15,
+              size: 12,
+              font: regularFont,
+              color: blackColor,
+            })
+            
+            page.drawText('& sharing', {
+              x: qrX + 15,
+              y: qrY - 30,
+              size: 12,
+              font: regularFont,
+              color: blackColor,
+            })
+            
+            console.log('QR code added to PDF successfully at position:', qrX, qrY)
+          } else {
+            console.error('QR service returned error:', qrResponse.status, await qrResponse.text())
+          }
+        } catch (qrError) {
+          console.error('Failed to add QR code:', qrError.message, qrError.stack)
+        }
+      }
+
+      // Add new pages for "full" type PDF with all additional sections
       if (type === 'full') {
+        console.log('Adding additional pages for complete profile...')
+        
         // Add second page for complete profile
         const page2 = pdfDoc.addPage([612, 792])
         let yPos2 = height - 60
@@ -1106,84 +1187,6 @@ serve(async (req) => {
           font: boldFont,
           color: rgb(0.83, 0.69, 0.22),
         })
-      }
-
-      // QR Code for Missing Pet Flyers - DRAW FIRST to avoid being covered
-      if (type === 'lost_pet') {
-        console.log('Generating QR code for missing pet...')
-        const siteUrl = Deno.env.get('SITE_URL') || 'https://c2db7d2d-7448-4eaf-945e-d804d3aeaccc.lovableproject.com'
-        const missingPetUrl = `${siteUrl}/missing-pet/${petId}`
-        console.log('QR code target URL:', missingPetUrl)
-        const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(missingPetUrl)}`
-        console.log('QR service URL:', qrCodeUrl)
-        
-        try {
-          console.log('Fetching QR image from service...')
-          const qrResponse = await fetch(qrCodeUrl)
-          console.log('QR service response status:', qrResponse.status)
-          
-          if (qrResponse.ok) {
-            const qrImageBytes = await qrResponse.arrayBuffer()
-            console.log('QR image bytes received:', qrImageBytes.byteLength)
-            const qrImage = await pdfDoc.embedPng(new Uint8Array(qrImageBytes))
-            console.log('QR image embedded successfully')
-            
-            // Position QR code in bottom-right corner with GUARANTEED visibility
-            const qrSize = 100
-            const qrX = width - qrSize - 30
-            const qrY = 120  // Well above footer
-            
-            // Draw bright background for maximum visibility  
-            page.drawRectangle({
-              x: qrX - 15,
-              y: qrY - 45,
-              width: qrSize + 30,
-              height: qrSize + 60,
-              color: rgb(1, 1, 1), // White background
-              borderColor: rgb(1, 0, 0), // RED border for visibility
-              borderWidth: 2,
-            })
-            
-            // Draw QR code
-            page.drawImage(qrImage, {
-              x: qrX,
-              y: qrY,
-              width: qrSize,
-              height: qrSize,
-            })
-            
-            // Add large, visible text
-            page.drawText('SCAN ME!', {
-              x: qrX + 15,
-              y: qrY + qrSize + 10,
-              size: 14,
-              font: boldFont,
-              color: rgb(1, 0, 0), // RED text
-            })
-            
-            page.drawText('For latest info', {
-              x: qrX + 5,
-              y: qrY - 15,
-              size: 12,
-              font: regularFont,
-              color: blackColor,
-            })
-            
-            page.drawText('& sharing', {
-              x: qrX + 15,
-              y: qrY - 30,
-              size: 12,
-              font: regularFont,
-              color: blackColor,
-            })
-            
-            console.log('QR code added to PDF successfully at position:', qrX, qrY)
-          } else {
-            console.error('QR service returned error:', qrResponse.status, await qrResponse.text())
-          }
-        } catch (qrError) {
-          console.error('Failed to add QR code:', qrError.message, qrError.stack)
-        }
       }
 
         // Footer

@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
-import { AlertTriangle, Phone, Trash2, Upload, Loader2 } from "lucide-react";
+import { AlertTriangle, Phone, Trash2, Upload, Loader2, Edit } from "lucide-react";
 import { PetPDFGenerator } from "@/components/PetPDFGenerator";
 import { SupportAnimalBanner } from "@/components/SupportAnimalBanner";
 import { SocialShareButtons } from "@/components/SocialShareButtons";
@@ -11,6 +11,9 @@ import { ProfileEditButton } from "@/components/ProfileEditButton";
 import { CertificationBanner } from "@/components/CertificationBanner";
 import { deleteOfficialPhoto, replaceOfficialPhoto } from "@/services/petService";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/context/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
+import { useNavigate } from "react-router-dom";
 
 interface PetProfileContentProps {
   petData: any;
@@ -50,7 +53,10 @@ export const PetProfileContent = ({
     profile: false,
     fullBody: false
   });
+  const [isDeleting, setIsDeleting] = useState(false);
   const { toast } = useToast();
+  const { user } = useAuth();
+  const navigate = useNavigate();
   
   // Safety check for missing data
   if (!petData) {
@@ -74,9 +80,49 @@ export const PetProfileContent = ({
     user_id: selectedPet?.user_id || petData.user_id
   };
 
+  // Check if current user owns this pet
+  const isOwner = user?.id === enhancedPetData?.user_id;
+
   const handleProfileEdit = () => {
     console.log("Profile edit clicked - switching to profile edit mode");
     window.dispatchEvent(new CustomEvent('start-pet-profile-edit'));
+  };
+
+  const handleDeletePet = async () => {
+    if (!user?.id || !enhancedPetData?.id) return;
+
+    setIsDeleting(true);
+    try {
+      const { error } = await supabase
+        .from('pets')
+        .delete()
+        .eq('id', enhancedPetData.id)
+        .eq('user_id', user.id);
+
+      if (error) {
+        console.error('Error deleting pet:', error);
+        toast({
+          title: "Error",
+          description: "Failed to delete pet. Please try again.",
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Success",
+          description: `${enhancedPetData.name} has been deleted successfully.`,
+        });
+        navigate('/');
+      }
+    } catch (error) {
+      console.error('Error deleting pet:', error);
+      toast({
+        title: "Error",
+        description: "Failed to delete pet. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsDeleting(false);
+    }
   };
 
   const handleDeletePhoto = async (photoType: 'profile' | 'fullBody') => {
@@ -163,7 +209,49 @@ export const PetProfileContent = ({
       <div className="passport-map-bg" />
       
       {/* Edit Profile and Delete Pet Buttons */}
-      <ProfileEditButton userId={enhancedPetData?.user_id} onEdit={handleProfileEdit} />
+      {isOwner && (
+        <div className="flex justify-end gap-2 mb-4">
+          <Button 
+            onClick={handleProfileEdit}
+            className="bg-gradient-to-r from-navy-900 to-navy-800 hover:from-navy-800 hover:to-navy-700 text-gold-500 border border-gold-500/30 px-3 py-2 text-sm font-medium shadow-lg"
+            size="sm"
+          >
+            <Edit className="w-4 h-4 mr-1" />
+            Edit Profile
+          </Button>
+          
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button 
+                variant="destructive"
+                size="sm"
+                className="px-3 py-2 text-sm font-medium shadow-lg"
+              >
+                <Trash2 className="w-4 h-4 mr-1" />
+                Delete Pet
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Delete {enhancedPetData?.name || "this pet"}?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  This action cannot be undone. This will permanently delete {enhancedPetData?.name || "this pet"}'s profile and all associated data including photos, documents, and medical records.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={handleDeletePet}
+                  disabled={isDeleting}
+                  className="bg-red-600 hover:bg-red-700"
+                >
+                  {isDeleting ? "Deleting..." : "Delete Pet"}
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        </div>
+      )}
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Left Column - Official Photographs */}

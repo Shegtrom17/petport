@@ -6,6 +6,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Download, Share2, QrCode, Star, Shield, Heart, Phone, Mail, Award, AlertTriangle, MapPin, GraduationCap, Trophy, Activity, Edit } from "lucide-react";
 import { SupportAnimalBanner } from "@/components/SupportAnimalBanner";
 import { PetResumeEditForm } from "@/components/PetResumeEditForm";
+import { generatePetPDF, downloadPDFBlob } from "@/services/pdfService";
+import { toast } from "sonner";
 
 // Helper function to extract phone number and create tel link
 const extractPhoneNumber = (contactString: string) => {
@@ -77,9 +79,23 @@ export const PetResumeSection = ({ petData, onUpdate }: PetResumeSectionProps) =
     ? petData.reviews.reduce((sum, review) => sum + review.rating, 0) / petData.reviews.length 
     : 0;
 
-  const handleDownloadPDF = () => {
+  const handleDownloadPDF = async () => {
     console.log("Downloading Pet Resume as PDF...");
-    // PDF generation would be implemented here
+    toast.loading("Generating PDF...");
+    
+    try {
+      const result = await generatePetPDF(petData.id, 'full');
+      
+      if (result.success && result.pdfBlob) {
+        await downloadPDFBlob(result.pdfBlob, result.fileName || `${petData.name}_Resume.pdf`);
+        toast.success("PDF downloaded successfully!");
+      } else {
+        toast.error(result.error || "Failed to generate PDF");
+      }
+    } catch (error) {
+      console.error("Error generating PDF:", error);
+      toast.error("Failed to generate PDF");
+    }
   };
 
   const handleShare = () => {

@@ -8,6 +8,7 @@ import { Camera, Upload, Download, Plus, Eye, Trash2, Edit2, X } from "lucide-re
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { uploadGalleryPhoto, uploadMultipleGalleryPhotos, deleteGalleryPhoto, updateGalleryPhotoCaption } from "@/services/petService";
+import { generatePetPDF, downloadPDFBlob } from "@/services/pdfService";
 
 const MAX_GALLERY_PHOTOS = 12;
 
@@ -28,6 +29,7 @@ interface PetGallerySectionProps {
 
 export const PetGallerySection = ({ petData, onUpdate }: PetGallerySectionProps) => {
   const [uploading, setUploading] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
   const [editingCaption, setEditingCaption] = useState<string | null>(null);
   const [editCaptionValue, setEditCaptionValue] = useState("");
   const { toast } = useToast();
@@ -208,11 +210,40 @@ export const PetGallerySection = ({ petData, onUpdate }: PetGallerySectionProps)
     setEditCaptionValue("");
   };
 
-  const handleDownloadGallery = () => {
-    toast({
-      title: "Feature coming soon",
-      description: "Gallery PDF export will be available soon",
-    });
+  const handleDownloadGallery = async () => {
+    if (!galleryPhotos || galleryPhotos.length === 0) {
+      toast({
+        title: "No Photos Available",
+        description: "Add some photos to your gallery before generating a PDF.",
+        variant: "destructive",
+      })
+      return
+    }
+
+    setIsUploading(true)
+    
+    try {
+      const result = await generatePetPDF(petData.id, 'gallery')
+      
+      if (result.success && result.blob) {
+        await downloadPDFBlob(result.blob, `${petData.name}_Photo_Gallery.pdf`)
+        toast({
+          title: "Gallery PDF Downloaded",
+          description: `Photo gallery for ${petData.name} has been downloaded successfully.`,
+        })
+      } else {
+        throw new Error(result.error || 'Failed to generate gallery PDF')
+      }
+    } catch (error) {
+      console.error('Error generating gallery PDF:', error)
+      toast({
+        title: "Download Failed",
+        description: "Failed to generate photo gallery PDF. Please try again.",
+        variant: "destructive",
+      })
+    } finally {
+      setIsUploading(false)
+    }
   };
 
   return (
@@ -243,10 +274,10 @@ export const PetGallerySection = ({ petData, onUpdate }: PetGallerySectionProps)
                 <span className="hidden sm:inline">{uploading ? "Uploading..." : "Add Photos"}</span>
                 <span className="sm:hidden">{uploading ? "..." : "Add"}</span>
               </Button>
-              <Button onClick={handleDownloadGallery} variant="secondary" size="sm" className="px-2 sm:px-3 py-1 sm:py-2 text-xs sm:text-sm">
+              <Button onClick={handleDownloadGallery} variant="secondary" size="sm" className="px-2 sm:px-3 py-1 sm:py-2 text-xs sm:text-sm" disabled={isUploading}>
                 <Download className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
-                <span className="hidden sm:inline">Download PDF</span>
-                <span className="sm:hidden">PDF</span>
+                <span className="hidden sm:inline">{isUploading ? "Generating..." : "Download PDF"}</span>
+                <span className="sm:hidden">{isUploading ? "..." : "PDF"}</span>
               </Button>
             </div>
           </div>

@@ -10,7 +10,7 @@ export interface PDFGenerationResult {
   type?: string;
 }
 
-export async function generatePetPDF(petId: string, type: 'emergency' | 'full' | 'lost_pet' | 'care' = 'emergency'): Promise<PDFGenerationResult> {
+export async function generatePetPDF(petId: string, type: 'emergency' | 'full' | 'lost_pet' | 'care' | 'gallery' = 'emergency'): Promise<PDFGenerationResult> {
   try {
     console.log('🔧 CLIENT: Starting PDF generation for pet:', petId, 'type:', type)
     console.log('🔧 CLIENT: Request body will be:', { petId, type })

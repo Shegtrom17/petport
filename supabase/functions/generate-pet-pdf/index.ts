@@ -857,9 +857,9 @@ serve(async (req) => {
               font: boldFont,
               color: blackColor,
             })
-            yPos2 -= 18 // Extra spacing after label
-            yPos2 = drawMultiLineText(page2, careData.feeding_schedule, 50, yPos2, 500, 11, regularFont, blackColor, 7)
-            yPos2 -= 15 // Extra spacing after content
+            yPos2 -= 20 // Extra spacing after label
+            yPos2 = drawMultiLineText(page2, careData.feeding_schedule, 50, yPos2, 500, 11, regularFont, blackColor, 8)
+            yPos2 -= 25 // Extra spacing after content
           }
 
           if (careData.morning_routine) {
@@ -870,9 +870,9 @@ serve(async (req) => {
               font: boldFont,
               color: blackColor,
             })
-            yPos2 -= 18 // Extra spacing after label
-            yPos2 = drawMultiLineText(page2, careData.morning_routine, 50, yPos2, 500, 11, regularFont, blackColor, 7)
-            yPos2 -= 15 // Extra spacing after content
+            yPos2 -= 22 // Extra spacing after label
+            yPos2 = drawMultiLineText(page2, careData.morning_routine, 50, yPos2, 500, 11, regularFont, blackColor, 8)
+            yPos2 -= 30 // Extra spacing after content
           }
 
           if (careData.evening_routine) {
@@ -883,9 +883,9 @@ serve(async (req) => {
               font: boldFont,
               color: blackColor,
             })
-            yPos2 -= 18 // Extra spacing after label
-            yPos2 = drawMultiLineText(page2, careData.evening_routine, 50, yPos2, 500, 11, regularFont, blackColor, 7)
-            yPos2 -= 15 // Extra spacing after content
+            yPos2 -= 22 // Extra spacing after label
+            yPos2 = drawMultiLineText(page2, careData.evening_routine, 50, yPos2, 500, 11, regularFont, blackColor, 8)
+            yPos2 -= 30 // Extra spacing after content
           }
         }
 

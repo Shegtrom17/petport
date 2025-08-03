@@ -21,6 +21,7 @@ interface PetProfileContentProps {
   setActiveTab: (tab: string) => void;
   setIsInAppSharingOpen: (open: boolean) => void;
   onPhotoUpdate?: () => void;
+  onEditClick?: () => void;
 }
 
 // Helper function to extract phone number and create tel link
@@ -44,7 +45,8 @@ export const PetProfileContent = ({
   selectedPet, 
   setActiveTab, 
   setIsInAppSharingOpen,
-  onPhotoUpdate 
+  onPhotoUpdate,
+  onEditClick 
 }: PetProfileContentProps) => {
   console.log("PetProfileContent - Received petData:", petData);
   console.log("PetProfileContent - Received selectedPet:", selectedPet);
@@ -84,8 +86,10 @@ export const PetProfileContent = ({
   const isOwner = user?.id === enhancedPetData?.user_id;
 
   const handleProfileEdit = () => {
-    console.log("Profile edit clicked - switching to profile edit mode");
-    window.dispatchEvent(new CustomEvent('start-pet-profile-edit'));
+    // Trigger parent component to switch to edit mode
+    if (onEditClick) {
+      onEditClick(); // This should trigger the parent to handle edit mode
+    }
   };
 
   const handleDeletePet = async () => {

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -67,6 +67,16 @@ export const PetProfileCard = ({ petData, onUpdate }: PetProfileCardProps) => {
   const { user } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
+
+  // Listen for edit event from PetProfileContent
+  useEffect(() => {
+    const handleEditEvent = () => {
+      setIsEditing(true);
+    };
+
+    window.addEventListener('trigger-pet-edit', handleEditEvent);
+    return () => window.removeEventListener('trigger-pet-edit', handleEditEvent);
+  }, []);
 
   const handleUploadMedicalDoc = () => {
     console.log("Opening medical document upload...");

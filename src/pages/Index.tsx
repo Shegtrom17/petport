@@ -152,6 +152,10 @@ const Index = () => {
               setActiveTab={setActiveTab}
               setIsInAppSharingOpen={setIsInAppSharingOpen}
               onPhotoUpdate={handlePetUpdate}
+              onEditClick={() => {
+                // Trigger the PetProfileCard to enter edit mode
+                window.dispatchEvent(new CustomEvent('trigger-pet-edit'));
+              }}
             />
             <PetProfileCard 
               petData={petData} 

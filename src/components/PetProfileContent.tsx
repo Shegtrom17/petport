@@ -433,8 +433,9 @@ export const PetProfileContent = ({
           <CertificationBanner certificationData={enhancedPetData?.certificationData} />
         </div>
 
-        {/* Right Column - Main Actions */}
+        {/* Right Column - Action-First Flow */}
         <div className="space-y-4">
+          {/* 1. PASSPORT DOCUMENTS - Most important action */}
           <Card className="bg-[#f8f8f8] shadow-md">
             <CardHeader className="pb-3">
               <CardTitle className="text-lg font-bold text-navy-900 border-b-2 border-gold-500 pb-2">
@@ -446,6 +447,46 @@ export const PetProfileContent = ({
             </CardContent>
           </Card>
 
+          {/* 2. QUICK ACTIONS - Immediate actions available */}
+          <Card className="bg-[#f8f8f8] shadow-md">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-lg font-bold text-navy-900 border-b-2 border-gold-500 pb-2">
+                ⚡ QUICK ACTIONS
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              {/* Privacy Toggle - Only for owners */}
+              {isOwner && togglePetPublicVisibility && (
+                <PrivacyToggle
+                  isPublic={enhancedPetData?.is_public || false}
+                  onToggle={(isPublic) => togglePetPublicVisibility(enhancedPetData.id, isPublic)}
+                />
+              )}
+              
+              <Button 
+                onClick={() => setActiveTab("documents")}
+                className="w-full bg-gradient-to-r from-navy-900 to-navy-800 text-gold-500 hover:from-navy-800 hover:to-navy-700 border border-gold-500/30"
+              >
+                📄 Manage Documents
+              </Button>
+              <Button 
+                onClick={() => setActiveTab("quickid")}
+                variant="outline"
+                className="w-full border-navy-900 text-navy-900 hover:bg-navy-50"
+              >
+                🆔 Lost Pet
+              </Button>
+              <Button 
+                onClick={() => setIsInAppSharingOpen(true)}
+                variant="outline"
+                className="w-full border-navy-900 text-navy-900 hover:bg-navy-50"
+              >
+                🔗 Share Profile
+              </Button>
+            </CardContent>
+          </Card>
+
+          {/* 3. CONTACT & IDENTIFICATION - Reference information */}
           <Card className="bg-[#f8f8f8] shadow-md">
             <CardHeader className="pb-3">
               <CardTitle className="text-lg font-bold text-navy-900 border-b-2 border-gold-500 pb-2">
@@ -543,44 +584,6 @@ export const PetProfileContent = ({
                   </p>
                 </div>
               )}
-            </CardContent>
-          </Card>
-
-          <Card className="bg-[#f8f8f8] shadow-md">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-lg font-bold text-navy-900 border-b-2 border-gold-500 pb-2">
-                ⚡ QUICK ACTIONS
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              {/* Privacy Toggle - Only for owners */}
-              {isOwner && togglePetPublicVisibility && (
-                <PrivacyToggle
-                  isPublic={enhancedPetData?.is_public || false}
-                  onToggle={(isPublic) => togglePetPublicVisibility(enhancedPetData.id, isPublic)}
-                />
-              )}
-              
-              <Button 
-                onClick={() => setActiveTab("documents")}
-                className="w-full bg-gradient-to-r from-navy-900 to-navy-800 text-gold-500 hover:from-navy-800 hover:to-navy-700 border border-gold-500/30"
-              >
-                📄 Manage Documents
-              </Button>
-              <Button 
-                onClick={() => setActiveTab("quickid")}
-                variant="outline"
-                className="w-full border-navy-900 text-navy-900 hover:bg-navy-50"
-              >
-                🆔 Lost Pet
-              </Button>
-              <Button 
-                onClick={() => setIsInAppSharingOpen(true)}
-                variant="outline"
-                className="w-full border-navy-900 text-navy-900 hover:bg-navy-50"
-              >
-                🔗 Share Profile
-              </Button>
             </CardContent>
           </Card>
         </div>

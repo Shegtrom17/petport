@@ -840,7 +840,7 @@ serve(async (req) => {
             currentYPosition = height - 60
             
             // Add page header
-            currentPage.drawText(`${pet.name} - Care Instructions (Page 2)`, {
+            currentPage.drawText(`${petData.name} - Care Instructions (Page 2)`, {
               x: 50,
               y: currentYPosition,
               size: 16,

@@ -13,6 +13,7 @@ export interface PDFGenerationResult {
 export async function generatePetPDF(petId: string, type: 'emergency' | 'full' | 'lost_pet' = 'emergency'): Promise<PDFGenerationResult> {
   try {
     console.log('🔧 CLIENT: Starting PDF generation for pet:', petId, 'type:', type)
+    console.log('🔧 CLIENT: Request body will be:', { petId, type })
     
     const response = await supabase.functions.invoke('generate-pet-pdf', {
       body: { petId, type }

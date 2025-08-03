@@ -45,7 +45,10 @@ serve(async (req) => {
     }
 
     // Parse the request body to get petId and type
-    const { petId, type = 'emergency' } = await req.json()
+    const requestBody = await req.json()
+    console.log('Raw request body received:', requestBody)
+    const { petId, type } = requestBody
+    console.log('Extracted petId:', petId, 'type:', type, 'original type value:', requestBody.type)
     
     if (!petId) {
       return new Response(

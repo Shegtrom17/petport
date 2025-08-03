@@ -838,8 +838,10 @@ serve(async (req) => {
         })
         yPos2 -= 40
 
-        // Care Instructions
+        // Care Instructions - Updated with improved spacing 2025-08-03
         if (careData) {
+          console.log('Adding care instructions with improved spacing...')
+          console.log('Care data fields:', Object.keys(careData))
           page2.drawText('CARE INSTRUCTIONS', {
             x: 50,
             y: yPos2,
@@ -885,6 +887,45 @@ serve(async (req) => {
             })
             yPos2 -= 22 // Extra spacing after label
             yPos2 = drawMultiLineText(page2, careData.evening_routine, 50, yPos2, 500, 11, regularFont, blackColor, 8)
+            yPos2 -= 30 // Extra spacing after content
+          }
+
+          if (careData.allergies) {
+            page2.drawText('Allergies:', {
+              x: 50,
+              y: yPos2,
+              size: 12,
+              font: boldFont,
+              color: blackColor,
+            })
+            yPos2 -= 22 // Extra spacing after label
+            yPos2 = drawMultiLineText(page2, careData.allergies, 50, yPos2, 500, 11, regularFont, blackColor, 8)
+            yPos2 -= 30 // Extra spacing after content
+          }
+
+          if (careData.behavioral_notes) {
+            page2.drawText('Behavioral Notes:', {
+              x: 50,
+              y: yPos2,
+              size: 12,
+              font: boldFont,
+              color: blackColor,
+            })
+            yPos2 -= 22 // Extra spacing after label
+            yPos2 = drawMultiLineText(page2, careData.behavioral_notes, 50, yPos2, 500, 11, regularFont, blackColor, 8)
+            yPos2 -= 30 // Extra spacing after content
+          }
+
+          if (careData.favorite_activities) {
+            page2.drawText('Favorite Activities:', {
+              x: 50,
+              y: yPos2,
+              size: 12,
+              font: boldFont,
+              color: blackColor,
+            })
+            yPos2 -= 22 // Extra spacing after label
+            yPos2 = drawMultiLineText(page2, careData.favorite_activities, 50, yPos2, 500, 11, regularFont, blackColor, 8)
             yPos2 -= 30 // Extra spacing after content
           }
         }

@@ -432,15 +432,8 @@ serve(async (req) => {
             color: redColor,
           })
           
-          page.drawText(lostPetData.last_seen_location, {
-            x: 150,
-            y: yPosition,
-            size: 14,
-            font: regularFont,
-            color: blackColor,
-          })
-          
-          yPosition -= 25
+          yPosition = drawMultiLineText(page, lostPetData.last_seen_location, 150, yPosition, 400, 14, regularFont, blackColor, 6)
+          yPosition -= 15
         }
         
         if (lostPetData.last_seen_date) {
@@ -1071,14 +1064,8 @@ serve(async (req) => {
                 yPos3 -= 15
 
                 if (review.text) {
-                  page3.drawText(`"${review.text}"`, {
-                    x: 50,
-                    y: yPos3,
-                    size: 11,
-                    font: regularFont,
-                    color: blackColor,
-                  })
-                  yPos3 -= 15
+                  yPos3 = drawMultiLineText(page3, `"${review.text}"`, 50, yPos3, 500, 11, regularFont, blackColor, 6)
+                  yPos3 -= 10
                 }
 
                 page3.drawText(`${review.type || 'General'} | ${review.location || 'N/A'} | ${review.date || 'N/A'}`, {
@@ -1160,14 +1147,8 @@ serve(async (req) => {
               yPos3 -= 15
 
               if (exp.description) {
-                page3.drawText(exp.description, {
-                  x: 50,
-                  y: yPos3,
-                  size: 11,
-                  font: regularFont,
-                  color: blackColor,
-                })
-                yPos3 -= 15
+                yPos3 = drawMultiLineText(page3, exp.description, 50, yPos3, 500, 11, regularFont, blackColor, 6)
+                yPos3 -= 10
               }
 
               if (exp.contact) {

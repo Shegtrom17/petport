@@ -951,7 +951,7 @@ serve(async (req) => {
             const allergyLines = careData.allergies.split('\n')
             allergyLines.forEach((line) => {
               if (line.trim()) {
-                page.drawText(`⚠ ${line.trim()}`, {
+                page.drawText(`! ${line.trim()}`, {
                   x: 70,
                   y: yPosition,
                   size: 10,

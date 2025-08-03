@@ -209,8 +209,16 @@ serve(async (req) => {
         .replace(/📞/g, 'PHONE:')
         .replace(/💊/g, 'MEDICINE:')
         .replace(/🚨/g, 'ALERT:')
+        // Fix newline characters that cause encoding errors
+        .replace(/\\n/g, ' ')  // Replace literal \n with space
+        .replace(/\n/g, ' ')   // Replace actual newlines with space
+        .replace(/\r/g, ' ')   // Replace carriage returns with space
+        .replace(/\t/g, ' ')   // Replace tabs with space
         // Remove any other problematic unicode characters
-        .replace(/[\u2700-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF]/g, '');
+        .replace(/[\u2700-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF]/g, '')
+        // Clean up multiple spaces
+        .replace(/\s+/g, ' ')
+        .trim();
     }
     
     // Helper function to draw multi-line text with proper spacing

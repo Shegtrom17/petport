@@ -825,197 +825,227 @@ serve(async (req) => {
         }
       }
 
-      // Add care instructions section for "care" type PDF
+      // Add care instructions section for "care" type PDF with auto page break
       if (type === 'care') {
-        console.log('Adding care instructions with improved spacing...')
+        console.log('Adding care instructions with improved spacing and page break support...')
+        
+        let currentPage = page
+        let currentYPosition = yPosition
+        
+        // Function to check if we need a new page
+        const checkNewPage = (neededSpace: number) => {
+          if (currentYPosition - neededSpace < 80) { // Bottom margin
+            console.log('Adding new page for care instructions...')
+            currentPage = pdfDoc.addPage([612, 792])
+            currentYPosition = height - 60
+            
+            // Add page header
+            currentPage.drawText(`${pet.name} - Care Instructions (Page 2)`, {
+              x: 50,
+              y: currentYPosition,
+              size: 16,
+              font: boldFont,
+              color: titleColor,
+            })
+            currentYPosition -= 40
+          }
+        }
         
         if (careData) {
           console.log('Care data fields:', Object.keys(careData))
           
           // Add more spacing before care section
-          yPosition -= 40
+          currentYPosition -= 40
           
           // Care Instructions Header
-          page.drawText('DAILY CARE SCHEDULE', {
+          checkNewPage(50)
+          currentPage.drawText('DAILY CARE SCHEDULE', {
             x: 50,
-            y: yPosition,
+            y: currentYPosition,
             size: 16,
             font: boldFont,
             color: titleColor,
           })
-          yPosition -= 30
+          currentYPosition -= 30
           
           // Feeding Schedule
           if (careData.feeding_schedule) {
-            page.drawText('Feeding Schedule:', {
+            const feedingLines = careData.feeding_schedule.split('\n').filter(line => line.trim())
+            checkNewPage(50 + (feedingLines.length * 15))
+            
+            currentPage.drawText('Feeding Schedule:', {
               x: 50,
-              y: yPosition,
+              y: currentYPosition,
               size: 12,
               font: boldFont,
               color: blackColor,
             })
-            yPosition -= 20
+            currentYPosition -= 20
             
-            const feedingLines = careData.feeding_schedule.split('\n')
             feedingLines.forEach((line) => {
-              if (line.trim()) {
-                page.drawText(`• ${line.trim()}`, {
-                  x: 70,
-                  y: yPosition,
-                  size: 10,
-                  font: regularFont,
-                  color: blackColor,
-                })
-                yPosition -= 15
-              }
+              checkNewPage(20)
+              currentPage.drawText(`• ${line.trim()}`, {
+                x: 70,
+                y: currentYPosition,
+                size: 10,
+                font: regularFont,
+                color: blackColor,
+              })
+              currentYPosition -= 15
             })
-            yPosition -= 10
+            currentYPosition -= 10
           }
           
           // Morning Routine
           if (careData.morning_routine) {
-            page.drawText('Morning Routine:', {
+            const morningLines = careData.morning_routine.split('\n').filter(line => line.trim())
+            checkNewPage(50 + (morningLines.length * 15))
+            
+            currentPage.drawText('Morning Routine:', {
               x: 50,
-              y: yPosition,
+              y: currentYPosition,
               size: 12,
               font: boldFont,
               color: blackColor,
             })
-            yPosition -= 20
+            currentYPosition -= 20
             
-            const morningLines = careData.morning_routine.split('\n')
             morningLines.forEach((line) => {
-              if (line.trim()) {
-                page.drawText(`• ${line.trim()}`, {
-                  x: 70,
-                  y: yPosition,
-                  size: 10,
-                  font: regularFont,
-                  color: blackColor,
-                })
-                yPosition -= 15
-              }
+              checkNewPage(20)
+              currentPage.drawText(`• ${line.trim()}`, {
+                x: 70,
+                y: currentYPosition,
+                size: 10,
+                font: regularFont,
+                color: blackColor,
+              })
+              currentYPosition -= 15
             })
-            yPosition -= 10
+            currentYPosition -= 10
           }
           
           // Evening Routine
           if (careData.evening_routine) {
-            page.drawText('Evening Routine:', {
+            const eveningLines = careData.evening_routine.split('\n').filter(line => line.trim())
+            checkNewPage(50 + (eveningLines.length * 15))
+            
+            currentPage.drawText('Evening Routine:', {
               x: 50,
-              y: yPosition,
+              y: currentYPosition,
               size: 12,
               font: boldFont,
               color: blackColor,
             })
-            yPosition -= 20
+            currentYPosition -= 20
             
-            const eveningLines = careData.evening_routine.split('\n')
             eveningLines.forEach((line) => {
-              if (line.trim()) {
-                page.drawText(`• ${line.trim()}`, {
-                  x: 70,
-                  y: yPosition,
-                  size: 10,
-                  font: regularFont,
-                  color: blackColor,
-                })
-                yPosition -= 15
-              }
+              checkNewPage(20)
+              currentPage.drawText(`• ${line.trim()}`, {
+                x: 70,
+                y: currentYPosition,
+                size: 10,
+                font: regularFont,
+                color: blackColor,
+              })
+              currentYPosition -= 15
             })
-            yPosition -= 10
+            currentYPosition -= 10
           }
           
           // Important Notes Section
-          yPosition -= 20
-          page.drawText('IMPORTANT NOTES & ALERTS', {
+          checkNewPage(80)
+          currentYPosition -= 20
+          currentPage.drawText('IMPORTANT NOTES & ALERTS', {
             x: 50,
-            y: yPosition,
+            y: currentYPosition,
             size: 16,
             font: boldFont,
             color: titleColor,
           })
-          yPosition -= 30
+          currentYPosition -= 30
           
           // Allergies
           if (careData.allergies) {
-            page.drawText('Allergies & Restrictions:', {
+            const allergyLines = careData.allergies.split('\n').filter(line => line.trim())
+            checkNewPage(50 + (allergyLines.length * 15))
+            
+            currentPage.drawText('Allergies & Restrictions:', {
               x: 50,
-              y: yPosition,
+              y: currentYPosition,
               size: 12,
               font: boldFont,
               color: blackColor,
             })
-            yPosition -= 20
+            currentYPosition -= 20
             
-            const allergyLines = careData.allergies.split('\n')
             allergyLines.forEach((line) => {
-              if (line.trim()) {
-                page.drawText(`! ${line.trim()}`, {
-                  x: 70,
-                  y: yPosition,
-                  size: 10,
-                  font: regularFont,
-                  color: blackColor,
-                })
-                yPosition -= 15
-              }
+              checkNewPage(20)
+              currentPage.drawText(`! ${line.trim()}`, {
+                x: 70,
+                y: currentYPosition,
+                size: 10,
+                font: regularFont,
+                color: blackColor,
+              })
+              currentYPosition -= 15
             })
-            yPosition -= 10
+            currentYPosition -= 10
           }
           
           // Behavioral Notes
           if (careData.behavioral_notes) {
-            page.drawText('Behavioral Notes:', {
+            const behaviorLines = careData.behavioral_notes.split('\n').filter(line => line.trim())
+            checkNewPage(50 + (behaviorLines.length * 15))
+            
+            currentPage.drawText('Behavioral Notes:', {
               x: 50,
-              y: yPosition,
+              y: currentYPosition,
               size: 12,
               font: boldFont,
               color: blackColor,
             })
-            yPosition -= 20
+            currentYPosition -= 20
             
-            const behaviorLines = careData.behavioral_notes.split('\n')
             behaviorLines.forEach((line) => {
-              if (line.trim()) {
-                page.drawText(`• ${line.trim()}`, {
-                  x: 70,
-                  y: yPosition,
-                  size: 10,
-                  font: regularFont,
-                  color: blackColor,
-                })
-                yPosition -= 15
-              }
+              checkNewPage(20)
+              currentPage.drawText(`• ${line.trim()}`, {
+                x: 70,
+                y: currentYPosition,
+                size: 10,
+                font: regularFont,
+                color: blackColor,
+              })
+              currentYPosition -= 15
             })
-            yPosition -= 10
+            currentYPosition -= 10
           }
           
           // Favorite Activities
           if (careData.favorite_activities) {
-            page.drawText('Favorite Activities:', {
+            const activityLines = careData.favorite_activities.split('\n').filter(line => line.trim())
+            checkNewPage(50 + (activityLines.length * 15))
+            
+            currentPage.drawText('Favorite Activities:', {
               x: 50,
-              y: yPosition,
+              y: currentYPosition,
               size: 12,
               font: boldFont,
               color: blackColor,
             })
-            yPosition -= 20
+            currentYPosition -= 20
             
-            const activityLines = careData.favorite_activities.split('\n')
             activityLines.forEach((line) => {
-              if (line.trim()) {
-                page.drawText(`• ${line.trim()}`, {
-                  x: 70,
-                  y: yPosition,
-                  size: 10,
-                  font: regularFont,
-                  color: blackColor,
-                })
-                yPosition -= 15
-              }
+              checkNewPage(20)
+              currentPage.drawText(`• ${line.trim()}`, {
+                x: 70,
+                y: currentYPosition,
+                size: 10,
+                font: regularFont,
+                color: blackColor,
+              })
+              currentYPosition -= 15
             })
-            yPosition -= 10
+            currentYPosition -= 10
           }
         }
       }

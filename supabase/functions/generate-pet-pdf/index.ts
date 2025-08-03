@@ -190,6 +190,26 @@ serve(async (req) => {
     const blackColor = rgb(0, 0, 0)
     const whiteColor = rgb(1, 1, 1)
     
+    // Helper function to sanitize text for PDF generation
+    const sanitizeTextForPDF = (text: string): string => {
+      if (!text) return '';
+      // Replace problematic unicode characters with safe alternatives
+      return text
+        .replace(/✈/g, 'TRAVEL:')
+        .replace(/🏆/g, 'AWARD:')
+        .replace(/🎓/g, 'TRAINING:')
+        .replace(/⭐/g, 'STAR:')
+        .replace(/🐾/g, 'PAW:')
+        .replace(/❤️/g, 'HEART:')
+        .replace(/🏠/g, 'HOME:')
+        .replace(/📍/g, 'LOCATION:')
+        .replace(/📞/g, 'PHONE:')
+        .replace(/💊/g, 'MEDICINE:')
+        .replace(/🚨/g, 'ALERT:')
+        // Remove any other problematic unicode characters
+        .replace(/[\u2700-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF]/g, '');
+    }
+    
     let yPosition = height - 60
     
     // MISSING PET FLYER LAYOUT
@@ -1012,7 +1032,7 @@ serve(async (req) => {
             yPos3 -= 25
 
             travelData.forEach((location: any) => {
-              page3.drawText(`✈ ${location.name} (${location.type})`, {
+              page3.drawText(sanitizeTextForPDF(`✈ ${location.name} (${location.type})`), {
                 x: 50,
                 y: yPos3,
                 size: 12,

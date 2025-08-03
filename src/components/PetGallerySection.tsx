@@ -9,6 +9,8 @@ import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { uploadGalleryPhoto, uploadMultipleGalleryPhotos, deleteGalleryPhoto, updateGalleryPhotoCaption } from "@/services/petService";
 
+const MAX_GALLERY_PHOTOS = 12;
+
 interface GalleryPhoto {
   id: string;
   url: string;
@@ -31,8 +33,18 @@ export const PetGallerySection = ({ petData, onUpdate }: PetGallerySectionProps)
   const { toast } = useToast();
 
   const galleryPhotos = petData.gallery_photos || [];
+  const remainingSlots = MAX_GALLERY_PHOTOS - galleryPhotos.length;
+  const isLimitReached = galleryPhotos.length >= MAX_GALLERY_PHOTOS;
 
   const handleUploadPhotos = () => {
+    if (isLimitReached) {
+      toast({
+        title: "Photo limit reached",
+        description: `Maximum of ${MAX_GALLERY_PHOTOS} photos allowed per pet. Delete some photos to add new ones.`,
+        variant: "destructive",
+      });
+      return;
+    }
     const input = document.createElement('input');
     input.type = 'file';
     input.accept = 'image/*';
@@ -42,9 +54,18 @@ export const PetGallerySection = ({ petData, onUpdate }: PetGallerySectionProps)
       const files = Array.from((e.target as HTMLInputElement).files || []);
       if (files.length === 0) return;
 
+      // Limit files to remaining slots
+      const filesToUpload = files.slice(0, remainingSlots);
+      if (files.length > remainingSlots) {
+        toast({
+          title: `Limited to ${remainingSlots} photos`,
+          description: `Only uploading ${remainingSlots} out of ${files.length} selected photos due to ${MAX_GALLERY_PHOTOS} photo limit.`,
+        });
+      }
+
       setUploading(true);
       try {
-        const result = await uploadMultipleGalleryPhotos(petData.id, files);
+        const result = await uploadMultipleGalleryPhotos(petData.id, filesToUpload);
         
         if (result.success) {
           toast({
@@ -75,6 +96,14 @@ export const PetGallerySection = ({ petData, onUpdate }: PetGallerySectionProps)
   };
 
   const handleCapturePhoto = () => {
+    if (isLimitReached) {
+      toast({
+        title: "Photo limit reached",
+        description: `Maximum of ${MAX_GALLERY_PHOTOS} photos allowed per pet. Delete some photos to add new ones.`,
+        variant: "destructive",
+      });
+      return;
+    }
     const input = document.createElement('input');
     input.type = 'file';
     input.accept = 'image/*';
@@ -208,7 +237,7 @@ export const PetGallerySection = ({ petData, onUpdate }: PetGallerySectionProps)
                 variant="secondary" 
                 size="sm" 
                 className="px-2 sm:px-3 py-1 sm:py-2 text-xs sm:text-sm"
-                disabled={uploading}
+                disabled={uploading || isLimitReached}
               >
                 <Plus className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
                 <span className="hidden sm:inline">{uploading ? "Uploading..." : "Add Photos"}</span>
@@ -238,8 +267,15 @@ export const PetGallerySection = ({ petData, onUpdate }: PetGallerySectionProps)
             onClick={handleUploadPhotos}
           >
             <Camera className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-            <p className="text-gray-600 mb-2">Click to upload photos or drag and drop</p>
-            <p className="text-sm text-gray-500 mb-4">Supports JPG, PNG, HEIC up to 10MB each • Multiple files allowed</p>
+            <p className="text-gray-600 mb-2">
+              {isLimitReached ? "Photo limit reached - delete photos to add new ones" : "Click to upload photos or drag and drop"}
+            </p>
+            <p className="text-sm text-gray-500 mb-4">
+              {isLimitReached 
+                ? `Maximum ${MAX_GALLERY_PHOTOS} photos per pet` 
+                : `${remainingSlots} slots remaining • Supports JPG, PNG, HEIC up to 10MB each`
+              }
+            </p>
             <div className="flex justify-center space-x-2 sm:space-x-3">
               <Button 
                 className="bg-gradient-to-r from-navy-900 to-navy-800 text-gold-500 border border-gold-500/30 px-2 sm:px-4 py-1 sm:py-2 text-xs sm:text-sm"
@@ -247,7 +283,7 @@ export const PetGallerySection = ({ petData, onUpdate }: PetGallerySectionProps)
                   e.stopPropagation();
                   handleUploadPhotos();
                 }}
-                disabled={uploading}
+                disabled={uploading || isLimitReached}
               >
                 <Plus className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
                 <span className="hidden sm:inline">{uploading ? "Uploading..." : "Choose Files"}</span>
@@ -259,7 +295,7 @@ export const PetGallerySection = ({ petData, onUpdate }: PetGallerySectionProps)
                   e.stopPropagation();
                   handleCapturePhoto();
                 }}
-                disabled={uploading}
+                disabled={uploading || isLimitReached}
               >
                 <Camera className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
                 <span className="hidden sm:inline">📸 Capture Moment</span>
@@ -279,8 +315,11 @@ export const PetGallerySection = ({ petData, onUpdate }: PetGallerySectionProps)
                 <Eye className="w-5 h-5 text-blue-600" />
                 <span>{petData.name}'s Photo Gallery</span>
               </div>
-              <Badge variant="outline" className="border-navy-800 text-navy-800 text-xs px-2 py-1">
-                {galleryPhotos.length} Photos
+              <Badge 
+                variant={isLimitReached ? "destructive" : "outline"} 
+                className={isLimitReached ? "text-xs px-2 py-1" : "border-navy-800 text-navy-800 text-xs px-2 py-1"}
+              >
+                {galleryPhotos.length}/{MAX_GALLERY_PHOTOS} Photos
               </Badge>
             </div>
           </CardTitle>
@@ -392,7 +431,7 @@ export const PetGallerySection = ({ petData, onUpdate }: PetGallerySectionProps)
                 <Button 
                   onClick={handleUploadPhotos}
                   className="bg-gradient-to-r from-navy-900 to-navy-800 text-gold-500 border border-gold-500/30 px-2 sm:px-4 py-1 sm:py-2 text-xs sm:text-sm"
-                  disabled={uploading}
+                  disabled={uploading || isLimitReached}
                 >
                   <Plus className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
                   <span className="hidden sm:inline">{uploading ? "Uploading..." : "Upload First Photo"}</span>
@@ -401,7 +440,7 @@ export const PetGallerySection = ({ petData, onUpdate }: PetGallerySectionProps)
                 <Button 
                   onClick={handleCapturePhoto}
                   className="bg-blue-600 hover:bg-blue-700 text-white px-2 sm:px-4 py-1 sm:py-2 text-xs sm:text-sm"
-                  disabled={uploading}
+                  disabled={uploading || isLimitReached}
                 >
                   <Camera className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
                   <span className="hidden sm:inline">📸 Take Photo</span>

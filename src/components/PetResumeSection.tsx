@@ -3,10 +3,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Download, Share2, QrCode, Star, Shield, Heart, Phone, Mail, Award, AlertTriangle, MapPin, GraduationCap, Trophy, Activity, Edit } from "lucide-react";
+import { Download, Share2, QrCode, Star, Shield, Heart, Phone, Mail, Award, AlertTriangle, MapPin, GraduationCap, Trophy, Activity, Edit, Eye } from "lucide-react";
 import { SupportAnimalBanner } from "@/components/SupportAnimalBanner";
 import { PetResumeEditForm } from "@/components/PetResumeEditForm";
-import { generatePetPDF, downloadPDFBlob } from "@/services/pdfService";
+import { generatePetPDF, downloadPDFBlob, viewPDFBlob } from "@/services/pdfService";
 import { toast } from "sonner";
 
 // Helper function to extract phone number and create tel link
@@ -74,6 +74,8 @@ interface PetResumeSectionProps {
 
 export const PetResumeSection = ({ petData, onUpdate }: PetResumeSectionProps) => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [generatedPdfBlob, setGeneratedPdfBlob] = useState<Blob | null>(null);
+  const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
 
   const averageRating = petData.reviews?.length 
     ? petData.reviews.reduce((sum, review) => sum + review.rating, 0) / petData.reviews.length 
@@ -81,20 +83,38 @@ export const PetResumeSection = ({ petData, onUpdate }: PetResumeSectionProps) =
 
   const handleDownloadPDF = async () => {
     console.log("Downloading Pet Resume as PDF...");
+    setIsGeneratingPDF(true);
     toast.loading("Generating PDF...");
     
     try {
       const result = await generatePetPDF(petData.id, 'full');
       
       if (result.success && result.pdfBlob) {
-        await downloadPDFBlob(result.pdfBlob, result.fileName || `${petData.name}_Resume.pdf`);
-        toast.success("PDF downloaded successfully!");
+        setGeneratedPdfBlob(result.pdfBlob);
+        toast.success("PDF generated successfully! Choose view or download below.");
       } else {
         toast.error(result.error || "Failed to generate PDF");
       }
     } catch (error) {
       console.error("Error generating PDF:", error);
       toast.error("Failed to generate PDF");
+    } finally {
+      setIsGeneratingPDF(false);
+    }
+  };
+
+  const handleViewPDF = async () => {
+    if (generatedPdfBlob) {
+      const filename = `${petData.name}_Resume.pdf`;
+      await viewPDFBlob(generatedPdfBlob, filename);
+    }
+  };
+
+  const handleDownloadGeneratedPDF = async () => {
+    if (generatedPdfBlob) {
+      const filename = `${petData.name}_Resume.pdf`;
+      await downloadPDFBlob(generatedPdfBlob, filename);
+      toast.success("PDF downloaded successfully!");
     }
   };
 
@@ -173,9 +193,14 @@ export const PetResumeSection = ({ petData, onUpdate }: PetResumeSectionProps) =
                 <Edit className="w-4 h-4 mr-2" />
                 Edit
               </Button>
-              <Button onClick={handleDownloadPDF} variant="secondary" size="sm">
+              <Button 
+                onClick={handleDownloadPDF} 
+                variant="secondary" 
+                size="sm"
+                disabled={isGeneratingPDF}
+              >
                 <Download className="w-4 h-4 mr-2" />
-                PDF
+                {isGeneratingPDF ? "Generating..." : "PDF"}
               </Button>
               <Button onClick={handleShare} variant="secondary" size="sm">
                 <Share2 className="w-4 h-4 mr-2" />
@@ -202,6 +227,37 @@ export const PetResumeSection = ({ petData, onUpdate }: PetResumeSectionProps) =
           />
         </DialogContent>
       </Dialog>
+
+      {/* PDF Options - Show after generation */}
+      {generatedPdfBlob && !isGeneratingPDF && (
+        <Card className="border-0 shadow-xl bg-gradient-to-r from-green-50 to-blue-50 border-l-4 border-green-500">
+          <CardContent className="p-6">
+            <div className="text-center">
+              <h4 className="font-bold text-green-800 mb-3">✅ Pet Resume PDF Generated!</h4>
+              <div className="flex flex-col sm:flex-row gap-2 justify-center">
+                <Button
+                  onClick={handleViewPDF}
+                  variant="outline"
+                  className="border-green-500 text-green-600 hover:bg-green-50"
+                >
+                  <Eye className="w-4 h-4 mr-2" />
+                  View PDF
+                </Button>
+                <Button
+                  onClick={handleDownloadGeneratedPDF}
+                  className="bg-gradient-to-r from-green-500 to-green-400 text-white hover:from-green-400 hover:to-green-300"
+                >
+                  <Download className="w-4 h-4 mr-2" />
+                  Download PDF
+                </Button>
+              </div>
+              <p className="text-sm text-green-600 mt-3">
+                Generated complete profile including resume, care instructions & contact info
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Pet Information */}
       <Card className="border-0 shadow-xl bg-white/90 backdrop-blur-sm">

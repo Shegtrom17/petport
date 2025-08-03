@@ -74,6 +74,7 @@ interface PetResumeSectionProps {
 
 export const PetResumeSection = ({ petData, onUpdate }: PetResumeSectionProps) => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isPdfDialogOpen, setIsPdfDialogOpen] = useState(false);
   const [generatedPdfBlob, setGeneratedPdfBlob] = useState<Blob | null>(null);
   const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
 
@@ -81,17 +82,28 @@ export const PetResumeSection = ({ petData, onUpdate }: PetResumeSectionProps) =
     ? petData.reviews.reduce((sum, review) => sum + review.rating, 0) / petData.reviews.length 
     : 0;
 
-  const handleGeneratePDF = async () => {
-    console.log("Generating Pet Resume PDF...");
+  const showPdfOptions = () => {
+    setIsPdfDialogOpen(true);
+  };
+
+  const handlePdfAction = async (action: 'view' | 'download') => {
     setIsGeneratingPDF(true);
-    toast.loading("Generating PDF...");
     
     try {
       const result = await generatePetPDF(petData.id, 'full');
       
       if (result.success && result.pdfBlob) {
         setGeneratedPdfBlob(result.pdfBlob);
-        toast.success("PDF generated successfully! Choose view or download below.");
+        
+        if (action === 'download') {
+          const filename = `${petData.name}_Resume.pdf`;
+          await downloadPDFBlob(result.pdfBlob, filename);
+          toast.success("PDF downloaded successfully!");
+          setIsPdfDialogOpen(false);
+        } else if (action === 'view') {
+          const filename = `${petData.name}_Resume.pdf`;
+          await viewPDFBlob(result.pdfBlob, filename);
+        }
       } else {
         toast.error(result.error || "Failed to generate PDF");
       }
@@ -194,13 +206,12 @@ export const PetResumeSection = ({ petData, onUpdate }: PetResumeSectionProps) =
                 Edit
               </Button>
               <Button 
-                onClick={handleGeneratePDF} 
+                onClick={showPdfOptions} 
                 variant="secondary" 
                 size="sm"
-                disabled={isGeneratingPDF}
               >
                 <Download className="w-4 h-4 mr-2" />
-                {isGeneratingPDF ? "Generating..." : "PDF"}
+                PDF
               </Button>
               <Button onClick={handleShare} variant="secondary" size="sm">
                 <Share2 className="w-4 h-4 mr-2" />
@@ -228,36 +239,93 @@ export const PetResumeSection = ({ petData, onUpdate }: PetResumeSectionProps) =
         </DialogContent>
       </Dialog>
 
-      {/* PDF Options - Show after generation */}
-      {generatedPdfBlob && !isGeneratingPDF && (
-        <Card className="border-0 shadow-xl bg-gradient-to-r from-green-50 to-blue-50 border-l-4 border-green-500">
-          <CardContent className="p-6">
-            <div className="text-center">
-              <h4 className="font-bold text-green-800 mb-3">✅ Pet Resume PDF Generated!</h4>
-              <div className="flex flex-col sm:flex-row gap-2 justify-center">
-                <Button
-                  onClick={handleViewPDF}
-                  variant="outline"
-                  className="border-green-500 text-green-600 hover:bg-green-50"
-                >
-                  <Eye className="w-4 h-4 mr-2" />
-                  View PDF
-                </Button>
-                <Button
-                  onClick={handleDownloadGeneratedPDF}
-                  className="bg-gradient-to-r from-green-500 to-green-400 text-white hover:from-green-400 hover:to-green-300"
-                >
-                  <Download className="w-4 h-4 mr-2" />
-                  Download PDF
-                </Button>
+      {/* PDF Options Dialog */}
+      <Dialog open={isPdfDialogOpen} onOpenChange={setIsPdfDialogOpen}>
+        <DialogContent className="max-w-md bg-[#f8f8f8]">
+          <DialogHeader>
+            <DialogTitle className="font-bold text-navy-900 border-b-2 border-gold-500 pb-2">
+              📋 Pet Resume PDF Options
+            </DialogTitle>
+          </DialogHeader>
+          
+          <div className="space-y-6">
+            {/* PDF Actions */}
+            {!generatedPdfBlob && !isGeneratingPDF && (
+              <div className="space-y-3">
+                <p className="text-sm text-navy-600 text-center">
+                  Choose how you'd like to use {petData.name}'s resume:
+                </p>
+                
+                <div className="grid grid-cols-2 gap-3">
+                  <Button
+                    onClick={() => handlePdfAction('view')}
+                    variant="outline"
+                    className="border-gold-500 text-gold-600 hover:bg-gold-50"
+                  >
+                    <Eye className="w-4 h-4 mr-2" />
+                    View PDF
+                  </Button>
+                  <Button
+                    onClick={() => handlePdfAction('download')}
+                    className="bg-gradient-to-r from-gold-500 to-gold-400 text-navy-900 hover:from-gold-400 hover:to-gold-300"
+                  >
+                    <Download className="w-4 h-4 mr-2" />
+                    Download PDF
+                  </Button>
+                </div>
               </div>
-              <p className="text-sm text-green-600 mt-3">
-                Generated complete profile including resume, care instructions & contact info
-              </p>
-            </div>
-          </CardContent>
-        </Card>
-      )}
+            )}
+            
+            {/* Loading State */}
+            {isGeneratingPDF && (
+              <div className="text-center py-6">
+                <div className="w-8 h-8 animate-spin mx-auto mb-3 text-gold-500">⏳</div>
+                <p className="text-navy-600">Generating pet resume PDF...</p>
+              </div>
+            )}
+            
+            {/* Generated PDF Actions */}
+            {generatedPdfBlob && !isGeneratingPDF && (
+              <div className="space-y-4">
+                <div className="bg-white p-4 rounded-lg border border-gold-500/30 shadow-sm">
+                  <h4 className="font-bold text-navy-900 mb-3">Pet Resume PDF</h4>
+                  <div className="flex flex-col sm:flex-row gap-2 justify-center mb-3">
+                    <Button
+                      onClick={() => {
+                        const url = URL.createObjectURL(generatedPdfBlob);
+                        window.open(url, '_blank')?.focus();
+                        URL.revokeObjectURL(url);
+                      }}
+                      variant="outline"
+                      className="border-gold-500 text-gold-600 hover:bg-gold-50"
+                    >
+                      <Eye className="w-4 h-4 mr-2" />
+                      View PDF
+                    </Button>
+                    <Button
+                      onClick={() => {
+                        const fileName = `${petData.name}_Resume.pdf`;
+                        const a = document.createElement('a');
+                        a.href = URL.createObjectURL(generatedPdfBlob);
+                        a.download = fileName;
+                        document.body.appendChild(a);
+                        a.click();
+                        document.body.removeChild(a);
+                        URL.revokeObjectURL(a.href);
+                        toast.success("PDF downloaded successfully!");
+                      }}
+                      className="bg-gradient-to-r from-gold-500 to-gold-400 text-navy-900 hover:from-gold-400 hover:to-gold-300"
+                    >
+                      <Download className="w-4 h-4 mr-2" />
+                      Download PDF
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
 
       {/* Pet Information */}
       <Card className="border-0 shadow-xl bg-white/90 backdrop-blur-sm">

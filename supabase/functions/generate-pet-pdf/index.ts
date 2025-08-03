@@ -213,6 +213,50 @@ serve(async (req) => {
         .replace(/[\u2700-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF]/g, '');
     }
     
+    // Helper function to draw multi-line text with proper spacing
+    const drawMultiLineText = (page: any, text: string, x: number, y: number, maxWidth: number, fontSize: number, font: any, color: any, lineSpacing: number = 5): number => {
+      if (!text) return y;
+      
+      const sanitizedText = sanitizeTextForPDF(text);
+      const words = sanitizedText.split(' ');
+      let currentLine = '';
+      let currentY = y;
+      
+      for (let i = 0; i < words.length; i++) {
+        const testLine = currentLine + (currentLine ? ' ' : '') + words[i];
+        const testWidth = font.widthOfTextAtSize(testLine, fontSize);
+        
+        if (testWidth > maxWidth && currentLine) {
+          // Draw the current line
+          page.drawText(currentLine, {
+            x: x,
+            y: currentY,
+            size: fontSize,
+            font: font,
+            color: color,
+          });
+          currentY -= fontSize + lineSpacing;
+          currentLine = words[i];
+        } else {
+          currentLine = testLine;
+        }
+      }
+      
+      // Draw the last line
+      if (currentLine) {
+        page.drawText(currentLine, {
+          x: x,
+          y: currentY,
+          size: fontSize,
+          font: font,
+          color: color,
+        });
+        currentY -= fontSize + lineSpacing;
+      }
+      
+      return currentY;
+    }
+    
     let yPosition = height - 60
     
     // MISSING PET FLYER LAYOUT
@@ -813,14 +857,9 @@ serve(async (req) => {
               font: boldFont,
               color: blackColor,
             })
-            page2.drawText(careData.feeding_schedule, {
-              x: 50,
-              y: yPos2 - 15,
-              size: 11,
-              font: regularFont,
-              color: blackColor,
-            })
-            yPos2 -= 35
+            yPos2 -= 18 // Extra spacing after label
+            yPos2 = drawMultiLineText(page2, careData.feeding_schedule, 50, yPos2, 500, 11, regularFont, blackColor, 7)
+            yPos2 -= 15 // Extra spacing after content
           }
 
           if (careData.morning_routine) {
@@ -831,14 +870,9 @@ serve(async (req) => {
               font: boldFont,
               color: blackColor,
             })
-            page2.drawText(careData.morning_routine, {
-              x: 50,
-              y: yPos2 - 15,
-              size: 11,
-              font: regularFont,
-              color: blackColor,
-            })
-            yPos2 -= 35
+            yPos2 -= 18 // Extra spacing after label
+            yPos2 = drawMultiLineText(page2, careData.morning_routine, 50, yPos2, 500, 11, regularFont, blackColor, 7)
+            yPos2 -= 15 // Extra spacing after content
           }
 
           if (careData.evening_routine) {
@@ -849,14 +883,9 @@ serve(async (req) => {
               font: boldFont,
               color: blackColor,
             })
-            page2.drawText(careData.evening_routine, {
-              x: 50,
-              y: yPos2 - 15,
-              size: 11,
-              font: regularFont,
-              color: blackColor,
-            })
-            yPos2 -= 35
+            yPos2 -= 18 // Extra spacing after label
+            yPos2 = drawMultiLineText(page2, careData.evening_routine, 50, yPos2, 500, 11, regularFont, blackColor, 7)
+            yPos2 -= 15 // Extra spacing after content
           }
         }
 

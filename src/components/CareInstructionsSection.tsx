@@ -90,7 +90,7 @@ export const CareInstructionsSection = ({ petData }: CareInstructionsSectionProp
     try {
       console.log('Starting care instructions PDF generation for pet:', petData.id);
       
-      const result = await generatePetPDF(petData.id, 'full');
+      const result = await generatePetPDF(petData.id, 'care');
       
       if (result.success && result.pdfBlob) {
         setCarePdfBlob(result.pdfBlob);

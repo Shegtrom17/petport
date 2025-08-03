@@ -64,10 +64,10 @@ serve(async (req) => {
       )
     }
 
-    if (type && !['emergency', 'full', 'lost_pet'].includes(type)) {
+    if (type && !['emergency', 'full', 'lost_pet', 'care'].includes(type)) {
       return new Response(
         JSON.stringify({ 
-          error: 'Type must be either "emergency", "full", or "lost_pet"',
+          error: 'Type must be either "emergency", "full", "lost_pet", or "care"',
           pdfBytes: null,
           filename: null 
         }),
@@ -644,7 +644,11 @@ serve(async (req) => {
       console.log('Generating regular pet passport...')
       
       // Header
-      page.drawText(type === 'emergency' ? 'EMERGENCY PET IDENTIFICATION' : 'OFFICIAL PET PASSPORT', {
+      let headerText = 'OFFICIAL PET PASSPORT'
+      if (type === 'emergency') headerText = 'EMERGENCY PET IDENTIFICATION'
+      if (type === 'care') headerText = 'COMPLETE CARE INSTRUCTIONS'
+      
+      page.drawText(headerText, {
         x: 50,
         y: yPosition,
         size: 20,
@@ -821,6 +825,201 @@ serve(async (req) => {
         }
       }
 
+      // Add care instructions section for "care" type PDF
+      if (type === 'care') {
+        console.log('Adding care instructions with improved spacing...')
+        
+        if (careData) {
+          console.log('Care data fields:', Object.keys(careData))
+          
+          // Add more spacing before care section
+          yPosition -= 40
+          
+          // Care Instructions Header
+          page.drawText('DAILY CARE SCHEDULE', {
+            x: 50,
+            y: yPosition,
+            size: 16,
+            font: boldFont,
+            color: titleColor,
+          })
+          yPosition -= 30
+          
+          // Feeding Schedule
+          if (careData.feeding_schedule) {
+            page.drawText('Feeding Schedule:', {
+              x: 50,
+              y: yPosition,
+              size: 12,
+              font: boldFont,
+              color: blackColor,
+            })
+            yPosition -= 20
+            
+            const feedingLines = careData.feeding_schedule.split('\n')
+            feedingLines.forEach((line) => {
+              if (line.trim()) {
+                page.drawText(`• ${line.trim()}`, {
+                  x: 70,
+                  y: yPosition,
+                  size: 10,
+                  font: regularFont,
+                  color: blackColor,
+                })
+                yPosition -= 15
+              }
+            })
+            yPosition -= 10
+          }
+          
+          // Morning Routine
+          if (careData.morning_routine) {
+            page.drawText('Morning Routine:', {
+              x: 50,
+              y: yPosition,
+              size: 12,
+              font: boldFont,
+              color: blackColor,
+            })
+            yPosition -= 20
+            
+            const morningLines = careData.morning_routine.split('\n')
+            morningLines.forEach((line) => {
+              if (line.trim()) {
+                page.drawText(`• ${line.trim()}`, {
+                  x: 70,
+                  y: yPosition,
+                  size: 10,
+                  font: regularFont,
+                  color: blackColor,
+                })
+                yPosition -= 15
+              }
+            })
+            yPosition -= 10
+          }
+          
+          // Evening Routine
+          if (careData.evening_routine) {
+            page.drawText('Evening Routine:', {
+              x: 50,
+              y: yPosition,
+              size: 12,
+              font: boldFont,
+              color: blackColor,
+            })
+            yPosition -= 20
+            
+            const eveningLines = careData.evening_routine.split('\n')
+            eveningLines.forEach((line) => {
+              if (line.trim()) {
+                page.drawText(`• ${line.trim()}`, {
+                  x: 70,
+                  y: yPosition,
+                  size: 10,
+                  font: regularFont,
+                  color: blackColor,
+                })
+                yPosition -= 15
+              }
+            })
+            yPosition -= 10
+          }
+          
+          // Important Notes Section
+          yPosition -= 20
+          page.drawText('IMPORTANT NOTES & ALERTS', {
+            x: 50,
+            y: yPosition,
+            size: 16,
+            font: boldFont,
+            color: titleColor,
+          })
+          yPosition -= 30
+          
+          // Allergies
+          if (careData.allergies) {
+            page.drawText('Allergies & Restrictions:', {
+              x: 50,
+              y: yPosition,
+              size: 12,
+              font: boldFont,
+              color: blackColor,
+            })
+            yPosition -= 20
+            
+            const allergyLines = careData.allergies.split('\n')
+            allergyLines.forEach((line) => {
+              if (line.trim()) {
+                page.drawText(`⚠ ${line.trim()}`, {
+                  x: 70,
+                  y: yPosition,
+                  size: 10,
+                  font: regularFont,
+                  color: blackColor,
+                })
+                yPosition -= 15
+              }
+            })
+            yPosition -= 10
+          }
+          
+          // Behavioral Notes
+          if (careData.behavioral_notes) {
+            page.drawText('Behavioral Notes:', {
+              x: 50,
+              y: yPosition,
+              size: 12,
+              font: boldFont,
+              color: blackColor,
+            })
+            yPosition -= 20
+            
+            const behaviorLines = careData.behavioral_notes.split('\n')
+            behaviorLines.forEach((line) => {
+              if (line.trim()) {
+                page.drawText(`• ${line.trim()}`, {
+                  x: 70,
+                  y: yPosition,
+                  size: 10,
+                  font: regularFont,
+                  color: blackColor,
+                })
+                yPosition -= 15
+              }
+            })
+            yPosition -= 10
+          }
+          
+          // Favorite Activities
+          if (careData.favorite_activities) {
+            page.drawText('Favorite Activities:', {
+              x: 50,
+              y: yPosition,
+              size: 12,
+              font: boldFont,
+              color: blackColor,
+            })
+            yPosition -= 20
+            
+            const activityLines = careData.favorite_activities.split('\n')
+            activityLines.forEach((line) => {
+              if (line.trim()) {
+                page.drawText(`• ${line.trim()}`, {
+                  x: 70,
+                  y: yPosition,
+                  size: 10,
+                  font: regularFont,
+                  color: blackColor,
+                })
+                yPosition -= 15
+              }
+            })
+            yPosition -= 10
+          }
+        }
+      }
+      
       // Add new pages for "full" type PDF with all additional sections
       if (type === 'full') {
         console.log('Adding additional pages for complete profile...')

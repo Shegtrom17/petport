@@ -188,6 +188,37 @@ const LostPet = () => {
       </div>
 
       <main className="max-w-6xl mx-auto px-4 py-6 space-y-6">
+        {/* Instructions Section - Moved to top */}
+        <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 border-2 border-blue-200">
+          <CardContent className="p-6">
+            <div className="flex items-start space-x-4">
+              <div className="bg-blue-500 rounded-full p-2 flex-shrink-0">
+                <Search className="w-5 h-5 text-white" />
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold text-blue-900 mb-3">How to Create a Missing Pet Flyer</h3>
+                <div className="space-y-2 text-blue-800">
+                  <div className="flex items-center space-x-2">
+                    <span className="bg-blue-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold">1</span>
+                    <span>Mark your pet as missing using the button above</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <span className="bg-blue-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold">2</span>
+                    <span>Click 'Missing Pet Flyer' button that appears at the top of the page</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <span className="bg-blue-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold">3</span>
+                    <span>Generate a printable PDF with photos, contact details, and pet information</span>
+                  </div>
+                </div>
+                <p className="text-sm text-blue-700 mt-3 font-medium">
+                  The flyer includes all essential information to help bring your pet home safely.
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
         {/* Missing Status Banner */}
         {lostPetData.is_missing && (
           <Card className="border-4 border-red-500 bg-red-50">
@@ -261,37 +292,6 @@ const LostPet = () => {
                     </div>
                   )}
                 </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Instructions Section */}
-        <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 border-2 border-blue-200">
-          <CardContent className="p-6">
-            <div className="flex items-start space-x-4">
-              <div className="bg-blue-500 rounded-full p-2 flex-shrink-0">
-                <Search className="w-5 h-5 text-white" />
-              </div>
-              <div>
-                <h3 className="text-lg font-semibold text-blue-900 mb-3">How to Create a Missing Pet Flyer</h3>
-                <div className="space-y-2 text-blue-800">
-                  <div className="flex items-center space-x-2">
-                    <span className="bg-blue-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold">1</span>
-                    <span>Mark your pet as missing using the button above</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <span className="bg-blue-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold">2</span>
-                    <span>Click 'Missing Pet Flyer' button that appears at the top of the page</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <span className="bg-blue-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold">3</span>
-                    <span>Generate a printable PDF with photos, contact details, and pet information</span>
-                  </div>
-                </div>
-                <p className="text-sm text-blue-700 mt-3 font-medium">
-                  The flyer includes all essential information to help bring your pet home safely.
-                </p>
               </div>
             </div>
           </CardContent>

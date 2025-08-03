@@ -81,8 +81,8 @@ export const PetResumeSection = ({ petData, onUpdate }: PetResumeSectionProps) =
     ? petData.reviews.reduce((sum, review) => sum + review.rating, 0) / petData.reviews.length 
     : 0;
 
-  const handleDownloadPDF = async () => {
-    console.log("Downloading Pet Resume as PDF...");
+  const handleGeneratePDF = async () => {
+    console.log("Generating Pet Resume PDF...");
     setIsGeneratingPDF(true);
     toast.loading("Generating PDF...");
     
@@ -194,7 +194,7 @@ export const PetResumeSection = ({ petData, onUpdate }: PetResumeSectionProps) =
                 Edit
               </Button>
               <Button 
-                onClick={handleDownloadPDF} 
+                onClick={handleGeneratePDF} 
                 variant="secondary" 
                 size="sm"
                 disabled={isGeneratingPDF}

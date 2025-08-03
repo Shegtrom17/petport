@@ -9,6 +9,7 @@ import { SupportAnimalBanner } from "@/components/SupportAnimalBanner";
 import { SocialShareButtons } from "@/components/SocialShareButtons";
 import { ProfileEditButton } from "@/components/ProfileEditButton";
 import { CertificationBanner } from "@/components/CertificationBanner";
+import { PrivacyToggle } from "@/components/PrivacyToggle";
 import { deleteOfficialPhoto, replaceOfficialPhoto } from "@/services/petService";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/context/AuthContext";
@@ -22,6 +23,7 @@ interface PetProfileContentProps {
   setIsInAppSharingOpen: (open: boolean) => void;
   onPhotoUpdate?: () => void;
   onEditClick?: () => void;
+  togglePetPublicVisibility?: (petId: string, isPublic: boolean) => Promise<boolean>;
 }
 
 // Helper function to extract phone number and create tel link
@@ -46,7 +48,8 @@ export const PetProfileContent = ({
   setActiveTab, 
   setIsInAppSharingOpen,
   onPhotoUpdate,
-  onEditClick 
+  onEditClick,
+  togglePetPublicVisibility 
 }: PetProfileContentProps) => {
   console.log("PetProfileContent - Received petData:", petData);
   console.log("PetProfileContent - Received selectedPet:", selectedPet);
@@ -550,6 +553,14 @@ export const PetProfileContent = ({
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
+              {/* Privacy Toggle - Only for owners */}
+              {isOwner && togglePetPublicVisibility && (
+                <PrivacyToggle
+                  isPublic={enhancedPetData?.is_public || false}
+                  onToggle={(isPublic) => togglePetPublicVisibility(enhancedPetData.id, isPublic)}
+                />
+              )}
+              
               <Button 
                 onClick={() => setActiveTab("documents")}
                 className="w-full bg-gradient-to-r from-navy-900 to-navy-800 text-gold-500 hover:from-navy-800 hover:to-navy-700 border border-gold-500/30"

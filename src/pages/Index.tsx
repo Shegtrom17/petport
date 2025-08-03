@@ -36,7 +36,8 @@ const Index = () => {
     handleSelectPet,
     handlePetUpdate,
     handleDocumentUpdate,
-    handleReorderPets
+    handleReorderPets,
+    togglePetPublicVisibility
   } = usePetData();
 
   useEffect(() => {
@@ -152,6 +153,7 @@ const Index = () => {
               setActiveTab={setActiveTab}
               setIsInAppSharingOpen={setIsInAppSharingOpen}
               onPhotoUpdate={handlePetUpdate}
+              togglePetPublicVisibility={togglePetPublicVisibility}
               onEditClick={() => {
                 // Trigger the PetProfileCard to enter edit mode
                 window.dispatchEvent(new CustomEvent('trigger-pet-edit'));
@@ -160,6 +162,7 @@ const Index = () => {
             <PetProfileCard 
               petData={petData} 
               onUpdate={handlePetUpdate}
+              togglePetPublicVisibility={togglePetPublicVisibility}
             />
           </div>
         );

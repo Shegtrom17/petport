@@ -11,6 +11,7 @@ import { useAuth } from "@/context/AuthContext";
 import { updatePetBasicInfo, updatePetContacts } from "@/services/petService";
 import { Loader2 } from "lucide-react";
 import { sanitizeText, validateTextLength, containsSuspiciousContent } from "@/utils/inputSanitizer";
+import { PrivacyToggle } from "@/components/PrivacyToggle";
 
 interface PetData {
   id: string;
@@ -40,9 +41,10 @@ interface PetEditFormProps {
   petData: PetData;
   onSave: () => void;
   onCancel: () => void;
+  togglePetPublicVisibility?: (petId: string, isPublic: boolean) => Promise<boolean>;
 }
 
-export const PetEditForm = ({ petData, onSave, onCancel }: PetEditFormProps) => {
+export const PetEditForm = ({ petData, onSave, onCancel, togglePetPublicVisibility }: PetEditFormProps) => {
   const { toast } = useToast();
   const { user } = useAuth();
   const [isSaving, setIsSaving] = useState(false);
@@ -293,6 +295,17 @@ const handleSubmit = async (e: React.FormEvent) => {
             </div>
           </div>
         </div>
+
+        {/* Privacy Settings */}
+        {togglePetPublicVisibility && (
+          <div className="border-t pt-6">
+            <h3 className="text-lg font-serif text-navy-900 mb-4">Privacy Settings</h3>
+            <PrivacyToggle
+              isPublic={petData.is_public || false}
+              onToggle={(isPublic) => togglePetPublicVisibility(petData.id, isPublic)}
+            />
+          </div>
+        )}
         
         <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4">
           <Button 

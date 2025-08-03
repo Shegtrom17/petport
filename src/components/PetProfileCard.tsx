@@ -40,9 +40,10 @@ interface PetData {
 interface PetProfileCardProps {
   petData: PetData;
   onUpdate?: () => void;
+  togglePetPublicVisibility?: (petId: string, isPublic: boolean) => Promise<boolean>;
 }
 
-export const PetProfileCard = ({ petData, onUpdate }: PetProfileCardProps) => {
+export const PetProfileCard = ({ petData, onUpdate, togglePetPublicVisibility }: PetProfileCardProps) => {
   console.log("PetProfileCard - Received petData:", petData);
   
   // Safety check for missing or invalid petData
@@ -165,6 +166,7 @@ const handleEditSave = () => {
         petData={safeEditData}
         onSave={handleEditSave}
         onCancel={() => setIsEditing(false)}
+        togglePetPublicVisibility={togglePetPublicVisibility}
       />
     );
   }

@@ -455,19 +455,7 @@ export const PetProfileContent = ({
 
         {/* Right Column - Action-First Flow */}
         <div className="space-y-4">
-          {/* 1. PASSPORT DOCUMENTS - Most important action */}
-          <Card className="bg-[#f8f8f8] shadow-md">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-lg font-bold text-navy-900 border-b-2 border-gold-500 pb-2">
-                🛂 PASSPORT DOCUMENTS
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              <PetPDFGenerator petId={selectedPet?.id || enhancedPetData.id || ""} petName={enhancedPetData.name || "Pet"} />
-            </CardContent>
-          </Card>
-
-          {/* 2. QUICK ACTIONS - Immediate actions available */}
+          {/* 1. QUICK ACTIONS - Immediate actions available */}
           <Card className="bg-[#f8f8f8] shadow-md">
             <CardHeader className="pb-3">
               <CardTitle className="text-lg font-bold text-navy-900 border-b-2 border-gold-500 pb-2 flex items-center justify-between">
@@ -514,6 +502,18 @@ export const PetProfileContent = ({
                   <PrivacyHint isPublic={enhancedPetData?.is_public || false} feature="profile sharing" variant="inline" />
                 )}
               </div>
+            </CardContent>
+          </Card>
+
+          {/* 2. PASSPORT DOCUMENTS - Most important action */}
+          <Card className="bg-[#f8f8f8] shadow-md">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-lg font-bold text-navy-900 border-b-2 border-gold-500 pb-2">
+                🛂 PASSPORT DOCUMENTS
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <PetPDFGenerator petId={selectedPet?.id || enhancedPetData.id || ""} petName={enhancedPetData.name || "Pet"} />
             </CardContent>
           </Card>
 

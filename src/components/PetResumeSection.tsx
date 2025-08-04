@@ -6,7 +6,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Download, Share2, QrCode, Star, Shield, Heart, Phone, Mail, Award, AlertTriangle, MapPin, GraduationCap, Trophy, Activity, Edit, Eye } from "lucide-react";
 import { SupportAnimalBanner } from "@/components/SupportAnimalBanner";
 import { PetResumeEditForm } from "@/components/PetResumeEditForm";
-import { generatePetPDF, downloadPDFBlob, viewPDFBlob } from "@/services/pdfService";
+import { generatePetPDF, downloadPDFBlob, viewPDFBlob, generatePublicProfileUrl, shareProfileOptimized, generateQRCodeUrl } from "@/services/pdfService";
 import { toast } from "sonner";
 
 // Helper function to extract phone number and create tel link
@@ -45,6 +45,7 @@ interface PetResumeSectionProps {
     supportAnimalStatus?: string | null;
     medicalAlert: boolean;
     medicalConditions?: string;
+    is_public?: boolean;
     experiences?: Array<{
       activity: string;
       contact?: string;
@@ -77,6 +78,8 @@ export const PetResumeSection = ({ petData, onUpdate }: PetResumeSectionProps) =
   const [isPdfDialogOpen, setIsPdfDialogOpen] = useState(false);
   const [generatedPdfBlob, setGeneratedPdfBlob] = useState<Blob | null>(null);
   const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
+  const [isQRDialogOpen, setIsQRDialogOpen] = useState(false);
+  const [isSharing, setIsSharing] = useState(false);
 
   const averageRating = petData.reviews?.length 
     ? petData.reviews.reduce((sum, review) => sum + review.rating, 0) / petData.reviews.length 
@@ -130,14 +133,36 @@ export const PetResumeSection = ({ petData, onUpdate }: PetResumeSectionProps) =
     }
   };
 
-  const handleShare = () => {
-    console.log("Sharing Pet Resume...");
-    // Share functionality would be implemented here
+  const handleShare = async () => {
+    if (!petData.is_public) {
+      toast.error("Pet profile must be public to share. Please enable public visibility in settings.");
+      return;
+    }
+
+    setIsSharing(true);
+    try {
+      const profileUrl = generatePublicProfileUrl(petData.id);
+      const result = await shareProfileOptimized(profileUrl, petData.name, 'profile');
+      
+      if (result.success) {
+        toast.success(result.message || "Profile shared successfully!");
+      } else {
+        toast.error(result.message || "Failed to share profile");
+      }
+    } catch (error) {
+      console.error("Error sharing profile:", error);
+      toast.error("Failed to share profile");
+    } finally {
+      setIsSharing(false);
+    }
   };
 
   const handleQRCode = () => {
-    console.log("Generating QR Code...");
-    // QR code generation would be implemented here
+    if (!petData.is_public) {
+      toast.error("Pet profile must be public to generate QR code. Please enable public visibility in settings.");
+      return;
+    }
+    setIsQRDialogOpen(true);
   };
 
   const handleEditSave = () => {
@@ -213,9 +238,9 @@ export const PetResumeSection = ({ petData, onUpdate }: PetResumeSectionProps) =
                 <Download className="w-4 h-4 mr-2" />
                 PDF
               </Button>
-              <Button onClick={handleShare} variant="secondary" size="sm">
+              <Button onClick={handleShare} variant="secondary" size="sm" disabled={isSharing}>
                 <Share2 className="w-4 h-4 mr-2" />
-                Share
+                {isSharing ? "Sharing..." : "Share"}
               </Button>
               <Button onClick={handleQRCode} variant="secondary" size="sm">
                 <QrCode className="w-4 h-4" />
@@ -323,6 +348,53 @@ export const PetResumeSection = ({ petData, onUpdate }: PetResumeSectionProps) =
                 </div>
               </div>
             )}
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* QR Code Dialog */}
+      <Dialog open={isQRDialogOpen} onOpenChange={setIsQRDialogOpen}>
+        <DialogContent className="max-w-md bg-[#f8f8f8]">
+          <DialogHeader>
+            <DialogTitle className="font-bold text-navy-900 border-b-2 border-gold-500 pb-2">
+              📱 QR Code for {petData.name}
+            </DialogTitle>
+          </DialogHeader>
+          
+          <div className="space-y-4 text-center">
+            <p className="text-sm text-navy-600">
+              Scan this QR code to view {petData.name}'s public profile
+            </p>
+            
+            <div className="flex justify-center p-4 bg-white rounded-lg border-2 border-gold-500/30">
+              <img 
+                src={generateQRCodeUrl(generatePublicProfileUrl(petData.id), 200)}
+                alt={`QR Code for ${petData.name}'s profile`}
+                className="w-48 h-48"
+              />
+            </div>
+            
+            <div className="bg-white p-3 rounded border border-gray-200">
+              <p className="text-xs text-gray-600 break-all">
+                {generatePublicProfileUrl(petData.id)}
+              </p>
+            </div>
+            
+            <Button
+              onClick={async () => {
+                const profileUrl = generatePublicProfileUrl(petData.id);
+                try {
+                  await navigator.clipboard.writeText(profileUrl);
+                  toast.success("Profile URL copied to clipboard!");
+                } catch (error) {
+                  toast.error("Failed to copy URL to clipboard");
+                }
+              }}
+              variant="outline"
+              className="border-gold-500 text-gold-600 hover:bg-gold-50"
+            >
+              Copy Profile URL
+            </Button>
           </div>
         </DialogContent>
       </Dialog>

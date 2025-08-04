@@ -10,6 +10,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Star, Plus, Share2, Mail, MapPin, Calendar, User, Edit, Send, X } from "lucide-react";
 import { ReviewsEditForm } from "@/components/ReviewsEditForm";
 import { useToast } from "@/hooks/use-toast";
+import { PrivacyHint } from "@/components/PrivacyHint";
+import { generatePublicProfileUrl, shareProfileOptimized } from "@/services/pdfService";
 
 interface Review {
   id?: string;
@@ -27,6 +29,7 @@ interface ReviewsSectionProps {
     id: string;
     name: string;
     reviews?: Review[];
+    is_public?: boolean;
   };
   onUpdate?: () => void;
 }
@@ -92,20 +95,39 @@ export const ReviewsSection = ({ petData, onUpdate }: ReviewsSectionProps) => {
     setIsRequestModalOpen(false);
   };
 
-  const handleShareReviews = () => {
-    console.log("Sharing reviews for pet:", petData.name);
-    if (navigator.share) {
-      navigator.share({
-        title: `${petData.name}'s Reviews`,
-        text: `Check out the reviews for ${petData.name}!`,
-        url: window.location.href,
-      });
-    } else {
-      // Fallback for browsers that don't support Web Share API
-      navigator.clipboard.writeText(window.location.href);
+  const handleShareReviews = async () => {
+    // Check if profile is public
+    if (!petData.is_public) {
       toast({
-        title: "Link Copied",
-        description: "The reviews link has been copied to your clipboard.",
+        title: "Profile Not Public",
+        description: "Your pet's profile must be public to share reviews. Please enable public sharing first.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      const publicUrl = generatePublicProfileUrl(petData.id);
+      const result = await shareProfileOptimized(publicUrl, petData.name, 'profile');
+      
+      if (result.success) {
+        toast({
+          title: result.shared ? "Reviews Shared" : "Link Copied",
+          description: result.message || "Reviews have been shared successfully!",
+        });
+      } else {
+        toast({
+          title: "Sharing Failed",
+          description: result.error || "Unable to share reviews. Please try again.",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.error("Error sharing reviews:", error);
+      toast({
+        title: "Sharing Error",
+        description: "An unexpected error occurred while sharing.",
+        variant: "destructive",
       });
     }
   };
@@ -172,6 +194,18 @@ export const ReviewsSection = ({ petData, onUpdate }: ReviewsSectionProps) => {
           </div>
         </CardContent>
       </Card>
+
+      {/* Privacy Hint for sharing */}
+      {!petData.is_public && (
+        <PrivacyHint
+          isPublic={petData.is_public || false}
+          feature="sharing reviews"
+          variant="inline"
+          showToggle={true}
+          petId={petData.id}
+          onUpdate={onUpdate}
+        />
+      )}
 
       {/* Edit Modal */}
       <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>

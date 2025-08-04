@@ -19,7 +19,7 @@ serve(async (req) => {
   }
 
   try {
-    console.log('=== PDF Generation Started ===')
+    console.log('=== PDF Generation Started v2 ===')
     
     // Validate environment variables
     if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {

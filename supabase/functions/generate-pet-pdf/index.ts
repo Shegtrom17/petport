@@ -1481,8 +1481,17 @@ serve(async (req) => {
                   color: rgb(0.5, 0.5, 0.5),
                 })
                 yPos3 -= 20
+              } else {
+                // Add extra spacing if no notes to ensure proper separation
+                yPos3 -= 10
               }
+              
+              // Add consistent spacing between travel items
+              yPos3 -= 15
             })
+            
+            // Add extra spacing after travel history section before next section
+            yPos3 -= 20
           }
 
           // Experience Section

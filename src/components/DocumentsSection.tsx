@@ -321,15 +321,12 @@ export const DocumentsSection = ({ petId, documents, onDocumentDeleted }: Docume
       {/* Document List */}
       <Card className="border-0 shadow-lg bg-passport-section-bg backdrop-blur-sm">
         <CardHeader>
-          <CardTitle className="flex items-center justify-between">
-            <div className="flex items-center space-x-2">
-              <FileText className="w-5 h-5 text-navy-900" />
-              <span>Stored Documents</span>
-            </div>
-            <div className="flex items-center gap-2">
+          <CardTitle className="flex flex-col space-y-3 sm:flex-row sm:items-center sm:justify-between sm:space-y-0">
+            <span>Stored Documents</span>
+            <div className="flex items-center gap-2 w-full sm:w-auto">
               <label className="text-sm font-medium text-gray-700">Filter:</label>
               <Select value={filterCategory} onValueChange={setFilterCategory}>
-                <SelectTrigger className="w-40 bg-white border-navy-300">
+                <SelectTrigger className="flex-1 sm:w-40 bg-white border-navy-300">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent className="bg-white border-navy-300 z-50">

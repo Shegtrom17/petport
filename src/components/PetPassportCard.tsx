@@ -32,7 +32,7 @@ export const PetPassportCard = ({ petData }: PetPassportCardProps) => {
                 </div>
                 <div className="flex items-center space-x-1 sm:space-x-2">
                   <div className="w-1.5 h-1.5 bg-yellow-400 rounded-full"></div>
-                  <span className="text-yellow-200">{petData.badges?.length || 0} Certifications</span>
+                  <span className="text-yellow-200">Breed: {petData.breed}</span>
                 </div>
               </div>
             </div>

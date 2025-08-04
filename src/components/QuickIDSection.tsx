@@ -277,17 +277,17 @@ export const QuickIDSection = ({ petData }: QuickIDSectionProps) => {
               <AlertTriangle className="w-6 h-6" />
               <span>Missing Pet Information</span>
             </CardTitle>
-            <div className="flex items-center space-x-2">
+            <div className="flex flex-col space-y-2 sm:flex-row sm:space-y-0 sm:space-x-2">
               <Button
                 onClick={() => setIsEditing(!isEditing)}
                 variant="outline"
-                className="border-red-500 text-red-600 hover:bg-red-50"
+                className="border-red-500 text-red-600 hover:bg-red-50 w-full sm:w-auto"
               >
                 {isEditing ? 'Cancel' : 'Edit'}
               </Button>
               <Button
                 onClick={toggleMissingStatus}
-                className={`px-4 py-2 font-bold ${
+                className={`px-4 py-2 font-bold w-full sm:w-auto ${
                   lostPetData.is_missing 
                     ? 'bg-green-600 hover:bg-green-700 text-white' 
                     : 'bg-red-600 hover:bg-red-700 text-white'

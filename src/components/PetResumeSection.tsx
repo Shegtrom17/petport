@@ -221,11 +221,12 @@ export const PetResumeSection = ({ petData, onUpdate }: PetResumeSectionProps) =
                 <p className="text-xs text-blue-200 mt-1">PetPort ID: {petData.petPassId}</p>
               </div>
             </div>
-            <div className="flex space-x-2">
+            <div className="flex flex-col space-y-2 sm:flex-row sm:space-y-0 sm:space-x-2">
               <Button 
                 onClick={() => setIsEditModalOpen(true)} 
                 variant="secondary" 
                 size="sm"
+                className="w-full sm:w-auto"
               >
                 <Edit className="w-4 h-4 mr-2" />
                 Edit
@@ -234,15 +235,16 @@ export const PetResumeSection = ({ petData, onUpdate }: PetResumeSectionProps) =
                 onClick={showPdfOptions} 
                 variant="secondary" 
                 size="sm"
+                className="w-full sm:w-auto"
               >
                 <Download className="w-4 h-4 mr-2" />
                 PDF
               </Button>
-              <Button onClick={handleShare} variant="secondary" size="sm" disabled={isSharing}>
+              <Button onClick={handleShare} variant="secondary" size="sm" disabled={isSharing} className="w-full sm:w-auto">
                 <Share2 className="w-4 h-4 mr-2" />
                 {isSharing ? "Sharing..." : "Share"}
               </Button>
-              <Button onClick={handleQRCode} variant="secondary" size="sm">
+              <Button onClick={handleQRCode} variant="secondary" size="sm" className="w-full sm:w-auto">
                 <QrCode className="w-4 h-4" />
               </Button>
             </div>

@@ -1421,17 +1421,18 @@ serve(async (req) => {
           )
         }
 
-        // Gallery layout configuration - 2 photos per page for proper spacing
-        const photosPerPage = 2 // 2 photos per page to avoid overlap
-        const photoWidth = 200 // Reduced to ensure fit
-        const photoHeight = 150 // Reduced to ensure fit  
-        const spacing = 60 // More spacing between photos
+        // Gallery layout configuration - 4 photos per page (2x2 grid)
+        const photosPerPage = 4 // 2x2 grid for efficiency and clean layout
+        const photoWidth = 250 // Larger photos for better visual impact
+        const photoHeight = 200 // Maintain good aspect ratio
+        const spacing = 40 // Balanced spacing
         const margin = 50
         
-        // Calculate positions for 2 photos side by side
+        // Calculate grid positions - 2x2 layout
         const leftX = margin
         const rightX = leftX + photoWidth + spacing
-        const photoY = height - 200 // Centered vertically with good margins
+        const topY = height - 100 // Start well below any header area
+        const bottomY = topY - photoHeight - spacing
         
         let currentPage = page
         let photosProcessed = 0
@@ -1447,7 +1448,7 @@ serve(async (req) => {
             // No header text - clean photo-only layout
           }
           
-          // Process up to 4 photos on this page
+          // Process up to 4 photos on this page in 2x2 grid
           const pagePhotos = galleryData.slice(i, i + photosPerPage)
           
           for (let j = 0; j < pagePhotos.length; j++) {
@@ -1477,9 +1478,12 @@ serve(async (req) => {
                 }
               }
               
-              // Calculate position for 2 photos side by side
+              // Calculate position in 2x2 grid
               const isLeft = j % 2 === 0
+              const isTop = j < 2
+              
               const photoX = isLeft ? leftX : rightX
+              const photoY = isTop ? topY : bottomY
               
               // Scale image to fit while maintaining aspect ratio
               const { width: imgWidth, height: imgHeight } = image.scale(1)
@@ -1517,7 +1521,7 @@ serve(async (req) => {
             } catch (photoError) {
               console.error(`Error processing photo ${i + j + 1}:`, photoError.message)
               
-              // Draw placeholder for failed photos
+              // Draw placeholder for failed photos - use same grid calculation
               const isLeft = j % 2 === 0
               const isTop = j < 2
               

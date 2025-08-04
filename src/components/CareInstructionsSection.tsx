@@ -515,8 +515,8 @@ export const CareInstructionsSection = ({ petData }: CareInstructionsSectionProp
         <CardContent>
           <div className="space-y-4">
             {feedingScheduleItems.map((feeding, index) => (
-              <div key={index} className="flex items-start space-x-4 p-4 bg-orange-50 rounded-lg border-l-4 border-orange-500">
-                <div className="flex items-center space-x-2 min-w-0">
+              <div key={index} className="flex flex-col md:flex-row md:items-start space-y-2 md:space-y-0 md:space-x-4 p-4 bg-orange-50 rounded-lg border-l-4 border-orange-500">
+                <div className="flex items-center space-x-2">
                   <Clock className="w-4 h-4 text-orange-600 flex-shrink-0" />
                   <Badge variant="outline" className="text-orange-700 border-orange-300">
                     {feeding.time}

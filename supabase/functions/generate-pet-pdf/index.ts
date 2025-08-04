@@ -305,7 +305,7 @@ serve(async (req) => {
           const bottomRowY = yPosition - photoHeight - rowSpacing
           
           let photosAdded = 0
-          const maxPhotos = 3 // Allow up to 3 photos
+          const maxPhotos = 4 // Now allow up to 4 photos for full 2x2 grid
           
           // Try to add first photo (main photo) - top-left
           if (photosData.photo_url && photosAdded < maxPhotos) {
@@ -395,14 +395,45 @@ serve(async (req) => {
             }
           }
           
+          // Try to add fourth photo (second gallery photo) - bottom-right
+          if (galleryData && galleryData.length > 1 && photosAdded < maxPhotos) {
+            try {
+              const secondGalleryPhoto = galleryData[1]
+              console.log('Loading second gallery photo:', secondGalleryPhoto.url)
+              const photoResponse = await fetch(secondGalleryPhoto.url)
+              if (photoResponse.ok) {
+                const photoBytes = await photoResponse.arrayBuffer()
+                const photoImage = await pdfDoc.embedJpg(new Uint8Array(photoBytes))
+                
+                // Calculate dimensions to maintain aspect ratio
+                const { width: imgWidth, height: imgHeight } = photoImage.scale(1)
+                const scale = Math.min(photoWidth / imgWidth, photoHeight / imgHeight)
+                const scaledWidth = imgWidth * scale
+                const scaledHeight = imgHeight * scale
+                
+                page.drawImage(photoImage, {
+                  x: rightPhotoX + (photoWidth - scaledWidth) / 2,
+                  y: bottomRowY - photoHeight + (photoHeight - scaledHeight) / 2,
+                  width: scaledWidth,
+                  height: scaledHeight,
+                })
+                photosAdded++
+                console.log('Second gallery photo added successfully (bottom-right)')
+              }
+            } catch (photoError) {
+              console.log('Failed to load second gallery photo:', photoError.message)
+            }
+          }
+          
           // Add photo placeholders for missing photos
           const positions = [
             { x: leftPhotoX, y: topRowY, label: 'MAIN PHOTO' },
             { x: rightPhotoX, y: topRowY, label: 'FULL BODY' },
-            { x: leftPhotoX, y: bottomRowY, label: 'GALLERY' }
+            { x: leftPhotoX, y: bottomRowY, label: 'GALLERY 1' },
+            { x: rightPhotoX, y: bottomRowY, label: 'GALLERY 2' }
           ]
           
-          for (let i = photosAdded; i < 3; i++) {
+          for (let i = photosAdded; i < 4; i++) {
             const pos = positions[i]
             // Draw placeholder rectangle
             page.drawRectangle({

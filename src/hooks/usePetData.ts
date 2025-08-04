@@ -65,10 +65,17 @@ export const usePetData = () => {
 
   const handleSelectPet = async (petId: string) => {
     try {
-      console.log("usePetData - Selecting pet:", petId);
+      console.log("usePetData - Selecting pet:", petId, "current selected:", selectedPet?.id);
+      
+      // Don't reload if already selected
+      if (selectedPet?.id === petId) {
+        console.log("usePetData - Pet already selected, skipping reload");
+        return;
+      }
+      
       setIsLoading(true);
       const petDetails = await fetchPetDetails(petId);
-      console.log("usePetData - Selected pet details:", petDetails);
+      console.log("usePetData - Selected pet details:", petDetails?.name, petDetails?.id);
       setSelectedPet(petDetails);
       await fetchDocuments(petId);
     } catch (error) {

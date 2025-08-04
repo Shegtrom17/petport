@@ -37,15 +37,25 @@ const LostPet = () => {
     emergency_notes: ""
   });
 
-  // Find the pet data
-  const currentPet = petId ? pets.find(p => p.id === petId) || selectedPet : selectedPet;
+  // Find the pet data - wait for pets to load before fallback
+  const currentPet = petId && pets.length > 0 
+    ? pets.find(p => p.id === petId) || selectedPet 
+    : selectedPet;
 
   useEffect(() => {
-    if (currentPet?.id) {
-      loadLostPetData(currentPet.id);
-      handleSelectPet(currentPet.id);
+    console.log('LostPet useEffect - petId:', petId, 'pets loaded:', pets.length > 0, 'currentPet:', currentPet?.id);
+    
+    if (petId && pets.length > 0) {
+      const targetPet = pets.find(p => p.id === petId);
+      if (targetPet && targetPet.id !== selectedPet?.id) {
+        console.log('LostPet - Selecting new pet:', targetPet.id, 'current selected:', selectedPet?.id);
+        handleSelectPet(targetPet.id);
+      }
+      if (targetPet) {
+        loadLostPetData(targetPet.id);
+      }
     }
-  }, [currentPet?.id]);
+  }, [petId, pets.length]);
 
   // Redirect if no pet found - after all hooks
   if (!currentPet && pets.length > 0) {

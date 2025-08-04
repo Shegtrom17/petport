@@ -32,7 +32,7 @@ export const LostPetPDFGenerator = ({ petId, petName, isActive }: LostPetPDFGene
     setIsGenerating(true);
     
     try {
-      console.log('Generating lost pet PDF for:', petId);
+      console.log('LostPetPDFGenerator - Generating lost pet PDF for petId:', petId, 'petName:', petName);
       const result = await generatePetPDF(petId, 'lost_pet');
       
       if (result.success && result.blob) {

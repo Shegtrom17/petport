@@ -313,7 +313,13 @@ serve(async (req) => {
               const photoResponse = await fetch(photosData.photo_url)
               if (photoResponse.ok) {
                 const photoBytes = await photoResponse.arrayBuffer()
-                const photoImage = await pdfDoc.embedJpg(new Uint8Array(photoBytes))
+                let photoImage
+                try {
+                  photoImage = await pdfDoc.embedJpg(new Uint8Array(photoBytes))
+                } catch (jpgError) {
+                  console.log('JPG failed, trying PNG for main photo')
+                  photoImage = await pdfDoc.embedPng(new Uint8Array(photoBytes))
+                }
                 
                 // Calculate dimensions to maintain aspect ratio
                 const { width: imgWidth, height: imgHeight } = photoImage.scale(1)
@@ -342,7 +348,13 @@ serve(async (req) => {
               const photoResponse = await fetch(photosData.full_body_photo_url)
               if (photoResponse.ok) {
                 const photoBytes = await photoResponse.arrayBuffer()
-                const photoImage = await pdfDoc.embedJpg(new Uint8Array(photoBytes))
+                let photoImage
+                try {
+                  photoImage = await pdfDoc.embedJpg(new Uint8Array(photoBytes))
+                } catch (jpgError) {
+                  console.log('JPG failed, trying PNG for full body photo')
+                  photoImage = await pdfDoc.embedPng(new Uint8Array(photoBytes))
+                }
                 
                 // Calculate dimensions to maintain aspect ratio
                 const { width: imgWidth, height: imgHeight } = photoImage.scale(1)
@@ -372,7 +384,13 @@ serve(async (req) => {
               const photoResponse = await fetch(firstGalleryPhoto.url)
               if (photoResponse.ok) {
                 const photoBytes = await photoResponse.arrayBuffer()
-                const photoImage = await pdfDoc.embedJpg(new Uint8Array(photoBytes))
+                let photoImage
+                try {
+                  photoImage = await pdfDoc.embedJpg(new Uint8Array(photoBytes))
+                } catch (jpgError) {
+                  console.log('JPG failed, trying PNG for gallery photo')
+                  photoImage = await pdfDoc.embedPng(new Uint8Array(photoBytes))
+                }
                 
                 // Calculate dimensions to maintain aspect ratio
                 const { width: imgWidth, height: imgHeight } = photoImage.scale(1)
@@ -1238,7 +1256,7 @@ serve(async (req) => {
             
             // Try JPG first, then PNG fallback
             try {
-              const photoImage = await pdfDoc.embedJpg(photoBytes)
+              const photoImage = await pdfDoc.embedJpg(new Uint8Array(photoBytes))
               console.log(`${logPrefix}: Photo embedded as JPG successfully`)
               return photoImage
             } catch (jpgError) {

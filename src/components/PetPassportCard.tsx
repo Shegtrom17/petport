@@ -63,7 +63,7 @@ export const PetPassportCard = ({ petData, onUpdate }: PetPassportCardProps) => 
             <div className="mb-3 flex justify-center">
               <div className="w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 lg:w-32 lg:h-32 rounded-xl flex items-center justify-center overflow-hidden border-2 border-yellow-500/50 shadow-lg">
                 <img 
-                  src="/lovable-uploads/fda1bf45-8aa7-4652-90b2-3814829f4c95.png" 
+                  src="/lovable-uploads/1a0d3abc-61d2-4b3b-9c39-9fe8c777dc80.png"
                   alt="PetPort Logo"
                   className="w-full h-full object-contain"
                   onError={(e) => {

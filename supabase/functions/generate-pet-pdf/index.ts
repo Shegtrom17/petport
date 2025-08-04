@@ -1428,11 +1428,13 @@ serve(async (req) => {
         const spacing = 40 // Balanced spacing
         const margin = 50
         
-        // Calculate grid positions - 2x2 layout
+        // Calculate grid positions - 2x2 layout with corrected coordinates
         const leftX = margin
         const rightX = leftX + photoWidth + spacing
-        const topY = height - 100 // Start well below any header area
-        const bottomY = topY - photoHeight - spacing
+        const topY = height - margin - photoHeight // Top row: 592 - 50 - 200 = 342
+        const bottomY = height - margin - (2 * photoHeight) - spacing // Bottom row: 592 - 50 - 400 - 40 = 102
+        
+        console.log(`Gallery layout: topY=${topY}, bottomY=${bottomY}, leftX=${leftX}, rightX=${rightX}`)
         
         let currentPage = page
         let photosProcessed = 0
@@ -1524,6 +1526,26 @@ serve(async (req) => {
               // Draw placeholder for failed photos - use same grid calculation
               const isLeft = j % 2 === 0
               const isTop = j < 2
+              const placeholderX = isLeft ? leftX : rightX
+              const placeholderY = isTop ? topY : bottomY
+              
+              console.log(`Drawing placeholder at position: x=${placeholderX}, y=${placeholderY}`)
+              
+              currentPage.drawRectangle({
+                x: placeholderX,
+                y: placeholderY,
+                width: photoWidth,
+                height: photoHeight,
+                borderColor: rgb(0.8, 0.8, 0.8),
+                borderWidth: 2,
+              })
+              
+              currentPage.drawText('Photo unavailable', {
+                x: placeholderX + 50,
+                y: placeholderY + photoHeight / 2,
+                size: 12,
+                color: rgb(0.5, 0.5, 0.5),
+              })
               
               const photoX = isLeft ? leftX : rightX
               const photoY = isTop ? topY : bottomY

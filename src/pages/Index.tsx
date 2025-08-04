@@ -240,7 +240,7 @@ const Index = () => {
               onReorderPets={handleReorderPets}
             />
 
-            <PetPassportCard petData={petData} />
+            <PetPassportCard petData={petData} onUpdate={handlePetUpdate} />
 
             <div className="mb-4 sm:mb-6">
               <NavigationTabs activeTab={activeTab} onTabChange={setActiveTab} />

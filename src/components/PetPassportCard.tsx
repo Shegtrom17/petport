@@ -5,14 +5,19 @@ import { usePetData } from "@/hooks/usePetData";
 
 interface PetPassportCardProps {
   petData: any;
+  onUpdate?: () => void;
 }
 
-export const PetPassportCard = ({ petData }: PetPassportCardProps) => {
+export const PetPassportCard = ({ petData, onUpdate }: PetPassportCardProps) => {
   const { togglePetPublicVisibility } = usePetData();
 
   const handlePrivacyToggle = async (isPublic: boolean) => {
     if (petData?.id) {
-      return await togglePetPublicVisibility(petData.id, isPublic);
+      const success = await togglePetPublicVisibility(petData.id, isPublic);
+      if (success && onUpdate) {
+        onUpdate(); // Trigger parent component to refresh data
+      }
+      return success;
     }
     return false;
   };

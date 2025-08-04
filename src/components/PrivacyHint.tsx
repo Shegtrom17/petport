@@ -1,6 +1,8 @@
 import { Lock, Unlock, Info, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 interface PrivacyHintProps {
   isPublic: boolean;
@@ -8,6 +10,8 @@ interface PrivacyHintProps {
   variant?: "banner" | "inline" | "badge";
   showToggle?: boolean;
   onTogglePrivacy?: () => void;
+  petId?: string;
+  onUpdate?: () => void;
 }
 
 export const PrivacyHint = ({ 
@@ -15,8 +19,41 @@ export const PrivacyHint = ({
   feature, 
   variant = "inline", 
   showToggle = false,
-  onTogglePrivacy 
+  onTogglePrivacy,
+  petId,
+  onUpdate
 }: PrivacyHintProps) => {
+  const handleTogglePrivacy = async () => {
+    if (onTogglePrivacy) {
+      onTogglePrivacy();
+      return;
+    }
+
+    if (!petId) {
+      toast.error("Unable to update privacy settings");
+      return;
+    }
+
+    try {
+      const { error } = await supabase
+        .from('pets')
+        .update({ is_public: true })
+        .eq('id', petId);
+
+      if (error) {
+        toast.error("Failed to update privacy settings");
+        return;
+      }
+
+      toast.success("Profile is now public!");
+      if (onUpdate) {
+        onUpdate();
+      }
+    } catch (error) {
+      console.error("Error updating privacy:", error);
+      toast.error("Failed to update privacy settings");
+    }
+  };
   if (variant === "badge") {
     return (
       <Badge 
@@ -60,6 +97,19 @@ export const PrivacyHint = ({
   }
 
   if (variant === "inline" && !isPublic) {
+    if (showToggle) {
+      return (
+        <div 
+          onClick={handleTogglePrivacy}
+          className="flex items-center gap-2 text-xs text-amber-700 bg-amber-50 px-2 py-1 rounded cursor-pointer hover:bg-amber-100 transition-colors"
+        >
+          <Lock className="w-3 h-3" />
+          <span>Public profile required for {feature.toLowerCase()}</span>
+          <Settings className="w-3 h-3 ml-1" />
+        </div>
+      );
+    }
+    
     return (
       <div className="flex items-center gap-2 text-xs text-amber-700 bg-amber-50 px-2 py-1 rounded">
         <Lock className="w-3 h-3" />

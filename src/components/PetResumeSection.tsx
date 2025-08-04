@@ -246,16 +246,20 @@ export const PetResumeSection = ({ petData, onUpdate }: PetResumeSectionProps) =
                   <Share2 className="w-4 h-4 mr-2" />
                   {isSharing ? "Sharing..." : "Share"}
                 </Button>
-                {!petData.is_public && (
-                  <PrivacyHint isPublic={petData.is_public || false} feature="sharing" variant="inline" />
-                )}
               </div>
               <div className="flex flex-col gap-1">
                 <Button onClick={handleQRCode} variant="secondary" size="sm" className="w-full sm:w-auto">
                   <QrCode className="w-4 h-4" />
                 </Button>
                 {!petData.is_public && (
-                  <PrivacyHint isPublic={petData.is_public || false} feature="QR codes" variant="inline" />
+                  <PrivacyHint 
+                    isPublic={petData.is_public || false} 
+                    feature="sharing & QR codes" 
+                    variant="inline" 
+                    showToggle={true}
+                    petId={petData.id}
+                    onUpdate={onUpdate}
+                  />
                 )}
               </div>
             </div>

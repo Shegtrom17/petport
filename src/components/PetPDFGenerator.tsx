@@ -1,7 +1,7 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { FileText, Download, Share2, Loader2, Users, ExternalLink, LogIn, AlertTriangle, Eye } from "lucide-react";
 import { generatePetPDF, generateQRCodeUrl, generatePublicProfileUrl, shareProfileOptimized } from "@/services/pdfService";
@@ -243,6 +243,9 @@ export const PetPDFGenerator = ({ petId, petName }: PetPDFGeneratorProps) => {
             <DialogTitle className="font-bold text-navy-900 border-b-2 border-gold-500 pb-2">
               📋 {selectedPdfType === 'emergency' ? '🚨 Emergency' : 'Complete'} Profile Options
             </DialogTitle>
+            <DialogDescription>
+              Generate, view, or download {petName}'s {selectedPdfType === 'emergency' ? 'emergency' : 'complete'} profile document.
+            </DialogDescription>
           </DialogHeader>
           
           <div className="space-y-6">

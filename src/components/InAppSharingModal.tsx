@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
@@ -148,6 +148,9 @@ export const InAppSharingModal = ({ isOpen, onClose, petId, petName }: InAppShar
             <Users className="w-5 h-5" />
             <span>Share {petName}'s Profile with PetPort Members</span>
           </DialogTitle>
+          <DialogDescription>
+            Select PetPort members to share {petName}'s profile with for collaboration and care coordination.
+          </DialogDescription>
         </DialogHeader>
 
         <div className="flex-1 overflow-hidden flex flex-col space-y-4">

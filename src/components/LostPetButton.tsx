@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { AlertTriangle, Download, Eye, Loader2 } from "lucide-react";
 import { generatePetPDF, generatePublicProfileUrl, shareProfileOptimized } from "@/services/pdfService";
 import { useToast } from "@/hooks/use-toast";
@@ -129,6 +129,9 @@ export const LostPetButton = ({ petId, petName = "Pet", isMissing = false, class
             <DialogTitle className="font-bold text-navy-900 border-b-2 border-red-500 pb-2">
               🚨 Missing Pet Flyer Options
             </DialogTitle>
+            <DialogDescription>
+              Generate and download {petName}'s missing pet flyer for printing and sharing.
+            </DialogDescription>
           </DialogHeader>
           
           <div className="space-y-6">

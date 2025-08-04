@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Download, Share, Eye, AlertTriangle, FileText } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { useToast } from "@/hooks/use-toast";
@@ -158,6 +158,9 @@ export const LostPetPDFGenerator = ({ petId, petName, isActive }: LostPetPDFGene
               <AlertTriangle className="w-5 h-5 text-red-600" />
               <span>Missing Pet Flyer Ready</span>
             </DialogTitle>
+            <DialogDescription>
+              Your professional missing pet flyer has been generated. Choose to preview, download, or share the flyer.
+            </DialogDescription>
           </DialogHeader>
           
           <div className="space-y-4">

@@ -608,25 +608,17 @@ serve(async (req) => {
       
       // Medical alert if applicable
       if (medicalData?.medical_alert) {
-        yPosition -= 20
+        yPosition -= 10
         
-        page.drawRectangle({
-          x: 40,
-          y: yPosition - 10,
-          width: width - 80,
-          height: 40,
-          color: redColor,
-        })
-        
-        page.drawText('*** MEDICAL ALERT - NEEDS MEDICATION ***', {
+        page.drawText('⚠️ MEDICAL ALERT - NEEDS MEDICATION ⚠️', {
           x: 50,
           y: yPosition,
           size: 16,
           font: boldFont,
-          color: whiteColor,
+          color: redColor,
         })
         
-        yPosition -= 50
+        yPosition -= 25
         
         if (medicalData.medical_conditions) {
           page.drawText(medicalData.medical_conditions, {
@@ -912,16 +904,6 @@ serve(async (req) => {
         
         yPosition -= 30
 
-        if (medicalData.medical_alert) {
-          page.drawText('! MEDICAL ALERT', {
-            x: 50,
-            y: yPosition,
-            size: 14,
-            font: boldFont,
-            color: redColor,
-          })
-          yPosition -= 25
-        }
 
         if (medicalData.medical_conditions) {
           page.drawText('Medical Conditions:', {

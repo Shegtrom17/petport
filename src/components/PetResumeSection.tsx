@@ -135,7 +135,7 @@ export const PetResumeSection = ({ petData, onUpdate }: PetResumeSectionProps) =
 
   const handleShare = async () => {
     if (!petData.is_public) {
-      toast.error("Pet profile must be public to share. Please enable public visibility in settings.");
+      toast.error("Pet profile must be public to share. Please enable public visibility in quick actions on the profile page.");
       return;
     }
 
@@ -159,7 +159,7 @@ export const PetResumeSection = ({ petData, onUpdate }: PetResumeSectionProps) =
 
   const handleQRCode = () => {
     if (!petData.is_public) {
-      toast.error("Pet profile must be public to generate QR code. Please enable public visibility in settings.");
+      toast.error("Pet profile must be public to generate QR code. Please enable public visibility in quick actions on the profile page.");
       return;
     }
     setIsQRDialogOpen(true);

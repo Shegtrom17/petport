@@ -4,7 +4,8 @@ import 'leaflet/dist/leaflet.css';
 import html2canvas from 'html2canvas';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { MapPin, Facebook, Twitter, Download, Edit, Trash2, Plus, Filter } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { MapPin, Facebook, Twitter, Download, Edit, Trash2, Plus, Filter, Eye, Share2, FileText } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { PinEditDialog, EnhancedMapPin } from './PinEditDialog';
@@ -97,6 +98,8 @@ export const EnhancedInteractiveMap = ({ petId, petName, pins, locations, onPins
   const [selectedPin, setSelectedPin] = useState<EnhancedMapPin | null>(null);
   const [categoryFilter, setCategoryFilter] = useState('all');
   const [isNewPin, setIsNewPin] = useState(false);
+  const [isMapOptionsDialogOpen, setIsMapOptionsDialogOpen] = useState(false);
+  const [generatedMapBlob, setGeneratedMapBlob] = useState<Blob | null>(null);
   const { toast } = useToast();
   const markersRef = useRef<{ marker: L.Marker; pin?: EnhancedMapPin; location?: TravelLocation }[]>([]);
 
@@ -455,7 +458,11 @@ export const EnhancedInteractiveMap = ({ petId, petName, pins, locations, onPins
     }
   };
 
-  const handleDownloadMap = async () => {
+  const handleDownloadMap = () => {
+    setIsMapOptionsDialogOpen(true);
+  };
+
+  const handleMapAction = async (action: 'view' | 'download') => {
     if (!mapContainer.current) return;
     
     setIsLoading(true);
@@ -463,7 +470,7 @@ export const EnhancedInteractiveMap = ({ petId, petName, pins, locations, onPins
     try {
       toast({
         title: "Generating Map Image... 📸",
-        description: "Creating a downloadable image of your travel map.",
+        description: "Creating a high-quality image of your travel map.",
       });
       
       // Wait a moment for the toast to show
@@ -478,25 +485,39 @@ export const EnhancedInteractiveMap = ({ petId, petName, pins, locations, onPins
         height: mapContainer.current.offsetHeight,
       });
       
-      // Create download link
-      const link = document.createElement('a');
-      link.download = `${petName.replace(/\s+/g, '_')}_travel_map_${new Date().toISOString().split('T')[0]}.png`;
-      link.href = canvas.toDataURL('image/png');
-      
-      // Trigger download
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      
-      toast({
-        title: "Map Downloaded! 🎉",
-        description: `${petName}'s travel map has been saved to your downloads.`,
+      // Convert to blob
+      const blob = await new Promise<Blob>((resolve) => {
+        canvas.toBlob((blob) => {
+          resolve(blob!);
+        }, 'image/png');
       });
+      
+      setGeneratedMapBlob(blob);
+      
+      if (action === 'download') {
+        // Direct download
+        const link = document.createElement('a');
+        link.download = `${petName.replace(/\s+/g, '_')}_travel_map_${new Date().toISOString().split('T')[0]}.png`;
+        link.href = URL.createObjectURL(blob);
+        
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(link.href);
+        
+        toast({
+          title: "Map Downloaded! 🎉",
+          description: `${petName}'s travel map has been saved to your downloads.`,
+        });
+        
+        setIsMapOptionsDialogOpen(false);
+      }
+      // If action is 'view', keep dialog open to show map options
     } catch (error) {
-      console.error('Error downloading map:', error);
+      console.error('Error generating map:', error);
       toast({
         variant: "destructive",
-        title: "Download Failed",
+        title: "Generation Failed",
         description: "Unable to generate map image. Try taking a screenshot instead.",
       });
     } finally {
@@ -628,6 +649,117 @@ export const EnhancedInteractiveMap = ({ petId, petName, pins, locations, onPins
         onSave={handlePinEditSave}
         isNewPin={isNewPin}
       />
+
+      {/* Map Options Dialog */}
+      <Dialog open={isMapOptionsDialogOpen} onOpenChange={setIsMapOptionsDialogOpen}>
+        <DialogContent className="max-w-md bg-[#f8f8f8]">
+          <DialogHeader>
+            <DialogTitle className="font-bold text-navy-900 border-b-2 border-gold-500 pb-2">
+              🗺️ Travel Map Options
+            </DialogTitle>
+          </DialogHeader>
+          
+          <div className="space-y-6">
+            {/* Map Actions */}
+            {!generatedMapBlob && !isLoading && (
+              <div className="space-y-3">
+                <p className="text-sm text-navy-600 text-center">
+                  Choose how you'd like to use {petName}'s travel map:
+                </p>
+                
+                <div className="grid grid-cols-2 gap-3">
+                  <Button
+                    onClick={() => handleMapAction('view')}
+                    variant="outline"
+                    className="border-gold-500 text-gold-600 hover:bg-gold-50"
+                  >
+                    <Eye className="w-4 h-4 mr-2" />
+                    View Map
+                  </Button>
+                  <Button
+                    onClick={() => handleMapAction('download')}
+                    className="bg-gradient-to-r from-gold-500 to-gold-400 text-navy-900 hover:from-gold-400 hover:to-gold-300"
+                  >
+                    <Download className="w-4 h-4 mr-2" />
+                    Download Map
+                  </Button>
+                </div>
+              </div>
+            )}
+            
+            {/* Loading State */}
+            {isLoading && (
+              <div className="text-center py-6">
+                <div className="w-8 h-8 animate-spin mx-auto mb-3 text-gold-500">
+                  <MapPin className="w-8 h-8" />
+                </div>
+                <p className="text-navy-600">Generating travel map image...</p>
+              </div>
+            )}
+            
+            {/* Generated Map Actions */}
+            {generatedMapBlob && !isLoading && (
+              <div className="space-y-4">
+                <div className="bg-white p-4 rounded-lg border border-gold-500/30 shadow-sm">
+                  <h4 className="font-bold text-navy-900 mb-3">
+                    🗺️ {petName}'s Travel Map Image
+                  </h4>
+                  <div className="flex flex-col sm:flex-row gap-2 justify-center mb-3">
+                    <Button
+                      onClick={() => {
+                        const url = URL.createObjectURL(generatedMapBlob);
+                        window.open(url, '_blank')?.focus();
+                        URL.revokeObjectURL(url);
+                      }}
+                      variant="outline"
+                      className="border-gold-500 text-gold-600 hover:bg-gold-50"
+                    >
+                      <Eye className="w-4 h-4 mr-2" />
+                      View Map
+                    </Button>
+                    <Button
+                      onClick={() => {
+                        const fileName = `${petName.replace(/\s+/g, '_')}_Travel_Map_${new Date().toISOString().split('T')[0]}.png`;
+                        const a = document.createElement('a');
+                        a.href = URL.createObjectURL(generatedMapBlob);
+                        a.download = fileName;
+                        document.body.appendChild(a);
+                        a.click();
+                        document.body.removeChild(a);
+                        URL.revokeObjectURL(a.href);
+                      }}
+                      className="bg-gradient-to-r from-gold-500 to-gold-400 text-navy-900 hover:from-gold-400 hover:to-gold-300"
+                    >
+                      <Download className="w-4 h-4 mr-2" />
+                      Download Map
+                    </Button>
+                  </div>
+                </div>
+
+                {/* Sharing Options */}
+                <div className="border-t border-gold-500/30 pt-4 space-y-3">
+                  <Button
+                    onClick={handleShareFacebook}
+                    variant="outline"
+                    className="w-full border-blue-600 text-blue-600 hover:bg-blue-50"
+                  >
+                    <Facebook className="w-4 h-4 mr-2" />
+                    Share Map on Facebook
+                  </Button>
+                  
+                  <Button
+                    onClick={handleShareTwitter}
+                    className="w-full bg-black hover:bg-gray-800 text-white"
+                  >
+                    <Twitter className="w-4 h-4 mr-2" />
+                    Share Map on X
+                  </Button>
+                </div>
+              </div>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
     </Card>
   );
 };

@@ -101,18 +101,15 @@ export const PrivacyHint = ({
       return (
         <div 
           onClick={handleTogglePrivacy}
-          className="flex items-center justify-center gap-2 text-xs text-amber-700 bg-amber-50 px-3 py-2 rounded-lg cursor-pointer hover:bg-amber-100 transition-colors border border-amber-200 shadow-sm"
+          className="w-full text-center text-xs text-amber-700 bg-amber-50 px-3 py-2 rounded-lg cursor-pointer hover:bg-amber-100 transition-colors border border-amber-200 shadow-sm"
         >
-          <Lock className="w-3 h-3" />
-          <span className="font-medium">Public profile required for {feature.replace(/qr/gi, 'QR')}</span>
-          <Settings className="w-3 h-3 ml-1" />
+          <span className="font-medium">Public profile required for {feature.replace(/qr/gi, 'QR')} - Click to enable</span>
         </div>
       );
     }
     
     return (
-      <div className="flex items-center justify-center gap-2 text-xs text-amber-700 bg-amber-50 px-3 py-2 rounded-lg border border-amber-200 shadow-sm">
-        <Lock className="w-3 h-3" />
+      <div className="w-full text-center text-xs text-amber-700 bg-amber-50 px-3 py-2 rounded-lg border border-amber-200 shadow-sm">
         <span className="font-medium">Public profile required for {feature.replace(/qr/gi, 'QR')}</span>
       </div>
     );

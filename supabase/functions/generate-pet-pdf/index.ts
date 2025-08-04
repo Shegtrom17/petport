@@ -1711,8 +1711,12 @@ serve(async (req) => {
             }
           }
 
-          // Add fourth page if needed for overflow content
-          if (yPos3 < 150 && (galleryData && galleryData.length > 4)) {
+          // Add fourth page for additional content and gallery photos
+          // Create page 4 if we have overflow content OR additional gallery photos
+          const hasAdditionalGallery = galleryData && galleryData.length > 4
+          const hasContentOverflow = yPos3 < 200 // More generous space check
+          
+          if (hasAdditionalGallery || hasContentOverflow) {
             console.log('Adding fourth page for additional content...')
             const page4 = pdfDoc.addPage([612, 792])
             let yPos4 = height - 60
@@ -1727,8 +1731,10 @@ serve(async (req) => {
             })
             yPos4 -= 40
 
-            // Additional Gallery Photos
+            // Additional Gallery Photos (photos 5-8)
             if (galleryData && galleryData.length > 4) {
+              console.log(`Adding ${galleryData.length - 4} additional gallery photos to page 4...`)
+              
               page4.drawText('ADDITIONAL PHOTOS', {
                 x: 50,
                 y: yPos4,
@@ -1756,7 +1762,13 @@ serve(async (req) => {
                   const photoResponse = await fetch(photo.url)
                   if (photoResponse.ok) {
                     const photoBytes = await photoResponse.arrayBuffer()
-                    const photoImage = await pdfDoc.embedJpg(new Uint8Array(photoBytes))
+                    let photoImage
+                    try {
+                      photoImage = await pdfDoc.embedJpg(new Uint8Array(photoBytes))
+                    } catch (jpgError) {
+                      console.log('Failed to embed additional gallery photo as JPG, trying PNG:', jpgError.message)
+                      photoImage = await pdfDoc.embedPng(new Uint8Array(photoBytes))
+                    }
                     
                     const { width: imgWidth, height: imgHeight } = photoImage.scale(1)
                     const scale = Math.min(photoWidth / imgWidth, photoHeight / imgHeight)
@@ -1778,14 +1790,106 @@ serve(async (req) => {
                   }
                 } catch (photoError) {
                   console.log(`Failed to load additional gallery photo ${i + 1}:`, photoError.message)
-                }
-              }
-              
-              yPos4 = bottomRowY - photoHeight - 40
             }
-
-            // Page 4 Footer
-            page4.drawText(`Generated on: ${new Date().toLocaleDateString()}`, {
+            
+            // Check if we need even more pages for content overflow
+            if (yPos4 < 150) {
+              console.log('Content overflow detected - adding page 5 if needed...')
+              // Add logic for page 5 and beyond if we have extensive content
+              // For now, ensure current content fits properly
+            }
+          }
+          
+          // Support for unlimited additional pages based on remaining gallery photos
+          let currentPageNum = 4
+          let remainingPhotos = galleryData ? galleryData.slice(8) : [] // Photos 9+
+          
+          while (remainingPhotos.length > 0 && currentPageNum < 10) { // Limit to 10 pages max
+            currentPageNum++
+            console.log(`Adding page ${currentPageNum} for remaining gallery photos...`)
+            
+            const pageN = pdfDoc.addPage([612, 792])
+            let yPosN = height - 60
+            
+            // Page Header
+            pageN.drawText(`COMPLETE PET PROFILE - PAGE ${currentPageNum}`, {
+              x: 50,
+              y: yPosN,
+              size: 18,
+              font: boldFont,
+              color: titleColor,
+            })
+            yPosN -= 40
+            
+            pageN.drawText('GALLERY PHOTOS CONTINUED', {
+              x: 50,
+              y: yPosN,
+              size: 16,
+              font: boldFont,
+              color: titleColor,
+            })
+            yPosN -= 35
+            
+            // Add up to 6 photos per additional page (3x2 grid)
+            const photosForThisPage = remainingPhotos.slice(0, 6)
+            remainingPhotos = remainingPhotos.slice(6)
+            
+            const photoWidth = 120
+            const photoHeight = 90
+            const photoSpacing = 20
+            const photosPerRow = 3
+            const startX = 50
+            const startY = yPosN - 10
+            
+            for (let i = 0; i < photosForThisPage.length; i++) {
+              const photo = photosForThisPage[i]
+              const row = Math.floor(i / photosPerRow)
+              const col = i % photosPerRow
+              
+              const photoX = startX + col * (photoWidth + photoSpacing)
+              const photoY = startY - row * (photoHeight + photoSpacing)
+              
+              try {
+                const photoResponse = await fetch(photo.url)
+                if (photoResponse.ok) {
+                  const photoBytes = await photoResponse.arrayBuffer()
+                  let photoImage
+                  try {
+                    photoImage = await pdfDoc.embedJpg(new Uint8Array(photoBytes))
+                  } catch (jpgError) {
+                    photoImage = await pdfDoc.embedPng(new Uint8Array(photoBytes))
+                  }
+                  
+                  const { width: imgWidth, height: imgHeight } = photoImage.scale(1)
+                  const scale = Math.min(photoWidth / imgWidth, photoHeight / imgHeight)
+                  const scaledWidth = imgWidth * scale
+                  const scaledHeight = imgHeight * scale
+                  
+                  pageN.drawImage(photoImage, {
+                    x: photoX + (photoWidth - scaledWidth) / 2,
+                    y: photoY - scaledHeight,
+                    width: scaledWidth,
+                    height: scaledHeight,
+                  })
+                  
+                  // Add caption if available
+                  if (photo.caption) {
+                    pageN.drawText(photo.caption.substring(0, 20), {
+                      x: photoX,
+                      y: photoY - scaledHeight - 15,
+                      size: 8,
+                      font: regularFont,
+                      color: rgb(0.5, 0.5, 0.5),
+                    })
+                  }
+                }
+              } catch (photoError) {
+                console.log(`Failed to load gallery photo on page ${currentPageNum}:`, photoError.message)
+              }
+            }
+            
+            // Page Footer
+            pageN.drawText(`Generated on: ${new Date().toLocaleDateString()}`, {
               x: 50,
               y: 50,
               size: 10,
@@ -1793,15 +1897,14 @@ serve(async (req) => {
               color: rgb(0.83, 0.69, 0.22),
             })
 
-            page4.drawText('PetPort™ Official Document - Page 4', {
-              x: width - 250,
+            pageN.drawText(`PetPort™ Official Document - Page ${currentPageNum}`, {
+              x: width - 280,
               y: 50,
               size: 10,
               font: boldFont,
               color: rgb(0.83, 0.69, 0.22),
             })
           }
-        }
       }
 
       // QR Code for Missing Pet Flyers - DRAW FIRST to avoid being covered

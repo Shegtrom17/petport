@@ -165,7 +165,7 @@ const LostPet = () => {
       {/* Emergency Header */}
       <div className={`bg-gradient-to-r ${lostPetData.is_missing ? 'from-red-600 to-red-700' : 'from-gold-500 to-gold-400'} text-white py-6 px-4 shadow-lg`}>
         <div className="max-w-6xl mx-auto">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col space-y-4 md:flex-row md:items-center md:justify-between md:space-y-0">
             <div className="flex items-center space-x-4">
               <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center">
                 {lostPetData.is_missing ? (
@@ -185,7 +185,7 @@ const LostPet = () => {
             </div>
             <Button
               onClick={toggleMissingStatus}
-              className={`px-6 py-3 font-bold text-lg ${
+              className={`w-full md:w-auto px-6 py-3 font-bold text-lg ${
                 lostPetData.is_missing 
                   ? 'bg-green-600 hover:bg-green-700 text-white' 
                   : 'bg-red-600 hover:bg-red-700 text-white'

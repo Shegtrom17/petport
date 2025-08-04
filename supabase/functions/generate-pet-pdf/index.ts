@@ -1428,13 +1428,14 @@ serve(async (req) => {
         const spacing = 40 // Balanced spacing
         const margin = 50
         
-        // Calculate grid positions - 2x2 layout with corrected coordinates
+        // Calculate grid positions - 2x2 layout with proper spacing from top (like missing pet PDF)
         const leftX = margin
         const rightX = leftX + photoWidth + spacing
-        const topY = height - margin - photoHeight // Top row: 592 - 50 - 200 = 342
-        const bottomY = height - margin - (2 * photoHeight) - spacing // Bottom row: 592 - 50 - 400 - 40 = 102
+        const startY = height - 120 // Same spacing as missing pet PDF - starts well below top
+        const topY = startY - photoHeight // Top row photos
+        const bottomY = startY - (2 * photoHeight) - spacing // Bottom row photos
         
-        console.log(`Gallery layout: topY=${topY}, bottomY=${bottomY}, leftX=${leftX}, rightX=${rightX}`)
+        console.log(`Gallery layout: startY=${startY}, topY=${topY}, bottomY=${bottomY}, leftX=${leftX}, rightX=${rightX}`)
         
         let currentPage = page
         let photosProcessed = 0

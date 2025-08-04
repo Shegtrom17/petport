@@ -1568,7 +1568,13 @@ serve(async (req) => {
                   const photoResponse = await fetch(photosData.photo_url)
                   if (photoResponse.ok) {
                     const photoBytes = await photoResponse.arrayBuffer()
-                    const photoImage = await pdfDoc.embedJpg(new Uint8Array(photoBytes))
+                    let photoImage
+                    try {
+                      photoImage = await pdfDoc.embedJpg(new Uint8Array(photoBytes))
+                    } catch (jpgError) {
+                      console.log('Failed to embed as JPG, trying PNG:', jpgError.message)
+                      photoImage = await pdfDoc.embedPng(new Uint8Array(photoBytes))
+                    }
                     
                     const { width: imgWidth, height: imgHeight } = photoImage.scale(1)
                     const scale = Math.min(photoWidth / imgWidth, photoHeight / imgHeight)
@@ -1596,7 +1602,13 @@ serve(async (req) => {
                   const photoResponse = await fetch(photosData.full_body_photo_url)
                   if (photoResponse.ok) {
                     const photoBytes = await photoResponse.arrayBuffer()
-                    const photoImage = await pdfDoc.embedJpg(new Uint8Array(photoBytes))
+                    let photoImage
+                    try {
+                      photoImage = await pdfDoc.embedJpg(new Uint8Array(photoBytes))
+                    } catch (jpgError) {
+                      console.log('Failed to embed as JPG, trying PNG:', jpgError.message)
+                      photoImage = await pdfDoc.embedPng(new Uint8Array(photoBytes))
+                    }
                     
                     const { width: imgWidth, height: imgHeight } = photoImage.scale(1)
                     const scale = Math.min(photoWidth / imgWidth, photoHeight / imgHeight)
@@ -1629,7 +1641,13 @@ serve(async (req) => {
                     const photoResponse = await fetch(galleryPhoto.url)
                     if (photoResponse.ok) {
                       const photoBytes = await photoResponse.arrayBuffer()
-                      const photoImage = await pdfDoc.embedJpg(new Uint8Array(photoBytes))
+                      let photoImage
+                      try {
+                        photoImage = await pdfDoc.embedJpg(new Uint8Array(photoBytes))
+                      } catch (jpgError) {
+                        console.log('Failed to embed gallery photo as JPG, trying PNG:', jpgError.message)
+                        photoImage = await pdfDoc.embedPng(new Uint8Array(photoBytes))
+                      }
                       
                       const { width: imgWidth, height: imgHeight } = photoImage.scale(1)
                       const scale = Math.min(photoWidth / imgWidth, photoHeight / imgHeight)

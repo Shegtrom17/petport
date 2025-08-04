@@ -294,16 +294,21 @@ serve(async (req) => {
       if (photosData) {
         console.log('Adding photos to Missing Pet Flyer...')
         try {
-          const photoHeight = 108 // 1.5 inches at 72 DPI
-          const photoWidth = 144 // 2 inches at 72 DPI
-          const photoSpacing = 20
+          // New 2x2 photo layout for better identification
+          const photoHeight = 100 // Slightly smaller to fit 2 rows
+          const photoWidth = 133   // Slightly smaller to fit better
+          const photoSpacing = 15
+          const rowSpacing = 15
           const leftPhotoX = 50
           const rightPhotoX = leftPhotoX + photoWidth + photoSpacing
+          const topRowY = yPosition
+          const bottomRowY = yPosition - photoHeight - rowSpacing
           
           let photosAdded = 0
+          const maxPhotos = 3 // Allow up to 3 photos
           
-          // Try to add first photo (main photo)
-          if (photosData.photo_url && photosAdded < 2) {
+          // Try to add first photo (main photo) - top-left
+          if (photosData.photo_url && photosAdded < maxPhotos) {
             try {
               console.log('Loading main photo:', photosData.photo_url)
               const photoResponse = await fetch(photosData.photo_url)
@@ -319,20 +324,20 @@ serve(async (req) => {
                 
                 page.drawImage(photoImage, {
                   x: leftPhotoX + (photoWidth - scaledWidth) / 2,
-                  y: yPosition - photoHeight + (photoHeight - scaledHeight) / 2,
+                  y: topRowY - photoHeight + (photoHeight - scaledHeight) / 2,
                   width: scaledWidth,
                   height: scaledHeight,
                 })
                 photosAdded++
-                console.log('Main photo added successfully')
+                console.log('Main photo added successfully (top-left)')
               }
             } catch (photoError) {
               console.log('Failed to load main photo:', photoError.message)
             }
           }
           
-          // Try to add second photo (full body photo)
-          if (photosData.full_body_photo_url && photosAdded < 2) {
+          // Try to add second photo (full body photo) - top-right
+          if (photosData.full_body_photo_url && photosAdded < maxPhotos) {
             try {
               console.log('Loading full body photo:', photosData.full_body_photo_url)
               const photoResponse = await fetch(photosData.full_body_photo_url)
@@ -346,38 +351,63 @@ serve(async (req) => {
                 const scaledWidth = imgWidth * scale
                 const scaledHeight = imgHeight * scale
                 
-                const xPosition = photosAdded === 0 ? leftPhotoX : rightPhotoX
-                
                 page.drawImage(photoImage, {
-                  x: xPosition + (photoWidth - scaledWidth) / 2,
-                  y: yPosition - photoHeight + (photoHeight - scaledHeight) / 2,
+                  x: rightPhotoX + (photoWidth - scaledWidth) / 2,
+                  y: topRowY - photoHeight + (photoHeight - scaledHeight) / 2,
                   width: scaledWidth,
                   height: scaledHeight,
                 })
                 photosAdded++
-                console.log('Full body photo added successfully')
+                console.log('Full body photo added successfully (top-right)')
               }
             } catch (photoError) {
               console.log('Failed to load full body photo:', photoError.message)
             }
           }
           
-          // Add photo placeholders if no photos could be loaded
-          if (photosAdded === 0) {
-            console.log('No photos loaded, adding placeholders')
-            // Draw placeholder rectangles
+          // Try to add third photo (first gallery photo) - bottom-left
+          if (galleryData && galleryData.length > 0 && photosAdded < maxPhotos) {
+            try {
+              const firstGalleryPhoto = galleryData[0]
+              console.log('Loading first gallery photo:', firstGalleryPhoto.url)
+              const photoResponse = await fetch(firstGalleryPhoto.url)
+              if (photoResponse.ok) {
+                const photoBytes = await photoResponse.arrayBuffer()
+                const photoImage = await pdfDoc.embedJpg(new Uint8Array(photoBytes))
+                
+                // Calculate dimensions to maintain aspect ratio
+                const { width: imgWidth, height: imgHeight } = photoImage.scale(1)
+                const scale = Math.min(photoWidth / imgWidth, photoHeight / imgHeight)
+                const scaledWidth = imgWidth * scale
+                const scaledHeight = imgHeight * scale
+                
+                page.drawImage(photoImage, {
+                  x: leftPhotoX + (photoWidth - scaledWidth) / 2,
+                  y: bottomRowY - photoHeight + (photoHeight - scaledHeight) / 2,
+                  width: scaledWidth,
+                  height: scaledHeight,
+                })
+                photosAdded++
+                console.log('Gallery photo added successfully (bottom-left)')
+              }
+            } catch (photoError) {
+              console.log('Failed to load gallery photo:', photoError.message)
+            }
+          }
+          
+          // Add photo placeholders for missing photos
+          const positions = [
+            { x: leftPhotoX, y: topRowY, label: 'MAIN PHOTO' },
+            { x: rightPhotoX, y: topRowY, label: 'FULL BODY' },
+            { x: leftPhotoX, y: bottomRowY, label: 'GALLERY' }
+          ]
+          
+          for (let i = photosAdded; i < 3; i++) {
+            const pos = positions[i]
+            // Draw placeholder rectangle
             page.drawRectangle({
-              x: leftPhotoX,
-              y: yPosition - photoHeight,
-              width: photoWidth,
-              height: photoHeight,
-              borderColor: blackColor,
-              borderWidth: 2,
-            })
-            
-            page.drawRectangle({
-              x: rightPhotoX,
-              y: yPosition - photoHeight,
+              x: pos.x,
+              y: pos.y - photoHeight,
               width: photoWidth,
               height: photoHeight,
               borderColor: blackColor,
@@ -385,30 +415,22 @@ serve(async (req) => {
             })
             
             // Add placeholder text
-            page.drawText('PHOTO', {
-              x: leftPhotoX + photoWidth/2 - 30,
-              y: yPosition - photoHeight/2,
-              size: 16,
-              font: boldFont,
-              color: blackColor,
-            })
-            
-            page.drawText('PHOTO', {
-              x: rightPhotoX + photoWidth/2 - 30,
-              y: yPosition - photoHeight/2,
-              size: 16,
+            page.drawText(pos.label, {
+              x: pos.x + photoWidth/2 - (pos.label.length * 4),
+              y: pos.y - photoHeight/2,
+              size: 10,
               font: boldFont,
               color: blackColor,
             })
           }
           
-          // Adjust yPosition to account for photos
-          yPosition -= (photoHeight + 30)
+          // Adjust yPosition to account for 2-row photo layout
+          yPosition -= (photoHeight * 2 + rowSpacing + 30)
           
         } catch (photoSectionError) {
           console.error('Error in photo section:', photoSectionError)
           // Continue without photos if there's an error
-          yPosition -= 20
+          yPosition -= 30
         }
       } else {
         console.log('No photo data available')

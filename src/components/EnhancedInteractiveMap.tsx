@@ -110,10 +110,27 @@ export const EnhancedInteractiveMap = ({ petId, petName, pins, locations, onPins
       attribution: '© OpenStreetMap contributors'
     }).addTo(map.current);
 
-    // Add click handler to add pins
+    // Add click handler to add pins with visual feedback
     map.current.on('click', async (e) => {
       const { lat, lng } = e.latlng;
-      await addPin(lat, lng);
+      console.log('🗺️ Map clicked at coordinates:', { lat, lng });
+      
+      // Add temporary loading indicator
+      const tempMarker = L.marker([lat, lng], {
+        icon: L.divIcon({
+          html: '<div style="background: #f59e0b; width: 20px; height: 20px; border-radius: 50%; border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; font-size: 10px; animation: pulse 1s infinite;">⏳</div>',
+          className: 'temp-marker',
+          iconSize: [20, 20],
+          iconAnchor: [10, 10]
+        })
+      }).addTo(map.current!);
+      
+      try {
+        await addPin(lat, lng);
+      } finally {
+        // Remove temporary marker
+        tempMarker.remove();
+      }
     });
 
     return () => {
@@ -261,32 +278,62 @@ export const EnhancedInteractiveMap = ({ petId, petName, pins, locations, onPins
 
   const addPin = async (lat: number, lng: number) => {
     setIsLoading(true);
+    
+    // Enhanced debugging
+    console.log('🔧 Adding pin at coordinates:', { lat, lng, petId });
+    
     try {
-      const { error } = await supabase
+      // Check authentication
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        throw new Error('User not authenticated');
+      }
+      console.log('✅ User authenticated:', session.user.id);
+      
+      // Insert pin with enhanced logging
+      const pinData = {
+        pet_id: petId,
+        latitude: lat,
+        longitude: lng,
+        title: null,
+        description: null,
+        category: 'custom'
+      };
+      console.log('📍 Inserting pin data:', pinData);
+      
+      const { data, error } = await supabase
         .from('map_pins')
-        .insert({
-          pet_id: petId,
-          latitude: lat,
-          longitude: lng,
-          title: null,
-          description: null,
-          category: 'custom'
-        });
+        .insert(pinData)
+        .select();
 
-      if (error) throw error;
-
+      if (error) {
+        console.error('❌ Database error:', error);
+        throw error;
+      }
+      
+      console.log('✅ Pin added successfully:', data);
       onPinsUpdate();
       
       toast({
-        title: "Pin Added!",
-        description: `Added a new location where ${petName} has been! Click the pin to edit it.`,
+        title: "Pin Added! 📍",
+        description: `Added a new red pin where ${petName} has been! Click the pin to edit it.`,
       });
-    } catch (error) {
-      console.error('Error adding pin:', error);
+    } catch (error: any) {
+      console.error('❌ Error adding pin:', error);
+      
+      let errorMessage = "Failed to add pin. Please try again.";
+      if (error.message?.includes('not authenticated')) {
+        errorMessage = "Please log in to add pins to the map.";
+      } else if (error.message?.includes('violates row-level security')) {
+        errorMessage = "Permission denied. Make sure you own this pet profile.";
+      } else if (error.details) {
+        errorMessage = `Database error: ${error.details}`;
+      }
+      
       toast({
         variant: "destructive",
-        title: "Error",
-        description: "Failed to add pin. Please try again.",
+        title: "Error Adding Pin",
+        description: errorMessage,
       });
     } finally {
       setIsLoading(false);
@@ -434,10 +481,10 @@ export const EnhancedInteractiveMap = ({ petId, petName, pins, locations, onPins
               className="w-full h-64 sm:h-80 rounded-lg overflow-hidden shadow-lg"
               style={{ cursor: isLoading ? 'wait' : 'crosshair' }}
             />
-            <div className="absolute bottom-4 left-4 bg-white/90 backdrop-blur-sm rounded-lg p-3 shadow-lg">
-              <p className="text-sm text-gray-700 mb-2">
-                <MapPin className="w-4 h-4 inline mr-1" />
-                Click anywhere to add a pin where {petName} has been!
+            <div className="absolute bottom-4 left-4 bg-white/95 backdrop-blur-sm rounded-lg p-3 shadow-xl border border-white/20">
+              <p className="text-sm font-medium text-gray-800 mb-2 flex items-center">
+                <div className="w-3 h-3 bg-red-500 rounded-full mr-2 animate-pulse"></div>
+                Click anywhere to add a RED PIN where {petName} has been!
               </p>
               <div className="flex items-center space-x-4 text-xs">
                 <div className="flex items-center space-x-1">

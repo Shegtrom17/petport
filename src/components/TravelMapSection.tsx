@@ -64,14 +64,27 @@ export const TravelMapSection = ({ petData, onUpdate }: TravelMapSectionProps) =
 
   const loadMapPins = async () => {
     try {
-      console.log('Loading map pins for pet:', petData.id);
+      console.log('🔄 Loading map pins for pet:', petData.id);
+      
+      // Check authentication
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        console.warn('⚠️ User not authenticated, cannot load pins');
+        setMapPins([]);
+        return;
+      }
+      console.log('✅ User authenticated, loading pins for user:', session.user.id);
+      
       const { data, error } = await supabase
         .from('map_pins')
         .select('*')
         .eq('pet_id', petData.id)
         .order('created_at', { ascending: false });
 
-      if (error) throw error;
+      if (error) {
+        console.error('❌ Database error loading pins:', error);
+        throw error;
+      }
 
       const pins = (data || []).map(pin => ({
         id: pin.id,
@@ -85,10 +98,18 @@ export const TravelMapSection = ({ petData, onUpdate }: TravelMapSectionProps) =
         createdAt: pin.created_at
       }));
 
-      console.log('Loaded map pins:', pins);
+      console.log('✅ Loaded map pins successfully:', {
+        count: pins.length,
+        pins: pins.map(p => ({ id: p.id, title: p.title, category: p.category }))
+      });
       setMapPins(pins);
     } catch (error) {
-      console.error('Error loading map pins:', error);
+      console.error('❌ Error loading map pins:', error);
+      toast({
+        variant: "destructive",
+        title: "Error Loading Map Pins",
+        description: "Failed to load existing pins. Please refresh the page.",
+      });
     }
   };
 
@@ -295,7 +316,11 @@ export const TravelMapSection = ({ petData, onUpdate }: TravelMapSectionProps) =
             <MapPin className="w-12 h-12 sm:w-16 sm:h-16 text-blue-400 mx-auto mb-4" />
             <h3 className="text-lg sm:text-xl font-semibold text-blue-900 mb-2">No Travel Locations Yet</h3>
             <p className="text-blue-700 mb-4 text-sm sm:text-base px-2">
-              Start recording the places you've visited with {petData.name}! Use the map above to click and add pins, or add detailed locations below.
+              Start recording the places you've visited with {petData.name}! 
+              <br />
+              <strong>🔴 Click anywhere on the map above to add RED PINS instantly!</strong>
+              <br />
+              Or add detailed travel locations below.
             </p>
             <Button 
               onClick={handleAddNewLocation}

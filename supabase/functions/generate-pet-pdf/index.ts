@@ -1534,16 +1534,19 @@ serve(async (req) => {
               font: boldFont,
               color: titleColor,
             })
-            yPos3 -= 30
+            yPos3 -= 35
 
             // Photo layout for complete profile - 2 photos per row, max 4 photos
             const photoWidth = 120
             const photoHeight = 90
-            const photoSpacing = 20
+            const photoSpacing = 25
             const leftPhotoX = 50
             const rightPhotoX = leftPhotoX + photoWidth + photoSpacing
-            const topRowY = yPos3
-            const bottomRowY = yPos3 - photoHeight - photoSpacing
+            
+            // Fix Y positioning to prevent overlap
+            const startPhotoY = yPos3 - 10 // Add buffer after title
+            const topRowY = startPhotoY
+            const bottomRowY = startPhotoY - photoHeight - photoSpacing
 
             let photosAdded = 0
             const maxPhotos = 4
@@ -1565,7 +1568,7 @@ serve(async (req) => {
                     
                     page3.drawImage(photoImage, {
                       x: leftPhotoX + (photoWidth - scaledWidth) / 2,
-                      y: topRowY - photoHeight + (photoHeight - scaledHeight) / 2,
+                      y: topRowY - scaledHeight,
                       width: scaledWidth,
                       height: scaledHeight,
                     })
@@ -1593,7 +1596,7 @@ serve(async (req) => {
                     
                     page3.drawImage(photoImage, {
                       x: rightPhotoX + (photoWidth - scaledWidth) / 2,
-                      y: topRowY - photoHeight + (photoHeight - scaledHeight) / 2,
+                      y: topRowY - scaledHeight,
                       width: scaledWidth,
                       height: scaledHeight,
                     })
@@ -1605,7 +1608,7 @@ serve(async (req) => {
                 }
               }
 
-              // Try to add gallery photos (bottom row)
+              // Try to add gallery photos (bottom row or continue on next page)
               if (galleryData && galleryData.length > 0 && photosAdded < maxPhotos) {
                 const remainingSlots = maxPhotos - photosAdded
                 const galleryPhotosToAdd = galleryData.slice(0, remainingSlots)
@@ -1624,13 +1627,13 @@ serve(async (req) => {
                       const scaledWidth = imgWidth * scale
                       const scaledHeight = imgHeight * scale
                       
-                      // Position in bottom row
-                      const isLeft = (photosAdded % 2) === 0
-                      const photoX = isLeft ? leftPhotoX : rightPhotoX
+                      // Position in bottom row - use proper bottom positioning
+                      const isLeftBottom = (photosAdded % 2) === 0
+                      const photoX = isLeftBottom ? leftPhotoX : rightPhotoX
                       
                       page3.drawImage(photoImage, {
                         x: photoX + (photoWidth - scaledWidth) / 2,
-                        y: bottomRowY + (photoHeight - scaledHeight) / 2,
+                        y: bottomRowY - scaledHeight,
                         width: scaledWidth,
                         height: scaledHeight,
                       })
@@ -1643,7 +1646,7 @@ serve(async (req) => {
                 }
               }
 
-              // Add photo placeholders if needed
+              // Add photo placeholders if needed - fix positioning
               const placeholderPositions = [
                 { x: leftPhotoX, y: topRowY, label: 'MAIN' },
                 { x: rightPhotoX, y: topRowY, label: 'FULL BODY' },
@@ -1672,12 +1675,104 @@ serve(async (req) => {
               }
 
               console.log(`Photo gallery section complete. Added ${photosAdded} photos to complete profile.`)
-              yPos3 -= photoHeight + photoSpacing + 30
+              // Update yPos3 to account for both photo rows
+              yPos3 = bottomRowY - photoHeight - 40
 
             } catch (photoError) {
               console.log('Error adding photos to complete profile:', photoError.message)
-              yPos3 -= 20
+              yPos3 -= 30
             }
+          }
+
+          // Add fourth page if needed for overflow content
+          if (yPos3 < 150 && (galleryData && galleryData.length > 4)) {
+            console.log('Adding fourth page for additional content...')
+            const page4 = pdfDoc.addPage([612, 792])
+            let yPos4 = height - 60
+            
+            // Page 4 Header
+            page4.drawText('COMPLETE PET PROFILE - PAGE 4', {
+              x: 50,
+              y: yPos4,
+              size: 18,
+              font: boldFont,
+              color: titleColor,
+            })
+            yPos4 -= 40
+
+            // Additional Gallery Photos
+            if (galleryData && galleryData.length > 4) {
+              page4.drawText('ADDITIONAL PHOTOS', {
+                x: 50,
+                y: yPos4,
+                size: 16,
+                font: boldFont,
+                color: titleColor,
+              })
+              yPos4 -= 35
+
+              const additionalPhotos = galleryData.slice(4, 8) // Next 4 photos
+              const photoWidth = 120
+              const photoHeight = 90
+              const photoSpacing = 25
+              const leftPhotoX = 50
+              const rightPhotoX = leftPhotoX + photoWidth + photoSpacing
+              
+              const startPhotoY = yPos4 - 10
+              const topRowY = startPhotoY
+              const bottomRowY = startPhotoY - photoHeight - photoSpacing
+
+              for (let i = 0; i < additionalPhotos.length && i < 4; i++) {
+                const photo = additionalPhotos[i]
+                try {
+                  console.log(`Loading additional gallery photo ${i + 1}:`, photo.url)
+                  const photoResponse = await fetch(photo.url)
+                  if (photoResponse.ok) {
+                    const photoBytes = await photoResponse.arrayBuffer()
+                    const photoImage = await pdfDoc.embedJpg(new Uint8Array(photoBytes))
+                    
+                    const { width: imgWidth, height: imgHeight } = photoImage.scale(1)
+                    const scale = Math.min(photoWidth / imgWidth, photoHeight / imgHeight)
+                    const scaledWidth = imgWidth * scale
+                    const scaledHeight = imgHeight * scale
+                    
+                    const isTopRow = i < 2
+                    const isLeft = (i % 2) === 0
+                    const photoX = isLeft ? leftPhotoX : rightPhotoX
+                    const photoY = isTopRow ? topRowY : bottomRowY
+                    
+                    page4.drawImage(photoImage, {
+                      x: photoX + (photoWidth - scaledWidth) / 2,
+                      y: photoY - scaledHeight,
+                      width: scaledWidth,
+                      height: scaledHeight,
+                    })
+                    console.log(`Additional gallery photo ${i + 1} added successfully`)
+                  }
+                } catch (photoError) {
+                  console.log(`Failed to load additional gallery photo ${i + 1}:`, photoError.message)
+                }
+              }
+              
+              yPos4 = bottomRowY - photoHeight - 40
+            }
+
+            // Page 4 Footer
+            page4.drawText(`Generated on: ${new Date().toLocaleDateString()}`, {
+              x: 50,
+              y: 50,
+              size: 10,
+              font: regularFont,
+              color: rgb(0.83, 0.69, 0.22),
+            })
+
+            page4.drawText('PetPort™ Official Document - Page 4', {
+              x: width - 250,
+              y: 50,
+              size: 10,
+              font: boldFont,
+              color: rgb(0.83, 0.69, 0.22),
+            })
           }
         }
       }

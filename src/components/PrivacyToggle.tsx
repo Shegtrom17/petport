@@ -30,7 +30,7 @@ export const PrivacyToggle: React.FC<PrivacyToggleProps> = ({
   };
 
   return (
-    <Card className="border-l-4 border-l-blue-500">
+    <Card className="border-l-4 border-l-gold-500">
       <CardContent className="p-4">
         <div className="flex items-center justify-between space-x-4">
           <div className="flex items-center space-x-3">

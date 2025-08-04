@@ -1421,30 +1421,18 @@ serve(async (req) => {
           )
         }
 
-        // Header
-        page.drawText(`${petData.name}'s Photo Gallery`, {
-          x: 50,
-          y: yPosition,
-          size: 20,
-          font: boldFont,
-          color: titleColor,
-        })
-        
-        yPosition -= 40
-
-        // Gallery layout configuration
+        // Gallery layout configuration - Clean photo-only layout
         const photosPerPage = 4 // 2x2 grid
-        const photoWidth = 180
-        const photoHeight = 135
-        const spacing = 30
+        const photoWidth = 220 // Increased size since no captions
+        const photoHeight = 165 // Increased size since no captions
+        const spacing = 40 // Increased spacing for better balance
         const margin = 50
-        const captionHeight = 40
         
-        // Calculate grid positions
+        // Calculate grid positions - Start higher on page
         const leftX = margin
         const rightX = leftX + photoWidth + spacing
-        const topY = height - 150
-        const bottomY = topY - photoHeight - captionHeight - spacing
+        const topY = height - 80 // Much higher position, no header text
+        const bottomY = topY - photoHeight - spacing
         
         let currentPage = page
         let photosProcessed = 0
@@ -1457,15 +1445,7 @@ serve(async (req) => {
           if (i > 0) {
             currentPage = pdfDoc.addPage([612, 792])
             pageNumber++
-            
-            // Page header
-            currentPage.drawText(`${petData.name}'s Photo Gallery - Page ${pageNumber}`, {
-              x: 50,
-              y: height - 60,
-              size: 16,
-              font: boldFont,
-              color: titleColor,
-            })
+            // No header text - clean photo-only layout
           }
           
           // Process up to 4 photos on this page
@@ -1533,20 +1513,7 @@ serve(async (req) => {
                 height: scaledHeight,
               })
               
-              // Add caption if available
-              if (photo.caption) {
-                const captionText = photo.caption.length > 50 
-                  ? photo.caption.substring(0, 47) + '...' 
-                  : photo.caption
-                
-                currentPage.drawText(captionText, {
-                  x: photoX,
-                  y: photoY - 15,
-                  size: 10,
-                  font: regularFont,
-                  color: blackColor,
-                })
-              }
+              // No captions in clean photo-only layout
               
               photosProcessed++
               console.log(`Successfully processed photo ${photosProcessed}`)
@@ -1581,10 +1548,10 @@ serve(async (req) => {
             }
           }
           
-          // Add page footer with photo count
-          currentPage.drawText(`Page ${pageNumber} | Photos ${Math.min(i + 1, galleryData.length)}-${Math.min(i + photosPerPage, galleryData.length)} of ${galleryData.length}`, {
+          // Minimal footer - page number and generation date only
+          currentPage.drawText(`Page ${pageNumber}`, {
             x: 50,
-            y: 50,
+            y: 30,
             size: 10,
             font: regularFont,
             color: rgb(0.5, 0.5, 0.5),
@@ -1592,7 +1559,7 @@ serve(async (req) => {
           
           currentPage.drawText(`Generated: ${new Date().toLocaleDateString()}`, {
             x: width - 150,
-            y: 50,
+            y: 30,
             size: 10,
             font: regularFont,
             color: rgb(0.5, 0.5, 0.5),

@@ -1552,15 +1552,15 @@ serve(async (req) => {
             const qrX = width - qrSize - 30
             const qrY = 120  // Well above footer
             
-            // Draw bright background for maximum visibility  
+            // Draw clean white background for QR code visibility  
             page.drawRectangle({
               x: qrX - 15,
               y: qrY - 45,
               width: qrSize + 30,
               height: qrSize + 60,
               color: rgb(1, 1, 1), // White background
-              borderColor: rgb(1, 0, 0), // RED border for visibility
-              borderWidth: 2,
+              borderColor: rgb(0, 0, 0), // Black border instead of red
+              borderWidth: 1,
             })
             
             // Draw QR code

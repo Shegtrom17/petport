@@ -610,7 +610,7 @@ serve(async (req) => {
       if (medicalData?.medical_alert) {
         yPosition -= 10
         
-        page.drawText('⚠️ MEDICAL ALERT - NEEDS MEDICATION ⚠️', {
+        page.drawText('MEDICAL ALERT - NEEDS MEDICATION', {
           x: 50,
           y: yPosition,
           size: 16,

@@ -3,8 +3,9 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
-import { Camera, Upload, Download, Plus, Eye, Trash2, Edit2, X } from "lucide-react";
+import { Camera, Upload, Download, Plus, Eye, Trash2, Edit2, X, Loader2 } from "lucide-react";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { uploadGalleryPhoto, uploadMultipleGalleryPhotos, deleteGalleryPhoto, updateGalleryPhotoCaption } from "@/services/petService";
@@ -32,6 +33,9 @@ export const PetGallerySection = ({ petData, onUpdate }: PetGallerySectionProps)
   const [isUploading, setIsUploading] = useState(false);
   const [editingCaption, setEditingCaption] = useState<string | null>(null);
   const [editCaptionValue, setEditCaptionValue] = useState("");
+  const [isGalleryPDFDialogOpen, setIsGalleryPDFDialogOpen] = useState(false);
+  const [generatedGalleryPdfBlob, setGeneratedGalleryPdfBlob] = useState<Blob | null>(null);
+  const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
   const { toast } = useToast();
 
   const galleryPhotos = petData.gallery_photos || [];
@@ -210,39 +214,56 @@ export const PetGallerySection = ({ petData, onUpdate }: PetGallerySectionProps)
     setEditCaptionValue("");
   };
 
-  const handleDownloadGallery = async () => {
+  const showGalleryPDFOptions = () => {
     if (!galleryPhotos || galleryPhotos.length === 0) {
       toast({
         title: "No Photos Available",
         description: "Add some photos to your gallery before generating a PDF.",
         variant: "destructive",
-      })
-      return
+      });
+      return;
     }
+    setIsGalleryPDFDialogOpen(true);
+    setGeneratedGalleryPdfBlob(null);
+  };
 
-    setIsUploading(true)
-    
+  const handleGalleryPDFAction = async (action: 'view' | 'download') => {
+    setIsGeneratingPDF(true);
     try {
-      const result = await generatePetPDF(petData.id, 'gallery')
+      const result = await generatePetPDF(petData.id, 'gallery');
       
-      if (result.success && result.blob) {
-        await downloadPDFBlob(result.blob, `${petData.name}_Photo_Gallery.pdf`)
-        toast({
-          title: "Gallery PDF Downloaded",
-          description: `Photo gallery for ${petData.name} has been downloaded successfully.`,
-        })
+      if (result.success && result.pdfBlob) {
+        setGeneratedGalleryPdfBlob(result.pdfBlob);
+        
+        if (action === 'download') {
+          const fileName = `${petData.name}_Photo_Gallery.pdf`;
+          const a = document.createElement('a');
+          a.href = URL.createObjectURL(result.pdfBlob);
+          a.download = fileName;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          URL.revokeObjectURL(a.href);
+          
+          toast({
+            title: "Download Started",
+            description: `${petData.name}'s photo gallery PDF is downloading.`,
+          });
+          
+          setIsGalleryPDFDialogOpen(false);
+        }
       } else {
-        throw new Error(result.error || 'Failed to generate gallery PDF')
+        throw new Error(result.error || 'Failed to generate gallery PDF');
       }
     } catch (error) {
-      console.error('Error generating gallery PDF:', error)
+      console.error('Gallery PDF generation error:', error);
       toast({
-        title: "Download Failed",
-        description: "Failed to generate photo gallery PDF. Please try again.",
+        title: "Error",
+        description: "Failed to generate gallery PDF. Please try again.",
         variant: "destructive",
-      })
+      });
     } finally {
-      setIsUploading(false)
+      setIsGeneratingPDF(false);
     }
   };
 
@@ -274,10 +295,10 @@ export const PetGallerySection = ({ petData, onUpdate }: PetGallerySectionProps)
                 <span className="hidden sm:inline">{uploading ? "Uploading..." : "Add Photos"}</span>
                 <span className="sm:hidden">{uploading ? "..." : "Add"}</span>
               </Button>
-              <Button onClick={handleDownloadGallery} variant="secondary" size="sm" className="px-2 sm:px-3 py-1 sm:py-2 text-xs sm:text-sm" disabled={isUploading}>
+              <Button onClick={showGalleryPDFOptions} variant="secondary" size="sm" className="px-2 sm:px-3 py-1 sm:py-2 text-xs sm:text-sm">
                 <Download className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
-                <span className="hidden sm:inline">{isUploading ? "Generating..." : "Download PDF"}</span>
-                <span className="sm:hidden">{isUploading ? "..." : "PDF"}</span>
+                <span className="hidden sm:inline">Download PDF</span>
+                <span className="sm:hidden">PDF</span>
               </Button>
             </div>
           </div>
@@ -513,6 +534,95 @@ export const PetGallerySection = ({ petData, onUpdate }: PetGallerySectionProps)
           </div>
         </CardContent>
       </Card>
+
+      {/* Gallery PDF Options Dialog */}
+      <Dialog open={isGalleryPDFDialogOpen} onOpenChange={setIsGalleryPDFDialogOpen}>
+        <DialogContent className="max-w-md bg-[#f8f8f8]">
+          <DialogHeader>
+            <DialogTitle className="font-bold text-navy-900 border-b-2 border-gold-500 pb-2">
+              Photo Gallery PDF Options
+            </DialogTitle>
+          </DialogHeader>
+          
+          <div className="space-y-6">
+            {/* PDF Actions */}
+            {!generatedGalleryPdfBlob && !isGeneratingPDF && (
+              <div className="space-y-3">
+                <p className="text-sm text-navy-600 text-center">
+                  Choose how you'd like to use {petData.name}'s photo gallery PDF:
+                </p>
+                
+                <div className="grid grid-cols-2 gap-3">
+                  <Button
+                    onClick={() => handleGalleryPDFAction('view')}
+                    variant="outline"
+                    className="border-gold-500 text-gold-600 hover:bg-gold-50"
+                  >
+                    <Eye className="w-4 h-4 mr-2" />
+                    View PDF
+                  </Button>
+                  <Button
+                    onClick={() => handleGalleryPDFAction('download')}
+                    className="bg-gradient-to-r from-gold-500 to-gold-400 text-navy-900 hover:from-gold-400 hover:to-gold-300"
+                  >
+                    <Download className="w-4 h-4 mr-2" />
+                    Download PDF
+                  </Button>
+                </div>
+              </div>
+            )}
+            
+            {/* Loading State */}
+            {isGeneratingPDF && (
+              <div className="text-center py-6">
+                <Loader2 className="w-8 h-8 animate-spin mx-auto mb-3 text-gold-500" />
+                <p className="text-navy-600">Generating photo gallery PDF...</p>
+              </div>
+            )}
+            
+            {/* Generated PDF Actions */}
+            {generatedGalleryPdfBlob && !isGeneratingPDF && (
+              <div className="space-y-4">
+                <div className="bg-white p-4 rounded-lg border border-gold-500/30 shadow-sm">
+                  <h4 className="font-bold text-navy-900 mb-3">
+                    Photo Gallery PDF
+                  </h4>
+                  <div className="flex flex-col sm:flex-row gap-2 justify-center">
+                    <Button
+                      onClick={() => {
+                        const url = URL.createObjectURL(generatedGalleryPdfBlob);
+                        window.open(url, '_blank')?.focus();
+                        URL.revokeObjectURL(url);
+                      }}
+                      variant="outline"
+                      className="border-gold-500 text-gold-600 hover:bg-gold-50"
+                    >
+                      <Eye className="w-4 h-4 mr-2" />
+                      View PDF
+                    </Button>
+                    <Button
+                      onClick={() => {
+                        const fileName = `${petData.name}_Photo_Gallery.pdf`;
+                        const a = document.createElement('a');
+                        a.href = URL.createObjectURL(generatedGalleryPdfBlob);
+                        a.download = fileName;
+                        document.body.appendChild(a);
+                        a.click();
+                        document.body.removeChild(a);
+                        URL.revokeObjectURL(a.href);
+                      }}
+                      className="bg-gradient-to-r from-gold-500 to-gold-400 text-navy-900 hover:from-gold-400 hover:to-gold-300"
+                    >
+                      <Download className="w-4 h-4 mr-2" />
+                      Download PDF
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

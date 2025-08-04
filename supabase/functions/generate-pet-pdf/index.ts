@@ -639,6 +639,126 @@ serve(async (req) => {
         color: blackColor,
       })
       
+    } else if (type === 'gallery') {
+      // CLEAN PHOTO-ONLY GALLERY LAYOUT
+      console.log('Generating photo gallery PDF...')
+      
+      if (!galleryData || galleryData.length === 0) {
+        return new Response(
+          JSON.stringify({ 
+            error: 'No gallery photos found for this pet',
+            pdfBytes: null,
+            filename: null 
+          }),
+          { 
+            status: 400, 
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+          }
+        )
+      }
+
+      // Gallery layout configuration - 4 photos per page (2x2 grid)
+      const photosPerPage = 4
+      const photoWidth = 250
+      const photoHeight = 200
+      const spacing = 40
+      const margin = 50
+      
+      // Calculate grid positions - 2x2 layout with proper spacing from top
+      const leftX = margin
+      const rightX = leftX + photoWidth + spacing
+      const startY = height - 120 // Same spacing as missing pet PDF
+      const topY = startY - photoHeight
+      const bottomY = startY - (2 * photoHeight) - spacing
+      
+      console.log(`Gallery layout: startY=${startY}, topY=${topY}, bottomY=${bottomY}, leftX=${leftX}, rightX=${rightX}`)
+      
+      let currentPage = page
+      let photosProcessed = 0
+      let pageNumber = 1
+      
+      console.log(`Processing ${galleryData.length} gallery photos...`)
+      
+      for (let i = 0; i < galleryData.length; i += photosPerPage) {
+        // Add new page if needed (except for first page)
+        if (i > 0) {
+          currentPage = pdfDoc.addPage([612, 792])
+          pageNumber++
+        }
+        
+        // Process up to 4 photos on this page in 2x2 grid
+        const pagePhotos = galleryData.slice(i, i + photosPerPage)
+        
+        for (let j = 0; j < pagePhotos.length; j++) {
+          const photo = pagePhotos[j]
+          
+          try {
+            console.log(`Processing photo ${i + j + 1}/${galleryData.length}: ${photo.url}`)
+            
+            const response = await fetch(photo.url)
+            if (!response.ok) {
+              console.log(`Failed to fetch photo ${i + j + 1}, skipping...`)
+              continue
+            }
+            
+            const imageBytes = await response.arrayBuffer()
+            let image
+            
+            try {
+              image = await pdfDoc.embedJpg(new Uint8Array(imageBytes))
+            } catch (jpgError) {
+              try {
+                image = await pdfDoc.embedPng(new Uint8Array(imageBytes))
+              } catch (pngError) {
+                console.log(`Failed to embed photo ${i + j + 1}, skipping...`)
+                continue
+              }
+            }
+            
+            // Calculate position in 2x2 grid
+            const isLeft = j % 2 === 0
+            const isTop = j < 2
+            
+            const photoX = isLeft ? leftX : rightX
+            const photoY = isTop ? topY : bottomY
+            
+            // Scale image to fit while maintaining aspect ratio
+            const { width: imgWidth, height: imgHeight } = image.scale(1)
+            const scale = Math.min(photoWidth / imgWidth, photoHeight / imgHeight)
+            const scaledWidth = imgWidth * scale
+            const scaledHeight = imgHeight * scale
+            
+            // Center the image in its allocated space
+            const centeredX = photoX + (photoWidth - scaledWidth) / 2
+            const centeredY = photoY + (photoHeight - scaledHeight) / 2
+            
+            currentPage.drawImage(image, {
+              x: centeredX,
+              y: centeredY,
+              width: scaledWidth,
+              height: scaledHeight,
+            })
+            
+            photosProcessed++
+            console.log(`Successfully processed photo ${photosProcessed}`)
+            
+          } catch (error) {
+            console.log(`Error processing photo ${i + j + 1}: ${error.message}`)
+          }
+        }
+        
+        // Add minimal footer with page number
+        currentPage.drawText(`Page ${pageNumber} | Generated: ${new Date().toLocaleDateString()}`, {
+          x: 50,
+          y: 20,
+          size: 10,
+          font: regularFont,
+          color: blackColor,
+        })
+      }
+      
+      console.log(`Gallery PDF generation complete. Processed ${photosProcessed} photos across ${pageNumber} pages.`)
+      
     } else {
       // REGULAR PET PASSPORT LAYOUT
       console.log('Generating regular pet passport...')
@@ -1403,197 +1523,9 @@ serve(async (req) => {
         }
       }
 
-      // GALLERY PDF LAYOUT
-      if (type === 'gallery') {
-        console.log('Generating photo gallery PDF...')
-        
-        if (!galleryData || galleryData.length === 0) {
-          return new Response(
-            JSON.stringify({ 
-              error: 'No gallery photos found for this pet',
-              pdfBytes: null,
-              filename: null 
-            }),
-            { 
-              status: 400, 
-              headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
-            }
-          )
-        }
-
-        // Gallery layout configuration - 4 photos per page (2x2 grid)
-        const photosPerPage = 4 // 2x2 grid for efficiency and clean layout
-        const photoWidth = 250 // Larger photos for better visual impact
-        const photoHeight = 200 // Maintain good aspect ratio
-        const spacing = 40 // Balanced spacing
-        const margin = 50
-        
-        // Calculate grid positions - 2x2 layout with proper spacing from top (like missing pet PDF)
-        const leftX = margin
-        const rightX = leftX + photoWidth + spacing
-        const startY = height - 120 // Same spacing as missing pet PDF - starts well below top
-        const topY = startY - photoHeight // Top row photos
-        const bottomY = startY - (2 * photoHeight) - spacing // Bottom row photos
-        
-        console.log(`Gallery layout: startY=${startY}, topY=${topY}, bottomY=${bottomY}, leftX=${leftX}, rightX=${rightX}`)
-        
-        let currentPage = page
-        let photosProcessed = 0
-        let pageNumber = 1
-        
-        console.log(`Processing ${galleryData.length} gallery photos...`)
-        
-        for (let i = 0; i < galleryData.length; i += photosPerPage) {
-          // Add new page if needed (except for first page)
-          if (i > 0) {
-            currentPage = pdfDoc.addPage([612, 792])
-            pageNumber++
-            // No header text - clean photo-only layout
-          }
-          
-          // Process up to 4 photos on this page in 2x2 grid
-          const pagePhotos = galleryData.slice(i, i + photosPerPage)
-          
-          for (let j = 0; j < pagePhotos.length; j++) {
-            const photo = pagePhotos[j]
-            
-            try {
-              console.log(`Processing photo ${i + j + 1}/${galleryData.length}: ${photo.url}`)
-              
-              const response = await fetch(photo.url)
-              if (!response.ok) {
-                console.log(`Failed to fetch photo ${i + j + 1}, skipping...`)
-                continue
-              }
-              
-              const imageBytes = await response.arrayBuffer()
-              let image
-              
-              try {
-                // Try JPEG first, then PNG
-                image = await pdfDoc.embedJpg(new Uint8Array(imageBytes))
-              } catch (jpgError) {
-                try {
-                  image = await pdfDoc.embedPng(new Uint8Array(imageBytes))
-                } catch (pngError) {
-                  console.log(`Failed to embed photo ${i + j + 1}, skipping...`)
-                  continue
-                }
-              }
-              
-              // Calculate position in 2x2 grid
-              const isLeft = j % 2 === 0
-              const isTop = j < 2
-              
-              const photoX = isLeft ? leftX : rightX
-              const photoY = isTop ? topY : bottomY
-              
-              // Scale image to fit while maintaining aspect ratio
-              const { width: imgWidth, height: imgHeight } = image.scale(1)
-              const scale = Math.min(photoWidth / imgWidth, photoHeight / imgHeight)
-              const scaledWidth = imgWidth * scale
-              const scaledHeight = imgHeight * scale
-              
-              // Center the image in its allocated space
-              const centeredX = photoX + (photoWidth - scaledWidth) / 2
-              const centeredY = photoY + (photoHeight - scaledHeight) / 2
-              
-              // Draw photo border
-              currentPage.drawRectangle({
-                x: photoX,
-                y: photoY,
-                width: photoWidth,
-                height: photoHeight,
-                borderColor: rgb(0.8, 0.8, 0.8),
-                borderWidth: 1,
-              })
-              
-              // Draw the image
-              currentPage.drawImage(image, {
-                x: centeredX,
-                y: centeredY,
-                width: scaledWidth,
-                height: scaledHeight,
-              })
-              
-              // No captions in clean photo-only layout
-              
-              photosProcessed++
-              console.log(`Successfully processed photo ${photosProcessed}`)
-              
-            } catch (photoError) {
-              console.error(`Error processing photo ${i + j + 1}:`, photoError.message)
-              
-              // Draw placeholder for failed photos - use same grid calculation
-              const isLeft = j % 2 === 0
-              const isTop = j < 2
-              const placeholderX = isLeft ? leftX : rightX
-              const placeholderY = isTop ? topY : bottomY
-              
-              console.log(`Drawing placeholder at position: x=${placeholderX}, y=${placeholderY}`)
-              
-              currentPage.drawRectangle({
-                x: placeholderX,
-                y: placeholderY,
-                width: photoWidth,
-                height: photoHeight,
-                borderColor: rgb(0.8, 0.8, 0.8),
-                borderWidth: 2,
-              })
-              
-              currentPage.drawText('Photo unavailable', {
-                x: placeholderX + 50,
-                y: placeholderY + photoHeight / 2,
-                size: 12,
-                color: rgb(0.5, 0.5, 0.5),
-              })
-              
-              const photoX = isLeft ? leftX : rightX
-              const photoY = isTop ? topY : bottomY
-              
-              currentPage.drawRectangle({
-                x: photoX,
-                y: photoY,
-                width: photoWidth,
-                height: photoHeight,
-                borderColor: rgb(0.8, 0.8, 0.8),
-                borderWidth: 1,
-                color: rgb(0.95, 0.95, 0.95),
-              })
-              
-              currentPage.drawText('Photo unavailable', {
-                x: photoX + photoWidth/2 - 40,
-                y: photoY + photoHeight/2,
-                size: 12,
-                font: regularFont,
-                color: rgb(0.5, 0.5, 0.5),
-              })
-            }
-          }
-          
-          // Minimal footer - page number and generation date only
-          currentPage.drawText(`Page ${pageNumber}`, {
-            x: 50,
-            y: 30,
-            size: 10,
-            font: regularFont,
-            color: rgb(0.5, 0.5, 0.5),
-          })
-          
-          currentPage.drawText(`Generated: ${new Date().toLocaleDateString()}`, {
-            x: width - 150,
-            y: 30,
-            size: 10,
-            font: regularFont,
-            color: rgb(0.5, 0.5, 0.5),
-          })
-        }
-        
-        console.log(`Gallery PDF generation complete. Processed ${photosProcessed} photos across ${pageNumber} pages.`)
-      }
-      
       // QR Code for Missing Pet Flyers - DRAW FIRST to avoid being covered
       if (type === 'lost_pet') {
+        console.log('Generating QR code for missing pet...')
         console.log('Generating QR code for missing pet...')
         const siteUrl = Deno.env.get('SITE_URL') || 'https://c2db7d2d-7448-4eaf-945e-d804d3aeaccc.lovableproject.com'
         const missingPetUrl = `${siteUrl}/missing-pet/${petId}`

@@ -1790,7 +1790,8 @@ serve(async (req) => {
                   }
                 } catch (photoError) {
                   console.log(`Failed to load additional gallery photo ${i + 1}:`, photoError.message)
-            }
+                }
+              }
             
             // Check if we need even more pages for content overflow
             if (yPos4 < 150) {
@@ -1799,6 +1800,25 @@ serve(async (req) => {
               // For now, ensure current content fits properly
             }
           }
+          
+          // Add footer to page 4
+          page4.drawText(`Generated on ${new Date().toLocaleDateString()}`, {
+            x: 50,
+            y: 30,
+            size: 8,
+            font: regularFont,
+            color: rgb(0.5, 0.5, 0.5),
+          })
+          
+          page4.drawText('Pet Profile Document - Page 4', {
+            x: width - 200,
+            y: 30,
+            size: 8,
+            font: regularFont,
+            color: rgb(0.5, 0.5, 0.5),
+          })
+          
+          console.log('Page 4 photo gallery section complete.')
           
           // Support for unlimited additional pages based on remaining gallery photos
           let currentPageNum = 4

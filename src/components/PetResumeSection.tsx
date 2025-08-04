@@ -252,14 +252,9 @@ export const PetResumeSection = ({ petData, onUpdate }: PetResumeSectionProps) =
                   <QrCode className="w-4 h-4" />
                 </Button>
                 {!petData.is_public && (
-                  <PrivacyHint 
-                    isPublic={petData.is_public || false} 
-                    feature="sharing & QR codes" 
-                    variant="inline" 
-                    showToggle={true}
-                    petId={petData.id}
-                    onUpdate={onUpdate}
-                  />
+                  <p className="text-xs text-muted-foreground text-center">
+                    📝 Make your profile public in the privacy settings above to enable sharing & QR codes
+                  </p>
                 )}
               </div>
             </div>

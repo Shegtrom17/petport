@@ -1,12 +1,28 @@
 
 import { Card } from "@/components/ui/card";
+import { PrivacyToggle } from "@/components/PrivacyToggle";
+import { usePetData } from "@/hooks/usePetData";
 
 interface PetPassportCardProps {
   petData: any;
 }
 
 export const PetPassportCard = ({ petData }: PetPassportCardProps) => {
+  const { togglePetPublicVisibility } = usePetData();
+
+  const handlePrivacyToggle = async (isPublic: boolean) => {
+    if (petData?.id) {
+      return await togglePetPublicVisibility(petData.id, isPublic);
+    }
+    return false;
+  };
+
   return (
+    <div className="space-y-4">
+      <PrivacyToggle 
+        isPublic={petData?.is_public || false}
+        onToggle={handlePrivacyToggle}
+      />
     <Card className="mb-6 sm:mb-8 overflow-hidden border-0 shadow-xl bg-gradient-to-br from-navy-900 to-slate-800 text-white">
       <div className="bg-gradient-to-r from-navy-900 to-slate-800 p-4 sm:p-6 text-white relative overflow-hidden">
         {/* Simple decorative elements instead of world map */}
@@ -61,5 +77,6 @@ export const PetPassportCard = ({ petData }: PetPassportCardProps) => {
         <div className="absolute bottom-0 left-0 right-0 h-2 bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-400"></div>
       </div>
     </Card>
+    </div>
   );
 };

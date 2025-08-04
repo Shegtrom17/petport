@@ -476,13 +476,7 @@ export const PetProfileContent = ({
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
-              {/* Privacy Toggle - Only for owners */}
-              {isOwner && togglePetPublicVisibility && (
-                <PrivacyToggle
-                  isPublic={enhancedPetData?.is_public || false}
-                  onToggle={(isPublic) => togglePetPublicVisibility(enhancedPetData.id, isPublic)}
-                />
-              )}
+              {/* Privacy Toggle removed - now in PetPassportCard */}
               
               {/* Privacy hint for sharing features when profile is private */}
               {!enhancedPetData?.is_public && (

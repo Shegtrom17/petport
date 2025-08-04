@@ -15,6 +15,7 @@ export type PetWithDetails = {
   notes: string | null;
   state: string | null;
   county: string | null;
+  is_public?: boolean | null;
   contacts?: Tables<"contacts"> | null;
   medical?: Tables<"medical"> | null;
   photos?: Tables<"pet_photos"> | null;
@@ -46,6 +47,7 @@ export function transformPetData(pet: PetWithDetails): any {
     notes: pet.notes,
     state: pet.state,
     county: pet.county,
+    is_public: pet.is_public,
     // Transform contacts
     vetContact: pet.contacts?.vet_contact || "",
     emergencyContact: pet.contacts?.emergency_contact || "",
@@ -122,7 +124,7 @@ export async function fetchUserPets(): Promise<any[]> {
 
     const { data: pets, error } = await supabase
       .from("pets")
-      .select("id, name, breed, species, age, weight, microchip_id, petport_id, bio, notes, state, county, created_at, updated_at, user_id")
+      .select("id, name, breed, species, age, weight, microchip_id, petport_id, bio, notes, state, county, created_at, updated_at, user_id, is_public")
       .eq('user_id', user.id) // Explicitly filter by user_id
       .order("created_at", { ascending: false });
 
@@ -154,6 +156,7 @@ export async function fetchUserPets(): Promise<any[]> {
         notes: pet.notes,
         state: pet.state,
         county: pet.county,
+        is_public: pet.is_public,
         contacts: null,
         medical: null,
         photos: null,
@@ -180,7 +183,7 @@ export async function fetchPetDetails(petId: string): Promise<any | null> {
   try {
     const { data: pet, error } = await supabase
       .from("pets")
-      .select("id, name, breed, species, age, weight, microchip_id, petport_id, bio, notes, state, county, created_at, updated_at, user_id")
+      .select("id, name, breed, species, age, weight, microchip_id, petport_id, bio, notes, state, county, created_at, updated_at, user_id, is_public")
       .eq("id", petId)
       .single();
 
@@ -238,6 +241,7 @@ export async function fetchPetDetails(petId: string): Promise<any | null> {
       notes: pet.notes,
       state: pet.state,
       county: pet.county,
+      is_public: pet.is_public,
       contacts: contactsResponse.data,
       medical: medicalResponse.data,
       photos: photosResponse.data,

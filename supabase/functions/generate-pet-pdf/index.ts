@@ -1421,18 +1421,17 @@ serve(async (req) => {
           )
         }
 
-        // Gallery layout configuration - Clean photo-only layout
-        const photosPerPage = 4 // 2x2 grid
-        const photoWidth = 220 // Increased size since no captions
-        const photoHeight = 165 // Increased size since no captions
-        const spacing = 40 // Increased spacing for better balance
+        // Gallery layout configuration - 2 photos per page for proper spacing
+        const photosPerPage = 2 // 2 photos per page to avoid overlap
+        const photoWidth = 200 // Reduced to ensure fit
+        const photoHeight = 150 // Reduced to ensure fit  
+        const spacing = 60 // More spacing between photos
         const margin = 50
         
-        // Calculate grid positions - Start higher on page
+        // Calculate positions for 2 photos side by side
         const leftX = margin
         const rightX = leftX + photoWidth + spacing
-        const topY = height - 80 // Much higher position, no header text
-        const bottomY = topY - photoHeight - spacing
+        const photoY = height - 200 // Centered vertically with good margins
         
         let currentPage = page
         let photosProcessed = 0
@@ -1478,12 +1477,9 @@ serve(async (req) => {
                 }
               }
               
-              // Calculate position in 2x2 grid
+              // Calculate position for 2 photos side by side
               const isLeft = j % 2 === 0
-              const isTop = j < 2
-              
               const photoX = isLeft ? leftX : rightX
-              const photoY = isTop ? topY : bottomY
               
               // Scale image to fit while maintaining aspect ratio
               const { width: imgWidth, height: imgHeight } = image.scale(1)

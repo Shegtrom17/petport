@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
+import html2canvas from 'html2canvas';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { MapPin, Facebook, Twitter, Download, Edit, Trash2, Plus, Filter } from 'lucide-react';
@@ -402,26 +403,105 @@ export const EnhancedInteractiveMap = ({ petId, petName, pins, locations, onPins
 
   const generateShareText = () => {
     const totalLocations = pins.length + locations.length;
-    return `${petName}'s Travel Adventures: ${totalLocations} amazing places explored! 🌍🐾`;
+    const statesCount = locations.filter(l => l.type === 'state').length;
+    const countriesCount = locations.filter(l => l.type === 'country').length;
+    
+    return `🐾 ${petName}'s Travel Adventures! 🌍\n\n✈️ ${totalLocations} amazing places explored!\n📍 ${pins.length} custom pins\n🇺🇸 ${statesCount} states visited\n🌍 ${countriesCount} countries explored\n\nFollow our journey! #PetTravel #AdventurePet`;
   };
 
   const handleShareFacebook = () => {
-    const text = generateShareText();
-    const url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}&quote=${encodeURIComponent(text)}`;
-    window.open(url, '_blank', 'width=600,height=400');
+    try {
+      const text = generateShareText();
+      const currentUrl = window.location.href;
+      const shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(currentUrl)}&quote=${encodeURIComponent(text)}`;
+      
+      console.log('🔗 Sharing to Facebook:', { text, currentUrl });
+      window.open(shareUrl, '_blank', 'width=600,height=400,scrollbars=yes,resizable=yes');
+      
+      toast({
+        title: "Shared to Facebook! 📘",
+        description: "Opening Facebook to share your pet's travel map.",
+      });
+    } catch (error) {
+      console.error('Error sharing to Facebook:', error);
+      toast({
+        variant: "destructive",
+        title: "Share Error",
+        description: "Failed to open Facebook share dialog.",
+      });
+    }
   };
 
   const handleShareTwitter = () => {
-    const text = generateShareText();
-    const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(window.location.href)}`;
-    window.open(url, '_blank', 'width=600,height=400');
+    try {
+      const text = generateShareText();
+      const currentUrl = window.location.href;
+      const shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(currentUrl)}`;
+      
+      console.log('🔗 Sharing to X/Twitter:', { text, currentUrl });
+      window.open(shareUrl, '_blank', 'width=600,height=400,scrollbars=yes,resizable=yes');
+      
+      toast({
+        title: "Shared to X! 🐦",
+        description: "Opening X (Twitter) to share your pet's travel map.",
+      });
+    } catch (error) {
+      console.error('Error sharing to X:', error);
+      toast({
+        variant: "destructive",
+        title: "Share Error",
+        description: "Failed to open X share dialog.",
+      });
+    }
   };
 
   const handleDownloadMap = async () => {
-    toast({
-      title: "Download Feature",
-      description: "Map download feature coming soon! For now, you can take a screenshot of the map.",
-    });
+    if (!mapContainer.current) return;
+    
+    setIsLoading(true);
+    
+    try {
+      toast({
+        title: "Generating Map Image... 📸",
+        description: "Creating a downloadable image of your travel map.",
+      });
+      
+      // Wait a moment for the toast to show
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      const canvas = await html2canvas(mapContainer.current, {
+        useCORS: true,
+        allowTaint: true,
+        backgroundColor: '#ffffff',
+        scale: 2, // Higher quality
+        width: mapContainer.current.offsetWidth,
+        height: mapContainer.current.offsetHeight,
+      });
+      
+      // Create download link
+      const link = document.createElement('a');
+      link.download = `${petName.replace(/\s+/g, '_')}_travel_map_${new Date().toISOString().split('T')[0]}.png`;
+      link.href = canvas.toDataURL('image/png');
+      
+      // Trigger download
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+      toast({
+        title: "Map Downloaded! 🎉",
+        description: `${petName}'s travel map has been saved to your downloads.`,
+      });
+    } catch (error) {
+      console.error('Error downloading map:', error);
+      toast({
+        variant: "destructive",
+        title: "Download Failed",
+        description: "Unable to generate map image. Try taking a screenshot instead.",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const filteredPins = pins.filter(shouldShowPin);

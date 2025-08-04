@@ -72,6 +72,7 @@ export const PetProfileCard = ({ petData, onUpdate, togglePetPublicVisibility }:
   // Listen for edit event from PetProfileContent
   useEffect(() => {
     const handleEditEvent = () => {
+      console.log("Edit event received, setting isEditing to true");
       setIsEditing(true);
     };
 
@@ -162,12 +163,14 @@ const handleEditSave = () => {
 
   if (isEditing) {
     return (
-      <PetEditForm
-        petData={safeEditData}
-        onSave={handleEditSave}
-        onCancel={() => setIsEditing(false)}
-        togglePetPublicVisibility={togglePetPublicVisibility}
-      />
+      <div id="pet-profile-edit-section" className="space-y-6">
+        <PetEditForm
+          petData={safeEditData}
+          onSave={handleEditSave}
+          onCancel={() => setIsEditing(false)}
+          togglePetPublicVisibility={togglePetPublicVisibility}
+        />
+      </div>
     );
   }
 

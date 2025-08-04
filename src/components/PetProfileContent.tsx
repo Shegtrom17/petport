@@ -89,18 +89,29 @@ export const PetProfileContent = ({
   const isOwner = user?.id === enhancedPetData?.user_id;
 
   const handleProfileEdit = () => {
+    console.log("Edit Profile button clicked - starting edit process");
+    
     // Trigger parent component to switch to edit mode
     if (onEditClick) {
+      console.log("Calling onEditClick to trigger edit mode");
       onEditClick(); // This should trigger the parent to handle edit mode
     }
     
     // Smooth scroll to the edit section after a brief delay to ensure form renders
     setTimeout(() => {
-      document.getElementById('pet-profile-edit-section')?.scrollIntoView({ 
-        behavior: 'smooth', 
-        block: 'start' 
-      });
-    }, 100);
+      const editSection = document.getElementById('pet-profile-edit-section');
+      console.log("Looking for edit section element:", editSection);
+      
+      if (editSection) {
+        console.log("Found edit section, scrolling to it");
+        editSection.scrollIntoView({ 
+          behavior: 'smooth', 
+          block: 'start' 
+        });
+      } else {
+        console.error("Edit section not found! ID 'pet-profile-edit-section' does not exist in DOM");
+      }
+    }, 200); // Increased delay slightly
   };
 
   const handleDeletePet = async () => {

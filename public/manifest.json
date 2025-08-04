@@ -1,0 +1,28 @@
+{
+  "name": "PetPort - Digital Pet Passport",
+  "short_name": "PetPort",
+  "description": "Digital passport for your beloved pets",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#1a1a1a",
+  "theme_color": "#d97706",
+  "orientation": "portrait",
+  "scope": "/",
+  "lang": "en",
+  "icons": [
+    {
+      "src": "/lovable-uploads/84c72c48-c677-43be-b2c3-75fc40e1d09c.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/lovable-uploads/84c72c48-c677-43be-b2c3-75fc40e1d09c.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["lifestyle", "utilities"],
+  "dir": "ltr"
+}

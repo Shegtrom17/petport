@@ -2,7 +2,8 @@
 import { useState, useRef } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { FileText, Upload, Download, Eye, Trash2, Loader2, Camera } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { FileText, Upload, Download, Eye, Trash2, Loader2, Camera, Shield, Syringe, Receipt, Heart, FileArchive, FolderOpen } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -21,10 +22,25 @@ interface DocumentsSectionProps {
   onDocumentDeleted: () => void;
 }
 
+const DOCUMENT_CATEGORIES = [
+  { value: 'insurance', label: 'Insurance', icon: Shield },
+  { value: 'vaccinations', label: 'Vaccinations', icon: Syringe },
+  { value: 'medical', label: 'Medical Records', icon: Heart },
+  { value: 'medication', label: 'Medication', icon: FileText },
+  { value: 'invoices', label: 'Invoices', icon: Receipt },
+  { value: 'misc', label: 'Misc/Other', icon: FolderOpen },
+];
+
+const getCategoryInfo = (category: string) => {
+  return DOCUMENT_CATEGORIES.find(cat => cat.value === category) || DOCUMENT_CATEGORIES[5]; // Default to Misc
+};
+
 export const DocumentsSection = ({ petId, documents, onDocumentDeleted }: DocumentsSectionProps) => {
   const [deletingDocId, setDeletingDocId] = useState<string | null>(null);
   const [viewingDocId, setViewingDocId] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState<string>('misc');
+  const [filterCategory, setFilterCategory] = useState<string>('all');
   const { toast } = useToast();
   
   // Refs for the hidden file inputs
@@ -147,7 +163,7 @@ export const DocumentsSection = ({ petId, documents, onDocumentDeleted }: Docume
     setIsUploading(true);
     
     try {
-      console.log(`Uploading document from ${source}:`, file.name);
+      console.log(`Uploading document from ${source}:`, file.name, 'Category:', selectedCategory);
       
       // Generate unique filename
       const fileExt = file.name.split('.').pop();
@@ -168,13 +184,13 @@ export const DocumentsSection = ({ petId, documents, onDocumentDeleted }: Docume
         .from('pet_documents')
         .getPublicUrl(fileName);
       
-      // Save document record to database
+      // Save document record to database with category
       const { error: dbError } = await supabase
         .from('documents')
         .insert({
           pet_id: petId,
           name: file.name,
-          type: file.type || 'application/octet-stream',
+          type: selectedCategory, // Store category instead of MIME type
           file_url: publicUrl,
           size: `${(file.size / 1024 / 1024).toFixed(2)} MB`,
           upload_date: new Date().toLocaleDateString()
@@ -185,9 +201,10 @@ export const DocumentsSection = ({ petId, documents, onDocumentDeleted }: Docume
         throw dbError;
       }
       
+      const categoryLabel = getCategoryInfo(selectedCategory).label;
       toast({
         title: "Success",
-        description: `Document "${file.name}" uploaded successfully!`,
+        description: `Document "${file.name}" uploaded to ${categoryLabel} successfully!`,
       });
       
       onDocumentDeleted(); // Refresh the document list
@@ -203,6 +220,11 @@ export const DocumentsSection = ({ petId, documents, onDocumentDeleted }: Docume
       setIsUploading(false);
     }
   };
+
+  // Filter documents based on selected filter
+  const filteredDocuments = filterCategory === 'all' 
+    ? documents 
+    : documents.filter(doc => doc.type === filterCategory);
 
   return (
     <div className="space-y-6">
@@ -223,6 +245,31 @@ export const DocumentsSection = ({ petId, documents, onDocumentDeleted }: Docume
             <p className="text-sm text-gray-500 mb-4">
               Supported formats: PDF, JPG, PNG (Max 10MB)
             </p>
+            
+            {/* Category Selection */}
+            <div className="mb-6 max-w-xs mx-auto">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Document Category
+              </label>
+              <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+                <SelectTrigger className="w-full bg-white border-navy-300">
+                  <SelectValue placeholder="Select category" />
+                </SelectTrigger>
+                <SelectContent className="bg-white border-navy-300 z-50">
+                  {DOCUMENT_CATEGORIES.map((category) => {
+                    const IconComponent = category.icon;
+                    return (
+                      <SelectItem key={category.value} value={category.value}>
+                        <div className="flex items-center gap-2">
+                          <IconComponent className="w-4 h-4" />
+                          {category.label}
+                        </div>
+                      </SelectItem>
+                    );
+                  })}
+                </SelectContent>
+              </Select>
+            </div>
             
             {/* Hidden file inputs */}
             <input
@@ -274,33 +321,82 @@ export const DocumentsSection = ({ petId, documents, onDocumentDeleted }: Docume
       {/* Document List */}
       <Card className="border-0 shadow-lg bg-passport-section-bg backdrop-blur-sm">
         <CardHeader>
-          <CardTitle className="flex items-center space-x-2">
-            <FileText className="w-5 h-5 text-navy-900" />
-            <span>Stored Documents</span>
+          <CardTitle className="flex items-center justify-between">
+            <div className="flex items-center space-x-2">
+              <FileText className="w-5 h-5 text-navy-900" />
+              <span>Stored Documents</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <label className="text-sm font-medium text-gray-700">Filter:</label>
+              <Select value={filterCategory} onValueChange={setFilterCategory}>
+                <SelectTrigger className="w-40 bg-white border-navy-300">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent className="bg-white border-navy-300 z-50">
+                  <SelectItem value="all">
+                    <div className="flex items-center gap-2">
+                      <FileArchive className="w-4 h-4" />
+                      All Categories
+                    </div>
+                  </SelectItem>
+                  {DOCUMENT_CATEGORIES.map((category) => {
+                    const IconComponent = category.icon;
+                    return (
+                      <SelectItem key={category.value} value={category.value}>
+                        <div className="flex items-center gap-2">
+                          <IconComponent className="w-4 h-4" />
+                          {category.label}
+                        </div>
+                      </SelectItem>
+                    );
+                  })}
+                </SelectContent>
+              </Select>
+            </div>
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-3">
-            {documents.length === 0 ? (
+            {filteredDocuments.length === 0 ? (
               <div className="text-center py-8 text-gray-500">
                 <FileText className="w-12 h-12 mx-auto mb-2 opacity-50" />
-                <p>No documents uploaded yet</p>
-                <p className="text-sm">Use the camera or file upload above to add documents</p>
+                <p>
+                  {documents.length === 0 
+                    ? "No documents uploaded yet" 
+                    : filterCategory === 'all' 
+                      ? "No documents found"
+                      : `No ${getCategoryInfo(filterCategory).label.toLowerCase()} documents found`
+                  }
+                </p>
+                <p className="text-sm">
+                  {documents.length === 0 
+                    ? "Use the camera or file upload above to add documents"
+                    : "Try a different category filter"
+                  }
+                </p>
               </div>
             ) : (
-              documents.map((doc) => (
+              filteredDocuments.map((doc) => {
+                const categoryInfo = getCategoryInfo(doc.type);
+                const IconComponent = categoryInfo.icon;
+                return (
                 <div
                   key={doc.id}
                   className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors gap-3 sm:gap-0"
                 >
                   <div className="flex items-center space-x-3 min-w-0 flex-1">
-                    <div className="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                      <FileText className="w-5 h-5 text-red-600" />
+                    <div className="w-10 h-10 bg-navy-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                      <IconComponent className="w-5 h-5 text-navy-600" />
                     </div>
                     <div className="min-w-0 flex-1">
-                      <p className="font-medium text-gray-900 truncate">{doc.name}</p>
+                      <div className="flex items-center gap-2">
+                        <p className="font-medium text-gray-900 truncate">{doc.name}</p>
+                        <span className="px-2 py-1 text-xs bg-navy-100 text-navy-700 rounded-full flex-shrink-0">
+                          {categoryInfo.label}
+                        </span>
+                      </div>
                       <p className="text-sm text-gray-500 truncate">
-                        {doc.type} • {doc.size} • Uploaded {doc.upload_date}
+                        {doc.size} • Uploaded {doc.upload_date}
                       </p>
                     </div>
                   </div>
@@ -346,7 +442,8 @@ export const DocumentsSection = ({ petId, documents, onDocumentDeleted }: Docume
                     </Button>
                   </div>
                 </div>
-              ))
+                );
+              })
             )}
           </div>
         </CardContent>

@@ -172,7 +172,7 @@ const handleEditSave = () => {
   }
 
   return (
-    <div className="space-y-6">
+    <div id="pet-profile-edit-section" className="space-y-6">
       {/* Support Animal Status Banner - Commented out since not in pets table */}
       {/* <SupportAnimalBanner status={petData?.supportAnimalStatus || null} /> */}
 

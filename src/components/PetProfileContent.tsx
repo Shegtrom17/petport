@@ -93,6 +93,14 @@ export const PetProfileContent = ({
     if (onEditClick) {
       onEditClick(); // This should trigger the parent to handle edit mode
     }
+    
+    // Smooth scroll to the edit section after a brief delay to ensure form renders
+    setTimeout(() => {
+      document.getElementById('pet-profile-edit-section')?.scrollIntoView({ 
+        behavior: 'smooth', 
+        block: 'start' 
+      });
+    }, 100);
   };
 
   const handleDeletePet = async () => {

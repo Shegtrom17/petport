@@ -35,7 +35,7 @@ export const PrivacyToggle: React.FC<PrivacyToggleProps> = ({
         <div className="flex items-center justify-between space-x-4">
           <div className="flex items-center space-x-3">
             {isPublic ? (
-              <Globe className="h-5 w-5 text-green-600" />
+              <Globe className="h-5 w-5 text-gold-500" />
             ) : (
               <Lock className="h-5 w-5 text-gray-600" />
             )}

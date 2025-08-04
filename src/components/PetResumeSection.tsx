@@ -7,6 +7,7 @@ import { Download, Share2, QrCode, Star, Shield, Heart, Phone, Mail, Award, Aler
 import { SupportAnimalBanner } from "@/components/SupportAnimalBanner";
 import { PetResumeEditForm } from "@/components/PetResumeEditForm";
 import { generatePetPDF, downloadPDFBlob, viewPDFBlob, generatePublicProfileUrl, shareProfileOptimized, generateQRCodeUrl } from "@/services/pdfService";
+import { PrivacyHint } from "@/components/PrivacyHint";
 import { toast } from "sonner";
 
 // Helper function to extract phone number and create tel link
@@ -240,13 +241,23 @@ export const PetResumeSection = ({ petData, onUpdate }: PetResumeSectionProps) =
                 <Download className="w-4 h-4 mr-2" />
                 PDF
               </Button>
-              <Button onClick={handleShare} variant="secondary" size="sm" disabled={isSharing} className="w-full sm:w-auto">
-                <Share2 className="w-4 h-4 mr-2" />
-                {isSharing ? "Sharing..." : "Share"}
-              </Button>
-              <Button onClick={handleQRCode} variant="secondary" size="sm" className="w-full sm:w-auto">
-                <QrCode className="w-4 h-4" />
-              </Button>
+              <div className="flex flex-col gap-1">
+                <Button onClick={handleShare} variant="secondary" size="sm" disabled={isSharing} className="w-full sm:w-auto">
+                  <Share2 className="w-4 h-4 mr-2" />
+                  {isSharing ? "Sharing..." : "Share"}
+                </Button>
+                {!petData.is_public && (
+                  <PrivacyHint isPublic={petData.is_public || false} feature="sharing" variant="inline" />
+                )}
+              </div>
+              <div className="flex flex-col gap-1">
+                <Button onClick={handleQRCode} variant="secondary" size="sm" className="w-full sm:w-auto">
+                  <QrCode className="w-4 h-4" />
+                </Button>
+                {!petData.is_public && (
+                  <PrivacyHint isPublic={petData.is_public || false} feature="QR codes" variant="inline" />
+                )}
+              </div>
             </div>
           </div>
         </CardContent>

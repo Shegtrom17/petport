@@ -10,6 +10,7 @@ import { SocialShareButtons } from "@/components/SocialShareButtons";
 import { ProfileEditButton } from "@/components/ProfileEditButton";
 import { CertificationBanner } from "@/components/CertificationBanner";
 import { PrivacyToggle } from "@/components/PrivacyToggle";
+import { PrivacyHint } from "@/components/PrivacyHint";
 import { deleteOfficialPhoto, replaceOfficialPhoto } from "@/services/petService";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/context/AuthContext";
@@ -469,8 +470,9 @@ export const PetProfileContent = ({
           {/* 2. QUICK ACTIONS - Immediate actions available */}
           <Card className="bg-[#f8f8f8] shadow-md">
             <CardHeader className="pb-3">
-              <CardTitle className="text-lg font-bold text-navy-900 border-b-2 border-gold-500 pb-2">
-                ⚡ QUICK ACTIONS
+              <CardTitle className="text-lg font-bold text-navy-900 border-b-2 border-gold-500 pb-2 flex items-center justify-between">
+                <span>⚡ QUICK ACTIONS</span>
+                <PrivacyHint isPublic={enhancedPetData?.is_public || false} feature="" variant="badge" />
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
@@ -479,6 +481,17 @@ export const PetProfileContent = ({
                 <PrivacyToggle
                   isPublic={enhancedPetData?.is_public || false}
                   onToggle={(isPublic) => togglePetPublicVisibility(enhancedPetData.id, isPublic)}
+                />
+              )}
+              
+              {/* Privacy hint for sharing features when profile is private */}
+              {!enhancedPetData?.is_public && (
+                <PrivacyHint 
+                  isPublic={enhancedPetData?.is_public || false} 
+                  feature="sharing and QR code features" 
+                  variant="banner"
+                  showToggle={isOwner}
+                  onTogglePrivacy={isOwner && togglePetPublicVisibility ? () => togglePetPublicVisibility(enhancedPetData.id, true) : undefined}
                 />
               )}
               
@@ -495,13 +508,18 @@ export const PetProfileContent = ({
               >
                 🆔 Lost Pet
               </Button>
-              <Button 
-                onClick={() => setIsInAppSharingOpen(true)}
-                variant="outline"
-                className="w-full border-navy-900 text-navy-900 hover:bg-navy-50"
-              >
-                🔗 Share Profile
-              </Button>
+              <div className="space-y-2">
+                <Button 
+                  onClick={() => setIsInAppSharingOpen(true)}
+                  variant="outline"
+                  className="w-full border-navy-900 text-navy-900 hover:bg-navy-50"
+                >
+                  🔗 Share Profile
+                </Button>
+                {!enhancedPetData?.is_public && (
+                  <PrivacyHint isPublic={enhancedPetData?.is_public || false} feature="profile sharing" variant="inline" />
+                )}
+              </div>
             </CardContent>
           </Card>
 

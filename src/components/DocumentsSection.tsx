@@ -228,6 +228,15 @@ export const DocumentsSection = ({ petId, documents, onDocumentDeleted }: Docume
 
   return (
     <div className="space-y-6">
+      {/* Privacy Info */}
+      <Card className="border-0 shadow-lg bg-green-50 border-l-4 border-green-500">
+        <CardContent className="p-4">
+          <p className="text-green-800 text-sm font-medium">
+            🔒 <strong>Privacy Note:</strong> Documents are always private regardless of your profile visibility setting. Only you can view and manage your pet's documents.
+          </p>
+        </CardContent>
+      </Card>
+
       {/* Upload Section */}
       <Card className="border-0 shadow-lg bg-passport-section-bg backdrop-blur-sm">
         <CardHeader>

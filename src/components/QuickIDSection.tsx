@@ -13,6 +13,7 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { SocialShareButtons } from "@/components/SocialShareButtons";
+import { PrivacyHint } from "@/components/PrivacyHint";
 
 interface PetData {
   name: string;
@@ -499,6 +500,27 @@ export const QuickIDSection = ({ petData }: QuickIDSectionProps) => {
           </CardContent>
         </Card>
       )}
+
+      {/* Quick Share Section */}
+      <Card className="bg-white shadow-xl">
+        <CardHeader>
+          <CardTitle className="text-xl flex items-center justify-between">
+            <span>Quick Share & QR</span>
+            <PrivacyHint isPublic={true} feature="" variant="badge" />
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <PrivacyHint 
+            isPublic={true} 
+            feature="sharing and QR code generation" 
+            variant="banner" 
+            showToggle={true}
+          />
+          <div className="flex flex-col sm:flex-row gap-3 mt-4">
+            <SocialShareButtons petId={petData.id || ""} petName={petData.name} />
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 };

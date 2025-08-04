@@ -308,7 +308,7 @@ export const PetProfileContent = ({
                         onClick={() => handleUploadPhoto('profile')}
                         disabled={photoLoading.profile}
                         size="sm"
-                        className="bg-blue-600 hover:bg-blue-700 text-white"
+                        className="bg-gradient-to-r from-gold-500 to-gold-400 text-navy-900 hover:from-gold-400 hover:to-gold-300 border border-gold-500/50"
                       >
                         {photoLoading.profile ? (
                           <Loader2 className="w-3 h-3 animate-spin" />
@@ -369,7 +369,7 @@ export const PetProfileContent = ({
                         onClick={() => handleUploadPhoto('fullBody')}
                         disabled={photoLoading.fullBody}
                         size="sm"
-                        className="bg-blue-600 hover:bg-blue-700 text-white"
+                        className="bg-gradient-to-r from-gold-500 to-gold-400 text-navy-900 hover:from-gold-400 hover:to-gold-300 border border-gold-500/50"
                       >
                         {photoLoading.fullBody ? (
                           <Loader2 className="w-3 h-3 animate-spin" />

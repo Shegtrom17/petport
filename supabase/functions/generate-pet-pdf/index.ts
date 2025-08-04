@@ -1177,719 +1177,664 @@ serve(async (req) => {
       if (type === 'full') {
         console.log('Adding additional pages for complete profile...')
         
-        // Add second page for complete profile
-        const page2 = pdfDoc.addPage([612, 792])
-        let yPos2 = height - 60
+        // Initialize universal page management system
+        let currentPage = page
+        let currentYPosition = yPosition
+        let currentPageNum = 1
         
-        // Page 2 Header
-        page2.drawText('COMPLETE PET PROFILE - PAGE 2', {
-          x: 50,
-          y: yPos2,
-          size: 18,
-          font: boldFont,
-          color: titleColor,
-        })
-        yPos2 -= 40
+        // Universal checkNewPage function for Complete Profile PDF
+        const checkNewPageComplete = (neededSpace: number) => {
+          if (currentYPosition - neededSpace < 80) { // Bottom margin
+            currentPageNum++
+            console.log(`Adding new page ${currentPageNum} for complete profile...`)
+            
+            // Add footer to current page before creating new one
+            currentPage.drawText(`Generated on ${new Date().toLocaleDateString()}`, {
+              x: 50,
+              y: 30,
+              size: 8,
+              font: regularFont,
+              color: rgb(0.5, 0.5, 0.5),
+            })
+            
+            currentPage.drawText(`Pet Profile Document - Page ${currentPageNum - 1}`, {
+              x: width - 200,
+              y: 30,
+              size: 8,
+              font: regularFont,
+              color: rgb(0.5, 0.5, 0.5),
+            })
+            
+            // Create new page
+            currentPage = pdfDoc.addPage([612, 792])
+            currentYPosition = height - 60
+            
+            // Add page header
+            currentPage.drawText(`COMPLETE PET PROFILE - PAGE ${currentPageNum}`, {
+              x: 50,
+              y: currentYPosition,
+              size: 18,
+              font: boldFont,
+              color: titleColor,
+            })
+            currentYPosition -= 40
+          }
+        }
 
-        // Care Instructions - Updated with improved spacing 2025-08-03
+        // Enhanced photo loading function with JPG/PNG fallback
+        const loadPhotoWithFallback = async (photoUrl: string, logPrefix: string) => {
+          if (!photoUrl) return null
+          
+          try {
+            console.log(`${logPrefix}: Attempting to load photo: ${photoUrl}`)
+            const response = await fetch(photoUrl)
+            if (!response.ok) {
+              console.log(`${logPrefix}: Failed to fetch photo (${response.status})`)
+              return null
+            }
+            
+            const photoBytes = await response.arrayBuffer()
+            console.log(`${logPrefix}: Photo loaded successfully, size: ${photoBytes.byteLength} bytes`)
+            
+            // Try JPG first, then PNG fallback
+            try {
+              const photoImage = await pdfDoc.embedJpg(photoBytes)
+              console.log(`${logPrefix}: Photo embedded as JPG successfully`)
+              return photoImage
+            } catch (jpgError) {
+              console.log(`${logPrefix}: JPG embedding failed, trying PNG...`)
+              try {
+                const photoImage = await pdfDoc.embedPng(photoBytes)
+                console.log(`${logPrefix}: Photo embedded as PNG successfully`)
+                return photoImage
+              } catch (pngError) {
+                console.log(`${logPrefix}: Both JPG and PNG embedding failed`)
+                return null
+              }
+            }
+          } catch (error) {
+            console.log(`${logPrefix}: Photo loading error:`, error.message)
+            return null
+          }
+        }
+
+        // Care Instructions Section with dynamic page breaks
         if (careData) {
           console.log('Adding care instructions with improved spacing...')
           console.log('Care data fields:', Object.keys(careData))
-          page2.drawText('CARE INSTRUCTIONS', {
+          
+          currentYPosition -= 20
+          checkNewPageComplete(50)
+          
+          currentPage.drawText('CARE INSTRUCTIONS', {
             x: 50,
-            y: yPos2,
+            y: currentYPosition,
             size: 16,
             font: boldFont,
             color: titleColor,
           })
-          yPos2 -= 25
+          currentYPosition -= 25
 
           if (careData.feeding_schedule) {
-            page2.drawText('Feeding Schedule:', {
+            checkNewPageComplete(50)
+            currentPage.drawText('Feeding Schedule:', {
               x: 50,
-              y: yPos2,
+              y: currentYPosition,
               size: 12,
               font: boldFont,
               color: blackColor,
             })
-            yPos2 -= 20 // Extra spacing after label
-            yPos2 = drawMultiLineText(page2, careData.feeding_schedule, 50, yPos2, 500, 11, regularFont, blackColor, 8)
-            yPos2 -= 25 // Extra spacing after content
+            currentYPosition -= 20
+            
+            const feedingLines = careData.feeding_schedule.split('\n').filter(line => line.trim())
+            feedingLines.forEach((line) => {
+              checkNewPageComplete(20)
+              currentPage.drawText(`• ${line.trim()}`, {
+                x: 70,
+                y: currentYPosition,
+                size: 10,
+                font: regularFont,
+                color: blackColor,
+              })
+              currentYPosition -= 15
+            })
+            currentYPosition -= 10
           }
 
           if (careData.morning_routine) {
-            page2.drawText('Morning Routine:', {
+            checkNewPageComplete(50)
+            currentPage.drawText('Morning Routine:', {
               x: 50,
-              y: yPos2,
+              y: currentYPosition,
               size: 12,
               font: boldFont,
               color: blackColor,
             })
-            yPos2 -= 22 // Extra spacing after label
-            yPos2 = drawMultiLineText(page2, careData.morning_routine, 50, yPos2, 500, 11, regularFont, blackColor, 8)
-            yPos2 -= 30 // Extra spacing after content
+            currentYPosition -= 20
+            
+            const morningLines = careData.morning_routine.split('\n').filter(line => line.trim())
+            morningLines.forEach((line) => {
+              checkNewPageComplete(20)
+              currentPage.drawText(`• ${line.trim()}`, {
+                x: 70,
+                y: currentYPosition,
+                size: 10,
+                font: regularFont,
+                color: blackColor,
+              })
+              currentYPosition -= 15
+            })
+            currentYPosition -= 10
           }
 
           if (careData.evening_routine) {
-            page2.drawText('Evening Routine:', {
+            checkNewPageComplete(50)
+            currentPage.drawText('Evening Routine:', {
               x: 50,
-              y: yPos2,
+              y: currentYPosition,
               size: 12,
               font: boldFont,
               color: blackColor,
             })
-            yPos2 -= 22 // Extra spacing after label
-            yPos2 = drawMultiLineText(page2, careData.evening_routine, 50, yPos2, 500, 11, regularFont, blackColor, 8)
-            yPos2 -= 30 // Extra spacing after content
+            currentYPosition -= 20
+            
+            const eveningLines = careData.evening_routine.split('\n').filter(line => line.trim())
+            eveningLines.forEach((line) => {
+              checkNewPageComplete(20)
+              currentPage.drawText(`• ${line.trim()}`, {
+                x: 70,
+                y: currentYPosition,
+                size: 10,
+                font: regularFont,
+                color: blackColor,
+              })
+              currentYPosition -= 15
+            })
+            currentYPosition -= 10
           }
 
           if (careData.allergies) {
-            page2.drawText('Allergies:', {
+            checkNewPageComplete(50)
+            currentPage.drawText('Allergies & Restrictions:', {
               x: 50,
-              y: yPos2,
+              y: currentYPosition,
               size: 12,
               font: boldFont,
               color: blackColor,
             })
-            yPos2 -= 22 // Extra spacing after label
-            yPos2 = drawMultiLineText(page2, careData.allergies, 50, yPos2, 500, 11, regularFont, blackColor, 8)
-            yPos2 -= 30 // Extra spacing after content
+            currentYPosition -= 20
+            
+            const allergyLines = careData.allergies.split('\n').filter(line => line.trim())
+            allergyLines.forEach((line) => {
+              checkNewPageComplete(20)
+              currentPage.drawText(`! ${line.trim()}`, {
+                x: 70,
+                y: currentYPosition,
+                size: 10,
+                font: regularFont,
+                color: blackColor,
+              })
+              currentYPosition -= 15
+            })
+            currentYPosition -= 10
           }
 
           if (careData.behavioral_notes) {
-            page2.drawText('Behavioral Notes:', {
+            checkNewPageComplete(50)
+            currentPage.drawText('Behavioral Notes:', {
               x: 50,
-              y: yPos2,
+              y: currentYPosition,
               size: 12,
               font: boldFont,
               color: blackColor,
             })
-            yPos2 -= 22 // Extra spacing after label
-            yPos2 = drawMultiLineText(page2, careData.behavioral_notes, 50, yPos2, 500, 11, regularFont, blackColor, 8)
-            yPos2 -= 30 // Extra spacing after content
+            currentYPosition -= 20
+            
+            const behaviorLines = careData.behavioral_notes.split('\n').filter(line => line.trim())
+            behaviorLines.forEach((line) => {
+              checkNewPageComplete(20)
+              currentPage.drawText(`• ${line.trim()}`, {
+                x: 70,
+                y: currentYPosition,
+                size: 10,
+                font: regularFont,
+                color: blackColor,
+              })
+              currentYPosition -= 15
+            })
+            currentYPosition -= 10
           }
 
           if (careData.favorite_activities) {
-            page2.drawText('Favorite Activities:', {
+            checkNewPageComplete(50)
+            currentPage.drawText('Favorite Activities:', {
               x: 50,
-              y: yPos2,
+              y: currentYPosition,
               size: 12,
               font: boldFont,
               color: blackColor,
             })
-            yPos2 -= 22 // Extra spacing after label
-            yPos2 = drawMultiLineText(page2, careData.favorite_activities, 50, yPos2, 500, 11, regularFont, blackColor, 8)
-            yPos2 -= 30 // Extra spacing after content
+            currentYPosition -= 20
+            
+            const activityLines = careData.favorite_activities.split('\n').filter(line => line.trim())
+            activityLines.forEach((line) => {
+              checkNewPageComplete(20)
+              currentPage.drawText(`• ${line.trim()}`, {
+                x: 70,
+                y: currentYPosition,
+                size: 10,
+                font: regularFont,
+                color: blackColor,
+              })
+              currentYPosition -= 15
+            })
+            currentYPosition -= 10
           }
         }
 
-        // Professional Data & Certifications
+        // Professional Data & Certifications with dynamic page breaks
         if (professionalData || (certificationsData && certificationsData.length > 0)) {
-          page2.drawText('PROFESSIONAL CREDENTIALS', {
+          currentYPosition -= 20
+          checkNewPageComplete(50)
+          
+          currentPage.drawText('PROFESSIONAL CREDENTIALS', {
             x: 50,
-            y: yPos2,
+            y: currentYPosition,
             size: 16,
             font: boldFont,
             color: titleColor,
           })
-          yPos2 -= 25
+          currentYPosition -= 25
 
           if (professionalData?.support_animal_status) {
-            page2.drawText(`Support Animal Status: ${professionalData.support_animal_status}`, {
+            checkNewPageComplete(30)
+            currentPage.drawText(`Support Animal Status: ${professionalData.support_animal_status}`, {
               x: 50,
-              y: yPos2,
+              y: currentYPosition,
               size: 12,
               font: boldFont,
               color: blackColor,
             })
-            yPos2 -= 20
+            currentYPosition -= 20
           }
 
           if (certificationsData && certificationsData.length > 0) {
-            page2.drawText('Certifications:', {
+            checkNewPageComplete(50 + (certificationsData.length * 15))
+            currentPage.drawText('Certifications:', {
               x: 50,
-              y: yPos2,
+              y: currentYPosition,
               size: 12,
               font: boldFont,
               color: blackColor,
             })
-            yPos2 -= 15
+            currentYPosition -= 15
 
             certificationsData.forEach((cert: any) => {
-              page2.drawText(`• ${cert.type} - ${cert.status} (${cert.issuer || 'N/A'})`, {
+              checkNewPageComplete(20)
+              currentPage.drawText(`• ${cert.type} - ${cert.status} (${cert.issuer || 'N/A'})`, {
                 x: 50,
-                y: yPos2,
+                y: currentYPosition,
                 size: 11,
                 font: regularFont,
                 color: blackColor,
               })
-              yPos2 -= 15
+              currentYPosition -= 15
             })
-            yPos2 -= 10
+            currentYPosition -= 10
           }
         }
 
-        // Training & Achievements
+        // Training & Achievements with dynamic page breaks
         if ((trainingData && trainingData.length > 0) || (achievementsData && achievementsData.length > 0)) {
-          page2.drawText('TRAINING & ACHIEVEMENTS', {
+          currentYPosition -= 20
+          checkNewPageComplete(50)
+          
+          currentPage.drawText('TRAINING & ACHIEVEMENTS', {
             x: 50,
-            y: yPos2,
+            y: currentYPosition,
             size: 16,
             font: boldFont,
             color: titleColor,
           })
-          yPos2 -= 25
+          currentYPosition -= 25
 
           if (trainingData && trainingData.length > 0) {
-            page2.drawText('Training:', {
+            checkNewPageComplete(50 + (trainingData.length * 15))
+            currentPage.drawText('Training:', {
               x: 50,
-              y: yPos2,
+              y: currentYPosition,
               size: 12,
               font: boldFont,
               color: blackColor,
             })
-            yPos2 -= 15
+            currentYPosition -= 15
 
             trainingData.forEach((training: any) => {
-              page2.drawText(`• ${training.course} at ${training.facility || 'N/A'} - ${training.completed || 'In Progress'}`, {
+              checkNewPageComplete(20)
+              currentPage.drawText(`• ${training.course} at ${training.facility || 'N/A'} - ${training.completed || 'In Progress'}`, {
                 x: 50,
-                y: yPos2,
+                y: currentYPosition,
                 size: 11,
                 font: regularFont,
                 color: blackColor,
               })
-              yPos2 -= 15
+              currentYPosition -= 15
             })
-            yPos2 -= 10
+            currentYPosition -= 10
           }
 
           if (achievementsData && achievementsData.length > 0) {
-            page2.drawText('Achievements:', {
+            checkNewPageComplete(50 + (achievementsData.length * 15))
+            currentPage.drawText('Achievements:', {
               x: 50,
-              y: yPos2,
+              y: currentYPosition,
               size: 12,
               font: boldFont,
               color: blackColor,
             })
-            yPos2 -= 15
+            currentYPosition -= 15
 
             achievementsData.forEach((achievement: any) => {
-              page2.drawText(`• ${achievement.title} - ${achievement.description || 'N/A'}`, {
+              checkNewPageComplete(20)
+              currentPage.drawText(`• ${achievement.title} - ${achievement.description || 'N/A'}`, {
                 x: 50,
-                y: yPos2,
+                y: currentYPosition,
                 size: 11,
                 font: regularFont,
                 color: blackColor,
               })
-              yPos2 -= 15
+              currentYPosition -= 15
             })
-            yPos2 -= 10
+            currentYPosition -= 10
           }
         }
 
-        // Add third page for reviews and travel
-        if (yPos2 < 200 || (reviewsData && reviewsData.length > 0) || (travelData && travelData.length > 0)) {
-          const page3 = pdfDoc.addPage([612, 792])
-          let yPos3 = height - 60
+        // Reviews & Testimonials with dynamic page breaks
+        if (reviewsData && reviewsData.length > 0) {
+          currentYPosition -= 20
+          checkNewPageComplete(50)
           
-          page3.drawText('COMPLETE PET PROFILE - PAGE 3', {
+          currentPage.drawText('REVIEWS & TESTIMONIALS', {
             x: 50,
-            y: yPos3,
-            size: 18,
+            y: currentYPosition,
+            size: 16,
             font: boldFont,
             color: titleColor,
           })
-          yPos3 -= 40
+          currentYPosition -= 25
 
-          // Reviews Section
-          if (reviewsData && reviewsData.length > 0) {
-            page3.drawText('REVIEWS & TESTIMONIALS', {
+          reviewsData.forEach((review: any) => {
+            // Calculate space needed for this review
+            const reviewLines = review.text ? Math.ceil(review.text.length / 80) : 0
+            const neededSpace = 80 + (reviewLines * 15)
+            
+            checkNewPageComplete(neededSpace)
+            
+            currentPage.drawText(`★ ${review.rating}/5 - ${review.reviewer_name}`, {
               x: 50,
-              y: yPos3,
-              size: 16,
+              y: currentYPosition,
+              size: 12,
               font: boldFont,
-              color: titleColor,
+              color: blackColor,
             })
-            yPos3 -= 25
+            currentYPosition -= 15
 
-            reviewsData.forEach((review: any, index: number) => {
-              if (index < 3) { // Limit to 3 reviews per page
-                page3.drawText(`* ${review.rating}/5 - ${review.reviewer_name}`, {
+            if (review.text) {
+              const reviewTextLines = review.text.split('\n').filter(line => line.trim())
+              reviewTextLines.forEach((line) => {
+                checkNewPageComplete(20)
+                currentPage.drawText(`"${line.trim()}"`, {
                   x: 50,
-                  y: yPos3,
-                  size: 12,
-                  font: boldFont,
-                  color: blackColor,
-                })
-                yPos3 -= 15
-
-                if (review.text) {
-                  yPos3 = drawMultiLineText(page3, `"${review.text}"`, 50, yPos3, 500, 11, regularFont, blackColor, 6)
-                  yPos3 -= 10
-                }
-
-                page3.drawText(`${review.type || 'General'} | ${review.location || 'N/A'} | ${review.date || 'N/A'}`, {
-                  x: 50,
-                  y: yPos3,
-                  size: 10,
-                  font: regularFont,
-                  color: rgb(0.5, 0.5, 0.5),
-                })
-                yPos3 -= 25
-              }
-            })
-          }
-
-          // Travel History
-          if (travelData && travelData.length > 0) {
-            page3.drawText('TRAVEL HISTORY', {
-              x: 50,
-              y: yPos3,
-              size: 16,
-              font: boldFont,
-              color: titleColor,
-            })
-            yPos3 -= 25
-
-            travelData.forEach((location: any) => {
-              page3.drawText(sanitizeTextForPDF(`✈ ${location.name} (${location.type})`), {
-                x: 50,
-                y: yPos3,
-                size: 12,
-                font: boldFont,
-                color: blackColor,
-              })
-              yPos3 -= 15
-
-              if (location.date_visited) {
-                page3.drawText(`Visited: ${location.date_visited}`, {
-                  x: 50,
-                  y: yPos3,
+                  y: currentYPosition,
                   size: 11,
                   font: regularFont,
                   color: blackColor,
                 })
-                yPos3 -= 15
-              }
+                currentYPosition -= 15
+              })
+            }
 
-              if (location.notes) {
-                page3.drawText(location.notes, {
-                  x: 50,
-                  y: yPos3,
-                  size: 10,
-                  font: regularFont,
-                  color: rgb(0.5, 0.5, 0.5),
-                })
-                yPos3 -= 20
-              } else {
-                // Add extra spacing if no notes to ensure proper separation
-                yPos3 -= 10
-              }
-              
-              // Add consistent spacing between travel items
-              yPos3 -= 15
-            })
-            
-            // Add extra spacing after travel history section before next section
-            yPos3 -= 20
-          }
-
-          // Experience Section
-          if (experiencesData && experiencesData.length > 0) {
-            page3.drawText('EXPERIENCE', {
+            checkNewPageComplete(20)
+            currentPage.drawText(`${review.type || 'General'} | ${review.location || 'N/A'} | ${review.date || 'N/A'}`, {
               x: 50,
-              y: yPos3,
-              size: 16,
-              font: boldFont,
-              color: titleColor,
+              y: currentYPosition,
+              size: 10,
+              font: regularFont,
+              color: rgb(0.5, 0.5, 0.5),
             })
-            yPos3 -= 25
+            currentYPosition -= 25
+          })
+        }
 
-            experiencesData.forEach((exp: any) => {
-              page3.drawText(`• ${exp.activity}`, {
+        // Travel History with dynamic page breaks
+        if (travelData && travelData.length > 0) {
+          currentYPosition -= 20
+          checkNewPageComplete(50)
+          
+          currentPage.drawText('TRAVEL HISTORY', {
+            x: 50,
+            y: currentYPosition,
+            size: 16,
+            font: boldFont,
+            color: titleColor,
+          })
+          currentYPosition -= 25
+
+          travelData.forEach((location: any) => {
+            checkNewPageComplete(80)
+            
+            currentPage.drawText(sanitizeTextForPDF(`✈ ${location.name} (${location.type})`), {
+              x: 50,
+              y: currentYPosition,
+              size: 12,
+              font: boldFont,
+              color: blackColor,
+            })
+            currentYPosition -= 15
+
+            if (location.date_visited) {
+              checkNewPageComplete(20)
+              currentPage.drawText(`Visited: ${location.date_visited}`, {
                 x: 50,
-                y: yPos3,
-                size: 12,
-                font: boldFont,
+                y: currentYPosition,
+                size: 11,
+                font: regularFont,
                 color: blackColor,
               })
-              yPos3 -= 15
-
-              if (exp.description) {
-                yPos3 = drawMultiLineText(page3, exp.description, 50, yPos3, 500, 11, regularFont, blackColor, 6)
-                yPos3 -= 10
-              }
-
-              if (exp.contact) {
-                page3.drawText(`Contact: ${exp.contact}`, {
-                  x: 50,
-                  y: yPos3,
-                  size: 10,
-                  font: regularFont,
-                  color: rgb(0.5, 0.5, 0.5),
-                })
-                yPos3 -= 20
-              }
-            })
-          }
-
-          // Photo Gallery Section - Add photos for complete profile
-          if (yPos3 > 250 && (photosData || galleryData)) {
-            console.log('Adding photo gallery section to complete profile...')
-            page3.drawText('PHOTO GALLERY', {
-              x: 50,
-              y: yPos3,
-              size: 16,
-              font: boldFont,
-              color: titleColor,
-            })
-            yPos3 -= 35
-
-            // Photo layout for complete profile - 2 photos per row, max 4 photos
-            const photoWidth = 120
-            const photoHeight = 90
-            const photoSpacing = 25
-            const leftPhotoX = 50
-            const rightPhotoX = leftPhotoX + photoWidth + photoSpacing
-            
-            // Fix Y positioning to prevent overlap
-            const startPhotoY = yPos3 - 10 // Add buffer after title
-            const topRowY = startPhotoY
-            const bottomRowY = startPhotoY - photoHeight - photoSpacing
-
-            let photosAdded = 0
-            const maxPhotos = 4
-
-            try {
-              // Try to add main photo (top-left)
-              if (photosData?.photo_url && photosAdded < maxPhotos) {
-                try {
-                  console.log('Loading main photo for complete profile:', photosData.photo_url)
-                  const photoResponse = await fetch(photosData.photo_url)
-                  if (photoResponse.ok) {
-                    const photoBytes = await photoResponse.arrayBuffer()
-                    let photoImage
-                    try {
-                      photoImage = await pdfDoc.embedJpg(new Uint8Array(photoBytes))
-                    } catch (jpgError) {
-                      console.log('Failed to embed as JPG, trying PNG:', jpgError.message)
-                      photoImage = await pdfDoc.embedPng(new Uint8Array(photoBytes))
-                    }
-                    
-                    const { width: imgWidth, height: imgHeight } = photoImage.scale(1)
-                    const scale = Math.min(photoWidth / imgWidth, photoHeight / imgHeight)
-                    const scaledWidth = imgWidth * scale
-                    const scaledHeight = imgHeight * scale
-                    
-                    page3.drawImage(photoImage, {
-                      x: leftPhotoX + (photoWidth - scaledWidth) / 2,
-                      y: topRowY - scaledHeight,
-                      width: scaledWidth,
-                      height: scaledHeight,
-                    })
-                    photosAdded++
-                    console.log('Main photo added to complete profile (top-left)')
-                  }
-                } catch (photoError) {
-                  console.log('Failed to load main photo for complete profile:', photoError.message)
-                }
-              }
-
-              // Try to add full body photo (top-right)
-              if (photosData?.full_body_photo_url && photosAdded < maxPhotos) {
-                try {
-                  console.log('Loading full body photo for complete profile:', photosData.full_body_photo_url)
-                  const photoResponse = await fetch(photosData.full_body_photo_url)
-                  if (photoResponse.ok) {
-                    const photoBytes = await photoResponse.arrayBuffer()
-                    let photoImage
-                    try {
-                      photoImage = await pdfDoc.embedJpg(new Uint8Array(photoBytes))
-                    } catch (jpgError) {
-                      console.log('Failed to embed as JPG, trying PNG:', jpgError.message)
-                      photoImage = await pdfDoc.embedPng(new Uint8Array(photoBytes))
-                    }
-                    
-                    const { width: imgWidth, height: imgHeight } = photoImage.scale(1)
-                    const scale = Math.min(photoWidth / imgWidth, photoHeight / imgHeight)
-                    const scaledWidth = imgWidth * scale
-                    const scaledHeight = imgHeight * scale
-                    
-                    page3.drawImage(photoImage, {
-                      x: rightPhotoX + (photoWidth - scaledWidth) / 2,
-                      y: topRowY - scaledHeight,
-                      width: scaledWidth,
-                      height: scaledHeight,
-                    })
-                    photosAdded++
-                    console.log('Full body photo added to complete profile (top-right)')
-                  }
-                } catch (photoError) {
-                  console.log('Failed to load full body photo for complete profile:', photoError.message)
-                }
-              }
-
-              // Try to add gallery photos (bottom row or continue on next page)
-              if (galleryData && galleryData.length > 0 && photosAdded < maxPhotos) {
-                const remainingSlots = maxPhotos - photosAdded
-                const galleryPhotosToAdd = galleryData.slice(0, remainingSlots)
-                
-                for (let i = 0; i < galleryPhotosToAdd.length; i++) {
-                  const galleryPhoto = galleryPhotosToAdd[i]
-                  try {
-                    console.log(`Loading gallery photo ${i + 1} for complete profile:`, galleryPhoto.url)
-                    const photoResponse = await fetch(galleryPhoto.url)
-                    if (photoResponse.ok) {
-                      const photoBytes = await photoResponse.arrayBuffer()
-                      let photoImage
-                      try {
-                        photoImage = await pdfDoc.embedJpg(new Uint8Array(photoBytes))
-                      } catch (jpgError) {
-                        console.log('Failed to embed gallery photo as JPG, trying PNG:', jpgError.message)
-                        photoImage = await pdfDoc.embedPng(new Uint8Array(photoBytes))
-                      }
-                      
-                      const { width: imgWidth, height: imgHeight } = photoImage.scale(1)
-                      const scale = Math.min(photoWidth / imgWidth, photoHeight / imgHeight)
-                      const scaledWidth = imgWidth * scale
-                      const scaledHeight = imgHeight * scale
-                      
-                      // Position in bottom row - use proper bottom positioning
-                      const isLeftBottom = (photosAdded % 2) === 0
-                      const photoX = isLeftBottom ? leftPhotoX : rightPhotoX
-                      
-                      page3.drawImage(photoImage, {
-                        x: photoX + (photoWidth - scaledWidth) / 2,
-                        y: bottomRowY - scaledHeight,
-                        width: scaledWidth,
-                        height: scaledHeight,
-                      })
-                      photosAdded++
-                      console.log(`Gallery photo ${i + 1} added to complete profile`)
-                    }
-                  } catch (photoError) {
-                    console.log(`Failed to load gallery photo ${i + 1} for complete profile:`, photoError.message)
-                  }
-                }
-              }
-
-              // Add photo placeholders if needed - fix positioning
-              const placeholderPositions = [
-                { x: leftPhotoX, y: topRowY, label: 'MAIN' },
-                { x: rightPhotoX, y: topRowY, label: 'FULL BODY' },
-                { x: leftPhotoX, y: bottomRowY, label: 'GALLERY 1' },
-                { x: rightPhotoX, y: bottomRowY, label: 'GALLERY 2' },
-              ]
-
-              for (let i = photosAdded; i < Math.min(4, placeholderPositions.length); i++) {
-                const pos = placeholderPositions[i]
-                page3.drawRectangle({
-                  x: pos.x,
-                  y: pos.y - photoHeight,
-                  width: photoWidth,
-                  height: photoHeight,
-                  borderColor: rgb(0.8, 0.8, 0.8),
-                  borderWidth: 1,
-                })
-                
-                page3.drawText(pos.label, {
-                  x: pos.x + photoWidth / 2 - 25,
-                  y: pos.y - photoHeight / 2,
-                  size: 10,
-                  font: regularFont,
-                  color: rgb(0.6, 0.6, 0.6),
-                })
-              }
-
-              console.log(`Photo gallery section complete. Added ${photosAdded} photos to complete profile.`)
-              // Update yPos3 to account for both photo rows
-              yPos3 = bottomRowY - photoHeight - 40
-
-            } catch (photoError) {
-              console.log('Error adding photos to complete profile:', photoError.message)
-              yPos3 -= 30
+              currentYPosition -= 15
             }
-          }
 
-          // Add fourth page for additional content and gallery photos
-          // Create page 4 if we have overflow content OR additional gallery photos
-          const hasAdditionalGallery = galleryData && galleryData.length > 4
-          const hasContentOverflow = yPos3 < 200 // More generous space check
-          
-          if (hasAdditionalGallery || hasContentOverflow) {
-            console.log('Adding fourth page for additional content...')
-            const page4 = pdfDoc.addPage([612, 792])
-            let yPos4 = height - 60
-            
-            // Page 4 Header
-            page4.drawText('COMPLETE PET PROFILE - PAGE 4', {
-              x: 50,
-              y: yPos4,
-              size: 18,
-              font: boldFont,
-              color: titleColor,
-            })
-            yPos4 -= 40
-
-            // Additional Gallery Photos (photos 5-8)
-            if (galleryData && galleryData.length > 4) {
-              console.log(`Adding ${galleryData.length - 4} additional gallery photos to page 4...`)
-              
-              page4.drawText('ADDITIONAL PHOTOS', {
+            if (location.notes) {
+              checkNewPageComplete(25)
+              currentPage.drawText(location.notes, {
                 x: 50,
-                y: yPos4,
-                size: 16,
-                font: boldFont,
-                color: titleColor,
+                y: currentYPosition,
+                size: 10,
+                font: regularFont,
+                color: rgb(0.5, 0.5, 0.5),
               })
-              yPos4 -= 35
-
-              const additionalPhotos = galleryData.slice(4, 8) // Next 4 photos
-              const photoWidth = 120
-              const photoHeight = 90
-              const photoSpacing = 25
-              const leftPhotoX = 50
-              const rightPhotoX = leftPhotoX + photoWidth + photoSpacing
-              
-              const startPhotoY = yPos4 - 10
-              const topRowY = startPhotoY
-              const bottomRowY = startPhotoY - photoHeight - photoSpacing
-
-              for (let i = 0; i < additionalPhotos.length && i < 4; i++) {
-                const photo = additionalPhotos[i]
-                try {
-                  console.log(`Loading additional gallery photo ${i + 1}:`, photo.url)
-                  const photoResponse = await fetch(photo.url)
-                  if (photoResponse.ok) {
-                    const photoBytes = await photoResponse.arrayBuffer()
-                    let photoImage
-                    try {
-                      photoImage = await pdfDoc.embedJpg(new Uint8Array(photoBytes))
-                    } catch (jpgError) {
-                      console.log('Failed to embed additional gallery photo as JPG, trying PNG:', jpgError.message)
-                      photoImage = await pdfDoc.embedPng(new Uint8Array(photoBytes))
-                    }
-                    
-                    const { width: imgWidth, height: imgHeight } = photoImage.scale(1)
-                    const scale = Math.min(photoWidth / imgWidth, photoHeight / imgHeight)
-                    const scaledWidth = imgWidth * scale
-                    const scaledHeight = imgHeight * scale
-                    
-                    const isTopRow = i < 2
-                    const isLeft = (i % 2) === 0
-                    const photoX = isLeft ? leftPhotoX : rightPhotoX
-                    const photoY = isTopRow ? topRowY : bottomRowY
-                    
-                    page4.drawImage(photoImage, {
-                      x: photoX + (photoWidth - scaledWidth) / 2,
-                      y: photoY - scaledHeight,
-                      width: scaledWidth,
-                      height: scaledHeight,
-                    })
-                    console.log(`Additional gallery photo ${i + 1} added successfully`)
-                  }
-                } catch (photoError) {
-                  console.log(`Failed to load additional gallery photo ${i + 1}:`, photoError.message)
-                }
-              }
-            
-            // Check if we need even more pages for content overflow
-            if (yPos4 < 150) {
-              console.log('Content overflow detected - adding page 5 if needed...')
-              // Add logic for page 5 and beyond if we have extensive content
-              // For now, ensure current content fits properly
+              currentYPosition -= 20
             }
-          }
+            
+            currentYPosition -= 15
+          })
           
-          // Add footer to page 4
-          page4.drawText(`Generated on ${new Date().toLocaleDateString()}`, {
+          currentYPosition -= 20
+        }
+
+        // Experience Section with dynamic page breaks
+        if (experiencesData && experiencesData.length > 0) {
+          currentYPosition -= 20
+          checkNewPageComplete(50)
+          
+          currentPage.drawText('EXPERIENCE', {
             x: 50,
-            y: 30,
-            size: 8,
-            font: regularFont,
-            color: rgb(0.5, 0.5, 0.5),
+            y: currentYPosition,
+            size: 16,
+            font: boldFont,
+            color: titleColor,
           })
-          
-          page4.drawText('Pet Profile Document - Page 4', {
-            x: width - 200,
-            y: 30,
-            size: 8,
-            font: regularFont,
-            color: rgb(0.5, 0.5, 0.5),
+          currentYPosition -= 25
+
+          experiencesData.forEach((exp: any) => {
+            // Calculate space needed for this experience
+            const descLines = exp.description ? Math.ceil(exp.description.length / 80) : 0
+            const neededSpace = 80 + (descLines * 15)
+            
+            checkNewPageComplete(neededSpace)
+            
+            currentPage.drawText(`• ${exp.activity}`, {
+              x: 50,
+              y: currentYPosition,
+              size: 12,
+              font: boldFont,
+              color: blackColor,
+            })
+            currentYPosition -= 15
+
+            if (exp.description) {
+              const descLines = exp.description.split('\n').filter(line => line.trim())
+              descLines.forEach((line) => {
+                checkNewPageComplete(20)
+                currentPage.drawText(line.trim(), {
+                  x: 50,
+                  y: currentYPosition,
+                  size: 11,
+                  font: regularFont,
+                  color: blackColor,
+                })
+                currentYPosition -= 15
+              })
+            }
+
+            if (exp.contact) {
+              checkNewPageComplete(25)
+              currentPage.drawText(`Contact: ${exp.contact}`, {
+                x: 50,
+                y: currentYPosition,
+                size: 10,
+                font: regularFont,
+                color: rgb(0.5, 0.5, 0.5),
+              })
+              currentYPosition -= 20
+            }
+            
+            currentYPosition -= 10
           })
+        }
+
+        // Enhanced Photo Gallery Section with dynamic page management
+        if (photosData || galleryData) {
+          console.log('Adding enhanced photo gallery section to complete profile...')
           
-          console.log('Page 4 photo gallery section complete.')
+          currentYPosition -= 20
+          checkNewPageComplete(200) // Ensure space for gallery section
           
-          // Support for unlimited additional pages based on remaining gallery photos
-          let currentPageNum = 4
-          let remainingPhotos = galleryData ? galleryData.slice(8) : [] // Photos 9+
+          currentPage.drawText('PHOTO GALLERY', {
+            x: 50,
+            y: currentYPosition,
+            size: 16,
+            font: boldFont,
+            color: titleColor,
+          })
+          currentYPosition -= 35
+
+          // Gallery layout - 3 photos per row, 2 rows per page (6 photos per page)
+          const photoWidth = 120
+          const photoHeight = 90
+          const photoSpacing = 25
+          const photosPerRow = 3
+          const rowsPerPage = 2
+          const photosPerPage = photosPerRow * rowsPerPage
+
+          let allPhotos = []
           
-          while (remainingPhotos.length > 0 && currentPageNum < 10) { // Limit to 10 pages max
-            currentPageNum++
-            console.log(`Adding page ${currentPageNum} for remaining gallery photos...`)
-            
-            const pageN = pdfDoc.addPage([612, 792])
-            let yPosN = height - 60
-            
-            // Page Header
-            pageN.drawText(`COMPLETE PET PROFILE - PAGE ${currentPageNum}`, {
-              x: 50,
-              y: yPosN,
-              size: 18,
-              font: boldFont,
-              color: titleColor,
+          // Collect all available photos
+          if (photosData?.photo_url) allPhotos.push({ url: photosData.photo_url, type: 'profile' })
+          if (photosData?.full_body_photo_url) allPhotos.push({ url: photosData.full_body_photo_url, type: 'full_body' })
+          if (galleryData && galleryData.length > 0) {
+            galleryData.forEach(photo => {
+              if (photo.url) allPhotos.push({ url: photo.url, type: 'gallery', caption: photo.caption })
             })
-            yPosN -= 40
+          }
+
+          // Process photos in batches for each page
+          for (let photoIndex = 0; photoIndex < allPhotos.length; photoIndex += photosPerPage) {
+            const pagePhotos = allPhotos.slice(photoIndex, photoIndex + photosPerPage)
             
-            pageN.drawText('GALLERY PHOTOS CONTINUED', {
-              x: 50,
-              y: yPosN,
-              size: 16,
-              font: boldFont,
-              color: titleColor,
-            })
-            yPosN -= 35
-            
-            // Add up to 6 photos per additional page (3x2 grid)
-            const photosForThisPage = remainingPhotos.slice(0, 6)
-            remainingPhotos = remainingPhotos.slice(6)
-            
-            const photoWidth = 120
-            const photoHeight = 90
-            const photoSpacing = 20
-            const photosPerRow = 3
-            const startX = 50
-            const startY = yPosN - 10
-            
-            for (let i = 0; i < photosForThisPage.length; i++) {
-              const photo = photosForThisPage[i]
+            // If this isn't the first batch and we need more space, create new page
+            if (photoIndex > 0) {
+              checkNewPageComplete(300)
+            }
+
+            for (let i = 0; i < pagePhotos.length; i++) {
+              const photo = pagePhotos[i]
               const row = Math.floor(i / photosPerRow)
               const col = i % photosPerRow
               
-              const photoX = startX + col * (photoWidth + photoSpacing)
-              const photoY = startY - row * (photoHeight + photoSpacing)
+              const photoX = 50 + (col * (photoWidth + photoSpacing))
+              const photoY = currentYPosition - (row * (photoHeight + photoSpacing + 20)) // Extra space for captions
               
               try {
-                const photoResponse = await fetch(photo.url)
-                if (photoResponse.ok) {
-                  const photoBytes = await photoResponse.arrayBuffer()
-                  let photoImage
-                  try {
-                    photoImage = await pdfDoc.embedJpg(new Uint8Array(photoBytes))
-                  } catch (jpgError) {
-                    photoImage = await pdfDoc.embedPng(new Uint8Array(photoBytes))
-                  }
-                  
+                console.log(`Loading gallery photo ${photoIndex + i + 1}: ${photo.url}`)
+                const photoImage = await loadPhotoWithFallback(photo.url, `Gallery photo ${photoIndex + i + 1}`)
+                
+                if (photoImage) {
                   const { width: imgWidth, height: imgHeight } = photoImage.scale(1)
                   const scale = Math.min(photoWidth / imgWidth, photoHeight / imgHeight)
                   const scaledWidth = imgWidth * scale
                   const scaledHeight = imgHeight * scale
                   
-                  pageN.drawImage(photoImage, {
+                  currentPage.drawImage(photoImage, {
                     x: photoX + (photoWidth - scaledWidth) / 2,
                     y: photoY - scaledHeight,
                     width: scaledWidth,
                     height: scaledHeight,
+                  })
+                  
+                  // Add caption if available
+                  if (photo.caption) {
+                    currentPage.drawText(photo.caption.substring(0, 20), {
+                      x: photoX,
+                      y: photoY - scaledHeight - 15,
+                      size: 8,
+                      font: regularFont,
+                      color: rgb(0.5, 0.5, 0.5),
+                    })
+                  }
+                  
+                  console.log(`Gallery photo ${photoIndex + i + 1} added successfully`)
+                }
+              } catch (photoError) {
+                console.log(`Failed to load gallery photo ${photoIndex + i + 1}:`, photoError.message)
+              }
+            }
+            
+            // Update Y position after this batch
+            const rowsUsed = Math.ceil(pagePhotos.length / photosPerRow)
+            currentYPosition -= (rowsUsed * (photoHeight + photoSpacing + 20)) + 30
+          }
+        }
+
+
+        // Add footer to final page
+        currentPage.drawText(`Generated on ${new Date().toLocaleDateString()}`, {
+          x: 50,
+          y: 30,
+          size: 8,
+          font: regularFont,
+          color: rgb(0.5, 0.5, 0.5),
+        })
+        
+        currentPage.drawText(`Pet Profile Document - Page ${currentPageNum}`, {
+          x: width - 200,
+          y: 30,
+          size: 8,
+          font: regularFont,
+          color: rgb(0.5, 0.5, 0.5),
+        })
+        
+        console.log(`Complete Profile PDF generated with ${currentPageNum} pages.`)
                   })
                   
                   // Add caption if available

@@ -374,7 +374,7 @@ export const CareInstructionsSection = ({ petData }: CareInstructionsSectionProp
                 onClick={handleGenerateCarePDF}
                 disabled={isGeneratingPDF}
                 variant="secondary"
-                className="bg-sage-600 hover:bg-sage-700 text-white text-xs sm:text-sm px-2 sm:px-4 py-1 sm:py-2"
+                className="bg-white/20 hover:bg-white/30 text-white border-white/30 text-xs sm:text-sm px-2 sm:px-4 py-1 sm:py-2"
               >
                 {isGeneratingPDF ? (
                   <Loader2 className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 animate-spin" />

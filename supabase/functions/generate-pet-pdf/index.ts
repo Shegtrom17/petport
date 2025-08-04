@@ -1523,6 +1523,162 @@ serve(async (req) => {
               }
             })
           }
+
+          // Photo Gallery Section - Add photos for complete profile
+          if (yPos3 > 250 && (photosData || galleryData)) {
+            console.log('Adding photo gallery section to complete profile...')
+            page3.drawText('PHOTO GALLERY', {
+              x: 50,
+              y: yPos3,
+              size: 16,
+              font: boldFont,
+              color: titleColor,
+            })
+            yPos3 -= 30
+
+            // Photo layout for complete profile - 2 photos per row, max 4 photos
+            const photoWidth = 120
+            const photoHeight = 90
+            const photoSpacing = 20
+            const leftPhotoX = 50
+            const rightPhotoX = leftPhotoX + photoWidth + photoSpacing
+            const topRowY = yPos3
+            const bottomRowY = yPos3 - photoHeight - photoSpacing
+
+            let photosAdded = 0
+            const maxPhotos = 4
+
+            try {
+              // Try to add main photo (top-left)
+              if (photosData?.photo_url && photosAdded < maxPhotos) {
+                try {
+                  console.log('Loading main photo for complete profile:', photosData.photo_url)
+                  const photoResponse = await fetch(photosData.photo_url)
+                  if (photoResponse.ok) {
+                    const photoBytes = await photoResponse.arrayBuffer()
+                    const photoImage = await pdfDoc.embedJpg(new Uint8Array(photoBytes))
+                    
+                    const { width: imgWidth, height: imgHeight } = photoImage.scale(1)
+                    const scale = Math.min(photoWidth / imgWidth, photoHeight / imgHeight)
+                    const scaledWidth = imgWidth * scale
+                    const scaledHeight = imgHeight * scale
+                    
+                    page3.drawImage(photoImage, {
+                      x: leftPhotoX + (photoWidth - scaledWidth) / 2,
+                      y: topRowY - photoHeight + (photoHeight - scaledHeight) / 2,
+                      width: scaledWidth,
+                      height: scaledHeight,
+                    })
+                    photosAdded++
+                    console.log('Main photo added to complete profile (top-left)')
+                  }
+                } catch (photoError) {
+                  console.log('Failed to load main photo for complete profile:', photoError.message)
+                }
+              }
+
+              // Try to add full body photo (top-right)
+              if (photosData?.full_body_photo_url && photosAdded < maxPhotos) {
+                try {
+                  console.log('Loading full body photo for complete profile:', photosData.full_body_photo_url)
+                  const photoResponse = await fetch(photosData.full_body_photo_url)
+                  if (photoResponse.ok) {
+                    const photoBytes = await photoResponse.arrayBuffer()
+                    const photoImage = await pdfDoc.embedJpg(new Uint8Array(photoBytes))
+                    
+                    const { width: imgWidth, height: imgHeight } = photoImage.scale(1)
+                    const scale = Math.min(photoWidth / imgWidth, photoHeight / imgHeight)
+                    const scaledWidth = imgWidth * scale
+                    const scaledHeight = imgHeight * scale
+                    
+                    page3.drawImage(photoImage, {
+                      x: rightPhotoX + (photoWidth - scaledWidth) / 2,
+                      y: topRowY - photoHeight + (photoHeight - scaledHeight) / 2,
+                      width: scaledWidth,
+                      height: scaledHeight,
+                    })
+                    photosAdded++
+                    console.log('Full body photo added to complete profile (top-right)')
+                  }
+                } catch (photoError) {
+                  console.log('Failed to load full body photo for complete profile:', photoError.message)
+                }
+              }
+
+              // Try to add gallery photos (bottom row)
+              if (galleryData && galleryData.length > 0 && photosAdded < maxPhotos) {
+                const remainingSlots = maxPhotos - photosAdded
+                const galleryPhotosToAdd = galleryData.slice(0, remainingSlots)
+                
+                for (let i = 0; i < galleryPhotosToAdd.length; i++) {
+                  const galleryPhoto = galleryPhotosToAdd[i]
+                  try {
+                    console.log(`Loading gallery photo ${i + 1} for complete profile:`, galleryPhoto.url)
+                    const photoResponse = await fetch(galleryPhoto.url)
+                    if (photoResponse.ok) {
+                      const photoBytes = await photoResponse.arrayBuffer()
+                      const photoImage = await pdfDoc.embedJpg(new Uint8Array(photoBytes))
+                      
+                      const { width: imgWidth, height: imgHeight } = photoImage.scale(1)
+                      const scale = Math.min(photoWidth / imgWidth, photoHeight / imgHeight)
+                      const scaledWidth = imgWidth * scale
+                      const scaledHeight = imgHeight * scale
+                      
+                      // Position in bottom row
+                      const isLeft = (photosAdded % 2) === 0
+                      const photoX = isLeft ? leftPhotoX : rightPhotoX
+                      
+                      page3.drawImage(photoImage, {
+                        x: photoX + (photoWidth - scaledWidth) / 2,
+                        y: bottomRowY + (photoHeight - scaledHeight) / 2,
+                        width: scaledWidth,
+                        height: scaledHeight,
+                      })
+                      photosAdded++
+                      console.log(`Gallery photo ${i + 1} added to complete profile`)
+                    }
+                  } catch (photoError) {
+                    console.log(`Failed to load gallery photo ${i + 1} for complete profile:`, photoError.message)
+                  }
+                }
+              }
+
+              // Add photo placeholders if needed
+              const placeholderPositions = [
+                { x: leftPhotoX, y: topRowY, label: 'MAIN' },
+                { x: rightPhotoX, y: topRowY, label: 'FULL BODY' },
+                { x: leftPhotoX, y: bottomRowY, label: 'GALLERY 1' },
+                { x: rightPhotoX, y: bottomRowY, label: 'GALLERY 2' },
+              ]
+
+              for (let i = photosAdded; i < Math.min(4, placeholderPositions.length); i++) {
+                const pos = placeholderPositions[i]
+                page3.drawRectangle({
+                  x: pos.x,
+                  y: pos.y - photoHeight,
+                  width: photoWidth,
+                  height: photoHeight,
+                  borderColor: rgb(0.8, 0.8, 0.8),
+                  borderWidth: 1,
+                })
+                
+                page3.drawText(pos.label, {
+                  x: pos.x + photoWidth / 2 - 25,
+                  y: pos.y - photoHeight / 2,
+                  size: 10,
+                  font: regularFont,
+                  color: rgb(0.6, 0.6, 0.6),
+                })
+              }
+
+              console.log(`Photo gallery section complete. Added ${photosAdded} photos to complete profile.`)
+              yPos3 -= photoHeight + photoSpacing + 30
+
+            } catch (photoError) {
+              console.log('Error adding photos to complete profile:', photoError.message)
+              yPos3 -= 20
+            }
+          }
         }
       }
 

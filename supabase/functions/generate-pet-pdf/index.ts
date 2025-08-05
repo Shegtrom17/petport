@@ -1981,7 +1981,7 @@ serve(async (req) => {
     return new Response(JSON.stringify({
       success: true,
       pdfBytes: Array.from(pdfBytes), // Convert to array for JSON transport
-      fileName: `${petData.name.replace(/[^a-zA-Z0-9]/g, '_')}_${type}_profile.pdf`
+      fileName: petData.name.replace(/[^a-zA-Z0-9]/g, '_') + '_' + type + '_profile.pdf'
     }), {
       headers: {
         ...corsHeaders,

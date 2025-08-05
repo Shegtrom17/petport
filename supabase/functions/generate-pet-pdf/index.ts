@@ -626,32 +626,6 @@ serve(async (req) => {
         }
       }
       
-      // Medical alert if applicable
-      if (medicalData?.medical_alert) {
-        yPosition -= 10
-        
-        page.drawText('MEDICAL ALERT - NEEDS MEDICATION', {
-          x: 50,
-          y: yPosition,
-          size: 16,
-          font: boldFont,
-          color: redColor,
-        })
-        
-        yPosition -= 25
-        
-        if (medicalData.medical_conditions) {
-          page.drawText(medicalData.medical_conditions, {
-            x: 50,
-            y: yPosition,
-            size: 12,
-            font: boldFont,
-            color: blackColor,
-          })
-          
-          yPosition -= 30
-        }
-      }
       
       // Footer for flyer
       yPosition = 80
@@ -934,7 +908,7 @@ serve(async (req) => {
             color: blackColor,
           })
           
-          page.drawText(medicalData.medical_conditions, {
+          page.drawText(sanitizeTextForPDF(medicalData.medical_conditions), {
             x: 50,
             y: yPosition - 15,
             size: 11,
@@ -955,7 +929,7 @@ serve(async (req) => {
           })
           
           medicalData.medications.forEach((med: string, index: number) => {
-            page.drawText(`• ${med}`, {
+            page.drawText(`• ${sanitizeTextForPDF(med)}`, {
               x: 50,
               y: yPosition - 15 - (index * 15),
               size: 11,

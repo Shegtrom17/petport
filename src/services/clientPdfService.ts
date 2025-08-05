@@ -653,11 +653,11 @@ const generateFullPDF = async (doc: jsPDF, pageManager: PDFPageManager, petData:
   if (petData.documents && petData.documents.length > 0) {
     addSection(doc, pageManager, 'DOCUMENTS ON FILE', () => {
       addText(doc, pageManager, `Total Documents: ${petData.documents.length}`);
-      petData.documents.forEach((doc: any, index: number) => {
-        addText(doc, pageManager, `${index + 1}. ${safeText(doc.name)} (${safeText(doc.type)})`);
-        if (doc.upload_date) addText(doc, pageManager, `   Uploaded: ${safeText(doc.upload_date)}`);
-        if (doc.size) addText(doc, pageManager, `   Size: ${safeText(doc.size)}`);
-      });
+    petData.documents.forEach((document: any, index: number) => {
+      addText(doc, pageManager, `${index + 1}. ${safeText(document.name)} (${safeText(document.type)})`);
+      if (document.upload_date) addText(doc, pageManager, `   Uploaded: ${safeText(document.upload_date)}`);
+      if (document.size) addText(doc, pageManager, `   Size: ${safeText(document.size)}`);
+    });
     });
   }
 

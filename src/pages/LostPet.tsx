@@ -41,31 +41,6 @@ const LostPet = () => {
   const currentPet = selectedPet;
   const [petDataLoaded, setPetDataLoaded] = useState(false);
 
-  useEffect(() => {
-    console.log('LostPet useEffect - petId:', petId, 'pets loaded:', pets.length > 0, 'selectedPet:', selectedPet?.id, 'isLoading:', isLoading);
-    
-    // Wait for pets to load and pet to be selected
-    if (!isLoading && selectedPet) {
-      console.log('LostPet - Pet data loaded, loading lost pet data for:', selectedPet.id);
-      loadLostPetData(selectedPet.id);
-      setPetDataLoaded(true);
-    }
-  }, [isLoading, selectedPet?.id, petId]);
-
-  // Show loading state while data is being loaded
-  if (isLoading || !petDataLoaded) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-red-50 via-[#F5F0E0] to-yellow-50 flex items-center justify-center">
-        <div className="text-lg text-red-800">Loading pet data...</div>
-      </div>
-    );
-  }
-
-  // Redirect if no pet found after loading
-  if (!currentPet) {
-    return <Navigate to="/" replace />;
-  }
-
   const loadLostPetData = async (petId: string) => {
     try {
       const { data, error } = await supabase
@@ -96,6 +71,31 @@ const LostPet = () => {
       console.error('Error loading lost pet data:', error);
     }
   };
+
+  useEffect(() => {
+    console.log('LostPet useEffect - petId:', petId, 'pets loaded:', pets.length > 0, 'selectedPet:', selectedPet?.id, 'isLoading:', isLoading);
+    
+    // Wait for pets to load and pet to be selected
+    if (!isLoading && selectedPet) {
+      console.log('LostPet - Pet data loaded, loading lost pet data for:', selectedPet.id);
+      loadLostPetData(selectedPet.id);
+      setPetDataLoaded(true);
+    }
+  }, [isLoading, selectedPet?.id, petId]);
+
+  // Show loading state while data is being loaded
+  if (isLoading || !petDataLoaded) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-red-50 via-[#F5F0E0] to-yellow-50 flex items-center justify-center">
+        <div className="text-lg text-red-800">Loading pet data...</div>
+      </div>
+    );
+  }
+
+  // Redirect if no pet found after loading
+  if (!currentPet) {
+    return <Navigate to="/" replace />;
+  }
 
   const saveLostPetData = async () => {
     if (!currentPet?.id) return;

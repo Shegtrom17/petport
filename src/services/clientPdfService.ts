@@ -443,7 +443,7 @@ const generateResumePDF = async (doc: jsPDF, pageManager: PDFPageManager, petDat
   // Add first gallery photo if available
   if (petData.gallery_photos && petData.gallery_photos.length > 0) {
     try {
-      await addImage(doc, pageManager, petData.gallery_photos[0], 60, 60);
+      await addImage(doc, pageManager, petData.gallery_photos[0].url, 60, 60);
       pageManager.addY(10);
     } catch (error) {
       console.error('Error loading gallery photo:', error);

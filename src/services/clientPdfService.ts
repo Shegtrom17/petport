@@ -331,11 +331,12 @@ const generateGalleryPDF = async (doc: jsPDF, pageManager: PDFPageManager, petDa
   addText(doc, pageManager, 'Generated from PetPort Digital Pet Passport', '#6b7280', 8);
 };
 
+// Generate full profile PDF (NO emergency contacts)
 const generateFullPDF = async (doc: jsPDF, pageManager: PDFPageManager, petData: any): Promise<void> => {
   const safeText = (text: string) => sanitizeText(text || '');
   
   // Header
-  addTitle(doc, pageManager, 'Complete Pet Profile', '#1e40af', 18);
+  addTitle(doc, pageManager, 'COMPLETE PET PROFILE', '#1e40af', 18);
   addTitle(doc, pageManager, safeText(petData.name), '#1e40af', 16);
   pageManager.addY(15);
   
@@ -361,35 +362,32 @@ const generateFullPDF = async (doc: jsPDF, pageManager: PDFPageManager, petData:
       addText(doc, pageManager, petData.bio);
     });
   }
-  
-  // Care instructions
-  if (petData.careInstructions) {
-    addSection(doc, pageManager, 'CARE INSTRUCTIONS', () => {
-      if (petData.careInstructions.feedingSchedule) {
-        addText(doc, pageManager, `Feeding Schedule: ${petData.careInstructions.feedingSchedule}`);
-      }
-      if (petData.careInstructions.allergies) {
-        addText(doc, pageManager, `Allergies: ${petData.careInstructions.allergies}`);
-      }
-      if (petData.careInstructions.medications) {
-        addText(doc, pageManager, `Medications: ${petData.careInstructions.medications}`);
-      }
+
+  // Additional characteristics
+  if (petData.distinctiveFeatures) {
+    addSection(doc, pageManager, 'DISTINCTIVE FEATURES', () => {
+      addText(doc, pageManager, petData.distinctiveFeatures);
     });
   }
-  
-  // Emergency contacts
-  addSubtitle(doc, pageManager, 'EMERGENCY CONTACTS', '#1d4ed8');
-  
-  if (petData.emergencyContact) {
-    addContactCard(doc, pageManager, 'PRIMARY EMERGENCY CONTACT', petData.emergencyContact, '#dc2626');
+
+  // Travel history
+  if (petData.travelHistory && petData.travelHistory.length > 0) {
+    addSection(doc, pageManager, 'TRAVEL HISTORY', () => {
+      petData.travelHistory.forEach((trip: any, index: number) => {
+        addText(doc, pageManager, `${index + 1}. ${safeText(trip.location)} (${safeText(trip.date)})`);
+        if (trip.notes) addText(doc, pageManager, `   Notes: ${safeText(trip.notes)}`);
+      });
+    });
   }
-  
-  if (petData.secondEmergencyContact) {
-    addContactCard(doc, pageManager, 'SECONDARY EMERGENCY CONTACT', petData.secondEmergencyContact, '#f59e0b');
-  }
-  
-  if (petData.vetContact) {
-    addContactCard(doc, pageManager, 'VETERINARIAN', petData.vetContact, '#059669');
+
+  // Certifications
+  if (petData.certifications && petData.certifications.length > 0) {
+    addSection(doc, pageManager, 'CERTIFICATIONS', () => {
+      petData.certifications.forEach((cert: any) => {
+        addText(doc, pageManager, `• ${safeText(cert.name)} - ${safeText(cert.issuer)}`);
+        if (cert.expiryDate) addText(doc, pageManager, `  Expires: ${safeText(cert.expiryDate)}`);
+      });
+    });
   }
   
   // Gallery photos
@@ -403,6 +401,79 @@ const generateFullPDF = async (doc: jsPDF, pageManager: PDFPageManager, petData:
       if (photo.caption) {
         addText(doc, pageManager, photo.caption, '#6b7280', 9);
       }
+    }
+  }
+  
+  // Footer
+  pageManager.addY(20);
+  addText(doc, pageManager, 'Generated from PetPort Digital Pet Passport', '#6b7280', 8);
+  addText(doc, pageManager, `Pet ID: ${safeText(petData.id)} | Generated: ${new Date().toLocaleDateString()}`, '#6b7280', 8);
+};
+
+// Generate care instructions PDF (ONLY care-related content)
+const generateCarePDF = async (doc: jsPDF, pageManager: PDFPageManager, petData: any): Promise<void> => {
+  const safeText = (text: string) => sanitizeText(text || '');
+  
+  // Header
+  addTitle(doc, pageManager, 'CARE INSTRUCTIONS', '#059669', 18);
+  addTitle(doc, pageManager, safeText(petData.name), '#059669', 16);
+  pageManager.addY(15);
+  
+  // Pet photo
+  if (petData.photoUrl) {
+    await addImage(doc, pageManager, petData.photoUrl, 60, 60);
+  }
+  
+  // Basic pet info for context
+  addSection(doc, pageManager, 'PET INFORMATION', () => {
+    addText(doc, pageManager, `Species: ${safeText(petData.species)}`);
+    addText(doc, pageManager, `Breed: ${safeText(petData.breed)}`);
+    addText(doc, pageManager, `Age: ${safeText(petData.age)}`);
+    addText(doc, pageManager, `Weight: ${safeText(petData.weight)}`);
+  });
+  
+  // Care instructions
+  if (petData.careInstructions) {
+    if (petData.careInstructions.feedingSchedule) {
+      addSection(doc, pageManager, 'FEEDING SCHEDULE', () => {
+        addText(doc, pageManager, petData.careInstructions.feedingSchedule);
+      });
+    }
+    
+    if (petData.careInstructions.morningRoutine) {
+      addSection(doc, pageManager, 'MORNING ROUTINE', () => {
+        addText(doc, pageManager, petData.careInstructions.morningRoutine);
+      });
+    }
+    
+    if (petData.careInstructions.eveningRoutine) {
+      addSection(doc, pageManager, 'EVENING ROUTINE', () => {
+        addText(doc, pageManager, petData.careInstructions.eveningRoutine);
+      });
+    }
+    
+    if (petData.careInstructions.allergies) {
+      addSection(doc, pageManager, 'ALLERGIES & RESTRICTIONS', () => {
+        addText(doc, pageManager, petData.careInstructions.allergies);
+      });
+    }
+    
+    if (petData.careInstructions.medications) {
+      addSection(doc, pageManager, 'MEDICATIONS', () => {
+        addText(doc, pageManager, petData.careInstructions.medications);
+      });
+    }
+    
+    if (petData.careInstructions.specialNeeds) {
+      addSection(doc, pageManager, 'SPECIAL NEEDS', () => {
+        addText(doc, pageManager, petData.careInstructions.specialNeeds);
+      });
+    }
+    
+    if (petData.careInstructions.exerciseRequirements) {
+      addSection(doc, pageManager, 'EXERCISE REQUIREMENTS', () => {
+        addText(doc, pageManager, petData.careInstructions.exerciseRequirements);
+      });
     }
   }
   
@@ -439,8 +510,10 @@ export async function generateClientPetPDF(
         await generateGalleryPDF(doc, pageManager, petData);
         break;
       case 'full':
-      case 'care':
         await generateFullPDF(doc, pageManager, petData);
+        break;
+      case 'care':
+        await generateCarePDF(doc, pageManager, petData);
         break;
       default:
         await generateEmergencyPDF(doc, pageManager, petData);

@@ -107,12 +107,12 @@ export const PetPDFGenerator = ({ petId, petName, petData }: PetPDFGeneratorProp
       if (result.success) {
         if (result.shared) {
           toast({
-            title: "Profile Shared! 📱",
+            title: "Profile Shared!",
             description: `${petName}'s ${type} profile shared successfully.`,
           });
         } else {
           toast({
-            title: "Link Copied! 📋",
+            title: "Link Copied!",
             description: `${type} profile link copied - share with anyone!`,
           });
         }
@@ -205,7 +205,7 @@ export const PetPDFGenerator = ({ petId, petName, petData }: PetPDFGeneratorProp
           <div className="absolute top-2 right-2 w-8 h-8 bg-gold-500/20 rounded-full flex items-center justify-center">
             <span className="text-xs font-bold text-gold-600">1</span>
           </div>
-          <h4 className="font-bold text-navy-900 mb-2 border-b border-gold-500/50 pb-1">🚨 Emergency Profile</h4>
+          <h4 className="font-bold text-navy-900 mb-2 border-b border-gold-500/50 pb-1">Emergency Profile</h4>
           <p className="text-sm text-navy-600 mb-3">Essential medical and contact information</p>
           <Button 
             onClick={() => showPdfOptions('emergency')}
@@ -252,7 +252,7 @@ export const PetPDFGenerator = ({ petId, petName, petData }: PetPDFGeneratorProp
         <DialogContent className="max-w-md bg-[#f8f8f8]">
           <DialogHeader>
             <DialogTitle className="font-bold text-navy-900 border-b-2 border-gold-500 pb-2">
-              📋 {selectedPdfType === 'emergency' ? '🚨 Emergency' : 'Complete'} Profile Options
+              {selectedPdfType === 'emergency' ? 'Emergency' : 'Complete'} Profile Options
             </DialogTitle>
             <DialogDescription>
               Generate, view, or download {petName}'s {selectedPdfType === 'emergency' ? 'emergency' : 'complete'} profile document.
@@ -300,7 +300,7 @@ export const PetPDFGenerator = ({ petId, petName, petData }: PetPDFGeneratorProp
               <div className="space-y-4">
                 <div className="bg-white p-4 rounded-lg border border-gold-500/30 shadow-sm">
                   <h4 className="font-bold text-navy-900 mb-3">
-                    {selectedPdfType === 'emergency' ? '🚨 Emergency Profile PDF' : 'Complete Profile PDF'}
+                    {selectedPdfType === 'emergency' ? 'Emergency Profile PDF' : 'Complete Profile PDF'}
                   </h4>
                   <div className="flex flex-col sm:flex-row gap-2 justify-center mb-3">
                     <Button

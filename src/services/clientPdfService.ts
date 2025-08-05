@@ -215,6 +215,9 @@ const generateEmergencyPDF = async (doc: jsPDF, pageManager: PDFPageManager, pet
     addSection(doc, pageManager, 'CRITICAL MEDICAL INFO', () => {
       if (medicalAlert) {
         addText(doc, pageManager, 'MEDICAL ALERT ACTIVE', '#dc2626', 12);
+        if (petData.medicalConditions) {
+          addText(doc, pageManager, `Conditions: ${safeText(petData.medicalConditions)}`, '#dc2626', 10);
+        }
       }
       if (medications.length > 0) {
         addText(doc, pageManager, `Medications: ${medications.join(', ')}`, '#000000', 10);

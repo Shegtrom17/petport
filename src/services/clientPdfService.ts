@@ -468,12 +468,36 @@ const generateGalleryPDF = async (doc: jsPDF, pageManager: PDFPageManager, petDa
   const galleryPhotos = petData.gallery_photos || [];
   
   if (galleryPhotos.length > 0) {
-    for (const photo of galleryPhotos) {
-      await addImage(doc, pageManager, photo.url, 120, 120);
-      if (photo.caption) {
-        addText(doc, pageManager, photo.caption, '#6b7280', 9);
+    const photoSize = 55;
+    const spacing = 60; // 55 photo width + 5 margin
+    const startX = 20;
+    const photosPerRow = 3;
+    
+    for (let i = 0; i < galleryPhotos.length; i += photosPerRow) {
+      const startY = pageManager.getCurrentY();
+      const rowPhotos = galleryPhotos.slice(i, i + photosPerRow);
+      
+      // Place photos horizontally in the same row
+      for (let j = 0; j < rowPhotos.length; j++) {
+        const photoX = startX + (j * spacing);
+        
+        // Draw photo without advancing Y cursor
+        try {
+          const base64 = await loadImageAsBase64(rowPhotos[j].url);
+          doc.addImage(base64, 'JPEG', photoX, startY, photoSize, photoSize);
+        } catch (error) {
+          console.error('Error adding image:', error);
+        }
+        
+        // Add caption below photo
+        if (rowPhotos[j].caption) {
+          const captionY = startY + photoSize + 5;
+          doc.text(rowPhotos[j].caption, photoX, captionY, { maxWidth: photoSize });
+        }
       }
-      pageManager.addY(10);
+      
+      // Advance Y position for next row
+      pageManager.addY(photoSize + 20); // Photo height + space for caption and row spacing
     }
   } else {
     addText(doc, pageManager, 'No photos available', '#6b7280');

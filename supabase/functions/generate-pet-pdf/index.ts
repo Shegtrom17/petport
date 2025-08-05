@@ -261,46 +261,44 @@ serve(async (req) => {
     
     // Helper function to sanitize text for PDF generation - AGGRESSIVE EMOJI REMOVAL
     const sanitizeTextForPDF = (text: string): string => {
-      if (!text) return '';
+      if (!text) return 'N/A';
       
       try {
-        // Convert to string if it's not already
-        const str = String(text);
+        // Convert to string and get basic string
+        let str = String(text || '');
         
-        // STEP 1: Remove ALL emojis and Unicode symbols first
-        let sanitized = str
-          // Remove all emojis (comprehensive range)
-          .replace(/[\u{1F600}-\u{1F64F}]/gu, '') // Emoticons
-          .replace(/[\u{1F300}-\u{1F5FF}]/gu, '') // Misc Symbols and Pictographs
-          .replace(/[\u{1F680}-\u{1F6FF}]/gu, '') // Transport and Map Symbols
-          .replace(/[\u{1F1E0}-\u{1F1FF}]/gu, '') // Regional indicator symbols (flags)
-          .replace(/[\u{2600}-\u{26FF}]/gu, '')   // Misc symbols
-          .replace(/[\u{2700}-\u{27BF}]/gu, '')   // Dingbats
-          .replace(/[\u{1F900}-\u{1F9FF}]/gu, '') // Supplemental Symbols and Pictographs
-          .replace(/[\u{1FA70}-\u{1FAFF}]/gu, '') // Symbols and Pictographs Extended-A
-          .replace(/[\u{FE00}-\u{FE0F}]/gu, '')   // Variation Selectors
-          .replace(/[\u{200D}]/gu, '')            // Zero Width Joiner (emoji sequences)
+        // ULTRA-AGGRESSIVE APPROACH: Only allow basic ASCII printable characters (32-126)
+        // This removes ALL Unicode, emojis, and special characters
+        str = str
+          // First, replace common characters with ASCII equivalents
+          .replace(/[""]/g, '"')      // Smart quotes
+          .replace(/['']/g, "'")      // Smart apostrophes  
+          .replace(/[–—]/g, '-')      // Em/en dashes
+          .replace(/[…]/g, '...')     // Ellipsis
           
-          // STEP 2: Remove ALL non-basic ASCII characters (keep only 32-126)
+          // Then remove ALL non-ASCII characters (anything >= 128)
+          .replace(/[^\x00-\x7F]/g, '')
+          
+          // Keep only printable ASCII characters (space through tilde: 32-126)
           .replace(/[^\x20-\x7E]/g, '')
           
-          // STEP 3: Clean up formatting
-          .replace(/\\n/g, ' ')
-          .replace(/\n/g, ' ')
-          .replace(/\r/g, ' ')
-          .replace(/\t/g, ' ')
+          // Clean up whitespace
+          .replace(/[\r\n\t]/g, ' ')
           .replace(/\s+/g, ' ')
           .trim();
         
-        // STEP 4: Final safety check - if any high Unicode chars remain, remove them
-        sanitized = sanitized.replace(/[\u0080-\uFFFF]/g, '');
+        // Final verification - if still contains high Unicode, strip everything non-alphanumeric
+        if (/[^\x20-\x7E]/.test(str)) {
+          console.error('ERROR: Still contains non-ASCII after sanitization:', str);
+          str = str.replace(/[^a-zA-Z0-9\s\.\,\!\?\-\(\)]/g, '').trim();
+        }
         
-        return sanitized || 'N/A'; // Return fallback if empty
+        return str || 'N/A';
         
       } catch (error) {
-        console.error('ERROR: Error sanitizing text:', error);
-        // Ultra-safe fallback: only alphanumeric and basic punctuation
-        return String(text || '').replace(/[^a-zA-Z0-9\s\.\,\!\?\-\(\)]/g, '').replace(/\s+/g, ' ').trim() || 'N/A';
+        console.error('ERROR: Error sanitizing text for PDF:', error);
+        // Ultra-safe fallback
+        return String(text || '').replace(/[^a-zA-Z0-9\s\.\,\!\?\-\(\)]/g, '').trim() || 'N/A';
       }
     }
     
@@ -309,7 +307,10 @@ serve(async (req) => {
       if (!text) return y;
       
       try {
+        // CRITICAL: Re-sanitize text before any drawing operation
         const sanitizedText = sanitizeTextForPDF(text);
+        console.log('DEBUG: Drawing multiline text:', { original: text, sanitized: sanitizedText });
+        
         const words = sanitizedText.split(' ');
         let currentLine = '';
         let currentY = y;
@@ -319,8 +320,9 @@ serve(async (req) => {
           const testWidth = font.widthOfTextAtSize(testLine, fontSize);
           
           if (testWidth > maxWidth && currentLine) {
-            // Draw the current line
-            page.drawText(currentLine, {
+            // Draw the current line with double-sanitization
+            const safeText = sanitizeTextForPDF(currentLine);
+            page.drawText(safeText, {
               x: x,
               y: currentY,
               size: fontSize,
@@ -334,9 +336,10 @@ serve(async (req) => {
           }
         }
         
-        // Draw the last line
+        // Draw the last line with double-sanitization
         if (currentLine) {
-          page.drawText(currentLine, {
+          const safeText = sanitizeTextForPDF(currentLine);
+          page.drawText(safeText, {
             x: x,
             y: currentY,
             size: fontSize,
@@ -353,6 +356,28 @@ serve(async (req) => {
       }
     }
     
+    // CRITICAL: Safe text drawing wrapper
+    const safeDrawText = (page: any, text: string, options: any): void => {
+      try {
+        const safeText = sanitizeTextForPDF(text);
+        console.log('DEBUG: Drawing safe text:', { original: text, sanitized: safeText });
+        if (safeText && safeText !== 'N/A') {
+          page.drawText(safeText, options);
+        }
+      } catch (error) {
+        console.error('ERROR: Error in safeDrawText:', error);
+        // Try with ultra-safe fallback
+        try {
+          const ultraSafe = String(text || '').replace(/[^a-zA-Z0-9\s]/g, '').trim();
+          if (ultraSafe) {
+            page.drawText(ultraSafe, options);
+          }
+        } catch (fallbackError) {
+          console.error('ERROR: Even fallback failed:', fallbackError);
+        }
+      }
+    }
+    
     let yPosition = height - 60
     
     console.log('🎨 Starting PDF layout generation for type:', type)
@@ -362,8 +387,8 @@ serve(async (req) => {
       console.log('EMERGENCY: Generating Emergency PDF...')
       
       try {
-        // Title
-        page.drawText('EMERGENCY PET PROFILE', {
+        // Title - Use safe drawing
+        safeDrawText(page, 'EMERGENCY PET PROFILE', {
           x: 50,
           y: yPosition,
           size: 24,
@@ -372,7 +397,14 @@ serve(async (req) => {
         })
         yPosition -= 40
         
-        // Pet Name and Basic Info - PRE-SANITIZE ALL DATA
+        // Pet Name and Basic Info - PRE-SANITIZE ALL DATA WITH LOGGING
+        console.log('DEBUG: Raw pet data before sanitization:', {
+          name: petData.name,
+          breed: petData.breed,
+          species: petData.species,
+          age: petData.age
+        });
+        
         const petName = sanitizeTextForPDF(String(petData.name || 'Unknown Pet'))
         const petBreed = sanitizeTextForPDF(String(petData.breed || 'Unknown Breed'))
         const petSpecies = sanitizeTextForPDF(String(petData.species || 'Pet'))
@@ -380,7 +412,7 @@ serve(async (req) => {
         
         console.log('🧹 Sanitized pet data:', { petName, petBreed, petSpecies, petAge })
         
-        page.drawText(`Name: ${petName}`, {
+        safeDrawText(page, `Name: ${petName}`, {
           x: 50,
           y: yPosition,
           size: 16,
@@ -390,7 +422,7 @@ serve(async (req) => {
         yPosition -= 25
         
         
-        page.drawText(`Breed: ${petBreed} | Species: ${petSpecies}`, {
+        safeDrawText(page, `Breed: ${petBreed} | Species: ${petSpecies}`, {
           x: 50,
           y: yPosition,
           size: 14,
@@ -400,7 +432,7 @@ serve(async (req) => {
         yPosition -= 25
         
         if (petAge) {
-          page.drawText(`Age: ${petAge}`, {
+          safeDrawText(page, `Age: ${petAge}`, {
             x: 50,
             y: yPosition,
             size: 14,

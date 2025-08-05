@@ -259,30 +259,48 @@ serve(async (req) => {
     const blackColor = rgb(0, 0, 0)
     const whiteColor = rgb(1, 1, 1)
     
-    // Helper function to sanitize text for PDF generation
+    // Helper function to sanitize text for PDF generation - AGGRESSIVE EMOJI REMOVAL
     const sanitizeTextForPDF = (text: string): string => {
       if (!text) return '';
       
       try {
-        // Remove all emojis and non-ASCII characters completely
-        let sanitized = text
-          // Fix newline characters
+        // Convert to string if it's not already
+        const str = String(text);
+        
+        // STEP 1: Remove ALL emojis and Unicode symbols first
+        let sanitized = str
+          // Remove all emojis (comprehensive range)
+          .replace(/[\u{1F600}-\u{1F64F}]/gu, '') // Emoticons
+          .replace(/[\u{1F300}-\u{1F5FF}]/gu, '') // Misc Symbols and Pictographs
+          .replace(/[\u{1F680}-\u{1F6FF}]/gu, '') // Transport and Map Symbols
+          .replace(/[\u{1F1E0}-\u{1F1FF}]/gu, '') // Regional indicator symbols (flags)
+          .replace(/[\u{2600}-\u{26FF}]/gu, '')   // Misc symbols
+          .replace(/[\u{2700}-\u{27BF}]/gu, '')   // Dingbats
+          .replace(/[\u{1F900}-\u{1F9FF}]/gu, '') // Supplemental Symbols and Pictographs
+          .replace(/[\u{1FA70}-\u{1FAFF}]/gu, '') // Symbols and Pictographs Extended-A
+          .replace(/[\u{FE00}-\u{FE0F}]/gu, '')   // Variation Selectors
+          .replace(/[\u{200D}]/gu, '')            // Zero Width Joiner (emoji sequences)
+          
+          // STEP 2: Remove ALL non-basic ASCII characters (keep only 32-126)
+          .replace(/[^\x20-\x7E]/g, '')
+          
+          // STEP 3: Clean up formatting
           .replace(/\\n/g, ' ')
           .replace(/\n/g, ' ')
           .replace(/\r/g, ' ')
           .replace(/\t/g, ' ')
-          // Remove ALL non-ASCII characters (anything above code point 127)
-          .replace(/[^\x00-\x7F]/g, '')
-          // Clean up whitespace
           .replace(/\s+/g, ' ')
           .trim();
         
-        return sanitized;
+        // STEP 4: Final safety check - if any high Unicode chars remain, remove them
+        sanitized = sanitized.replace(/[\u0080-\uFFFF]/g, '');
+        
+        return sanitized || 'N/A'; // Return fallback if empty
         
       } catch (error) {
         console.error('❌ Error sanitizing text:', error);
-        // Fallback: return only ASCII alphanumeric characters and basic punctuation
-        return text.replace(/[^a-zA-Z0-9\s\.\,\!\?\-\(\)]/g, '').replace(/\s+/g, ' ').trim();
+        // Ultra-safe fallback: only alphanumeric and basic punctuation
+        return String(text || '').replace(/[^a-zA-Z0-9\s\.\,\!\?\-\(\)]/g, '').replace(/\s+/g, ' ').trim() || 'N/A';
       }
     }
     
@@ -354,10 +372,13 @@ serve(async (req) => {
         })
         yPosition -= 40
         
-        // Pet Name and Basic Info
-        const petName = sanitizeTextForPDF(petData.name || 'Unknown Pet')
-        const petBreed = sanitizeTextForPDF(petData.breed || 'Unknown Breed')
-        const petSpecies = sanitizeTextForPDF(petData.species || 'Pet')
+        // Pet Name and Basic Info - PRE-SANITIZE ALL DATA
+        const petName = sanitizeTextForPDF(String(petData.name || 'Unknown Pet'))
+        const petBreed = sanitizeTextForPDF(String(petData.breed || 'Unknown Breed'))
+        const petSpecies = sanitizeTextForPDF(String(petData.species || 'Pet'))
+        const petAge = sanitizeTextForPDF(String(petData.age || ''))
+        
+        console.log('🧹 Sanitized pet data:', { petName, petBreed, petSpecies, petAge })
         
         page.drawText(`Name: ${petName}`, {
           x: 50,
@@ -368,6 +389,7 @@ serve(async (req) => {
         })
         yPosition -= 25
         
+        
         page.drawText(`Breed: ${petBreed} | Species: ${petSpecies}`, {
           x: 50,
           y: yPosition,
@@ -377,8 +399,8 @@ serve(async (req) => {
         })
         yPosition -= 25
         
-        if (petData.age) {
-          page.drawText(`Age: ${sanitizeTextForPDF(petData.age)}`, {
+        if (petAge) {
+          page.drawText(`Age: ${petAge}`, {
             x: 50,
             y: yPosition,
             size: 14,
@@ -388,7 +410,7 @@ serve(async (req) => {
           yPosition -= 25
         }
         
-        // Emergency Contacts
+        // Emergency Contacts - PRE-SANITIZE ALL TEXT
         if (contactsData) {
           console.log('📞 Adding emergency contacts...')
           
@@ -402,40 +424,49 @@ serve(async (req) => {
           yPosition -= 25
           
           if (contactsData.emergency_contact) {
-            page.drawText(`Primary: ${sanitizeTextForPDF(contactsData.emergency_contact)}`, {
-              x: 70,
-              y: yPosition,
-              size: 14,
-              font: regularFont,
-              color: blackColor,
-            })
-            yPosition -= 20
+            const emergencyContact = sanitizeTextForPDF(String(contactsData.emergency_contact || ''))
+            if (emergencyContact && emergencyContact !== 'N/A') {
+              page.drawText(`Primary: ${emergencyContact}`, {
+                x: 70,
+                y: yPosition,
+                size: 14,
+                font: regularFont,
+                color: blackColor,
+              })
+              yPosition -= 20
+            }
           }
           
           if (contactsData.second_emergency_contact) {
-            page.drawText(`Secondary: ${sanitizeTextForPDF(contactsData.second_emergency_contact)}`, {
-              x: 70,
-              y: yPosition,
-              size: 14,
-              font: regularFont,
-              color: blackColor,
-            })
-            yPosition -= 20
+            const secondContact = sanitizeTextForPDF(String(contactsData.second_emergency_contact || ''))
+            if (secondContact && secondContact !== 'N/A') {
+              page.drawText(`Secondary: ${secondContact}`, {
+                x: 70,
+                y: yPosition,
+                size: 14,
+                font: regularFont,
+                color: blackColor,
+              })
+              yPosition -= 20
+            }
           }
           
           if (contactsData.vet_contact) {
-            page.drawText(`Vet: ${sanitizeTextForPDF(contactsData.vet_contact)}`, {
-              x: 70,
-              y: yPosition,
-              size: 14,
-              font: regularFont,
-              color: blackColor,
-            })
-            yPosition -= 25
+            const vetContact = sanitizeTextForPDF(String(contactsData.vet_contact || ''))
+            if (vetContact && vetContact !== 'N/A') {
+              page.drawText(`Vet: ${vetContact}`, {
+                x: 70,
+                y: yPosition,
+                size: 14,
+                font: regularFont,
+                color: blackColor,
+              })
+              yPosition -= 25
+            }
           }
         }
         
-        // Medical Information
+        // Medical Information - PRE-SANITIZE ALL MEDICAL DATA
         if (medicalData) {
           console.log('🏥 Adding medical information...')
           
@@ -460,14 +491,17 @@ serve(async (req) => {
           }
           
           if (medicalData.medical_conditions) {
-            page.drawText(`Conditions: ${sanitizeTextForPDF(medicalData.medical_conditions)}`, {
-              x: 70,
-              y: yPosition,
-              size: 12,
-              font: regularFont,
-              color: blackColor,
-            })
-            yPosition -= 20
+            const conditions = sanitizeTextForPDF(String(medicalData.medical_conditions || ''))
+            if (conditions && conditions !== 'N/A') {
+              page.drawText(`Conditions: ${conditions}`, {
+                x: 70,
+                y: yPosition,
+                size: 12,
+                font: regularFont,
+                color: blackColor,
+              })
+              yPosition -= 20
+            }
           }
           
           if (medicalData.medications && Array.isArray(medicalData.medications) && medicalData.medications.length > 0) {
@@ -482,14 +516,17 @@ serve(async (req) => {
             
             medicalData.medications.forEach((med, index) => {
               if (med && yPosition > 50) {
-                page.drawText(`- ${sanitizeTextForPDF(med)}`, {
-                  x: 90,
-                  y: yPosition,
-                  size: 11,
-                  font: regularFont,
-                  color: blackColor,
-                })
-                yPosition -= 15
+                const medication = sanitizeTextForPDF(String(med || ''))
+                if (medication && medication !== 'N/A') {
+                  page.drawText(`- ${medication}`, {
+                    x: 90,
+                    y: yPosition,
+                    size: 11,
+                    font: regularFont,
+                    color: blackColor,
+                  })
+                  yPosition -= 15
+                }
               }
             })
           }

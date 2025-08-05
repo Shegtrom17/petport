@@ -1864,7 +1864,6 @@ serve(async (req) => {
         })
         
         console.log(`Complete Profile PDF generated with ${currentPageNum} pages.`)
-                  })
                   
                   // Add caption if available
                   if (photo.caption) {

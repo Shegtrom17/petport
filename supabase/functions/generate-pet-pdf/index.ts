@@ -458,7 +458,7 @@ serve(async (req) => {
       }
       
       // Pet basic info in slightly smaller text to accommodate photos
-      page.drawText(`${petData.name} - ${petData.breed || 'Unknown Breed'} ${petData.species || 'Pet'}`, {
+      page.drawText(sanitizeTextForPDF(`${petData.name} - ${petData.breed || 'Unknown Breed'} ${petData.species || 'Pet'}`), {
         x: 50,
         y: yPosition,
         size: 18,
@@ -487,7 +487,7 @@ serve(async (req) => {
         
         if (lostPetData.last_seen_date) {
           const date = new Date(lostPetData.last_seen_date).toLocaleDateString()
-          page.drawText(`Date: ${date}`, {
+          page.drawText(sanitizeTextForPDF(`Date: ${date}`), {
             x: 50,
             y: yPosition,
             size: 14,
@@ -496,7 +496,7 @@ serve(async (req) => {
           })
           
           if (lostPetData.last_seen_time) {
-            page.drawText(`Time: ${lostPetData.last_seen_time}`, {
+            page.drawText(sanitizeTextForPDF(`Time: ${lostPetData.last_seen_time}`), {
               x: 250,
               y: yPosition,
               size: 14,
@@ -519,7 +519,7 @@ serve(async (req) => {
           
           yPosition -= 18
           
-          page.drawText(lostPetData.distinctive_features, {
+          page.drawText(sanitizeTextForPDF(lostPetData.distinctive_features), {
             x: 50,
             y: yPosition,
             size: 12,
@@ -539,7 +539,7 @@ serve(async (req) => {
             color: redColor,
           })
           
-          page.drawText(lostPetData.reward_amount, {
+          page.drawText(sanitizeTextForPDF(lostPetData.reward_amount), {
             x: 130,
             y: yPosition,
             size: 16,
@@ -572,7 +572,7 @@ serve(async (req) => {
       ]
       
       for (const detail of petDetails) {
-        page.drawText(`${detail.label} ${detail.value}`, {
+        page.drawText(sanitizeTextForPDF(`${detail.label} ${detail.value}`), {
           x: 50,
           y: yPosition,
           size: 12,
@@ -828,7 +828,7 @@ serve(async (req) => {
             color: blackColor,
           })
           
-          page.drawText(detail.value, {
+          page.drawText(sanitizeTextForPDF(detail.value), {
             x: 150,
             y: yPosition,
             size: 12,
@@ -957,7 +957,7 @@ serve(async (req) => {
             currentYPosition = height - 60
             
             // Add page header
-            currentPage.drawText(`${petData.name} - Care Instructions (Page 2)`, {
+            currentPage.drawText(sanitizeTextForPDF(`${petData.name} - Care Instructions (Page 2)`), {
               x: 50,
               y: currentYPosition,
               size: 16,
@@ -1001,7 +1001,7 @@ serve(async (req) => {
             
             feedingLines.forEach((line) => {
               checkNewPage(20)
-              currentPage.drawText(`• ${line.trim()}`, {
+              currentPage.drawText(sanitizeTextForPDF(`• ${line.trim()}`), {
                 x: 70,
                 y: currentYPosition,
                 size: 10,
@@ -1029,7 +1029,7 @@ serve(async (req) => {
             
             morningLines.forEach((line) => {
               checkNewPage(20)
-              currentPage.drawText(`• ${line.trim()}`, {
+              currentPage.drawText(sanitizeTextForPDF(`• ${line.trim()}`), {
                 x: 70,
                 y: currentYPosition,
                 size: 10,
@@ -1057,7 +1057,7 @@ serve(async (req) => {
             
             eveningLines.forEach((line) => {
               checkNewPage(20)
-              currentPage.drawText(`• ${line.trim()}`, {
+              currentPage.drawText(sanitizeTextForPDF(`• ${line.trim()}`), {
                 x: 70,
                 y: currentYPosition,
                 size: 10,
@@ -1097,7 +1097,7 @@ serve(async (req) => {
             
             allergyLines.forEach((line) => {
               checkNewPage(20)
-              currentPage.drawText(`! ${line.trim()}`, {
+              currentPage.drawText(sanitizeTextForPDF(`! ${line.trim()}`), {
                 x: 70,
                 y: currentYPosition,
                 size: 10,
@@ -1125,7 +1125,7 @@ serve(async (req) => {
             
             behaviorLines.forEach((line) => {
               checkNewPage(20)
-              currentPage.drawText(`• ${line.trim()}`, {
+              currentPage.drawText(sanitizeTextForPDF(`• ${line.trim()}`), {
                 x: 70,
                 y: currentYPosition,
                 size: 10,
@@ -1153,7 +1153,7 @@ serve(async (req) => {
             
             activityLines.forEach((line) => {
               checkNewPage(20)
-              currentPage.drawText(`• ${line.trim()}`, {
+              currentPage.drawText(sanitizeTextForPDF(`• ${line.trim()}`), {
                 x: 70,
                 y: currentYPosition,
                 size: 10,
@@ -1283,7 +1283,7 @@ serve(async (req) => {
             const feedingLines = careData.feeding_schedule.split('\n').filter(line => line.trim())
             feedingLines.forEach((line) => {
               checkNewPageComplete(20)
-              currentPage.drawText(`• ${line.trim()}`, {
+              currentPage.drawText(sanitizeTextForPDF(`• ${line.trim()}`), {
                 x: 70,
                 y: currentYPosition,
                 size: 10,
@@ -1309,7 +1309,7 @@ serve(async (req) => {
             const morningLines = careData.morning_routine.split('\n').filter(line => line.trim())
             morningLines.forEach((line) => {
               checkNewPageComplete(20)
-              currentPage.drawText(`• ${line.trim()}`, {
+              currentPage.drawText(sanitizeTextForPDF(`• ${line.trim()}`), {
                 x: 70,
                 y: currentYPosition,
                 size: 10,
@@ -1335,7 +1335,7 @@ serve(async (req) => {
             const eveningLines = careData.evening_routine.split('\n').filter(line => line.trim())
             eveningLines.forEach((line) => {
               checkNewPageComplete(20)
-              currentPage.drawText(`• ${line.trim()}`, {
+              currentPage.drawText(sanitizeTextForPDF(`• ${line.trim()}`), {
                 x: 70,
                 y: currentYPosition,
                 size: 10,
@@ -1361,7 +1361,7 @@ serve(async (req) => {
             const allergyLines = careData.allergies.split('\n').filter(line => line.trim())
             allergyLines.forEach((line) => {
               checkNewPageComplete(20)
-              currentPage.drawText(`! ${line.trim()}`, {
+              currentPage.drawText(sanitizeTextForPDF(`! ${line.trim()}`), {
                 x: 70,
                 y: currentYPosition,
                 size: 10,
@@ -1387,7 +1387,7 @@ serve(async (req) => {
             const behaviorLines = careData.behavioral_notes.split('\n').filter(line => line.trim())
             behaviorLines.forEach((line) => {
               checkNewPageComplete(20)
-              currentPage.drawText(`• ${line.trim()}`, {
+              currentPage.drawText(sanitizeTextForPDF(`• ${line.trim()}`), {
                 x: 70,
                 y: currentYPosition,
                 size: 10,
@@ -1413,7 +1413,7 @@ serve(async (req) => {
             const activityLines = careData.favorite_activities.split('\n').filter(line => line.trim())
             activityLines.forEach((line) => {
               checkNewPageComplete(20)
-              currentPage.drawText(`• ${line.trim()}`, {
+              currentPage.drawText(sanitizeTextForPDF(`• ${line.trim()}`), {
                 x: 70,
                 y: currentYPosition,
                 size: 10,
@@ -1442,7 +1442,7 @@ serve(async (req) => {
 
           if (professionalData?.support_animal_status) {
             checkNewPageComplete(30)
-            currentPage.drawText(`Support Animal Status: ${professionalData.support_animal_status}`, {
+            currentPage.drawText(sanitizeTextForPDF(`Support Animal Status: ${professionalData.support_animal_status}`), {
               x: 50,
               y: currentYPosition,
               size: 12,
@@ -1465,7 +1465,7 @@ serve(async (req) => {
 
             certificationsData.forEach((cert: any) => {
               checkNewPageComplete(20)
-              currentPage.drawText(`• ${cert.type} - ${cert.status} (${cert.issuer || 'N/A'})`, {
+              currentPage.drawText(sanitizeTextForPDF(`• ${cert.type} - ${cert.status} (${cert.issuer || 'N/A'})`), {
                 x: 50,
                 y: currentYPosition,
                 size: 11,
@@ -1505,7 +1505,7 @@ serve(async (req) => {
 
             trainingData.forEach((training: any) => {
               checkNewPageComplete(20)
-              currentPage.drawText(`• ${training.course} at ${training.facility || 'N/A'} - ${training.completed || 'In Progress'}`, {
+              currentPage.drawText(sanitizeTextForPDF(`• ${training.course} at ${training.facility || 'N/A'} - ${training.completed || 'In Progress'}`), {
                 x: 50,
                 y: currentYPosition,
                 size: 11,
@@ -1530,7 +1530,7 @@ serve(async (req) => {
 
             achievementsData.forEach((achievement: any) => {
               checkNewPageComplete(20)
-              currentPage.drawText(`• ${achievement.title} - ${achievement.description || 'N/A'}`, {
+              currentPage.drawText(sanitizeTextForPDF(`• ${achievement.title} - ${achievement.description || 'N/A'}`), {
                 x: 50,
                 y: currentYPosition,
                 size: 11,
@@ -1564,7 +1564,7 @@ serve(async (req) => {
             
             checkNewPageComplete(neededSpace)
             
-            currentPage.drawText(`★ ${review.rating}/5 - ${review.reviewer_name}`, {
+            currentPage.drawText(sanitizeTextForPDF(`★ ${review.rating}/5 - ${review.reviewer_name}`), {
               x: 50,
               y: currentYPosition,
               size: 12,
@@ -1577,7 +1577,7 @@ serve(async (req) => {
               const reviewTextLines = review.text.split('\n').filter(line => line.trim())
               reviewTextLines.forEach((line) => {
                 checkNewPageComplete(20)
-                currentPage.drawText(`"${line.trim()}"`, {
+                currentPage.drawText(sanitizeTextForPDF(`"${line.trim()}"`), {
                   x: 50,
                   y: currentYPosition,
                   size: 11,
@@ -1589,7 +1589,7 @@ serve(async (req) => {
             }
 
             checkNewPageComplete(20)
-            currentPage.drawText(`${review.type || 'General'} | ${review.location || 'N/A'} | ${review.date || 'N/A'}`, {
+            currentPage.drawText(sanitizeTextForPDF(`${review.type || 'General'} | ${review.location || 'N/A'} | ${review.date || 'N/A'}`), {
               x: 50,
               y: currentYPosition,
               size: 10,
@@ -1628,7 +1628,7 @@ serve(async (req) => {
 
             if (location.date_visited) {
               checkNewPageComplete(20)
-              currentPage.drawText(`Visited: ${location.date_visited}`, {
+              currentPage.drawText(sanitizeTextForPDF(`Visited: ${location.date_visited}`), {
                 x: 50,
                 y: currentYPosition,
                 size: 11,
@@ -1677,7 +1677,7 @@ serve(async (req) => {
             
             checkNewPageComplete(neededSpace)
             
-            currentPage.drawText(`• ${exp.activity}`, {
+            currentPage.drawText(sanitizeTextForPDF(`• ${exp.activity}`), {
               x: 50,
               y: currentYPosition,
               size: 12,
@@ -1690,7 +1690,7 @@ serve(async (req) => {
               const descLines = exp.description.split('\n').filter(line => line.trim())
               descLines.forEach((line) => {
                 checkNewPageComplete(20)
-                currentPage.drawText(line.trim(), {
+                currentPage.drawText(sanitizeTextForPDF(line.trim()), {
                   x: 50,
                   y: currentYPosition,
                   size: 11,
@@ -1703,7 +1703,7 @@ serve(async (req) => {
 
             if (exp.contact) {
               checkNewPageComplete(25)
-              currentPage.drawText(`Contact: ${exp.contact}`, {
+              currentPage.drawText(sanitizeTextForPDF(`Contact: ${exp.contact}`), {
                 x: 50,
                 y: currentYPosition,
                 size: 10,

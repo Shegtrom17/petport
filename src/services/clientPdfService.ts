@@ -442,6 +442,14 @@ const generateLostPetPDF = async (doc: jsPDF, pageManager: PDFPageManager, petDa
     doc.setTextColor(0, 0, 0); // Reset text color
   }
   
+  // Instructions for finder (if available)
+  if (petData.finder_instructions) {
+    pageManager.addY(15);
+    addSection(doc, pageManager, 'INSTRUCTIONS FOR FINDER', () => {
+      addText(doc, pageManager, safeText(petData.finder_instructions));
+    });
+  }
+
   // If Found section
   pageManager.addY(15);
   addSection(doc, pageManager, 'IF FOUND', () => {

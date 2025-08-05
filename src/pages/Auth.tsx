@@ -111,7 +111,7 @@ export default function Auth() {
           <div className="flex justify-center">
             <div className="w-20 h-20 rounded-full bg-white/90 shadow-lg flex items-center justify-center mb-4">
               <img 
-                src="/lovable-uploads/1af9fe70-ed76-44c5-a1e1-1a058e497a10.png" 
+                src="/lovable-uploads/213ccabc-3918-406d-b844-9c2730b7637d.png" 
                 alt="PetPort Logo"
                 className="w-16 h-16 object-contain"
               />

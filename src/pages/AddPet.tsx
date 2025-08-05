@@ -106,7 +106,7 @@ export default function AddPet() {
             <div className="flex items-center space-x-3">
               <div className="w-10 h-10 rounded-xl flex items-center justify-center overflow-hidden">
                 <img 
-                  src="/lovable-uploads/1af9fe70-ed76-44c5-a1e1-1a058e497a10.png" 
+                  src="/lovable-uploads/213ccabc-3918-406d-b844-9c2730b7637d.png" 
                   alt="PetPort Logo"
                   className="w-full h-full object-contain"
                 />

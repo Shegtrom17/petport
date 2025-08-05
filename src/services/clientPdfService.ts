@@ -319,12 +319,12 @@ const generateLostPetPDF = async (doc: jsPDF, pageManager: PDFPageManager, petDa
   pageManager.setX(rightColumnX);
   
   addSection(doc, pageManager, 'PET DETAILS', () => {
-    addText(doc, pageManager, `Name: ${safeText(petData.name)}`);
-    addText(doc, pageManager, `Breed: ${safeText(petData.breed)}`);
-    addText(doc, pageManager, `Age: ${safeText(petData.age)}`);
-    addText(doc, pageManager, `Weight: ${safeText(petData.weight)}`);
-    if (petData.species) addText(doc, pageManager, `Color: ${safeText(petData.species)}`);
-    if (petData.microchipId) addText(doc, pageManager, `Microchip: ${safeText(petData.microchipId)}`);
+    addText(doc, pageManager, `Name: ${safeText(petData.name)}`, '#000000', 11);
+    addText(doc, pageManager, `Breed: ${safeText(petData.breed)}`, '#000000', 11);
+    addText(doc, pageManager, `Age: ${safeText(petData.age)}`, '#000000', 11);
+    addText(doc, pageManager, `Weight: ${safeText(petData.weight)}`, '#000000', 11);
+    if (petData.species) addText(doc, pageManager, `Color: ${safeText(petData.species)}`, '#000000', 11);
+    if (petData.microchipId) addText(doc, pageManager, `Microchip: ${safeText(petData.microchipId)}`, '#000000', 11);
   });
   
   // Reset X position and move below both columns
@@ -332,7 +332,7 @@ const generateLostPetPDF = async (doc: jsPDF, pageManager: PDFPageManager, petDa
   pageManager.setY(Math.max(currentY + 70, pageManager.getCurrentY()));
   
   // Emergency contact information - compact format
-  pageManager.addY(6);
+  pageManager.addY(4);
   addSection(doc, pageManager, 'EMERGENCY CONTACT', () => {
     // Try different possible property names for emergency contacts
     const primaryContact = petData.emergencyContact || petData.emergency_contact || petData.emergency_contacts?.[0];
@@ -341,21 +341,21 @@ const generateLostPetPDF = async (doc: jsPDF, pageManager: PDFPageManager, petDa
     
     // Combine all contacts into compact lines
     if (primaryContact && secondaryContact) {
-      addText(doc, pageManager, `Primary: ${safeText(primaryContact)} | Secondary: ${safeText(secondaryContact)}`);
+      addText(doc, pageManager, `Primary: ${safeText(primaryContact)} | Secondary: ${safeText(secondaryContact)}`, '#000000', 12);
     } else if (primaryContact) {
-      addText(doc, pageManager, `Primary: ${safeText(primaryContact)}`);
+      addText(doc, pageManager, `Primary: ${safeText(primaryContact)}`, '#000000', 12);
     } else if (secondaryContact) {
-      addText(doc, pageManager, `Contact: ${safeText(secondaryContact)}`);
+      addText(doc, pageManager, `Contact: ${safeText(secondaryContact)}`, '#000000', 12);
     }
     if (vetContact) {
-      addText(doc, pageManager, `Vet: ${safeText(vetContact)}`);
+      addText(doc, pageManager, `Vet: ${safeText(vetContact)}`, '#000000', 12);
     }
-    addText(doc, pageManager, `PetPort ID: ${safeText(petData.id)}`);
+    addText(doc, pageManager, `PetPort ID: ${safeText(petData.id)}`, '#000000', 11);
   });
   
   // Last seen information (if available from lost pet data)
   if (petData.last_seen_location || petData.last_seen_date) {
-    pageManager.addY(6);
+    pageManager.addY(4);
     addSection(doc, pageManager, 'LAST SEEN', () => {
       let lastSeenText = '';
       if (petData.last_seen_location) {
@@ -370,29 +370,29 @@ const generateLostPetPDF = async (doc: jsPDF, pageManager: PDFPageManager, petDa
       if (petData.last_seen_time) {
         lastSeenText += lastSeenText ? ` | Time: ${safeText(petData.last_seen_time)}` : `Time: ${safeText(petData.last_seen_time)}`;
       }
-      addText(doc, pageManager, lastSeenText);
+      addText(doc, pageManager, lastSeenText, '#000000', 12);
     });
   }
   
   // Special markings/description
   if (petData.bio || petData.distinctive_features) {
-    pageManager.addY(6);
+    pageManager.addY(4);
     addSection(doc, pageManager, 'DISTINCTIVE FEATURES', () => {
       if (petData.distinctive_features) {
-        addText(doc, pageManager, safeText(petData.distinctive_features));
+        addText(doc, pageManager, safeText(petData.distinctive_features), '#000000', 12);
       } else if (petData.bio) {
-        addText(doc, pageManager, safeText(petData.bio));
+        addText(doc, pageManager, safeText(petData.bio), '#000000', 12);
       }
     });
   }
   
   // Medical alerts
   if (petData.medicalAlert && petData.medicalConditions) {
-    pageManager.addY(6);
+    pageManager.addY(4);
     addSection(doc, pageManager, 'MEDICAL ALERT', () => {
-      addText(doc, pageManager, safeText(petData.medicalConditions), '#dc2626');
+      addText(doc, pageManager, safeText(petData.medicalConditions), '#dc2626', 12);
       if (petData.medications && petData.medications.length > 0) {
-        addText(doc, pageManager, `Medications: ${petData.medications.join(', ')}`);
+        addText(doc, pageManager, `Medications: ${petData.medications.join(', ')}`, '#000000', 11);
       }
     });
   }
@@ -417,8 +417,8 @@ const generateLostPetPDF = async (doc: jsPDF, pageManager: PDFPageManager, petDa
   }
   
   if (additionalPhotos.length > 0) {
-    pageManager.addY(6);
-    addText(doc, pageManager, 'IDENTIFICATION PHOTOS', '#dc2626', 10);
+    pageManager.addY(4);
+    addText(doc, pageManager, 'IDENTIFICATION PHOTOS', '#dc2626', 12);
     pageManager.addY(3);
     
     const startY = pageManager.getCurrentY();
@@ -452,29 +452,29 @@ const generateLostPetPDF = async (doc: jsPDF, pageManager: PDFPageManager, petDa
   }
   
   // Combined Finder Instructions section
-  pageManager.addY(6);
+  pageManager.addY(4);
   addSection(doc, pageManager, 'FINDER INSTRUCTIONS', () => {
     // Add custom instructions if available
     if (petData.finder_instructions) {
-      addText(doc, pageManager, safeText(petData.finder_instructions));
-      pageManager.addY(3);
+      addText(doc, pageManager, safeText(petData.finder_instructions), '#000000', 12);
+      pageManager.addY(2);
     }
     // Standard instructions
-    addText(doc, pageManager, '1. Approach calmly and speak softly');
-    addText(doc, pageManager, '2. Check for identification tags or collar');
-    addText(doc, pageManager, '3. Contact numbers listed above immediately');
-    addText(doc, pageManager, '4. Keep pet safe and contained if possible');
-    addText(doc, pageManager, '5. Pet may be scared and not respond to name');
+    addText(doc, pageManager, '1. Approach calmly and speak softly', '#000000', 11);
+    addText(doc, pageManager, '2. Check for identification tags or collar', '#000000', 11);
+    addText(doc, pageManager, '3. Contact numbers listed above immediately', '#000000', 11);
+    addText(doc, pageManager, '4. Keep pet safe and contained if possible', '#000000', 11);
+    addText(doc, pageManager, '5. Pet may be scared and not respond to name', '#000000', 11);
   });
 
   // Compact reward section
-  pageManager.addY(6);
-  addText(doc, pageManager, 'REWARD OFFERED', '#dc2626', 14);
+  pageManager.addY(4);
+  addText(doc, pageManager, 'REWARD OFFERED', '#dc2626', 16);
   if (petData.reward_amount) {
-    addText(doc, pageManager, `Amount: ${safeText(petData.reward_amount)}`, '#000000', 12);
+    addText(doc, pageManager, `Amount: ${safeText(petData.reward_amount)}`, '#000000', 14);
   }
-  addText(doc, pageManager, 'PLEASE CONTACT IMMEDIATELY IF FOUND!', '#dc2626', 10);
-  pageManager.addY(6);
+  addText(doc, pageManager, 'PLEASE CONTACT IMMEDIATELY IF FOUND!', '#dc2626', 12);
+  pageManager.addY(4);
   
   // Footer
   addText(doc, pageManager, 'Generated from PetPort Digital Pet Passport', '#6b7280', 8);

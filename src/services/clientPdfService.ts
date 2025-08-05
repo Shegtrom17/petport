@@ -457,7 +457,7 @@ const generateFullPDF = async (doc: jsPDF, pageManager: PDFPageManager, petData:
       addText(doc, pageManager, `Veterinarian: ${safeText(petData.vet_contact)}`, '#dc2626', 12);
     }
     if (petData.medical_alert) {
-      addText(doc, pageManager, '⚠️ MEDICAL ALERT - See medical section for details', '#dc2626', 12);
+      addText(doc, pageManager, 'MEDICAL ALERT - See medical section for details', '#dc2626', 12);
     }
     if (petData.medications && petData.medications.length > 0) {
       addText(doc, pageManager, `Current Medications: ${petData.medications.join(', ')}`, '#dc2626', 10);
@@ -492,7 +492,7 @@ const generateFullPDF = async (doc: jsPDF, pageManager: PDFPageManager, petData:
   // Medical & Health Information
   addSection(doc, pageManager, 'MEDICAL & HEALTH INFORMATION', () => {
     if (petData.medical_alert) {
-      addText(doc, pageManager, '⚠️ MEDICAL ALERT', '#dc2626', 12);
+      addText(doc, pageManager, 'MEDICAL ALERT', '#dc2626', 12);
     }
     if (petData.medical_conditions) {
       addText(doc, pageManager, `Medical Conditions: ${safeText(petData.medical_conditions)}`);

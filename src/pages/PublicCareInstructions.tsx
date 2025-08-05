@@ -17,6 +17,10 @@ interface Pet {
   state: string;
   county: string;
   is_public: boolean;
+  emergencyContact?: string;
+  secondEmergencyContact?: string;
+  vetContact?: string;
+  petCaretaker?: string;
 }
 
 interface CareData {
@@ -143,11 +147,96 @@ const PublicCareInstructions = () => {
 
         <div className="grid gap-6">
           {/* Emergency Contacts */}
+          {(pet.emergencyContact || pet.secondEmergencyContact || pet.vetContact || pet.petCaretaker) && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-navy-900">
+                  <Phone className="w-5 h-5 text-red-600" />
+                  Emergency Contacts
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {pet.emergencyContact && (
+                  <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+                    <h4 className="font-medium text-red-800 mb-2">Primary Emergency Contact</h4>
+                    <p className="text-red-700">
+                      {pet.emergencyContact}
+                      {extractPhoneNumber(pet.emergencyContact) && (
+                        <a 
+                          href={`tel:${formatPhoneForTel(extractPhoneNumber(pet.emergencyContact)!)}`}
+                          className="ml-2 inline-flex items-center gap-1 text-red-600 hover:text-red-800 font-medium"
+                        >
+                          <Phone className="w-3 h-3" />
+                          Call
+                        </a>
+                      )}
+                    </p>
+                  </div>
+                )}
+                
+                {pet.secondEmergencyContact && (
+                  <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
+                    <h4 className="font-medium text-amber-800 mb-2">Secondary Emergency Contact</h4>
+                    <p className="text-amber-700">
+                      {pet.secondEmergencyContact}
+                      {extractPhoneNumber(pet.secondEmergencyContact) && (
+                        <a 
+                          href={`tel:${formatPhoneForTel(extractPhoneNumber(pet.secondEmergencyContact)!)}`}
+                          className="ml-2 inline-flex items-center gap-1 text-amber-600 hover:text-amber-800 font-medium"
+                        >
+                          <Phone className="w-3 h-3" />
+                          Call
+                        </a>
+                      )}
+                    </p>
+                  </div>
+                )}
+
+                {pet.vetContact && (
+                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                    <h4 className="font-medium text-blue-800 mb-2">Veterinarian</h4>
+                    <p className="text-blue-700">
+                      {pet.vetContact}
+                      {extractPhoneNumber(pet.vetContact) && (
+                        <a 
+                          href={`tel:${formatPhoneForTel(extractPhoneNumber(pet.vetContact)!)}`}
+                          className="ml-2 inline-flex items-center gap-1 text-blue-600 hover:text-blue-800 font-medium"
+                        >
+                          <Phone className="w-3 h-3" />
+                          Call
+                        </a>
+                      )}
+                    </p>
+                  </div>
+                )}
+
+                {pet.petCaretaker && (
+                  <div className="bg-sage-50 border border-sage-200 rounded-lg p-4">
+                    <h4 className="font-medium text-sage-800 mb-2">Pet Caretaker</h4>
+                    <p className="text-sage-700">
+                      {pet.petCaretaker}
+                      {extractPhoneNumber(pet.petCaretaker) && (
+                        <a 
+                          href={`tel:${formatPhoneForTel(extractPhoneNumber(pet.petCaretaker)!)}`}
+                          className="ml-2 inline-flex items-center gap-1 text-sage-600 hover:text-sage-800 font-medium"
+                        >
+                          <Phone className="w-3 h-3" />
+                          Call
+                        </a>
+                      )}
+                    </p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Daily Care Schedule */}
           {(careData?.feeding_schedule || careData?.morning_routine || careData?.evening_routine) && (
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-navy-900">
-                  <Phone className="w-5 h-5 text-sage-600" />
+                  <Clock className="w-5 h-5 text-sage-600" />
                   Daily Care Schedule
                 </CardTitle>
               </CardHeader>

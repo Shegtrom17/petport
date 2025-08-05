@@ -544,7 +544,10 @@ const LostPet = () => {
               petId={currentPet.id || ""} 
               petName={currentPet.name}
               isActive={lostPetData.is_missing}
-              petData={currentPet}
+              petData={{
+                ...currentPet,
+                ...lostPetData
+              }}
             />
           </CardContent>
         </Card>

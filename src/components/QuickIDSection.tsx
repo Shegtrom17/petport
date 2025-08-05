@@ -524,6 +524,7 @@ export const QuickIDSection = ({ petData }: QuickIDSectionProps) => {
               petName={petData.name}
               isMissing={lostPetData.is_missing}
               petData={petData}
+              lostPetData={lostPetData}
               className="w-full sm:w-auto"
             />
           </div>

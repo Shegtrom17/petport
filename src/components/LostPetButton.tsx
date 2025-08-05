@@ -13,9 +13,10 @@ interface LostPetButtonProps {
   isMissing?: boolean;
   className?: string;
   petData?: any;
+  lostPetData?: any;
 }
 
-export const LostPetButton = ({ petId, petName = "Pet", isMissing = false, className = "", petData }: LostPetButtonProps) => {
+export const LostPetButton = ({ petId, petName = "Pet", isMissing = false, className = "", petData, lostPetData }: LostPetButtonProps) => {
   const { toast } = useToast();
   const { user } = useAuth();
   
@@ -54,7 +55,15 @@ export const LostPetButton = ({ petId, petName = "Pet", isMissing = false, class
       }
 
       console.log('LostPetButton - Generating PDF for pet:', petData.name, petData.id);
-      const result = await generateClientPetPDF(petData, 'lost_pet');
+      console.log('LostPetButton - Lost pet data:', lostPetData);
+      
+      // Combine pet data with lost pet data for PDF generation
+      const combinedData = {
+        ...petData,
+        ...lostPetData
+      };
+      
+      const result = await generateClientPetPDF(combinedData, 'lost_pet');
       
       if (!result.success || !result.blob) {
         throw new Error(result.error || 'Failed to generate PDF');

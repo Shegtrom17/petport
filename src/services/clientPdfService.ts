@@ -271,6 +271,15 @@ const generateEmergencyPDF = async (doc: jsPDF, pageManager: PDFPageManager, pet
 const generateLostPetPDF = async (doc: jsPDF, pageManager: PDFPageManager, petData: any): Promise<void> => {
   const safeText = (text: string) => sanitizeText(text || '');
   
+  console.log('generateLostPetPDF - Pet data received:', {
+    name: petData.name,
+    emergencyContact: petData.emergencyContact,
+    emergencyContact2: petData.second_emergency_contact,
+    lastSeenLocation: petData.last_seen_location,
+    distinctiveFeatures: petData.distinctive_features,
+    keys: Object.keys(petData)
+  });
+  
   // Red banner across the top
   doc.setFillColor(220, 38, 38); // Red color (#dc2626)
   doc.rect(0, 0, 210, 25, 'F'); // Full width red banner
@@ -321,29 +330,37 @@ const generateLostPetPDF = async (doc: jsPDF, pageManager: PDFPageManager, petDa
   
   // Emergency contact information
   addSection(doc, pageManager, '🚨 EMERGENCY CONTACT 🚨', () => {
-    if (petData.emergencyContact) {
-      addText(doc, pageManager, `Primary: ${safeText(petData.emergencyContact)}`);
+    // Try different possible property names for emergency contacts
+    const primaryContact = petData.emergencyContact || petData.emergency_contact || petData.emergency_contacts?.[0];
+    const secondaryContact = petData.secondEmergencyContact || petData.second_emergency_contact || petData.emergency_contacts?.[1];
+    const vetContact = petData.vetContact || petData.vet_contact;
+    
+    if (primaryContact) {
+      addText(doc, pageManager, `Primary: ${safeText(primaryContact)}`);
     }
-    if (petData.secondEmergencyContact) {
-      addText(doc, pageManager, `Secondary: ${safeText(petData.secondEmergencyContact)}`);
+    if (secondaryContact) {
+      addText(doc, pageManager, `Secondary: ${safeText(secondaryContact)}`);
     }
-    if (petData.vetContact) {
-      addText(doc, pageManager, `Veterinarian: ${safeText(petData.vetContact)}`);
+    if (vetContact) {
+      addText(doc, pageManager, `Veterinarian: ${safeText(vetContact)}`);
     }
     addText(doc, pageManager, `PetPort ID: ${safeText(petData.id)}`);
   });
   
   // Last seen information (if available from lost pet data)
-  const lastSeenInfo = petData.last_seen_location || petData.lastSeenLocation;
-  const lastSeenDate = petData.last_seen_date || petData.lastSeenDate;
-  if (lastSeenInfo || lastSeenDate) {
+  if (petData.last_seen_location || petData.last_seen_date) {
     addSection(doc, pageManager, '📍 LAST SEEN', () => {
-      if (lastSeenInfo) {
-        addText(doc, pageManager, `Location: ${safeText(lastSeenInfo)}`);
+      if (petData.last_seen_location) {
+        addText(doc, pageManager, `Location: ${safeText(petData.last_seen_location)}`);
       }
-      if (lastSeenDate) {
-        const dateStr = typeof lastSeenDate === 'string' ? lastSeenDate : new Date(lastSeenDate).toLocaleDateString();
+      if (petData.last_seen_date) {
+        const dateStr = petData.last_seen_date instanceof Date 
+          ? petData.last_seen_date.toLocaleDateString()
+          : new Date(petData.last_seen_date).toLocaleDateString();
         addText(doc, pageManager, `Date: ${dateStr}`);
+      }
+      if (petData.last_seen_time) {
+        addText(doc, pageManager, `Time: ${safeText(petData.last_seen_time)}`);
       }
     });
   }

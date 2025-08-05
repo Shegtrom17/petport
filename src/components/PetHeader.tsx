@@ -68,7 +68,7 @@ export const PetHeader = ({ activeTab, onTabChange, selectedPetId, selectedPetNa
                   petId={selectedPetId} 
                   petName={selectedPetName}
                   petData={selectedPet}
-                  className="text-xs sm:text-sm px-2 sm:px-3 py-1 sm:py-2" 
+                  className="text-xs sm:text-sm px-1.5 sm:px-2 md:px-3 py-1 sm:py-2 h-8 sm:h-10" 
                 />
                 <Button 
                   className="bg-gradient-to-r from-navy-900 to-navy-800 hover:from-navy-800 hover:to-navy-700 text-gold-500 border border-gold-500/30 text-xs sm:text-sm px-2 sm:px-3 py-1 sm:py-2 whitespace-nowrap"

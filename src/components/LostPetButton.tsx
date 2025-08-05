@@ -206,17 +206,19 @@ export const LostPetButton = ({ petId, petName = "Pet", isMissing = false, class
           isMissing 
             ? 'from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 border-2 border-red-500' 
             : 'from-gold-500 to-gold-400 hover:from-gold-400 hover:to-gold-300'
-        } text-white shadow-lg hover:shadow-xl transition-all ${className}`}
+        } text-white shadow-lg hover:shadow-xl transition-all whitespace-nowrap ${className}`}
       >
         {isMissing ? (
           <>
-            <AlertTriangle className="w-4 h-4 mr-2 animate-pulse" />
-            MISSING FLYER
+            <AlertTriangle className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 animate-pulse flex-shrink-0" />
+            <span className="hidden xs:inline sm:hidden">MISSING</span>
+            <span className="xs:hidden sm:inline">MISSING FLYER</span>
           </>
         ) : (
           <>
-            <Download className="w-4 h-4 mr-2" />
-            Missing Pet Flyer
+            <Download className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 flex-shrink-0" />
+            <span className="hidden xs:inline sm:hidden">Lost Pet</span>
+            <span className="xs:hidden sm:inline">Missing Pet Flyer</span>
           </>
         )}
       </Button>

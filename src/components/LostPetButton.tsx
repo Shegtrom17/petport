@@ -33,13 +33,31 @@ export const LostPetButton = ({ petId, petName = "Pet", isMissing = false, class
   // Use provided lostPetData or fetch it if needed
   const activeLostPetData = lostPetData || fetchedLostPetData;
   
-  // Check if we have complete lost pet data
-  const hasCompleteLostPetData = activeLostPetData && (
-    activeLostPetData.last_seen_location || 
-    activeLostPetData.last_seen_date || 
-    activeLostPetData.distinctive_features || 
-    activeLostPetData.reward_amount
-  );
+  // Enhanced data completeness analysis
+  const getDataCompleteness = (data: any) => {
+    if (!data) return { level: 'none', hasEssential: false, hasRecommended: false, hasComplete: false };
+    
+    const hasEssential = data.last_seen_location && data.last_seen_date;
+    const hasRecommended = hasEssential && data.distinctive_features;
+    const hasComplete = hasRecommended && (data.reward_amount || data.behavioral_notes);
+    
+    return {
+      level: hasComplete ? 'complete' : hasRecommended ? 'recommended' : hasEssential ? 'essential' : 'incomplete',
+      hasEssential,
+      hasRecommended,
+      hasComplete,
+      missingFields: {
+        location: !data.last_seen_location,
+        date: !data.last_seen_date,
+        features: !data.distinctive_features,
+        reward: !data.reward_amount,
+        notes: !data.behavioral_notes
+      }
+    };
+  };
+
+  const dataCompleteness = getDataCompleteness(activeLostPetData);
+  const hasCompleteLostPetData = dataCompleteness.hasRecommended;
   
   const hasAnyLostPetData = activeLostPetData && Object.keys(activeLostPetData).length > 0;
 
@@ -212,37 +230,81 @@ export const LostPetButton = ({ petId, petName = "Pet", isMissing = false, class
               </div>
             )}
 
-            {/* Data Completeness Check */}
+            {/* Enhanced Data Completeness Check */}
             {!isLoadingLostPetData && !hasCompleteLostPetData && !generatedPdfBlob && !isGenerating && (
-              <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
+              <div className={`rounded-lg p-4 ${
+                !dataCompleteness.hasEssential 
+                  ? 'bg-red-50 border border-red-200' 
+                  : 'bg-amber-50 border border-amber-200'
+              }`}>
                 <div className="flex items-start space-x-3">
-                  <MapPin className="w-5 h-5 text-amber-600 mt-0.5" />
+                  <AlertTriangle className={`w-5 h-5 mt-0.5 ${
+                    !dataCompleteness.hasEssential ? 'text-red-600' : 'text-amber-600'
+                  }`} />
                   <div className="flex-1">
-                    <h4 className="font-semibold text-amber-800 mb-2">
-                      Improve Your Flyer's Effectiveness
+                    <h4 className={`font-semibold mb-2 ${
+                      !dataCompleteness.hasEssential ? 'text-red-800' : 'text-amber-800'
+                    }`}>
+                      {!dataCompleteness.hasEssential 
+                        ? 'Critical Information Missing' 
+                        : 'Enhance Your Flyer'}
                     </h4>
-                    <p className="text-sm text-amber-700 mb-3">
-                      A complete flyer with last seen location, date, and distinctive features 
-                      significantly increases the chances of finding {petName}.
-                    </p>
+                    
+                    {/* Context-specific messaging */}
+                    <div className={`text-sm mb-3 ${
+                      !dataCompleteness.hasEssential ? 'text-red-700' : 'text-amber-700'
+                    }`}>
+                      {!dataCompleteness.hasEssential ? (
+                        <div>
+                          <p className="mb-2">Your flyer needs essential information to be effective:</p>
+                          <ul className="space-y-1 ml-4">
+                            {dataCompleteness.missingFields.location && (
+                              <li>• Last seen location (where to search)</li>
+                            )}
+                            {dataCompleteness.missingFields.date && (
+                              <li>• Last seen date (timeline importance)</li>
+                            )}
+                          </ul>
+                        </div>
+                      ) : (
+                        <div>
+                          <p className="mb-2">Adding these details will make your flyer more effective:</p>
+                          <ul className="space-y-1 ml-4">
+                            {dataCompleteness.missingFields.features && (
+                              <li>• Distinctive features (helps identify {petName})</li>
+                            )}
+                            {dataCompleteness.missingFields.reward && (
+                              <li>• Reward amount (increases motivation to help)</li>
+                            )}
+                          </ul>
+                        </div>
+                      )}
+                    </div>
+                    
                     <div className="flex flex-col sm:flex-row gap-2">
                       <Button
                         onClick={navigateToLostPetPage}
                         variant="outline"
                         size="sm"
-                        className="border-amber-500 text-amber-700 hover:bg-amber-100"
+                        className={`${
+                          !dataCompleteness.hasEssential 
+                            ? 'border-red-500 text-red-700 hover:bg-red-100' 
+                            : 'border-amber-500 text-amber-700 hover:bg-amber-100'
+                        }`}
                       >
                         <ExternalLink className="w-4 h-4 mr-2" />
-                        Complete Details
+                        {!dataCompleteness.hasEssential ? 'Add Essential Info' : 'Complete Details'}
                       </Button>
-                      <Button
-                        onClick={() => setIsOptionsDialogOpen(false)}
-                        size="sm"
-                        className="bg-amber-600 text-white hover:bg-amber-700"
-                        disabled={isGenerating}
-                      >
-                        Continue Anyway
-                      </Button>
+                      {dataCompleteness.hasEssential && (
+                        <Button
+                          onClick={() => setIsOptionsDialogOpen(false)}
+                          size="sm"
+                          className="bg-amber-600 text-white hover:bg-amber-700"
+                          disabled={isGenerating}
+                        >
+                          Generate Anyway
+                        </Button>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -252,6 +314,18 @@ export const LostPetButton = ({ petId, petName = "Pet", isMissing = false, class
             {/* PDF Actions */}
             {!isLoadingLostPetData && !generatedPdfBlob && !isGenerating && (
               <div className="space-y-3">
+                {hasCompleteLostPetData && (
+                  <div className="bg-green-50 border border-green-200 rounded-lg p-3">
+                    <div className="flex items-center space-x-2">
+                      <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                      <p className="text-sm font-medium text-green-800">
+                        {dataCompleteness.level === 'complete' 
+                          ? 'Complete information - Ready for an effective flyer!' 
+                          : 'Good information - Your flyer will be helpful!'}
+                      </p>
+                    </div>
+                  </div>
+                )}
                 <p className="text-sm text-navy-600 text-center">
                   {hasCompleteLostPetData ? 
                     `Generate ${petName}'s missing pet flyer:` : 

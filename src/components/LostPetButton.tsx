@@ -35,7 +35,19 @@ export const LostPetButton = ({ petId, petName = "Pet", isMissing = false, class
   
   // Enhanced data completeness analysis
   const getDataCompleteness = (data: any) => {
-    if (!data) return { level: 'none', hasEssential: false, hasRecommended: false, hasComplete: false };
+    if (!data) return { 
+      level: 'none', 
+      hasEssential: false, 
+      hasRecommended: false, 
+      hasComplete: false,
+      missingFields: {
+        location: true,
+        date: true,
+        features: true,
+        reward: true,
+        notes: true
+      }
+    };
     
     const hasEssential = data.last_seen_location && data.last_seen_date;
     const hasRecommended = hasEssential && data.distinctive_features;

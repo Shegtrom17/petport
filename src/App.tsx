@@ -6,6 +6,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/context/AuthContext";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
+import { ErrorBoundary } from "@/components/ErrorBoundary";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import AddPet from "./pages/AddPet";
@@ -23,34 +24,36 @@ const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <AuthProvider>
-            <Routes>
-              <Route path="/auth" element={<Auth />} />
-              <Route path="/" element={
-                <ProtectedRoute>
-                  <Index />
-                </ProtectedRoute>
-              } />
-              <Route path="/add-pet" element={
-                <ProtectedRoute>
-                  <AddPet />
-                </ProtectedRoute>
-              } />
-              <Route path="/lost-pet/:petId?" element={
-                <ProtectedRoute>
-                  <LostPet />
-                </ProtectedRoute>
-              } />
-              <Route path="/profile/:petId" element={<PublicProfile />} />
-              <Route path="/care/:petId" element={<PublicCareInstructions />} />
-              <Route path="/missing-pet/:petId" element={<PublicMissingPet />} />
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </AuthProvider>
-        </BrowserRouter>
+        <ErrorBoundary>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <AuthProvider>
+              <Routes>
+                <Route path="/auth" element={<Auth />} />
+                <Route path="/" element={
+                  <ProtectedRoute>
+                    <Index />
+                  </ProtectedRoute>
+                } />
+                <Route path="/add-pet" element={
+                  <ProtectedRoute>
+                    <AddPet />
+                  </ProtectedRoute>
+                } />
+                <Route path="/lost-pet/:petId?" element={
+                  <ProtectedRoute>
+                    <LostPet />
+                  </ProtectedRoute>
+                } />
+                <Route path="/profile/:petId" element={<PublicProfile />} />
+                <Route path="/care/:petId" element={<PublicCareInstructions />} />
+                <Route path="/missing-pet/:petId" element={<PublicMissingPet />} />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </AuthProvider>
+          </BrowserRouter>
+        </ErrorBoundary>
       </TooltipProvider>
     </QueryClientProvider>
   );

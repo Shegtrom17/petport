@@ -284,6 +284,48 @@ export type Database = {
           },
         ]
       }
+      issues: {
+        Row: {
+          browser_info: Json | null
+          created_at: string
+          current_page: string | null
+          description: string
+          email: string
+          id: string
+          priority: string
+          status: string
+          title: string
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          browser_info?: Json | null
+          created_at?: string
+          current_page?: string | null
+          description: string
+          email: string
+          id?: string
+          priority?: string
+          status?: string
+          title: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          browser_info?: Json | null
+          created_at?: string
+          current_page?: string | null
+          description?: string
+          email?: string
+          id?: string
+          priority?: string
+          status?: string
+          title?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       lost_pet_data: {
         Row: {
           contact_priority: string | null

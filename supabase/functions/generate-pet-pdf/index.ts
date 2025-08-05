@@ -196,29 +196,44 @@ serve(async (req) => {
     // Helper function to sanitize text for PDF generation
     const sanitizeTextForPDF = (text: string): string => {
       if (!text) return '';
-      // Replace problematic unicode characters with safe alternatives
-      return text
-        .replace(/✈/g, 'TRAVEL:')
-        .replace(/🏆/g, 'AWARD:')
-        .replace(/🎓/g, 'TRAINING:')
-        .replace(/⭐/g, 'STAR:')
-        .replace(/🐾/g, 'PAW:')
-        .replace(/❤️/g, 'HEART:')
-        .replace(/🏠/g, 'HOME:')
-        .replace(/📍/g, 'LOCATION:')
-        .replace(/📞/g, 'PHONE:')
-        .replace(/💊/g, 'MEDICINE:')
-        .replace(/🚨/g, 'ALERT:')
-        // Fix newline characters that cause encoding errors
-        .replace(/\\n/g, ' ')  // Replace literal \n with space
-        .replace(/\n/g, ' ')   // Replace actual newlines with space
-        .replace(/\r/g, ' ')   // Replace carriage returns with space
-        .replace(/\t/g, ' ')   // Replace tabs with space
-        // Remove any other problematic unicode characters
-        .replace(/[\u2700-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF]/g, '')
-        // Clean up multiple spaces
-        .replace(/\s+/g, ' ')
-        .trim();
+      
+      console.log('Sanitizing text:', text.substring(0, 100) + (text.length > 100 ? '...' : ''));
+      
+      try {
+        // First pass: Replace common emojis with text equivalents
+        let sanitized = text
+          .replace(/✈/g, 'TRAVEL:')
+          .replace(/🏆/g, 'AWARD:')
+          .replace(/🎓/g, 'TRAINING:')
+          .replace(/⭐/g, 'STAR:')
+          .replace(/🐾/g, 'PAW:')
+          .replace(/❤️/g, 'HEART:')
+          .replace(/🏠/g, 'HOME:')
+          .replace(/📍/g, 'LOCATION:')
+          .replace(/📞/g, 'PHONE:')
+          .replace(/💊/g, 'MEDICINE:')
+          .replace(/🚨/g, 'ALERT:')
+          // Fix newline characters
+          .replace(/\\n/g, ' ')
+          .replace(/\n/g, ' ')
+          .replace(/\r/g, ' ')
+          .replace(/\t/g, ' ');
+        
+        // Second pass: Remove ALL non-ASCII characters (anything above code point 127)
+        // This is more aggressive but ensures WinAnsi compatibility
+        sanitized = sanitized.replace(/[^\x00-\x7F]/g, '');
+        
+        // Third pass: Clean up whitespace
+        sanitized = sanitized.replace(/\s+/g, ' ').trim();
+        
+        console.log('Text sanitized successfully, length:', sanitized.length);
+        return sanitized;
+        
+      } catch (error) {
+        console.error('Error sanitizing text:', error);
+        // Fallback: return only ASCII alphanumeric characters and basic punctuation
+        return text.replace(/[^a-zA-Z0-9\s\.\,\!\?\-\(\)]/g, '').replace(/\s+/g, ' ').trim();
+      }
     }
     
     // Helper function to draw multi-line text with proper spacing

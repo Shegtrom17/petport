@@ -843,18 +843,18 @@ const generateResumePDF = async (doc: jsPDF, pageManager: PDFPageManager, petDat
   }
 
   // Travel Experience Section
-  if (petData.travelLocations && petData.travelLocations.length > 0) {
+  if (petData.travel_locations && petData.travel_locations.length > 0) {
     addSection(doc, pageManager, 'Travel Experience', () => {
       // Group travel by type for better presentation
-      const states = petData.travelLocations.filter((loc: any) => loc.type === 'state');
-      const countries = petData.travelLocations.filter((loc: any) => loc.type === 'country');
-      const cities = petData.travelLocations.filter((loc: any) => loc.type === 'city');
+      const states = petData.travel_locations.filter((loc: any) => loc.type === 'state');
+      const countries = petData.travel_locations.filter((loc: any) => loc.type === 'country');
+      const cities = petData.travel_locations.filter((loc: any) => loc.type === 'city');
       
       if (states.length > 0) {
         addText(doc, pageManager, 'States Visited:', '#374151', 10);
         states.forEach((location: any) => {
-          const dateText = location.dateVisited ? ` - Visited: ${new Date(location.dateVisited).toLocaleDateString()}` : '';
-          addText(doc, pageManager, `• ${safeText(location.name)}${dateText}`);
+          const dateText = location.date_visited ? ` - Visited: ${new Date(location.date_visited).toLocaleDateString()}` : '';
+          addText(doc, pageManager, `${safeText(location.name)}${dateText}`);
         });
         pageManager.addY(5);
       }
@@ -862,8 +862,8 @@ const generateResumePDF = async (doc: jsPDF, pageManager: PDFPageManager, petDat
       if (countries.length > 0) {
         addText(doc, pageManager, 'Countries Visited:', '#374151', 10);
         countries.forEach((location: any) => {
-          const dateText = location.dateVisited ? ` - Visited: ${new Date(location.dateVisited).toLocaleDateString()}` : '';
-          addText(doc, pageManager, `• ${safeText(location.name)}${dateText}`);
+          const dateText = location.date_visited ? ` - Visited: ${new Date(location.date_visited).toLocaleDateString()}` : '';
+          addText(doc, pageManager, `${safeText(location.name)}${dateText}`);
         });
         pageManager.addY(5);
       }
@@ -871,8 +871,8 @@ const generateResumePDF = async (doc: jsPDF, pageManager: PDFPageManager, petDat
       if (cities.length > 0) {
         addText(doc, pageManager, 'Cities Visited:', '#374151', 10);
         cities.forEach((location: any) => {
-          const dateText = location.dateVisited ? ` - Visited: ${new Date(location.dateVisited).toLocaleDateString()}` : '';
-          addText(doc, pageManager, `• ${safeText(location.name)}${dateText}`);
+          const dateText = location.date_visited ? ` - Visited: ${new Date(location.date_visited).toLocaleDateString()}` : '';
+          addText(doc, pageManager, `${safeText(location.name)}${dateText}`);
         });
         pageManager.addY(5);
       }

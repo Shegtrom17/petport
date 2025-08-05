@@ -74,7 +74,7 @@ export const PetHeader = ({ activeTab, onTabChange, selectedPetId, selectedPetNa
                   className="bg-gradient-to-r from-navy-900 to-navy-800 hover:from-navy-800 hover:to-navy-700 text-gold-500 border border-gold-500/30 text-xs sm:text-sm px-2 sm:px-3 py-1 sm:py-2 whitespace-nowrap"
                   onClick={() => navigate('/add-pet')}
                 >
-                  <PlusCircle className="mr-1 h-3 w-3 sm:h-4 sm:w-4" /> 
+                  <PlusCircle className="mr-0.5 sm:mr-1 h-3 w-3 sm:h-4 sm:w-4" /> 
                   <span className="hidden sm:inline">Add Pet</span>
                   <span className="sm:hidden">Add</span>
                 </Button>

@@ -72,7 +72,7 @@ export const PetHeader = ({ activeTab, onTabChange, selectedPetId, selectedPetNa
                   className="text-xs sm:text-sm px-1.5 sm:px-2 md:px-3 py-1 sm:py-2 h-8 sm:h-10" 
                 />
                 <Button 
-                  className="bg-gradient-to-r from-navy-900 to-navy-800 hover:from-navy-800 hover:to-navy-700 text-gold-500 border border-gold-500/30 text-xs sm:text-sm px-2 sm:px-3 py-1 sm:py-2 whitespace-nowrap"
+                  className="bg-gradient-to-r from-navy-900 to-navy-800 hover:from-navy-800 hover:to-navy-700 text-gold-500 border border-gold-500/30 text-xs sm:text-sm px-2 sm:px-3 h-8 sm:h-10 whitespace-nowrap"
                   onClick={() => navigate('/add-pet')}
                 >
                   <PlusCircle className="mr-0.5 sm:mr-1 h-3 w-3 sm:h-4 sm:w-4" /> 
@@ -102,7 +102,7 @@ export const PetHeader = ({ activeTab, onTabChange, selectedPetId, selectedPetNa
               </>
             ) : (
               <Button 
-                className="bg-gradient-to-r from-navy-900 to-navy-800 hover:from-navy-800 hover:to-navy-700 text-gold-500 border border-gold-500/30 text-xs sm:text-sm px-2 sm:px-3 py-1 sm:py-2 whitespace-nowrap"
+                className="bg-gradient-to-r from-navy-900 to-navy-800 hover:from-navy-800 hover:to-navy-700 text-gold-500 border border-gold-500/30 text-xs sm:text-sm px-2 sm:px-3 h-8 sm:h-10 whitespace-nowrap"
                 onClick={() => navigate('/auth')}
               >
                 <LogIn className="mr-1 h-3 w-3 sm:h-4 sm:w-4" /> 

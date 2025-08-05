@@ -1864,41 +1864,6 @@ serve(async (req) => {
         })
         
         console.log(`Complete Profile PDF generated with ${currentPageNum} pages.`)
-                  
-                  // Add caption if available
-                  if (photo.caption) {
-                    pageN.drawText(photo.caption.substring(0, 20), {
-                      x: photoX,
-                      y: photoY - scaledHeight - 15,
-                      size: 8,
-                      font: regularFont,
-                      color: rgb(0.5, 0.5, 0.5),
-                    })
-                  }
-                }
-              } catch (photoError) {
-                console.log(`Failed to load gallery photo on page ${currentPageNum}:`, photoError.message)
-              }
-            }
-            
-            // Page Footer
-            pageN.drawText(`Generated on: ${new Date().toLocaleDateString()}`, {
-              x: 50,
-              y: 50,
-              size: 10,
-              font: regularFont,
-              color: rgb(0.83, 0.69, 0.22),
-            })
-
-            pageN.drawText(`PetPort™ Official Document - Page ${currentPageNum}`, {
-              x: width - 280,
-              y: 50,
-              size: 10,
-              font: boldFont,
-              color: rgb(0.83, 0.69, 0.22),
-            })
-          }
-      }
 
       // QR Code for Missing Pet Flyers - DRAW FIRST to avoid being covered
       if (type === 'lost_pet') {

@@ -439,7 +439,7 @@ const generateGalleryPDF = async (doc: jsPDF, pageManager: PDFPageManager, petDa
   addText(doc, pageManager, 'Generated from PetPort Digital Pet Passport', '#6b7280', 8);
 };
 
-// Generate full profile PDF (NO emergency contacts)
+// Generate comprehensive profile PDF
 const generateFullPDF = async (doc: jsPDF, pageManager: PDFPageManager, petData: any): Promise<void> => {
   const safeText = (text: string) => sanitizeText(text || '');
   
@@ -448,12 +448,28 @@ const generateFullPDF = async (doc: jsPDF, pageManager: PDFPageManager, petData:
   addTitle(doc, pageManager, safeText(petData.name), '#1e40af', 16);
   pageManager.addY(15);
   
+  // Emergency Summary Section (for quick reference)
+  addSection(doc, pageManager, 'EMERGENCY SUMMARY', () => {
+    if (petData.emergency_contact) {
+      addText(doc, pageManager, `Emergency Contact: ${safeText(petData.emergency_contact)}`, '#dc2626', 12);
+    }
+    if (petData.vet_contact) {
+      addText(doc, pageManager, `Veterinarian: ${safeText(petData.vet_contact)}`, '#dc2626', 12);
+    }
+    if (petData.medical_alert) {
+      addText(doc, pageManager, '⚠️ MEDICAL ALERT - See medical section for details', '#dc2626', 12);
+    }
+    if (petData.medications && petData.medications.length > 0) {
+      addText(doc, pageManager, `Current Medications: ${petData.medications.join(', ')}`, '#dc2626', 10);
+    }
+  });
+  
   // Pet photo
   if (petData.photoUrl) {
     await addImage(doc, pageManager, petData.photoUrl, 80, 80);
   }
   
-  // Basic information
+  // Basic Pet Information
   addSection(doc, pageManager, 'PET INFORMATION', () => {
     addText(doc, pageManager, `Species: ${safeText(petData.species)}`);
     addText(doc, pageManager, `Breed: ${safeText(petData.breed)}`);
@@ -462,28 +478,96 @@ const generateFullPDF = async (doc: jsPDF, pageManager: PDFPageManager, petData:
     addText(doc, pageManager, `Gender: ${safeText(petData.gender)}`);
     if (petData.color) addText(doc, pageManager, `Color: ${safeText(petData.color)}`);
     if (petData.microchipId) addText(doc, pageManager, `Microchip: ${safeText(petData.microchipId)}`);
+    if (petData.petport_id) addText(doc, pageManager, `PetPort ID: ${safeText(petData.petport_id)}`);
+    if (petData.county) addText(doc, pageManager, `Location: ${safeText(petData.county)}, ${safeText(petData.state)}`);
   });
   
-  // Bio
+  // Biography
   if (petData.bio) {
     addSection(doc, pageManager, 'BIOGRAPHY', () => {
       addText(doc, pageManager, petData.bio);
     });
   }
 
-  // Additional characteristics
-  if (petData.distinctiveFeatures) {
-    addSection(doc, pageManager, 'DISTINCTIVE FEATURES', () => {
-      addText(doc, pageManager, petData.distinctiveFeatures);
+  // Medical & Health Information
+  addSection(doc, pageManager, 'MEDICAL & HEALTH INFORMATION', () => {
+    if (petData.medical_alert) {
+      addText(doc, pageManager, '⚠️ MEDICAL ALERT', '#dc2626', 12);
+    }
+    if (petData.medical_conditions) {
+      addText(doc, pageManager, `Medical Conditions: ${safeText(petData.medical_conditions)}`);
+    }
+    if (petData.medications && petData.medications.length > 0) {
+      addText(doc, pageManager, `Current Medications: ${petData.medications.join(', ')}`);
+    }
+    if (petData.last_vaccination) {
+      addText(doc, pageManager, `Last Vaccination: ${safeText(petData.last_vaccination)}`);
+    }
+    if (petData.allergies) {
+      addText(doc, pageManager, `Allergies: ${safeText(petData.allergies)}`);
+    }
+    if (petData.medical_emergency_document) {
+      addText(doc, pageManager, `Emergency Medical Document: ${safeText(petData.medical_emergency_document)}`);
+    }
+  });
+
+  // Care Instructions
+  if (petData.feeding_schedule || petData.morning_routine || petData.evening_routine || petData.behavioral_notes || petData.favorite_activities) {
+    addSection(doc, pageManager, 'CARE INSTRUCTIONS', () => {
+      if (petData.feeding_schedule) {
+        addText(doc, pageManager, `Feeding Schedule: ${safeText(petData.feeding_schedule)}`);
+      }
+      if (petData.morning_routine) {
+        addText(doc, pageManager, `Morning Routine: ${safeText(petData.morning_routine)}`);
+      }
+      if (petData.evening_routine) {
+        addText(doc, pageManager, `Evening Routine: ${safeText(petData.evening_routine)}`);
+      }
+      if (petData.behavioral_notes) {
+        addText(doc, pageManager, `Behavioral Notes: ${safeText(petData.behavioral_notes)}`);
+      }
+      if (petData.favorite_activities) {
+        addText(doc, pageManager, `Favorite Activities: ${safeText(petData.favorite_activities)}`);
+      }
     });
   }
 
-  // Travel history
-  if (petData.travelHistory && petData.travelHistory.length > 0) {
-    addSection(doc, pageManager, 'TRAVEL HISTORY', () => {
-      petData.travelHistory.forEach((trip: any, index: number) => {
-        addText(doc, pageManager, `${index + 1}. ${safeText(trip.location)} (${safeText(trip.date)})`);
-        if (trip.notes) addText(doc, pageManager, `   Notes: ${safeText(trip.notes)}`);
+  // Contact Information
+  addSection(doc, pageManager, 'CONTACT INFORMATION', () => {
+    if (petData.emergency_contact) {
+      addText(doc, pageManager, `Primary Emergency Contact: ${safeText(petData.emergency_contact)}`);
+    }
+    if (petData.second_emergency_contact) {
+      addText(doc, pageManager, `Secondary Emergency Contact: ${safeText(petData.second_emergency_contact)}`);
+    }
+    if (petData.vet_contact) {
+      addText(doc, pageManager, `Veterinarian: ${safeText(petData.vet_contact)}`);
+    }
+    if (petData.pet_caretaker) {
+      addText(doc, pageManager, `Pet Caretaker: ${safeText(petData.pet_caretaker)}`);
+    }
+  });
+
+  // Professional Status & Support Animal Information
+  if (petData.support_animal_status || (petData.badges && petData.badges.length > 0)) {
+    addSection(doc, pageManager, 'PROFESSIONAL STATUS', () => {
+      if (petData.support_animal_status) {
+        addText(doc, pageManager, `Support Animal Status: ${safeText(petData.support_animal_status)}`);
+      }
+      if (petData.badges && petData.badges.length > 0) {
+        addText(doc, pageManager, `Professional Badges: ${petData.badges.join(', ')}`);
+      }
+    });
+  }
+
+  // Training & Education
+  if (petData.training && petData.training.length > 0) {
+    addSection(doc, pageManager, 'TRAINING & EDUCATION', () => {
+      petData.training.forEach((training: any, index: number) => {
+        addText(doc, pageManager, `${index + 1}. ${safeText(training.course)}`);
+        if (training.facility) addText(doc, pageManager, `   Facility: ${safeText(training.facility)}`);
+        if (training.completed) addText(doc, pageManager, `   Completed: ${safeText(training.completed)}`);
+        if (training.phone) addText(doc, pageManager, `   Contact: ${safeText(training.phone)}`);
       });
     });
   }
@@ -492,19 +576,112 @@ const generateFullPDF = async (doc: jsPDF, pageManager: PDFPageManager, petData:
   if (petData.certifications && petData.certifications.length > 0) {
     addSection(doc, pageManager, 'CERTIFICATIONS', () => {
       petData.certifications.forEach((cert: any) => {
-        addText(doc, pageManager, `• ${safeText(cert.name)} - ${safeText(cert.issuer)}`);
-        if (cert.expiryDate) addText(doc, pageManager, `  Expires: ${safeText(cert.expiryDate)}`);
+        addText(doc, pageManager, `• ${safeText(cert.type)} - ${safeText(cert.issuer)}`);
+        if (cert.certification_number) addText(doc, pageManager, `  Number: ${safeText(cert.certification_number)}`);
+        if (cert.issue_date) addText(doc, pageManager, `  Issued: ${safeText(cert.issue_date)}`);
+        if (cert.expiry_date) addText(doc, pageManager, `  Expires: ${safeText(cert.expiry_date)}`);
+        addText(doc, pageManager, `  Status: ${safeText(cert.status)}`);
+        if (cert.notes) addText(doc, pageManager, `  Notes: ${safeText(cert.notes)}`);
       });
     });
   }
+
+  // Professional References & Reviews
+  if (petData.reviews && petData.reviews.length > 0) {
+    addSection(doc, pageManager, 'PROFESSIONAL REFERENCES & REVIEWS', () => {
+      const averageRating = petData.reviews.reduce((sum: number, review: any) => sum + review.rating, 0) / petData.reviews.length;
+      addText(doc, pageManager, `Overall Rating: ${averageRating.toFixed(1)}/5 stars (${petData.reviews.length} reviews)`);
+      pageManager.addY(3);
+
+      petData.reviews.forEach((review: any, index: number) => {
+        addText(doc, pageManager, `Review ${index + 1}: ${review.rating}/5 stars`);
+        addText(doc, pageManager, `Reviewer: ${safeText(review.reviewer_name || 'Anonymous')}`);
+        if (review.reviewer_contact) {
+          addText(doc, pageManager, `Contact: ${safeText(review.reviewer_contact)}`);
+        }
+        if (review.text) {
+          addText(doc, pageManager, `"${safeText(review.text)}"`);
+        }
+        if (review.date) {
+          addText(doc, pageManager, `Date: ${safeText(review.date)}`);
+        }
+        if (review.location) {
+          addText(doc, pageManager, `Location: ${safeText(review.location)}`);
+        }
+        if (review.type) {
+          addText(doc, pageManager, `Service Type: ${safeText(review.type)}`);
+        }
+        pageManager.addY(5);
+      });
+    });
+  }
+
+  // Professional Experiences
+  if (petData.experiences && petData.experiences.length > 0) {
+    addSection(doc, pageManager, 'PROFESSIONAL EXPERIENCE', () => {
+      petData.experiences.forEach((experience: any, index: number) => {
+        addText(doc, pageManager, `${index + 1}. ${safeText(experience.activity)}`);
+        if (experience.description) addText(doc, pageManager, `   Description: ${safeText(experience.description)}`);
+        if (experience.contact) addText(doc, pageManager, `   Contact: ${safeText(experience.contact)}`);
+      });
+    });
+  }
+
+  // Achievements
+  if (petData.achievements && petData.achievements.length > 0) {
+    addSection(doc, pageManager, 'ACHIEVEMENTS', () => {
+      petData.achievements.forEach((achievement: any, index: number) => {
+        addText(doc, pageManager, `${index + 1}. ${safeText(achievement.title)}`);
+        if (achievement.description) addText(doc, pageManager, `   ${safeText(achievement.description)}`);
+      });
+    });
+  }
+
+  // Travel History & Locations
+  if (petData.travel_locations && petData.travel_locations.length > 0) {
+    addSection(doc, pageManager, 'TRAVEL HISTORY', () => {
+      petData.travel_locations.forEach((location: any, index: number) => {
+        addText(doc, pageManager, `${index + 1}. ${safeText(location.name)} (${safeText(location.type)})`);
+        if (location.date_visited) addText(doc, pageManager, `   Date Visited: ${safeText(location.date_visited)}`);
+        if (location.code) addText(doc, pageManager, `   Location Code: ${safeText(location.code)}`);
+        if (location.notes) addText(doc, pageManager, `   Notes: ${safeText(location.notes)}`);
+      });
+    });
+  }
+
+  // Documents Reference
+  if (petData.documents && petData.documents.length > 0) {
+    addSection(doc, pageManager, 'DOCUMENTS ON FILE', () => {
+      addText(doc, pageManager, `Total Documents: ${petData.documents.length}`);
+      petData.documents.forEach((doc: any, index: number) => {
+        addText(doc, pageManager, `${index + 1}. ${safeText(doc.name)} (${safeText(doc.type)})`);
+        if (doc.upload_date) addText(doc, pageManager, `   Uploaded: ${safeText(doc.upload_date)}`);
+        if (doc.size) addText(doc, pageManager, `   Size: ${safeText(doc.size)}`);
+      });
+    });
+  }
+
+  // Distinctive Features
+  if (petData.distinctive_features) {
+    addSection(doc, pageManager, 'DISTINCTIVE FEATURES', () => {
+      addText(doc, pageManager, petData.distinctive_features);
+    });
+  }
+
+  // Notes
+  if (petData.notes) {
+    addSection(doc, pageManager, 'ADDITIONAL NOTES', () => {
+      addText(doc, pageManager, petData.notes);
+    });
+  }
   
-  // Gallery photos
+  // Photo Gallery
   const galleryPhotos = petData.gallery_photos || [];
   if (galleryPhotos.length > 0) {
     pageManager.checkPageSpace(50, true); // Force new page for gallery
     addSubtitle(doc, pageManager, 'PHOTO GALLERY', '#1e40af');
     
-    for (const photo of galleryPhotos.slice(0, 6)) { // Limit to 6 photos
+    for (const photo of galleryPhotos.slice(0, 8)) { // Show up to 8 photos
       await addImage(doc, pageManager, photo.url, 80, 60);
       if (photo.caption) {
         addText(doc, pageManager, photo.caption, '#6b7280', 9);

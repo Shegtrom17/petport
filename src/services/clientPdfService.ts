@@ -74,12 +74,24 @@ const createPetProfileHTML = (petData: any, type: 'emergency' | 'full' | 'lost_p
     const petCaretaker = petData.petCaretaker || '';
     
     content = `
-      <div style="padding: 30px; max-width: 800px; margin: 0 auto; font-family: Arial, sans-serif; background: white; line-height: 1.4;">
+      <style>
+        @media print {
+          .emergency-section { page-break-inside: avoid; margin-bottom: 15px; }
+          .contact-card { page-break-inside: avoid; margin-bottom: 10px; }
+          .medical-section { page-break-inside: avoid; }
+          .pet-info-section { page-break-inside: avoid; }
+        }
+        .emergency-section { page-break-inside: avoid; margin-bottom: 15px; }
+        .contact-card { page-break-inside: avoid; margin-bottom: 10px; }
+        .medical-section { page-break-inside: avoid; }
+        .pet-info-section { page-break-inside: avoid; }
+      </style>
+      <div style="padding: 20px; max-width: 800px; margin: 0 auto; font-family: Arial, sans-serif; background: white; line-height: 1.3;">
         <!-- Emergency Header -->
-        <div style="text-align: center; margin-bottom: 25px; border: 3px solid #dc2626; padding: 20px; background: #fef2f2;">
-          <h1 style="color: #dc2626; font-size: 28px; margin: 0; font-weight: bold;">🚨 EMERGENCY PROFILE</h1>
-          <h2 style="color: #dc2626; font-size: 24px; margin: 8px 0; font-weight: bold;">${safeText(petData.name)}</h2>
-          ${petData.microchipId ? `<p style="margin: 5px 0; font-size: 16px; font-weight: bold;">Microchip: ${safeText(petData.microchipId)}</p>` : ''}
+        <div class="emergency-section" style="text-align: center; margin-bottom: 20px; border: 3px solid #dc2626; padding: 15px; background: #fef2f2;">
+          <h1 style="color: #dc2626; font-size: 26px; margin: 0; font-weight: bold;">🚨 EMERGENCY PROFILE</h1>
+          <h2 style="color: #dc2626; font-size: 22px; margin: 5px 0; font-weight: bold;">${safeText(petData.name)}</h2>
+          ${petData.microchipId ? `<p style="margin: 3px 0; font-size: 16px; font-weight: bold;">Microchip: ${safeText(petData.microchipId)}</p>` : ''}
         </div>
         
         <!-- Pet Photo Section -->
@@ -124,48 +136,48 @@ const createPetProfileHTML = (petData: any, type: 'emergency' | 'full' | 'lost_p
         ` : ''}
         
         <!-- Pet Basic Information -->
-        <div style="display: flex; gap: 20px; margin-bottom: 25px;">
-          <div style="flex: 1; background: #f9fafb; padding: 15px; border-radius: 8px; border: 1px solid #d1d5db;">
-            <h3 style="color: #374151; margin: 0 0 15px 0; font-size: 18px; border-bottom: 2px solid #374151; padding-bottom: 5px;">PET INFORMATION</h3>
-            <p style="margin: 5px 0;"><strong>Species:</strong> ${safeText(petData.species)}</p>
-            <p style="margin: 5px 0;"><strong>Breed:</strong> ${safeText(petData.breed)}</p>
-            <p style="margin: 5px 0;"><strong>Age:</strong> ${safeText(petData.age)}</p>
-            <p style="margin: 5px 0;"><strong>Weight:</strong> ${safeText(petData.weight)}</p>
-            <p style="margin: 5px 0;"><strong>Gender:</strong> ${safeText(petData.gender)}</p>
-            ${petData.color ? `<p style="margin: 5px 0;"><strong>Color:</strong> ${safeText(petData.color)}</p>` : ''}
-            ${petData.petPortId ? `<p style="margin: 5px 0;"><strong>PetPort ID:</strong> ${safeText(petData.petPortId)}</p>` : ''}
+        <div class="pet-info-section" style="margin-bottom: 20px;">
+          <div style="background: #f9fafb; padding: 12px; border-radius: 8px; border: 1px solid #d1d5db;">
+            <h3 style="color: #374151; margin: 0 0 10px 0; font-size: 16px; border-bottom: 2px solid #374151; padding-bottom: 3px;">PET INFORMATION</h3>
+            <p style="margin: 3px 0; font-size: 13px;"><strong>Species:</strong> ${safeText(petData.species)}</p>
+            <p style="margin: 3px 0; font-size: 13px;"><strong>Breed:</strong> ${safeText(petData.breed)}</p>
+            <p style="margin: 3px 0; font-size: 13px;"><strong>Age:</strong> ${safeText(petData.age)}</p>
+            <p style="margin: 3px 0; font-size: 13px;"><strong>Weight:</strong> ${safeText(petData.weight)}</p>
+            <p style="margin: 3px 0; font-size: 13px;"><strong>Gender:</strong> ${safeText(petData.gender)}</p>
+            ${petData.color ? `<p style="margin: 3px 0; font-size: 13px;"><strong>Color:</strong> ${safeText(petData.color)}</p>` : ''}
+            ${petData.petPortId ? `<p style="margin: 3px 0; font-size: 13px;"><strong>PetPort ID:</strong> ${safeText(petData.petPortId)}</p>` : ''}
           </div>
         </div>
         
         <!-- Emergency Contacts -->
-        <div style="margin-bottom: 25px; background: #eff6ff; padding: 20px; border-radius: 8px; border: 2px solid #2563eb;">
-          <h3 style="color: #1d4ed8; margin: 0 0 15px 0; font-size: 18px;">📞 EMERGENCY CONTACTS</h3>
+        <div class="emergency-section" style="margin-bottom: 20px; background: #eff6ff; padding: 15px; border-radius: 8px; border: 2px solid #2563eb;">
+          <h3 style="color: #1d4ed8; margin: 0 0 12px 0; font-size: 18px;">📞 EMERGENCY CONTACTS</h3>
           
           ${emergencyContact ? `
-            <div style="margin-bottom: 15px; padding: 10px; background: white; border-radius: 4px; border-left: 4px solid #dc2626;">
-              <h4 style="color: #dc2626; margin: 0 0 5px 0; font-size: 16px;">PRIMARY EMERGENCY CONTACT</h4>
-              <p style="margin: 2px 0; font-size: 14px;">${safeText(emergencyContact)}</p>
+            <div class="contact-card" style="margin-bottom: 10px; padding: 8px; background: white; border-radius: 4px; border-left: 4px solid #dc2626;">
+              <h4 style="color: #dc2626; margin: 0 0 3px 0; font-size: 14px;">PRIMARY EMERGENCY CONTACT</h4>
+              <p style="margin: 0; font-size: 13px;">${safeText(emergencyContact)}</p>
             </div>
           ` : ''}
           
           ${secondEmergencyContact ? `
-            <div style="margin-bottom: 15px; padding: 10px; background: white; border-radius: 4px; border-left: 4px solid #f59e0b;">
-              <h4 style="color: #d97706; margin: 0 0 5px 0; font-size: 16px;">SECONDARY EMERGENCY CONTACT</h4>
-              <p style="margin: 2px 0; font-size: 14px;">${safeText(secondEmergencyContact)}</p>
+            <div class="contact-card" style="margin-bottom: 10px; padding: 8px; background: white; border-radius: 4px; border-left: 4px solid #f59e0b;">
+              <h4 style="color: #d97706; margin: 0 0 3px 0; font-size: 14px;">SECONDARY EMERGENCY CONTACT</h4>
+              <p style="margin: 0; font-size: 13px;">${safeText(secondEmergencyContact)}</p>
             </div>
           ` : ''}
           
           ${vetContact ? `
-            <div style="margin-bottom: 15px; padding: 10px; background: white; border-radius: 4px; border-left: 4px solid #059669;">
-              <h4 style="color: #047857; margin: 0 0 5px 0; font-size: 16px;">VETERINARIAN</h4>
-              <p style="margin: 2px 0; font-size: 14px;">${safeText(vetContact)}</p>
+            <div class="contact-card" style="margin-bottom: 10px; padding: 8px; background: white; border-radius: 4px; border-left: 4px solid #059669;">
+              <h4 style="color: #047857; margin: 0 0 3px 0; font-size: 14px;">VETERINARIAN</h4>
+              <p style="margin: 0; font-size: 13px;">${safeText(vetContact)}</p>
             </div>
           ` : ''}
           
           ${petCaretaker ? `
-            <div style="padding: 10px; background: white; border-radius: 4px; border-left: 4px solid #7c3aed;">
-              <h4 style="color: #6d28d9; margin: 0 0 5px 0; font-size: 16px;">PET CARETAKER</h4>
-              <p style="margin: 2px 0; font-size: 14px;">${safeText(petCaretaker)}</p>
+            <div class="contact-card" style="padding: 8px; background: white; border-radius: 4px; border-left: 4px solid #7c3aed;">
+              <h4 style="color: #6d28d9; margin: 0 0 3px 0; font-size: 14px;">PET CARETAKER</h4>
+              <p style="margin: 0; font-size: 13px;">${safeText(petCaretaker)}</p>
             </div>
           ` : ''}
         </div>

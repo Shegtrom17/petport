@@ -150,34 +150,34 @@ const createPetProfileHTML = (petData: any, type: 'emergency' | 'full' | 'lost_p
         </div>
         
         <!-- Emergency Contacts -->
-        <div class="emergency-section" style="margin-bottom: 20px; background: #eff6ff; padding: 15px; border-radius: 8px; border: 2px solid #2563eb;">
-          <h3 style="color: #1d4ed8; margin: 0 0 12px 0; font-size: 18px;">📞 EMERGENCY CONTACTS</h3>
+        <div style="margin-bottom: 20px;">
+          <h3 style="color: #1d4ed8; margin: 0 0 15px 0; font-size: 18px; text-align: center; font-weight: bold;">📞 EMERGENCY CONTACTS</h3>
           
           ${emergencyContact ? `
-            <div class="contact-card" style="margin-bottom: 10px; padding: 8px; background: white; border-radius: 4px; border-left: 4px solid #dc2626;">
-              <h4 style="color: #dc2626; margin: 0 0 3px 0; font-size: 14px;">PRIMARY EMERGENCY CONTACT</h4>
-              <p style="margin: 0; font-size: 13px;">${safeText(emergencyContact)}</p>
+            <div class="contact-card" style="margin-bottom: 15px; padding: 12px; background: white; border-radius: 6px; border: 2px solid #dc2626; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+              <h4 style="color: #dc2626; margin: 0 0 5px 0; font-size: 14px; font-weight: bold;">🚨 PRIMARY EMERGENCY CONTACT</h4>
+              <p style="margin: 0; font-size: 13px; line-height: 1.4;">${safeText(emergencyContact)}</p>
             </div>
           ` : ''}
           
           ${secondEmergencyContact ? `
-            <div class="contact-card" style="margin-bottom: 10px; padding: 8px; background: white; border-radius: 4px; border-left: 4px solid #f59e0b;">
-              <h4 style="color: #d97706; margin: 0 0 3px 0; font-size: 14px;">SECONDARY EMERGENCY CONTACT</h4>
-              <p style="margin: 0; font-size: 13px;">${safeText(secondEmergencyContact)}</p>
+            <div class="contact-card" style="margin-bottom: 15px; padding: 12px; background: white; border-radius: 6px; border: 2px solid #f59e0b; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+              <h4 style="color: #d97706; margin: 0 0 5px 0; font-size: 14px; font-weight: bold;">📱 SECONDARY EMERGENCY CONTACT</h4>
+              <p style="margin: 0; font-size: 13px; line-height: 1.4;">${safeText(secondEmergencyContact)}</p>
             </div>
           ` : ''}
           
           ${vetContact ? `
-            <div class="contact-card" style="margin-bottom: 10px; padding: 8px; background: white; border-radius: 4px; border-left: 4px solid #059669;">
-              <h4 style="color: #047857; margin: 0 0 3px 0; font-size: 14px;">VETERINARIAN</h4>
-              <p style="margin: 0; font-size: 13px;">${safeText(vetContact)}</p>
+            <div class="contact-card" style="margin-bottom: 15px; padding: 12px; background: white; border-radius: 6px; border: 2px solid #059669; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+              <h4 style="color: #047857; margin: 0 0 5px 0; font-size: 14px; font-weight: bold;">🏥 VETERINARIAN</h4>
+              <p style="margin: 0; font-size: 13px; line-height: 1.4;">${safeText(vetContact)}</p>
             </div>
           ` : ''}
           
           ${petCaretaker ? `
-            <div class="contact-card" style="padding: 8px; background: white; border-radius: 4px; border-left: 4px solid #7c3aed;">
-              <h4 style="color: #6d28d9; margin: 0 0 3px 0; font-size: 14px;">PET CARETAKER</h4>
-              <p style="margin: 0; font-size: 13px;">${safeText(petCaretaker)}</p>
+            <div class="contact-card" style="margin-bottom: 15px; padding: 12px; background: white; border-radius: 6px; border: 2px solid #7c3aed; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+              <h4 style="color: #6d28d9; margin: 0 0 5px 0; font-size: 14px; font-weight: bold;">👤 PET CARETAKER</h4>
+              <p style="margin: 0; font-size: 13px; line-height: 1.4;">${safeText(petCaretaker)}</p>
             </div>
           ` : ''}
         </div>

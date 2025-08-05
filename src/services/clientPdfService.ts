@@ -430,13 +430,23 @@ const generateResumePDF = async (doc: jsPDF, pageManager: PDFPageManager, petDat
   }
   pageManager.addY(10);
 
-  // Add pet photo if available
+  // Add pet photos if available
   if (petData.photoUrl) {
     try {
       await addImage(doc, pageManager, petData.photoUrl, 60, 60);
       pageManager.addY(10);
     } catch (error) {
       console.error('Error loading pet photo:', error);
+    }
+  }
+
+  // Add first gallery photo if available
+  if (petData.gallery_photos && petData.gallery_photos.length > 0) {
+    try {
+      await addImage(doc, pageManager, petData.gallery_photos[0], 60, 60);
+      pageManager.addY(10);
+    } catch (error) {
+      console.error('Error loading gallery photo:', error);
     }
   }
 

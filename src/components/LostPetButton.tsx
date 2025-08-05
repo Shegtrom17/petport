@@ -1,11 +1,13 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import { AlertTriangle, Download, Eye, Loader2 } from "lucide-react";
+import { AlertTriangle, Download, Eye, Loader2, MapPin, ExternalLink } from "lucide-react";
 import { generatePublicProfileUrl, shareProfileOptimized } from "@/services/pdfService";
 import { generateClientPetPDF } from "@/services/clientPdfService";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/context/AuthContext";
+import { useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
 
 interface LostPetButtonProps {
   petId?: string;
@@ -19,11 +21,68 @@ interface LostPetButtonProps {
 export const LostPetButton = ({ petId, petName = "Pet", isMissing = false, className = "", petData, lostPetData }: LostPetButtonProps) => {
   const { toast } = useToast();
   const { user } = useAuth();
+  const navigate = useNavigate();
   
   // Dialog and loading states - exact same pattern as PetPDFGenerator
   const [isOptionsDialogOpen, setIsOptionsDialogOpen] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedPdfBlob, setGeneratedPdfBlob] = useState<Blob | null>(null);
+  const [fetchedLostPetData, setFetchedLostPetData] = useState<any>(null);
+  const [isLoadingLostPetData, setIsLoadingLostPetData] = useState(false);
+  
+  // Use provided lostPetData or fetch it if needed
+  const activeLostPetData = lostPetData || fetchedLostPetData;
+  
+  // Check if we have complete lost pet data
+  const hasCompleteLostPetData = activeLostPetData && (
+    activeLostPetData.last_seen_location || 
+    activeLostPetData.last_seen_date || 
+    activeLostPetData.distinctive_features || 
+    activeLostPetData.reward_amount
+  );
+  
+  const hasAnyLostPetData = activeLostPetData && Object.keys(activeLostPetData).length > 0;
+
+  // Fetch lost pet data when dialog opens if we don't have it
+  useEffect(() => {
+    const fetchLostPetData = async () => {
+      if (!petId || lostPetData || !isOptionsDialogOpen) return;
+      
+      setIsLoadingLostPetData(true);
+      try {
+        const { data, error } = await supabase
+          .from('lost_pet_data')
+          .select('*')
+          .eq('pet_id', petId)
+          .single();
+
+        if (error && error.code !== 'PGRST116') {
+          console.error('Error loading lost pet data:', error);
+          return;
+        }
+
+        if (data) {
+          setFetchedLostPetData({
+            is_missing: data.is_missing || false,
+            last_seen_location: data.last_seen_location || "",
+            last_seen_date: data.last_seen_date ? new Date(data.last_seen_date) : null,
+            last_seen_time: data.last_seen_time || "",
+            distinctive_features: data.distinctive_features || "",
+            reward_amount: data.reward_amount || "",
+            finder_instructions: data.finder_instructions || "",
+            contact_priority: data.contact_priority || "",
+            emergency_notes: data.emergency_notes || ""
+          });
+        }
+      } catch (error) {
+        console.error('Error fetching lost pet data:', error);
+      } finally {
+        setIsLoadingLostPetData(false);
+      }
+    };
+
+    fetchLostPetData();
+  }, [petId, lostPetData, isOptionsDialogOpen]);
 
   const showPdfOptions = () => {
     if (!user) {
@@ -47,6 +106,11 @@ export const LostPetButton = ({ petId, petName = "Pet", isMissing = false, class
     setIsOptionsDialogOpen(true);
   };
 
+  const navigateToLostPetPage = () => {
+    setIsOptionsDialogOpen(false);
+    navigate(`/lost-pet/${petId}`);
+  };
+
   const handlePdfAction = async (action: 'view' | 'download') => {
     setIsGenerating(true);
     try {
@@ -55,12 +119,12 @@ export const LostPetButton = ({ petId, petName = "Pet", isMissing = false, class
       }
 
       console.log('LostPetButton - Generating PDF for pet:', petData.name, petData.id);
-      console.log('LostPetButton - Lost pet data:', lostPetData);
+      console.log('LostPetButton - Lost pet data:', activeLostPetData);
       
       // Combine pet data with lost pet data for PDF generation
       const combinedData = {
         ...petData,
-        ...lostPetData
+        ...activeLostPetData
       };
       
       const result = await generateClientPetPDF(combinedData, 'lost_pet');
@@ -140,11 +204,59 @@ export const LostPetButton = ({ petId, petName = "Pet", isMissing = false, class
           </DialogHeader>
           
           <div className="space-y-6">
+            {/* Loading Lost Pet Data */}
+            {isLoadingLostPetData && (
+              <div className="text-center py-4">
+                <Loader2 className="w-6 h-6 animate-spin mx-auto mb-2 text-amber-500" />
+                <p className="text-sm text-navy-600">Loading lost pet information...</p>
+              </div>
+            )}
+
+            {/* Data Completeness Check */}
+            {!isLoadingLostPetData && !hasCompleteLostPetData && !generatedPdfBlob && !isGenerating && (
+              <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
+                <div className="flex items-start space-x-3">
+                  <MapPin className="w-5 h-5 text-amber-600 mt-0.5" />
+                  <div className="flex-1">
+                    <h4 className="font-semibold text-amber-800 mb-2">
+                      Improve Your Flyer's Effectiveness
+                    </h4>
+                    <p className="text-sm text-amber-700 mb-3">
+                      A complete flyer with last seen location, date, and distinctive features 
+                      significantly increases the chances of finding {petName}.
+                    </p>
+                    <div className="flex flex-col sm:flex-row gap-2">
+                      <Button
+                        onClick={navigateToLostPetPage}
+                        variant="outline"
+                        size="sm"
+                        className="border-amber-500 text-amber-700 hover:bg-amber-100"
+                      >
+                        <ExternalLink className="w-4 h-4 mr-2" />
+                        Complete Details
+                      </Button>
+                      <Button
+                        onClick={() => setIsOptionsDialogOpen(false)}
+                        size="sm"
+                        className="bg-amber-600 text-white hover:bg-amber-700"
+                        disabled={isGenerating}
+                      >
+                        Continue Anyway
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
             {/* PDF Actions */}
-            {!generatedPdfBlob && !isGenerating && (
+            {!isLoadingLostPetData && !generatedPdfBlob && !isGenerating && (
               <div className="space-y-3">
                 <p className="text-sm text-navy-600 text-center">
-                  Choose how you'd like to use {petName}'s missing pet flyer:
+                  {hasCompleteLostPetData ? 
+                    `Generate ${petName}'s missing pet flyer:` : 
+                    `Generate a basic flyer with available information:`
+                  }
                 </p>
                 
                 <div className="grid grid-cols-2 gap-3">

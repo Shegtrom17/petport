@@ -219,6 +219,7 @@ const Index = () => {
         onTabChange={setActiveTab} 
         selectedPetId={selectedPet?.id || petData.id}
         selectedPetName={selectedPet?.name || petData.name}
+        selectedPet={selectedPet || petData}
       />
 
       <InAppSharingModal

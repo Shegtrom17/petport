@@ -64,40 +64,135 @@ const createPetProfileHTML = (petData: any, type: 'emergency' | 'full' | 'lost_p
       </div>
     `;
   } else if (type === 'emergency') {
+    // Enhanced Emergency PDF with comprehensive emergency information
+    const vetContact = petData.vet_contact || '';
+    const emergencyContact = petData.emergency_contact || '';
+    const secondEmergencyContact = petData.second_emergency_contact || '';
+    const medications = petData.medications || [];
+    const allergies = petData.allergies || '';
+    const medicalAlert = petData.medical_alert || false;
+    const petCaretaker = petData.pet_caretaker || '';
+    
     content = `
-      <div style="padding: 40px; max-width: 800px; margin: 0 auto; font-family: Arial, sans-serif; background: white;">
-        <div style="text-align: center; margin-bottom: 30px; border: 2px solid #dc2626; padding: 20px; background: #fef2f2;">
-          <h1 style="color: #dc2626; font-size: 24px; margin: 0;">🚨 EMERGENCY PROFILE</h1>
-          <h2 style="color: #dc2626; font-size: 20px; margin: 10px 0;">${safeText(petData.name)}</h2>
+      <div style="padding: 30px; max-width: 800px; margin: 0 auto; font-family: Arial, sans-serif; background: white; line-height: 1.4;">
+        <!-- Emergency Header -->
+        <div style="text-align: center; margin-bottom: 25px; border: 3px solid #dc2626; padding: 20px; background: #fef2f2;">
+          <h1 style="color: #dc2626; font-size: 28px; margin: 0; font-weight: bold;">🚨 EMERGENCY PROFILE</h1>
+          <h2 style="color: #dc2626; font-size: 24px; margin: 8px 0; font-weight: bold;">${safeText(petData.name)}</h2>
+          ${petData.microchip_id ? `<p style="margin: 5px 0; font-size: 16px; font-weight: bold;">Microchip: ${safeText(petData.microchip_id)}</p>` : ''}
         </div>
         
-        <div style="display: flex; gap: 20px; margin-bottom: 20px;">
-          <div style="flex: 1;">
-            <h3 style="color: #dc2626; border-bottom: 2px solid #dc2626; padding-bottom: 5px;">BASIC INFO</h3>
-            <p><strong>Breed:</strong> ${safeText(petData.breed)}</p>
-            <p><strong>Age:</strong> ${safeText(petData.age)}</p>
-            <p><strong>Weight:</strong> ${safeText(petData.weight)}</p>
-            ${petData.microchip_id ? `<p><strong>Microchip:</strong> ${safeText(petData.microchip_id)}</p>` : ''}
-          </div>
-          
-          <div style="flex: 1;">
-            <h3 style="color: #dc2626; border-bottom: 2px solid #dc2626; padding-bottom: 5px;">EMERGENCY CONTACT</h3>
-            <p><strong>Owner:</strong> ${safeText(primaryContact.name || 'Contact via PetPort')}</p>
-            ${primaryContact.phone ? `<p><strong>Phone:</strong> ${safeText(primaryContact.phone)}</p>` : ''}
-            ${primaryContact.email ? `<p><strong>Email:</strong> ${safeText(primaryContact.email)}</p>` : ''}
-          </div>
-        </div>
-        
-        ${petData.medical_conditions ? `
-          <div style="margin-bottom: 20px; background: #fef2f2; padding: 15px; border-left: 4px solid #dc2626;">
-            <h3 style="color: #dc2626; margin: 0 0 10px 0;">MEDICAL CONDITIONS</h3>
-            <p style="margin: 0;">${safeText(petData.medical_conditions)}</p>
+        <!-- Pet Photo Section -->
+        ${petData.photo_url ? `
+          <div style="text-align: center; margin-bottom: 25px;">
+            <img src="${petData.photo_url}" alt="${safeText(petData.name)}" style="max-width: 200px; max-height: 200px; border: 3px solid #dc2626; border-radius: 8px;">
           </div>
         ` : ''}
         
-        <div style="text-align: center; margin-top: 30px; padding: 15px; background: #f3f4f6; border: 1px solid #d1d5db;">
-          <p style="margin: 0; font-size: 12px; color: #6b7280;">Generated from PetPort Digital Pet Passport</p>
-          <p style="margin: 5px 0 0 0; font-size: 12px; color: #6b7280;">PetPort ID: ${safeText(petData.id)}</p>
+        <!-- Critical Medical Alert -->
+        ${medicalAlert || medications.length > 0 || allergies ? `
+          <div style="margin-bottom: 25px; background: #fee2e2; padding: 20px; border: 3px solid #dc2626; border-radius: 8px;">
+            <h3 style="color: #dc2626; margin: 0 0 15px 0; font-size: 20px; font-weight: bold;">⚠️ CRITICAL MEDICAL INFORMATION</h3>
+            
+            ${medicalAlert ? `
+              <div style="background: #fca5a5; padding: 10px; margin-bottom: 10px; border-radius: 4px;">
+                <p style="margin: 0; font-weight: bold; color: #7f1d1d;">MEDICAL ALERT ACTIVE</p>
+              </div>
+            ` : ''}
+            
+            ${medications.length > 0 ? `
+              <div style="margin-bottom: 15px;">
+                <h4 style="color: #dc2626; margin: 0 0 8px 0; font-size: 16px;">MEDICATIONS:</h4>
+                ${medications.map((med: string) => `<p style="margin: 2px 0; padding-left: 10px;">• ${safeText(med)}</p>`).join('')}
+              </div>
+            ` : ''}
+            
+            ${allergies ? `
+              <div style="margin-bottom: 10px;">
+                <h4 style="color: #dc2626; margin: 0 0 8px 0; font-size: 16px;">ALLERGIES:</h4>
+                <p style="margin: 0; padding-left: 10px; font-weight: bold;">${safeText(allergies)}</p>
+              </div>
+            ` : ''}
+            
+            ${petData.medical_conditions ? `
+              <div>
+                <h4 style="color: #dc2626; margin: 0 0 8px 0; font-size: 16px;">MEDICAL CONDITIONS:</h4>
+                <p style="margin: 0; padding-left: 10px;">${safeText(petData.medical_conditions)}</p>
+              </div>
+            ` : ''}
+          </div>
+        ` : ''}
+        
+        <!-- Pet Basic Information -->
+        <div style="display: flex; gap: 20px; margin-bottom: 25px;">
+          <div style="flex: 1; background: #f9fafb; padding: 15px; border-radius: 8px; border: 1px solid #d1d5db;">
+            <h3 style="color: #374151; margin: 0 0 15px 0; font-size: 18px; border-bottom: 2px solid #374151; padding-bottom: 5px;">PET INFORMATION</h3>
+            <p style="margin: 5px 0;"><strong>Species:</strong> ${safeText(petData.species)}</p>
+            <p style="margin: 5px 0;"><strong>Breed:</strong> ${safeText(petData.breed)}</p>
+            <p style="margin: 5px 0;"><strong>Age:</strong> ${safeText(petData.age)}</p>
+            <p style="margin: 5px 0;"><strong>Weight:</strong> ${safeText(petData.weight)}</p>
+            <p style="margin: 5px 0;"><strong>Gender:</strong> ${safeText(petData.gender)}</p>
+            ${petData.color ? `<p style="margin: 5px 0;"><strong>Color:</strong> ${safeText(petData.color)}</p>` : ''}
+            ${petData.petport_id ? `<p style="margin: 5px 0;"><strong>PetPort ID:</strong> ${safeText(petData.petport_id)}</p>` : ''}
+          </div>
+        </div>
+        
+        <!-- Emergency Contacts -->
+        <div style="margin-bottom: 25px; background: #eff6ff; padding: 20px; border-radius: 8px; border: 2px solid #2563eb;">
+          <h3 style="color: #1d4ed8; margin: 0 0 15px 0; font-size: 18px;">📞 EMERGENCY CONTACTS</h3>
+          
+          ${emergencyContact ? `
+            <div style="margin-bottom: 15px; padding: 10px; background: white; border-radius: 4px; border-left: 4px solid #dc2626;">
+              <h4 style="color: #dc2626; margin: 0 0 5px 0; font-size: 16px;">PRIMARY EMERGENCY CONTACT</h4>
+              <p style="margin: 2px 0; font-size: 14px;">${safeText(emergencyContact)}</p>
+            </div>
+          ` : ''}
+          
+          ${secondEmergencyContact ? `
+            <div style="margin-bottom: 15px; padding: 10px; background: white; border-radius: 4px; border-left: 4px solid #f59e0b;">
+              <h4 style="color: #d97706; margin: 0 0 5px 0; font-size: 16px;">SECONDARY EMERGENCY CONTACT</h4>
+              <p style="margin: 2px 0; font-size: 14px;">${safeText(secondEmergencyContact)}</p>
+            </div>
+          ` : ''}
+          
+          ${vetContact ? `
+            <div style="margin-bottom: 15px; padding: 10px; background: white; border-radius: 4px; border-left: 4px solid #059669;">
+              <h4 style="color: #047857; margin: 0 0 5px 0; font-size: 16px;">VETERINARIAN</h4>
+              <p style="margin: 2px 0; font-size: 14px;">${safeText(vetContact)}</p>
+            </div>
+          ` : ''}
+          
+          ${petCaretaker ? `
+            <div style="padding: 10px; background: white; border-radius: 4px; border-left: 4px solid #7c3aed;">
+              <h4 style="color: #6d28d9; margin: 0 0 5px 0; font-size: 16px;">PET CARETAKER</h4>
+              <p style="margin: 2px 0; font-size: 14px;">${safeText(petCaretaker)}</p>
+            </div>
+          ` : ''}
+        </div>
+        
+        <!-- Important Notes -->
+        ${petData.bio || petData.notes ? `
+          <div style="margin-bottom: 25px; background: #fefce8; padding: 15px; border-radius: 8px; border: 2px solid #eab308;">
+            <h3 style="color: #a16207; margin: 0 0 10px 0; font-size: 18px;">📝 IMPORTANT NOTES</h3>
+            ${petData.bio ? `<p style="margin: 0 0 10px 0;"><strong>Bio:</strong> ${safeText(petData.bio)}</p>` : ''}
+            ${petData.notes ? `<p style="margin: 0;"><strong>Notes:</strong> ${safeText(petData.notes)}</p>` : ''}
+          </div>
+        ` : ''}
+        
+        <!-- Location Information -->
+        ${petData.county || petData.state ? `
+          <div style="margin-bottom: 25px; background: #f0fdf4; padding: 15px; border-radius: 8px; border: 1px solid #22c55e;">
+            <h3 style="color: #15803d; margin: 0 0 10px 0; font-size: 18px;">📍 LOCATION</h3>
+            <p style="margin: 0;">${petData.county ? safeText(petData.county) : ''}${petData.county && petData.state ? ', ' : ''}${petData.state ? safeText(petData.state) : ''}</p>
+          </div>
+        ` : ''}
+        
+        <!-- Footer -->
+        <div style="text-align: center; margin-top: 30px; padding: 15px; background: #f3f4f6; border: 1px solid #d1d5db; border-radius: 8px;">
+          <p style="margin: 0; font-size: 14px; color: #6b7280; font-weight: bold;">🆘 IN CASE OF EMERGENCY</p>
+          <p style="margin: 5px 0; font-size: 12px; color: #6b7280;">Contact the numbers above immediately</p>
+          <p style="margin: 10px 0 5px 0; font-size: 12px; color: #6b7280;">Generated from PetPort Digital Pet Passport</p>
+          <p style="margin: 0; font-size: 11px; color: #6b7280;">Pet ID: ${safeText(petData.id)} | Generated: ${new Date().toLocaleDateString()}</p>
         </div>
       </div>
     `;

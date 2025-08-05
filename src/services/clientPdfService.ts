@@ -331,45 +331,52 @@ const generateLostPetPDF = async (doc: jsPDF, pageManager: PDFPageManager, petDa
   pageManager.setX(originalX);
   pageManager.setY(Math.max(currentY + 70, pageManager.getCurrentY()));
   
-  // Emergency contact information
+  // Emergency contact information - compact format
+  pageManager.addY(6);
   addSection(doc, pageManager, 'EMERGENCY CONTACT', () => {
     // Try different possible property names for emergency contacts
     const primaryContact = petData.emergencyContact || petData.emergency_contact || petData.emergency_contacts?.[0];
     const secondaryContact = petData.secondEmergencyContact || petData.second_emergency_contact || petData.emergency_contacts?.[1];
     const vetContact = petData.vetContact || petData.vet_contact;
     
-    if (primaryContact) {
+    // Combine all contacts into compact lines
+    if (primaryContact && secondaryContact) {
+      addText(doc, pageManager, `Primary: ${safeText(primaryContact)} | Secondary: ${safeText(secondaryContact)}`);
+    } else if (primaryContact) {
       addText(doc, pageManager, `Primary: ${safeText(primaryContact)}`);
-    }
-    if (secondaryContact) {
-      addText(doc, pageManager, `Secondary: ${safeText(secondaryContact)}`);
+    } else if (secondaryContact) {
+      addText(doc, pageManager, `Contact: ${safeText(secondaryContact)}`);
     }
     if (vetContact) {
-      addText(doc, pageManager, `Veterinarian: ${safeText(vetContact)}`);
+      addText(doc, pageManager, `Vet: ${safeText(vetContact)}`);
     }
     addText(doc, pageManager, `PetPort ID: ${safeText(petData.id)}`);
   });
   
   // Last seen information (if available from lost pet data)
   if (petData.last_seen_location || petData.last_seen_date) {
+    pageManager.addY(6);
     addSection(doc, pageManager, 'LAST SEEN', () => {
+      let lastSeenText = '';
       if (petData.last_seen_location) {
-        addText(doc, pageManager, `Location: ${safeText(petData.last_seen_location)}`);
+        lastSeenText += `Location: ${safeText(petData.last_seen_location)}`;
       }
       if (petData.last_seen_date) {
         const dateStr = petData.last_seen_date instanceof Date 
           ? petData.last_seen_date.toLocaleDateString()
           : new Date(petData.last_seen_date).toLocaleDateString();
-        addText(doc, pageManager, `Date: ${dateStr}`);
+        lastSeenText += lastSeenText ? ` | Date: ${dateStr}` : `Date: ${dateStr}`;
       }
       if (petData.last_seen_time) {
-        addText(doc, pageManager, `Time: ${safeText(petData.last_seen_time)}`);
+        lastSeenText += lastSeenText ? ` | Time: ${safeText(petData.last_seen_time)}` : `Time: ${safeText(petData.last_seen_time)}`;
       }
+      addText(doc, pageManager, lastSeenText);
     });
   }
   
   // Special markings/description
   if (petData.bio || petData.distinctive_features) {
+    pageManager.addY(6);
     addSection(doc, pageManager, 'DISTINCTIVE FEATURES', () => {
       if (petData.distinctive_features) {
         addText(doc, pageManager, safeText(petData.distinctive_features));
@@ -381,6 +388,7 @@ const generateLostPetPDF = async (doc: jsPDF, pageManager: PDFPageManager, petDa
   
   // Medical alerts
   if (petData.medicalAlert && petData.medicalConditions) {
+    pageManager.addY(6);
     addSection(doc, pageManager, 'MEDICAL ALERT', () => {
       addText(doc, pageManager, safeText(petData.medicalConditions), '#dc2626');
       if (petData.medications && petData.medications.length > 0) {
@@ -409,16 +417,17 @@ const generateLostPetPDF = async (doc: jsPDF, pageManager: PDFPageManager, petDa
   }
   
   if (additionalPhotos.length > 0) {
-    pageManager.addY(15);
-    addText(doc, pageManager, 'IDENTIFICATION PHOTOS', '#dc2626', 12);
-    pageManager.addY(5);
+    pageManager.addY(6);
+    addText(doc, pageManager, 'IDENTIFICATION PHOTOS', '#dc2626', 10);
+    pageManager.addY(3);
     
     const startY = pageManager.getCurrentY();
-    const photoSize = 45;
-    const spacing = 65; // Photo width + margin
+    const photoSize = 35;
+    const spacing = 50; // Photo width + margin
     const startX = 20;
     
-    for (let i = 0; i < additionalPhotos.length && i < 3; i++) {
+    // Limit to 2 additional photos for compact design
+    for (let i = 0; i < additionalPhotos.length && i < 2; i++) {
       const photoX = startX + (i * spacing);
       
       // Draw photo without advancing Y cursor
@@ -430,52 +439,42 @@ const generateLostPetPDF = async (doc: jsPDF, pageManager: PDFPageManager, petDa
       }
       
       // Add caption below photo
-      const captionY = startY + photoSize + 5;
-      doc.setFontSize(8);
+      const captionY = startY + photoSize + 3;
+      doc.setFontSize(7);
       doc.setTextColor(107, 114, 128); // Gray color
-      const caption = additionalPhotos[i].caption.substring(0, 15); // Limit caption length
+      const caption = additionalPhotos[i].caption.substring(0, 12); // Limit caption length
       doc.text(caption, photoX, captionY);
     }
     
     // Move cursor below the photos
-    pageManager.setY(startY + photoSize + 15);
+    pageManager.setY(startY + photoSize + 12);
     doc.setTextColor(0, 0, 0); // Reset text color
   }
   
-  // Instructions for finder (if available)
-  if (petData.finder_instructions) {
-    pageManager.addY(15);
-    addSection(doc, pageManager, 'INSTRUCTIONS FOR FINDER', () => {
+  // Combined Finder Instructions section
+  pageManager.addY(6);
+  addSection(doc, pageManager, 'FINDER INSTRUCTIONS', () => {
+    // Add custom instructions if available
+    if (petData.finder_instructions) {
       addText(doc, pageManager, safeText(petData.finder_instructions));
-    });
-  }
-
-  // If Found section
-  pageManager.addY(15);
-  addSection(doc, pageManager, 'IF FOUND', () => {
+      pageManager.addY(3);
+    }
+    // Standard instructions
     addText(doc, pageManager, '1. Approach calmly and speak softly');
     addText(doc, pageManager, '2. Check for identification tags or collar');
     addText(doc, pageManager, '3. Contact numbers listed above immediately');
     addText(doc, pageManager, '4. Keep pet safe and contained if possible');
-    addText(doc, pageManager, '5. Do not attempt to feed without owner permission');
-  });
-  
-  // Important Notes section
-  addSection(doc, pageManager, 'IMPORTANT NOTES', () => {
-    addText(doc, pageManager, 'This pet may be scared and disoriented');
-    addText(doc, pageManager, 'May not respond to name when frightened');
-    addText(doc, pageManager, 'Please handle with care and patience');
-    addText(doc, pageManager, 'Any sighting information is valuable');
+    addText(doc, pageManager, '5. Pet may be scared and not respond to name');
   });
 
-  // Reward section
-  pageManager.addY(15);
-  addTitle(doc, pageManager, 'REWARD OFFERED', '#dc2626', 16);
+  // Compact reward section
+  pageManager.addY(6);
+  addText(doc, pageManager, 'REWARD OFFERED', '#dc2626', 14);
   if (petData.reward_amount) {
-    addText(doc, pageManager, `Reward: ${safeText(petData.reward_amount)}`, '#000000', 14);
+    addText(doc, pageManager, `Amount: ${safeText(petData.reward_amount)}`, '#000000', 12);
   }
-  addText(doc, pageManager, 'PLEASE CONTACT IMMEDIATELY IF FOUND!', '#dc2626', 12);
-  pageManager.addY(10);
+  addText(doc, pageManager, 'PLEASE CONTACT IMMEDIATELY IF FOUND!', '#dc2626', 10);
+  pageManager.addY(6);
   
   // Footer
   addText(doc, pageManager, 'Generated from PetPort Digital Pet Passport', '#6b7280', 8);

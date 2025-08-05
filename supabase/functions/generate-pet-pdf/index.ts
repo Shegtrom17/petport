@@ -1855,23 +1855,6 @@ serve(async (req) => {
         })
         
         console.log(`Complete Profile PDF generated with ${currentPageNum} pages.`)
-                  })
-                  
-                  // Add caption if available
-                  if (photo.caption) {
-                    pageN.drawText(photo.caption.substring(0, 20), {
-                      x: photoX,
-                      y: photoY - scaledHeight - 15,
-                      size: 8,
-                      font: regularFont,
-                      color: rgb(0.5, 0.5, 0.5),
-                    })
-                  }
-                }
-              } catch (photoError) {
-                console.log(`Failed to load gallery photo on page ${currentPageNum}:`, photoError.message)
-              }
-            }
             
             // Page Footer
             pageN.drawText(`Generated on: ${new Date().toLocaleDateString()}`, {

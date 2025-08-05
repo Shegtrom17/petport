@@ -842,6 +842,43 @@ const generateResumePDF = async (doc: jsPDF, pageManager: PDFPageManager, petDat
     });
   }
 
+  // Travel Experience Section
+  if (petData.travelLocations && petData.travelLocations.length > 0) {
+    addSection(doc, pageManager, 'Travel Experience', () => {
+      // Group travel by type for better presentation
+      const states = petData.travelLocations.filter((loc: any) => loc.type === 'state');
+      const countries = petData.travelLocations.filter((loc: any) => loc.type === 'country');
+      const cities = petData.travelLocations.filter((loc: any) => loc.type === 'city');
+      
+      if (states.length > 0) {
+        addText(doc, pageManager, 'States Visited:', '#374151', 10);
+        states.forEach((location: any) => {
+          const dateText = location.dateVisited ? ` - Visited: ${new Date(location.dateVisited).toLocaleDateString()}` : '';
+          addText(doc, pageManager, `• ${safeText(location.name)}${dateText}`);
+        });
+        pageManager.addY(5);
+      }
+      
+      if (countries.length > 0) {
+        addText(doc, pageManager, 'Countries Visited:', '#374151', 10);
+        countries.forEach((location: any) => {
+          const dateText = location.dateVisited ? ` - Visited: ${new Date(location.dateVisited).toLocaleDateString()}` : '';
+          addText(doc, pageManager, `• ${safeText(location.name)}${dateText}`);
+        });
+        pageManager.addY(5);
+      }
+      
+      if (cities.length > 0) {
+        addText(doc, pageManager, 'Cities Visited:', '#374151', 10);
+        cities.forEach((location: any) => {
+          const dateText = location.dateVisited ? ` - Visited: ${new Date(location.dateVisited).toLocaleDateString()}` : '';
+          addText(doc, pageManager, `• ${safeText(location.name)}${dateText}`);
+        });
+        pageManager.addY(5);
+      }
+    });
+  }
+
   // Contact Information
   addSection(doc, pageManager, 'Contact Information', () => {
     if (petData.vetContact) {

@@ -182,7 +182,7 @@ const generateEmergencyPDF = async (doc: jsPDF, pageManager: PDFPageManager, pet
   const safeText = (text: string) => sanitizeText(text || '');
   
   // Header
-  addTitle(doc, pageManager, '🚨 EMERGENCY PROFILE', '#dc2626', 18);
+  addTitle(doc, pageManager, 'EMERGENCY PROFILE', '#dc2626', 18);
   addTitle(doc, pageManager, safeText(petData.name), '#dc2626', 16);
   pageManager.addY(10);
   
@@ -197,7 +197,7 @@ const generateEmergencyPDF = async (doc: jsPDF, pageManager: PDFPageManager, pet
   const medicalAlert = petData.medicalAlert || false;
   
   if (medicalAlert || medications.length > 0 || allergies) {
-    addSection(doc, pageManager, '⚠️ CRITICAL MEDICAL INFO', () => {
+    addSection(doc, pageManager, 'CRITICAL MEDICAL INFO', () => {
       if (medicalAlert) {
         addText(doc, pageManager, 'MEDICAL ALERT ACTIVE', '#dc2626', 12);
       }
@@ -222,22 +222,22 @@ const generateEmergencyPDF = async (doc: jsPDF, pageManager: PDFPageManager, pet
   });
   
   // Emergency contacts
-  addSubtitle(doc, pageManager, '📞 EMERGENCY CONTACTS', '#1d4ed8');
+  addSubtitle(doc, pageManager, 'EMERGENCY CONTACTS', '#1d4ed8');
   
   if (petData.emergencyContact) {
-    addContactCard(doc, pageManager, '🚨 PRIMARY EMERGENCY CONTACT', petData.emergencyContact, '#dc2626');
+    addContactCard(doc, pageManager, 'PRIMARY EMERGENCY CONTACT', petData.emergencyContact, '#dc2626');
   }
   
   if (petData.secondEmergencyContact) {
-    addContactCard(doc, pageManager, '📱 SECONDARY EMERGENCY CONTACT', petData.secondEmergencyContact, '#f59e0b');
+    addContactCard(doc, pageManager, 'SECONDARY EMERGENCY CONTACT', petData.secondEmergencyContact, '#f59e0b');
   }
   
   if (petData.vetContact) {
-    addContactCard(doc, pageManager, '🏥 VETERINARIAN', petData.vetContact, '#059669');
+    addContactCard(doc, pageManager, 'VETERINARIAN', petData.vetContact, '#059669');
   }
   
   if (petData.petCaretaker) {
-    addContactCard(doc, pageManager, '👤 PET CARETAKER', petData.petCaretaker, '#7c3aed');
+    addContactCard(doc, pageManager, 'PET CARETAKER', petData.petCaretaker, '#7c3aed');
   }
   
   // Additional information
@@ -257,7 +257,7 @@ const generateLostPetPDF = async (doc: jsPDF, pageManager: PDFPageManager, petDa
   const safeText = (text: string) => sanitizeText(text || '');
   
   // Header
-  addTitle(doc, pageManager, '🚨 MISSING PET ALERT', '#dc2626', 20);
+  addTitle(doc, pageManager, 'MISSING PET ALERT', '#dc2626', 20);
   addTitle(doc, pageManager, safeText(petData.name), '#dc2626', 18);
   pageManager.addY(15);
   

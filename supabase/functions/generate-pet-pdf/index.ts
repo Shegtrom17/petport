@@ -922,6 +922,17 @@ serve(async (req) => {
         
         yPosition -= 30
 
+        // Show medical alert prominently if flagged
+        if (medicalData.medical_alert) {
+          page.drawText('⚠️ MEDICAL ALERT', {
+            x: 50,
+            y: yPosition,
+            size: 12,
+            font: boldFont,
+            color: redColor,
+          })
+          yPosition -= 25
+        }
 
         if (medicalData.medical_conditions) {
           page.drawText('Medical Conditions:', {

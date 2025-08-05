@@ -22,13 +22,69 @@ const createPetProfileHTML = (petData: any, type: 'emergency' | 'full' | 'lost_p
   
   if (type === 'lost_pet') {
     content = `
+      <style>
+        @page {
+          margin: 20mm 15mm 35mm 15mm;
+          size: A4;
+        }
+        
+        body {
+          font-family: Arial, sans-serif;
+          margin: 0;
+          padding: 20px;
+          background: white;
+          color: #333;
+          line-height: 1.4;
+        }
+        
+        .section {
+          page-break-inside: avoid;
+          margin-bottom: 30px;
+          min-height: 80px;
+        }
+        
+        .contact-section {
+          page-break-inside: avoid;
+          margin-bottom: 25px;
+          min-height: 100px;
+        }
+        
+        .reward-section {
+          page-break-inside: avoid;
+          margin-top: 40px;
+          min-height: 80px;
+        }
+        
+        @media print {
+          body {
+            margin: 0;
+            -webkit-print-color-adjust: exact;
+            color-adjust: exact;
+          }
+          
+          .section {
+            page-break-inside: avoid;
+            break-inside: avoid;
+          }
+          
+          .contact-section {
+            page-break-inside: avoid;
+            break-inside: avoid;
+          }
+          
+          .reward-section {
+            page-break-inside: avoid;
+            break-inside: avoid;
+          }
+        }
+      </style>
       <div style="padding: 40px; max-width: 800px; margin: 0 auto; font-family: Arial, sans-serif; background: white;">
-        <div style="text-align: center; margin-bottom: 30px; border: 3px solid #dc2626; padding: 20px; background: #fef2f2;">
+        <div class="section" style="text-align: center; margin-bottom: 30px; border: 3px solid #dc2626; padding: 20px; background: #fef2f2;">
           <h1 style="color: #dc2626; font-size: 36px; margin: 0; font-weight: bold;">🚨 MISSING PET ALERT</h1>
           <h2 style="color: #dc2626; font-size: 28px; margin: 10px 0;">${safeText(petData.name)}</h2>
         </div>
         
-        <div style="display: flex; gap: 30px; margin-bottom: 30px;">
+        <div class="section" style="display: flex; gap: 30px; margin-bottom: 30px;">
           <div style="flex: 1;">
             <h3 style="color: #dc2626; border-bottom: 2px solid #dc2626; padding-bottom: 5px;">PET INFORMATION</h3>
             <p><strong>Name:</strong> ${safeText(petData.name)}</p>
@@ -40,7 +96,7 @@ const createPetProfileHTML = (petData: any, type: 'emergency' | 'full' | 'lost_p
             ${petData.microchip_id ? `<p><strong>Microchip:</strong> ${safeText(petData.microchip_id)}</p>` : ''}
           </div>
           
-          <div style="flex: 1;">
+          <div class="contact-section" style="flex: 1;">
             <h3 style="color: #dc2626; border-bottom: 2px solid #dc2626; padding-bottom: 5px;">EMERGENCY CONTACT</h3>
             <p><strong>Owner:</strong> ${safeText(primaryContact.name || 'Contact via PetPort')}</p>
             ${primaryContact.phone ? `<p><strong>Phone:</strong> ${safeText(primaryContact.phone)}</p>` : ''}
@@ -50,13 +106,13 @@ const createPetProfileHTML = (petData: any, type: 'emergency' | 'full' | 'lost_p
         </div>
         
         ${petData.bio ? `
-          <div style="margin-bottom: 20px;">
+          <div class="section" style="margin-bottom: 20px;">
             <h3 style="color: #dc2626; border-bottom: 2px solid #dc2626; padding-bottom: 5px;">DESCRIPTION</h3>
             <p>${safeText(petData.bio)}</p>
           </div>
         ` : ''}
         
-        <div style="text-align: center; background: #fef2f2; padding: 20px; border: 2px solid #dc2626; margin-top: 30px;">
+        <div class="reward-section" style="text-align: center; background: #fef2f2; padding: 20px; border: 2px solid #dc2626; margin-top: 30px;">
           <h3 style="color: #dc2626; margin: 0 0 10px 0;">REWARD OFFERED</h3>
           <p style="font-size: 18px; margin: 0;">Please contact immediately if found!</p>
           <p style="font-size: 14px; margin: 10px 0 0 0;">Generated from PetPort Digital Pet Passport</p>
@@ -75,16 +131,94 @@ const createPetProfileHTML = (petData: any, type: 'emergency' | 'full' | 'lost_p
     
     content = `
       <style>
-        @media print {
-          .emergency-section { page-break-inside: avoid; margin-bottom: 15px; }
-          .contact-card { page-break-inside: avoid; margin-bottom: 10px; }
-          .medical-section { page-break-inside: avoid; }
-          .pet-info-section { page-break-inside: avoid; }
+        @page {
+          margin: 20mm 15mm 35mm 15mm;
+          size: A4;
         }
-        .emergency-section { page-break-inside: avoid; margin-bottom: 15px; }
-        .contact-card { page-break-inside: avoid; margin-bottom: 10px; }
-        .medical-section { page-break-inside: avoid; }
-        .pet-info-section { page-break-inside: avoid; }
+        
+        body {
+          font-family: Arial, sans-serif;
+          margin: 0;
+          padding: 20px;
+          background: white;
+          color: #333;
+          line-height: 1.4;
+        }
+        
+        .emergency-section {
+          page-break-inside: avoid;
+          margin-bottom: 30px;
+          min-height: 120px;
+          orphans: 3;
+          widows: 3;
+        }
+        
+        .contact-card {
+          page-break-inside: avoid;
+          margin-bottom: 20px;
+          min-height: 60px;
+          orphans: 2;
+          widows: 2;
+          break-inside: avoid;
+        }
+        
+        .medical-section {
+          page-break-inside: avoid;
+          margin-bottom: 30px;
+          min-height: 100px;
+        }
+        
+        .pet-info-section {
+          page-break-inside: avoid;
+          margin-bottom: 25px;
+          min-height: 80px;
+        }
+        
+        .contact-group {
+          page-break-inside: avoid;
+          margin-bottom: 35px;
+          min-height: 150px;
+        }
+        
+        .section-spacer {
+          height: 25px;
+          page-break-inside: avoid;
+        }
+        
+        .page-buffer {
+          height: 40px;
+          page-break-inside: avoid;
+        }
+        
+        @media print {
+          body {
+            margin: 0;
+            -webkit-print-color-adjust: exact;
+            color-adjust: exact;
+          }
+          
+          .emergency-section {
+            page-break-inside: avoid;
+            break-inside: avoid;
+            margin-bottom: 25px;
+          }
+          
+          .contact-card {
+            page-break-inside: avoid;
+            break-inside: avoid;
+            margin-bottom: 15px;
+          }
+          
+          .medical-section {
+            page-break-inside: avoid;
+            break-inside: avoid;
+          }
+          
+          .pet-info-section {
+            page-break-inside: avoid;
+            break-inside: avoid;
+          }
+        }
       </style>
       <div style="padding: 20px; max-width: 800px; margin: 0 auto; font-family: Arial, sans-serif; background: white; line-height: 1.3;">
         <!-- Emergency Header -->
@@ -150,37 +284,40 @@ const createPetProfileHTML = (petData: any, type: 'emergency' | 'full' | 'lost_p
         </div>
         
         <!-- Emergency Contacts -->
-        <div style="margin-bottom: 20px;">
-          <h3 style="color: #1d4ed8; margin: 0 0 15px 0; font-size: 18px; text-align: center; font-weight: bold;">📞 EMERGENCY CONTACTS</h3>
+        <div class="contact-group" style="margin-bottom: 35px;">
+          <h3 style="color: #1d4ed8; margin: 0 0 20px 0; font-size: 18px; text-align: center; font-weight: bold;">📞 EMERGENCY CONTACTS</h3>
           
           ${emergencyContact ? `
-            <div class="contact-card" style="margin-bottom: 15px; padding: 12px; background: white; border-radius: 6px; border: 2px solid #dc2626; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            <div class="contact-card" style="margin-bottom: 20px; padding: 12px; background: white; border-radius: 6px; border: 2px solid #dc2626; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
               <h4 style="color: #dc2626; margin: 0 0 5px 0; font-size: 14px; font-weight: bold;">🚨 PRIMARY EMERGENCY CONTACT</h4>
               <p style="margin: 0; font-size: 13px; line-height: 1.4;">${safeText(emergencyContact)}</p>
             </div>
           ` : ''}
           
           ${secondEmergencyContact ? `
-            <div class="contact-card" style="margin-bottom: 15px; padding: 12px; background: white; border-radius: 6px; border: 2px solid #f59e0b; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            <div class="contact-card" style="margin-bottom: 20px; padding: 12px; background: white; border-radius: 6px; border: 2px solid #f59e0b; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
               <h4 style="color: #d97706; margin: 0 0 5px 0; font-size: 14px; font-weight: bold;">📱 SECONDARY EMERGENCY CONTACT</h4>
               <p style="margin: 0; font-size: 13px; line-height: 1.4;">${safeText(secondEmergencyContact)}</p>
             </div>
           ` : ''}
           
           ${vetContact ? `
-            <div class="contact-card" style="margin-bottom: 15px; padding: 12px; background: white; border-radius: 6px; border: 2px solid #059669; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            <div class="contact-card" style="margin-bottom: 20px; padding: 12px; background: white; border-radius: 6px; border: 2px solid #059669; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
               <h4 style="color: #047857; margin: 0 0 5px 0; font-size: 14px; font-weight: bold;">🏥 VETERINARIAN</h4>
               <p style="margin: 0; font-size: 13px; line-height: 1.4;">${safeText(vetContact)}</p>
             </div>
           ` : ''}
           
           ${petCaretaker ? `
-            <div class="contact-card" style="margin-bottom: 15px; padding: 12px; background: white; border-radius: 6px; border: 2px solid #7c3aed; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            <div class="contact-card" style="margin-bottom: 20px; padding: 12px; background: white; border-radius: 6px; border: 2px solid #7c3aed; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
               <h4 style="color: #6d28d9; margin: 0 0 5px 0; font-size: 14px; font-weight: bold;">👤 PET CARETAKER</h4>
               <p style="margin: 0; font-size: 13px; line-height: 1.4;">${safeText(petCaretaker)}</p>
             </div>
           ` : ''}
         </div>
+        
+        <!-- Page Buffer -->
+        <div class="page-buffer"></div>
         
         <!-- Important Notes -->
         ${petData.bio || petData.notes ? `
@@ -221,22 +358,83 @@ const createPetProfileHTML = (petData: any, type: 'emergency' | 'full' | 'lost_p
       : '<p style="text-align: center; color: #6b7280;">No photos available</p>';
     
     content = `
+      <style>
+        @page {
+          margin: 20mm 15mm 35mm 15mm;
+          size: A4;
+        }
+        
+        body {
+          font-family: Arial, sans-serif;
+          margin: 0;
+          padding: 20px;
+          background: white;
+          color: #333;
+          line-height: 1.4;
+        }
+        
+        .gallery-item {
+          page-break-inside: avoid;
+          margin-bottom: 30px;
+          min-height: 200px;
+        }
+        
+        .gallery-header {
+          page-break-inside: avoid;
+          margin-bottom: 25px;
+          min-height: 100px;
+        }
+        
+        .gallery-footer {
+          page-break-inside: avoid;
+          margin-top: 40px;
+          min-height: 60px;
+        }
+        
+        @media print {
+          body {
+            margin: 0;
+            -webkit-print-color-adjust: exact;
+            color-adjust: exact;
+          }
+          
+          .gallery-item {
+            page-break-inside: avoid;
+            break-inside: avoid;
+          }
+          
+          .gallery-header {
+            page-break-inside: avoid;
+            break-inside: avoid;
+          }
+          
+          .gallery-footer {
+            page-break-inside: avoid;
+            break-inside: avoid;
+          }
+        }
+      </style>
       <div style="padding: 40px; max-width: 800px; margin: 0 auto; font-family: Arial, sans-serif; background: white;">
-        <div style="text-align: center; margin-bottom: 30px; border: 2px solid #1e40af; padding: 20px; background: #eff6ff;">
+        <div class="gallery-header" style="text-align: center; margin-bottom: 30px; border: 2px solid #1e40af; padding: 20px; background: #eff6ff;">
           <h1 style="color: #1e40af; font-size: 24px; margin: 0;">PetPort Photo Gallery</h1>
           <h2 style="color: #1e40af; font-size: 20px; margin: 10px 0;">${safeText(petData.name)}</h2>
         </div>
         
-        <div style="margin-bottom: 20px; text-align: center;">
+        <div class="gallery-item" style="margin-bottom: 20px; text-align: center;">
           <p><strong>Pet:</strong> ${safeText(petData.name)} (${safeText(petData.breed)})</p>
           <p><strong>PetPort ID:</strong> ${safeText(petData.id)}</p>
         </div>
         
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-          ${photoGrid}
+          ${galleryPhotos.map((photo: any, index: number) => `
+            <div class="gallery-item" style="text-align: center; margin-bottom: 20px;">
+              <img src="${photo.url}" alt="Gallery photo ${index + 1}" style="max-width: 300px; max-height: 300px; border: 2px solid #1e40af; border-radius: 8px;">
+              ${photo.caption ? `<p style="margin-top: 10px; font-style: italic; color: #6b7280;">${safeText(photo.caption)}</p>` : ''}
+            </div>
+          `).join('')}
         </div>
         
-        <div style="text-align: center; margin-top: 30px; padding: 15px; background: #f3f4f6; border: 1px solid #d1d5db;">
+        <div class="gallery-footer" style="text-align: center; margin-top: 30px; padding: 15px; background: #f3f4f6; border: 1px solid #d1d5db;">
           <p style="margin: 0; font-size: 12px; color: #6b7280;">Generated from PetPort Digital Pet Passport</p>
           <p style="margin: 5px 0 0 0; font-size: 12px; color: #6b7280;">Visit: ${window.location.origin}/profile/${petData.id}</p>
         </div>
@@ -245,13 +443,80 @@ const createPetProfileHTML = (petData: any, type: 'emergency' | 'full' | 'lost_p
   } else {
     // Full profile
     content = `
+      <style>
+        @page {
+          margin: 20mm 15mm 35mm 15mm;
+          size: A4;
+        }
+        
+        body {
+          font-family: Arial, sans-serif;
+          margin: 0;
+          padding: 20px;
+          background: white;
+          color: #333;
+          line-height: 1.4;
+        }
+        
+        .profile-section {
+          page-break-inside: avoid;
+          margin-bottom: 30px;
+          min-height: 80px;
+        }
+        
+        .profile-header {
+          page-break-inside: avoid;
+          margin-bottom: 25px;
+          min-height: 100px;
+        }
+        
+        .profile-content {
+          page-break-inside: avoid;
+          margin-bottom: 25px;
+          min-height: 120px;
+        }
+        
+        .profile-footer {
+          page-break-inside: avoid;
+          margin-top: 40px;
+          min-height: 60px;
+        }
+        
+        @media print {
+          body {
+            margin: 0;
+            -webkit-print-color-adjust: exact;
+            color-adjust: exact;
+          }
+          
+          .profile-section {
+            page-break-inside: avoid;
+            break-inside: avoid;
+          }
+          
+          .profile-header {
+            page-break-inside: avoid;
+            break-inside: avoid;
+          }
+          
+          .profile-content {
+            page-break-inside: avoid;
+            break-inside: avoid;
+          }
+          
+          .profile-footer {
+            page-break-inside: avoid;
+            break-inside: avoid;
+          }
+        }
+      </style>
       <div style="padding: 40px; max-width: 800px; margin: 0 auto; font-family: Arial, sans-serif; background: white;">
-        <div style="text-align: center; margin-bottom: 30px; border: 2px solid #1e40af; padding: 20px; background: #eff6ff;">
+        <div class="profile-header" style="text-align: center; margin-bottom: 30px; border: 2px solid #1e40af; padding: 20px; background: #eff6ff;">
           <h1 style="color: #1e40af; font-size: 24px; margin: 0;">PetPort Digital Passport</h1>
           <h2 style="color: #1e40af; font-size: 20px; margin: 10px 0;">${safeText(petData.name)}</h2>
         </div>
         
-        <div style="display: flex; gap: 20px; margin-bottom: 20px;">
+        <div class="profile-content" style="display: flex; gap: 20px; margin-bottom: 20px;">
           <div style="flex: 1;">
             <h3 style="color: #1e40af; border-bottom: 2px solid #1e40af; padding-bottom: 5px;">BASIC INFORMATION</h3>
             <p><strong>Name:</strong> ${safeText(petData.name)}</p>
@@ -273,20 +538,20 @@ const createPetProfileHTML = (petData: any, type: 'emergency' | 'full' | 'lost_p
         </div>
         
         ${petData.bio ? `
-          <div style="margin-bottom: 20px;">
+          <div class="profile-section" style="margin-bottom: 20px;">
             <h3 style="color: #1e40af; border-bottom: 2px solid #1e40af; padding-bottom: 5px;">BIOGRAPHY</h3>
             <p>${safeText(petData.bio)}</p>
           </div>
         ` : ''}
         
         ${petData.medical_conditions ? `
-          <div style="margin-bottom: 20px;">
+          <div class="profile-section" style="margin-bottom: 20px;">
             <h3 style="color: #1e40af; border-bottom: 2px solid #1e40af; padding-bottom: 5px;">MEDICAL CONDITIONS</h3>
             <p>${safeText(petData.medical_conditions)}</p>
           </div>
         ` : ''}
         
-        <div style="text-align: center; margin-top: 30px; padding: 15px; background: #f3f4f6; border: 1px solid #d1d5db;">
+        <div class="profile-footer" style="text-align: center; margin-top: 30px; padding: 15px; background: #f3f4f6; border: 1px solid #d1d5db;">
           <p style="margin: 0; font-size: 12px; color: #6b7280;">Generated from PetPort Digital Pet Passport</p>
           <p style="margin: 5px 0 0 0; font-size: 12px; color: #6b7280;">Visit: ${window.location.origin}/profile/${petData.id}</p>
         </div>

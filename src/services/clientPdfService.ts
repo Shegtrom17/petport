@@ -65,13 +65,13 @@ const createPetProfileHTML = (petData: any, type: 'emergency' | 'full' | 'lost_p
     `;
   } else if (type === 'emergency') {
     // Enhanced Emergency PDF with comprehensive emergency information
-    const vetContact = petData.vet_contact || '';
-    const emergencyContact = petData.emergency_contact || '';
-    const secondEmergencyContact = petData.second_emergency_contact || '';
+    const vetContact = petData.vetContact || '';
+    const emergencyContact = petData.emergencyContact || '';
+    const secondEmergencyContact = petData.secondEmergencyContact || '';
     const medications = petData.medications || [];
-    const allergies = petData.allergies || '';
-    const medicalAlert = petData.medical_alert || false;
-    const petCaretaker = petData.pet_caretaker || '';
+    const allergies = petData.careInstructions?.allergies || '';
+    const medicalAlert = petData.medicalAlert || false;
+    const petCaretaker = petData.petCaretaker || '';
     
     content = `
       <div style="padding: 30px; max-width: 800px; margin: 0 auto; font-family: Arial, sans-serif; background: white; line-height: 1.4;">
@@ -79,13 +79,13 @@ const createPetProfileHTML = (petData: any, type: 'emergency' | 'full' | 'lost_p
         <div style="text-align: center; margin-bottom: 25px; border: 3px solid #dc2626; padding: 20px; background: #fef2f2;">
           <h1 style="color: #dc2626; font-size: 28px; margin: 0; font-weight: bold;">🚨 EMERGENCY PROFILE</h1>
           <h2 style="color: #dc2626; font-size: 24px; margin: 8px 0; font-weight: bold;">${safeText(petData.name)}</h2>
-          ${petData.microchip_id ? `<p style="margin: 5px 0; font-size: 16px; font-weight: bold;">Microchip: ${safeText(petData.microchip_id)}</p>` : ''}
+          ${petData.microchipId ? `<p style="margin: 5px 0; font-size: 16px; font-weight: bold;">Microchip: ${safeText(petData.microchipId)}</p>` : ''}
         </div>
         
         <!-- Pet Photo Section -->
-        ${petData.photo_url ? `
+        ${petData.photoUrl ? `
           <div style="text-align: center; margin-bottom: 25px;">
-            <img src="${petData.photo_url}" alt="${safeText(petData.name)}" style="max-width: 200px; max-height: 200px; border: 3px solid #dc2626; border-radius: 8px;">
+            <img src="${petData.photoUrl}" alt="${safeText(petData.name)}" style="max-width: 200px; max-height: 200px; border: 3px solid #dc2626; border-radius: 8px;">
           </div>
         ` : ''}
         
@@ -114,10 +114,10 @@ const createPetProfileHTML = (petData: any, type: 'emergency' | 'full' | 'lost_p
               </div>
             ` : ''}
             
-            ${petData.medical_conditions ? `
+            ${petData.medicalConditions ? `
               <div>
                 <h4 style="color: #dc2626; margin: 0 0 8px 0; font-size: 16px;">MEDICAL CONDITIONS:</h4>
-                <p style="margin: 0; padding-left: 10px;">${safeText(petData.medical_conditions)}</p>
+                <p style="margin: 0; padding-left: 10px;">${safeText(petData.medicalConditions)}</p>
               </div>
             ` : ''}
           </div>
@@ -133,7 +133,7 @@ const createPetProfileHTML = (petData: any, type: 'emergency' | 'full' | 'lost_p
             <p style="margin: 5px 0;"><strong>Weight:</strong> ${safeText(petData.weight)}</p>
             <p style="margin: 5px 0;"><strong>Gender:</strong> ${safeText(petData.gender)}</p>
             ${petData.color ? `<p style="margin: 5px 0;"><strong>Color:</strong> ${safeText(petData.color)}</p>` : ''}
-            ${petData.petport_id ? `<p style="margin: 5px 0;"><strong>PetPort ID:</strong> ${safeText(petData.petport_id)}</p>` : ''}
+            ${petData.petPortId ? `<p style="margin: 5px 0;"><strong>PetPort ID:</strong> ${safeText(petData.petPortId)}</p>` : ''}
           </div>
         </div>
         

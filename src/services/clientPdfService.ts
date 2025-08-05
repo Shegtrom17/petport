@@ -442,6 +442,24 @@ const generateLostPetPDF = async (doc: jsPDF, pageManager: PDFPageManager, petDa
     doc.setTextColor(0, 0, 0); // Reset text color
   }
   
+  // If Found section
+  pageManager.addY(15);
+  addSection(doc, pageManager, 'IF FOUND', () => {
+    addText(doc, pageManager, '1. Approach calmly and speak softly');
+    addText(doc, pageManager, '2. Check for identification tags or collar');
+    addText(doc, pageManager, '3. Contact numbers listed above immediately');
+    addText(doc, pageManager, '4. Keep pet safe and contained if possible');
+    addText(doc, pageManager, '5. Do not attempt to feed without owner permission');
+  });
+  
+  // Important Notes section
+  addSection(doc, pageManager, 'IMPORTANT NOTES', () => {
+    addText(doc, pageManager, 'This pet may be scared and disoriented');
+    addText(doc, pageManager, 'May not respond to name when frightened');
+    addText(doc, pageManager, 'Please handle with care and patience');
+    addText(doc, pageManager, 'Any sighting information is valuable');
+  });
+
   // Reward section
   pageManager.addY(15);
   addTitle(doc, pageManager, 'REWARD OFFERED', '#dc2626', 16);

@@ -288,7 +288,7 @@ const generateLostPetPDF = async (doc: jsPDF, pageManager: PDFPageManager, petDa
   doc.setTextColor(255, 255, 255); // White text
   doc.setFontSize(24);
   doc.setFont('helvetica', 'bold');
-  const bannerText = '🚨 MISSING PET ALERT 🚨';
+  const bannerText = 'MISSING PET ALERT';
   const textWidth = doc.getTextWidth(bannerText);
   doc.text(bannerText, (210 - textWidth) / 2, 18); // Centered text
   
@@ -329,7 +329,7 @@ const generateLostPetPDF = async (doc: jsPDF, pageManager: PDFPageManager, petDa
   pageManager.setY(Math.max(currentY + 70, pageManager.getCurrentY()));
   
   // Emergency contact information
-  addSection(doc, pageManager, '🚨 EMERGENCY CONTACT 🚨', () => {
+  addSection(doc, pageManager, 'EMERGENCY CONTACT', () => {
     // Try different possible property names for emergency contacts
     const primaryContact = petData.emergencyContact || petData.emergency_contact || petData.emergency_contacts?.[0];
     const secondaryContact = petData.secondEmergencyContact || petData.second_emergency_contact || petData.emergency_contacts?.[1];
@@ -349,7 +349,7 @@ const generateLostPetPDF = async (doc: jsPDF, pageManager: PDFPageManager, petDa
   
   // Last seen information (if available from lost pet data)
   if (petData.last_seen_location || petData.last_seen_date) {
-    addSection(doc, pageManager, '📍 LAST SEEN', () => {
+    addSection(doc, pageManager, 'LAST SEEN', () => {
       if (petData.last_seen_location) {
         addText(doc, pageManager, `Location: ${safeText(petData.last_seen_location)}`);
       }
@@ -378,7 +378,7 @@ const generateLostPetPDF = async (doc: jsPDF, pageManager: PDFPageManager, petDa
   
   // Medical alerts
   if (petData.medicalAlert && petData.medicalConditions) {
-    addSection(doc, pageManager, '⚠️ MEDICAL ALERT', () => {
+    addSection(doc, pageManager, 'MEDICAL ALERT', () => {
       addText(doc, pageManager, safeText(petData.medicalConditions), '#dc2626');
       if (petData.medications && petData.medications.length > 0) {
         addText(doc, pageManager, `Medications: ${petData.medications.join(', ')}`);
@@ -399,7 +399,7 @@ const generateLostPetPDF = async (doc: jsPDF, pageManager: PDFPageManager, petDa
   
   // Reward section
   pageManager.addY(15);
-  addTitle(doc, pageManager, '💰 REWARD OFFERED', '#dc2626', 16);
+  addTitle(doc, pageManager, 'REWARD OFFERED', '#dc2626', 16);
   if (petData.reward_amount) {
     addText(doc, pageManager, `Reward: ${safeText(petData.reward_amount)}`, '#000000', 14);
   }

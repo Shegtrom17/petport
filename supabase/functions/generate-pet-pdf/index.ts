@@ -200,31 +200,18 @@ serve(async (req) => {
       console.log('Sanitizing text:', text.substring(0, 100) + (text.length > 100 ? '...' : ''));
       
       try {
-        // First pass: Replace common emojis with text equivalents
+        // Remove all emojis and non-ASCII characters completely
         let sanitized = text
-          .replace(/✈/g, 'TRAVEL:')
-          .replace(/🏆/g, 'AWARD:')
-          .replace(/🎓/g, 'TRAINING:')
-          .replace(/⭐/g, 'STAR:')
-          .replace(/🐾/g, 'PAW:')
-          .replace(/❤️/g, 'HEART:')
-          .replace(/🏠/g, 'HOME:')
-          .replace(/📍/g, 'LOCATION:')
-          .replace(/📞/g, 'PHONE:')
-          .replace(/💊/g, 'MEDICINE:')
-          .replace(/🚨/g, 'ALERT:')
           // Fix newline characters
           .replace(/\\n/g, ' ')
           .replace(/\n/g, ' ')
           .replace(/\r/g, ' ')
-          .replace(/\t/g, ' ');
-        
-        // Second pass: Remove ALL non-ASCII characters (anything above code point 127)
-        // This is more aggressive but ensures WinAnsi compatibility
-        sanitized = sanitized.replace(/[^\x00-\x7F]/g, '');
-        
-        // Third pass: Clean up whitespace
-        sanitized = sanitized.replace(/\s+/g, ' ').trim();
+          .replace(/\t/g, ' ')
+          // Remove ALL non-ASCII characters (anything above code point 127)
+          .replace(/[^\x00-\x7F]/g, '')
+          // Clean up whitespace
+          .replace(/\s+/g, ' ')
+          .trim();
         
         console.log('Text sanitized successfully, length:', sanitized.length);
         return sanitized;

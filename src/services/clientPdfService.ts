@@ -421,8 +421,13 @@ const generateLostPetPDF = async (doc: jsPDF, pageManager: PDFPageManager, petDa
     for (let i = 0; i < additionalPhotos.length && i < 3; i++) {
       const photoX = startX + (i * spacing);
       
-      // Draw photo
-      await addImage(doc, pageManager, additionalPhotos[i].url, photoSize, photoSize, photoX);
+      // Draw photo without advancing Y cursor
+      try {
+        const base64 = await loadImageAsBase64(additionalPhotos[i].url);
+        doc.addImage(base64, 'JPEG', photoX, startY, photoSize, photoSize);
+      } catch (error) {
+        console.error('Error adding image:', error);
+      }
       
       // Add caption below photo
       const captionY = startY + photoSize + 5;

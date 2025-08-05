@@ -1862,7 +1862,6 @@ serve(async (req) => {
       // QR Code for Missing Pet Flyers - DRAW FIRST to avoid being covered
       if (type === 'lost_pet') {
         console.log('Generating QR code for missing pet...')
-        console.log('Generating QR code for missing pet...')
         const siteUrl = Deno.env.get('SITE_URL') || 'https://c2db7d2d-7448-4eaf-945e-d804d3aeaccc.lovableproject.com'
         const missingPetUrl = `${siteUrl}/missing-pet/${petId}`
         console.log('QR code target URL:', missingPetUrl)

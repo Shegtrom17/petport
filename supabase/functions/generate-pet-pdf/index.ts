@@ -1855,24 +1855,8 @@ serve(async (req) => {
         })
         
         console.log(`Complete Profile PDF generated with ${currentPageNum} pages.`)
-            
-            // Page Footer
-            currentPage.drawText(`Generated on: ${new Date().toLocaleDateString()}`, {
-              x: 50,
-              y: 50,
-              size: 10,
-              font: regularFont,
-              color: rgb(0.83, 0.69, 0.22),
-            })
-
-            currentPage.drawText(`PetPort™ Official Document - Page ${currentPageNum}`, {
-              x: width - 280,
-              y: 50,
-              size: 10,
-              font: boldFont,
-              color: rgb(0.83, 0.69, 0.22),
-            })
-          }
+        
+      }
       }
 
       // QR Code for Missing Pet Flyers - DRAW FIRST to avoid being covered

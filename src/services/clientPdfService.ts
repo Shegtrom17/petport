@@ -324,7 +324,7 @@ const generateLostPetPDF = async (doc: jsPDF, pageManager: PDFPageManager, petDa
     addText(doc, pageManager, `Age: ${safeText(petData.age)}`);
     addText(doc, pageManager, `Weight: ${safeText(petData.weight)}`);
     if (petData.species) addText(doc, pageManager, `Color: ${safeText(petData.species)}`);
-    if (petData.microchip_id) addText(doc, pageManager, `Microchip: ${safeText(petData.microchip_id)}`);
+    if (petData.microchipId) addText(doc, pageManager, `Microchip: ${safeText(petData.microchipId)}`);
   });
   
   // Reset X position and move below both columns
@@ -389,15 +389,52 @@ const generateLostPetPDF = async (doc: jsPDF, pageManager: PDFPageManager, petDa
     });
   }
   
-  // Add second photo if available (smaller)
+  // Additional Photos Section - Horizontal layout with up to 3 photos
+  const additionalPhotos = [];
+  
+  // Add full body photo if available
+  if (petData.fullBodyPhotoUrl) {
+    additionalPhotos.push({ url: petData.fullBodyPhotoUrl, caption: 'Full Body Photo' });
+  }
+  
+  // Add gallery photos (up to 2 more)
   if (petData.gallery_photos && petData.gallery_photos.length > 0) {
-    pageManager.addY(10);
-    addText(doc, pageManager, 'Additional Photo:', '#000000', 10);
-    pageManager.addY(5);
-    await addImage(doc, pageManager, petData.gallery_photos[0].url, 50, 50);
-    if (petData.gallery_photos[0].caption) {
-      addText(doc, pageManager, petData.gallery_photos[0].caption, '#6b7280', 9);
+    const galleryCount = Math.min(2, petData.gallery_photos.length);
+    for (let i = 0; i < galleryCount; i++) {
+      additionalPhotos.push({
+        url: petData.gallery_photos[i].url,
+        caption: petData.gallery_photos[i].caption || `Photo ${i + 1}`
+      });
     }
+  }
+  
+  if (additionalPhotos.length > 0) {
+    pageManager.addY(15);
+    addText(doc, pageManager, 'IDENTIFICATION PHOTOS', '#dc2626', 12);
+    pageManager.addY(5);
+    
+    const startY = pageManager.getCurrentY();
+    const photoSize = 45;
+    const spacing = 65; // Photo width + margin
+    const startX = 20;
+    
+    for (let i = 0; i < additionalPhotos.length && i < 3; i++) {
+      const photoX = startX + (i * spacing);
+      
+      // Draw photo
+      await addImage(doc, pageManager, additionalPhotos[i].url, photoSize, photoSize, photoX);
+      
+      // Add caption below photo
+      const captionY = startY + photoSize + 5;
+      doc.setFontSize(8);
+      doc.setTextColor(107, 114, 128); // Gray color
+      const caption = additionalPhotos[i].caption.substring(0, 15); // Limit caption length
+      doc.text(caption, photoX, captionY);
+    }
+    
+    // Move cursor below the photos
+    pageManager.setY(startY + photoSize + 15);
+    doc.setTextColor(0, 0, 0); // Reset text color
   }
   
   // Reward section

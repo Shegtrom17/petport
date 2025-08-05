@@ -8,10 +8,11 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/context/AuthContext";
-import { updatePetBasicInfo, updatePetContacts } from "@/services/petService";
+import { updatePetBasicInfo, updatePetContacts, updatePetMedical } from "@/services/petService";
 import { Loader2 } from "lucide-react";
 import { sanitizeText, validateTextLength, containsSuspiciousContent } from "@/utils/inputSanitizer";
 import { PrivacyToggle } from "@/components/PrivacyToggle";
+import { Switch } from "@/components/ui/switch";
 
 interface PetData {
   id: string;
@@ -35,6 +36,9 @@ interface PetData {
   emergencyContact?: string;
   secondEmergencyContact?: string;
   petCaretaker?: string;
+  // Medical information
+  medicalAlert?: boolean;
+  medicalConditions?: string;
 }
 
 interface PetEditFormProps {
@@ -64,7 +68,10 @@ export const PetEditForm = ({ petData, onSave, onCancel, togglePetPublicVisibili
     vetContact: petData.vetContact || "",
     emergencyContact: petData.emergencyContact || "",
     secondEmergencyContact: petData.secondEmergencyContact || "",
-    petCaretaker: petData.petCaretaker || ""
+    petCaretaker: petData.petCaretaker || "",
+    // Medical information
+    medicalAlert: petData.medicalAlert || false,
+    medicalConditions: petData.medicalConditions || ""
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -157,7 +164,16 @@ const handleSubmit = async (e: React.FormEvent) => {
     // Call service layer to update pet contacts
     const contactUpdateSuccess = await updatePetContacts(petData.id, contactData);
 
-    if (basicUpdateSuccess && contactUpdateSuccess) {
+    // Prepare medical data
+    const medicalData = {
+      medical_alert: formData.medicalAlert,
+      medical_conditions: formData.medicalAlert ? sanitizeText(formData.medicalConditions.trim()) : ""
+    };
+
+    // Call service layer to update pet medical info
+    const medicalUpdateSuccess = await updatePetMedical(petData.id, medicalData);
+
+    if (basicUpdateSuccess && contactUpdateSuccess && medicalUpdateSuccess) {
       toast({
         title: "Success",
         description: "Pet profile updated successfully!",
@@ -294,6 +310,45 @@ const handleSubmit = async (e: React.FormEvent) => {
               />
             </div>
           </div>
+        </div>
+
+        {/* Medical Information Section */}
+        <div className="border-t pt-6">
+          <h3 className="text-lg font-serif text-navy-900 mb-4">Medical Information</h3>
+          
+          <div className="flex items-center space-x-3 mb-4">
+            <Switch
+              id="medicalAlert"
+              checked={formData.medicalAlert}
+              onCheckedChange={(checked) => {
+                setFormData(prev => ({
+                  ...prev,
+                  medicalAlert: checked,
+                  medicalConditions: checked ? prev.medicalConditions : ""
+                }));
+              }}
+            />
+            <Label htmlFor="medicalAlert" className="text-sm font-medium">
+              Enable medical alert banner
+            </Label>
+          </div>
+
+          {formData.medicalAlert && (
+            <div>
+              <Label htmlFor="medicalConditions">Medical Conditions</Label>
+              <Textarea 
+                id="medicalConditions" 
+                name="medicalConditions" 
+                value={formData.medicalConditions} 
+                onChange={handleChange}
+                placeholder="Describe any medical conditions, allergies, or special care requirements..."
+                className="mt-1"
+              />
+              <p className="text-xs text-gray-500 mt-1">
+                This information will be displayed on the medical alert banner and included in emergency PDFs.
+              </p>
+            </div>
+          )}
         </div>
 
         {/* Privacy Settings */}

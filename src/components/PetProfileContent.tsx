@@ -428,22 +428,16 @@ export const PetProfileContent = ({
 
           {/* Medical Alert Banner - Moved to left column */}
           {enhancedPetData?.medicalAlert && (
-            <Card className="border-2 border-red-600 shadow-xl bg-gradient-to-r from-red-500 to-red-600 text-white relative overflow-hidden cursor-pointer transition-all hover:shadow-2xl hover:scale-[1.02] hover:border-red-400"
+            <Card className="border border-red-400 bg-red-50 hover:bg-red-100 text-red-800 cursor-pointer transition-all hover:border-red-500"
                   onClick={() => window.dispatchEvent(new CustomEvent('navigate-to-care'))}>
-              <div className="absolute inset-0 bg-black/10"></div>
-              <CardContent className="p-4 relative">
-                <div className="flex items-center justify-center space-x-3">
-                  <AlertTriangle className="w-8 h-8 text-white animate-pulse" />
-                  <div className="text-center">
-                    <h3 className="text-xl font-bold tracking-wide">MEDICAL ALERT</h3>
-                    <p className="text-red-100 text-sm">{enhancedPetData?.medicalConditions || "Medical conditions specified"}</p>
-                    <div className="mt-2 pt-2 border-t border-red-400/50">
-                      <p className="text-red-200 text-xs font-medium">
-                        👆 Click to view full medical details
-                      </p>
-                    </div>
+              <CardContent className="p-3">
+                <div className="flex items-center space-x-3">
+                  <AlertTriangle className="w-5 h-5 text-red-600" />
+                  <div className="flex-1 min-w-0">
+                    <h3 className="text-sm font-semibold text-red-800">Medical Alert</h3>
+                    <p className="text-xs text-red-700 truncate">{enhancedPetData?.medicalConditions || "Medical conditions specified"}</p>
                   </div>
-                  <AlertTriangle className="w-8 h-8 text-white animate-pulse" />
+                  <span className="text-xs text-red-600">→</span>
                 </div>
               </CardContent>
             </Card>

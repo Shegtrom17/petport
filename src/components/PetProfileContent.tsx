@@ -509,7 +509,7 @@ export const PetProfileContent = ({
           <Card className="bg-[#f8f8f8] shadow-md">
             <CardHeader className="pb-3">
               <CardTitle className="text-lg font-bold text-navy-900 border-b-2 border-gold-500 pb-2">
-                🛂 PASSPORT DOCUMENTS
+                🛂 PETPORT QUICK PDF'S
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">

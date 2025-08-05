@@ -19,11 +19,11 @@ serve(async (req) => {
   }
 
   try {
-    console.log('=== PDF Generation Started v2 ===')
+    console.log('=== PDF Generation Started v3 ===')
     
     // Validate environment variables
     if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
-      console.error('Missing required environment variables')
+      console.error('❌ Missing required environment variables')
       return new Response(
         JSON.stringify({ error: 'Service configuration error' }), 
         { 
@@ -35,6 +35,7 @@ serve(async (req) => {
 
     // Validate request method
     if (req.method !== 'POST') {
+      console.error('❌ Invalid method:', req.method)
       return new Response(
         JSON.stringify({ error: 'Method not allowed' }), 
         { 
@@ -45,10 +46,11 @@ serve(async (req) => {
     }
 
     // Parse the request body to get petId and type
+    console.log('📥 Parsing request body...')
     const requestBody = await req.json()
-    console.log('Raw request body received:', requestBody)
+    console.log('Request body:', requestBody)
     const { petId, type } = requestBody
-    console.log('Extracted petId:', petId, 'type:', type, 'original type value:', requestBody.type)
+    console.log('Fetching pet ID:', petId, 'type:', type)
     
     if (!petId) {
       return new Response(
@@ -78,9 +80,10 @@ serve(async (req) => {
       )
     }
 
-    console.log('Generating PDF for pet:', petId, 'type:', type)
+    console.log('🔧 Generating PDF for pet:', petId, 'type:', type)
 
     // Initialize Supabase client with service role (bypasses RLS)
+    console.log('🔌 Initializing Supabase client...')
     const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, {
       auth: {
         autoRefreshToken: false,
@@ -89,7 +92,7 @@ serve(async (req) => {
     })
 
     // Fetch pet data - separate queries to avoid join issues
-    console.log('Fetching pet data for:', petId)
+    console.log('📋 Fetching pet data for ID:', petId)
     
     const { data: petData, error: fetchError } = await supabase
       .from('pets')
@@ -98,7 +101,7 @@ serve(async (req) => {
       .single()
 
     if (fetchError) {
-      console.error('Error fetching pet data:', fetchError)
+      console.error('❌ Error fetching pet data:', fetchError)
       return new Response(
         JSON.stringify({ 
           error: 'Failed to fetch pet data: ' + fetchError.message,
@@ -113,7 +116,7 @@ serve(async (req) => {
     }
 
     if (!petData) {
-      console.error('Pet not found:', petId)
+      console.error('❌ Pet not found:', petId)
       return new Response(
         JSON.stringify({ 
           error: 'Pet not found',
@@ -127,40 +130,101 @@ serve(async (req) => {
       )
     }
 
-    console.log('Pet data fetched successfully:', petData.name)
+    console.log('✅ Pet data fetched successfully:', petData.name || 'Unknown')
+    console.log('Fetched data for type:', type)
 
-    // Fetch additional data separately to avoid join issues
-    const [
-      { data: contactsData },
-      { data: medicalData },
-      { data: lostPetData },
-      { data: careData },
-      { data: photosData },
-      { data: achievementsData },
-      { data: trainingData },
-      { data: reviewsData },
-      { data: experiencesData },
-      { data: travelData },
-      { data: galleryData },
-      { data: certificationsData },
-      { data: professionalData }
-    ] = await Promise.all([
-      supabase.from('contacts').select('*').eq('pet_id', petId).maybeSingle(),
-      supabase.from('medical').select('*').eq('pet_id', petId).maybeSingle(),
-      supabase.from('lost_pet_data').select('*').eq('pet_id', petId).maybeSingle(),
-      supabase.from('care_instructions').select('*').eq('pet_id', petId).maybeSingle(),
-      supabase.from('pet_photos').select('*').eq('pet_id', petId).maybeSingle(),
-      supabase.from('achievements').select('*').eq('pet_id', petId),
-      supabase.from('training').select('*').eq('pet_id', petId),
-      supabase.from('reviews').select('*').eq('pet_id', petId),
-      supabase.from('experiences').select('*').eq('pet_id', petId),
-      supabase.from('travel_locations').select('*').eq('pet_id', petId),
-      supabase.from('gallery_photos').select('*').eq('pet_id', petId),
-      supabase.from('certifications').select('*').eq('pet_id', petId),
-      supabase.from('professional_data').select('*').eq('pet_id', petId).maybeSingle()
-    ])
+    // For Emergency PDF, only fetch essential data to minimize errors
+    console.log('📊 Fetching additional data for type:', type)
+    
+    let contactsData = null
+    let medicalData = null
+    let lostPetData = null
+    let careData = null
+    let photosData = null
+    let achievementsData = []
+    let trainingData = []
+    let reviewsData = []
+    let experiencesData = []
+    let travelData = []
+    let galleryData = []
+    let certificationsData = []
+    let professionalData = null
 
-    console.log('Additional data fetched:', {
+    try {
+      if (type === 'emergency') {
+        // Emergency PDF - only fetch critical data
+        console.log('🚨 Emergency PDF - fetching minimal data...')
+        const [
+          { data: contacts, error: contactError },
+          { data: medical, error: medicalError },
+          { data: photos, error: photoError }
+        ] = await Promise.all([
+          supabase.from('contacts').select('*').eq('pet_id', petId).maybeSingle(),
+          supabase.from('medical').select('*').eq('pet_id', petId).maybeSingle(),
+          supabase.from('pet_photos').select('*').eq('pet_id', petId).maybeSingle()
+        ])
+        
+        if (contactError) console.log('⚠️ Contact fetch error:', contactError)
+        if (medicalError) console.log('⚠️ Medical fetch error:', medicalError)
+        if (photoError) console.log('⚠️ Photo fetch error:', photoError)
+        
+        contactsData = contacts
+        medicalData = medical
+        photosData = photos
+        
+      } else {
+        // Full/other PDFs - fetch all data
+        console.log('📚 Full PDF - fetching all data...')
+        const [
+          { data: contacts },
+          { data: medical },
+          { data: lostPet },
+          { data: care },
+          { data: photos },
+          { data: achievements },
+          { data: training },
+          { data: reviews },
+          { data: experiences },
+          { data: travel },
+          { data: gallery },
+          { data: certifications },
+          { data: professional }
+        ] = await Promise.all([
+          supabase.from('contacts').select('*').eq('pet_id', petId).maybeSingle(),
+          supabase.from('medical').select('*').eq('pet_id', petId).maybeSingle(),
+          supabase.from('lost_pet_data').select('*').eq('pet_id', petId).maybeSingle(),
+          supabase.from('care_instructions').select('*').eq('pet_id', petId).maybeSingle(),
+          supabase.from('pet_photos').select('*').eq('pet_id', petId).maybeSingle(),
+          supabase.from('achievements').select('*').eq('pet_id', petId),
+          supabase.from('training').select('*').eq('pet_id', petId),
+          supabase.from('reviews').select('*').eq('pet_id', petId),
+          supabase.from('experiences').select('*').eq('pet_id', petId),
+          supabase.from('travel_locations').select('*').eq('pet_id', petId),
+          supabase.from('gallery_photos').select('*').eq('pet_id', petId),
+          supabase.from('certifications').select('*').eq('pet_id', petId),
+          supabase.from('professional_data').select('*').eq('pet_id', petId).maybeSingle()
+        ])
+        
+        contactsData = contacts
+        medicalData = medical
+        lostPetData = lostPet
+        careData = care
+        photosData = photos
+        achievementsData = achievements || []
+        trainingData = training || []
+        reviewsData = reviews || []
+        experiencesData = experiences || []
+        travelData = travel || []
+        galleryData = gallery || []
+        certificationsData = certifications || []
+        professionalData = professional
+      }
+    } catch (dataError) {
+      console.error('❌ Error fetching additional data:', dataError)
+      // Continue with null values for non-critical data
+    }
+
+    console.log('📈 Data fetched successfully:', {
       hasContacts: !!contactsData,
       hasMedical: !!medicalData,
       hasLostData: !!lostPetData,
@@ -177,10 +241,12 @@ serve(async (req) => {
     })
 
     // Generate PDF using pdf-lib
+    console.log('📄 Creating PDF document...')
     const pdfDoc = await PDFDocument.create()
     const page = pdfDoc.addPage([612, 792]) // Standard letter size
     const { width, height } = page.getSize()
     
+    console.log('🔤 Embedding fonts...')
     // Get fonts
     const boldFont = await pdfDoc.embedFont(StandardFonts.HelveticaBold)
     const regularFont = await pdfDoc.embedFont(StandardFonts.Helvetica)
@@ -197,8 +263,6 @@ serve(async (req) => {
     const sanitizeTextForPDF = (text: string): string => {
       if (!text) return '';
       
-      console.log('Sanitizing text:', text.substring(0, 100) + (text.length > 100 ? '...' : ''));
-      
       try {
         // Remove all emojis and non-ASCII characters completely
         let sanitized = text
@@ -213,11 +277,10 @@ serve(async (req) => {
           .replace(/\s+/g, ' ')
           .trim();
         
-        console.log('Text sanitized successfully, length:', sanitized.length);
         return sanitized;
         
       } catch (error) {
-        console.error('Error sanitizing text:', error);
+        console.error('❌ Error sanitizing text:', error);
         // Fallback: return only ASCII alphanumeric characters and basic punctuation
         return text.replace(/[^a-zA-Z0-9\s\.\,\!\?\-\(\)]/g, '').replace(/\s+/g, ' ').trim();
       }
@@ -227,17 +290,34 @@ serve(async (req) => {
     const drawMultiLineText = (page: any, text: string, x: number, y: number, maxWidth: number, fontSize: number, font: any, color: any, lineSpacing: number = 5): number => {
       if (!text) return y;
       
-      const sanitizedText = sanitizeTextForPDF(text);
-      const words = sanitizedText.split(' ');
-      let currentLine = '';
-      let currentY = y;
-      
-      for (let i = 0; i < words.length; i++) {
-        const testLine = currentLine + (currentLine ? ' ' : '') + words[i];
-        const testWidth = font.widthOfTextAtSize(testLine, fontSize);
+      try {
+        const sanitizedText = sanitizeTextForPDF(text);
+        const words = sanitizedText.split(' ');
+        let currentLine = '';
+        let currentY = y;
         
-        if (testWidth > maxWidth && currentLine) {
-          // Draw the current line
+        for (let i = 0; i < words.length; i++) {
+          const testLine = currentLine + (currentLine ? ' ' : '') + words[i];
+          const testWidth = font.widthOfTextAtSize(testLine, fontSize);
+          
+          if (testWidth > maxWidth && currentLine) {
+            // Draw the current line
+            page.drawText(currentLine, {
+              x: x,
+              y: currentY,
+              size: fontSize,
+              font: font,
+              color: color,
+            });
+            currentY -= fontSize + lineSpacing;
+            currentLine = words[i];
+          } else {
+            currentLine = testLine;
+          }
+        }
+        
+        // Draw the last line
+        if (currentLine) {
           page.drawText(currentLine, {
             x: x,
             y: currentY,
@@ -246,32 +326,184 @@ serve(async (req) => {
             color: color,
           });
           currentY -= fontSize + lineSpacing;
-          currentLine = words[i];
-        } else {
-          currentLine = testLine;
         }
+        
+        return currentY;
+      } catch (error) {
+        console.error('❌ Error drawing multiline text:', error);
+        return y - 20; // Return a reasonable fallback position
       }
-      
-      // Draw the last line
-      if (currentLine) {
-        page.drawText(currentLine, {
-          x: x,
-          y: currentY,
-          size: fontSize,
-          font: font,
-          color: color,
-        });
-        currentY -= fontSize + lineSpacing;
-      }
-      
-      return currentY;
     }
     
     let yPosition = height - 60
     
-    // MISSING PET FLYER LAYOUT
-    if (isLostPetFlyer) {
-      console.log('Generating Missing Pet Flyer...')
+    console.log('🎨 Starting PDF layout generation for type:', type)
+    
+    // EMERGENCY PDF LAYOUT - SIMPLIFIED
+    if (type === 'emergency') {
+      console.log('🚨 Generating Emergency PDF...')
+      
+      try {
+        // Title
+        page.drawText('EMERGENCY PET PROFILE', {
+          x: 50,
+          y: yPosition,
+          size: 24,
+          font: boldFont,
+          color: redColor,
+        })
+        yPosition -= 40
+        
+        // Pet Name and Basic Info
+        const petName = sanitizeTextForPDF(petData.name || 'Unknown Pet')
+        const petBreed = sanitizeTextForPDF(petData.breed || 'Unknown Breed')
+        const petSpecies = sanitizeTextForPDF(petData.species || 'Pet')
+        
+        page.drawText(`Name: ${petName}`, {
+          x: 50,
+          y: yPosition,
+          size: 16,
+          font: boldFont,
+          color: blackColor,
+        })
+        yPosition -= 25
+        
+        page.drawText(`Breed: ${petBreed} | Species: ${petSpecies}`, {
+          x: 50,
+          y: yPosition,
+          size: 14,
+          font: regularFont,
+          color: blackColor,
+        })
+        yPosition -= 25
+        
+        if (petData.age) {
+          page.drawText(`Age: ${sanitizeTextForPDF(petData.age)}`, {
+            x: 50,
+            y: yPosition,
+            size: 14,
+            font: regularFont,
+            color: blackColor,
+          })
+          yPosition -= 25
+        }
+        
+        // Emergency Contacts
+        if (contactsData) {
+          console.log('📞 Adding emergency contacts...')
+          
+          page.drawText('EMERGENCY CONTACTS:', {
+            x: 50,
+            y: yPosition,
+            size: 16,
+            font: boldFont,
+            color: redColor,
+          })
+          yPosition -= 25
+          
+          if (contactsData.emergency_contact) {
+            page.drawText(`Primary: ${sanitizeTextForPDF(contactsData.emergency_contact)}`, {
+              x: 70,
+              y: yPosition,
+              size: 14,
+              font: regularFont,
+              color: blackColor,
+            })
+            yPosition -= 20
+          }
+          
+          if (contactsData.second_emergency_contact) {
+            page.drawText(`Secondary: ${sanitizeTextForPDF(contactsData.second_emergency_contact)}`, {
+              x: 70,
+              y: yPosition,
+              size: 14,
+              font: regularFont,
+              color: blackColor,
+            })
+            yPosition -= 20
+          }
+          
+          if (contactsData.vet_contact) {
+            page.drawText(`Vet: ${sanitizeTextForPDF(contactsData.vet_contact)}`, {
+              x: 70,
+              y: yPosition,
+              size: 14,
+              font: regularFont,
+              color: blackColor,
+            })
+            yPosition -= 25
+          }
+        }
+        
+        // Medical Information
+        if (medicalData) {
+          console.log('🏥 Adding medical information...')
+          
+          page.drawText('MEDICAL INFORMATION:', {
+            x: 50,
+            y: yPosition,
+            size: 16,
+            font: boldFont,
+            color: redColor,
+          })
+          yPosition -= 25
+          
+          if (medicalData.medical_alert) {
+            page.drawText('MEDICAL ALERT: YES', {
+              x: 70,
+              y: yPosition,
+              size: 14,
+              font: boldFont,
+              color: redColor,
+            })
+            yPosition -= 20
+          }
+          
+          if (medicalData.medical_conditions) {
+            page.drawText(`Conditions: ${sanitizeTextForPDF(medicalData.medical_conditions)}`, {
+              x: 70,
+              y: yPosition,
+              size: 12,
+              font: regularFont,
+              color: blackColor,
+            })
+            yPosition -= 20
+          }
+          
+          if (medicalData.medications && Array.isArray(medicalData.medications) && medicalData.medications.length > 0) {
+            page.drawText('Medications:', {
+              x: 70,
+              y: yPosition,
+              size: 12,
+              font: boldFont,
+              color: blackColor,
+            })
+            yPosition -= 15
+            
+            medicalData.medications.forEach((med, index) => {
+              if (med && yPosition > 50) {
+                page.drawText(`- ${sanitizeTextForPDF(med)}`, {
+                  x: 90,
+                  y: yPosition,
+                  size: 11,
+                  font: regularFont,
+                  color: blackColor,
+                })
+                yPosition -= 15
+              }
+            })
+          }
+        }
+        
+        console.log('✅ Emergency PDF layout completed successfully')
+        
+      } catch (emergencyError) {
+        console.error('❌ Error generating emergency PDF:', emergencyError)
+        throw emergencyError
+      }
+      
+    } else if (isLostPetFlyer) {
+      console.log('🔍 Generating Missing Pet Flyer...')
       
       // Large MISSING banner
       page.drawRectangle({
@@ -1939,25 +2171,39 @@ serve(async (req) => {
     }
 
     // Save the PDF as bytes
-    console.log('Generating PDF bytes...')
-    const pdfBytes = await pdfDoc.save()
-    
-    console.log('PDF generated successfully for:', petData.name, 'Size:', pdfBytes.length, 'bytes')
-    
-    // Return JSON response with PDF data for client-side processing
-    return new Response(JSON.stringify({
-      success: true,
-      pdfBytes: Array.from(pdfBytes), // Convert to array for JSON transport
-      fileName: `${petData.name.replace(/[^a-zA-Z0-9]/g, '_')}_${type}_profile.pdf`
-    }), {
-      headers: {
-        ...corsHeaders,
-        'Content-Type': 'application/json'
-      }
-    })
+    console.log('💾 Generating PDF bytes...')
+    try {
+      const pdfBytes = await pdfDoc.save()
+      console.log('✅ PDF generated successfully for:', petData.name || 'Unknown', 'Type:', type, 'Size:', pdfBytes.length, 'bytes')
+      
+      // Return JSON response with PDF data for client-side processing
+      const safePetName = sanitizeTextForPDF(petData.name || 'Unknown').replace(/[^a-zA-Z0-9]/g, '_')
+      const fileName = `${safePetName}_${type || 'emergency'}_profile.pdf`
+      
+      return new Response(JSON.stringify({
+        success: true,
+        pdfBytes: Array.from(pdfBytes), // Convert to array for JSON transport
+        fileName: fileName
+      }), {
+        headers: {
+          ...corsHeaders,
+          'Content-Type': 'application/json'
+        }
+      })
+    } catch (saveError) {
+      console.error('❌ Error saving PDF:', saveError)
+      throw saveError
+    }
 
   } catch (error) {
-    console.error('Error in generate-pet-pdf function:', error)
+    console.error('❌ Error in generate-pet-pdf function:', error)
+    console.error('❌ Error stack:', error.stack)
+    console.error('❌ Error details:', {
+      name: error.name,
+      message: error.message,
+      stack: error.stack
+    })
+    
     return new Response(
       JSON.stringify({ 
         error: 'Internal server error: ' + error.message,

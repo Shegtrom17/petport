@@ -23,7 +23,7 @@ serve(async (req) => {
     
     // Validate environment variables
     if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
-      console.error('❌ Missing required environment variables')
+      console.error('ERROR: Missing required environment variables')
       return new Response(
         JSON.stringify({ error: 'Service configuration error' }), 
         { 
@@ -35,7 +35,7 @@ serve(async (req) => {
 
     // Validate request method
     if (req.method !== 'POST') {
-      console.error('❌ Invalid method:', req.method)
+      console.error('ERROR: Invalid method:', req.method)
       return new Response(
         JSON.stringify({ error: 'Method not allowed' }), 
         { 
@@ -101,7 +101,7 @@ serve(async (req) => {
       .single()
 
     if (fetchError) {
-      console.error('❌ Error fetching pet data:', fetchError)
+      console.error('ERROR: Error fetching pet data:', fetchError)
       return new Response(
         JSON.stringify({ 
           error: 'Failed to fetch pet data: ' + fetchError.message,
@@ -116,7 +116,7 @@ serve(async (req) => {
     }
 
     if (!petData) {
-      console.error('❌ Pet not found:', petId)
+      console.error('ERROR: Pet not found:', petId)
       return new Response(
         JSON.stringify({ 
           error: 'Pet not found',
@@ -130,7 +130,7 @@ serve(async (req) => {
       )
     }
 
-    console.log('✅ Pet data fetched successfully:', petData.name || 'Unknown')
+    console.log('SUCCESS: Pet data fetched successfully:', petData.name || 'Unknown')
     console.log('Fetched data for type:', type)
 
     // For Emergency PDF, only fetch essential data to minimize errors
@@ -153,7 +153,7 @@ serve(async (req) => {
     try {
       if (type === 'emergency') {
         // Emergency PDF - only fetch critical data
-        console.log('🚨 Emergency PDF - fetching minimal data...')
+        console.log('EMERGENCY: Emergency PDF - fetching minimal data...')
         const [
           { data: contacts, error: contactError },
           { data: medical, error: medicalError },
@@ -164,9 +164,9 @@ serve(async (req) => {
           supabase.from('pet_photos').select('*').eq('pet_id', petId).maybeSingle()
         ])
         
-        if (contactError) console.log('⚠️ Contact fetch error:', contactError)
-        if (medicalError) console.log('⚠️ Medical fetch error:', medicalError)
-        if (photoError) console.log('⚠️ Photo fetch error:', photoError)
+        if (contactError) console.log('WARNING: Contact fetch error:', contactError)
+        if (medicalError) console.log('WARNING: Medical fetch error:', medicalError)
+        if (photoError) console.log('WARNING: Photo fetch error:', photoError)
         
         contactsData = contacts
         medicalData = medical
@@ -220,7 +220,7 @@ serve(async (req) => {
         professionalData = professional
       }
     } catch (dataError) {
-      console.error('❌ Error fetching additional data:', dataError)
+      console.error('ERROR: Error fetching additional data:', dataError)
       // Continue with null values for non-critical data
     }
 
@@ -298,7 +298,7 @@ serve(async (req) => {
         return sanitized || 'N/A'; // Return fallback if empty
         
       } catch (error) {
-        console.error('❌ Error sanitizing text:', error);
+        console.error('ERROR: Error sanitizing text:', error);
         // Ultra-safe fallback: only alphanumeric and basic punctuation
         return String(text || '').replace(/[^a-zA-Z0-9\s\.\,\!\?\-\(\)]/g, '').replace(/\s+/g, ' ').trim() || 'N/A';
       }
@@ -348,7 +348,7 @@ serve(async (req) => {
         
         return currentY;
       } catch (error) {
-        console.error('❌ Error drawing multiline text:', error);
+        console.error('ERROR: Error drawing multiline text:', error);
         return y - 20; // Return a reasonable fallback position
       }
     }
@@ -359,7 +359,7 @@ serve(async (req) => {
     
     // EMERGENCY PDF LAYOUT - SIMPLIFIED
     if (type === 'emergency') {
-      console.log('🚨 Generating Emergency PDF...')
+      console.log('EMERGENCY: Generating Emergency PDF...')
       
       try {
         // Title
@@ -532,15 +532,15 @@ serve(async (req) => {
           }
         }
         
-        console.log('✅ Emergency PDF layout completed successfully')
+        console.log('SUCCESS: Emergency PDF layout completed successfully')
         
       } catch (emergencyError) {
-        console.error('❌ Error generating emergency PDF:', emergencyError)
+        console.error('ERROR: Error generating emergency PDF:', emergencyError)
         throw emergencyError
       }
       
     } else if (isLostPetFlyer) {
-      console.log('🔍 Generating Missing Pet Flyer...')
+      console.log('MISSING: Generating Missing Pet Flyer...')
       
       // Large MISSING banner
       page.drawRectangle({
@@ -2208,10 +2208,10 @@ serve(async (req) => {
     }
 
     // Save the PDF as bytes
-    console.log('💾 Generating PDF bytes...')
+    console.log('SAVE: Generating PDF bytes...')
     try {
       const pdfBytes = await pdfDoc.save()
-      console.log('✅ PDF generated successfully for:', petData.name || 'Unknown', 'Type:', type, 'Size:', pdfBytes.length, 'bytes')
+      console.log('SUCCESS: PDF generated successfully for:', petData.name || 'Unknown', 'Type:', type, 'Size:', pdfBytes.length, 'bytes')
       
       // Return JSON response with PDF data for client-side processing
       const safePetName = sanitizeTextForPDF(petData.name || 'Unknown').replace(/[^a-zA-Z0-9]/g, '_')
@@ -2228,14 +2228,14 @@ serve(async (req) => {
         }
       })
     } catch (saveError) {
-      console.error('❌ Error saving PDF:', saveError)
+      console.error('ERROR: Error saving PDF:', saveError)
       throw saveError
     }
 
   } catch (error) {
-    console.error('❌ Error in generate-pet-pdf function:', error)
-    console.error('❌ Error stack:', error.stack)
-    console.error('❌ Error details:', {
+    console.error('ERROR: Error in generate-pet-pdf function:', error)
+    console.error('ERROR: Error stack:', error.stack)
+    console.error('ERROR: Error details:', {
       name: error.name,
       message: error.message,
       stack: error.stack

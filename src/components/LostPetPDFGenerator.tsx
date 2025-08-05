@@ -4,16 +4,18 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { Download, Share, Eye, AlertTriangle, FileText } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { useToast } from "@/hooks/use-toast";
-import { generatePetPDF, downloadPDFBlob, viewPDFBlob, shareProfile } from "@/services/pdfService";
+import { shareProfile } from "@/services/pdfService";
+import { generateClientPetPDF, downloadPDFBlob, viewPDFBlob } from "@/services/clientPdfService";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 
 interface LostPetPDFGeneratorProps {
   petId: string;
   petName: string;
   isActive: boolean;
+  petData?: any; // Add pet data prop for client-side generation
 }
 
-export const LostPetPDFGenerator = ({ petId, petName, isActive }: LostPetPDFGeneratorProps) => {
+export const LostPetPDFGenerator = ({ petId, petName, isActive, petData }: LostPetPDFGeneratorProps) => {
   const { user } = useAuth();
   const { toast } = useToast();
   const [showDialog, setShowDialog] = useState(false);
@@ -28,12 +30,21 @@ export const LostPetPDFGenerator = ({ petId, petName, isActive }: LostPetPDFGene
       return;
     }
 
+    if (!petData) {
+      toast({
+        title: "Error",
+        description: "Pet data not available for flyer generation.",
+        variant: "destructive"
+      });
+      return;
+    }
+
     setAuthError(false);
     setIsGenerating(true);
     
     try {
       console.log('LostPetPDFGenerator - Generating lost pet PDF for petId:', petId, 'petName:', petName);
-      const result = await generatePetPDF(petId, 'lost_pet');
+      const result = await generateClientPetPDF(petData, 'lost_pet');
       
       if (result.success && result.blob) {
         setPdfBlob(result.blob);

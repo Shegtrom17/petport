@@ -6,7 +6,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Download, Share2, QrCode, Star, Shield, Heart, Phone, Mail, Award, AlertTriangle, MapPin, GraduationCap, Trophy, Activity, Edit, Eye } from "lucide-react";
 import { SupportAnimalBanner } from "@/components/SupportAnimalBanner";
 import { PetResumeEditForm } from "@/components/PetResumeEditForm";
-import { generatePetPDF, downloadPDFBlob, viewPDFBlob, generatePublicProfileUrl, shareProfileOptimized, generateQRCodeUrl } from "@/services/pdfService";
+import { generatePublicProfileUrl, shareProfileOptimized, generateQRCodeUrl } from "@/services/pdfService";
+import { generateClientPetPDF, downloadPDFBlob, viewPDFBlob } from "@/services/clientPdfService";
 import { PrivacyHint } from "@/components/PrivacyHint";
 import { toast } from "sonner";
 
@@ -94,7 +95,7 @@ export const PetResumeSection = ({ petData, onUpdate }: PetResumeSectionProps) =
     setIsGeneratingPDF(true);
     
     try {
-      const result = await generatePetPDF(petData.id, 'full');
+      const result = await generateClientPetPDF(petData, 'full');
       
       if (result.success && result.pdfBlob) {
         setGeneratedPdfBlob(result.pdfBlob);

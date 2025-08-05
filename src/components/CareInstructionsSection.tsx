@@ -6,7 +6,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Heart, Clock, Pill, Coffee, Moon, AlertTriangle, Edit, Loader2, FileText, Download, QrCode, Share2, ExternalLink, Eye, Phone } from "lucide-react";
 import { CareInstructionsEditForm } from "@/components/CareInstructionsEditForm";
 import { fetchCareInstructions } from "@/services/careInstructionsService";
-import { generatePetPDF, generateQRCodeUrl, downloadPDFBlob, shareProfile, shareProfileOptimized } from "@/services/pdfService";
+import { generateQRCodeUrl, shareProfile, shareProfileOptimized } from "@/services/pdfService";
+import { generateClientPetPDF, downloadPDFBlob } from "@/services/clientPdfService";
 import { useToast } from "@/hooks/use-toast";
 
 interface CareInstructionsSectionProps {
@@ -90,7 +91,7 @@ export const CareInstructionsSection = ({ petData }: CareInstructionsSectionProp
     try {
       console.log('Starting care instructions PDF generation for pet:', petData.id);
       
-      const result = await generatePetPDF(petData.id, 'care');
+      const result = await generateClientPetPDF(petData, 'care');
       
       if (result.success && result.pdfBlob) {
         setCarePdfBlob(result.pdfBlob);

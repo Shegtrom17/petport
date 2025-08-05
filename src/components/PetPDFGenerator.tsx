@@ -4,7 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { FileText, Download, Share2, Loader2, Users, ExternalLink, LogIn, AlertTriangle, Eye } from "lucide-react";
-import { generatePetPDF, generateQRCodeUrl, generatePublicProfileUrl, shareProfileOptimized } from "@/services/pdfService";
+import { generateQRCodeUrl, generatePublicProfileUrl, shareProfileOptimized } from "@/services/pdfService";
+import { generateClientPetPDF } from "@/services/clientPdfService";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/context/AuthContext";
 import { useNavigate } from "react-router-dom";
@@ -12,9 +13,10 @@ import { useNavigate } from "react-router-dom";
 interface PetPDFGeneratorProps {
   petId: string;
   petName: string;
+  petData?: any; // Add pet data prop for client-side generation
 }
 
-export const PetPDFGenerator = ({ petId, petName }: PetPDFGeneratorProps) => {
+export const PetPDFGenerator = ({ petId, petName, petData }: PetPDFGeneratorProps) => {
   // Auth state
   const { user, isLoading: authLoading } = useAuth();
   const navigate = useNavigate();
@@ -43,11 +45,18 @@ export const PetPDFGenerator = ({ petId, petName }: PetPDFGeneratorProps) => {
   };
 
   const handlePdfAction = async (action: 'view' | 'download') => {
-    if (!selectedPdfType) return;
+    if (!selectedPdfType || !petData) {
+      toast({
+        title: "Error",
+        description: "Pet data not available for PDF generation.",
+        variant: "destructive",
+      });
+      return;
+    }
 
     setIsGenerating(true);
     try {
-      const result = await generatePetPDF(petId, selectedPdfType);
+      const result = await generateClientPetPDF(petData, selectedPdfType);
 
       if (result.success && result.pdfBlob) {
         setGeneratedPdfBlob(result.pdfBlob);
@@ -71,11 +80,13 @@ export const PetPDFGenerator = ({ petId, petName }: PetPDFGeneratorProps) => {
           setIsOptionsDialogOpen(false);
         }
         // If action is 'view', keep dialog open to show PDF options
+      } else {
+        throw new Error(result.error || 'Failed to generate PDF');
       }
     } catch (error) {
       console.error('PDF generation error:', error);
       toast({
-        title: "Error",
+        title: "Error", 
         description: "Failed to generate PDF. Please try again.",
         variant: "destructive",
       });

@@ -513,7 +513,11 @@ export const PetProfileContent = ({
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
-              <PetPDFGenerator petId={petData?.id || ""} petName={petData?.name || "Pet"} />
+              <PetPDFGenerator 
+                petId={petData?.id || ""} 
+                petName={petData?.name || "Pet"} 
+                petData={petData}
+              />
             </CardContent>
           </Card>
 

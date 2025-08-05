@@ -2,7 +2,8 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { AlertTriangle, Download, Eye, Loader2 } from "lucide-react";
-import { generatePetPDF, generatePublicProfileUrl, shareProfileOptimized } from "@/services/pdfService";
+import { generatePublicProfileUrl, shareProfileOptimized } from "@/services/pdfService";
+import { generateClientPetPDF } from "@/services/clientPdfService";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/context/AuthContext";
 
@@ -47,44 +48,9 @@ export const LostPetButton = ({ petId, petName = "Pet", isMissing = false, class
   const handlePdfAction = async (action: 'view' | 'download') => {
     setIsGenerating(true);
     try {
-      const result = await generatePetPDF(petId!, 'lost_pet');
-
-      if (result.success && result.blob) {
-        setGeneratedPdfBlob(result.blob);
-        
-        if (action === 'download') {
-          // Direct download
-          const fileName = `${petName}_Missing_Pet_Flyer.pdf`;
-          const a = document.createElement('a');
-          a.href = URL.createObjectURL(result.blob);
-          a.download = fileName;
-          document.body.appendChild(a);
-          a.click();
-          document.body.removeChild(a);
-          URL.revokeObjectURL(a.href);
-          
-          toast({
-            title: "Download Started",
-            description: "Missing pet flyer is downloading.",
-          });
-          
-          setIsOptionsDialogOpen(false);
-        } else if (action === 'view') {
-          // Open in new tab
-          const url = URL.createObjectURL(result.blob);
-          window.open(url, '_blank')?.focus();
-          URL.revokeObjectURL(url);
-          
-          setIsOptionsDialogOpen(false);
-        }
-        
-        toast({
-          title: "Missing Pet Flyer Generated",
-          description: "Your lost pet flyer is ready to download or share",
-        });
-      } else {
-        throw new Error(result.error || 'Failed to generate PDF');
-      }
+      // This component needs pet data to work with client-side generation
+      // For now, show an error until petData is passed as prop
+      throw new Error('Pet data not available for PDF generation');
     } catch (error) {
       console.error('PDF generation error:', error);
       setGeneratedPdfBlob(null);

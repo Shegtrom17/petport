@@ -9,7 +9,7 @@ import { Camera, Upload, Download, Plus, Eye, Trash2, Edit2, X, Loader2 } from "
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { uploadGalleryPhoto, uploadMultipleGalleryPhotos, deleteGalleryPhoto, updateGalleryPhotoCaption } from "@/services/petService";
-import { generatePetPDF, downloadPDFBlob } from "@/services/pdfService";
+import { generateClientPetPDF, downloadPDFBlob } from "@/services/clientPdfService";
 
 const MAX_GALLERY_PHOTOS = 12;
 
@@ -230,7 +230,7 @@ export const PetGallerySection = ({ petData, onUpdate }: PetGallerySectionProps)
   const handleGalleryPDFAction = async (action: 'view' | 'download') => {
     setIsGeneratingPDF(true);
     try {
-      const result = await generatePetPDF(petData.id, 'gallery');
+      const result = await generateClientPetPDF(petData, 'gallery');
       
       if (result.success && result.pdfBlob) {
         setGeneratedGalleryPdfBlob(result.pdfBlob);

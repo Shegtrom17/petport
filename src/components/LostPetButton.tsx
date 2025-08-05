@@ -12,9 +12,10 @@ interface LostPetButtonProps {
   petName?: string;
   isMissing?: boolean;
   className?: string;
+  petData?: any;
 }
 
-export const LostPetButton = ({ petId, petName = "Pet", isMissing = false, className = "" }: LostPetButtonProps) => {
+export const LostPetButton = ({ petId, petName = "Pet", isMissing = false, className = "", petData }: LostPetButtonProps) => {
   const { toast } = useToast();
   const { user } = useAuth();
   
@@ -48,9 +49,38 @@ export const LostPetButton = ({ petId, petName = "Pet", isMissing = false, class
   const handlePdfAction = async (action: 'view' | 'download') => {
     setIsGenerating(true);
     try {
-      // This component needs pet data to work with client-side generation
-      // For now, show an error until petData is passed as prop
-      throw new Error('Pet data not available for PDF generation');
+      if (!petData) {
+        throw new Error('Pet data not available for PDF generation');
+      }
+
+      console.log('LostPetButton - Generating PDF for pet:', petData.name, petData.id);
+      const result = await generateClientPetPDF(petData, 'lost_pet');
+      
+      if (!result.success || !result.blob) {
+        throw new Error(result.error || 'Failed to generate PDF');
+      }
+
+      setGeneratedPdfBlob(result.blob);
+
+      if (action === 'view') {
+        const url = URL.createObjectURL(result.blob);
+        window.open(url, '_blank')?.focus();
+        URL.revokeObjectURL(url);
+      } else if (action === 'download') {
+        const fileName = `${petName}_Missing_Pet_Flyer.pdf`;
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(result.blob);
+        a.download = fileName;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(a.href);
+      }
+
+      toast({
+        title: "Success",
+        description: `Missing pet flyer ${action === 'view' ? 'opened' : 'downloaded'} successfully!`,
+      });
     } catch (error) {
       console.error('PDF generation error:', error);
       setGeneratedPdfBlob(null);

@@ -14,6 +14,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { SocialShareButtons } from "@/components/SocialShareButtons";
 import { PrivacyHint } from "@/components/PrivacyHint";
+import { LostPetButton } from "@/components/LostPetButton";
 
 interface PetData {
   name: string;
@@ -518,6 +519,13 @@ export const QuickIDSection = ({ petData }: QuickIDSectionProps) => {
           />
           <div className="flex flex-col sm:flex-row gap-3 mt-4">
             <SocialShareButtons petId={petData.id || ""} petName={petData.name} />
+            <LostPetButton 
+              petId={petData.id || ""}
+              petName={petData.name}
+              isMissing={lostPetData.is_missing}
+              petData={petData}
+              className="w-full sm:w-auto"
+            />
           </div>
         </CardContent>
       </Card>

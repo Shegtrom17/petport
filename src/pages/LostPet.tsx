@@ -21,7 +21,7 @@ import { LostPetPDFGenerator } from "@/components/LostPetPDFGenerator";
 const LostPet = () => {
   const { petId } = useParams();
   const { user } = useAuth();
-  const { pets, selectedPet, handleSelectPet } = usePetData();
+  const { pets, selectedPet, handleSelectPet, isLoading } = usePetData(petId);
   const { toast } = useToast();
   
   const [isEditing, setIsEditing] = useState(false);
@@ -37,28 +37,32 @@ const LostPet = () => {
     emergency_notes: ""
   });
 
-  // Find the pet data - wait for pets to load before fallback
-  const currentPet = petId && pets.length > 0 
-    ? pets.find(p => p.id === petId) || selectedPet 
-    : selectedPet;
+  // Wait for loading to complete and pets to be available
+  const currentPet = selectedPet;
+  const [petDataLoaded, setPetDataLoaded] = useState(false);
 
   useEffect(() => {
-    console.log('LostPet useEffect - petId:', petId, 'pets loaded:', pets.length > 0, 'currentPet:', currentPet?.id);
+    console.log('LostPet useEffect - petId:', petId, 'pets loaded:', pets.length > 0, 'selectedPet:', selectedPet?.id, 'isLoading:', isLoading);
     
-    if (petId && pets.length > 0) {
-      const targetPet = pets.find(p => p.id === petId);
-      if (targetPet && targetPet.id !== selectedPet?.id) {
-        console.log('LostPet - Selecting new pet:', targetPet.id, 'current selected:', selectedPet?.id);
-        handleSelectPet(targetPet.id);
-      }
-      if (targetPet) {
-        loadLostPetData(targetPet.id);
-      }
+    // Wait for pets to load and pet to be selected
+    if (!isLoading && selectedPet) {
+      console.log('LostPet - Pet data loaded, loading lost pet data for:', selectedPet.id);
+      loadLostPetData(selectedPet.id);
+      setPetDataLoaded(true);
     }
-  }, [petId, pets.length]);
+  }, [isLoading, selectedPet?.id, petId]);
 
-  // Redirect if no pet found - after all hooks
-  if (!currentPet && pets.length > 0) {
+  // Show loading state while data is being loaded
+  if (isLoading || !petDataLoaded) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-red-50 via-[#F5F0E0] to-yellow-50 flex items-center justify-center">
+        <div className="text-lg text-red-800">Loading pet data...</div>
+      </div>
+    );
+  }
+
+  // Redirect if no pet found after loading
+  if (!currentPet) {
     return <Navigate to="/" replace />;
   }
 

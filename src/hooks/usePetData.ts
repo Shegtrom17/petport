@@ -4,7 +4,9 @@ import { fetchUserPets, fetchPetDetails } from "@/services/petService";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 
-export const usePetData = () => {
+const SELECTED_PET_KEY = 'selectedPetId';
+
+export const usePetData = (initialPetId?: string) => {
   const [pets, setPets] = useState<any[]>([]);
   const [selectedPet, setSelectedPet] = useState<any | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -42,14 +44,31 @@ export const usePetData = () => {
       setPets(sortedPets);
       
       if (sortedPets.length > 0) {
-        console.log("usePetData - Loading first pet details:", sortedPets[0].id);
-        const petDetails = await fetchPetDetails(sortedPets[0].id);
-        console.log("usePetData - Fetched pet details:", petDetails);
+        // Determine which pet to select: initialPetId > localStorage > first pet
+        let targetPetId = initialPetId;
+        
+        if (!targetPetId) {
+          const savedPetId = localStorage.getItem(SELECTED_PET_KEY);
+          if (savedPetId && sortedPets.find(p => p.id === savedPetId)) {
+            targetPetId = savedPetId;
+          } else {
+            targetPetId = sortedPets[0].id;
+          }
+        }
+        
+        console.log("usePetData - Target pet ID:", targetPetId, "initial:", initialPetId, "saved:", localStorage.getItem(SELECTED_PET_KEY));
+        
+        const petDetails = await fetchPetDetails(targetPetId);
+        console.log("usePetData - Selected pet details:", petDetails?.name, petDetails?.id);
         setSelectedPet(petDetails);
-        await fetchDocuments(sortedPets[0].id);
+        await fetchDocuments(targetPetId);
+        
+        // Save selection to localStorage
+        localStorage.setItem(SELECTED_PET_KEY, targetPetId);
       } else {
         console.log("usePetData - No pets found");
         setSelectedPet(null);
+        localStorage.removeItem(SELECTED_PET_KEY);
       }
     } catch (error) {
       console.error("Error loading pets:", error);
@@ -78,6 +97,9 @@ export const usePetData = () => {
       console.log("usePetData - Selected pet details:", petDetails?.name, petDetails?.id);
       setSelectedPet(petDetails);
       await fetchDocuments(petId);
+      
+      // Save selection to localStorage
+      localStorage.setItem(SELECTED_PET_KEY, petId);
     } catch (error) {
       console.error("Error fetching pet details:", error);
       toast({

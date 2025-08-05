@@ -95,7 +95,7 @@ export const PetResumeSection = ({ petData, onUpdate }: PetResumeSectionProps) =
     setIsGeneratingPDF(true);
     
     try {
-      const result = await generateClientPetPDF(petData, 'full');
+      const result = await generateClientPetPDF(petData, 'resume');
       
       if (result.success && result.pdfBlob) {
         setGeneratedPdfBlob(result.pdfBlob);

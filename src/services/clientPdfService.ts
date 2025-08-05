@@ -410,6 +410,165 @@ const generateFullPDF = async (doc: jsPDF, pageManager: PDFPageManager, petData:
   addText(doc, pageManager, `Pet ID: ${safeText(petData.id)} | Generated: ${new Date().toLocaleDateString()}`, '#6b7280', 8);
 };
 
+/**
+ * Generate a pet resume PDF with professional credentials and references
+ */
+const generateResumePDF = async (doc: jsPDF, pageManager: PDFPageManager, petData: any): Promise<void> => {
+  const safeText = (text: string) => sanitizeText(text || '');
+  
+  // Header with pet name and title
+  addTitle(doc, pageManager, `${safeText(petData.name)} - Professional Resume`, '#1e40af', 18);
+  pageManager.addY(10);
+
+  // Pet Basic Information
+  addSubtitle(doc, pageManager, 'Pet Information');
+  addText(doc, pageManager, `Name: ${safeText(petData.name)}`);
+  addText(doc, pageManager, `Breed: ${safeText(petData.breed)}`);
+  addText(doc, pageManager, `Age: ${safeText(petData.age)}`);
+  if (petData.weight) {
+    addText(doc, pageManager, `Weight: ${safeText(petData.weight)} lbs`);
+  }
+  pageManager.addY(10);
+
+  // Add pet photo if available
+  if (petData.photoUrl) {
+    try {
+      await addImage(doc, pageManager, petData.photoUrl, 60, 60);
+      pageManager.addY(10);
+    } catch (error) {
+      console.error('Error loading pet photo:', error);
+    }
+  }
+
+  // Reviews Section
+  if (petData.reviews && petData.reviews.length > 0) {
+    addSection(doc, pageManager, 'Professional References & Reviews', () => {
+      const averageRating = petData.reviews.reduce((sum: number, review: any) => sum + review.rating, 0) / petData.reviews.length;
+      addText(doc, pageManager, `Overall Rating: ${averageRating.toFixed(1)}/5 stars (${petData.reviews.length} reviews)`);
+      pageManager.addY(5);
+
+      petData.reviews.forEach((review: any, index: number) => {
+        addText(doc, pageManager, `Review ${index + 1}:`);
+        addText(doc, pageManager, `Reviewer: ${safeText(review.reviewer_name || 'Anonymous')}`);
+        if (review.reviewer_contact) {
+          addText(doc, pageManager, `Contact: ${safeText(review.reviewer_contact)}`);
+        }
+        addText(doc, pageManager, `Rating: ${review.rating}/5 stars`);
+        if (review.review_text) {
+          addText(doc, pageManager, `Review: ${safeText(review.review_text)}`);
+        }
+        if (review.review_date) {
+          addText(doc, pageManager, `Date: ${new Date(review.review_date).toLocaleDateString()}`);
+        }
+        if (review.location) {
+          addText(doc, pageManager, `Location: ${safeText(review.location)}`);
+        }
+        if (review.review_type) {
+          addText(doc, pageManager, `Type: ${safeText(review.review_type)}`);
+        }
+        pageManager.addY(8);
+      });
+    });
+  }
+
+  // Experiences Section
+  if (petData.experiences && petData.experiences.length > 0) {
+    addSection(doc, pageManager, 'Professional Experience', () => {
+      petData.experiences.forEach((experience: any, index: number) => {
+        addText(doc, pageManager, `Experience ${index + 1}:`);
+        addText(doc, pageManager, `Activity: ${safeText(experience.activity)}`);
+        if (experience.contact) {
+          addText(doc, pageManager, `Contact: ${safeText(experience.contact)}`);
+        }
+        if (experience.description) {
+          addText(doc, pageManager, `Description: ${safeText(experience.description)}`);
+        }
+        pageManager.addY(8);
+      });
+    });
+  }
+
+  // Achievements Section
+  if (petData.achievements && petData.achievements.length > 0) {
+    addSection(doc, pageManager, 'Achievements & Awards', () => {
+      petData.achievements.forEach((achievement: any, index: number) => {
+        addText(doc, pageManager, `Achievement ${index + 1}:`);
+        addText(doc, pageManager, `Title: ${safeText(achievement.title)}`);
+        if (achievement.description) {
+          addText(doc, pageManager, `Description: ${safeText(achievement.description)}`);
+        }
+        pageManager.addY(8);
+      });
+    });
+  }
+
+  // Training Section
+  if (petData.training && petData.training.length > 0) {
+    addSection(doc, pageManager, 'Training & Education', () => {
+      petData.training.forEach((training: any, index: number) => {
+        addText(doc, pageManager, `Training ${index + 1}:`);
+        addText(doc, pageManager, `Course: ${safeText(training.course)}`);
+        if (training.facility) {
+          addText(doc, pageManager, `Facility: ${safeText(training.facility)}`);
+        }
+        if (training.phone) {
+          addText(doc, pageManager, `Contact: ${safeText(training.phone)}`);
+        }
+        if (training.completed) {
+          addText(doc, pageManager, `Completed: ${safeText(training.completed)}`);
+        }
+        pageManager.addY(8);
+      });
+    });
+  }
+
+  // Certifications Section (if available)
+  if (petData.certifications && petData.certifications.length > 0) {
+    addSection(doc, pageManager, 'Professional Certifications', () => {
+      petData.certifications.forEach((cert: any, index: number) => {
+        addText(doc, pageManager, `Certification ${index + 1}:`);
+        addText(doc, pageManager, `Type: ${safeText(cert.type)}`);
+        addText(doc, pageManager, `Issuer: ${safeText(cert.issuer)}`);
+        addText(doc, pageManager, `Status: ${safeText(cert.status)}`);
+        if (cert.certification_number) {
+          addText(doc, pageManager, `Number: ${safeText(cert.certification_number)}`);
+        }
+        if (cert.issue_date) {
+          addText(doc, pageManager, `Issued: ${new Date(cert.issue_date).toLocaleDateString()}`);
+        }
+        if (cert.expiry_date) {
+          addText(doc, pageManager, `Expires: ${new Date(cert.expiry_date).toLocaleDateString()}`);
+        }
+        if (cert.notes) {
+          addText(doc, pageManager, `Notes: ${safeText(cert.notes)}`);
+        }
+        pageManager.addY(8);
+      });
+    });
+  }
+
+  // Contact Information
+  addSection(doc, pageManager, 'Contact Information', () => {
+    if (petData.vetContact) {
+      addText(doc, pageManager, `Veterinarian: ${safeText(petData.vetContact)}`);
+    }
+    if (petData.emergencyContact) {
+      addText(doc, pageManager, `Emergency Contact: ${safeText(petData.emergencyContact)}`);
+    }
+    if (petData.secondEmergencyContact) {
+      addText(doc, pageManager, `Secondary Contact: ${safeText(petData.secondEmergencyContact)}`);
+    }
+    if (petData.petCaretaker) {
+      addText(doc, pageManager, `Caretaker: ${safeText(petData.petCaretaker)}`);
+    }
+  });
+
+  // Footer
+  pageManager.addY(20);
+  addText(doc, pageManager, 'Generated from PetPort Digital Pet Passport', '#6b7280', 8);
+  addText(doc, pageManager, `Pet ID: ${safeText(petData.id)} | Generated: ${new Date().toLocaleDateString()}`, '#6b7280', 8);
+};
+
 // Generate care instructions PDF (ONLY care-related content)
 const generateCarePDF = async (doc: jsPDF, pageManager: PDFPageManager, petData: any): Promise<void> => {
   const safeText = (text: string) => sanitizeText(text || '');
@@ -485,7 +644,7 @@ const generateCarePDF = async (doc: jsPDF, pageManager: PDFPageManager, petData:
 
 export async function generateClientPetPDF(
   petData: any,
-  type: 'emergency' | 'full' | 'lost_pet' | 'care' | 'gallery' = 'emergency'
+  type: 'emergency' | 'full' | 'lost_pet' | 'care' | 'gallery' | 'resume' = 'emergency'
 ): Promise<ClientPDFGenerationResult> {
   try {
     console.log('📋 Starting client PDF generation with jsPDF...', { type, petId: petData?.id });
@@ -514,6 +673,9 @@ export async function generateClientPetPDF(
         break;
       case 'care':
         await generateCarePDF(doc, pageManager, petData);
+        break;
+      case 'resume':
+        await generateResumePDF(doc, pageManager, petData);
         break;
       default:
         await generateEmergencyPDF(doc, pageManager, petData);
@@ -547,7 +709,7 @@ export async function generateClientPetPDF(
 }
 
 // Legacy functions for compatibility - redirect to client-side generation
-export async function generatePetPDF(petId: string, type: 'emergency' | 'full' | 'lost_pet' | 'care' | 'gallery' = 'emergency'): Promise<ClientPDFGenerationResult> {
+export async function generatePetPDF(petId: string, type: 'emergency' | 'full' | 'lost_pet' | 'care' | 'gallery' | 'resume' = 'emergency'): Promise<ClientPDFGenerationResult> {
   // This would need to fetch pet data from Supabase first
   // For now, return an error asking to use the new client-side method directly
   return {

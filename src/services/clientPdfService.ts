@@ -727,8 +727,8 @@ const generateFullPDF = async (doc: jsPDF, pageManager: PDFPageManager, petData:
     addSubtitle(doc, pageManager, 'PHOTO GALLERY', '#1e40af');
     
     const photosToShow = galleryPhotos.slice(0, 8); // Show up to 8 photos
-    const photoSize = 60;
-    const spacing = 70; // 60 photo width + 10 margin
+    const photoSize = 55;
+    const spacing = 60; // 55 photo width + 5 margin
     const startX = 20;
     const photosPerRow = 3;
     

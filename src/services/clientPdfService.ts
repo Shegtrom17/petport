@@ -14,6 +14,7 @@ export interface ClientPDFGenerationResult {
 class PDFPageManager {
   private doc: jsPDF;
   private currentY: number = 25;
+  private currentX: number = 15;
   private pageHeight: number = 280;
   private pageWidth: number = 200;
   private leftMargin: number = 15;
@@ -25,10 +26,23 @@ class PDFPageManager {
     this.doc = doc;
     this.pageHeight = doc.internal.pageSize.height - this.topMargin - this.bottomMargin;
     this.pageWidth = doc.internal.pageSize.width - this.leftMargin - this.rightMargin;
+    this.currentX = this.leftMargin;
   }
 
   getCurrentY(): number {
     return this.currentY;
+  }
+
+  getCurrentX(): number {
+    return this.currentX;
+  }
+
+  getX(): number {
+    return this.currentX;
+  }
+
+  setX(x: number): void {
+    this.currentX = x;
   }
 
   addY(amount: number): void {
@@ -39,6 +53,7 @@ class PDFPageManager {
     if (forceNewPage || (this.currentY + contentHeight) > this.pageHeight) {
       this.doc.addPage();
       this.currentY = this.topMargin;
+      this.currentX = this.leftMargin;
     }
   }
 
@@ -110,7 +125,7 @@ const addText = (doc: jsPDF, pageManager: PDFPageManager, text: string, color: s
   doc.setFont('helvetica', 'normal');
   
   const lines = doc.splitTextToSize(sanitizeText(text), pageManager.getContentWidth());
-  doc.text(lines, pageManager.getLeftMargin(), pageManager.getCurrentY());
+  doc.text(lines, pageManager.getCurrentX(), pageManager.getCurrentY());
   pageManager.addY(lines.length * (fontSize / 2) + 2);
 };
 
@@ -144,7 +159,7 @@ const addContactCard = (doc: jsPDF, pageManager: PDFPageManager, title: string, 
   pageManager.addY(Math.max(cardHeight - 8, lines.length * 4) + 5);
 };
 
-const addImage = async (doc: jsPDF, pageManager: PDFPageManager, imageUrl: string, maxWidth: number = 80, maxHeight: number = 60): Promise<void> => {
+const addImage = async (doc: jsPDF, pageManager: PDFPageManager, imageUrl: string, maxWidth: number = 80, maxHeight: number = 60, customX?: number): Promise<void> => {
   try {
     pageManager.checkPageSpace(maxHeight + 10);
     
@@ -161,7 +176,7 @@ const addImage = async (doc: jsPDF, pageManager: PDFPageManager, imageUrl: strin
       width = height * aspectRatio;
     }
     
-    const x = pageManager.getLeftMargin() + (pageManager.getContentWidth() - width) / 2;
+    const x = customX !== undefined ? customX : pageManager.getLeftMargin() + (pageManager.getContentWidth() - width) / 2;
     doc.addImage(base64, 'JPEG', x, pageManager.getCurrentY(), width, height);
     pageManager.addY(height + 10);
   } catch (error) {
@@ -256,51 +271,127 @@ const generateEmergencyPDF = async (doc: jsPDF, pageManager: PDFPageManager, pet
 const generateLostPetPDF = async (doc: jsPDF, pageManager: PDFPageManager, petData: any): Promise<void> => {
   const safeText = (text: string) => sanitizeText(text || '');
   
-  // Header
-  addTitle(doc, pageManager, 'MISSING PET ALERT', '#dc2626', 20);
-  addTitle(doc, pageManager, safeText(petData.name), '#dc2626', 18);
-  pageManager.addY(15);
+  // Red banner across the top
+  doc.setFillColor(220, 38, 38); // Red color (#dc2626)
+  doc.rect(0, 0, 210, 25, 'F'); // Full width red banner
   
-  // Pet photo
+  // White text on red banner
+  doc.setTextColor(255, 255, 255); // White text
+  doc.setFontSize(24);
+  doc.setFont('helvetica', 'bold');
+  const bannerText = '🚨 MISSING PET ALERT 🚨';
+  const textWidth = doc.getTextWidth(bannerText);
+  doc.text(bannerText, (210 - textWidth) / 2, 18); // Centered text
+  
+  // Reset text color and move cursor below banner
+  doc.setTextColor(0, 0, 0);
+  pageManager.setY(35);
+  
+  // Pet name in large red text
+  addTitle(doc, pageManager, safeText(petData.name), '#dc2626', 20);
+  pageManager.addY(10);
+  
+  // Create two columns: left for photo, right for info
+  const leftColumnX = 20;
+  const rightColumnX = 110;
+  const currentY = pageManager.getCurrentY();
+  
+  // Smaller pet photo (60x60) on the left
   if (petData.photoUrl) {
-    await addImage(doc, pageManager, petData.photoUrl, 100, 100);
+    await addImage(doc, pageManager, petData.photoUrl, 60, 60, leftColumnX);
   }
   
-  // Pet information
-  addSection(doc, pageManager, 'PET INFORMATION', () => {
+  // Pet information on the right side
+  pageManager.setY(currentY);
+  const originalX = pageManager.getX();
+  pageManager.setX(rightColumnX);
+  
+  addSection(doc, pageManager, 'PET DETAILS', () => {
     addText(doc, pageManager, `Name: ${safeText(petData.name)}`);
     addText(doc, pageManager, `Breed: ${safeText(petData.breed)}`);
     addText(doc, pageManager, `Age: ${safeText(petData.age)}`);
     addText(doc, pageManager, `Weight: ${safeText(petData.weight)}`);
-    addText(doc, pageManager, `Color: ${safeText(petData.color)}`);
-    addText(doc, pageManager, `Gender: ${safeText(petData.gender)}`);
+    if (petData.species) addText(doc, pageManager, `Color: ${safeText(petData.species)}`);
     if (petData.microchip_id) addText(doc, pageManager, `Microchip: ${safeText(petData.microchip_id)}`);
   });
   
-  // Emergency contact
-  const emergencyContacts = petData.emergency_contacts || [];
-  const primaryContact = emergencyContacts[0] || {};
+  // Reset X position and move below both columns
+  pageManager.setX(originalX);
+  pageManager.setY(Math.max(currentY + 70, pageManager.getCurrentY()));
   
-  addSection(doc, pageManager, 'EMERGENCY CONTACT', () => {
-    addText(doc, pageManager, `Owner: ${safeText(primaryContact.name || 'Contact via PetPort')}`);
-    if (primaryContact.phone) addText(doc, pageManager, `Phone: ${safeText(primaryContact.phone)}`);
-    if (primaryContact.email) addText(doc, pageManager, `Email: ${safeText(primaryContact.email)}`);
+  // Emergency contact information
+  addSection(doc, pageManager, '🚨 EMERGENCY CONTACT 🚨', () => {
+    if (petData.emergencyContact) {
+      addText(doc, pageManager, `Primary: ${safeText(petData.emergencyContact)}`);
+    }
+    if (petData.secondEmergencyContact) {
+      addText(doc, pageManager, `Secondary: ${safeText(petData.secondEmergencyContact)}`);
+    }
+    if (petData.vetContact) {
+      addText(doc, pageManager, `Veterinarian: ${safeText(petData.vetContact)}`);
+    }
     addText(doc, pageManager, `PetPort ID: ${safeText(petData.id)}`);
   });
   
-  // Description
-  if (petData.bio) {
-    addSection(doc, pageManager, 'DESCRIPTION', () => {
-      addText(doc, pageManager, petData.bio);
+  // Last seen information (if available from lost pet data)
+  const lastSeenInfo = petData.last_seen_location || petData.lastSeenLocation;
+  const lastSeenDate = petData.last_seen_date || petData.lastSeenDate;
+  if (lastSeenInfo || lastSeenDate) {
+    addSection(doc, pageManager, '📍 LAST SEEN', () => {
+      if (lastSeenInfo) {
+        addText(doc, pageManager, `Location: ${safeText(lastSeenInfo)}`);
+      }
+      if (lastSeenDate) {
+        const dateStr = typeof lastSeenDate === 'string' ? lastSeenDate : new Date(lastSeenDate).toLocaleDateString();
+        addText(doc, pageManager, `Date: ${dateStr}`);
+      }
     });
   }
   
+  // Special markings/description
+  if (petData.bio || petData.distinctive_features) {
+    addSection(doc, pageManager, 'DISTINCTIVE FEATURES', () => {
+      if (petData.distinctive_features) {
+        addText(doc, pageManager, safeText(petData.distinctive_features));
+      } else if (petData.bio) {
+        addText(doc, pageManager, safeText(petData.bio));
+      }
+    });
+  }
+  
+  // Medical alerts
+  if (petData.medicalAlert && petData.medicalConditions) {
+    addSection(doc, pageManager, '⚠️ MEDICAL ALERT', () => {
+      addText(doc, pageManager, safeText(petData.medicalConditions), '#dc2626');
+      if (petData.medications && petData.medications.length > 0) {
+        addText(doc, pageManager, `Medications: ${petData.medications.join(', ')}`);
+      }
+    });
+  }
+  
+  // Add second photo if available (smaller)
+  if (petData.gallery_photos && petData.gallery_photos.length > 0) {
+    pageManager.addY(10);
+    addText(doc, pageManager, 'Additional Photo:', '#000000', 10);
+    pageManager.addY(5);
+    await addImage(doc, pageManager, petData.gallery_photos[0].url, 50, 50);
+    if (petData.gallery_photos[0].caption) {
+      addText(doc, pageManager, petData.gallery_photos[0].caption, '#6b7280', 9);
+    }
+  }
+  
   // Reward section
-  pageManager.addY(20);
-  addTitle(doc, pageManager, 'REWARD OFFERED', '#dc2626', 16);
-  addText(doc, pageManager, 'Please contact immediately if found!', '#000000', 12);
+  pageManager.addY(15);
+  addTitle(doc, pageManager, '💰 REWARD OFFERED', '#dc2626', 16);
+  if (petData.reward_amount) {
+    addText(doc, pageManager, `Reward: ${safeText(petData.reward_amount)}`, '#000000', 14);
+  }
+  addText(doc, pageManager, 'PLEASE CONTACT IMMEDIATELY IF FOUND!', '#dc2626', 12);
   pageManager.addY(10);
+  
+  // Footer
   addText(doc, pageManager, 'Generated from PetPort Digital Pet Passport', '#6b7280', 8);
+  addText(doc, pageManager, `Generated: ${new Date().toLocaleDateString()}`, '#6b7280', 8);
 };
 
 const generateGalleryPDF = async (doc: jsPDF, pageManager: PDFPageManager, petData: any): Promise<void> => {

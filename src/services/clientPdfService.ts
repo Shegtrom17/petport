@@ -1,5 +1,4 @@
 import jsPDF from 'jspdf';
-import html2canvas from 'html2canvas';
 import { sanitizeText } from '@/utils/inputSanitizer';
 
 export interface ClientPDFGenerationResult {
@@ -11,633 +10,465 @@ export interface ClientPDFGenerationResult {
   type?: string;
 }
 
-// Create a temporary React component for PDF generation
-const createPetProfileHTML = (petData: any, type: 'emergency' | 'full' | 'lost_pet' | 'care' | 'gallery' = 'emergency') => {
+// Page management system
+class PDFPageManager {
+  private doc: jsPDF;
+  private currentY: number = 25;
+  private pageHeight: number = 280;
+  private pageWidth: number = 200;
+  private leftMargin: number = 15;
+  private rightMargin: number = 15;
+  private topMargin: number = 20;
+  private bottomMargin: number = 20;
+
+  constructor(doc: jsPDF) {
+    this.doc = doc;
+    this.pageHeight = doc.internal.pageSize.height - this.topMargin - this.bottomMargin;
+    this.pageWidth = doc.internal.pageSize.width - this.leftMargin - this.rightMargin;
+  }
+
+  getCurrentY(): number {
+    return this.currentY;
+  }
+
+  addY(amount: number): void {
+    this.currentY += amount;
+  }
+
+  checkPageSpace(contentHeight: number, forceNewPage: boolean = false): void {
+    if (forceNewPage || (this.currentY + contentHeight) > this.pageHeight) {
+      this.doc.addPage();
+      this.currentY = this.topMargin;
+    }
+  }
+
+  getContentWidth(): number {
+    return this.pageWidth;
+  }
+
+  getLeftMargin(): number {
+    return this.leftMargin;
+  }
+
+  setY(y: number): void {
+    this.currentY = y;
+  }
+}
+
+// Image utilities
+const loadImageAsBase64 = async (url: string): Promise<string> => {
+  try {
+    const response = await fetch(url);
+    const blob = await response.blob();
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result as string);
+      reader.onerror = reject;
+      reader.readAsDataURL(blob);
+    });
+  } catch (error) {
+    console.error('Failed to load image:', error);
+    throw error;
+  }
+};
+
+const getImageDimensions = (base64: string): Promise<{ width: number; height: number }> => {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => resolve({ width: img.width, height: img.height });
+    img.onerror = reject;
+    img.src = base64;
+  });
+};
+
+// Content rendering functions
+const addTitle = (doc: jsPDF, pageManager: PDFPageManager, text: string, color: string = '#dc2626', fontSize: number = 20): void => {
+  pageManager.checkPageSpace(15);
+  doc.setFontSize(fontSize);
+  doc.setTextColor(color);
+  doc.setFont('helvetica', 'bold');
+  
+  const textWidth = doc.getTextWidth(text);
+  const x = (doc.internal.pageSize.width - textWidth) / 2;
+  doc.text(text, x, pageManager.getCurrentY());
+  pageManager.addY(fontSize / 2);
+};
+
+const addSubtitle = (doc: jsPDF, pageManager: PDFPageManager, text: string, color: string = '#374151', fontSize: number = 14): void => {
+  pageManager.checkPageSpace(10);
+  doc.setFontSize(fontSize);
+  doc.setTextColor(color);
+  doc.setFont('helvetica', 'bold');
+  doc.text(text, pageManager.getLeftMargin(), pageManager.getCurrentY());
+  pageManager.addY(fontSize / 2 + 5);
+};
+
+const addText = (doc: jsPDF, pageManager: PDFPageManager, text: string, color: string = '#000000', fontSize: number = 10): void => {
+  pageManager.checkPageSpace(8);
+  doc.setFontSize(fontSize);
+  doc.setTextColor(color);
+  doc.setFont('helvetica', 'normal');
+  
+  const lines = doc.splitTextToSize(sanitizeText(text), pageManager.getContentWidth());
+  doc.text(lines, pageManager.getLeftMargin(), pageManager.getCurrentY());
+  pageManager.addY(lines.length * (fontSize / 2) + 2);
+};
+
+const addContactCard = (doc: jsPDF, pageManager: PDFPageManager, title: string, content: string, borderColor: string = '#dc2626'): void => {
+  const cardHeight = 25;
+  pageManager.checkPageSpace(cardHeight);
+  
+  const x = pageManager.getLeftMargin();
+  const y = pageManager.getCurrentY() - 5;
+  const width = pageManager.getContentWidth();
+  
+  // Draw border
+  doc.setDrawColor(borderColor);
+  doc.setLineWidth(0.5);
+  doc.rect(x, y, width, cardHeight);
+  
+  // Add title
+  doc.setFontSize(10);
+  doc.setTextColor(borderColor);
+  doc.setFont('helvetica', 'bold');
+  doc.text(title, x + 3, pageManager.getCurrentY() + 3);
+  
+  // Add content
+  pageManager.addY(8);
+  doc.setFontSize(9);
+  doc.setTextColor('#000000');
+  doc.setFont('helvetica', 'normal');
+  const lines = doc.splitTextToSize(sanitizeText(content), width - 6);
+  doc.text(lines, x + 3, pageManager.getCurrentY());
+  
+  pageManager.addY(Math.max(cardHeight - 8, lines.length * 4) + 5);
+};
+
+const addImage = async (doc: jsPDF, pageManager: PDFPageManager, imageUrl: string, maxWidth: number = 80, maxHeight: number = 60): Promise<void> => {
+  try {
+    pageManager.checkPageSpace(maxHeight + 10);
+    
+    const base64 = await loadImageAsBase64(imageUrl);
+    const dimensions = await getImageDimensions(base64);
+    
+    // Calculate scaled dimensions
+    const aspectRatio = dimensions.width / dimensions.height;
+    let width = Math.min(maxWidth, dimensions.width);
+    let height = width / aspectRatio;
+    
+    if (height > maxHeight) {
+      height = maxHeight;
+      width = height * aspectRatio;
+    }
+    
+    const x = pageManager.getLeftMargin() + (pageManager.getContentWidth() - width) / 2;
+    doc.addImage(base64, 'JPEG', x, pageManager.getCurrentY(), width, height);
+    pageManager.addY(height + 10);
+  } catch (error) {
+    console.error('Failed to add image:', error);
+    // Skip image if loading fails
+  }
+};
+
+const addSection = (doc: jsPDF, pageManager: PDFPageManager, title: string, content: () => void): void => {
+  pageManager.checkPageSpace(20);
+  addSubtitle(doc, pageManager, title);
+  content();
+  pageManager.addY(10);
+};
+
+// PDF generation functions by type
+const generateEmergencyPDF = async (doc: jsPDF, pageManager: PDFPageManager, petData: any): Promise<void> => {
   const safeText = (text: string) => sanitizeText(text || '');
   
+  // Header
+  addTitle(doc, pageManager, '🚨 EMERGENCY PROFILE', '#dc2626', 18);
+  addTitle(doc, pageManager, safeText(petData.name), '#dc2626', 16);
+  pageManager.addY(10);
+  
+  // Pet photo
+  if (petData.photoUrl) {
+    await addImage(doc, pageManager, petData.photoUrl, 60, 60);
+  }
+  
+  // Critical medical information
+  const medications = petData.medications || [];
+  const allergies = petData.careInstructions?.allergies || '';
+  const medicalAlert = petData.medicalAlert || false;
+  
+  if (medicalAlert || medications.length > 0 || allergies) {
+    addSection(doc, pageManager, '⚠️ CRITICAL MEDICAL INFO', () => {
+      if (medicalAlert) {
+        addText(doc, pageManager, 'MEDICAL ALERT ACTIVE', '#dc2626', 12);
+      }
+      if (medications.length > 0) {
+        addText(doc, pageManager, `Medications: ${medications.join(', ')}`, '#000000', 10);
+      }
+      if (allergies) {
+        addText(doc, pageManager, `Allergies: ${allergies}`, '#000000', 10);
+      }
+    });
+  }
+  
+  // Pet information
+  addSection(doc, pageManager, 'PET INFORMATION', () => {
+    addText(doc, pageManager, `Species: ${safeText(petData.species)}`);
+    addText(doc, pageManager, `Breed: ${safeText(petData.breed)}`);
+    addText(doc, pageManager, `Age: ${safeText(petData.age)}`);
+    addText(doc, pageManager, `Weight: ${safeText(petData.weight)}`);
+    addText(doc, pageManager, `Gender: ${safeText(petData.gender)}`);
+    if (petData.color) addText(doc, pageManager, `Color: ${safeText(petData.color)}`);
+    if (petData.microchipId) addText(doc, pageManager, `Microchip: ${safeText(petData.microchipId)}`);
+  });
+  
+  // Emergency contacts
+  addSubtitle(doc, pageManager, '📞 EMERGENCY CONTACTS', '#1d4ed8');
+  
+  if (petData.emergencyContact) {
+    addContactCard(doc, pageManager, '🚨 PRIMARY EMERGENCY CONTACT', petData.emergencyContact, '#dc2626');
+  }
+  
+  if (petData.secondEmergencyContact) {
+    addContactCard(doc, pageManager, '📱 SECONDARY EMERGENCY CONTACT', petData.secondEmergencyContact, '#f59e0b');
+  }
+  
+  if (petData.vetContact) {
+    addContactCard(doc, pageManager, '🏥 VETERINARIAN', petData.vetContact, '#059669');
+  }
+  
+  if (petData.petCaretaker) {
+    addContactCard(doc, pageManager, '👤 PET CARETAKER', petData.petCaretaker, '#7c3aed');
+  }
+  
+  // Additional information
+  if (petData.bio) {
+    addSection(doc, pageManager, 'IMPORTANT NOTES', () => {
+      addText(doc, pageManager, petData.bio);
+    });
+  }
+  
+  // Footer
+  pageManager.addY(20);
+  addText(doc, pageManager, 'Generated from PetPort Digital Pet Passport', '#6b7280', 8);
+  addText(doc, pageManager, `Pet ID: ${safeText(petData.id)} | Generated: ${new Date().toLocaleDateString()}`, '#6b7280', 8);
+};
+
+const generateLostPetPDF = async (doc: jsPDF, pageManager: PDFPageManager, petData: any): Promise<void> => {
+  const safeText = (text: string) => sanitizeText(text || '');
+  
+  // Header
+  addTitle(doc, pageManager, '🚨 MISSING PET ALERT', '#dc2626', 20);
+  addTitle(doc, pageManager, safeText(petData.name), '#dc2626', 18);
+  pageManager.addY(15);
+  
+  // Pet photo
+  if (petData.photoUrl) {
+    await addImage(doc, pageManager, petData.photoUrl, 100, 100);
+  }
+  
+  // Pet information
+  addSection(doc, pageManager, 'PET INFORMATION', () => {
+    addText(doc, pageManager, `Name: ${safeText(petData.name)}`);
+    addText(doc, pageManager, `Breed: ${safeText(petData.breed)}`);
+    addText(doc, pageManager, `Age: ${safeText(petData.age)}`);
+    addText(doc, pageManager, `Weight: ${safeText(petData.weight)}`);
+    addText(doc, pageManager, `Color: ${safeText(petData.color)}`);
+    addText(doc, pageManager, `Gender: ${safeText(petData.gender)}`);
+    if (petData.microchip_id) addText(doc, pageManager, `Microchip: ${safeText(petData.microchip_id)}`);
+  });
+  
+  // Emergency contact
   const emergencyContacts = petData.emergency_contacts || [];
   const primaryContact = emergencyContacts[0] || {};
   
-  let content = '';
+  addSection(doc, pageManager, 'EMERGENCY CONTACT', () => {
+    addText(doc, pageManager, `Owner: ${safeText(primaryContact.name || 'Contact via PetPort')}`);
+    if (primaryContact.phone) addText(doc, pageManager, `Phone: ${safeText(primaryContact.phone)}`);
+    if (primaryContact.email) addText(doc, pageManager, `Email: ${safeText(primaryContact.email)}`);
+    addText(doc, pageManager, `PetPort ID: ${safeText(petData.id)}`);
+  });
   
-  if (type === 'lost_pet') {
-    content = `
-      <style>
-        @page {
-          margin: 20mm 15mm 35mm 15mm;
-          size: A4;
-        }
-        
-        body {
-          font-family: Arial, sans-serif;
-          margin: 0;
-          padding: 20px;
-          background: white;
-          color: #333;
-          line-height: 1.4;
-        }
-        
-        .section {
-          page-break-inside: avoid;
-          margin-bottom: 30px;
-          min-height: 80px;
-        }
-        
-        .contact-section {
-          page-break-inside: avoid;
-          margin-bottom: 25px;
-          min-height: 100px;
-        }
-        
-        .reward-section {
-          page-break-inside: avoid;
-          margin-top: 40px;
-          min-height: 80px;
-        }
-        
-        @media print {
-          body {
-            margin: 0;
-            -webkit-print-color-adjust: exact;
-            color-adjust: exact;
-          }
-          
-          .section {
-            page-break-inside: avoid;
-            break-inside: avoid;
-          }
-          
-          .contact-section {
-            page-break-inside: avoid;
-            break-inside: avoid;
-          }
-          
-          .reward-section {
-            page-break-inside: avoid;
-            break-inside: avoid;
-          }
-        }
-      </style>
-      <div style="padding: 40px; max-width: 800px; margin: 0 auto; font-family: Arial, sans-serif; background: white;">
-        <div class="section" style="text-align: center; margin-bottom: 30px; border: 3px solid #dc2626; padding: 20px; background: #fef2f2;">
-          <h1 style="color: #dc2626; font-size: 36px; margin: 0; font-weight: bold;">🚨 MISSING PET ALERT</h1>
-          <h2 style="color: #dc2626; font-size: 28px; margin: 10px 0;">${safeText(petData.name)}</h2>
-        </div>
-        
-        <div class="section" style="display: flex; gap: 30px; margin-bottom: 30px;">
-          <div style="flex: 1;">
-            <h3 style="color: #dc2626; border-bottom: 2px solid #dc2626; padding-bottom: 5px;">PET INFORMATION</h3>
-            <p><strong>Name:</strong> ${safeText(petData.name)}</p>
-            <p><strong>Breed:</strong> ${safeText(petData.breed)}</p>
-            <p><strong>Age:</strong> ${safeText(petData.age)}</p>
-            <p><strong>Weight:</strong> ${safeText(petData.weight)}</p>
-            <p><strong>Color:</strong> ${safeText(petData.color)}</p>
-            <p><strong>Gender:</strong> ${safeText(petData.gender)}</p>
-            ${petData.microchip_id ? `<p><strong>Microchip:</strong> ${safeText(petData.microchip_id)}</p>` : ''}
-          </div>
-          
-          <div class="contact-section" style="flex: 1;">
-            <h3 style="color: #dc2626; border-bottom: 2px solid #dc2626; padding-bottom: 5px;">EMERGENCY CONTACT</h3>
-            <p><strong>Owner:</strong> ${safeText(primaryContact.name || 'Contact via PetPort')}</p>
-            ${primaryContact.phone ? `<p><strong>Phone:</strong> ${safeText(primaryContact.phone)}</p>` : ''}
-            ${primaryContact.email ? `<p><strong>Email:</strong> ${safeText(primaryContact.email)}</p>` : ''}
-            <p><strong>PetPort ID:</strong> ${safeText(petData.id)}</p>
-          </div>
-        </div>
-        
-        ${petData.bio ? `
-          <div class="section" style="margin-bottom: 20px;">
-            <h3 style="color: #dc2626; border-bottom: 2px solid #dc2626; padding-bottom: 5px;">DESCRIPTION</h3>
-            <p>${safeText(petData.bio)}</p>
-          </div>
-        ` : ''}
-        
-        <div class="reward-section" style="text-align: center; background: #fef2f2; padding: 20px; border: 2px solid #dc2626; margin-top: 30px;">
-          <h3 style="color: #dc2626; margin: 0 0 10px 0;">REWARD OFFERED</h3>
-          <p style="font-size: 18px; margin: 0;">Please contact immediately if found!</p>
-          <p style="font-size: 14px; margin: 10px 0 0 0;">Generated from PetPort Digital Pet Passport</p>
-        </div>
-      </div>
-    `;
-  } else if (type === 'emergency') {
-    // Enhanced Emergency PDF with comprehensive emergency information
-    const vetContact = petData.vetContact || '';
-    const emergencyContact = petData.emergencyContact || '';
-    const secondEmergencyContact = petData.secondEmergencyContact || '';
-    const medications = petData.medications || [];
-    const allergies = petData.careInstructions?.allergies || '';
-    const medicalAlert = petData.medicalAlert || false;
-    const petCaretaker = petData.petCaretaker || '';
-    
-    content = `
-      <style>
-        @page {
-          margin: 20mm 15mm 35mm 15mm;
-          size: A4;
-        }
-        
-        body {
-          font-family: Arial, sans-serif;
-          margin: 0;
-          padding: 20px;
-          background: white;
-          color: #333;
-          line-height: 1.4;
-        }
-        
-        .emergency-section {
-          page-break-inside: avoid;
-          margin-bottom: 30px;
-          min-height: 120px;
-          orphans: 3;
-          widows: 3;
-        }
-        
-        .contact-card {
-          page-break-inside: avoid;
-          margin-bottom: 20px;
-          min-height: 60px;
-          orphans: 2;
-          widows: 2;
-          break-inside: avoid;
-        }
-        
-        .medical-section {
-          page-break-inside: avoid;
-          margin-bottom: 30px;
-          min-height: 100px;
-        }
-        
-        .pet-info-section {
-          page-break-inside: avoid;
-          margin-bottom: 25px;
-          min-height: 80px;
-        }
-        
-        .contact-group {
-          page-break-inside: avoid;
-          margin-bottom: 35px;
-          min-height: 150px;
-        }
-        
-        .section-spacer {
-          height: 25px;
-          page-break-inside: avoid;
-        }
-        
-        .page-buffer {
-          height: 40px;
-          page-break-inside: avoid;
-        }
-        
-        @media print {
-          body {
-            margin: 0;
-            -webkit-print-color-adjust: exact;
-            color-adjust: exact;
-          }
-          
-          .emergency-section {
-            page-break-inside: avoid;
-            break-inside: avoid;
-            margin-bottom: 25px;
-          }
-          
-          .contact-card {
-            page-break-inside: avoid;
-            break-inside: avoid;
-            margin-bottom: 15px;
-          }
-          
-          .medical-section {
-            page-break-inside: avoid;
-            break-inside: avoid;
-          }
-          
-          .pet-info-section {
-            page-break-inside: avoid;
-            break-inside: avoid;
-          }
-        }
-      </style>
-      <div style="padding: 20px; max-width: 800px; margin: 0 auto; font-family: Arial, sans-serif; background: white; line-height: 1.3;">
-        <!-- Emergency Header -->
-        <div class="emergency-section" style="text-align: center; margin-bottom: 20px; border: 3px solid #dc2626; padding: 15px; background: #fef2f2;">
-          <h1 style="color: #dc2626; font-size: 26px; margin: 0; font-weight: bold;">🚨 EMERGENCY PROFILE</h1>
-          <h2 style="color: #dc2626; font-size: 22px; margin: 5px 0; font-weight: bold;">${safeText(petData.name)}</h2>
-          ${petData.microchipId ? `<p style="margin: 3px 0; font-size: 16px; font-weight: bold;">Microchip: ${safeText(petData.microchipId)}</p>` : ''}
-        </div>
-        
-        <!-- Pet Photo Section -->
-        ${petData.photoUrl ? `
-          <div style="text-align: center; margin-bottom: 25px;">
-            <img src="${petData.photoUrl}" alt="${safeText(petData.name)}" style="max-width: 200px; max-height: 200px; border: 3px solid #dc2626; border-radius: 8px;">
-          </div>
-        ` : ''}
-        
-        <!-- Critical Medical Alert -->
-        ${medicalAlert || medications.length > 0 || allergies ? `
-          <div style="margin-bottom: 25px; background: #fee2e2; padding: 20px; border: 3px solid #dc2626; border-radius: 8px;">
-            <h3 style="color: #dc2626; margin: 0 0 15px 0; font-size: 20px; font-weight: bold;">⚠️ CRITICAL MEDICAL INFORMATION</h3>
-            
-            ${medicalAlert ? `
-              <div style="background: #fca5a5; padding: 10px; margin-bottom: 10px; border-radius: 4px;">
-                <p style="margin: 0; font-weight: bold; color: #7f1d1d;">MEDICAL ALERT ACTIVE</p>
-              </div>
-            ` : ''}
-            
-            ${medications.length > 0 ? `
-              <div style="margin-bottom: 15px;">
-                <h4 style="color: #dc2626; margin: 0 0 8px 0; font-size: 16px;">MEDICATIONS:</h4>
-                ${medications.map((med: string) => `<p style="margin: 2px 0; padding-left: 10px;">• ${safeText(med)}</p>`).join('')}
-              </div>
-            ` : ''}
-            
-            ${allergies ? `
-              <div style="margin-bottom: 10px;">
-                <h4 style="color: #dc2626; margin: 0 0 8px 0; font-size: 16px;">ALLERGIES:</h4>
-                <p style="margin: 0; padding-left: 10px; font-weight: bold;">${safeText(allergies)}</p>
-              </div>
-            ` : ''}
-            
-            ${petData.medicalConditions ? `
-              <div>
-                <h4 style="color: #dc2626; margin: 0 0 8px 0; font-size: 16px;">MEDICAL CONDITIONS:</h4>
-                <p style="margin: 0; padding-left: 10px;">${safeText(petData.medicalConditions)}</p>
-              </div>
-            ` : ''}
-          </div>
-        ` : ''}
-        
-        <!-- Pet Basic Information -->
-        <div class="pet-info-section" style="margin-bottom: 20px;">
-          <div style="background: #f9fafb; padding: 12px; border-radius: 8px; border: 1px solid #d1d5db;">
-            <h3 style="color: #374151; margin: 0 0 10px 0; font-size: 16px; border-bottom: 2px solid #374151; padding-bottom: 3px;">PET INFORMATION</h3>
-            <p style="margin: 3px 0; font-size: 13px;"><strong>Species:</strong> ${safeText(petData.species)}</p>
-            <p style="margin: 3px 0; font-size: 13px;"><strong>Breed:</strong> ${safeText(petData.breed)}</p>
-            <p style="margin: 3px 0; font-size: 13px;"><strong>Age:</strong> ${safeText(petData.age)}</p>
-            <p style="margin: 3px 0; font-size: 13px;"><strong>Weight:</strong> ${safeText(petData.weight)}</p>
-            <p style="margin: 3px 0; font-size: 13px;"><strong>Gender:</strong> ${safeText(petData.gender)}</p>
-            ${petData.color ? `<p style="margin: 3px 0; font-size: 13px;"><strong>Color:</strong> ${safeText(petData.color)}</p>` : ''}
-            ${petData.petPortId ? `<p style="margin: 3px 0; font-size: 13px;"><strong>PetPort ID:</strong> ${safeText(petData.petPortId)}</p>` : ''}
-          </div>
-        </div>
-        
-        <!-- Emergency Contacts -->
-        <div class="contact-group" style="margin-bottom: 35px;">
-          <h3 style="color: #1d4ed8; margin: 0 0 20px 0; font-size: 18px; text-align: center; font-weight: bold;">📞 EMERGENCY CONTACTS</h3>
-          
-          ${emergencyContact ? `
-            <div class="contact-card" style="margin-bottom: 20px; padding: 12px; background: white; border-radius: 6px; border: 2px solid #dc2626; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-              <h4 style="color: #dc2626; margin: 0 0 5px 0; font-size: 14px; font-weight: bold;">🚨 PRIMARY EMERGENCY CONTACT</h4>
-              <p style="margin: 0; font-size: 13px; line-height: 1.4;">${safeText(emergencyContact)}</p>
-            </div>
-          ` : ''}
-          
-          ${secondEmergencyContact ? `
-            <div class="contact-card" style="margin-bottom: 20px; padding: 12px; background: white; border-radius: 6px; border: 2px solid #f59e0b; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-              <h4 style="color: #d97706; margin: 0 0 5px 0; font-size: 14px; font-weight: bold;">📱 SECONDARY EMERGENCY CONTACT</h4>
-              <p style="margin: 0; font-size: 13px; line-height: 1.4;">${safeText(secondEmergencyContact)}</p>
-            </div>
-          ` : ''}
-          
-          ${vetContact ? `
-            <div class="contact-card" style="margin-bottom: 20px; padding: 12px; background: white; border-radius: 6px; border: 2px solid #059669; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-              <h4 style="color: #047857; margin: 0 0 5px 0; font-size: 14px; font-weight: bold;">🏥 VETERINARIAN</h4>
-              <p style="margin: 0; font-size: 13px; line-height: 1.4;">${safeText(vetContact)}</p>
-            </div>
-          ` : ''}
-          
-          ${petCaretaker ? `
-            <div class="contact-card" style="margin-bottom: 20px; padding: 12px; background: white; border-radius: 6px; border: 2px solid #7c3aed; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-              <h4 style="color: #6d28d9; margin: 0 0 5px 0; font-size: 14px; font-weight: bold;">👤 PET CARETAKER</h4>
-              <p style="margin: 0; font-size: 13px; line-height: 1.4;">${safeText(petCaretaker)}</p>
-            </div>
-          ` : ''}
-        </div>
-        
-        <!-- Page Buffer -->
-        <div class="page-buffer"></div>
-        
-        <!-- Important Notes -->
-        ${petData.bio || petData.notes ? `
-          <div style="margin-bottom: 25px; background: #fefce8; padding: 15px; border-radius: 8px; border: 2px solid #eab308;">
-            <h3 style="color: #a16207; margin: 0 0 10px 0; font-size: 18px;">📝 IMPORTANT NOTES</h3>
-            ${petData.bio ? `<p style="margin: 0 0 10px 0;"><strong>Bio:</strong> ${safeText(petData.bio)}</p>` : ''}
-            ${petData.notes ? `<p style="margin: 0;"><strong>Notes:</strong> ${safeText(petData.notes)}</p>` : ''}
-          </div>
-        ` : ''}
-        
-        <!-- Location Information -->
-        ${petData.county || petData.state ? `
-          <div style="margin-bottom: 25px; background: #f0fdf4; padding: 15px; border-radius: 8px; border: 1px solid #22c55e;">
-            <h3 style="color: #15803d; margin: 0 0 10px 0; font-size: 18px;">📍 LOCATION</h3>
-            <p style="margin: 0;">${petData.county ? safeText(petData.county) : ''}${petData.county && petData.state ? ', ' : ''}${petData.state ? safeText(petData.state) : ''}</p>
-          </div>
-        ` : ''}
-        
-        <!-- Footer -->
-        <div style="text-align: center; margin-top: 30px; padding: 15px; background: #f3f4f6; border: 1px solid #d1d5db; border-radius: 8px;">
-          <p style="margin: 0; font-size: 14px; color: #6b7280; font-weight: bold;">🆘 IN CASE OF EMERGENCY</p>
-          <p style="margin: 5px 0; font-size: 12px; color: #6b7280;">Contact the numbers above immediately</p>
-          <p style="margin: 10px 0 5px 0; font-size: 12px; color: #6b7280;">Generated from PetPort Digital Pet Passport</p>
-          <p style="margin: 0; font-size: 11px; color: #6b7280;">Pet ID: ${safeText(petData.id)} | Generated: ${new Date().toLocaleDateString()}</p>
-        </div>
-      </div>
-    `;
-  } else if (type === 'gallery') {
-    // Gallery PDF with photos
-    const galleryPhotos = petData.gallery_photos || [];
-    const photoGrid = galleryPhotos.length > 0 
-      ? galleryPhotos.map((photo: any, index: number) => `
-          <div style="text-align: center; margin-bottom: 20px;">
-            <img src="${photo.url}" alt="Gallery photo ${index + 1}" style="max-width: 300px; max-height: 300px; border: 2px solid #1e40af; border-radius: 8px;">
-            ${photo.caption ? `<p style="margin-top: 10px; font-style: italic; color: #6b7280;">${safeText(photo.caption)}</p>` : ''}
-          </div>
-        `).join('')
-      : '<p style="text-align: center; color: #6b7280;">No photos available</p>';
-    
-    content = `
-      <style>
-        @page {
-          margin: 20mm 15mm 35mm 15mm;
-          size: A4;
-        }
-        
-        body {
-          font-family: Arial, sans-serif;
-          margin: 0;
-          padding: 20px;
-          background: white;
-          color: #333;
-          line-height: 1.4;
-        }
-        
-        .gallery-item {
-          page-break-inside: avoid;
-          margin-bottom: 30px;
-          min-height: 200px;
-        }
-        
-        .gallery-header {
-          page-break-inside: avoid;
-          margin-bottom: 25px;
-          min-height: 100px;
-        }
-        
-        .gallery-footer {
-          page-break-inside: avoid;
-          margin-top: 40px;
-          min-height: 60px;
-        }
-        
-        @media print {
-          body {
-            margin: 0;
-            -webkit-print-color-adjust: exact;
-            color-adjust: exact;
-          }
-          
-          .gallery-item {
-            page-break-inside: avoid;
-            break-inside: avoid;
-          }
-          
-          .gallery-header {
-            page-break-inside: avoid;
-            break-inside: avoid;
-          }
-          
-          .gallery-footer {
-            page-break-inside: avoid;
-            break-inside: avoid;
-          }
-        }
-      </style>
-      <div style="padding: 40px; max-width: 800px; margin: 0 auto; font-family: Arial, sans-serif; background: white;">
-        <div class="gallery-header" style="text-align: center; margin-bottom: 30px; border: 2px solid #1e40af; padding: 20px; background: #eff6ff;">
-          <h1 style="color: #1e40af; font-size: 24px; margin: 0;">PetPort Photo Gallery</h1>
-          <h2 style="color: #1e40af; font-size: 20px; margin: 10px 0;">${safeText(petData.name)}</h2>
-        </div>
-        
-        <div class="gallery-item" style="margin-bottom: 20px; text-align: center;">
-          <p><strong>Pet:</strong> ${safeText(petData.name)} (${safeText(petData.breed)})</p>
-          <p><strong>PetPort ID:</strong> ${safeText(petData.id)}</p>
-        </div>
-        
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-          ${galleryPhotos.map((photo: any, index: number) => `
-            <div class="gallery-item" style="text-align: center; margin-bottom: 20px;">
-              <img src="${photo.url}" alt="Gallery photo ${index + 1}" style="max-width: 300px; max-height: 300px; border: 2px solid #1e40af; border-radius: 8px;">
-              ${photo.caption ? `<p style="margin-top: 10px; font-style: italic; color: #6b7280;">${safeText(photo.caption)}</p>` : ''}
-            </div>
-          `).join('')}
-        </div>
-        
-        <div class="gallery-footer" style="text-align: center; margin-top: 30px; padding: 15px; background: #f3f4f6; border: 1px solid #d1d5db;">
-          <p style="margin: 0; font-size: 12px; color: #6b7280;">Generated from PetPort Digital Pet Passport</p>
-          <p style="margin: 5px 0 0 0; font-size: 12px; color: #6b7280;">Visit: ${window.location.origin}/profile/${petData.id}</p>
-        </div>
-      </div>
-    `;
-  } else {
-    // Full profile
-    content = `
-      <style>
-        @page {
-          margin: 20mm 15mm 35mm 15mm;
-          size: A4;
-        }
-        
-        body {
-          font-family: Arial, sans-serif;
-          margin: 0;
-          padding: 20px;
-          background: white;
-          color: #333;
-          line-height: 1.4;
-        }
-        
-        .profile-section {
-          page-break-inside: avoid;
-          margin-bottom: 30px;
-          min-height: 80px;
-        }
-        
-        .profile-header {
-          page-break-inside: avoid;
-          margin-bottom: 25px;
-          min-height: 100px;
-        }
-        
-        .profile-content {
-          page-break-inside: avoid;
-          margin-bottom: 25px;
-          min-height: 120px;
-        }
-        
-        .profile-footer {
-          page-break-inside: avoid;
-          margin-top: 40px;
-          min-height: 60px;
-        }
-        
-        @media print {
-          body {
-            margin: 0;
-            -webkit-print-color-adjust: exact;
-            color-adjust: exact;
-          }
-          
-          .profile-section {
-            page-break-inside: avoid;
-            break-inside: avoid;
-          }
-          
-          .profile-header {
-            page-break-inside: avoid;
-            break-inside: avoid;
-          }
-          
-          .profile-content {
-            page-break-inside: avoid;
-            break-inside: avoid;
-          }
-          
-          .profile-footer {
-            page-break-inside: avoid;
-            break-inside: avoid;
-          }
-        }
-      </style>
-      <div style="padding: 40px; max-width: 800px; margin: 0 auto; font-family: Arial, sans-serif; background: white;">
-        <div class="profile-header" style="text-align: center; margin-bottom: 30px; border: 2px solid #1e40af; padding: 20px; background: #eff6ff;">
-          <h1 style="color: #1e40af; font-size: 24px; margin: 0;">PetPort Digital Passport</h1>
-          <h2 style="color: #1e40af; font-size: 20px; margin: 10px 0;">${safeText(petData.name)}</h2>
-        </div>
-        
-        <div class="profile-content" style="display: flex; gap: 20px; margin-bottom: 20px;">
-          <div style="flex: 1;">
-            <h3 style="color: #1e40af; border-bottom: 2px solid #1e40af; padding-bottom: 5px;">BASIC INFORMATION</h3>
-            <p><strong>Name:</strong> ${safeText(petData.name)}</p>
-            <p><strong>Breed:</strong> ${safeText(petData.breed)}</p>
-            <p><strong>Age:</strong> ${safeText(petData.age)}</p>
-            <p><strong>Weight:</strong> ${safeText(petData.weight)}</p>
-            <p><strong>Color:</strong> ${safeText(petData.color)}</p>
-            <p><strong>Gender:</strong> ${safeText(petData.gender)}</p>
-            ${petData.microchip_id ? `<p><strong>Microchip:</strong> ${safeText(petData.microchip_id)}</p>` : ''}
-          </div>
-          
-          <div style="flex: 1;">
-            <h3 style="color: #1e40af; border-bottom: 2px solid #1e40af; padding-bottom: 5px;">CONTACT</h3>
-            <p><strong>Owner:</strong> ${safeText(primaryContact.name || 'Contact via PetPort')}</p>
-            ${primaryContact.phone ? `<p><strong>Phone:</strong> ${safeText(primaryContact.phone)}</p>` : ''}
-            ${primaryContact.email ? `<p><strong>Email:</strong> ${safeText(primaryContact.email)}</p>` : ''}
-            <p><strong>PetPort ID:</strong> ${safeText(petData.id)}</p>
-          </div>
-        </div>
-        
-        ${petData.bio ? `
-          <div class="profile-section" style="margin-bottom: 20px;">
-            <h3 style="color: #1e40af; border-bottom: 2px solid #1e40af; padding-bottom: 5px;">BIOGRAPHY</h3>
-            <p>${safeText(petData.bio)}</p>
-          </div>
-        ` : ''}
-        
-        ${petData.medical_conditions ? `
-          <div class="profile-section" style="margin-bottom: 20px;">
-            <h3 style="color: #1e40af; border-bottom: 2px solid #1e40af; padding-bottom: 5px;">MEDICAL CONDITIONS</h3>
-            <p>${safeText(petData.medical_conditions)}</p>
-          </div>
-        ` : ''}
-        
-        <div class="profile-footer" style="text-align: center; margin-top: 30px; padding: 15px; background: #f3f4f6; border: 1px solid #d1d5db;">
-          <p style="margin: 0; font-size: 12px; color: #6b7280;">Generated from PetPort Digital Pet Passport</p>
-          <p style="margin: 5px 0 0 0; font-size: 12px; color: #6b7280;">Visit: ${window.location.origin}/profile/${petData.id}</p>
-        </div>
-      </div>
-    `;
+  // Description
+  if (petData.bio) {
+    addSection(doc, pageManager, 'DESCRIPTION', () => {
+      addText(doc, pageManager, petData.bio);
+    });
   }
   
-  return content;
+  // Reward section
+  pageManager.addY(20);
+  addTitle(doc, pageManager, 'REWARD OFFERED', '#dc2626', 16);
+  addText(doc, pageManager, 'Please contact immediately if found!', '#000000', 12);
+  pageManager.addY(10);
+  addText(doc, pageManager, 'Generated from PetPort Digital Pet Passport', '#6b7280', 8);
+};
+
+const generateGalleryPDF = async (doc: jsPDF, pageManager: PDFPageManager, petData: any): Promise<void> => {
+  const safeText = (text: string) => sanitizeText(text || '');
+  
+  // Header
+  addTitle(doc, pageManager, 'PetPort Photo Gallery', '#1e40af', 18);
+  addTitle(doc, pageManager, safeText(petData.name), '#1e40af', 16);
+  pageManager.addY(15);
+  
+  // Gallery photos
+  const galleryPhotos = petData.gallery_photos || [];
+  
+  if (galleryPhotos.length > 0) {
+    for (const photo of galleryPhotos) {
+      await addImage(doc, pageManager, photo.url, 120, 120);
+      if (photo.caption) {
+        addText(doc, pageManager, photo.caption, '#6b7280', 9);
+      }
+      pageManager.addY(10);
+    }
+  } else {
+    addText(doc, pageManager, 'No photos available', '#6b7280');
+  }
+  
+  // Footer
+  pageManager.addY(20);
+  addText(doc, pageManager, 'Generated from PetPort Digital Pet Passport', '#6b7280', 8);
+};
+
+const generateFullPDF = async (doc: jsPDF, pageManager: PDFPageManager, petData: any): Promise<void> => {
+  const safeText = (text: string) => sanitizeText(text || '');
+  
+  // Header
+  addTitle(doc, pageManager, 'Complete Pet Profile', '#1e40af', 18);
+  addTitle(doc, pageManager, safeText(petData.name), '#1e40af', 16);
+  pageManager.addY(15);
+  
+  // Pet photo
+  if (petData.photoUrl) {
+    await addImage(doc, pageManager, petData.photoUrl, 80, 80);
+  }
+  
+  // Basic information
+  addSection(doc, pageManager, 'PET INFORMATION', () => {
+    addText(doc, pageManager, `Species: ${safeText(petData.species)}`);
+    addText(doc, pageManager, `Breed: ${safeText(petData.breed)}`);
+    addText(doc, pageManager, `Age: ${safeText(petData.age)}`);
+    addText(doc, pageManager, `Weight: ${safeText(petData.weight)}`);
+    addText(doc, pageManager, `Gender: ${safeText(petData.gender)}`);
+    if (petData.color) addText(doc, pageManager, `Color: ${safeText(petData.color)}`);
+    if (petData.microchipId) addText(doc, pageManager, `Microchip: ${safeText(petData.microchipId)}`);
+  });
+  
+  // Bio
+  if (petData.bio) {
+    addSection(doc, pageManager, 'BIOGRAPHY', () => {
+      addText(doc, pageManager, petData.bio);
+    });
+  }
+  
+  // Care instructions
+  if (petData.careInstructions) {
+    addSection(doc, pageManager, 'CARE INSTRUCTIONS', () => {
+      if (petData.careInstructions.feedingSchedule) {
+        addText(doc, pageManager, `Feeding Schedule: ${petData.careInstructions.feedingSchedule}`);
+      }
+      if (petData.careInstructions.allergies) {
+        addText(doc, pageManager, `Allergies: ${petData.careInstructions.allergies}`);
+      }
+      if (petData.careInstructions.medications) {
+        addText(doc, pageManager, `Medications: ${petData.careInstructions.medications}`);
+      }
+    });
+  }
+  
+  // Emergency contacts
+  addSubtitle(doc, pageManager, 'EMERGENCY CONTACTS', '#1d4ed8');
+  
+  if (petData.emergencyContact) {
+    addContactCard(doc, pageManager, 'PRIMARY EMERGENCY CONTACT', petData.emergencyContact, '#dc2626');
+  }
+  
+  if (petData.secondEmergencyContact) {
+    addContactCard(doc, pageManager, 'SECONDARY EMERGENCY CONTACT', petData.secondEmergencyContact, '#f59e0b');
+  }
+  
+  if (petData.vetContact) {
+    addContactCard(doc, pageManager, 'VETERINARIAN', petData.vetContact, '#059669');
+  }
+  
+  // Gallery photos
+  const galleryPhotos = petData.gallery_photos || [];
+  if (galleryPhotos.length > 0) {
+    pageManager.checkPageSpace(50, true); // Force new page for gallery
+    addSubtitle(doc, pageManager, 'PHOTO GALLERY', '#1e40af');
+    
+    for (const photo of galleryPhotos.slice(0, 6)) { // Limit to 6 photos
+      await addImage(doc, pageManager, photo.url, 80, 60);
+      if (photo.caption) {
+        addText(doc, pageManager, photo.caption, '#6b7280', 9);
+      }
+    }
+  }
+  
+  // Footer
+  pageManager.addY(20);
+  addText(doc, pageManager, 'Generated from PetPort Digital Pet Passport', '#6b7280', 8);
+  addText(doc, pageManager, `Pet ID: ${safeText(petData.id)} | Generated: ${new Date().toLocaleDateString()}`, '#6b7280', 8);
 };
 
 export async function generateClientPetPDF(
-  petData: any, 
+  petData: any,
   type: 'emergency' | 'full' | 'lost_pet' | 'care' | 'gallery' = 'emergency'
 ): Promise<ClientPDFGenerationResult> {
   try {
-    console.log('🔧 CLIENT: Starting client-side PDF generation for pet:', petData.name, 'type:', type);
+    console.log('📋 Starting client PDF generation with jsPDF...', { type, petId: petData?.id });
     
-    // Create a temporary container for HTML content
-    const tempContainer = document.createElement('div');
-    tempContainer.style.position = 'absolute';
-    tempContainer.style.top = '-9999px';
-    tempContainer.style.left = '-9999px';
-    tempContainer.style.width = '800px';
-    tempContainer.innerHTML = createPetProfileHTML(petData, type);
-    
-    document.body.appendChild(tempContainer);
-    
-    // Use html2canvas to capture the HTML as an image
-    const canvas = await html2canvas(tempContainer, {
-      width: 800,
-      height: tempContainer.scrollHeight,
-      scale: 2,
-      useCORS: true,
-      backgroundColor: '#ffffff'
-    });
-    
-    // Remove the temporary container
-    document.body.removeChild(tempContainer);
-    
-    // Create PDF using jsPDF
-    const pdf = new jsPDF({
-      orientation: 'portrait',
-      unit: 'mm',
-      format: 'a4'
-    });
-    
-    const imgData = canvas.toDataURL('image/png');
-    const imgWidth = 210; // A4 width in mm
-    const pageHeight = 295; // A4 height in mm
-    const imgHeight = (canvas.height * imgWidth) / canvas.width;
-    let heightLeft = imgHeight;
-    
-    let position = 0;
-    
-    // Add image to PDF (handle multiple pages if needed)
-    pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-    heightLeft -= pageHeight;
-    
-    while (heightLeft >= 0) {
-      position = heightLeft - imgHeight;
-      pdf.addPage();
-      pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-      heightLeft -= pageHeight;
+    if (!petData) {
+      throw new Error('Pet data is required for PDF generation');
     }
+
+    // Create PDF document
+    const doc = new jsPDF('p', 'mm', 'a4');
+    const pageManager = new PDFPageManager(doc);
+
+    // Generate content based on type
+    switch (type) {
+      case 'emergency':
+        await generateEmergencyPDF(doc, pageManager, petData);
+        break;
+      case 'lost_pet':
+        await generateLostPetPDF(doc, pageManager, petData);
+        break;
+      case 'gallery':
+        await generateGalleryPDF(doc, pageManager, petData);
+        break;
+      case 'full':
+      case 'care':
+        await generateFullPDF(doc, pageManager, petData);
+        break;
+      default:
+        await generateEmergencyPDF(doc, pageManager, petData);
+    }
+
+    // Generate blob
+    const pdfBlob = doc.output('blob');
     
-    // Convert PDF to blob
-    const pdfBlob = pdf.output('blob');
-    const fileName = `${petData.name}_${type}_profile.pdf`;
-    
-    console.log('✅ CLIENT: Client-side PDF generation successful');
-    console.log('  - Blob size:', pdfBlob.size);
-    console.log('  - Filename:', fileName);
-    
+    console.log('✅ Client PDF generated successfully with jsPDF', { 
+      type, 
+      fileSize: `${(pdfBlob.size / 1024).toFixed(1)}KB`,
+      pages: doc.getNumberOfPages()
+    });
+
     return {
       success: true,
       pdfBlob,
       blob: pdfBlob, // Alias for compatibility
-      fileName,
+      fileName: `${petData.name || 'pet'}_${type}_profile.pdf`,
       type
     };
-    
+
   } catch (error) {
-    console.error('❌ CLIENT: Error in client-side PDF generation:', error);
+    console.error('❌ Client PDF generation failed:', error);
     return {
       success: false,
-      error: error instanceof Error ? error.message : 'Failed to generate PDF'
+      error: error instanceof Error ? error.message : 'Unknown error occurred',
+      type
     };
   }
 }

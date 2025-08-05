@@ -726,11 +726,37 @@ const generateFullPDF = async (doc: jsPDF, pageManager: PDFPageManager, petData:
     pageManager.checkPageSpace(50, true); // Force new page for gallery
     addSubtitle(doc, pageManager, 'PHOTO GALLERY', '#1e40af');
     
-    for (const photo of galleryPhotos.slice(0, 8)) { // Show up to 8 photos
-      await addImage(doc, pageManager, photo.url, 80, 60);
-      if (photo.caption) {
-        addText(doc, pageManager, photo.caption, '#6b7280', 9);
+    const photosToShow = galleryPhotos.slice(0, 8); // Show up to 8 photos
+    const photoSize = 60;
+    const spacing = 70; // 60 photo width + 10 margin
+    const startX = 20;
+    const photosPerRow = 3;
+    
+    for (let i = 0; i < photosToShow.length; i += photosPerRow) {
+      const startY = pageManager.getCurrentY();
+      const rowPhotos = photosToShow.slice(i, i + photosPerRow);
+      
+      // Place photos horizontally in the same row
+      for (let j = 0; j < rowPhotos.length; j++) {
+        const photoX = startX + (j * spacing);
+        
+        // Draw photo without advancing Y cursor
+        try {
+          const base64 = await loadImageAsBase64(rowPhotos[j].url);
+          doc.addImage(base64, 'JPEG', photoX, startY, photoSize, photoSize);
+        } catch (error) {
+          console.error('Error adding image:', error);
+        }
+        
+        // Add caption below photo
+        if (rowPhotos[j].caption) {
+          const captionY = startY + photoSize + 5;
+          doc.text(rowPhotos[j].caption, photoX, captionY, { maxWidth: photoSize });
+        }
       }
+      
+      // Advance Y position for next row
+      pageManager.addY(photoSize + 20); // Photo height + space for caption and row spacing
     }
   }
   

@@ -114,7 +114,7 @@ const addSubtitle = (doc: jsPDF, pageManager: PDFPageManager, text: string, colo
   doc.setFontSize(fontSize);
   doc.setTextColor(color);
   doc.setFont('helvetica', 'bold');
-  doc.text(text, pageManager.getLeftMargin(), pageManager.getCurrentY());
+  doc.text(text, pageManager.getX(), pageManager.getCurrentY());
   pageManager.addY(fontSize / 2 + 5);
 };
 

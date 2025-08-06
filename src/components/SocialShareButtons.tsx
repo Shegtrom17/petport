@@ -94,7 +94,7 @@ export const SocialShareButtons = ({ petName, petId, isMissingPet = false }: Soc
   return (
     <Card className={`${isMissingPet ? 'border-2 border-red-500 bg-red-50' : 'border-2 border-gold-500/30 bg-[#f8f8f8]'} shadow-lg`}>
       <CardHeader className="pb-3">
-        <CardTitle className={`flex items-center space-x-2 text-lg font-serif ${isMissingPet ? 'text-red-800' : 'text-navy-900'} border-b-2 ${isMissingPet ? 'border-red-500' : 'border-gold-500'} pb-2`}>
+        <CardTitle className={`flex items-center space-x-2 text-lg font-semibold ${isMissingPet ? 'text-red-800' : 'text-navy-900'} border-b-2 ${isMissingPet ? 'border-red-500' : 'border-gold-500'} pb-2`}>
           <Share2 className="w-5 h-5" />
           <span>{isMissingPet ? `Help Find ${petName}!` : `Share ${petName}'s Profile`}</span>
         </CardTitle>

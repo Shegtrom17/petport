@@ -537,27 +537,25 @@ export const PetProfileContent = ({
                 />
               )}
               
-              <Button 
+              <div 
                 onClick={() => setActiveTab("documents")}
-                className="w-full bg-gradient-to-r from-navy-900 to-navy-800 text-gold-500 hover:from-navy-800 hover:to-navy-700 border border-gold-500/30"
+                className="w-full cursor-pointer flex items-center justify-center text-navy-900 hover:text-gold-600 hover:scale-110 transition-all duration-200 py-3"
               >
                 📄 Manage Documents
-              </Button>
-              <Button 
+              </div>
+              <div 
                 onClick={() => setActiveTab("quickid")}
-                variant="outline"
-                className="w-full border-navy-900 text-navy-900 hover:bg-navy-50"
+                className="w-full cursor-pointer flex items-center justify-center text-navy-900 hover:text-gold-600 hover:scale-110 transition-all duration-200 py-3"
               >
                 🆔 Lost Pet
-              </Button>
+              </div>
               <div className="space-y-2">
-                <Button 
+                <div 
                   onClick={() => setIsInAppSharingOpen(true)}
-                  variant="outline"
-                  className="w-full border-navy-900 text-navy-900 hover:bg-navy-50"
+                  className="w-full cursor-pointer flex items-center justify-center text-navy-900 hover:text-gold-600 hover:scale-110 transition-all duration-200 py-3"
                 >
                   🔗 Share Profile
-                </Button>
+                </div>
                 {!enhancedPetData?.is_public && (
                   <PrivacyHint isPublic={enhancedPetData?.is_public || false} feature="profile sharing" variant="inline" />
                 )}

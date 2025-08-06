@@ -205,12 +205,9 @@ export const PetPDFGenerator = ({ petId, petName, petData }: PetPDFGeneratorProp
           <div className="absolute top-2 right-2 w-8 h-8 bg-gold-500/20 rounded-full flex items-center justify-center">
             <span className="text-xs font-bold text-gold-600">1</span>
           </div>
-          <h4 className="font-bold text-navy-900 mb-2 border-b border-gold-500/50 pb-1">Emergency Profile</h4>
-          <p className="text-sm text-navy-600 mb-3">Essential medical and contact information</p>
-          <Button 
+          <div 
             onClick={() => showPdfOptions('emergency')}
-            disabled={authLoading || (!user && !authError)}
-            className="w-full bg-gradient-to-r from-gold-500 to-gold-400 text-navy-900 hover:from-gold-400 hover:to-gold-300 disabled:opacity-50"
+            className={`w-full cursor-pointer flex items-center justify-center text-navy-900 hover:text-gold-600 hover:scale-110 transition-all duration-200 py-3 ${(authLoading || (!user && !authError)) ? 'opacity-50 cursor-not-allowed' : ''}`}
           >
             {!user ? (
               <LogIn className="w-4 h-4 mr-2" />
@@ -218,19 +215,16 @@ export const PetPDFGenerator = ({ petId, petName, petData }: PetPDFGeneratorProp
               <FileText className="w-4 h-4 mr-2" />
             )}
             {!user ? 'Sign In to Generate' : 'Generate Emergency PDF'}
-          </Button>
+          </div>
         </div>
 
         <div className="bg-white p-4 rounded-lg border-2 border-gold-500/30 shadow-sm relative">
           <div className="absolute top-2 right-2 w-8 h-8 bg-gold-500/20 rounded-full flex items-center justify-center">
             <span className="text-xs font-bold text-gold-600">2</span>
           </div>
-          <h4 className="font-bold text-navy-900 mb-2 border-b border-gold-500/50 pb-1">Complete Profile</h4>
-          <p className="text-sm text-navy-600 mb-3">Full passport with all certifications</p>
-          <Button 
+          <div 
             onClick={() => showPdfOptions('full')}
-            disabled={authLoading || (!user && !authError)}
-            className="w-full bg-gradient-to-r from-gold-500 to-gold-400 text-navy-900 hover:from-gold-400 hover:to-gold-300 disabled:opacity-50"
+            className={`w-full cursor-pointer flex items-center justify-center text-navy-900 hover:text-gold-600 hover:scale-110 transition-all duration-200 py-3 ${(authLoading || (!user && !authError)) ? 'opacity-50 cursor-not-allowed' : ''}`}
           >
             {!user ? (
               <>
@@ -240,10 +234,10 @@ export const PetPDFGenerator = ({ petId, petName, petData }: PetPDFGeneratorProp
             ) : (
               <>
                 <FileText className="w-4 h-4 mr-2" />
-                Generate Full Profile
+                Generate Complete Profile PDF
               </>
             )}
-          </Button>
+          </div>
         </div>
       </div>
 

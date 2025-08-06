@@ -281,7 +281,7 @@ const Index = () => {
       {user && (
         <ReportIssueModal>
           <Button 
-            className="fixed bottom-6 left-6 z-50 h-12 w-12 md:h-14 md:w-14 rounded-full bg-amber-500 hover:bg-amber-600 text-white shadow-lg hover:shadow-xl transition-all duration-200 border-2 border-amber-400"
+            className="fixed bottom-6 left-6 z-50 h-12 w-12 md:h-14 md:w-14 rounded-full bg-gradient-to-r from-gold-500 to-gold-400 hover:from-gold-400 hover:to-gold-300 text-navy-900 shadow-lg hover:shadow-xl transition-all duration-200 border-2 border-gold-500/30"
             title="Report Issue"
           >
             <AlertTriangle className="h-5 w-5 md:h-6 md:w-6" />

@@ -550,11 +550,12 @@ export const PetProfileContent = ({
                 >
                   🆔 Lost Pet
                 </div>
-                <div 
-                  onClick={() => setIsInAppSharingOpen(true)}
-                  className="w-full cursor-pointer flex items-center justify-center text-navy-900 hover:text-gold-600 hover:scale-110 transition-all duration-200 py-2"
-                >
-                  🔗 Share Profile
+                <div className="px-2">
+                  <SocialShareButtons 
+                    petId={enhancedPetData?.id || ""} 
+                    petName={enhancedPetData?.name || "Pet"}
+                    isMissingPet={false}
+                  />
                 </div>
               </div>
               <div className="space-y-2">

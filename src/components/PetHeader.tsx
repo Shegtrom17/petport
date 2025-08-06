@@ -50,23 +50,12 @@ export const PetHeader = ({ activeTab, onTabChange, selectedPetId, selectedPetNa
           {/* Right: Action Buttons (Mobile Only) */}
           <div className="flex items-center space-x-2 flex-shrink-0">
             {user ? (
-              <>
-                <LostPetButton 
-                  petId={selectedPetId} 
-                  petName={selectedPetName}
-                  petData={selectedPet}
-                  className="text-xs px-2 py-1 h-8" 
-                />
-                <Button 
-                  variant="outline" 
-                  size="icon"
-                  onClick={signOut}
-                  title="Sign Out"
-                  className="h-8 w-8"
-                >
-                  <LogOut className="h-3 w-3" />
-                </Button>
-              </>
+              <LostPetButton 
+                petId={selectedPetId} 
+                petName={selectedPetName}
+                petData={selectedPet}
+                className="text-xs px-2 py-1 h-8" 
+              />
             ) : (
               <Button 
                 className="bg-gradient-to-r from-navy-900 to-navy-800 hover:from-navy-800 hover:to-navy-700 text-gold-500 border border-gold-500/30 text-xs px-2 h-8 whitespace-nowrap"
@@ -103,23 +92,12 @@ export const PetHeader = ({ activeTab, onTabChange, selectedPetId, selectedPetNa
           
           <div className="flex items-center space-x-3 flex-shrink-0">
             {user ? (
-              <>
-                <LostPetButton 
-                  petId={selectedPetId} 
-                  petName={selectedPetName}
-                  petData={selectedPet}
-                  className="text-sm px-3 py-2 h-10" 
-                />
-                <Button 
-                  variant="outline" 
-                  size="icon"
-                  onClick={signOut}
-                  title="Sign Out"
-                  className="h-10 w-10"
-                >
-                  <LogOut className="h-4 w-4" />
-                </Button>
-              </>
+              <LostPetButton 
+                petId={selectedPetId} 
+                petName={selectedPetName}
+                petData={selectedPet}
+                className="text-sm px-3 py-2 h-10" 
+              />
             ) : (
               <Button 
                 className="bg-gradient-to-r from-navy-900 to-navy-800 hover:from-navy-800 hover:to-navy-700 text-gold-500 border border-gold-500/30 text-sm px-3 h-10 whitespace-nowrap"

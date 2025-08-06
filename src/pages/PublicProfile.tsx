@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { supabase } from "@/integrations/supabase/client";
-import { Heart, MapPin, Phone, Calendar, Star, Award, GraduationCap, Plane } from "lucide-react";
+import { Heart, MapPin, Phone, Calendar, Star, Award, GraduationCap, Plane, Trophy, Briefcase, Shield } from "lucide-react";
 import { SocialShareButtons } from "@/components/SocialShareButtons";
 import { sanitizeText, sanitizeHtml } from "@/utils/inputSanitizer";
 
@@ -30,18 +30,22 @@ const PublicProfile = () => {
           .from('pets')
           .select(`
             *,
-            pet_photos (photo_url, full_body_photo_url),
-            professional_data (support_animal_status, badges),
-            medical (medical_alert, medical_conditions),
-            contacts (emergency_contact, second_emergency_contact, vet_contact, pet_caretaker),
+            pet_photos (*),
+            professional_data (*),
+            medical (*),
+            contacts (*),
             reviews (*),
             training (*),
             travel_locations (*),
-            gallery_photos (*)
+            gallery_photos (*),
+            achievements (*),
+            experiences (*),
+            certifications (*),
+            map_pins (*)
           `)
           .eq('id', petId)
           .eq('is_public', true)
-          .single();
+          .maybeSingle();
 
         if (fetchError || !data) {
           setError("Pet profile not found or not public");
@@ -89,7 +93,23 @@ const PublicProfile = () => {
           gallery_photos: data.gallery_photos?.map((photo: any) => ({
             ...photo,
             caption: sanitizeText(photo.caption || '')
-          })) || []
+          })) || [],
+          achievements: data.achievements?.map((achievement: any) => ({
+            ...achievement,
+            title: sanitizeText(achievement.title || ''),
+            description: sanitizeText(achievement.description || '')
+          })) || [],
+          experiences: data.experiences?.map((experience: any) => ({
+            ...experience,
+            activity: sanitizeText(experience.activity || ''),
+            description: sanitizeText(experience.description || '')
+          })) || [],
+          certifications: Array.isArray(data.certifications) ? data.certifications.map((cert: any) => ({
+            ...cert,
+            type: sanitizeText(cert.type || ''),
+            issuer: sanitizeText(cert.issuer || ''),
+            certification_number: sanitizeText(cert.certification_number || '')
+          })) : []
         };
 
         setPetData(sanitizedData);
@@ -167,15 +187,26 @@ const PublicProfile = () => {
         <Card className="mb-8">
           <CardContent className="p-8">
             <div className="flex flex-col md:flex-row items-center md:items-start space-y-6 md:space-y-0 md:space-x-8">
-              {petData.pet_photos?.[0]?.photo_url && (
-                <div className="flex-shrink-0">
-                  <img 
-                    src={petData.pet_photos[0].photo_url} 
-                    alt={`${petData.name} profile`}
-                    className="w-48 h-48 object-cover rounded-full border-4 border-blue-200"
-                  />
-                </div>
-              )}
+              <div className="flex space-x-4">
+                {petData.pet_photos?.[0]?.photo_url && (
+                  <div className="flex-shrink-0">
+                    <img 
+                      src={petData.pet_photos[0].photo_url} 
+                      alt={`${petData.name} profile`}
+                      className="w-48 h-48 object-cover rounded-full border-4 border-blue-200"
+                    />
+                  </div>
+                )}
+                {petData.pet_photos?.[0]?.full_body_photo_url && (
+                  <div className="flex-shrink-0">
+                    <img 
+                      src={petData.pet_photos[0].full_body_photo_url} 
+                      alt={`${petData.name} full body`}
+                      className="w-36 h-48 object-cover rounded-lg border-4 border-blue-200"
+                    />
+                  </div>
+                )}
+              </div>
               <div className="flex-1 text-center md:text-left">
                 <h1 className="text-4xl font-bold text-gray-900 mb-2">{petData.name}</h1>
                 <p className="text-xl text-gray-600 mb-4">
@@ -379,24 +410,106 @@ const PublicProfile = () => {
               </CardContent>
             </Card>
           )}
+
+          {/* Achievements */}
+          {petData.achievements && petData.achievements.length > 0 && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center space-x-2">
+                  <Trophy className="w-5 h-5" />
+                  <span>Achievements</span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  {petData.achievements.slice(0, 5).map((achievement: any, index: number) => (
+                    <div key={index} className="p-3 bg-gray-50 rounded">
+                      <h4 className="font-medium">{achievement.title}</h4>
+                      {achievement.description && <p className="text-sm text-gray-600">{achievement.description}</p>}
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Experiences */}
+          {petData.experiences && petData.experiences.length > 0 && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center space-x-2">
+                  <Briefcase className="w-5 h-5" />
+                  <span>Professional Experience</span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  {petData.experiences.slice(0, 5).map((experience: any, index: number) => (
+                    <div key={index} className="p-3 bg-gray-50 rounded">
+                      <h4 className="font-medium">{experience.activity}</h4>
+                      {experience.description && <p className="text-sm text-gray-600">{experience.description}</p>}
+                      {experience.contact && <p className="text-sm text-gray-500">📞 {experience.contact}</p>}
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Certifications */}
+          {petData.certifications && petData.certifications.length > 0 && (
+            <Card className="lg:col-span-2">
+              <CardHeader>
+                <CardTitle className="flex items-center space-x-2">
+                  <Shield className="w-5 h-5" />
+                  <span>Certifications</span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid gap-4">
+                  {petData.certifications.slice(0, 6).map((cert: any, index: number) => (
+                    <div key={index} className="p-4 bg-gray-50 rounded-lg">
+                      <div className="flex items-center justify-between mb-2">
+                        <h4 className="font-medium">{cert.type}</h4>
+                        <Badge variant={cert.status === 'active' ? 'default' : 'secondary'}>
+                          {cert.status}
+                        </Badge>
+                      </div>
+                      {cert.issuer && <p className="text-sm text-gray-600 mb-1">🏢 {cert.issuer}</p>}
+                      {cert.certification_number && <p className="text-sm text-gray-600 mb-1">📄 {cert.certification_number}</p>}
+                      <div className="text-sm text-gray-500 space-x-4">
+                        {cert.issue_date && <span>📅 Issued: {cert.issue_date}</span>}
+                        {cert.expiry_date && <span>⏰ Expires: {cert.expiry_date}</span>}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          )}
         </div>
 
         {petData.gallery_photos && petData.gallery_photos.length > 0 && (
           <Card className="mt-6">
             <CardHeader>
-              <CardTitle className="flex items-center space-x-2">
-                <span className="text-xl">📷</span>
-                <span>Photo Gallery</span>
+              <CardTitle className="flex items-center justify-between">
+                <div className="flex items-center space-x-2">
+                  <span className="text-xl">📷</span>
+                  <span>Photo Gallery</span>
+                </div>
+                <Badge variant="outline">
+                  {petData.gallery_photos.length} photo{petData.gallery_photos.length > 1 ? 's' : ''}
+                </Badge>
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                {petData.gallery_photos.slice(0, 8).map((photo: any, index: number) => (
-                  <div key={index} className="aspect-square">
+                {petData.gallery_photos.slice(0, 16).map((photo: any, index: number) => (
+                  <div key={index} className="aspect-square group cursor-pointer">
                     <img 
                       src={photo.url} 
                       alt={photo.caption ? `Gallery photo: ${photo.caption}` : `Gallery photo ${index + 1}`}
-                      className="w-full h-full object-cover rounded-lg border border-gray-200"
+                      className="w-full h-full object-cover rounded-lg border border-gray-200 group-hover:shadow-lg transition-shadow"
                     />
                     {photo.caption && (
                       <p className="text-xs text-gray-600 mt-1 text-center">{photo.caption}</p>
@@ -404,6 +517,13 @@ const PublicProfile = () => {
                   </div>
                 ))}
               </div>
+              {petData.gallery_photos.length > 16 && (
+                <div className="mt-4 text-center">
+                  <Badge variant="secondary">
+                    +{petData.gallery_photos.length - 16} more photos
+                  </Badge>
+                </div>
+              )}
             </CardContent>
           </Card>
         )}

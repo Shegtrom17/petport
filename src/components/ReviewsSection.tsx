@@ -149,24 +149,40 @@ export const ReviewsSection = ({ petData, onUpdate }: ReviewsSectionProps) => {
               <h2 className="text-xl md:text-2xl font-bold mb-2">Reviews & References</h2>
               <p className="text-blue-100 text-sm md:text-base">Trusted feedback from hosts, vets, and caregivers</p>
             </div>
-            <div className="flex flex-wrap gap-2">
-              <Button 
-                onClick={() => setIsEditModalOpen(true)} 
-                variant="secondary" 
-                size="sm"
-                className="flex-1 sm:flex-none"
+            <div className="flex flex-wrap gap-4">
+              <div
+                onClick={() => setIsEditModalOpen(true)}
+                className="flex items-center space-x-2 p-2 text-white hover:text-blue-200 hover:scale-110 transition-all cursor-pointer"
+                role="button"
+                tabIndex={0}
+                aria-label="Edit reviews"
+                onKeyDown={(e) => e.key === 'Enter' && setIsEditModalOpen(true)}
               >
-                <Edit className="w-4 h-4 mr-2" />
-                Edit
-              </Button>
-              <Button onClick={handleRequestReview} variant="secondary" size="sm" className="flex-1 sm:flex-none">
-                <Plus className="w-4 h-4 mr-2" />
-                Request Review
-              </Button>
-              <Button onClick={handleShareReviews} variant="secondary" size="sm" className="flex-1 sm:flex-none">
-                <Share2 className="w-4 h-4 mr-2" />
-                Share
-              </Button>
+                <Edit className="w-4 h-4" />
+                <span className="text-sm">Edit</span>
+              </div>
+              <div
+                onClick={handleRequestReview}
+                className="flex items-center space-x-2 p-2 text-white hover:text-blue-200 hover:scale-110 transition-all cursor-pointer"
+                role="button"
+                tabIndex={0}
+                aria-label="Request review"
+                onKeyDown={(e) => e.key === 'Enter' && handleRequestReview()}
+              >
+                <Plus className="w-4 h-4" />
+                <span className="text-sm">Request Review</span>
+              </div>
+              <div
+                onClick={handleShareReviews}
+                className="flex items-center space-x-2 p-2 text-white hover:text-blue-200 hover:scale-110 transition-all cursor-pointer"
+                role="button"
+                tabIndex={0}
+                aria-label="Share reviews"
+                onKeyDown={(e) => e.key === 'Enter' && handleShareReviews()}
+              >
+                <Share2 className="w-4 h-4" />
+                <span className="text-sm">Share</span>
+              </div>
             </div>
           </div>
 

@@ -537,25 +537,27 @@ export const PetProfileContent = ({
                 />
               )}
               
-              <div 
-                onClick={() => setActiveTab("documents")}
-                className="w-full cursor-pointer flex items-center justify-center text-navy-900 hover:text-gold-600 hover:scale-110 transition-all duration-200 py-3"
-              >
-                📄 Manage Documents
-              </div>
-              <div 
-                onClick={() => setActiveTab("quickid")}
-                className="w-full cursor-pointer flex items-center justify-center text-navy-900 hover:text-gold-600 hover:scale-110 transition-all duration-200 py-3"
-              >
-                🆔 Lost Pet
-              </div>
-              <div className="space-y-2">
+              <div className="space-y-1">
+                <div 
+                  onClick={() => setActiveTab("documents")}
+                  className="w-full cursor-pointer flex items-center justify-center text-navy-900 hover:text-gold-600 hover:scale-110 transition-all duration-200 py-2"
+                >
+                  📄 Manage Documents
+                </div>
+                <div 
+                  onClick={() => setActiveTab("quickid")}
+                  className="w-full cursor-pointer flex items-center justify-center text-navy-900 hover:text-gold-600 hover:scale-110 transition-all duration-200 py-2"
+                >
+                  🆔 Lost Pet
+                </div>
                 <div 
                   onClick={() => setIsInAppSharingOpen(true)}
-                  className="w-full cursor-pointer flex items-center justify-center text-navy-900 hover:text-gold-600 hover:scale-110 transition-all duration-200 py-3"
+                  className="w-full cursor-pointer flex items-center justify-center text-navy-900 hover:text-gold-600 hover:scale-110 transition-all duration-200 py-2"
                 >
                   🔗 Share Profile
                 </div>
+              </div>
+              <div className="space-y-2">
                 {!enhancedPetData?.is_public && (
                   <PrivacyHint isPublic={enhancedPetData?.is_public || false} feature="profile sharing" variant="inline" />
                 )}

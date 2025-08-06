@@ -48,22 +48,15 @@ export const PetHeader = ({ activeTab, onTabChange, selectedPetId, selectedPetNa
           </div>
           
           {/* Right: Action Buttons (Mobile Only) */}
-          <div className="flex items-center space-x-1 flex-shrink-0">
+          <div className="flex items-center space-x-2 flex-shrink-0">
             {user ? (
               <>
                 <LostPetButton 
                   petId={selectedPetId} 
                   petName={selectedPetName}
                   petData={selectedPet}
-                  className="text-xs px-1.5 py-1 h-8" 
+                  className="text-xs px-2 py-1 h-8" 
                 />
-                <Button 
-                  className="bg-gradient-to-r from-gold-500 to-gold-400 hover:from-gold-400 hover:to-gold-300 text-white border border-gold-500/30 text-xs px-2 h-8 whitespace-nowrap"
-                  onClick={() => navigate('/add-pet')}
-                >
-                  <PlusCircle className="mr-0.5 h-3 w-3" /> 
-                  <span>Add</span>
-                </Button>
                 <Button 
                   variant="outline" 
                   size="icon"
@@ -108,22 +101,15 @@ export const PetHeader = ({ activeTab, onTabChange, selectedPetId, selectedPetNa
             </div>
           </div>
           
-          <div className="flex items-center space-x-2 md:space-x-3 flex-shrink-0">
+          <div className="flex items-center space-x-3 flex-shrink-0">
             {user ? (
               <>
                 <LostPetButton 
                   petId={selectedPetId} 
                   petName={selectedPetName}
                   petData={selectedPet}
-                  className="text-sm px-2 md:px-3 py-2 h-10" 
+                  className="text-sm px-3 py-2 h-10" 
                 />
-                <Button 
-                  className="bg-gradient-to-r from-gold-500 to-gold-400 hover:from-gold-400 hover:to-gold-300 text-white border border-gold-500/30 text-sm px-3 h-10 whitespace-nowrap"
-                  onClick={() => navigate('/add-pet')}
-                >
-                  <PlusCircle className="mr-1 h-4 w-4" /> 
-                  <span>Add Pet</span>
-                </Button>
                 <Button 
                   variant="outline" 
                   size="icon"

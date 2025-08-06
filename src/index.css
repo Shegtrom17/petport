@@ -84,7 +84,40 @@
     --gradient-emergency: linear-gradient(135deg, hsl(var(--emergency)), hsl(var(--missing)));
     --gradient-alert: linear-gradient(135deg, hsl(var(--alert)), hsl(var(--emergency)));
     --gradient-mustard: linear-gradient(135deg, hsl(var(--mustard)), hsl(48 85% 55%));
+}
+
+/* PWA Enhancements */
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+  .safe-area-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
   }
+}
+
+/* Native-like scroll behavior */
+.native-scroll {
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+}
+
+/* Hide scrollbar for cleaner mobile experience */
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Native-like button press feedback */
+.touch-feedback {
+  transition: all 0.1s ease;
+}
+
+.touch-feedback:active {
+  transform: scale(0.98);
+  opacity: 0.8;
+}
 }
 
 /* Enhanced Map Animations */

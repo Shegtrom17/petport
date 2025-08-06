@@ -283,9 +283,9 @@ export const PetProfileContent = ({
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Left Column - Official Photographs */}
         <div className="space-y-4">
-          <Card className="border-2 border-yellow-600 shadow-xl bg-gradient-to-br from-slate-800 to-slate-900 text-white">
+          <Card className="border-2 border-gold-600 shadow-xl bg-gradient-to-br from-slate-800 to-slate-900 text-white">
             <CardHeader>
-              <CardTitle className="flex items-center justify-between text-yellow-400">
+              <CardTitle className="flex items-center justify-between text-gold-400">
                 <div className="flex items-center space-x-2">
                   <span className="tracking-wide">OFFICIAL PHOTOGRAPHS</span>
                 </div>
@@ -302,7 +302,7 @@ export const PetProfileContent = ({
               <div className="grid grid-cols-1 gap-6">
                 <div className="space-y-3">
                   <div className="flex justify-between items-center">
-                    <p className="text-yellow-400 text-sm font-semibold tracking-wide">PORTRAIT</p>
+                    <p className="text-gold-400 text-sm font-semibold tracking-wide">PORTRAIT</p>
                     <div className="flex gap-2">
                       <Button
                         onClick={() => handleUploadPhoto('profile')}
@@ -348,7 +348,7 @@ export const PetProfileContent = ({
                       )}
                     </div>
                   </div>
-                  <div className="aspect-square rounded-lg overflow-hidden border-4 border-yellow-600/50 shadow-lg relative">
+                  <div className="aspect-square rounded-lg overflow-hidden border-4 border-gold-600/50 shadow-lg relative">
                     <img 
                       src={enhancedPetData?.photoUrl || "/placeholder.svg"} 
                       alt={`${enhancedPetData?.name || "Pet"} portrait`}
@@ -363,7 +363,7 @@ export const PetProfileContent = ({
                 </div>
                 <div className="space-y-3">
                   <div className="flex justify-between items-center">
-                    <p className="text-yellow-400 text-sm font-semibold tracking-wide">FULL PROFILE</p>
+                    <p className="text-gold-400 text-sm font-semibold tracking-wide">FULL PROFILE</p>
                     <div className="flex gap-2">
                       <Button
                         onClick={() => handleUploadPhoto('fullBody')}
@@ -409,7 +409,7 @@ export const PetProfileContent = ({
                       )}
                     </div>
                   </div>
-                  <div className="aspect-[4/3] rounded-lg overflow-hidden border-4 border-yellow-600/50 shadow-lg relative">
+                  <div className="aspect-[4/3] rounded-lg overflow-hidden border-4 border-gold-600/50 shadow-lg relative">
                     <img 
                       src={enhancedPetData?.fullBodyPhotoUrl || "/placeholder.svg"} 
                       alt={`${enhancedPetData?.name || "Pet"} full profile`}

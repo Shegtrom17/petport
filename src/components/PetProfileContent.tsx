@@ -304,28 +304,32 @@ export const PetProfileContent = ({
                   <div className="flex justify-between items-center">
                     <p className="text-gold-400 text-sm font-semibold tracking-wide">PORTRAIT</p>
                     <div className="flex gap-2">
-                      <Button
+                      <div
                         onClick={() => handleUploadPhoto('profile')}
-                        disabled={photoLoading.profile}
-                        size="sm"
-                        className="bg-gradient-to-r from-gold-500 to-gold-400 text-navy-900 hover:from-gold-400 hover:to-gold-300 border border-gold-500/50"
+                        className="p-1 text-gold-400 hover:text-gold-300 hover:scale-110 transition-all cursor-pointer disabled:opacity-50"
+                        role="button"
+                        tabIndex={0}
+                        aria-label="Upload portrait photo"
+                        onKeyDown={(e) => e.key === 'Enter' && handleUploadPhoto('profile')}
                       >
                         {photoLoading.profile ? (
                           <Loader2 className="w-3 h-3 animate-spin" />
                         ) : (
                           <Upload className="w-3 h-3" />
                         )}
-                      </Button>
+                      </div>
                       {enhancedPetData?.photoUrl && enhancedPetData.photoUrl !== "/placeholder.svg" && (
                         <AlertDialog>
                           <AlertDialogTrigger asChild>
-                            <Button
-                              disabled={photoLoading.profile}
-                              size="sm"
-                              className="bg-gradient-to-r from-gold-500 to-gold-400 text-navy-900 hover:from-gold-400 hover:to-gold-300 border border-gold-500/50"
+                            <div
+                              className="p-1 text-gold-400 hover:text-gold-300 hover:scale-110 transition-all cursor-pointer disabled:opacity-50"
+                              role="button"
+                              tabIndex={0}
+                              aria-label="Delete portrait photo"
+                              onKeyDown={(e) => e.key === 'Enter' && e.currentTarget.click()}
                             >
                               <Trash2 className="w-3 h-3" />
-                            </Button>
+                            </div>
                           </AlertDialogTrigger>
                           <AlertDialogContent>
                             <AlertDialogHeader>
@@ -365,28 +369,32 @@ export const PetProfileContent = ({
                   <div className="flex justify-between items-center">
                     <p className="text-gold-400 text-sm font-semibold tracking-wide">FULL PROFILE</p>
                     <div className="flex gap-2">
-                      <Button
+                      <div
                         onClick={() => handleUploadPhoto('fullBody')}
-                        disabled={photoLoading.fullBody}
-                        size="sm"
-                        className="bg-gradient-to-r from-gold-500 to-gold-400 text-navy-900 hover:from-gold-400 hover:to-gold-300 border border-gold-500/50"
+                        className="p-1 text-gold-400 hover:text-gold-300 hover:scale-110 transition-all cursor-pointer disabled:opacity-50"
+                        role="button"
+                        tabIndex={0}
+                        aria-label="Upload full body photo"
+                        onKeyDown={(e) => e.key === 'Enter' && handleUploadPhoto('fullBody')}
                       >
                         {photoLoading.fullBody ? (
                           <Loader2 className="w-3 h-3 animate-spin" />
                         ) : (
                           <Upload className="w-3 h-3" />
                         )}
-                      </Button>
+                      </div>
                       {enhancedPetData?.fullBodyPhotoUrl && enhancedPetData.fullBodyPhotoUrl !== "/placeholder.svg" && (
                         <AlertDialog>
                           <AlertDialogTrigger asChild>
-                            <Button
-                              disabled={photoLoading.fullBody}
-                              size="sm"
-                              className="bg-gradient-to-r from-gold-500 to-gold-400 text-navy-900 hover:from-gold-400 hover:to-gold-300 border border-gold-500/50"
+                            <div
+                              className="p-1 text-gold-400 hover:text-gold-300 hover:scale-110 transition-all cursor-pointer disabled:opacity-50"
+                              role="button"
+                              tabIndex={0}
+                              aria-label="Delete full body photo"
+                              onKeyDown={(e) => e.key === 'Enter' && e.currentTarget.click()}
                             >
                               <Trash2 className="w-3 h-3" />
-                            </Button>
+                            </div>
                           </AlertDialogTrigger>
                           <AlertDialogContent>
                             <AlertDialogHeader>

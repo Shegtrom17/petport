@@ -235,50 +235,6 @@ export const PetProfileContent = ({
     <div className="passport-map-container">
       <div className="passport-map-bg" />
       
-      {/* Edit Profile and Delete Pet Buttons */}
-      {isOwner && (
-        <div className="flex justify-end gap-2 mb-4">
-          <Button 
-            onClick={handleProfileEdit}
-            className="bg-gradient-to-r from-navy-900 to-navy-800 hover:from-navy-800 hover:to-navy-700 text-gold-500 border border-gold-500/30 px-3 py-2 text-sm font-medium shadow-lg"
-            size="sm"
-          >
-            <Edit className="w-4 h-4 mr-1" />
-            Edit Profile
-          </Button>
-          
-          <AlertDialog>
-            <AlertDialogTrigger asChild>
-              <Button 
-                variant="destructive"
-                size="sm"
-                className="px-3 py-2 text-sm font-medium shadow-lg"
-              >
-                <Trash2 className="w-4 h-4 mr-1" />
-                Delete Pet
-              </Button>
-            </AlertDialogTrigger>
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>Delete {enhancedPetData?.name || "this pet"}?</AlertDialogTitle>
-                <AlertDialogDescription>
-                  This action cannot be undone. This will permanently delete {enhancedPetData?.name || "this pet"}'s profile and all associated data including photos, documents, and medical records.
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                <AlertDialogAction
-                  onClick={handleDeletePet}
-                  disabled={isDeleting}
-                  className="bg-red-600 hover:bg-red-700"
-                >
-                  {isDeleting ? "Deleting..." : "Delete Pet"}
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
-        </div>
-      )}
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Left Column - Official Photographs */}
@@ -459,6 +415,102 @@ export const PetProfileContent = ({
 
           {/* Certification Banner - Compact display */}
           <CertificationBanner certificationData={enhancedPetData?.certificationData} />
+
+          {/* Basic Information Section */}
+          <Card className="border-2 border-gold-600 shadow-xl bg-gradient-to-br from-slate-800 to-slate-900 text-white">
+            <CardHeader>
+              <CardTitle className="flex items-center justify-between text-gold-400">
+                <div className="flex items-center space-x-2">
+                  <span className="tracking-wide text-sm">BASIC INFO</span>
+                </div>
+                {isOwner && (
+                  <div className="flex items-center space-x-2">
+                    <div
+                      onClick={handleProfileEdit}
+                      className="flex items-center space-x-1 p-2 text-gold-400 hover:text-gold-300 hover:scale-110 transition-all cursor-pointer"
+                      role="button"
+                      tabIndex={0}
+                      aria-label="Edit pet profile"
+                      onKeyDown={(e) => e.key === 'Enter' && handleProfileEdit()}
+                    >
+                      <Edit className="w-4 h-4" />
+                      <span className="text-xs hidden sm:inline">Edit</span>
+                    </div>
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <div
+                          className="flex items-center space-x-1 p-2 text-gold-400 hover:text-gold-300 hover:scale-110 transition-all cursor-pointer"
+                          role="button"
+                          tabIndex={0}
+                          aria-label="Delete pet"
+                          onKeyDown={(e) => e.key === 'Enter' && e.currentTarget.click()}
+                        >
+                          <Trash2 className="w-4 h-4" />
+                          <span className="text-xs hidden sm:inline">Delete</span>
+                        </div>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>Delete {enhancedPetData?.name || "this pet"}?</AlertDialogTitle>
+                          <AlertDialogDescription>
+                            This action cannot be undone. This will permanently delete {enhancedPetData?.name || "this pet"}'s profile and all associated data including photos, documents, and medical records.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+                          <AlertDialogAction
+                            onClick={handleDeletePet}
+                            disabled={isDeleting}
+                            className="bg-red-600 hover:bg-red-700"
+                          >
+                            {isDeleting ? "Deleting..." : "Delete Pet"}
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
+                  </div>
+                )}
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <p className="text-gold-400 text-sm font-semibold tracking-wide">NAME</p>
+                  <p className="text-lg font-medium">{enhancedPetData?.name || "Not specified"}</p>
+                </div>
+                <div>
+                  <p className="text-gold-400 text-sm font-semibold tracking-wide">BREED</p>
+                  <p className="text-lg font-medium">{enhancedPetData?.breed || "Not specified"}</p>
+                </div>
+                <div>
+                  <p className="text-gold-400 text-sm font-semibold tracking-wide">AGE</p>
+                  <p className="text-lg font-medium">{enhancedPetData?.age || "Not specified"}</p>
+                </div>
+                <div>
+                  <p className="text-gold-400 text-sm font-semibold tracking-wide">WEIGHT</p>
+                  <p className="text-lg font-medium">{enhancedPetData?.weight || "Not specified"}</p>
+                </div>
+                <div className="md:col-span-2">
+                  <p className="text-gold-400 text-sm font-semibold tracking-wide">MICROCHIP NUMBER</p>
+                  <p className="text-lg font-mono bg-slate-700/50 px-3 py-2 rounded border border-gold-600/30">
+                    {enhancedPetData?.microchipId || "Not specified"}
+                  </p>
+                </div>
+              </div>
+              
+              {enhancedPetData?.bio && (
+                <div className="bg-slate-700/30 p-4 rounded-lg border border-gold-600/30">
+                  <p className="text-gold-400 text-sm font-semibold tracking-wide mb-2">BIO</p>
+                  <p className="text-slate-200">{enhancedPetData.bio}</p>
+                </div>
+              )}
+              
+              <div className="bg-slate-700/30 p-4 rounded-lg border border-gold-600/30">
+                <p className="text-gold-400 text-sm font-semibold tracking-wide mb-2">BEHAVIORAL NOTES</p>
+                <p className="text-slate-200">{enhancedPetData?.notes || "No notes specified"}</p>
+              </div>
+            </CardContent>
+          </Card>
         </div>
 
         {/* Right Column - Action-First Flow */}

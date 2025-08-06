@@ -176,83 +176,8 @@ const handleEditSave = () => {
 
   return (
     <div id="pet-profile-edit-section" className="space-y-6">
-      {/* Support Animal Status Banner - Commented out since not in pets table */}
-      {/* <SupportAnimalBanner status={petData?.supportAnimalStatus || null} /> */}
-
-
-      {/* Basic Information Card - Moved up for better flow */}
-      <Card className="border-2 border-gold-600 shadow-xl bg-gradient-to-br from-slate-800 to-slate-900 text-white">
-        <CardHeader>
-          <CardTitle className="flex items-center space-x-2 text-gold-400">
-            <FileText className="w-5 h-5" />
-            <span className="tracking-wide">BASIC INFORMATION</span>
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <p className="text-gold-400 text-sm font-semibold tracking-wide">NAME</p>
-              <p className="text-lg font-medium">{petData?.name || "Not specified"}</p>
-            </div>
-            <div>
-              <p className="text-gold-400 text-sm font-semibold tracking-wide">BREED</p>
-              <p className="text-lg font-medium">{petData?.breed || "Not specified"}</p>
-            </div>
-            <div>
-              <p className="text-gold-400 text-sm font-semibold tracking-wide">AGE</p>
-              <p className="text-lg font-medium">{petData?.age || "Not specified"}</p>
-            </div>
-            <div>
-              <p className="text-gold-400 text-sm font-semibold tracking-wide">WEIGHT</p>
-              <p className="text-lg font-medium">{petData?.weight || "Not specified"}</p>
-            </div>
-            <div className="md:col-span-2">
-              <p className="text-gold-400 text-sm font-semibold tracking-wide">MICROCHIP NUMBER</p>
-              <p className="text-lg font-mono bg-slate-700/50 px-3 py-2 rounded border border-gold-600/30">
-                {petData?.microchipId || "Not specified"}
-              </p>
-            </div>
-          </div>
-          
-          {petData?.bio && (
-            <div className="bg-slate-700/30 p-4 rounded-lg border border-gold-600/30">
-              <p className="text-gold-400 text-sm font-semibold tracking-wide mb-2">BIO</p>
-              <p className="text-slate-200">{petData.bio}</p>
-            </div>
-          )}
-          
-          <div className="bg-slate-700/30 p-4 rounded-lg border border-gold-600/30">
-            <p className="text-gold-400 text-sm font-semibold tracking-wide mb-2">BEHAVIORAL NOTES</p>
-            <p className="text-slate-200">{petData?.notes || "No notes specified"}</p>
-          </div>
-        </CardContent>
-      </Card>
-
-    {/* Health Information - Navy blue styling - Commented out since not in pets table */}
-      {/* <Card className="border-2 border-yellow-600/30 shadow-xl bg-gradient-to-br from-navy-900 to-slate-800 text-white">
-        <CardHeader>
-          <CardTitle className="flex items-center space-x-2 text-gold-500">
-            <Calendar className="w-5 h-5" />
-            <span className="tracking-wide">HEALTH INFORMATION</span>
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          Health info fields removed - data not in pets table
-        </CardContent>
-      </Card> */}
-
-
-
-      {/* Passport-style Badges - Commented out since not in pets table */}
-      {/* <Card className="border-2 border-yellow-600 shadow-xl bg-gradient-to-br from-slate-800 to-slate-900 text-white">
-        <CardHeader>
-          <CardTitle className="text-yellow-400 tracking-wide">CERTIFIED ACHIEVEMENTS</CardTitle>
-        </CardHeader>
-        <CardContent>
-          Badge info removed - data not in pets table
-        </CardContent>
-      </Card> */}
-
+      {/* Basic Information section has been moved to PetProfileContent.tsx */}
+      {/* This component now only handles the edit form */}
     </div>
   );
 };

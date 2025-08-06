@@ -20,6 +20,9 @@ import { AuthenticationPrompt } from "@/components/AuthenticationPrompt";
 import { PetProfileContent } from "@/components/PetProfileContent";
 import { PetProfileCard } from "@/components/PetProfileCard";
 import { usePetData } from "@/hooks/usePetData";
+import { ReportIssueModal } from "@/components/ReportIssueModal";
+import { AlertTriangle } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 const Index = () => {
   console.log("Index component is rendering");
@@ -273,6 +276,18 @@ const Index = () => {
           </>
         )}
       </main>
+
+      {/* Floating Report Issue Button */}
+      {user && (
+        <ReportIssueModal>
+          <Button 
+            className="fixed bottom-6 right-6 z-50 h-12 w-12 md:h-14 md:w-14 rounded-full bg-amber-500 hover:bg-amber-600 text-white shadow-lg hover:shadow-xl transition-all duration-200 border-2 border-amber-400"
+            title="Report Issue"
+          >
+            <AlertTriangle className="h-5 w-5 md:h-6 md:w-6" />
+          </Button>
+        </ReportIssueModal>
+      )}
     </div>
   );
 };

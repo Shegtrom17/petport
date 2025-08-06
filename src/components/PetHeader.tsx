@@ -1,11 +1,10 @@
 
-import { PlusCircle, LogOut, LogIn, AlertTriangle } from "lucide-react";
+import { PlusCircle, LogOut, LogIn } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { MobileNavigationMenu } from "@/components/MobileNavigationMenu";
 import { LostPetButton } from "@/components/LostPetButton";
-import { ReportIssueModal } from "@/components/ReportIssueModal";
 import worldMapOutline from "@/assets/world-map-outline.png";
 
 interface PetHeaderProps {
@@ -79,16 +78,6 @@ export const PetHeader = ({ activeTab, onTabChange, selectedPetId, selectedPetNa
                   <span className="hidden sm:inline">Add Pet</span>
                   <span className="sm:hidden">Add</span>
                 </Button>
-                <ReportIssueModal>
-                  <Button 
-                    variant="outline" 
-                    size="icon"
-                    title="Report Issue"
-                    className="h-8 w-8 sm:h-10 sm:w-10 border-amber-500/30 hover:bg-amber-500/10"
-                  >
-                    <AlertTriangle className="h-3 w-3 sm:h-4 sm:w-4 text-amber-600" />
-                  </Button>
-                </ReportIssueModal>
                 <MobileNavigationMenu activeTab={activeTab} onTabChange={onTabChange} />
                 <Button 
                   variant="outline" 

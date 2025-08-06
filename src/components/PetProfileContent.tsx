@@ -322,7 +322,7 @@ export const PetProfileContent = ({
                             <Button
                               disabled={photoLoading.profile}
                               size="sm"
-                              variant="destructive"
+                              className="bg-gradient-to-r from-gold-500 to-gold-400 text-navy-900 hover:from-gold-400 hover:to-gold-300 border border-gold-500/50"
                             >
                               <Trash2 className="w-3 h-3" />
                             </Button>
@@ -338,7 +338,7 @@ export const PetProfileContent = ({
                               <AlertDialogCancel>Cancel</AlertDialogCancel>
                               <AlertDialogAction
                                 onClick={() => handleDeletePhoto('profile')}
-                                className="bg-red-600 hover:bg-red-700"
+                                className="bg-gradient-to-r from-gold-500 to-gold-400 text-navy-900 hover:from-gold-400 hover:to-gold-300"
                               >
                                 Delete
                               </AlertDialogAction>
@@ -383,7 +383,7 @@ export const PetProfileContent = ({
                             <Button
                               disabled={photoLoading.fullBody}
                               size="sm"
-                              variant="destructive"
+                              className="bg-gradient-to-r from-gold-500 to-gold-400 text-navy-900 hover:from-gold-400 hover:to-gold-300 border border-gold-500/50"
                             >
                               <Trash2 className="w-3 h-3" />
                             </Button>
@@ -399,7 +399,7 @@ export const PetProfileContent = ({
                               <AlertDialogCancel>Cancel</AlertDialogCancel>
                               <AlertDialogAction
                                 onClick={() => handleDeletePhoto('fullBody')}
-                                className="bg-red-600 hover:bg-red-700"
+                                className="bg-gradient-to-r from-gold-500 to-gold-400 text-navy-900 hover:from-gold-400 hover:to-gold-300"
                               >
                                 Delete
                               </AlertDialogAction>

@@ -217,8 +217,7 @@ export const LostPetButton = ({ petId, petName = "Pet", isMissing = false, class
         ) : (
           <>
             <Download className="w-3 h-3 sm:w-4 sm:h-4 mr-0.5 sm:mr-2 flex-shrink-0" />
-            <span className="hidden xs:inline sm:hidden">Lost Pet</span>
-            <span className="xs:hidden sm:inline">Missing Pet Flyer</span>
+            Lost Pet Flyer
           </>
         )}
       </Button>

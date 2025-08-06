@@ -214,8 +214,8 @@ export const PetResumeSection = ({ petData, onUpdate }: PetResumeSectionProps) =
       {/* Header Actions */}
       <Card className="border-0 shadow-xl bg-gradient-to-r from-navy-900 to-navy-800 text-white">
         <CardContent className="p-6">
-          <div className="flex justify-between items-center">
-            <div className="flex items-center space-x-3">
+          <div className="flex justify-between items-start">
+            <div className="flex items-center space-x-3 flex-1">
               <Shield className="w-8 h-8 text-yellow-400" />
               <div>
                 <h2 className="text-2xl font-bold">Pet Resume</h2>
@@ -223,7 +223,7 @@ export const PetResumeSection = ({ petData, onUpdate }: PetResumeSectionProps) =
                 <p className="text-xs text-blue-200 mt-1">PetPort ID: {petData.petPassId}</p>
               </div>
             </div>
-            <div className="flex flex-col space-y-2 sm:flex-row sm:space-y-0 sm:space-x-4">
+            <div className="flex flex-col space-y-2 sm:flex-row sm:space-y-0 sm:space-x-4 ml-6">
               <div
                 onClick={() => setIsEditModalOpen(true)}
                 className="flex items-center space-x-2 p-2 text-white hover:text-blue-200 hover:scale-110 transition-all cursor-pointer"

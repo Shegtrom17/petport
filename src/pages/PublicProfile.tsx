@@ -51,7 +51,6 @@ const PublicProfile = () => {
             gallery_photos (*),
             achievements (*),
             experiences (*),
-            certifications (*),
             map_pins (*)
           `)
           .eq('id', petId)
@@ -80,8 +79,7 @@ const PublicProfile = () => {
           hasTraining: data.training?.length || 0,
           hasReviews: data.reviews?.length || 0,
           hasAchievements: data.achievements?.length || 0,
-          hasExperiences: data.experiences?.length || 0,
-          hasCertifications: data.certifications?.length || 0
+          hasExperiences: data.experiences?.length || 0
         });
 
         debug.push(`Data loaded: ${data.name}`, `Gallery photos: ${data.gallery_photos?.length || 0}`, `Training records: ${data.training?.length || 0}`);
@@ -137,13 +135,7 @@ const PublicProfile = () => {
             ...experience,
             activity: sanitizeText(experience.activity || ''),
             description: sanitizeText(experience.description || '')
-          })) || [],
-          certifications: Array.isArray(data.certifications) ? data.certifications.map((cert: any) => ({
-            ...cert,
-            type: sanitizeText(cert.type || ''),
-            issuer: sanitizeText(cert.issuer || ''),
-            certification_number: sanitizeText(cert.certification_number || '')
-          })) : []
+          })) || []
         };
 
         setPetData(sanitizedData);
@@ -547,37 +539,6 @@ const PublicProfile = () => {
             </Card>
           )}
 
-          {/* Certifications */}
-          {petData.certifications && petData.certifications.length > 0 && (
-            <Card className="lg:col-span-2">
-              <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
-                  <Shield className="w-5 h-5" />
-                  <span>Certifications</span>
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid gap-4">
-                  {petData.certifications.slice(0, 6).map((cert: any, index: number) => (
-                    <div key={index} className="p-4 bg-gray-50 rounded-lg">
-                      <div className="flex items-center justify-between mb-2">
-                        <h4 className="font-medium">{cert.type}</h4>
-                        <Badge variant={cert.status === 'active' ? 'default' : 'secondary'}>
-                          {cert.status}
-                        </Badge>
-                      </div>
-                      {cert.issuer && <p className="text-sm text-gray-600 mb-1">🏢 {cert.issuer}</p>}
-                      {cert.certification_number && <p className="text-sm text-gray-600 mb-1">📄 {cert.certification_number}</p>}
-                      <div className="text-sm text-gray-500 space-x-4">
-                        {cert.issue_date && <span>📅 Issued: {cert.issue_date}</span>}
-                        {cert.expiry_date && <span>⏰ Expires: {cert.expiry_date}</span>}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          )}
         </div>
 
         {petData.gallery_photos && petData.gallery_photos.length > 0 && (

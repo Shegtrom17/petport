@@ -270,14 +270,16 @@ export const PetResumeSection = ({ petData, onUpdate }: PetResumeSectionProps) =
                 >
                   <QrCode className="w-4 h-4" />
                 </div>
-                {!petData.is_public && (
-                  <p className="text-xs text-muted-foreground text-center">
-                    📝 Make your profile public in the privacy settings above to enable sharing & QR codes
-                  </p>
-                )}
               </div>
             </div>
           </div>
+          {!petData.is_public && (
+            <div className="mt-4 pt-4 border-t border-blue-400/30">
+              <p className="text-sm text-blue-200 text-center">
+                📝 Make your profile public in the privacy settings above to enable sharing & QR codes
+              </p>
+            </div>
+          )}
         </CardContent>
       </Card>
 

@@ -3,7 +3,8 @@ import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
-import { AlertTriangle, Phone, Trash2, Upload, Loader2, Edit } from "lucide-react";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { AlertTriangle, Phone, Trash2, Upload, Loader2, Edit, Share2 } from "lucide-react";
 import { PetPDFGenerator } from "@/components/PetPDFGenerator";
 import { SupportAnimalBanner } from "@/components/SupportAnimalBanner";
 import { SocialShareButtons } from "@/components/SocialShareButtons";
@@ -550,13 +551,26 @@ export const PetProfileContent = ({
                 >
                   🆔 Lost Pet
                 </div>
-                <div className="px-2">
-                  <SocialShareButtons 
-                    petId={enhancedPetData?.id || ""} 
-                    petName={enhancedPetData?.name || "Pet"}
-                    isMissingPet={false}
-                  />
-                </div>
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <div 
+                      className="bg-gradient-to-r from-navy-900 to-navy-800 text-gold-500 p-3 rounded-lg border border-gold-500/30 cursor-pointer hover:from-navy-800 hover:to-navy-700 transition-all duration-200 flex items-center gap-2"
+                      role="button"
+                      tabIndex={0}
+                      aria-label="Share profile"
+                    >
+                      <Share2 className="w-4 h-4" />
+                      📱 Share Profile
+                    </div>
+                  </DialogTrigger>
+                  <DialogContent className="max-w-md">
+                    <SocialShareButtons 
+                      petId={enhancedPetData?.id || ""} 
+                      petName={enhancedPetData?.name || "Pet"}
+                      isMissingPet={false}
+                    />
+                  </DialogContent>
+                </Dialog>
               </div>
               <div className="space-y-2">
                 {!enhancedPetData?.is_public && (

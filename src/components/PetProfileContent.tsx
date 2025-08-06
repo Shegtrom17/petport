@@ -562,7 +562,7 @@ export const PetProfileContent = ({
                       📱 Share Profile
                     </div>
                   </DialogTrigger>
-                  <DialogContent className="max-w-md">
+                  <DialogContent className="max-w-sm sm:max-w-md w-[95vw] max-h-[90vh] overflow-y-auto p-4 sm:p-6">
                     <SocialShareButtons 
                       petId={enhancedPetData?.id || ""} 
                       petName={enhancedPetData?.name || "Pet"}

@@ -291,10 +291,10 @@ export const PetProfileContent = ({
                 </div>
                 <Button 
                   onClick={() => setActiveTab("gallery")}
-                  className="bg-gradient-to-r from-gold-500 to-gold-400 text-navy-900 hover:from-gold-400 hover:to-gold-300 border border-gold-500/50 shadow-md font-medium text-xs sm:text-sm px-2 py-1"
+                  className="bg-gradient-to-r from-gold-500 to-gold-400 text-navy-900 hover:from-gold-400 hover:to-gold-300 border border-gold-500/50 shadow-md font-medium text-xs px-1.5 py-0.5"
                   size="sm"
                 >
-                  View Gallery ({enhancedPetData?.galleryPhotos?.length || 0})
+                  Gallery
                 </Button>
               </CardTitle>
             </CardHeader>

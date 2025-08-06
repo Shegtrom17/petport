@@ -8,6 +8,7 @@ import { Separator } from "@/components/ui/separator";
 import { supabase } from "@/integrations/supabase/client";
 import { Heart, MapPin, Phone, Calendar, Star, Award, GraduationCap, Plane, Trophy, Briefcase, Shield } from "lucide-react";
 import { SocialShareButtons } from "@/components/SocialShareButtons";
+import { MetaTags } from "@/components/MetaTags";
 import { sanitizeText, sanitizeHtml } from "@/utils/inputSanitizer";
 
 const PublicProfile = () => {
@@ -220,8 +221,24 @@ const PublicProfile = () => {
     );
   }
 
+  // Generate meta tags for social sharing
+  const profileTitle = `${petData.name} - PetPort Profile`;
+  const profileDescription = petData.bio 
+    ? `Meet ${petData.name}! ${petData.bio.slice(0, 150)}${petData.bio.length > 150 ? '...' : ''}`
+    : `Meet ${petData.name}, a ${petData.species || 'pet'}${petData.breed ? ` (${petData.breed})` : ''} on PetPort.`;
+  const profileImage = petData.pet_photos?.[0]?.photo_url;
+  const profileUrl = `${window.location.origin}/profile/${petId}`;
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 passport-map-container">
+    <>
+      <MetaTags
+        title={profileTitle}
+        description={profileDescription}
+        image={profileImage}
+        url={profileUrl}
+        type="profile"
+      />
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 passport-map-container">
       <div className="passport-map-bg" />
       {/* Header */}
       <div className="bg-white shadow-sm border-b relative passport-map-container">
@@ -610,6 +627,7 @@ const PublicProfile = () => {
         </div>
       </div>
     </div>
+    </>
   );
 };
 

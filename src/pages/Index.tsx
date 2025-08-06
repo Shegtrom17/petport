@@ -261,7 +261,8 @@ const Index = () => {
                   <div className="flex items-center justify-between">
                     <div>
                       <h3 className="font-semibold text-red-800">Need Missing Pet Flyer Instructions?</h3>
-                      <p className="text-sm text-red-600">Click the Lost Pet tab above to see step-by-step instructions</p>
+                      <p className="text-sm text-red-600">Click the Lost Pet tab above</p>
+                      <p className="text-sm text-red-600">to see step-by-step instructions</p>
                     </div>
                     <button 
                       onClick={() => setActiveTab("lostpet")}

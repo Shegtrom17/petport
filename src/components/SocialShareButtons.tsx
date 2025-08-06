@@ -102,8 +102,8 @@ export const SocialShareButtons = ({ petName, petId, isMissingPet = false }: Soc
       <CardContent className="space-y-4">
         <p className={`text-sm ${isMissingPet ? 'text-red-700' : 'text-navy-600'} text-center`}>
           {isMissingPet 
-            ? `Help us bring ${petName} home! Share their PetPort profile.`
-            : `Share ${petName}'s PetPort profile with friends and family.`
+            ? `Help us bring ${petName} home! Share their complete PetPort profile.`
+            : `Share ${petName}'s complete public profile (photos, bio, reviews & more).`
           }
         </p>
         

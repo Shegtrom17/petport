@@ -569,19 +569,43 @@ export const PetProfileContent = ({
                       <Button
                         onClick={async () => {
                           const shareUrl = `${window.location.origin}/profile/${enhancedPetData?.id}`;
+                          const shareData = {
+                            title: `${enhancedPetData?.name}'s PetPort Profile`,
+                            text: `Meet ${enhancedPetData?.name}! Check out their PetPort profile.`,
+                            url: shareUrl,
+                          };
+                          
                           try {
-                            if (navigator.share) {
-                              await navigator.share({
-                                title: `${enhancedPetData?.name}'s PetPort Profile`,
-                                text: `Meet ${enhancedPetData?.name}! Check out their PetPort profile.`,
-                                url: shareUrl,
+                            if (navigator.share && navigator.canShare && navigator.canShare(shareData)) {
+                              await navigator.share(shareData);
+                              toast({
+                                title: "Profile Shared! 📱",
+                                description: `${enhancedPetData?.name}'s profile has been shared successfully.`,
                               });
                             } else {
+                              // Fallback to clipboard
                               await navigator.clipboard.writeText(shareUrl);
-                              alert('Link copied to clipboard!');
+                              toast({
+                                title: "Link Copied! 📋",
+                                description: "Profile link copied to clipboard - paste to share anywhere!",
+                              });
                             }
                           } catch (err) {
                             console.error('Share failed:', err);
+                            // Fallback to clipboard if share fails
+                            try {
+                              await navigator.clipboard.writeText(shareUrl);
+                              toast({
+                                title: "Link Copied! 📋",
+                                description: "Profile link copied to clipboard - paste to share anywhere!",
+                              });
+                            } catch (clipboardErr) {
+                              toast({
+                                title: "Share Failed",
+                                description: "Please try copying the link manually.",
+                                variant: "destructive",
+                              });
+                            }
                           }
                         }}
                         className="w-full"
@@ -594,9 +618,17 @@ export const PetProfileContent = ({
                           const shareUrl = `${window.location.origin}/profile/${enhancedPetData?.id}`;
                           try {
                             await navigator.clipboard.writeText(shareUrl);
-                            alert('Link copied to clipboard!');
+                            toast({
+                              title: "Link Copied! 📋",
+                              description: "Profile link copied to clipboard!",
+                            });
                           } catch (err) {
                             console.error('Copy failed:', err);
+                            toast({
+                              title: "Copy Failed",
+                              description: "Please select and copy the link manually.",
+                              variant: "destructive",
+                            });
                           }
                         }}
                         variant="outline"

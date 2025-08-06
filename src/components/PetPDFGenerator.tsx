@@ -202,9 +202,6 @@ export const PetPDFGenerator = ({ petId, petName, petData }: PetPDFGeneratorProp
       {/* Document generation buttons in stamped boxes */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         <div className="bg-white p-3 rounded-lg border-2 border-gold-500/30 shadow-sm relative">
-          <div className="absolute top-2 right-2 w-8 h-8 bg-gold-500/20 rounded-full flex items-center justify-center">
-            <span className="text-xs font-bold text-gold-600">1</span>
-          </div>
           <div 
             onClick={() => showPdfOptions('emergency')}
             className={`w-full cursor-pointer flex items-center justify-center text-navy-900 hover:text-gold-600 hover:scale-110 transition-all duration-200 py-2 ${(authLoading || (!user && !authError)) ? 'opacity-50 cursor-not-allowed' : ''}`}
@@ -219,9 +216,6 @@ export const PetPDFGenerator = ({ petId, petName, petData }: PetPDFGeneratorProp
         </div>
 
         <div className="bg-white p-3 rounded-lg border-2 border-gold-500/30 shadow-sm relative">
-          <div className="absolute top-2 right-2 w-8 h-8 bg-gold-500/20 rounded-full flex items-center justify-center">
-            <span className="text-xs font-bold text-gold-600">2</span>
-          </div>
           <div 
             onClick={() => showPdfOptions('full')}
             className={`w-full cursor-pointer flex items-center justify-center text-navy-900 hover:text-gold-600 hover:scale-110 transition-all duration-200 py-2 ${(authLoading || (!user && !authError)) ? 'opacity-50 cursor-not-allowed' : ''}`}

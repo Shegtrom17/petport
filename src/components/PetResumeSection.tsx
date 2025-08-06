@@ -223,35 +223,53 @@ export const PetResumeSection = ({ petData, onUpdate }: PetResumeSectionProps) =
                 <p className="text-xs text-blue-200 mt-1">PetPort ID: {petData.petPassId}</p>
               </div>
             </div>
-            <div className="flex flex-col space-y-2 sm:flex-row sm:space-y-0 sm:space-x-2">
-              <Button 
-                onClick={() => setIsEditModalOpen(true)} 
-                variant="secondary" 
-                size="sm"
-                className="w-full sm:w-auto"
+            <div className="flex flex-col space-y-2 sm:flex-row sm:space-y-0 sm:space-x-4">
+              <div
+                onClick={() => setIsEditModalOpen(true)}
+                className="flex items-center space-x-2 p-2 text-white hover:text-blue-200 hover:scale-110 transition-all cursor-pointer"
+                role="button"
+                tabIndex={0}
+                aria-label="Edit pet resume"
+                onKeyDown={(e) => e.key === 'Enter' && setIsEditModalOpen(true)}
               >
-                <Edit className="w-4 h-4 mr-2" />
-                Edit
-              </Button>
-              <Button 
-                onClick={showPdfOptions} 
-                variant="secondary" 
-                size="sm"
-                className="w-full sm:w-auto"
+                <Edit className="w-4 h-4" />
+                <span className="text-sm">Edit</span>
+              </div>
+              <div
+                onClick={showPdfOptions}
+                className="flex items-center space-x-2 p-2 text-white hover:text-blue-200 hover:scale-110 transition-all cursor-pointer"
+                role="button"
+                tabIndex={0}
+                aria-label="Generate PDF"
+                onKeyDown={(e) => e.key === 'Enter' && showPdfOptions()}
               >
-                <Download className="w-4 h-4 mr-2" />
-                PDF
-              </Button>
-              <div className="flex flex-col gap-1">
-                <Button onClick={handleShare} variant="secondary" size="sm" disabled={isSharing} className="w-full sm:w-auto">
-                  <Share2 className="w-4 h-4 mr-2" />
-                  {isSharing ? "Sharing..." : "Share"}
-                </Button>
+                <Download className="w-4 h-4" />
+                <span className="text-sm">PDF</span>
               </div>
               <div className="flex flex-col gap-1">
-                <Button onClick={handleQRCode} variant="secondary" size="sm" className="w-full sm:w-auto">
+                <div
+                  onClick={handleShare}
+                  className={`flex items-center space-x-2 p-2 text-white hover:text-blue-200 hover:scale-110 transition-all cursor-pointer ${isSharing ? 'opacity-50' : ''}`}
+                  role="button"
+                  tabIndex={0}
+                  aria-label="Share profile"
+                  onKeyDown={(e) => e.key === 'Enter' && handleShare()}
+                >
+                  <Share2 className="w-4 h-4" />
+                  <span className="text-sm">{isSharing ? "Sharing..." : "Share"}</span>
+                </div>
+              </div>
+              <div className="flex flex-col gap-1">
+                <div
+                  onClick={handleQRCode}
+                  className="flex items-center space-x-2 p-2 text-white hover:text-blue-200 hover:scale-110 transition-all cursor-pointer"
+                  role="button"
+                  tabIndex={0}
+                  aria-label="Generate QR code"
+                  onKeyDown={(e) => e.key === 'Enter' && handleQRCode()}
+                >
                   <QrCode className="w-4 h-4" />
-                </Button>
+                </div>
                 {!petData.is_public && (
                   <p className="text-xs text-muted-foreground text-center">
                     📝 Make your profile public in the privacy settings above to enable sharing & QR codes

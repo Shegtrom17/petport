@@ -1,4 +1,5 @@
 
+import React from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -20,6 +21,15 @@ const queryClient = new QueryClient();
 
 const App = () => {
   console.log("App: Starting application render");
+  
+  // Register service worker for PWA functionality
+  React.useEffect(() => {
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js')
+        .then(() => console.log('Service Worker registered'))
+        .catch(() => console.log('Service Worker registration failed'));
+    }
+  }, []);
   
   return (
     <QueryClientProvider client={queryClient}>

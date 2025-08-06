@@ -562,12 +562,53 @@ export const PetProfileContent = ({
                       📱 Share Profile
                     </div>
                   </DialogTrigger>
-                  <DialogContent className="max-w-sm sm:max-w-md w-[95vw] max-h-[90vh] overflow-y-auto p-4 sm:p-6">
-                    <SocialShareButtons 
-                      petId={enhancedPetData?.id || ""} 
-                      petName={enhancedPetData?.name || "Pet"}
-                      isMissingPet={false}
-                    />
+                  <DialogContent className="max-w-xs w-[95vw] p-4">
+                    <div className="space-y-3">
+                      <h3 className="text-lg font-semibold text-center">Share {enhancedPetData?.name}'s Profile</h3>
+                      
+                      <Button
+                        onClick={async () => {
+                          const shareUrl = `${window.location.origin}/profile/${enhancedPetData?.id}`;
+                          try {
+                            if (navigator.share) {
+                              await navigator.share({
+                                title: `${enhancedPetData?.name}'s PetPort Profile`,
+                                text: `Meet ${enhancedPetData?.name}! Check out their PetPort profile.`,
+                                url: shareUrl,
+                              });
+                            } else {
+                              await navigator.clipboard.writeText(shareUrl);
+                              alert('Link copied to clipboard!');
+                            }
+                          } catch (err) {
+                            console.error('Share failed:', err);
+                          }
+                        }}
+                        className="w-full"
+                      >
+                        📱 Quick Share
+                      </Button>
+                      
+                      <Button
+                        onClick={async () => {
+                          const shareUrl = `${window.location.origin}/profile/${enhancedPetData?.id}`;
+                          try {
+                            await navigator.clipboard.writeText(shareUrl);
+                            alert('Link copied to clipboard!');
+                          } catch (err) {
+                            console.error('Copy failed:', err);
+                          }
+                        }}
+                        variant="outline"
+                        className="w-full"
+                      >
+                        📋 Copy Link
+                      </Button>
+                      
+                      <div className="text-xs text-muted-foreground text-center p-2 bg-muted rounded">
+                        {`${window.location.origin}/profile/${enhancedPetData?.id}`}
+                      </div>
+                    </div>
                   </DialogContent>
                 </Dialog>
               </div>

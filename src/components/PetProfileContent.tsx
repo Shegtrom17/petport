@@ -554,12 +554,11 @@ export const PetProfileContent = ({
                 <Dialog>
                   <DialogTrigger asChild>
                     <div 
-                      className="bg-gradient-to-r from-navy-900 to-navy-800 text-gold-500 p-3 rounded-lg border border-gold-500/30 cursor-pointer hover:from-navy-800 hover:to-navy-700 transition-all duration-200 flex items-center gap-2"
+                      className="w-full cursor-pointer flex items-center justify-center text-navy-900 hover:text-gold-600 hover:scale-110 transition-all duration-200 py-2"
                       role="button"
                       tabIndex={0}
                       aria-label="Share profile"
                     >
-                      <Share2 className="w-4 h-4" />
                       📱 Share Profile
                     </div>
                   </DialogTrigger>

@@ -2,8 +2,9 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { Menu, X } from "lucide-react";
+import { Menu, X, AlertTriangle } from "lucide-react";
 import { NavigationTabs } from "@/components/NavigationTabs";
+import { ReportIssueModal } from "@/components/ReportIssueModal";
 
 interface MobileNavigationMenuProps {
   activeTab: string;
@@ -44,6 +45,18 @@ export const MobileNavigationMenu = ({ activeTab, onTabChange }: MobileNavigatio
               onTabChange={handleTabChange}
               isMobile={true}
             />
+          </div>
+          
+          <div className="mt-6 pt-4 border-t border-gold-500/20">
+            <ReportIssueModal>
+              <Button 
+                variant="outline"
+                className="w-full justify-start space-x-3 text-sm py-3 border-gold-500/30 text-navy-800 hover:text-gold-500 hover:bg-navy-900/10 hover:border-gold-500/50 transition-all"
+              >
+                <AlertTriangle className="w-4 h-4" />
+                <span className="font-medium">Report Issue</span>
+              </Button>
+            </ReportIssueModal>
           </div>
         </SheetContent>
       </Sheet>

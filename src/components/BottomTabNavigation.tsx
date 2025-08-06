@@ -4,8 +4,6 @@ import { Home, PlusCircle, Search, User, Map } from "lucide-react";
 const tabs = [
   { path: "/", icon: Home, label: "Home" },
   { path: "/add-pet", icon: PlusCircle, label: "Add Pet" },
-  { path: "/search", icon: Search, label: "Search" },
-  { path: "/map", icon: Map, label: "Map" },
   { path: "/profile", icon: User, label: "Profile" },
 ];
 

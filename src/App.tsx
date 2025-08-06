@@ -11,6 +11,7 @@ import { ErrorBoundary } from "@/components/ErrorBoundary";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import AddPet from "./pages/AddPet";
+import Profile from "./pages/Profile";
 import LostPet from "./pages/LostPet";
 import PublicProfile from "./pages/PublicProfile";
 import PublicCareInstructions from "./pages/PublicCareInstructions";
@@ -49,6 +50,11 @@ const App = () => {
                 <Route path="/add-pet" element={
                   <ProtectedRoute>
                     <AddPet />
+                  </ProtectedRoute>
+                } />
+                <Route path="/profile" element={
+                  <ProtectedRoute>
+                    <Profile />
                   </ProtectedRoute>
                 } />
                 <Route path="/lost-pet/:petId?" element={

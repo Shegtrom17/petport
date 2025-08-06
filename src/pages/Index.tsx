@@ -10,6 +10,7 @@ import { TravelMapSection } from "@/components/TravelMapSection";
 import { DocumentsSection } from "@/components/DocumentsSection";
 import { PetGallerySection } from "@/components/PetGallerySection";
 import { InAppSharingModal } from "@/components/InAppSharingModal";
+import { PWALayout } from "@/components/PWALayout";
 import LostPet from "./LostPet";
 import { useAuth } from "@/context/AuthContext";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -209,77 +210,81 @@ const Index = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 flex items-center justify-center">
-        <div className="text-lg md:text-xl text-navy-800 animate-pulse">Loading your pets...</div>
-      </div>
+      <PWALayout>
+        <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 flex items-center justify-center">
+          <div className="text-lg md:text-xl text-navy-800 animate-pulse">Loading your pets...</div>
+        </div>
+      </PWALayout>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
-      <PetHeader 
-        activeTab={activeTab} 
-        onTabChange={setActiveTab} 
-        selectedPetId={selectedPet?.id || petData.id}
-        selectedPetName={selectedPet?.name || petData.name}
-        selectedPet={selectedPet || petData}
-      />
+    <PWALayout>
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
+        <PetHeader 
+          activeTab={activeTab} 
+          onTabChange={setActiveTab} 
+          selectedPetId={selectedPet?.id || petData.id}
+          selectedPetName={selectedPet?.name || petData.name}
+          selectedPet={selectedPet || petData}
+        />
 
-      <InAppSharingModal
-        isOpen={isInAppSharingOpen}
-        onClose={() => setIsInAppSharingOpen(false)}
-        petId={selectedPet?.id || petData.id || ""}
-        petName={petData.name}
-      />
+        <InAppSharingModal
+          isOpen={isInAppSharingOpen}
+          onClose={() => setIsInAppSharingOpen(false)}
+          petId={selectedPet?.id || petData.id || ""}
+          petName={petData.name}
+        />
 
-      <main className="max-w-6xl mx-auto px-3 sm:px-4 py-4 sm:py-6 lg:py-8">
-        <AuthenticationPrompt isSignedIn={!!user} hasPets={pets.length > 0} />
-        
-        {user && pets.length > 0 && (
-          <>
-            <PetSelector 
-              pets={pets}
-              selectedPet={selectedPet}
-              onSelectPet={handleSelectPet}
-              onReorderPets={handleReorderPets}
-            />
+        <main className="max-w-6xl mx-auto px-3 sm:px-4 py-4 sm:py-6 lg:py-8">
+          <AuthenticationPrompt isSignedIn={!!user} hasPets={pets.length > 0} />
+          
+          {user && pets.length > 0 && (
+            <>
+              <PetSelector 
+                pets={pets}
+                selectedPet={selectedPet}
+                onSelectPet={handleSelectPet}
+                onReorderPets={handleReorderPets}
+              />
 
-            <PetPassportCard petData={petData} onUpdate={handlePetUpdate} />
+              <PetPassportCard petData={petData} onUpdate={handlePetUpdate} />
 
-            <div className="mb-4 sm:mb-6">
-              <NavigationTabs activeTab={activeTab} onTabChange={setActiveTab} />
-            </div>
+              <div className="mb-4 sm:mb-6">
+                <NavigationTabs activeTab={activeTab} onTabChange={setActiveTab} />
+              </div>
 
-            <div className="space-y-4 sm:space-y-6">
-              {renderTabContent()}
-            </div>
-            
-            {/* Quick Access to Lost Pet Instructions */}
-            {activeTab !== "lostpet" && (
-              <Card className="bg-red-50 border-red-200">
-                <CardContent className="p-4">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <h3 className="font-semibold text-red-800">Need Missing Pet Flyer Instructions?</h3>
-                      <p className="text-sm text-red-600">Click the Lost Pet tab above</p>
-                      <p className="text-sm text-red-600">to see step-by-step instructions</p>
+              <div className="space-y-4 sm:space-y-6">
+                {renderTabContent()}
+              </div>
+              
+              {/* Quick Access to Lost Pet Instructions */}
+              {activeTab !== "lostpet" && (
+                <Card className="bg-red-50 border-red-200">
+                  <CardContent className="p-4">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h3 className="font-semibold text-red-800">Need Missing Pet Flyer Instructions?</h3>
+                        <p className="text-sm text-red-600">Click the Lost Pet tab above</p>
+                        <p className="text-sm text-red-600">to see step-by-step instructions</p>
+                      </div>
+                      <button 
+                        onClick={() => setActiveTab("lostpet")}
+                        className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors"
+                      >
+                        Go to Lost Pet
+                      </button>
                     </div>
-                    <button 
-                      onClick={() => setActiveTab("lostpet")}
-                      className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors"
-                    >
-                      Go to Lost Pet
-                    </button>
-                  </div>
-                </CardContent>
-              </Card>
-            )}
-          </>
-        )}
-      </main>
+                  </CardContent>
+                </Card>
+              )}
+            </>
+          )}
+        </main>
 
-      {/* Floating Report Issue Button */}
-    </div>
+        {/* Floating Report Issue Button */}
+      </div>
+    </PWALayout>
   );
 };
 

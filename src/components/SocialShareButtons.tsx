@@ -18,7 +18,9 @@ export const SocialShareButtons = ({ petName, petId, isMissingPet = false }: Soc
   const [showOptions, setShowOptions] = useState(false);
   const { toast } = useToast();
   
-  const shareUrl = `${window.location.origin}/profile/${petId}`;
+  // Add cache-busting parameter to ensure fresh loads
+  const cacheBuster = `v=${Date.now()}`;
+  const shareUrl = `${window.location.origin}/profile/${petId}?${cacheBuster}`;
   const shareText = isMissingPet 
     ? `🚨 MISSING PET ALERT 🚨 Help us bring ${petName} home! Please share this PetPort profile.`
     : `Meet ${petName}! Check out their PetPort profile.`;

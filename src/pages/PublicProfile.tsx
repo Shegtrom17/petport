@@ -15,6 +15,8 @@ const PublicProfile = () => {
   const [petData, setPetData] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [retryCount, setRetryCount] = useState(0);
+  const [debugInfo, setDebugInfo] = useState<string[]>([]);
 
   useEffect(() => {
     const loadPetData = async () => {
@@ -25,7 +27,15 @@ const PublicProfile = () => {
       }
 
       try {
-        // Fetch public pet data using the new RLS policy
+        const debug = [`Loading pet ID: ${petId}`, `Attempt: ${retryCount + 1}`, `Timestamp: ${new Date().toISOString()}`];
+        setDebugInfo(debug);
+        
+        console.log('🔍 Loading public profile for pet:', petId);
+        
+        // Add cache-busting parameter
+        const cacheBuster = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+        
+        // Fetch public pet data using the new RLS policy with all related data
         const { data, error: fetchError } = await supabase
           .from('pets')
           .select(`
@@ -47,11 +57,34 @@ const PublicProfile = () => {
           .eq('is_public', true)
           .maybeSingle();
 
-        if (fetchError || !data) {
+        if (fetchError) {
+          console.error('❌ Supabase fetch error:', fetchError);
+          debug.push(`Fetch error: ${fetchError.message}`);
+          setDebugInfo([...debug]);
+          throw fetchError;
+        }
+
+        if (!data) {
+          console.warn('⚠️ No data returned for pet:', petId);
+          debug.push('No data returned - pet may not exist or not public');
+          setDebugInfo([...debug]);
           setError("Pet profile not found or not public");
           setIsLoading(false);
           return;
         }
+
+        console.log('✅ Pet data loaded successfully:', {
+          name: data.name,
+          hasGallery: data.gallery_photos?.length || 0,
+          hasTraining: data.training?.length || 0,
+          hasReviews: data.reviews?.length || 0,
+          hasAchievements: data.achievements?.length || 0,
+          hasExperiences: data.experiences?.length || 0,
+          hasCertifications: data.certifications?.length || 0
+        });
+
+        debug.push(`Data loaded: ${data.name}`, `Gallery photos: ${data.gallery_photos?.length || 0}`, `Training records: ${data.training?.length || 0}`);
+        setDebugInfo([...debug]);
 
         // Sanitize all text data before setting state
         const sanitizedData = {
@@ -113,8 +146,21 @@ const PublicProfile = () => {
         };
 
         setPetData(sanitizedData);
+        setRetryCount(0); // Reset retry count on success
       } catch (err) {
-        console.error("Error loading pet data:", err);
+        console.error("❌ Error loading pet data:", err);
+        const errorMsg = err instanceof Error ? err.message : 'Unknown error';
+        setDebugInfo(prev => [...prev, `Error: ${errorMsg}`]);
+        
+        // Retry logic for transient failures
+        if (retryCount < 2) {
+          console.log(`🔄 Retrying... (${retryCount + 1}/2)`);
+          setTimeout(() => {
+            setRetryCount(prev => prev + 1);
+          }, 1000 * (retryCount + 1)); // Progressive delay
+          return;
+        }
+        
         setError("Failed to load pet profile");
       } finally {
         setIsLoading(false);
@@ -122,14 +168,24 @@ const PublicProfile = () => {
     };
 
     loadPetData();
-  }, [petId]);
+  }, [petId, retryCount]);
 
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
+        <div className="text-center space-y-4">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p>Loading pet profile...</p>
+          <p className="text-lg">Loading pet profile...</p>
+          {retryCount > 0 && (
+            <p className="text-sm text-gray-600">Retrying... ({retryCount}/2)</p>
+          )}
+          {debugInfo.length > 0 && (
+            <div className="text-xs text-gray-500 bg-gray-100 p-2 rounded max-w-md mx-auto">
+              {debugInfo.map((info, i) => (
+                <div key={i}>{info}</div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     );
@@ -138,9 +194,27 @@ const PublicProfile = () => {
   if (error || !petData) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
+        <div className="text-center space-y-4">
           <h1 className="text-2xl font-bold text-gray-800 mb-2">Profile Not Found</h1>
           <p className="text-gray-600">{error || "The requested pet profile could not be found or is not public."}</p>
+          <button 
+            onClick={() => {
+              setRetryCount(0);
+              setIsLoading(true);
+              setError(null);
+            }}
+            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+          >
+            🔄 Try Again
+          </button>
+          {debugInfo.length > 0 && (
+            <details className="text-xs text-gray-500 bg-gray-100 p-2 rounded max-w-md mx-auto">
+              <summary className="cursor-pointer">Debug Info</summary>
+              {debugInfo.map((info, i) => (
+                <div key={i}>{info}</div>
+              ))}
+            </details>
+          )}
         </div>
       </div>
     );

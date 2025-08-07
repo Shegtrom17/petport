@@ -258,9 +258,9 @@ export const PetProfileContent = ({
             <CardContent>
               <div className="grid grid-cols-1 gap-6">
                 <div className="space-y-3">
-                  <div className="flex justify-between items-center">
-                    <p className="text-gold-400 text-sm font-semibold tracking-wide">PORTRAIT</p>
-                    <div className="flex gap-2">
+                  <div className="flex justify-between items-center min-w-0">
+                    <p className="text-gold-400 text-xs sm:text-sm font-semibold tracking-wide truncate">PORTRAIT</p>
+                    <div className="flex gap-1 sm:gap-2 flex-shrink-0">
                       <div
                         onClick={() => handleUploadPhoto('profile')}
                         className="p-1 text-gold-400 hover:text-gold-300 hover:scale-110 transition-all cursor-pointer disabled:opacity-50"
@@ -272,7 +272,7 @@ export const PetProfileContent = ({
                         {photoLoading.profile ? (
                           <Loader2 className="w-3 h-3 animate-spin" />
                         ) : (
-                          <Upload className="w-3 h-3" />
+                           <Upload className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
                         )}
                       </div>
                       {enhancedPetData?.photoUrl && enhancedPetData.photoUrl !== "/placeholder.svg" && (
@@ -285,7 +285,7 @@ export const PetProfileContent = ({
                               aria-label="Delete portrait photo"
                               onKeyDown={(e) => e.key === 'Enter' && e.currentTarget.click()}
                             >
-                              <Trash2 className="w-3 h-3" />
+                               <Trash2 className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
                             </div>
                           </AlertDialogTrigger>
                           <AlertDialogContent>
@@ -323,9 +323,9 @@ export const PetProfileContent = ({
                   </div>
                 </div>
                 <div className="space-y-3">
-                  <div className="flex justify-between items-center">
-                    <p className="text-gold-400 text-sm font-semibold tracking-wide">FULL PROFILE</p>
-                    <div className="flex gap-2">
+                  <div className="flex justify-between items-center min-w-0">
+                    <p className="text-gold-400 text-xs sm:text-sm font-semibold tracking-wide truncate">FULL PROFILE</p>
+                    <div className="flex gap-1 sm:gap-2 flex-shrink-0">
                       <div
                         onClick={() => handleUploadPhoto('fullBody')}
                         className="p-1 text-gold-400 hover:text-gold-300 hover:scale-110 transition-all cursor-pointer disabled:opacity-50"
@@ -337,7 +337,7 @@ export const PetProfileContent = ({
                         {photoLoading.fullBody ? (
                           <Loader2 className="w-3 h-3 animate-spin" />
                         ) : (
-                          <Upload className="w-3 h-3" />
+                          <Upload className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
                         )}
                       </div>
                       {enhancedPetData?.fullBodyPhotoUrl && enhancedPetData.fullBodyPhotoUrl !== "/placeholder.svg" && (
@@ -350,7 +350,7 @@ export const PetProfileContent = ({
                               aria-label="Delete full body photo"
                               onKeyDown={(e) => e.key === 'Enter' && e.currentTarget.click()}
                             >
-                              <Trash2 className="w-3 h-3" />
+                              <Trash2 className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
                             </div>
                           </AlertDialogTrigger>
                           <AlertDialogContent>

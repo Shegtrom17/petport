@@ -509,16 +509,23 @@ export type Database = {
       }
       pets: {
         Row: {
+          adoption_instructions: string | null
+          adoption_status: string | null
           age: string | null
           bio: string | null
           breed: string | null
           county: string | null
           created_at: string
+          custom_logo_url: string | null
           id: string
           is_public: boolean
           microchip_id: string | null
           name: string
           notes: string | null
+          organization_email: string | null
+          organization_name: string | null
+          organization_phone: string | null
+          organization_website: string | null
           petport_id: string | null
           species: string | null
           state: string | null
@@ -527,16 +534,23 @@ export type Database = {
           weight: string | null
         }
         Insert: {
+          adoption_instructions?: string | null
+          adoption_status?: string | null
           age?: string | null
           bio?: string | null
           breed?: string | null
           county?: string | null
           created_at?: string
+          custom_logo_url?: string | null
           id?: string
           is_public?: boolean
           microchip_id?: string | null
           name: string
           notes?: string | null
+          organization_email?: string | null
+          organization_name?: string | null
+          organization_phone?: string | null
+          organization_website?: string | null
           petport_id?: string | null
           species?: string | null
           state?: string | null
@@ -545,16 +559,23 @@ export type Database = {
           weight?: string | null
         }
         Update: {
+          adoption_instructions?: string | null
+          adoption_status?: string | null
           age?: string | null
           bio?: string | null
           breed?: string | null
           county?: string | null
           created_at?: string
+          custom_logo_url?: string | null
           id?: string
           is_public?: boolean
           microchip_id?: string | null
           name?: string
           notes?: string | null
+          organization_email?: string | null
+          organization_name?: string | null
+          organization_phone?: string | null
+          organization_website?: string | null
           petport_id?: string | null
           species?: string | null
           state?: string | null

@@ -16,6 +16,13 @@ export type PetWithDetails = {
   state: string | null;
   county: string | null;
   is_public?: boolean | null;
+  organization_name?: string | null;
+  organization_email?: string | null;
+  organization_phone?: string | null;
+  organization_website?: string | null;
+  custom_logo_url?: string | null;
+  adoption_status?: string | null;
+  adoption_instructions?: string | null;
   contacts?: Tables<"contacts"> | null;
   medical?: Tables<"medical"> | null;
   photos?: Tables<"pet_photos"> | null;
@@ -100,7 +107,15 @@ export function transformPetData(pet: PetWithDetails): any {
     })) || [],
     documents: pet.documents || [],
     gallery_photos: pet.gallery_photos || [],
-    certifications: pet.certifications || []
+    certifications: pet.certifications || [],
+    // Transform organization fields
+    organizationName: pet.organization_name || "",
+    organizationEmail: pet.organization_email || "",
+    organizationPhone: pet.organization_phone || "",
+    organizationWebsite: pet.organization_website || "",
+    customLogoUrl: pet.custom_logo_url || "",
+    adoptionStatus: pet.adoption_status || "not_available",
+    adoptionInstructions: pet.adoption_instructions || ""
   };
 }
 
@@ -124,7 +139,7 @@ export async function fetchUserPets(): Promise<any[]> {
 
     const { data: pets, error } = await supabase
       .from("pets")
-      .select("id, name, breed, species, age, weight, microchip_id, petport_id, bio, notes, state, county, created_at, updated_at, user_id, is_public")
+      .select("id, name, breed, species, age, weight, microchip_id, petport_id, bio, notes, state, county, created_at, updated_at, user_id, is_public, organization_name, organization_email, organization_phone, organization_website, custom_logo_url, adoption_status, adoption_instructions")
       .eq('user_id', user.id) // Explicitly filter by user_id
       .order("created_at", { ascending: false });
 
@@ -157,6 +172,13 @@ export async function fetchUserPets(): Promise<any[]> {
         state: pet.state,
         county: pet.county,
         is_public: pet.is_public,
+        organization_name: pet.organization_name,
+        organization_email: pet.organization_email,
+        organization_phone: pet.organization_phone,
+        organization_website: pet.organization_website,
+        custom_logo_url: pet.custom_logo_url,
+        adoption_status: pet.adoption_status,
+        adoption_instructions: pet.adoption_instructions,
         contacts: null,
         medical: null,
         photos: null,
@@ -183,7 +205,7 @@ export async function fetchPetDetails(petId: string): Promise<any | null> {
   try {
     const { data: pet, error } = await supabase
       .from("pets")
-      .select("id, name, breed, species, age, weight, microchip_id, petport_id, bio, notes, state, county, created_at, updated_at, user_id, is_public")
+      .select("id, name, breed, species, age, weight, microchip_id, petport_id, bio, notes, state, county, created_at, updated_at, user_id, is_public, organization_name, organization_email, organization_phone, organization_website, custom_logo_url, adoption_status, adoption_instructions")
       .eq("id", petId)
       .single();
 
@@ -242,6 +264,13 @@ export async function fetchPetDetails(petId: string): Promise<any | null> {
       state: pet.state,
       county: pet.county,
       is_public: pet.is_public,
+      organization_name: pet.organization_name,
+      organization_email: pet.organization_email,
+      organization_phone: pet.organization_phone,
+      organization_website: pet.organization_website,
+      custom_logo_url: pet.custom_logo_url,
+      adoption_status: pet.adoption_status,
+      adoption_instructions: pet.adoption_instructions,
       contacts: contactsResponse.data,
       medical: medicalResponse.data,
       photos: photosResponse.data,
@@ -420,6 +449,13 @@ export async function updatePetBasicInfo(petId: string, basicData: {
   notes?: string;
   state?: string;
   county?: string;
+  organization_name?: string;
+  organization_email?: string;
+  organization_phone?: string;
+  organization_website?: string;
+  custom_logo_url?: string;
+  adoption_status?: string;
+  adoption_instructions?: string;
 }): Promise<boolean> {
   try {
     const { error } = await supabase

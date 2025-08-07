@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { supabase } from "@/integrations/supabase/client";
-import { Heart, MapPin, Phone, Calendar, Star, Award, GraduationCap, Plane, Trophy, Briefcase, Shield } from "lucide-react";
+import { Heart, MapPin, Phone, Calendar, Star, Award, GraduationCap, Plane, Trophy, Briefcase, Shield, Building, Mail, Globe } from "lucide-react";
 import { SocialShareButtons } from "@/components/SocialShareButtons";
 import { MetaTags } from "@/components/MetaTags";
 import { sanitizeText, sanitizeHtml } from "@/utils/inputSanitizer";
@@ -291,11 +291,51 @@ const PublicProfile = () => {
                 )}
               </div>
               <div className="flex-1 text-center md:text-left">
+                {/* Show adoption banner if available for adoption */}
+                {petData.adoption_status === 'available' && (
+                  <div className="bg-green-100 border border-green-300 text-green-800 text-center py-3 px-4 rounded-lg mb-4 shadow-sm">
+                    <p className="text-lg font-bold">🏠 Available for Adoption!</p>
+                    {petData.adoption_instructions && (
+                      <p className="text-sm mt-1">{petData.adoption_instructions}</p>
+                    )}
+                  </div>
+                )}
+
                 <h1 className="text-4xl font-bold text-gray-900 mb-2">{petData.name}</h1>
                 <p className="text-xl text-gray-600 mb-4">
                   {petData.species && petData.species.charAt(0).toUpperCase() + petData.species.slice(1)}
                   {petData.breed && ` • ${petData.breed}`}
                 </p>
+
+                {/* Organization Info */}
+                {petData.organization_name && (
+                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
+                    <h3 className="text-lg font-semibold text-blue-800 mb-2 flex items-center">
+                      <Building className="w-5 h-5 mr-2" />
+                      {petData.organization_name}
+                    </h3>
+                    <div className="flex flex-wrap gap-3 text-sm">
+                      {petData.organization_email && (
+                        <a href={`mailto:${petData.organization_email}`} className="text-blue-600 hover:text-blue-800 underline flex items-center">
+                          <Mail className="w-4 h-4 mr-1" />
+                          {petData.organization_email}
+                        </a>
+                      )}
+                      {petData.organization_phone && (
+                        <a href={`tel:${petData.organization_phone}`} className="text-blue-600 hover:text-blue-800 underline flex items-center">
+                          <Phone className="w-4 h-4 mr-1" />
+                          {petData.organization_phone}
+                        </a>
+                      )}
+                      {petData.organization_website && (
+                        <a href={petData.organization_website} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 underline flex items-center">
+                          <Globe className="w-4 h-4 mr-1" />
+                          Website
+                        </a>
+                      )}
+                    </div>
+                  </div>
+                )}
                 
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                   {petData.age && (

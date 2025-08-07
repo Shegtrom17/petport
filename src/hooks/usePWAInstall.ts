@@ -139,10 +139,27 @@ export const usePWAInstall = () => {
     saveState({ lastDismissed: Date.now() + (365 * 24 * 60 * 60 * 1000) }); // 1 year
   }, [saveState]);
 
+  // Force show instructions (for manual trigger)
+  const forceShowInstructions = useCallback(() => {
+    return {
+      isIOS: isIOS(),
+      isInstallable: !!installEvent,
+      canInstall: !!installEvent || isIOS(),
+    };
+  }, [installEvent, isIOS]);
+
+  // Reset install state (for testing)
+  const resetInstallState = useCallback(() => {
+    localStorage.removeItem(STORAGE_KEY);
+    setState(prev => ({ ...prev, lastDismissed: null, showPrompt: false }));
+  }, []);
+
   return {
     ...state,
     installApp,
     dismissPrompt,
     neverShowAgain,
+    forceShowInstructions,
+    resetInstallState,
   };
 };

@@ -70,8 +70,8 @@
   .theme-classic {
     --theme-primary-dark: var(--navy-900);
     --theme-primary-medium: var(--navy-800);
-    --theme-accent: var(--gold-500);
-    --theme-accent-light: var(--gold-400);
+    --theme-accent: 210 20% 92%;         /* Light blue-gray */
+    --theme-accent-light: 210 15% 96%;   /* Almost white */
   }
   
   /* Modern Theme Variant */

@@ -471,7 +471,7 @@ const generateLostPetPDF = async (doc: jsPDF, pageManager: PDFPageManager, petDa
 pageManager.addY(4);
 addText(doc, pageManager, 'REWARD OFFERED', '#dc2626', 16);
 if (petData.reward_amount) {
-  addText(doc, pageManager, `Amount: ${safeText(petData.reward_amount)}`, '#000000', 14);
+  addText(doc, pageManager, `Amount: ${safeText(petData.reward_amount)}`, '#000000', 12);
 }
 addText(doc, pageManager, 'PLEASE CONTACT IMMEDIATELY IF FOUND!', '#dc2626', 12);
 pageManager.addY(6);
@@ -481,7 +481,7 @@ try {
   const publicUrl = generatePublicMissingUrl(petData.id);
   const qrUrl = generateQRCodeUrl(publicUrl, 240);
   const base64 = await loadImageAsBase64(qrUrl);
-  const qrSize = 48; // mm
+  const qrSize = 36; // mm (reduced to fit within 2 pages)
   const x = (210 - qrSize) / 2;
   const y = pageManager.getCurrentY();
   doc.addImage(base64, 'PNG', x, y, qrSize, qrSize);

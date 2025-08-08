@@ -7,6 +7,7 @@ import { Clock, Heart, AlertTriangle, Phone, MapPin } from "lucide-react";
 import { fetchPetDetails } from '@/services/petService';
 import { fetchCareInstructions } from '@/services/careInstructionsService';
 import { supabase } from "@/integrations/supabase/client";
+import { MetaTags } from "@/components/MetaTags";
 
 interface Pet {
   id: string;
@@ -22,6 +23,7 @@ interface Pet {
   secondEmergencyContact?: string;
   vetContact?: string;
   petCaretaker?: string;
+  medications?: string[];
 }
 
 interface CareData {
@@ -153,6 +155,11 @@ const PublicCareInstructions = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-sage-50 to-cream-50">
+      <MetaTags 
+        title={`${pet.name} Care Instructions | PetPort`}
+        description={`Live care plan for ${pet.name}: feeding, routines, and important notes.`}
+        url={`${window.location.origin}/care/${pet.id}`}
+      />
       <div className="container mx-auto px-4 py-8 max-w-4xl">
         {/* Header */}
         <div className="text-center mb-8">
@@ -303,6 +310,29 @@ const PublicCareInstructions = () => {
                     </p>
                   </div>
                 )}
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Medications & Health */}
+          {pet.medications && pet.medications.length > 0 && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-navy-900">
+                  <Heart className="w-5 h-5 text-red-600" />
+                  Medications & Health
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                {pet.medications.map((med, idx) => (
+                  <div key={idx} className="p-3 bg-red-50 border border-red-200 rounded">
+                    <div className="flex items-center gap-2 mb-1">
+                      <Heart className="w-4 h-4 text-red-600" />
+                      <span className="font-medium text-red-800">{med}</span>
+                    </div>
+                    <p className="text-xs text-red-700">Administer as prescribed. Contact vet if reactions occur.</p>
+                  </div>
+                ))}
               </CardContent>
             </Card>
           )}

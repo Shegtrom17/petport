@@ -1109,8 +1109,34 @@ export async function generateClientPetPDF(
     const doc = new jsPDF('p', 'mm', 'a4');
     const pageManager = new PDFPageManager(doc);
 
-    // Generate content based on type
-    switch (type) {
+    // Generate content based on type (normalize common synonyms)
+    const t = (type || 'emergency').toString().toLowerCase();
+    let normalizedType: 'emergency' | 'full' | 'lost_pet' | 'care' | 'gallery' | 'resume';
+    switch (t) {
+      case 'complete':
+      case 'full_profile':
+      case 'profile':
+      case 'complete_profile':
+        normalizedType = 'full';
+        break;
+      case 'lost':
+      case 'lost-pet':
+      case 'missing':
+        normalizedType = 'lost_pet';
+        break;
+      case 'emergency':
+      case 'full':
+      case 'lost_pet':
+      case 'care':
+      case 'gallery':
+      case 'resume':
+        normalizedType = t as typeof normalizedType;
+        break;
+      default:
+        normalizedType = 'emergency';
+    }
+
+    switch (normalizedType) {
       case 'emergency':
         await generateEmergencyPDF(doc, pageManager, petData);
         break;

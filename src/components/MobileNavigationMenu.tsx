@@ -35,16 +35,16 @@ export const MobileNavigationMenu = ({ activeTab, onTabChange }: MobileNavigatio
             <Menu className="h-4 w-4 sm:h-5 sm:w-5" />
           </Button>
         </SheetTrigger>
-        <SheetContent side="left" className="w-72 sm:w-80 p-4 sm:p-6">
+        <SheetContent side="left" className="w-72 sm:w-80 p-4 sm:p-6 bg-gradient-to-b from-gold-500 to-gold-400 text-white">
           <div className="flex items-center justify-between mb-4 sm:mb-6">
-            <h2 className="text-base sm:text-lg font-semibold text-navy-900">Navigation</h2>
+            <h2 className="text-base sm:text-lg font-semibold text-white">Navigation</h2>
             <Button 
               variant="ghost" 
               size="icon" 
               onClick={() => setIsOpen(false)}
-              className="h-6 w-6 sm:h-8 sm:w-8"
+              className="h-6 w-6 sm:h-8 sm:w-8 text-white hover:bg-white/10"
             >
-              <X className="h-4 w-4" />
+              <X className="h-4 w-4 text-white" />
             </Button>
           </div>
           <div className="space-y-2">
@@ -55,11 +55,11 @@ export const MobileNavigationMenu = ({ activeTab, onTabChange }: MobileNavigatio
             />
           </div>
           
-          <div className="mt-6 pt-4 border-t border-gold-500/20">
+          <div className="mt-6 pt-4 border-t border-white/20">
             <ReportIssueModal>
               <Button 
                 variant="outline"
-                className="w-full justify-start space-x-3 text-sm py-3 border-gold-500/30 text-navy-800 hover:text-gold-500 hover:bg-navy-900/10 hover:border-gold-500/50 transition-all"
+                className="w-full justify-start space-x-3 text-sm py-3 border-white/30 text-white hover:text-white hover:bg-white/10 hover:border-white/50 transition-all"
               >
                 <AlertTriangle className="w-4 h-4" />
                 <span className="font-medium">Report Issue</span>

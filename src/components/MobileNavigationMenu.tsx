@@ -24,13 +24,9 @@ export const MobileNavigationMenu = ({ activeTab, onTabChange }: MobileNavigatio
       <Sheet open={isOpen} onOpenChange={setIsOpen}>
         <SheetTrigger asChild>
           <Button 
+            variant="ghost"
             size="icon" 
-            className="md:hidden h-8 w-8 sm:h-10 sm:w-10 border transition-colors"
-            style={{ 
-              backgroundColor: 'hsl(var(--menu-button-bg))', 
-              borderColor: 'hsl(var(--menu-button-border))', 
-              color: 'hsl(var(--menu-button-text))' 
-            }}
+            className="md:hidden h-8 w-8 sm:h-10 sm:w-10 bg-transparent hover:bg-transparent"
           >
             <Menu className="h-4 w-4 sm:h-5 sm:w-5" />
           </Button>

@@ -10,38 +10,42 @@ interface SocialShareButtonsProps {
   petName: string;
   petId: string;
   isMissingPet?: boolean;
+  context?: 'profile' | 'care';
+  shareUrlOverride?: string;
 }
 
-export const SocialShareButtons = ({ petName, petId, isMissingPet = false }: SocialShareButtonsProps) => {
+export const SocialShareButtons = ({ petName, petId, isMissingPet = false, context = 'profile', shareUrlOverride }: SocialShareButtonsProps) => {
   const [isSharing, setIsSharing] = useState(false);
   const [copied, setCopied] = useState(false);
   const [showOptions, setShowOptions] = useState(false);
   const { toast } = useToast();
   
-  // Add cache-busting parameter to ensure fresh loads
-  const cacheBuster = `v=${Date.now()}`;
-  const shareUrl = `${window.location.origin}/profile/${petId}?${cacheBuster}`;
-  const shareText = isMissingPet 
-    ? `🚨 MISSING PET ALERT 🚨 Help us bring ${petName} home! Please share this PetPort profile.`
-    : `Meet ${petName}! Check out their PetPort profile.`;
+// Add cache-busting parameter to ensure fresh loads
+const isCare = context === 'care';
+const cacheBuster = `v=${Date.now()}`;
+const path = isCare ? `care/${petId}` : `profile/${petId}`;
+const shareUrl = shareUrlOverride ?? `${window.location.origin}/${path}?${cacheBuster}`;
+const shareText = isMissingPet 
+  ? `🚨 MISSING PET ALERT 🚨 Help us bring ${petName} home!`
+  : (isCare ? `View ${petName}'s live Care Instructions on PetPort.` : `Meet ${petName}! Check out their PetPort profile.`);
 
   // Prioritize native mobile sharing
   const handleNativeShare = async () => {
     setIsSharing(true);
     try {
-      const result = await shareProfileOptimized(shareUrl, petName, 'profile', isMissingPet);
+const result = await shareProfileOptimized(shareUrl, petName, isCare ? 'care' : 'profile', isMissingPet);
       
       if (result.success) {
         if (result.shared) {
           toast({
-            title: "Profile Shared! 📱",
-            description: `${petName}'s profile has been shared successfully.`,
+            title: isCare ? "Care Link Shared! 📱" : "Profile Shared! 📱",
+            description: isCare ? `${petName}'s care instructions link shared successfully.` : `${petName}'s profile has been shared successfully.`,
           });
         } else {
           setCopied(true);
           toast({
             title: "Link Copied! 📋",
-            description: "Profile link copied to clipboard - paste to share anywhere!",
+            description: "Link copied to clipboard - paste to share anywhere!",
           });
           setTimeout(() => setCopied(false), 3000);
         }
@@ -69,8 +73,8 @@ export const SocialShareButtons = ({ petName, petId, isMissingPet = false }: Soc
       await navigator.clipboard.writeText(shareUrl);
       setCopied(true);
       toast({
-        title: "Link Copied! 📋",
-        description: "Profile link copied - paste to share anywhere!",
+title: "Link Copied! 📋",
+        description: "Link copied - paste to share anywhere!",
       });
       setTimeout(() => setCopied(false), 3000);
     } catch (err) {
@@ -100,7 +104,7 @@ export const SocialShareButtons = ({ petName, petId, isMissingPet = false }: Soc
   };
 
   const handleEmailShare = () => {
-    const subject = isMissingPet ? `MISSING PET: ${petName}` : `${petName}'s PetPort Profile`;
+    const subject = isMissingPet ? `MISSING PET: ${petName}` : (isCare ? `${petName}'s Care Instructions` : `${petName}'s PetPort Profile`);
     const body = `${shareText}\n\n${shareUrl}`;
     const mailtoUrl = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
     window.location.href = mailtoUrl;
@@ -123,14 +127,14 @@ export const SocialShareButtons = ({ petName, petId, isMissingPet = false }: Soc
       <CardHeader className="pb-3">
         <CardTitle className={`flex items-center space-x-2 text-lg font-semibold ${isMissingPet ? 'text-red-800' : 'text-navy-900'} border-b-2 ${isMissingPet ? 'border-red-500' : 'border-gold-500'} pb-2`}>
           <Share2 className="w-5 h-5" />
-          <span>{isMissingPet ? `Help Find ${petName}!` : `Share ${petName}'s Profile`}</span>
+          <span>{isMissingPet ? `Help Find ${petName}!` : (isCare ? `Share ${petName}'s Care Instructions` : `Share ${petName}'s Profile`)}</span>
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         <p className={`text-sm ${isMissingPet ? 'text-red-700' : 'text-navy-600'} text-center`}>
-          {isMissingPet 
+{isMissingPet 
             ? `Help us bring ${petName} home! Share their complete PetPort profile.`
-            : `Share ${petName}'s complete public profile (photos, bio, reviews & more).`
+            : (isCare ? `Share ${petName}'s live care plan (feeding schedule, routines, notes).` : `Share ${petName}'s complete public profile (photos, bio, reviews & more).`)
           }
         </p>
         
@@ -146,7 +150,7 @@ export const SocialShareButtons = ({ petName, petId, isMissingPet = false }: Soc
               }`}
             >
               <Share2 className="w-5 h-5 mr-2" />
-              {isMissingPet ? `Share ${petName}'s Missing Alert` : `Share ${petName}'s Profile`}
+{isMissingPet ? `Share ${petName}'s Missing Alert` : (isCare ? `Share Care Instructions` : `Share ${petName}'s Profile`)}
             </Button>
           ) : (
             <>

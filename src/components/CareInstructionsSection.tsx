@@ -9,6 +9,7 @@ import { fetchCareInstructions } from "@/services/careInstructionsService";
 import { generateQRCodeUrl, shareProfile, shareProfileOptimized } from "@/services/pdfService";
 import { generateClientPetPDF, downloadPDFBlob } from "@/services/clientPdfService";
 import { useToast } from "@/hooks/use-toast";
+import { SocialShareButtons } from "@/components/SocialShareButtons";
 
 interface CareInstructionsSectionProps {
   petData: {

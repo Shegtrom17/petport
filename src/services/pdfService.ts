@@ -13,10 +13,36 @@ export interface PDFGenerationResult {
 export async function generatePetPDF(petId: string, type: 'emergency' | 'full' | 'lost_pet' | 'care' | 'gallery' = 'emergency'): Promise<PDFGenerationResult> {
   try {
     console.log('🔧 CLIENT: Starting PDF generation for pet:', petId, 'type:', type)
-    console.log('🔧 CLIENT: Request body will be:', { petId, type })
-    
+
+    // Normalize common synonyms to prevent unintended fallbacks
+    const t = (type || 'emergency').toString().toLowerCase();
+    let normalizedType: 'emergency' | 'full' | 'lost_pet' | 'care' | 'gallery';
+    switch (t) {
+      case 'complete':
+      case 'full_profile':
+      case 'profile':
+      case 'complete_profile':
+        normalizedType = 'full';
+        break;
+      case 'lost':
+      case 'lost-pet':
+      case 'missing':
+        normalizedType = 'lost_pet';
+        break;
+      case 'emergency':
+      case 'full':
+      case 'lost_pet':
+      case 'care':
+      case 'gallery':
+        normalizedType = t as typeof normalizedType;
+        break;
+      default:
+        normalizedType = 'emergency';
+    }
+
+    console.log('🔧 CLIENT: Request body will be:', { petId, type: normalizedType })
     const response = await supabase.functions.invoke('generate-pet-pdf', {
-      body: { petId, type }
+      body: { petId, type: normalizedType }
     });
 
     console.log('📡 CLIENT: Raw response from edge function:')
@@ -60,7 +86,7 @@ export async function generatePetPDF(petId: string, type: 'emergency' | 'full' |
       console.log('  - Blob size:', pdfBlob.size)
       console.log('  - Blob type:', pdfBlob.type)
       
-      const fileName = response.data.fileName || `PetPort_${type}_Profile.pdf`;
+      const fileName = response.data.fileName || `PetPort_${normalizedType}_Profile.pdf`;
       console.log('✅ CLIENT: PDF generation successful, filename:', fileName)
       
       return {
@@ -68,7 +94,7 @@ export async function generatePetPDF(petId: string, type: 'emergency' | 'full' |
         pdfBlob,
         blob: pdfBlob, // Add alias for compatibility
         fileName,
-        type
+        type: normalizedType
       };
     }
 
@@ -87,7 +113,7 @@ export async function generatePetPDF(petId: string, type: 'emergency' | 'full' |
     console.log('  - Blob size:', pdfBlob.size)
     console.log('  - Blob type:', pdfBlob.type)
     
-    const fileName = `PetPort_${type}_Profile.pdf`;
+    const fileName = `PetPort_${normalizedType}_Profile.pdf`;
     console.log('✅ CLIENT: PDF generation successful, filename:', fileName)
     
     return {
@@ -95,7 +121,7 @@ export async function generatePetPDF(petId: string, type: 'emergency' | 'full' |
       pdfBlob,
       blob: pdfBlob, // Add alias for compatibility
       fileName,
-      type
+      type: normalizedType
     };
 
   } catch (error) {

@@ -73,20 +73,14 @@ export default {
 				},
 				// Passport color palette
 				navy: {
-					900: 'hsl(221, 39%, 11%)',
-					800: 'hsl(221, 39%, 16%)',
-					700: 'hsl(334, 155%, 55%)',
+					900: '#0A1F44',
+					800: '#203864',
+					700: '#334155',
 				},
 				gold: {
-					500: 'hsl(45, 86%, 62%)',
-					400: 'hsl(45, 84%, 68%)',
-					300: 'hsl(45, 82%, 75%)',
-				},
-				// Menu colors (consistent across themes)
-				menu: {
-					bg: 'hsl(var(--menu-bg))',
-					border: 'hsl(var(--menu-border))',
-					text: 'hsl(var(--menu-text))',
+					500: '#C8AA6E',
+					400: '#D4BE87',
+					300: '#E0D2A0',
 				},
 				// Theme system colors
 				'theme-primary': {

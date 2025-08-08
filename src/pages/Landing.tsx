@@ -59,12 +59,14 @@ export default function Landing() {
           </article>
           <article className="bg-white rounded-xl shadow-sm p-6">
             <h2 className="text-2xl font-semibold text-navy-900">For Rescues & Organizations</h2>
-            <ul className="mt-3 list-disc pl-5 text-navy-700 space-y-1">
-              <li>Organization-branded profiles</li>
-              <li>Adoption status and instructions</li>
-              <li>Team access with member roles</li>
-              <li>Transfer requests to new owners</li>
-            </ul>
+          <ul className="mt-3 list-disc pl-5 text-navy-700 space-y-1">
+            <li><strong>All Pet Owner features, plus:</strong></li>
+            <li><strong>Organization‑branded profiles & templates</strong> for consistent, professional listings.</li>
+            <li><strong>Adoption workflows</strong> — track status, add notes, and publish shareable adoption pages/QR codes.</li>
+            <li><strong>Team access & roles</strong> with member permissions for volunteers and staff.</li>
+            <li><strong>One‑Tap Account Transfer to Adopter</strong> — move the entire pet account (records, documents, care instructions) directly to the new owner. Requires the adopter to create a free PetPort account.</li>
+            <li><strong>Digitized records & care instructions</strong> — medical, behavior, meds, routines all organized and ready for hand‑off.</li>
+          </ul>
             <div className="mt-4">
               <Link to="/auth" className="underline text-navy-900">Get started as an organization →</Link>
             </div>

@@ -386,7 +386,6 @@ export const CareInstructionsSection = ({ petData }: CareInstructionsSectionProp
               <Dialog open={careShareDialogOpen} onOpenChange={setCareShareDialogOpen}>
                 <DialogTrigger asChild>
                   <div
-                    onClick={handleShareCareLink}
                     className={`cursor-pointer flex items-center justify-center text-white hover:text-gold-300 hover:scale-110 transition-all duration-200 text-xs sm:text-sm px-2 sm:px-4 py-1 sm:py-2 ${isSharing ? 'opacity-50 cursor-not-allowed' : ''}`}
                   >
                     {isSharing ? (

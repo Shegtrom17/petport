@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Clock, Heart, AlertTriangle, Phone, MapPin } from "lucide-react";
 import { fetchPetDetails } from '@/services/petService';
 import { fetchCareInstructions } from '@/services/careInstructionsService';
+import { supabase } from "@/integrations/supabase/client";
 
 interface Pet {
   id: string;
@@ -80,6 +81,32 @@ const PublicCareInstructions = () => {
     };
 
     fetchData();
+  }, [petId]);
+
+  // Realtime updates for care instructions
+  useEffect(() => {
+    if (!petId) return;
+
+    const channel = supabase
+      .channel('care-instructions-updates')
+      .on('postgres_changes', {
+        event: '*',
+        schema: 'public',
+        table: 'care_instructions',
+        filter: `pet_id=eq.${petId}`,
+      }, async () => {
+        try {
+          const updated = await fetchCareInstructions(petId);
+          setCareData(updated);
+        } catch (e) {
+          console.error('Realtime care update fetch failed:', e);
+        }
+      })
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, [petId]);
 
   if (loading) {

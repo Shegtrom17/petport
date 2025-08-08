@@ -10,6 +10,7 @@ import { generatePublicProfileUrl, shareProfileOptimized, generateQRCodeUrl } fr
 import { generateClientPetPDF, downloadPDFBlob, viewPDFBlob } from "@/services/clientPdfService";
 import { PrivacyHint } from "@/components/PrivacyHint";
 import { toast } from "sonner";
+import { SocialShareButtons } from "@/components/SocialShareButtons";
 
 // Helper function to extract phone number and create tel link
 const extractPhoneNumber = (contactString: string) => {
@@ -82,6 +83,7 @@ export const PetResumeSection = ({ petData, onUpdate }: PetResumeSectionProps) =
   const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
   const [isQRDialogOpen, setIsQRDialogOpen] = useState(false);
   const [isSharing, setIsSharing] = useState(false);
+  const [isCareShareDialogOpen, setIsCareShareDialogOpen] = useState(false);
 
   const averageRating = petData.reviews?.length 
     ? petData.reviews.reduce((sum, review) => sum + review.rating, 0) / petData.reviews.length 
@@ -248,15 +250,29 @@ export const PetResumeSection = ({ petData, onUpdate }: PetResumeSectionProps) =
               </div>
               <div className="flex flex-col gap-1">
                 <div
-                  onClick={handleShare}
+                  onClick={() => {
+                    if (!petData.is_public) {
+                      toast.error("Pet profile must be public to share. Please enable public visibility in quick actions on the profile page.");
+                      return;
+                    }
+                    setIsCareShareDialogOpen(true);
+                  }}
                   className={`flex items-center space-x-2 p-2 text-white hover:text-blue-200 hover:scale-110 transition-all cursor-pointer ${isSharing ? 'opacity-50' : ''}`}
                   role="button"
                   tabIndex={0}
-                  aria-label="Share profile"
-                  onKeyDown={(e) => e.key === 'Enter' && handleShare()}
+                  aria-label="Share care instructions"
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      if (!petData.is_public) {
+                        toast.error("Pet profile must be public to share. Please enable public visibility in quick actions on the profile page.");
+                        return;
+                      }
+                      setIsCareShareDialogOpen(true);
+                    }
+                  }}
                 >
                   <Share2 className="w-4 h-4" />
-                  <span className="text-sm">{isSharing ? "Sharing..." : "Share"}</span>
+                  <span className="text-sm">Share</span>
                 </div>
               </div>
               <div className="flex flex-col gap-1">
@@ -382,6 +398,18 @@ export const PetResumeSection = ({ petData, onUpdate }: PetResumeSectionProps) =
               </div>
             )}
           </div>
+        </DialogContent>
+      </Dialog>
+      
+      {/* Care Share Options Dialog */}
+      <Dialog open={isCareShareDialogOpen} onOpenChange={setIsCareShareDialogOpen}>
+        <DialogContent className="max-w-md bg-[#f8f8f8]">
+          <DialogHeader>
+            <DialogTitle className="font-bold text-navy-900 border-b-2 border-sage-500 pb-2">
+              🌿 Share {petData.name}'s Care Instructions
+            </DialogTitle>
+          </DialogHeader>
+          <SocialShareButtons petName={petData.name} petId={petData.id} context="care" />
         </DialogContent>
       </Dialog>
 

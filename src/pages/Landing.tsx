@@ -11,7 +11,7 @@ export default function Landing() {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
       <MetaTags
         title="PetPort: Digital Pet Passport"
-        description="Create a digital pet passport. For pet owners and rescue organizations."
+        description="Create a digital pet passport for pet owners and foster caregivers."
         url={window.location.origin + "/"}
       />
 
@@ -37,7 +37,7 @@ export default function Landing() {
           </p>
           <div className="mt-6 flex items-center justify-center gap-3">
             <Button onClick={() => navigate('/auth')}>Get Started</Button>
-            <Button variant="outline" onClick={() => navigate('/auth')}>For Organizations</Button>
+            <Button variant="outline" onClick={() => navigate('/auth')}>For Foster Caregivers</Button>
           </div>
         </section>
 
@@ -58,17 +58,17 @@ export default function Landing() {
             </div>
           </article>
           <article className="bg-white rounded-xl shadow-sm p-6">
-            <h2 className="text-2xl font-semibold text-navy-900">For Rescues & Organizations</h2>
+            <h2 className="text-2xl font-semibold text-navy-900">For Foster Caregivers</h2>
           <ul className="mt-3 list-disc pl-5 text-navy-700 space-y-1">
-            <li><strong>All Pet Owner features, plus:</strong></li>
-            <li><strong>Organization‑branded profiles & templates</strong> for consistent, professional listings.</li>
-            <li><strong>Adoption workflows</strong> — track status, add notes, and publish shareable adoption pages/QR codes.</li>
-            <li><strong>Team access & roles</strong> with member permissions for volunteers and staff.</li>
-            <li><strong>One‑Tap Account Transfer to Adopter</strong> — move the entire pet account (records, documents, care instructions) directly to the new owner. Requires the adopter to create a PetPort account.</li>
-            <li><strong>Digitized records & care instructions</strong> — medical, behavior, meds, routines all organized and ready for hand‑off.</li>
+            <li><strong>Handoff Kit</strong> — everything an adopter needs in one link and PDF.</li>
+            <li><strong>Care & Medication Schedule</strong> — diets, routines, meds, allergies, behaviors.</li>
+            <li><strong>Behavior & Notes</strong> — track quirks, training progress, and tips.</li>
+            <li><strong>Photos & Bio Builder</strong> — create a great adoption profile fast.</li>
+            <li><strong>One‑Tap Transfer to Adopter</strong> — move the full pet record to the new owner securely.</li>
+            <li><strong>Privacy by Default</strong> — you choose what’s shared publicly.</li>
           </ul>
             <div className="mt-4">
-              <Link to="/auth" className="underline text-navy-900">Get started as an organization →</Link>
+              <Link to="/auth" className="underline text-navy-900">Get started as a foster →</Link>
             </div>
           </article>
         </section>

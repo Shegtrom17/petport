@@ -70,8 +70,8 @@
   .theme-modern {
     --theme-primary-dark: 221 39% 25%;  /* Lighter navy */
     --theme-primary-medium: 221 39% 35%; /* Even lighter navy */
-    --theme-accent: 48 86% 63%;          /* Softer gold */
-    --theme-accent-light: 48 86% 73%;    /* Lighter soft gold */
+    --theme-accent: 210 20% 92%;         /* Light blue-gray */
+    --theme-accent-light: 210 15% 96%;   /* Almost white */
   }
 }
 

@@ -82,6 +82,15 @@ export default {
 					400: '#D4BE87',
 					300: '#E0D2A0',
 				},
+				// Theme system colors
+				'theme-primary': {
+					dark: 'hsl(var(--theme-primary-dark))',
+					medium: 'hsl(var(--theme-primary-medium))',
+				},
+				'theme-accent': {
+					DEFAULT: 'hsl(var(--theme-accent))',
+					light: 'hsl(var(--theme-accent-light))',
+				},
 				emergency: {
 					DEFAULT: 'hsl(var(--emergency))',
 					foreground: 'hsl(var(--emergency-foreground))',

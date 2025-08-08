@@ -36,6 +36,12 @@
     --navy-800: 221 39% 16%;
     --gold-500: 48 96% 53%;
     --gold-400: 48 96% 58%;
+    
+    /* Theme System - Passport Colors */
+    --theme-primary-dark: var(--navy-900);
+    --theme-primary-medium: var(--navy-800);
+    --theme-accent: var(--gold-500);
+    --theme-accent-light: var(--gold-400);
   }
 
   .dark {
@@ -58,6 +64,14 @@
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
     --ring: 212.7 26.8% 83.9%;
+  }
+  
+  /* Modern Theme Variant */
+  .theme-modern {
+    --theme-primary-dark: 221 39% 25%;  /* Lighter navy */
+    --theme-primary-medium: 221 39% 35%; /* Even lighter navy */
+    --theme-accent: 48 86% 63%;          /* Softer gold */
+    --theme-accent-light: 48 86% 73%;    /* Lighter soft gold */
   }
 }
 

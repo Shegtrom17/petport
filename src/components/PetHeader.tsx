@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { MobileNavigationMenu } from "@/components/MobileNavigationMenu";
 import { LostPetButton } from "@/components/LostPetButton";
+import { ThemeSwitcher } from "@/components/ThemeSwitcher";
 import worldMapOutline from "@/assets/world-map-outline.png";
 
 interface PetHeaderProps {
@@ -91,6 +92,7 @@ export const PetHeader = ({ activeTab, onTabChange, selectedPetId, selectedPetNa
           </div>
           
           <div className="flex items-center space-x-3 flex-shrink-0">
+            <ThemeSwitcher />
             {user ? (
               <LostPetButton 
                 petId={selectedPetId} 
@@ -100,7 +102,7 @@ export const PetHeader = ({ activeTab, onTabChange, selectedPetId, selectedPetNa
               />
             ) : (
               <Button 
-                className="bg-gradient-to-r from-navy-900 to-navy-800 hover:from-navy-800 hover:to-navy-700 text-gold-500 border border-gold-500/30 text-sm px-3 h-10 whitespace-nowrap"
+                className="bg-gradient-to-r from-theme-primary-dark to-theme-primary-medium hover:from-theme-primary-medium hover:to-theme-primary-dark text-theme-accent border border-theme-accent/30 text-sm px-3 h-10 whitespace-nowrap"
                 onClick={() => navigate('/auth')}
               >
                 <LogIn className="mr-1 h-4 w-4" /> 

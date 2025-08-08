@@ -5,7 +5,6 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { MobileNavigationMenu } from "@/components/MobileNavigationMenu";
 import { LostPetButton } from "@/components/LostPetButton";
-import { ThemeSwitcher } from "@/components/ThemeSwitcher";
 import worldMapOutline from "@/assets/world-map-outline.png";
 
 interface PetHeaderProps {
@@ -92,7 +91,6 @@ export const PetHeader = ({ activeTab, onTabChange, selectedPetId, selectedPetNa
           </div>
           
           <div className="flex items-center space-x-3 flex-shrink-0">
-            <ThemeSwitcher />
             {user ? (
               <LostPetButton 
                 petId={selectedPetId} 

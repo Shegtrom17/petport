@@ -472,6 +472,80 @@ export type Database = {
           },
         ]
       }
+      organization_members: {
+        Row: {
+          created_at: string
+          id: string
+          organization_id: string
+          role: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          organization_id: string
+          role?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          organization_id?: string
+          role?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "organization_members_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      organizations: {
+        Row: {
+          created_at: string
+          email: string | null
+          id: string
+          is_verified: boolean
+          name: string
+          owner_id: string
+          phone: string | null
+          type: string | null
+          updated_at: string
+          website: string | null
+        }
+        Insert: {
+          created_at?: string
+          email?: string | null
+          id?: string
+          is_verified?: boolean
+          name: string
+          owner_id: string
+          phone?: string | null
+          type?: string | null
+          updated_at?: string
+          website?: string | null
+        }
+        Update: {
+          created_at?: string
+          email?: string | null
+          id?: string
+          is_verified?: boolean
+          name?: string
+          owner_id?: string
+          phone?: string | null
+          type?: string | null
+          updated_at?: string
+          website?: string | null
+        }
+        Relationships: []
+      }
       pet_photos: {
         Row: {
           created_at: string
@@ -622,6 +696,7 @@ export type Database = {
       }
       profiles: {
         Row: {
+          account_type: string | null
           created_at: string
           email: string
           full_name: string | null
@@ -629,6 +704,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          account_type?: string | null
           created_at?: string
           email: string
           full_name?: string | null
@@ -636,6 +712,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          account_type?: string | null
           created_at?: string
           email?: string
           full_name?: string | null
@@ -725,6 +802,59 @@ export type Database = {
             columns: ["pet_id"]
             isOneToOne: false
             referencedRelation: "pets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      transfer_requests: {
+        Row: {
+          accepted_at: string | null
+          created_at: string
+          expires_at: string
+          from_user_id: string
+          id: string
+          organization_id: string
+          pet_id: string
+          status: string
+          to_email: string
+          to_user_id: string | null
+          token: string
+          updated_at: string
+        }
+        Insert: {
+          accepted_at?: string | null
+          created_at?: string
+          expires_at?: string
+          from_user_id: string
+          id?: string
+          organization_id: string
+          pet_id: string
+          status?: string
+          to_email: string
+          to_user_id?: string | null
+          token: string
+          updated_at?: string
+        }
+        Update: {
+          accepted_at?: string | null
+          created_at?: string
+          expires_at?: string
+          from_user_id?: string
+          id?: string
+          organization_id?: string
+          pet_id?: string
+          status?: string
+          to_email?: string
+          to_user_id?: string | null
+          token?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "transfer_requests_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
         ]
@@ -830,6 +960,14 @@ export type Database = {
           _full_body_photo_url?: string
         }
         Returns: string
+      }
+      is_org_admin: {
+        Args: { _user_id: string; _org_id: string }
+        Returns: boolean
+      }
+      is_org_member: {
+        Args: { _user_id: string; _org_id: string }
+        Returns: boolean
       }
       is_pet_missing: {
         Args: { pet_uuid: string }

@@ -10,6 +10,8 @@ import { ThemeProvider } from "@/context/ThemeContext";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import Index from "./pages/Index";
+import Landing from "./pages/Landing";
+import Onboarding from "./pages/Onboarding";
 import Auth from "./pages/Auth";
 import AddPet from "./pages/AddPet";
 import Profile from "./pages/Profile";
@@ -44,7 +46,8 @@ const App = () => {
               <AuthProvider>
               <Routes>
                 <Route path="/auth" element={<Auth />} />
-                <Route path="/" element={
+                <Route path="/" element={<Landing />} />
+                <Route path="/app" element={
                   <ProtectedRoute>
                     <Index />
                   </ProtectedRoute>
@@ -62,6 +65,11 @@ const App = () => {
                 <Route path="/lost-pet/:petId?" element={
                   <ProtectedRoute>
                     <LostPet />
+                  </ProtectedRoute>
+                } />
+                <Route path="/onboarding" element={
+                  <ProtectedRoute>
+                    <Onboarding />
                   </ProtectedRoute>
                 } />
                 <Route path="/profile/:petId" element={<PublicProfile />} />

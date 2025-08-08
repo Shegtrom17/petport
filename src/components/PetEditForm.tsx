@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -13,6 +13,7 @@ import { updatePetBasicInfo, updatePetContacts, updatePetMedical } from "@/servi
 import { Loader2 } from "lucide-react";
 import { sanitizeText, validateTextLength, containsSuspiciousContent } from "@/utils/inputSanitizer";
 import { PrivacyToggle } from "@/components/PrivacyToggle";
+import { supabase } from "@/integrations/supabase/client";
 
 interface PetData {
   id: string;
@@ -60,7 +61,30 @@ export const PetEditForm = ({ petData, onSave, onCancel, togglePetPublicVisibili
   const { toast } = useToast();
   const { user } = useAuth();
   const [isSaving, setIsSaving] = useState(false);
+  const [isOrgUser, setIsOrgUser] = useState(false);
 
+  // Determine if current user is part of any organization (owner or member)
+  useEffect(() => {
+    let active = true;
+    const checkOrgStatus = async () => {
+      if (!user?.id) return;
+      try {
+        const [membershipsRes, ownedOrgsRes] = await Promise.all([
+          supabase.from('organization_members').select('id').eq('user_id', user.id).limit(1),
+          supabase.from('organizations').select('id').eq('owner_id', user.id).limit(1),
+        ]);
+        if (membershipsRes.error || ownedOrgsRes.error) {
+          console.warn('Org check error', membershipsRes.error || ownedOrgsRes.error);
+        }
+        const hasOrg = (membershipsRes.data && membershipsRes.data.length > 0) || (ownedOrgsRes.data && ownedOrgsRes.data.length > 0);
+        if (active) setIsOrgUser(!!hasOrg);
+      } catch (e) {
+        console.warn('Org check exception', e);
+      }
+    };
+    checkOrgStatus();
+    return () => { active = false; };
+  }, [user?.id]);
   const [formData, setFormData] = useState({
     name: petData.name || "",
     breed: petData.breed || "",
@@ -373,96 +397,98 @@ const handleSubmit = async (e: React.FormEvent) => {
           </div>
         </div>
 
-        {/* Organization Information Section */}
-        <div className="border-t pt-6">
-          <h3 className="text-lg font-serif text-navy-900 mb-4">Organization Information (Optional)</h3>
-          <p className="text-sm text-gray-600 mb-4">
-            Complete this section if this pet is managed by a rescue organization, shelter, or foster program.
-          </p>
-          
-          <div className="space-y-4">
-            <div>
-              <Label htmlFor="organizationName">Organization/Rescue Name</Label>
-              <Input 
-                type="text" 
-                id="organizationName" 
-                name="organizationName" 
-                value={formData.organizationName} 
-                onChange={handleChange}
-                placeholder="e.g., Happy Tails Rescue, City Animal Shelter" 
-              />
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {/* Organization Information Section - visible to organization members only */}
+        {isOrgUser && (
+          <div className="border-t pt-6">
+            <h3 className="text-lg font-serif text-navy-900 mb-4">Organization Information (Optional)</h3>
+            <p className="text-sm text-gray-600 mb-4">
+              Complete this section if this pet is managed by a rescue organization, shelter, or foster program.
+            </p>
+            
+            <div className="space-y-4">
               <div>
-                <Label htmlFor="organizationEmail">Organization Contact Email</Label>
+                <Label htmlFor="organizationName">Organization/Rescue Name</Label>
                 <Input 
-                  type="email" 
-                  id="organizationEmail" 
-                  name="organizationEmail" 
-                  value={formData.organizationEmail} 
+                  type="text" 
+                  id="organizationName" 
+                  name="organizationName" 
+                  value={formData.organizationName} 
                   onChange={handleChange}
-                  placeholder="contact@rescue.org" 
+                  placeholder="e.g., Happy Tails Rescue, City Animal Shelter" 
                 />
               </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="organizationEmail">Organization Contact Email</Label>
+                  <Input 
+                    type="email" 
+                    id="organizationEmail" 
+                    name="organizationEmail" 
+                    value={formData.organizationEmail} 
+                    onChange={handleChange}
+                    placeholder="contact@rescue.org" 
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="organizationPhone">Organization Phone</Label>
+                  <Input 
+                    type="tel" 
+                    id="organizationPhone" 
+                    name="organizationPhone" 
+                    value={formData.organizationPhone} 
+                    onChange={handleChange}
+                    placeholder="(555) 123-4567" 
+                  />
+                </div>
+              </div>
+
               <div>
-                <Label htmlFor="organizationPhone">Organization Phone</Label>
+                <Label htmlFor="organizationWebsite">Organization Website</Label>
                 <Input 
-                  type="tel" 
-                  id="organizationPhone" 
-                  name="organizationPhone" 
-                  value={formData.organizationPhone} 
+                  type="url" 
+                  id="organizationWebsite" 
+                  name="organizationWebsite" 
+                  value={formData.organizationWebsite} 
                   onChange={handleChange}
-                  placeholder="(555) 123-4567" 
+                  placeholder="https://www.rescue.org" 
                 />
               </div>
-            </div>
 
-            <div>
-              <Label htmlFor="organizationWebsite">Organization Website</Label>
-              <Input 
-                type="url" 
-                id="organizationWebsite" 
-                name="organizationWebsite" 
-                value={formData.organizationWebsite} 
-                onChange={handleChange}
-                placeholder="https://www.rescue.org" 
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="adoptionStatus">Adoption Status</Label>
-              <Select 
-                value={formData.adoptionStatus} 
-                onValueChange={(value) => handleSelectChange('adoptionStatus', value)}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select adoption status" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="not_available">Not Available for Adoption</SelectItem>
-                  <SelectItem value="available">Available for Adoption</SelectItem>
-                  <SelectItem value="pending">Adoption Pending</SelectItem>
-                  <SelectItem value="adopted">Adopted</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            {formData.adoptionStatus === 'available' && (
               <div>
-                <Label htmlFor="adoptionInstructions">Adoption Instructions</Label>
-                <Textarea 
-                  id="adoptionInstructions" 
-                  name="adoptionInstructions" 
-                  value={formData.adoptionInstructions} 
-                  onChange={handleChange}
-                  placeholder="Provide instructions for potential adopters on how to inquire about this pet..."
-                  className="mt-1"
-                />
+                <Label htmlFor="adoptionStatus">Adoption Status</Label>
+                <Select 
+                  value={formData.adoptionStatus} 
+                  onValueChange={(value) => handleSelectChange('adoptionStatus', value)}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select adoption status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="not_available">Not Available for Adoption</SelectItem>
+                    <SelectItem value="available">Available for Adoption</SelectItem>
+                    <SelectItem value="pending">Adoption Pending</SelectItem>
+                    <SelectItem value="adopted">Adopted</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
-            )}
+
+              {formData.adoptionStatus === 'available' && (
+                <div>
+                  <Label htmlFor="adoptionInstructions">Adoption Instructions</Label>
+                  <Textarea 
+                    id="adoptionInstructions" 
+                    name="adoptionInstructions" 
+                    value={formData.adoptionInstructions} 
+                    onChange={handleChange}
+                    placeholder="Provide instructions for potential adopters on how to inquire about this pet..."
+                    className="mt-1"
+                  />
+                </div>
+              )}
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Privacy Settings */}
         {togglePetPublicVisibility && (

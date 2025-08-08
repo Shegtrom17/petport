@@ -133,7 +133,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       
       // Force page refresh for clean state
       setTimeout(() => {
-        window.location.href = '/';
+        window.location.href = '/app';
       }, 500);
       
     } catch (error) {
@@ -196,7 +196,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         
         // Force page refresh for clean state
         setTimeout(() => {
-          window.location.href = '/';
+          window.location.href = '/onboarding';
         }, 500);
       }
       

@@ -50,8 +50,8 @@ export default function Auth() {
       if (isSignIn) {
         console.log("Auth: Attempting sign in");
         await signIn(email, password);
-        console.log("Auth: Sign in completed, navigating to home");
-        navigate("/");
+        console.log("Auth: Sign in completed, navigating to app");
+        navigate("/app");
       } else {
         console.log("Auth: Attempting sign up");
         await signUp(email, password, fullName);
@@ -71,7 +71,7 @@ export default function Auth() {
         // Small delay to let the auth state settle, then navigate if user is logged in
         setTimeout(() => {
           // If signup was successful and user is immediately logged in, navigate
-          navigate("/");
+          navigate("/onboarding");
         }, 1000);
       }
     } catch (error) {

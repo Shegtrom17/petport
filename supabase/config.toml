@@ -63,3 +63,6 @@ port = 54328
 
 [functions.generate-pet-pdf]
 verify_jwt = true
+
+[functions.transfer-pet]
+verify_jwt = true

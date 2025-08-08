@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
@@ -18,6 +18,9 @@ import { useAuth } from "@/context/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { shareProfileOptimized } from "@/services/pdfService";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+
 
 interface PetProfileContentProps {
   petData: any;
@@ -65,6 +68,23 @@ export const PetProfileContent = ({
   const { toast } = useToast();
   const { user } = useAuth();
   const navigate = useNavigate();
+
+  // Transfer dialog state
+  const [transferOpen, setTransferOpen] = useState(false);
+  const [transferEmail, setTransferEmail] = useState("");
+  const [orgs, setOrgs] = useState<Array<{ id: string; name: string }>>([]);
+  const [selectedOrg, setSelectedOrg] = useState<string>("");
+  const [transferLoading, setTransferLoading] = useState(false);
+  const [transferLink, setTransferLink] = useState<string>("");
+
+  useEffect(() => {
+    const fetchOrgs = async () => {
+      if (!transferOpen) return;
+      const { data, error } = await supabase.from("organizations").select("id, name");
+      if (!error && data) setOrgs(data as any);
+    };
+    fetchOrgs();
+  }, [transferOpen]);
   
   // Safety check for missing data
   if (!petData) {
@@ -726,14 +746,82 @@ export const PetProfileContent = ({
                     </div>
                   </DialogContent>
                 </Dialog>
+
+                {isOwner && (
+                  <Dialog open={transferOpen} onOpenChange={setTransferOpen}>
+                    <DialogTrigger asChild>
+                      <div
+                        className="w-full cursor-pointer flex items-center justify-center text-navy-900 hover:text-gold-600 hover:scale-110 transition-all duration-200 py-2"
+                        role="button"
+                        tabIndex={0}
+                        aria-label="Transfer to adopter"
+                      >
+                        🔁 Transfer to Adopter
+                      </div>
+                    </DialogTrigger>
+                    <DialogContent className="max-w-sm w-[95vw] p-4">
+                      <div className="space-y-3">
+                        <h3 className="text-lg font-semibold text-center">Transfer {enhancedPetData?.name}</h3>
+                        <div className="space-y-2">
+                          <label className="text-sm font-medium">Adopter Email</label>
+                          <Input type="email" placeholder="name@example.com" value={transferEmail} onChange={(e) => setTransferEmail(e.target.value)} />
+                        </div>
+                        <div className="space-y-2">
+                          <label className="text-sm font-medium">Organization</label>
+                          <Select value={selectedOrg} onValueChange={setSelectedOrg}>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select organization" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {orgs.map((o) => (
+                                <SelectItem key={o.id} value={o.id}>{o.name}</SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <Button
+                          disabled={transferLoading || !transferEmail || !selectedOrg}
+                          onClick={async () => {
+                            try {
+                              setTransferLoading(true);
+                              const { data, error } = await supabase.functions.invoke("transfer-pet", {
+                                body: { action: "create", pet_id: enhancedPetData.id, to_email: transferEmail, organization_id: selectedOrg },
+                              });
+                              setTransferLoading(false);
+                              if (error || !data?.token) {
+                                throw new Error(error?.message || "Failed to create transfer");
+                              }
+                              const link = `${window.location.origin}/transfer/${data.token}`;
+                              setTransferLink(link);
+                              await navigator.clipboard.writeText(link);
+                              toast({ title: "Transfer link copied", description: "Send this link to the adopter to complete the transfer." });
+                            } catch (e: any) {
+                              setTransferLoading(false);
+                              toast({ title: "Unable to create transfer", description: e?.message || "Try again.", variant: "destructive" });
+                            }
+                          }}
+                          className="w-full"
+                        >
+                          {transferLoading ? "Creating…" : "Create Transfer Link"}
+                        </Button>
+                        {transferLink && (
+                          <div className="text-xs text-muted-foreground text-center p-2 bg-muted rounded break-all">
+                            {transferLink}
+                          </div>
+                        )}
+                        <p className="text-xs text-muted-foreground text-center">
+                          The adopter must sign in with the email above to accept.
+                        </p>
+                      </div>
+                    </DialogContent>
+                  </Dialog>
+                )}
               </div>
-              <div className="space-y-2">
                 {!enhancedPetData?.is_public && (
                   <PrivacyHint isPublic={enhancedPetData?.is_public || false} feature="profile sharing" variant="inline" />
                 )}
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
 
           {/* 2. PASSPORT DOCUMENTS - Most important action */}
           <Card className="bg-[#f8f8f8] shadow-md">

@@ -21,6 +21,7 @@ interface CareInstructionsSectionProps {
     secondEmergencyContact?: string;
     vetContact?: string;
     petCaretaker?: string;
+    is_public?: boolean;
   };
 }
 
@@ -416,7 +417,7 @@ export const CareInstructionsSection = ({ petData }: CareInstructionsSectionProp
                       <p className="text-sm text-navy-600 mb-3">Share detailed daily care info with pet sitters and caregivers</p>
                       <Button
                         onClick={handleShareCareLink}
-                        disabled={isSharing}
+                        disabled={isSharing || !petData.is_public}
                         variant="outline"
                         className="w-full border-navy-900 text-navy-900 hover:bg-navy-50"
                       >
@@ -427,7 +428,21 @@ export const CareInstructionsSection = ({ petData }: CareInstructionsSectionProp
                         )}
                         Get Shareable Link
                       </Button>
+                      {!petData.is_public && (
+                        <p className="text-xs text-red-700 mt-2">Make your pet profile public to enable sharing.</p>
+                      )}
                     </div>
+
+                    {/* Social sharing options */}
+                    {petData.is_public ? (
+                      <SocialShareButtons 
+                        petName={petData.name} 
+                        petId={petData.id} 
+                        context="care" 
+                        shareUrlOverride={generateCarePublicUrl()} 
+                        defaultOpenOptions 
+                      />
+                    ) : null}
 
                     {/* Care PDF */}
                     {carePdfBlob && careQrCodeUrl && (

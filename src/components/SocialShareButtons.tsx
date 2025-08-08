@@ -12,12 +12,13 @@ interface SocialShareButtonsProps {
   isMissingPet?: boolean;
   context?: 'profile' | 'care';
   shareUrlOverride?: string;
+  defaultOpenOptions?: boolean;
 }
 
-export const SocialShareButtons = ({ petName, petId, isMissingPet = false, context = 'profile', shareUrlOverride }: SocialShareButtonsProps) => {
+export const SocialShareButtons = ({ petName, petId, isMissingPet = false, context = 'profile', shareUrlOverride, defaultOpenOptions = false }: SocialShareButtonsProps) => {
   const [isSharing, setIsSharing] = useState(false);
   const [copied, setCopied] = useState(false);
-  const [showOptions, setShowOptions] = useState(false);
+  const [showOptions, setShowOptions] = useState(defaultOpenOptions);
   const { toast } = useToast();
   
 // Add cache-busting parameter to ensure fresh loads

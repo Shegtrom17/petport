@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Share2, Facebook, Copy, Check, Smartphone } from "lucide-react";
+import { Share2, Facebook, Copy, Check, Smartphone, MessageCircle, Mail } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { shareProfileOptimized } from "@/services/pdfService";
 
@@ -93,6 +93,31 @@ export const SocialShareButtons = ({ petName, petId, isMissingPet = false }: Soc
     window.open(xUrl, '_blank', 'width=600,height=400');
   };
 
+  const handleSMSShare = () => {
+    const smsBody = `${shareText} ${shareUrl}`;
+    const smsUrl = `sms:?&body=${encodeURIComponent(smsBody)}`;
+    window.location.href = smsUrl;
+  };
+
+  const handleEmailShare = () => {
+    const subject = isMissingPet ? `MISSING PET: ${petName}` : `${petName}'s PetPort Profile`;
+    const body = `${shareText}\n\n${shareUrl}`;
+    const mailtoUrl = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    window.location.href = mailtoUrl;
+  };
+
+  const handleMessengerShare = () => {
+    const messengerUrl = `fb-messenger://share?link=${encodeURIComponent(shareUrl)}`;
+    // Attempt to open Messenger app; if it doesn't open, suggest Facebook share as fallback
+    window.location.href = messengerUrl;
+    setTimeout(() => {
+      toast({
+        title: "Messenger share",
+        description: "If Messenger didn’t open, use Facebook share instead.",
+      });
+    }, 800);
+  };
+
   return (
     <Card className={`${isMissingPet ? 'border-2 border-red-500 bg-red-50' : 'border-2 border-gold-500/30 bg-[#f8f8f8]'} shadow-lg`}>
       <CardHeader className="pb-3">
@@ -161,6 +186,26 @@ export const SocialShareButtons = ({ petName, petId, isMissingPet = false }: Soc
                 </Button>
                 
                 <Button
+                  onClick={handleSMSShare}
+                  variant="outline"
+                  size="sm"
+                  className={`w-full ${isMissingPet ? 'border-red-600 text-red-700 hover:bg-red-50' : 'border-primary text-primary hover:bg-primary/5'}`}
+                >
+                  <MessageCircle className="w-4 h-4 mr-1" />
+                  Text/SMS
+                </Button>
+                
+                <Button
+                  onClick={handleEmailShare}
+                  variant="outline"
+                  size="sm"
+                  className={`w-full ${isMissingPet ? 'border-red-600 text-red-700 hover:bg-red-50' : 'border-primary text-primary hover:bg-primary/5'}`}
+                >
+                  <Mail className="w-4 h-4 mr-1" />
+                  Email
+                </Button>
+                
+                <Button
                   onClick={handleFacebookShare}
                   variant="outline"
                   size="sm"
@@ -168,6 +213,16 @@ export const SocialShareButtons = ({ petName, petId, isMissingPet = false }: Soc
                 >
                   <Facebook className="w-4 h-4 mr-1" />
                   Facebook
+                </Button>
+                
+                <Button
+                  onClick={handleMessengerShare}
+                  variant="outline"
+                  size="sm"
+                  className={`w-full ${isMissingPet ? 'border-red-600 text-red-700 hover:bg-red-50' : 'border-primary text-primary hover:bg-primary/5'}`}
+                >
+                  <MessageCircle className="w-4 h-4 mr-1" />
+                  Messenger
                 </Button>
                 
                 <Button

@@ -221,29 +221,25 @@ export interface ShareResult {
 }
 
 export async function shareProfile(url: string, title: string, description: string = ''): Promise<ShareResult> {
-  // Check if native sharing is available (mobile PWA)
-  if (navigator.share && navigator.canShare && navigator.canShare({ title, text: description, url })) {
+  // Try native share when available (more permissive - some browsers return false for canShare)
+  if (navigator.share) {
     try {
       await navigator.share({
-        title: title,
+        title,
         text: description,
-        url: url,
+        url,
       });
       console.log('Content shared successfully via native share');
       return { success: true, shared: true, message: 'Shared successfully' };
     } catch (error: any) {
       console.error('Native sharing failed:', error);
-      
       // If user cancelled share, don't treat as error
-      if (error.name === 'AbortError') {
+      if (error?.name === 'AbortError' || error?.message?.toLowerCase?.().includes('cancel')) {
         return { success: false, shared: false, error: 'Share cancelled' };
       }
-      
-      // Fall back to clipboard for other errors
-      return await fallbackToClipboard(url);
+      // Fall through to clipboard fallback
     }
   }
-  
   // Fallback for desktop or when native sharing not available
   return await fallbackToClipboard(url);
 }

@@ -264,19 +264,22 @@ async function fallbackToClipboard(url: string): Promise<ShareResult> {
 export async function shareProfileOptimized(
   url: string, 
   petName: string, 
-  contentType: 'profile' | 'care' | 'emergency' = 'profile',
+  contentType: 'profile' | 'care' | 'emergency' | 'credentials' = 'profile',
   isMissingPet: boolean = false
 ): Promise<ShareResult> {
   let title: string;
   let description: string;
   
-  // Optimize content for different sharing contexts
   switch (contentType) {
     case 'care':
       title = `${petName}'s Care Instructions`;
       description = isMissingPet 
         ? `🚨 MISSING: ${petName} - Care instructions for safe return`
         : `Care instructions for ${petName} - feeding, medication, emergency contacts`;
+      break;
+    case 'credentials':
+      title = `${petName}'s Credentials`;
+      description = `Professional credentials for ${petName}: certifications, training and badges`;
       break;
     case 'emergency':
       title = `${petName}'s Emergency Info`;
@@ -288,6 +291,5 @@ export async function shareProfileOptimized(
         ? `Help bring ${petName} home! Complete profile with photos & contact info`
         : `Meet ${petName}! View their complete profile, photos, and information`;
   }
-  
   return await shareProfile(url, title, description);
 }

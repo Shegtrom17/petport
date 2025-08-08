@@ -22,6 +22,7 @@ import PublicMissingPet from "./pages/PublicMissingPet";
 import NotFound from "./pages/NotFound";
 import { TestModeRibbon } from "@/components/TestModeRibbon";
 import TransferAccept from "./pages/TransferAccept";
+import PublicCredentials from "./pages/PublicCredentials";
 
 const queryClient = new QueryClient();
 
@@ -77,6 +78,7 @@ const App = () => {
                 } />
                 <Route path="/profile/:petId" element={<PublicProfile />} />
                 <Route path="/care/:petId" element={<PublicCareInstructions />} />
+                <Route path="/credentials/:petId" element={<PublicCredentials />} />
                 <Route path="/missing-pet/:petId" element={<PublicMissingPet />} />
                 <Route path="/transfer/:token" element={<TransferAccept />} />
                 <Route path="*" element={<NotFound />} />

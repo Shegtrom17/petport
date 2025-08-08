@@ -272,6 +272,14 @@ export const PetResumeSection = ({ petData, onUpdate }: PetResumeSectionProps) =
         </CardContent>
       </Card>
 
+      {/* Share Credentials */}
+      <SocialShareButtons 
+        petName={petData.name}
+        petId={petData.id}
+        context="credentials"
+        shareUrlOverride={`${window.location.origin}/credentials/${petData.id}`}
+      />
+
       {/* Edit Modal */}
       <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
         <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">

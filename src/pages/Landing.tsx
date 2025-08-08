@@ -64,7 +64,7 @@ export default function Landing() {
             <li><strong>Organization‑branded profiles & templates</strong> for consistent, professional listings.</li>
             <li><strong>Adoption workflows</strong> — track status, add notes, and publish shareable adoption pages/QR codes.</li>
             <li><strong>Team access & roles</strong> with member permissions for volunteers and staff.</li>
-            <li><strong>One‑Tap Account Transfer to Adopter</strong> — move the entire pet account (records, documents, care instructions) directly to the new owner. Requires the adopter to create a free PetPort account.</li>
+            <li><strong>One‑Tap Account Transfer to Adopter</strong> — move the entire pet account (records, documents, care instructions) directly to the new owner. Requires the adopter to create a PetPort account.</li>
             <li><strong>Digitized records & care instructions</strong> — medical, behavior, meds, routines all organized and ready for hand‑off.</li>
           </ul>
             <div className="mt-4">

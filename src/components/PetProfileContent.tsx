@@ -778,6 +778,9 @@ export const PetProfileContent = ({
                               ))}
                             </SelectContent>
                           </Select>
+                          <p className="text-xs text-muted-foreground">
+                            Independent fosters: leave this blank — transfers work the same. If you’re transferring on behalf of a rescue, pick it here.
+                          </p>
                         </div>
                         <Button
                           disabled={transferLoading || !transferEmail}

@@ -405,8 +405,11 @@ const handleSubmit = async (e: React.FormEvent) => {
             {featureFlags.testMode && !isOrgUser && (
               <p className="text-xs text-muted-foreground mb-2">Visible due to Test Mode; changes may be restricted by server policies.</p>
             )}
-            <p className="text-sm text-gray-600 mb-4">
+            <p className="text-sm text-gray-600 mb-1">
               Complete this section if this pet is managed by a rescue organization, shelter, or foster program.
+            </p>
+            <p className="text-xs text-muted-foreground mb-4">
+              Foster caregivers: it’s okay to leave this blank — you can still transfer to adopters without an organization.
             </p>
             
             <div className="space-y-4">

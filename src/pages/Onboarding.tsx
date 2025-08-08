@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { featureFlags } from "@/config/featureFlags";
-
+import { MetaTags } from "@/components/MetaTags";
 export default function Onboarding() {
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -55,9 +55,13 @@ export default function Onboarding() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 flex items-center justify-center p-4">
+      <MetaTags title="Onboarding | PetPort" description="Choose Individual or Organization. Fosters can transfer to adopters without an org." url={window.location.href} />
       <Card className="w-full max-w-xl">
         <CardHeader>
           <CardTitle>Welcome! Choose your account type</CardTitle>
+          <p className="text-sm text-muted-foreground">
+            Individual = pet owners and independent fosters. Organization = rescue/shelter teams. You can transfer to adopters either way.
+          </p>
           {featureFlags.testMode && (
             <p className="text-sm text-muted-foreground">Test Mode active — you can skip this step anytime.</p>
           )}
@@ -67,11 +71,11 @@ export default function Onboarding() {
             <RadioGroup value={type} onValueChange={(v) => setType(v as any)}>
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="individual" id="ind" />
-                <Label htmlFor="ind">Individual pet owner</Label>
+                <Label htmlFor="ind">Individual (pet owner or independent foster)</Label>
               </div>
               <div className="flex items-center space-x-2 mt-2">
                 <RadioGroupItem value="organization" id="org" />
-                <Label htmlFor="org">Rescue / Organization</Label>
+                <Label htmlFor="org">Rescue / Organization team</Label>
               </div>
             </RadioGroup>
 

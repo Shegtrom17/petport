@@ -34,8 +34,8 @@
     /* Custom colors */
     --navy-900: 221 39% 11%;
     --navy-800: 221 39% 16%;
-    --gold-500: 48 96% 53%;
-    --gold-400: 48 96% 58%;
+    --gold-500: 45 86% 62%;
+    --gold-400: 45 84% 68%;
     
     /* Theme System - Passport Colors */
     --theme-primary-dark: var(--navy-900);

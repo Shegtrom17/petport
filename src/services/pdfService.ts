@@ -212,6 +212,11 @@ export function generatePublicProfileUrl(petId: string): string {
   return `${baseUrl}/profile/${petId}`;
 }
 
+// Generate a shareable public missing-pet URL
+export function generatePublicMissingUrl(petId: string): string {
+  const baseUrl = window.location.origin;
+  return `${baseUrl}/missing-pet/${petId}`;
+}
 // Enhanced mobile PWA sharing functionality
 export interface ShareResult {
   success: boolean;

@@ -1,6 +1,6 @@
 import jsPDF from 'jspdf';
 import { sanitizeText } from '@/utils/inputSanitizer';
-import { generatePublicProfileUrl, generateQRCodeUrl } from '@/services/pdfService';
+import { generatePublicMissingUrl, generateQRCodeUrl } from '@/services/pdfService';
 export interface ClientPDFGenerationResult {
   success: boolean;
   pdfBlob?: Blob;
@@ -467,18 +467,38 @@ const generateLostPetPDF = async (doc: jsPDF, pageManager: PDFPageManager, petDa
     addText(doc, pageManager, '5. Pet may be scared and not respond to name', '#000000', 11);
   });
 
-  // Compact reward section
+// Compact reward section
+pageManager.addY(4);
+addText(doc, pageManager, 'REWARD OFFERED', '#dc2626', 16);
+if (petData.reward_amount) {
+  addText(doc, pageManager, `Amount: ${safeText(petData.reward_amount)}`, '#000000', 14);
+}
+addText(doc, pageManager, 'PLEASE CONTACT IMMEDIATELY IF FOUND!', '#dc2626', 12);
+pageManager.addY(6);
+
+// QR code linking to live missing pet page
+try {
+  const publicUrl = generatePublicMissingUrl(petData.id);
+  const qrUrl = generateQRCodeUrl(publicUrl, 240);
+  const base64 = await loadImageAsBase64(qrUrl);
+  const qrSize = 48; // mm
+  const x = (210 - qrSize) / 2;
+  const y = pageManager.getCurrentY();
+  doc.addImage(base64, 'PNG', x, y, qrSize, qrSize);
+  pageManager.setY(y + qrSize + 4);
+  doc.setFontSize(8);
+  doc.setTextColor(107, 114, 128);
+  const label = 'Scan for live updates and contact info';
+  const labelWidth = doc.getTextWidth(label);
+  doc.text(label, (210 - labelWidth) / 2, pageManager.getCurrentY());
   pageManager.addY(4);
-  addText(doc, pageManager, 'REWARD OFFERED', '#dc2626', 16);
-  if (petData.reward_amount) {
-    addText(doc, pageManager, `Amount: ${safeText(petData.reward_amount)}`, '#000000', 14);
-  }
-  addText(doc, pageManager, 'PLEASE CONTACT IMMEDIATELY IF FOUND!', '#dc2626', 12);
-  pageManager.addY(4);
-  
-  // Footer
-  addText(doc, pageManager, 'Generated from PetPort Digital Pet Passport', '#6b7280', 8);
-  addText(doc, pageManager, `Generated: ${new Date().toLocaleDateString()}`, '#6b7280', 8);
+} catch (e) {
+  console.warn('QR generation failed:', e);
+}
+
+// Footer
+addText(doc, pageManager, 'Generated from PetPort Digital Pet Passport', '#6b7280', 8);
+addText(doc, pageManager, `Generated: ${new Date().toLocaleDateString()}`, '#6b7280', 8);
 };
 
 const generateGalleryPDF = async (doc: jsPDF, pageManager: PDFPageManager, petData: any): Promise<void> => {

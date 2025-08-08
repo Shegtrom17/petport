@@ -4,7 +4,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { Download, Share, Eye, AlertTriangle, FileText } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { useToast } from "@/hooks/use-toast";
-import { shareProfile } from "@/services/pdfService";
+import { shareProfile, generatePublicMissingUrl, generateQRCodeUrl } from "@/services/pdfService";
 import { generateClientPetPDF, downloadPDFBlob, viewPDFBlob } from "@/services/clientPdfService";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 
@@ -126,9 +126,48 @@ export const LostPetPDFGenerator = ({ petId, petName, isActive, petData }: LostP
     }
   };
 
-  const buttonVariant = isActive ? "destructive" : "secondary";
-  const buttonIcon = isActive ? AlertTriangle : FileText;
-  const ButtonIcon = buttonIcon;
+const handleQuickFlyer = async () => {
+  if (!user) {
+    setAuthError(true);
+    return;
+  }
+  if (!petData) {
+    toast({ title: "Error", description: "Pet data not available for flyer generation.", variant: "destructive" });
+    return;
+  }
+  setIsGenerating(true);
+  try {
+    const result = await generateClientPetPDF(petData, 'lost_pet');
+    if (result.success && result.blob) {
+      setPdfBlob(result.blob);
+      const missingUrl = generatePublicMissingUrl(petId);
+      const title = `🚨 MISSING PET ALERT - ${petName}`;
+      const text = `Help us find ${petName}! Last seen details and contacts inside.`;
+      const file = new File([result.blob], `${petName.replace(/[^a-zA-Z0-9]/g, '_')}_Missing_Pet_Flyer.pdf`, { type: 'application/pdf' });
+      const canShareFiles = typeof (navigator as any).canShare === 'function' && (navigator as any).canShare({ files: [file] });
+      if (navigator.share && canShareFiles) {
+        await (navigator as any).share({ title, text, url: missingUrl, files: [file] });
+        toast({ title: "Shared Flyer", description: "Thanks for sharing to help bring them home." });
+        return;
+      }
+      // Fallback: share link only and open options dialog
+      await shareProfile(missingUrl, title, text);
+      setShowDialog(true);
+    } else {
+      throw new Error(result.error || 'Failed to generate PDF');
+    }
+  } catch (e) {
+    console.error('Quick flyer failed:', e);
+    setShowDialog(true);
+    toast({ title: "Share Unavailable", description: "Preview opened instead. Use options to share.", variant: "default" });
+  } finally {
+    setIsGenerating(false);
+  }
+};
+
+const buttonVariant = isActive ? "destructive" : "secondary";
+const buttonIcon = isActive ? AlertTriangle : FileText;
+const ButtonIcon = buttonIcon;
 
   return (
     <>
@@ -161,6 +200,16 @@ export const LostPetPDFGenerator = ({ petId, petName, isActive, petData }: LostP
         }
       </Button>
 
+      {/* One-tap Quick Flyer (generate + share) */}
+      <Button
+        onClick={handleQuickFlyer}
+        disabled={isGenerating || !user}
+        variant="outline"
+        className="w-full mt-2"
+      >
+        <Share className="w-4 h-4 mr-2" />
+        One-tap Quick Flyer
+      </Button>
       {/* PDF Actions Dialog */}
       <Dialog open={showDialog} onOpenChange={setShowDialog}>
         <DialogContent className="sm:max-w-md">
@@ -200,6 +249,17 @@ export const LostPetPDFGenerator = ({ petId, petName, isActive, petData }: LostP
                 <Share className="w-4 h-4 mr-2" />
                 {isSharing ? 'Sharing...' : 'Share Alert'}
               </Button>
+            </div>
+
+            {/* QR Preview for quick scanning */}
+            <div className="flex flex-col items-center rounded-lg border p-4">
+              <img
+                src={generateQRCodeUrl(generatePublicMissingUrl(petId), 200)}
+                alt={`QR code for ${petName} missing pet page`}
+                className="w-40 h-40"
+                loading="lazy"
+              />
+              <p className="text-xs text-muted-foreground mt-2">Scan for live updates and contact info</p>
             </div>
 
             <div className="text-xs text-muted-foreground bg-yellow-50 p-3 rounded-lg border">

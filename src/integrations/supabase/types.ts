@@ -813,7 +813,7 @@ export type Database = {
           expires_at: string
           from_user_id: string
           id: string
-          organization_id: string
+          organization_id: string | null
           pet_id: string
           status: string
           to_email: string
@@ -827,7 +827,7 @@ export type Database = {
           expires_at?: string
           from_user_id: string
           id?: string
-          organization_id: string
+          organization_id?: string | null
           pet_id: string
           status?: string
           to_email: string
@@ -841,7 +841,7 @@ export type Database = {
           expires_at?: string
           from_user_id?: string
           id?: string
-          organization_id?: string
+          organization_id?: string | null
           pet_id?: string
           status?: string
           to_email?: string

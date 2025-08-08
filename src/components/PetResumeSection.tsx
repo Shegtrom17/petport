@@ -82,8 +82,8 @@ export const PetResumeSection = ({ petData, onUpdate }: PetResumeSectionProps) =
   const [generatedPdfBlob, setGeneratedPdfBlob] = useState<Blob | null>(null);
   const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
   const [isQRDialogOpen, setIsQRDialogOpen] = useState(false);
+  const [isShareDialogOpen, setIsShareDialogOpen] = useState(false);
   const [isSharing, setIsSharing] = useState(false);
-  
 
   const averageRating = petData.reviews?.length 
     ? petData.reviews.reduce((sum, review) => sum + review.rating, 0) / petData.reviews.length 
@@ -250,6 +250,16 @@ export const PetResumeSection = ({ petData, onUpdate }: PetResumeSectionProps) =
               </div>
               <div className="flex flex-col gap-1">
                 <div
+                  onClick={() => setIsShareDialogOpen(true)}
+                  className="flex items-center space-x-2 p-2 text-white hover:text-blue-200 hover:scale-110 transition-all cursor-pointer"
+                  role="button"
+                  tabIndex={0}
+                  aria-label="Share credentials"
+                  onKeyDown={(e) => e.key === 'Enter' && setIsShareDialogOpen(true)}
+                >
+                  <Share2 className="w-4 h-4" />
+                </div>
+                <div
                   onClick={handleQRCode}
                   className="flex items-center space-x-2 p-2 text-white hover:text-blue-200 hover:scale-110 transition-all cursor-pointer"
                   role="button"
@@ -271,14 +281,6 @@ export const PetResumeSection = ({ petData, onUpdate }: PetResumeSectionProps) =
           )}
         </CardContent>
       </Card>
-
-      {/* Share Credentials */}
-      <SocialShareButtons 
-        petName={petData.name}
-        petId={petData.id}
-        context="credentials"
-        shareUrlOverride={`${window.location.origin}/credentials/${petData.id}`}
-      />
 
       {/* Edit Modal */}
       <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
@@ -426,6 +428,43 @@ export const PetResumeSection = ({ petData, onUpdate }: PetResumeSectionProps) =
             >
               Copy Profile URL
             </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Share Credentials Dialog */}
+      <Dialog open={isShareDialogOpen} onOpenChange={setIsShareDialogOpen}>
+        <DialogContent className="max-w-md bg-[#f8f8f8]">
+          <DialogHeader>
+            <DialogTitle className="font-bold text-navy-900 border-b-2 border-gold-500 pb-2">
+              🔗 Share {petData.name}'s Credentials
+            </DialogTitle>
+          </DialogHeader>
+
+          <div className="space-y-4">
+            <SocialShareButtons 
+              petName={petData.name}
+              petId={petData.id}
+              context="credentials"
+              defaultOpenOptions={true}
+              shareUrlOverride={`${window.location.origin}/credentials/${petData.id}`}
+            />
+
+            <div className="space-y-3 text-center">
+              <p className="text-sm text-navy-600">Or scan to open credentials</p>
+              <div className="flex justify-center p-4 bg-white rounded-lg border-2 border-gold-500/30">
+                <img 
+                  src={generateQRCodeUrl(`${window.location.origin}/credentials/${petData.id}`, 200)}
+                  alt={`QR Code for ${petData.name}'s credentials`}
+                  className="w-48 h-48"
+                />
+              </div>
+              <div className="bg-white p-3 rounded border border-gray-200">
+                <p className="text-xs text-gray-600 break-all">
+                  {`${window.location.origin}/credentials/${petData.id}`}
+                </p>
+              </div>
+            </div>
           </div>
         </DialogContent>
       </Dialog>

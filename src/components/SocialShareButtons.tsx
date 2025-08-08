@@ -10,7 +10,7 @@ import { shareProfileOptimized } from "@/services/pdfService";
   petName: string;
   petId: string;
   isMissingPet?: boolean;
-  context?: 'profile' | 'care' | 'credentials';
+  context?: 'profile' | 'care' | 'credentials' | 'reviews';
   shareUrlOverride?: string;
   defaultOpenOptions?: boolean;
 }
@@ -24,8 +24,15 @@ export const SocialShareButtons = ({ petName, petId, isMissingPet = false, conte
 // Add cache-busting parameter to ensure fresh loads
 const isCare = context === 'care';
 const isCredentials = context === 'credentials';
+const isReviews = context === 'reviews';
 const cacheBuster = `v=${Date.now()}`;
-const path = isCare ? `care/${petId}` : isCredentials ? `credentials/${petId}` : `profile/${petId}`;
+const path = isCare 
+  ? `care/${petId}` 
+  : isCredentials 
+    ? `credentials/${petId}` 
+    : isReviews 
+      ? `reviews/${petId}`
+      : `profile/${petId}`;
 const shareUrl = shareUrlOverride ?? `${window.location.origin}/${path}?${cacheBuster}`;
 const shareText = isMissingPet 
   ? `🚨 MISSING PET ALERT 🚨 Help us bring ${petName} home!`
@@ -33,18 +40,20 @@ const shareText = isMissingPet
       ? `View ${petName}'s live Care Instructions on PetPort.` 
       : (isCredentials 
           ? `View ${petName}'s professional credentials on PetPort.` 
-          : `Meet ${petName}! Check out their PetPort profile.`));
+          : (isReviews
+              ? `Read ${petName}'s reviews & references on PetPort.`
+              : `Meet ${petName}! Check out their PetPort profile.`)));
 
   // Prioritize native mobile sharing
   const handleNativeShare = async () => {
     setIsSharing(true);
     try {
-const result = await shareProfileOptimized(shareUrl, petName, isCare ? 'care' : (isCredentials ? 'credentials' : 'profile'), isMissingPet);
+const result = await shareProfileOptimized(shareUrl, petName, isCare ? 'care' : (isCredentials ? 'credentials' : (isReviews ? 'reviews' : 'profile')), isMissingPet);
       if (result.success) {
         if (result.shared) {
           toast({
-            title: isCare ? "Care Link Shared! 📱" : (isCredentials ? "Credentials Shared! 📱" : "Profile Shared! 📱"),
-            description: isCare ? `${petName}'s care instructions link shared successfully.` : (isCredentials ? `${petName}'s credentials link shared successfully.` : `${petName}'s profile has been shared successfully.`),
+            title: isCare ? "Care Link Shared! 📱" : (isCredentials ? "Credentials Shared! 📱" : (isReviews ? "Reviews Shared! 📱" : "Profile Shared! 📱")),
+            description: isCare ? `${petName}'s care instructions link shared successfully.` : (isCredentials ? `${petName}'s credentials link shared successfully.` : (isReviews ? `${petName}'s reviews link shared successfully.` : `${petName}'s profile has been shared successfully.`)),
           });
         } else {
           setCopied(true);
@@ -133,7 +142,7 @@ title: "Link Copied! 📋",
       <CardHeader className="pb-3">
         <CardTitle className={`flex items-center space-x-2 text-lg font-semibold ${isMissingPet ? 'text-red-800' : 'text-navy-900'} border-b-2 ${isMissingPet ? 'border-red-500' : 'border-gold-500'} pb-2`}>
           <Share2 className="w-5 h-5" />
-          <span>{isMissingPet ? `Help Find ${petName}!` : (isCare ? `Share ${petName}'s Care Instructions` : (isCredentials ? `Share ${petName}'s Credentials` : `Share ${petName}'s Profile`))}</span>
+          <span>{isMissingPet ? `Help Find ${petName}!` : (isCare ? `Share ${petName}'s Care Instructions` : (isCredentials ? `Share ${petName}'s Credentials` : (isReviews ? `Share ${petName}'s Reviews` : `Share ${petName}'s Profile`)))}</span>
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -160,7 +169,7 @@ title: "Link Copied! 📋",
               }`}
             >
                 <Share2 className="w-5 h-5 mr-2" />
-                {isMissingPet ? `Share ${petName}'s Missing Alert` : (isCare ? `Share Care Instructions` : (isCredentials ? `Share Credentials` : `Share ${petName}'s Profile`))}
+                {isMissingPet ? `Share ${petName}'s Missing Alert` : (isCare ? `Share Care Instructions` : (isCredentials ? `Share Credentials` : (isReviews ? `Share Reviews` : `Share ${petName}'s Profile`)))}
               </Button>
           ) : (
             <>

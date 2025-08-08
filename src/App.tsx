@@ -23,6 +23,8 @@ import NotFound from "./pages/NotFound";
 import { TestModeRibbon } from "@/components/TestModeRibbon";
 import TransferAccept from "./pages/TransferAccept";
 import PublicCredentials from "./pages/PublicCredentials";
+import PublicReviews from "./pages/PublicReviews";
+import PublicCredentials from "./pages/PublicCredentials";
 
 const queryClient = new QueryClient();
 

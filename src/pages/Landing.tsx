@@ -45,10 +45,13 @@ export default function Landing() {
           <article className="bg-white rounded-xl shadow-sm p-6">
             <h2 className="text-2xl font-semibold text-navy-900">For Pet Owners</h2>
             <ul className="mt-3 list-disc pl-5 text-navy-700 space-y-1">
-              <li>Quick Emergency PDF and Complete Profile PDF</li>
-              <li>Care instructions and medical alerts</li>
-              <li>Photo gallery and documents vault</li>
-              <li>Share public profile securely</li>
+              <li><strong>One‑Tap Missing Pet Flyer</strong> with photos, last-seen details, and a shareable QR code.</li>
+              <li><strong>Digital Pet File</strong> for vaccines, health records, medications, insurance, and adoption/certification—snap a photo and upload.</li>
+              <li><strong>Care & Handling</strong> — routines, diet, meds, allergies, and behaviors so any caregiver has precise instructions.</li>
+              <li><strong>Pet Credentials</strong> — resume, referrals, and achievements for hotels, groomers, and sitters.</li>
+              <li><strong>Travel Map</strong> — drop pins to track trips and attach proof for pet‑friendly stays.</li>
+              <li><strong>Reviews & Hospitality</strong> — collect, store, and share vet or host reviews for references.</li>
+              <li><strong>Easy uploads • Cloud‑secure • Everything in one place</strong> — no more lost papers.</li>
             </ul>
             <div className="mt-4">
               <Link to="/auth" className="underline text-navy-900">Create your free profile →</Link>

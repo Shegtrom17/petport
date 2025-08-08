@@ -11,7 +11,7 @@ import { Star, Plus, Share2, Mail, MapPin, Calendar, User, Edit, Send, X } from 
 import { ReviewsEditForm } from "@/components/ReviewsEditForm";
 import { useToast } from "@/hooks/use-toast";
 import { PrivacyHint } from "@/components/PrivacyHint";
-import { generatePublicProfileUrl, shareProfileOptimized } from "@/services/pdfService";
+import { SocialShareButtons } from "@/components/SocialShareButtons";
 
 interface Review {
   id?: string;
@@ -37,6 +37,7 @@ interface ReviewsSectionProps {
 export const ReviewsSection = ({ petData, onUpdate }: ReviewsSectionProps) => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isRequestModalOpen, setIsRequestModalOpen] = useState(false);
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const [requestForm, setRequestForm] = useState({
     name: '',
     email: '',
@@ -95,8 +96,7 @@ export const ReviewsSection = ({ petData, onUpdate }: ReviewsSectionProps) => {
     setIsRequestModalOpen(false);
   };
 
-  const handleShareReviews = async () => {
-    // Check if profile is public
+  const openShareDialog = () => {
     if (!petData.is_public) {
       toast({
         title: "Profile Not Public",
@@ -105,31 +105,7 @@ export const ReviewsSection = ({ petData, onUpdate }: ReviewsSectionProps) => {
       });
       return;
     }
-
-    try {
-      const publicUrl = generatePublicProfileUrl(petData.id);
-      const result = await shareProfileOptimized(publicUrl, petData.name, 'profile');
-      
-      if (result.success) {
-        toast({
-          title: result.shared ? "Reviews Shared" : "Link Copied",
-          description: result.message || "Reviews have been shared successfully!",
-        });
-      } else {
-        toast({
-          title: "Sharing Failed",
-          description: result.error || "Unable to share reviews. Please try again.",
-          variant: "destructive",
-        });
-      }
-    } catch (error) {
-      console.error("Error sharing reviews:", error);
-      toast({
-        title: "Sharing Error",
-        description: "An unexpected error occurred while sharing.",
-        variant: "destructive",
-      });
-    }
+    setIsShareModalOpen(true);
   };
 
   const handleEditSave = () => {
@@ -173,12 +149,12 @@ export const ReviewsSection = ({ petData, onUpdate }: ReviewsSectionProps) => {
                 <span className="text-sm">Request Review</span>
               </div>
               <div
-                onClick={handleShareReviews}
+                onClick={openShareDialog}
                 className="flex items-center space-x-2 p-2 text-white hover:text-blue-200 hover:scale-110 transition-all cursor-pointer"
                 role="button"
                 tabIndex={0}
                 aria-label="Share reviews"
-                onKeyDown={(e) => e.key === 'Enter' && handleShareReviews()}
+                onKeyDown={(e) => e.key === 'Enter' && openShareDialog()}
               >
                 <Share2 className="w-4 h-4" />
                 <span className="text-sm">Share</span>
@@ -403,6 +379,22 @@ export const ReviewsSection = ({ petData, onUpdate }: ReviewsSectionProps) => {
               </Button>
             </div>
           </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Share Modal */}
+      <Dialog open={isShareModalOpen} onOpenChange={setIsShareModalOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Share Reviews & References</DialogTitle>
+          </DialogHeader>
+          <SocialShareButtons
+            petName={petData.name}
+            petId={petData.id}
+            context="reviews"
+            defaultOpenOptions={false}
+            shareUrlOverride={`${window.location.origin}/reviews/${petData.id}`}
+          />
         </DialogContent>
       </Dialog>
     </div>

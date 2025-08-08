@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
-import { AlertTriangle, Phone, Trash2, Upload, Loader2, Edit, Share2 } from "lucide-react";
+import { AlertTriangle, Phone, Trash2, Upload, Loader2, Edit, Share2, Facebook, MessageCircle, Mail } from "lucide-react";
 import { PetPDFGenerator } from "@/components/PetPDFGenerator";
 import { SupportAnimalBanner } from "@/components/SupportAnimalBanner";
 import { SocialShareButtons } from "@/components/SocialShareButtons";
@@ -17,6 +17,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/context/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
+import { shareProfileOptimized } from "@/services/pdfService";
 
 interface PetProfileContentProps {
   petData: any;
@@ -568,41 +569,44 @@ export const PetProfileContent = ({
                       
                       <Button
                         onClick={async () => {
-                          const shareUrl = `${window.location.origin}/profile/${enhancedPetData?.id}`;
-                          const shareData = {
-                            title: `${enhancedPetData?.name}'s PetPort Profile`,
-                            text: `Meet ${enhancedPetData?.name}! Check out their PetPort profile.`,
-                            url: shareUrl,
-                          };
-                          
+                          const cacheBuster = `v=${Date.now()}`;
+                          const shareUrl = `${window.location.origin}/profile/${enhancedPetData?.id}?${cacheBuster}`;
                           try {
-                            if (navigator.share && navigator.canShare && navigator.canShare(shareData)) {
-                              await navigator.share(shareData);
-                              toast({
-                                title: "Profile Shared! 📱",
-                                description: `${enhancedPetData?.name}'s profile has been shared successfully.`,
-                              });
+                            const result = await shareProfileOptimized(shareUrl, enhancedPetData?.name || 'Pet', 'profile');
+                            if (result.success) {
+                              if (result.shared) {
+                                toast({
+                                  title: "Profile Shared! 📱",
+                                  description: `${enhancedPetData?.name}'s profile has been shared successfully.`,
+                                });
+                              } else {
+                                await navigator.clipboard.writeText(shareUrl);
+                                toast({
+                                  title: "Link Copied! 📋",
+                                  description: "Profile link copied to clipboard - paste to share anywhere!",
+                                });
+                              }
                             } else {
-                              // Fallback to clipboard
-                              await navigator.clipboard.writeText(shareUrl);
-                              toast({
-                                title: "Link Copied! 📋",
-                                description: "Profile link copied to clipboard - paste to share anywhere!",
-                              });
+                              if (result.error !== 'Share cancelled') {
+                                await navigator.clipboard.writeText(shareUrl);
+                                toast({
+                                  title: "Link Copied! 📋",
+                                  description: "Profile link copied to clipboard - paste to share anywhere!",
+                                });
+                              }
                             }
                           } catch (err) {
-                            console.error('Share failed:', err);
-                            // Fallback to clipboard if share fails
+                            console.error("Share failed:", err);
                             try {
                               await navigator.clipboard.writeText(shareUrl);
                               toast({
                                 title: "Link Copied! 📋",
                                 description: "Profile link copied to clipboard - paste to share anywhere!",
                               });
-                            } catch (clipboardErr) {
+                            } catch {
                               toast({
-                                title: "Share Failed",
-                                description: "Please try copying the link manually.",
+                                title: "Unable to Share",
+                                description: "Please try again or copy the link manually.",
                                 variant: "destructive",
                               });
                             }
@@ -612,31 +616,110 @@ export const PetProfileContent = ({
                       >
                         📱 Quick Share
                       </Button>
-                      
-                      <Button
-                        onClick={async () => {
-                          const shareUrl = `${window.location.origin}/profile/${enhancedPetData?.id}`;
-                          try {
-                            await navigator.clipboard.writeText(shareUrl);
-                            toast({
-                              title: "Link Copied! 📋",
-                              description: "Profile link copied to clipboard!",
-                            });
-                          } catch (err) {
-                            console.error('Copy failed:', err);
-                            toast({
-                              title: "Copy Failed",
-                              description: "Please select and copy the link manually.",
-                              variant: "destructive",
-                            });
-                          }
-                        }}
-                        variant="outline"
-                        className="w-full"
-                      >
-                        📋 Copy Link
-                      </Button>
-                      
+
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                        <Button
+                          onClick={async () => {
+                            const shareUrl = `${window.location.origin}/profile/${enhancedPetData?.id}?v=${Date.now()}`;
+                            try {
+                              await navigator.clipboard.writeText(shareUrl);
+                              toast({
+                                title: "Link Copied! 📋",
+                                description: "Profile link copied - paste to share anywhere!",
+                              });
+                            } catch {
+                              toast({
+                                title: "Copy Failed",
+                                description: "Please select and copy the link manually.",
+                                variant: "destructive",
+                              });
+                            }
+                          }}
+                          variant="outline"
+                          size="sm"
+                          className="w-full"
+                        >
+                          📋 Copy
+                        </Button>
+
+                        <Button
+                          onClick={() => {
+                            const shareText = `Meet ${enhancedPetData?.name}! Check out their PetPort profile.`;
+                            const smsBody = `${shareText} ${window.location.origin}/profile/${enhancedPetData?.id}?v=${Date.now()}`;
+                            window.location.href = `sms:?&body=${encodeURIComponent(smsBody)}`;
+                          }}
+                          variant="outline"
+                          size="sm"
+                          className="w-full"
+                        >
+                          <MessageCircle className="w-4 h-4 mr-1" />
+                          Text/SMS
+                        </Button>
+
+                        <Button
+                          onClick={() => {
+                            const subject = `${enhancedPetData?.name}'s PetPort Profile`;
+                            const body = `Meet ${enhancedPetData?.name}! Check out their PetPort profile.\n\n${window.location.origin}/profile/${enhancedPetData?.id}?v=${Date.now()}`;
+                            window.location.href = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+                          }}
+                          variant="outline"
+                          size="sm"
+                          className="w-full"
+                        >
+                          <Mail className="w-4 h-4 mr-1" />
+                          Email
+                        </Button>
+
+                        <Button
+                          onClick={() => {
+                            const shareUrl = `${window.location.origin}/profile/${enhancedPetData?.id}?v=${Date.now()}`;
+                            const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`;
+                            window.open(facebookUrl, '_blank', 'width=600,height=400');
+                          }}
+                          variant="outline"
+                          size="sm"
+                          className="w-full bg-[#1877F2] hover:bg-[#166FE5] text-white border-[#1877F2]"
+                        >
+                          <Facebook className="w-4 h-4 mr-1" />
+                          Facebook
+                        </Button>
+
+                        <Button
+                          onClick={() => {
+                            const shareUrl = `${window.location.origin}/profile/${enhancedPetData?.id}?v=${Date.now()}`;
+                            const messengerUrl = `fb-messenger://share?link=${encodeURIComponent(shareUrl)}`;
+                            window.location.href = messengerUrl;
+                            setTimeout(() => {
+                              toast({
+                                title: "Messenger share",
+                                description: "If Messenger didn’t open, use Facebook share instead.",
+                              });
+                            }, 800);
+                          }}
+                          variant="outline"
+                          size="sm"
+                          className="w-full"
+                        >
+                          <MessageCircle className="w-4 h-4 mr-1" />
+                          Messenger
+                        </Button>
+
+                        <Button
+                          onClick={() => {
+                            const shareText = `Meet ${enhancedPetData?.name}! Check out their PetPort profile.`;
+                            const shareUrl = `${window.location.origin}/profile/${enhancedPetData?.id}?v=${Date.now()}`;
+                            const xUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`;
+                            window.open(xUrl, '_blank', 'width=600,height=400');
+                          }}
+                          variant="outline"
+                          size="sm"
+                          className="w-full bg-black hover:bg-gray-800 text-white border-black"
+                        >
+                          <svg className="w-4 h-4 mr-1" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                          X/Twitter
+                        </Button>
+                      </div>
+
                       <div className="text-xs text-muted-foreground text-center p-2 bg-muted rounded">
                         {`${window.location.origin}/profile/${enhancedPetData?.id}`}
                       </div>

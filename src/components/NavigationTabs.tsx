@@ -42,7 +42,7 @@ export const NavigationTabs = ({ activeTab, onTabChange, isMobile = false }: Nav
   }
 
   return (
-    <div className="hidden md:flex flex-wrap gap-2 p-4 bg-gradient-to-br from-theme-accent to-theme-accent-light backdrop-blur-sm rounded-xl border border-theme-accent/30 shadow-lg">
+    <div className="hidden md:flex flex-wrap gap-2 p-4 bg-passport-section-bg rounded-xl border border-theme-primary-dark/10 shadow-lg">
       {tabs.map((tab) => (
         <Button
           key={tab.id}

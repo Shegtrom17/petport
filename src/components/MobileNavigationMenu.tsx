@@ -27,9 +27,9 @@ export const MobileNavigationMenu = ({ activeTab, onTabChange }: MobileNavigatio
             size="icon" 
             className="md:hidden h-8 w-8 sm:h-10 sm:w-10 border transition-colors"
             style={{ 
-              backgroundColor: 'hsl(200, 15%, 82%)', 
-              borderColor: 'hsl(200, 15%, 70%)', 
-              color: 'hsl(200, 15%, 25%)' 
+              backgroundColor: 'hsl(var(--menu-button-bg))', 
+              borderColor: 'hsl(var(--menu-button-border))', 
+              color: 'hsl(var(--menu-button-text))' 
             }}
           >
             <Menu className="h-4 w-4 sm:h-5 sm:w-5" />

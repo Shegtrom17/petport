@@ -73,6 +73,11 @@
     --theme-accent: var(--gold-500);
     --theme-accent-light: var(--gold-400);
     --radius: 0.5rem;
+    
+    /* Menu button - Cool gray-blue for classic theme */
+    --menu-button-bg: 200 15% 82%;
+    --menu-button-border: 200 15% 70%;
+    --menu-button-text: 200 15% 25%;
   }
   
   /* Modern Theme Variant - Cool colors & rounded design */
@@ -86,6 +91,11 @@
     --modern-sage: 155 12% 55%;             /* Sage green */
     --modern-dusty-blue: 210 15% 58%;       /* Dusty blue */
     --modern-cool-gray: 215 16% 47%;        /* Cool gray */
+    
+    /* Menu button - Cool gray-blue for modern theme */
+    --menu-button-bg: 200 15% 82%;
+    --menu-button-border: 200 15% 70%;
+    --menu-button-text: 200 15% 25%;
     
     /* Modern border radius */
     --radius: 1rem;

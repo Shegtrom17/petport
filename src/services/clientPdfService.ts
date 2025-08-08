@@ -1,6 +1,6 @@
 import jsPDF from 'jspdf';
 import { sanitizeText } from '@/utils/inputSanitizer';
-
+import { generatePublicProfileUrl, generateQRCodeUrl } from '@/services/pdfService';
 export interface ClientPDFGenerationResult {
   success: boolean;
   pdfBlob?: Blob;

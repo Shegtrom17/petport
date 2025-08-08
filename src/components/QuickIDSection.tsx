@@ -15,7 +15,8 @@ import { useToast } from "@/hooks/use-toast";
 import { SocialShareButtons } from "@/components/SocialShareButtons";
 import { PrivacyHint } from "@/components/PrivacyHint";
 import { LostPetButton } from "@/components/LostPetButton";
-
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { generatePublicProfileUrl, generateQRCodeUrl } from "@/services/pdfService";
 interface PetData {
   name: string;
   breed: string;
@@ -527,6 +528,28 @@ export const QuickIDSection = ({ petData }: QuickIDSectionProps) => {
               lostPetData={lostPetData}
               className="w-full sm:w-auto"
             />
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button variant="outline" className="w-full sm:w-auto">
+                  <QrCode className="w-4 h-4 mr-2" />
+                  Show QR Code
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-md bg-[#f8f8f8]">
+                <DialogHeader>
+                  <DialogTitle className="font-bold text-navy-900 border-b-2 border-gold-500 pb-2">
+                    QR Code for {petData.name}
+                  </DialogTitle>
+                </DialogHeader>
+                <div className="flex justify-center p-4 bg-white rounded-lg border-2 border-gold-500/30">
+                  <img
+                    src={generateQRCodeUrl(generatePublicProfileUrl(petData.id), 200)}
+                    alt={`QR Code for ${petData.name}'s profile`}
+                    className="w-48 h-48"
+                  />
+                </div>
+              </DialogContent>
+            </Dialog>
           </div>
         </CardContent>
       </Card>

@@ -494,7 +494,7 @@ export const PetResumeSection = ({ petData, onUpdate }: PetResumeSectionProps) =
               petName={petData.name}
               petId={petData.id}
               context="reviews"
-              defaultOpenOptions={true}
+              defaultOpenOptions={false}
               shareUrlOverride={`${window.location.origin}/reviews/${petData.id}`}
             />
 

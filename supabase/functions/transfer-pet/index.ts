@@ -15,7 +15,7 @@ interface CreateRequestBody {
   action: "create";
   pet_id: string;
   to_email: string;
-  organization_id: string;
+  organization_id?: string | null;
 }
 
 interface AcceptRequestBody {
@@ -88,7 +88,7 @@ serve(async (req) => {
     if (json.action === "create") {
       const { pet_id, to_email, organization_id } = json;
 
-      if (!pet_id || !to_email || !organization_id) {
+      if (!pet_id || !to_email) {
         return new Response(JSON.stringify({ error: "Missing fields" }), {
           status: 400,
           headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -110,12 +110,15 @@ serve(async (req) => {
       if (petErr) throw petErr;
 
       const isOwner = pet?.user_id === user.id;
-      const { data: isAdminData, error: adminErr } = await admin.rpc("is_org_admin", {
-        _user_id: user.id,
-        _org_id: organization_id,
-      });
-      if (adminErr) throw adminErr;
-      const isAdmin = Boolean(isAdminData);
+      let isAdmin = false;
+      if (organization_id) {
+        const { data: isAdminData, error: adminErr } = await admin.rpc("is_org_admin", {
+          _user_id: user.id,
+          _org_id: organization_id,
+        });
+        if (adminErr) throw adminErr;
+        isAdmin = Boolean(isAdminData);
+      }
 
       if (!isOwner && !isAdmin) {
         return new Response(JSON.stringify({ error: "Not allowed" }), {
@@ -131,7 +134,7 @@ serve(async (req) => {
         .from("transfer_requests")
         .insert({
           pet_id,
-          organization_id,
+          organization_id: organization_id || null,
           from_user_id: user.id,
           to_email: to_email.toLowerCase(),
           token,

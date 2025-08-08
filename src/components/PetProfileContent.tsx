@@ -767,10 +767,10 @@ export const PetProfileContent = ({
                           <Input type="email" placeholder="name@example.com" value={transferEmail} onChange={(e) => setTransferEmail(e.target.value)} />
                         </div>
                         <div className="space-y-2">
-                          <label className="text-sm font-medium">Organization</label>
+                          <label className="text-sm font-medium">Rescue, Shelter, or Foster Program (Optional)</label>
                           <Select value={selectedOrg} onValueChange={setSelectedOrg}>
                             <SelectTrigger>
-                              <SelectValue placeholder="Select organization" />
+                              <SelectValue placeholder="Optional — select if applicable" />
                             </SelectTrigger>
                             <SelectContent>
                               {orgs.map((o) => (
@@ -780,12 +780,12 @@ export const PetProfileContent = ({
                           </Select>
                         </div>
                         <Button
-                          disabled={transferLoading || !transferEmail || !selectedOrg}
+                          disabled={transferLoading || !transferEmail}
                           onClick={async () => {
                             try {
                               setTransferLoading(true);
                               const { data, error } = await supabase.functions.invoke("transfer-pet", {
-                                body: { action: "create", pet_id: enhancedPetData.id, to_email: transferEmail, organization_id: selectedOrg },
+                                body: { action: "create", pet_id: enhancedPetData.id, to_email: transferEmail, organization_id: selectedOrg || null },
                               });
                               setTransferLoading(false);
                               if (error || !data?.token) {

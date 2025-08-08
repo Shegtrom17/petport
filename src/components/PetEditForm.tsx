@@ -401,7 +401,7 @@ const handleSubmit = async (e: React.FormEvent) => {
         {/* Organization Information Section - visible to organization members only */}
         {(isOrgUser || featureFlags.testMode) && (
           <div className="border-t pt-6">
-            <h3 className="text-lg font-serif text-navy-900 mb-4">Organization Information (Optional)</h3>
+            <h3 className="text-lg font-serif text-navy-900 mb-4">Rescue, Shelter, or Foster Program (Optional)</h3>
             {featureFlags.testMode && !isOrgUser && (
               <p className="text-xs text-muted-foreground mb-2">Visible due to Test Mode; changes may be restricted by server policies.</p>
             )}
@@ -411,7 +411,7 @@ const handleSubmit = async (e: React.FormEvent) => {
             
             <div className="space-y-4">
               <div>
-                <Label htmlFor="organizationName">Organization/Rescue Name</Label>
+                <Label htmlFor="organizationName">Rescue/Shelter/Foster Program Name</Label>
                 <Input 
                   type="text" 
                   id="organizationName" 
@@ -424,7 +424,7 @@ const handleSubmit = async (e: React.FormEvent) => {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="organizationEmail">Organization Contact Email</Label>
+                  <Label htmlFor="organizationEmail">Rescue/Shelter/Foster Email</Label>
                   <Input 
                     type="email" 
                     id="organizationEmail" 
@@ -435,7 +435,7 @@ const handleSubmit = async (e: React.FormEvent) => {
                   />
                 </div>
                 <div>
-                  <Label htmlFor="organizationPhone">Organization Phone</Label>
+                  <Label htmlFor="organizationPhone">Rescue/Shelter/Foster Phone</Label>
                   <Input 
                     type="tel" 
                     id="organizationPhone" 
@@ -448,7 +448,7 @@ const handleSubmit = async (e: React.FormEvent) => {
               </div>
 
               <div>
-                <Label htmlFor="organizationWebsite">Organization Website</Label>
+                <Label htmlFor="organizationWebsite">Rescue/Shelter/Foster Website</Label>
                 <Input 
                   type="url" 
                   id="organizationWebsite" 

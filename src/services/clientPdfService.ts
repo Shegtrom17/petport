@@ -192,6 +192,27 @@ const addSection = (doc: jsPDF, pageManager: PDFPageManager, title: string, cont
   pageManager.addY(10);
 };
 
+// Compact section with tighter spacing for lost pet flyer
+const addCompactSection = (doc: jsPDF, pageManager: PDFPageManager, title: string, content: () => void): void => {
+  pageManager.checkPageSpace(16);
+  addSubtitle(doc, pageManager, title);
+  content();
+  pageManager.addY(6);
+};
+
+// Footer renderer pinned near the bottom of the page (centered)
+const addFooterBottom = (doc: jsPDF, pageManager: PDFPageManager, lines: string[]): void => {
+  const bottomY = doc.internal.pageSize.height - 8; // 8mm from bottom edge
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(8);
+  doc.setTextColor('#6b7280');
+  lines.forEach((t, idx) => {
+    const textWidth = doc.getTextWidth(t);
+    const x = (doc.internal.pageSize.width - textWidth) / 2;
+    // Stack multiple lines upward (4mm line height)
+    doc.text(t, x, bottomY - ((lines.length - 1 - idx) * 4));
+  });
+};
 // PDF generation functions by type
 const generateEmergencyPDF = async (doc: jsPDF, pageManager: PDFPageManager, petData: any): Promise<void> => {
   const safeText = (text: string) => sanitizeText(text || '');
@@ -300,8 +321,8 @@ const generateLostPetPDF = async (doc: jsPDF, pageManager: PDFPageManager, petDa
   pageManager.setY(35);
   
   // Pet name in large red text
-  addTitle(doc, pageManager, safeText(petData.name), '#dc2626', 20);
-  pageManager.addY(10);
+addTitle(doc, pageManager, safeText(petData.name), '#dc2626', 20);
+pageManager.addY(6);
   
   // Create two columns: left for photo, right for info
   const leftColumnX = 20;
@@ -333,7 +354,7 @@ const generateLostPetPDF = async (doc: jsPDF, pageManager: PDFPageManager, petDa
   
   // Emergency contact information - compact format
   pageManager.addY(4);
-  addSection(doc, pageManager, 'EMERGENCY CONTACT', () => {
+  addCompactSection(doc, pageManager, 'EMERGENCY CONTACT', () => {
     // Try different possible property names for emergency contacts
     const primaryContact = petData.emergencyContact || petData.emergency_contact || petData.emergency_contacts?.[0];
     const secondaryContact = petData.secondEmergencyContact || petData.second_emergency_contact || petData.emergency_contacts?.[1];
@@ -356,7 +377,7 @@ const generateLostPetPDF = async (doc: jsPDF, pageManager: PDFPageManager, petDa
   // Last seen information (if available from lost pet data)
   if (petData.last_seen_location || petData.last_seen_date) {
     pageManager.addY(4);
-    addSection(doc, pageManager, 'LAST SEEN', () => {
+    addCompactSection(doc, pageManager, 'LAST SEEN', () => {
       let lastSeenText = '';
       if (petData.last_seen_location) {
         lastSeenText += `Location: ${safeText(petData.last_seen_location)}`;
@@ -377,7 +398,7 @@ const generateLostPetPDF = async (doc: jsPDF, pageManager: PDFPageManager, petDa
   // Special markings/description
   if (petData.bio || petData.distinctive_features) {
     pageManager.addY(4);
-    addSection(doc, pageManager, 'DISTINCTIVE FEATURES', () => {
+    addCompactSection(doc, pageManager, 'DISTINCTIVE FEATURES', () => {
       if (petData.distinctive_features) {
         addText(doc, pageManager, safeText(petData.distinctive_features), '#000000', 12);
       } else if (petData.bio) {
@@ -389,7 +410,7 @@ const generateLostPetPDF = async (doc: jsPDF, pageManager: PDFPageManager, petDa
   // Medical alerts
   if (petData.medicalAlert && petData.medicalConditions) {
     pageManager.addY(4);
-    addSection(doc, pageManager, 'MEDICAL ALERT', () => {
+    addCompactSection(doc, pageManager, 'MEDICAL ALERT', () => {
       addText(doc, pageManager, safeText(petData.medicalConditions), '#dc2626', 12);
       if (petData.medications && petData.medications.length > 0) {
         addText(doc, pageManager, `Medications: ${petData.medications.join(', ')}`, '#000000', 11);
@@ -453,7 +474,7 @@ const generateLostPetPDF = async (doc: jsPDF, pageManager: PDFPageManager, petDa
   
   // Combined Finder Instructions section
   pageManager.addY(4);
-  addSection(doc, pageManager, 'FINDER INSTRUCTIONS', () => {
+  addCompactSection(doc, pageManager, 'FINDER INSTRUCTIONS', () => {
     // Add custom instructions if available
     if (petData.finder_instructions) {
       addText(doc, pageManager, safeText(petData.finder_instructions), '#000000', 12);
@@ -469,10 +490,23 @@ const generateLostPetPDF = async (doc: jsPDF, pageManager: PDFPageManager, petDa
 
 // Compact reward section
 pageManager.addY(4);
-addText(doc, pageManager, 'REWARD OFFERED', '#dc2626', 16);
+// Render "REWARD OFFERED" and the amount on the same line
+const rewardLabel = 'REWARD OFFERED';
+const baseX = pageManager.getX();
+const baseY = pageManager.getCurrentY();
+doc.setFont('helvetica', 'bold');
+doc.setFontSize(16);
+doc.setTextColor('#dc2626');
+doc.text(rewardLabel, baseX, baseY);
+let lineAdvance = 8;
 if (petData.reward_amount) {
-  addText(doc, pageManager, `Amount: ${safeText(petData.reward_amount)}`, '#000000', 12);
+  const labelWidth = doc.getTextWidth(rewardLabel) + 3; // small gap
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(12);
+  doc.setTextColor('#000000');
+  doc.text(`${safeText(petData.reward_amount)}`, baseX + labelWidth, baseY);
 }
+pageManager.addY(lineAdvance);
 addText(doc, pageManager, 'PLEASE CONTACT IMMEDIATELY IF FOUND!', '#dc2626', 12);
 pageManager.addY(6);
 
@@ -496,9 +530,11 @@ try {
   console.warn('QR generation failed:', e);
 }
 
-// Footer
-addText(doc, pageManager, 'Generated from PetPort Digital Pet Passport', '#6b7280', 8);
-addText(doc, pageManager, `Generated: ${new Date().toLocaleDateString()}`, '#6b7280', 8);
+// Footer pinned to bottom of the last page
+addFooterBottom(doc, pageManager, [
+  'Generated by Petport.app',
+  `Generated: ${new Date().toLocaleDateString()}`,
+]);
 };
 
 const generateGalleryPDF = async (doc: jsPDF, pageManager: PDFPageManager, petData: any): Promise<void> => {

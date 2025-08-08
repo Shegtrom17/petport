@@ -70,16 +70,29 @@
   .theme-classic {
     --theme-primary-dark: var(--navy-900);
     --theme-primary-medium: var(--navy-800);
-    --theme-accent: 210 20% 92%;         /* Light blue-gray */
-    --theme-accent-light: 210 15% 96%;   /* Almost white */
+    --theme-accent: var(--gold-500);
+    --theme-accent-light: var(--gold-400);
+    --radius: 0.5rem;
   }
   
-  /* Modern Theme Variant */
+  /* Modern Theme Variant - Cool colors & rounded design */
   .theme-modern {
-    --theme-primary-dark: 221 39% 25%;  /* Lighter navy */
-    --theme-primary-medium: 221 39% 35%; /* Even lighter navy */
-    --theme-accent: 210 20% 92%;         /* Light blue-gray */
-    --theme-accent-light: 210 15% 96%;   /* Almost white */
+    --theme-primary-dark: 210 24% 16%;      /* Deep slate-charcoal */
+    --theme-primary-medium: 210 20% 25%;    /* Medium slate */
+    --theme-accent: 186 14% 43%;            /* Teal-gray */
+    --theme-accent-light: 186 12% 65%;      /* Light teal-gray */
+    
+    /* Modern supporting colors */
+    --modern-sage: 155 12% 55%;             /* Sage green */
+    --modern-dusty-blue: 210 15% 58%;       /* Dusty blue */
+    --modern-cool-gray: 215 16% 47%;        /* Cool gray */
+    
+    /* Modern border radius */
+    --radius: 1rem;
+    --modern-radius-sm: 0.75rem;
+    --modern-radius-md: 1rem;
+    --modern-radius-lg: 1.5rem;
+    --modern-radius-xl: 2rem;
   }
 }
 

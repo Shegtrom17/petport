@@ -91,6 +91,10 @@ export default {
 					DEFAULT: 'hsl(var(--theme-accent))',
 					light: 'hsl(var(--theme-accent-light))',
 				},
+				// Modern theme colors
+				'modern-sage': 'hsl(var(--modern-sage))',
+				'modern-dusty-blue': 'hsl(var(--modern-dusty-blue))',
+				'modern-cool-gray': 'hsl(var(--modern-cool-gray))',
 				emergency: {
 					DEFAULT: 'hsl(var(--emergency))',
 					foreground: 'hsl(var(--emergency-foreground))',
@@ -118,7 +122,12 @@ export default {
 			borderRadius: {
 				lg: 'var(--radius)',
 				md: 'calc(var(--radius) - 2px)',
-				sm: 'calc(var(--radius) - 4px)'
+				sm: 'calc(var(--radius) - 4px)',
+				// Modern theme radius
+				'modern-sm': 'var(--modern-radius-sm)',
+				'modern': 'var(--modern-radius-md)',
+				'modern-lg': 'var(--modern-radius-lg)',
+				'modern-xl': 'var(--modern-radius-xl)',
 			},
 			fontFamily: {
 				'serif': ['Playfair Display', 'Crimson Text', 'serif'],

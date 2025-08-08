@@ -13,16 +13,16 @@
   "dir": "ltr",
   "icons": [
     {
-      "src": "/lovable-uploads/bf0cb7a6-343c-4164-a156-a47a1452237f.png",
+      "src": "/lovable-uploads/bf0cb7a6-343c-4164-a156-a47a1452237f.png?v=2",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "/lovable-uploads/bf0cb7a6-343c-4164-a156-a47a1452237f.png",
+      "src": "/lovable-uploads/bf0cb7a6-343c-4164-a156-a47a1452237f.png?v=2",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any"
+      "purpose": "any maskable"
     }
   ],
   "shortcuts": [
@@ -33,7 +33,7 @@
       "url": "/add-pet",
       "icons": [
         {
-        "src": "/lovable-uploads/bf0cb7a6-343c-4164-a156-a47a1452237f.png",
+        "src": "/lovable-uploads/bf0cb7a6-343c-4164-a156-a47a1452237f.png?v=2",
         "sizes": "96x96"
         }
       ]

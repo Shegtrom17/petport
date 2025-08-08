@@ -1,15 +1,27 @@
-const CACHE_NAME = 'petport-v1';
+const CACHE_NAME = 'petport-v2';
 const urlsToCache = [
   '/',
   '/static/css/main.css',
-  '/static/js/main.js',
-  '/manifest.json'
+  '/static/js/main.js'
 ];
 
 self.addEventListener('install', (event) => {
+  self.skipWaiting();
   event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then((cache) => cache.addAll(urlsToCache))
+    caches.open(CACHE_NAME).then((cache) => cache.addAll(urlsToCache))
+  );
+});
+
+self.addEventListener('activate', (event) => {
+  event.waitUntil(
+    caches.keys().then((cacheNames) =>
+      Promise.all(
+        cacheNames.map((name) => {
+          if (name !== CACHE_NAME) return caches.delete(name);
+          return Promise.resolve(false);
+        })
+      )
+    ).then(() => self.clients.claim())
   );
 });
 

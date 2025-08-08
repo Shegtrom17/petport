@@ -20,6 +20,7 @@ import PublicProfile from "./pages/PublicProfile";
 import PublicCareInstructions from "./pages/PublicCareInstructions";
 import PublicMissingPet from "./pages/PublicMissingPet";
 import NotFound from "./pages/NotFound";
+import { TestModeRibbon } from "@/components/TestModeRibbon";
 
 const queryClient = new QueryClient();
 
@@ -42,6 +43,7 @@ const App = () => {
           <ErrorBoundary>
             <Toaster />
             <Sonner />
+            <TestModeRibbon />
             <BrowserRouter>
               <AuthProvider>
               <Routes>

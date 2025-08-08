@@ -14,6 +14,7 @@ import { Loader2 } from "lucide-react";
 import { sanitizeText, validateTextLength, containsSuspiciousContent } from "@/utils/inputSanitizer";
 import { PrivacyToggle } from "@/components/PrivacyToggle";
 import { supabase } from "@/integrations/supabase/client";
+import { featureFlags } from "@/config/featureFlags";
 
 interface PetData {
   id: string;
@@ -398,9 +399,12 @@ const handleSubmit = async (e: React.FormEvent) => {
         </div>
 
         {/* Organization Information Section - visible to organization members only */}
-        {isOrgUser && (
+        {(isOrgUser || featureFlags.testMode) && (
           <div className="border-t pt-6">
             <h3 className="text-lg font-serif text-navy-900 mb-4">Organization Information (Optional)</h3>
+            {featureFlags.testMode && !isOrgUser && (
+              <p className="text-xs text-muted-foreground mb-2">Visible due to Test Mode; changes may be restricted by server policies.</p>
+            )}
             <p className="text-sm text-gray-600 mb-4">
               Complete this section if this pet is managed by a rescue organization, shelter, or foster program.
             </p>

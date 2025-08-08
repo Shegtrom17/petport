@@ -8,6 +8,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
+import { featureFlags } from "@/config/featureFlags";
 
 export default function Onboarding() {
   const { user } = useAuth();
@@ -57,6 +58,9 @@ export default function Onboarding() {
       <Card className="w-full max-w-xl">
         <CardHeader>
           <CardTitle>Welcome! Choose your account type</CardTitle>
+          {featureFlags.testMode && (
+            <p className="text-sm text-muted-foreground">Test Mode active — you can skip this step anytime.</p>
+          )}
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-6">

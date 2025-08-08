@@ -23,7 +23,10 @@ export const MobileNavigationMenu = ({ activeTab, onTabChange }: MobileNavigatio
     <div className="md:hidden">
       <Sheet open={isOpen} onOpenChange={setIsOpen}>
         <SheetTrigger asChild>
-          <Button variant="outline" size="icon" className="md:hidden h-8 w-8 sm:h-10 sm:w-10">
+          <Button 
+            size="icon" 
+            className="md:hidden h-8 w-8 sm:h-10 sm:w-10 bg-slate-50 border border-slate-300 text-slate-700 hover:bg-slate-100 hover:border-slate-400 hover:text-slate-800 transition-colors"
+          >
             <Menu className="h-4 w-4 sm:h-5 sm:w-5" />
           </Button>
         </SheetTrigger>

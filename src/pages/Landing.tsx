@@ -84,7 +84,7 @@ export default function Landing() {
       <footer className="max-w-6xl mx-auto px-4 py-10 text-sm text-navy-700">
         <div className="flex flex-col gap-2">
           <p>© {new Date().getFullYear()} PetPort. All rights reserved.</p>
-          <p>PetPort is owned and operated by Cool Change LLC (DBA "PetPort").</p>
+          <p>PetPort is owned and operated by Cool Change LLC (DBA "PetPort"), Blaine, MN.</p>
           <nav className="flex flex-wrap gap-4">
             <Link to="/privacy" className="underline text-navy-900">Privacy Policy</Link>
             <Link to="/terms" className="underline text-navy-900">Terms of Service</Link>

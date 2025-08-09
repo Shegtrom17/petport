@@ -24,6 +24,7 @@ import { usePetData } from "@/hooks/usePetData";
 import { ReportIssueModal } from "@/components/ReportIssueModal";
 import { AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useUserSettings } from "@/hooks/useUserSettings";
 
 const Index = () => {
   console.log("Index component is rendering");
@@ -32,6 +33,7 @@ const Index = () => {
   const [isInAppSharingOpen, setIsInAppSharingOpen] = useState(false);
   
   const { user } = useAuth();
+  const { settings } = useUserSettings(user?.id);
   const {
     pets,
     selectedPet,
@@ -44,6 +46,13 @@ const Index = () => {
     togglePetPublicVisibility
   } = usePetData();
 
+  const handleTabChange = (tab: string) => {
+    setActiveTab(tab);
+    if (user?.id && settings.rememberLastTab) {
+      localStorage.setItem(`pp_last_tab_${user.id}`, tab);
+    }
+  };
+
   useEffect(() => {
     const handleHashChange = () => {
       if (window.location.hash === '#share-with-members') {
@@ -53,7 +62,7 @@ const Index = () => {
     };
 
     const handleNavigateToCare = () => {
-      setActiveTab("care");
+      handleTabChange("care");
     };
 
     handleHashChange();
@@ -65,6 +74,13 @@ const Index = () => {
       window.removeEventListener('navigate-to-care', handleNavigateToCare);
     };
   }, []);
+
+  useEffect(() => {
+    if (user?.id && settings.rememberLastTab) {
+      const saved = localStorage.getItem(`pp_last_tab_${user.id}`);
+      if (saved) setActiveTab(saved);
+    }
+  }, [user?.id, settings.rememberLastTab]);
 
   // Enhanced petData with proper user_id from selectedPet or current user
   const petData = selectedPet ? {
@@ -154,7 +170,7 @@ const Index = () => {
             <PetProfileContent 
               petData={petData}
               selectedPet={selectedPet}
-              setActiveTab={setActiveTab}
+              setActiveTab={handleTabChange}
               setIsInAppSharingOpen={setIsInAppSharingOpen}
               onPhotoUpdate={handlePetUpdate}
               togglePetPublicVisibility={togglePetPublicVisibility}
@@ -223,7 +239,7 @@ const Index = () => {
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
         <PetHeader 
           activeTab={activeTab} 
-          onTabChange={setActiveTab} 
+           onTabChange={handleTabChange} 
           selectedPetId={selectedPet?.id || petData.id}
           selectedPetName={selectedPet?.name || petData.name}
           selectedPet={selectedPet || petData}
@@ -251,7 +267,7 @@ const Index = () => {
               <PetPassportCard petData={petData} onUpdate={handlePetUpdate} />
 
               <div className="mb-4 sm:mb-6">
-                <NavigationTabs activeTab={activeTab} onTabChange={setActiveTab} />
+                <NavigationTabs activeTab={activeTab} onTabChange={handleTabChange} />
               </div>
 
               <div className="space-y-4 sm:space-y-6">
@@ -269,7 +285,7 @@ const Index = () => {
                         <p className="text-sm text-red-600">to see step-by-step instructions</p>
                       </div>
                       <button 
-                        onClick={() => setActiveTab("lostpet")}
+                        onClick={() => handleTabChange("lostpet")}
                         className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors"
                       >
                         Go to Lost Pet

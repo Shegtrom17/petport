@@ -1,14 +1,19 @@
 import { NavLink, useLocation } from "react-router-dom";
-import { Home, PlusCircle, Search, User, Map } from "lucide-react";
-
-const tabs = [
-  { path: "/app", icon: Home, label: "Home" },
-  { path: "/add-pet", icon: PlusCircle, label: "Add Pet" },
-  { path: "/profile", icon: User, label: "Profile" },
-];
+import { Home, PlusCircle, User } from "lucide-react";
+import { useAuth } from "@/context/AuthContext";
+import { useUserSettings } from "@/hooks/useUserSettings";
 
 export const BottomTabNavigation = () => {
   const location = useLocation();
+  const { user } = useAuth();
+  const { settings } = useUserSettings(user?.id);
+
+  const homePath = settings.homeDestination === 'profile' ? '/profile' : '/app';
+  const tabs = [
+    { path: homePath, icon: Home, label: 'Home' },
+    { path: '/add-pet', icon: PlusCircle, label: 'Add Pet' },
+    { path: '/profile', icon: User, label: 'Profile' },
+  ];
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 bg-background border-t border-border safe-area-bottom">

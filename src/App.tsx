@@ -43,53 +43,53 @@ const App = () => {
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <ThemeProvider>
-          <ErrorBoundary>
-            <Toaster />
-            <Sonner />
-            <TestModeRibbon />
-            <BrowserRouter>
-              <AuthProvider>
-              <Routes>
-                <Route path="/auth" element={<Auth />} />
-                <Route path="/" element={<Landing />} />
-                <Route path="/app" element={
-                  <ProtectedRoute>
-                    <Index />
-                  </ProtectedRoute>
-                } />
-                <Route path="/add-pet" element={
-                  <ProtectedRoute>
-                    <AddPet />
-                  </ProtectedRoute>
-                } />
-                <Route path="/profile" element={
-                  <ProtectedRoute>
-                    <Profile />
-                  </ProtectedRoute>
-                } />
-                <Route path="/lost-pet/:petId?" element={
-                  <ProtectedRoute>
-                    <LostPet />
-                  </ProtectedRoute>
-                } />
-                <Route path="/onboarding" element={
-                  <ProtectedRoute>
-                    <Onboarding />
-                  </ProtectedRoute>
-                } />
-                <Route path="/profile/:petId" element={<PublicProfile />} />
-                <Route path="/care/:petId" element={<PublicCareInstructions />} />
-                <Route path="/credentials/:petId" element={<PublicCredentials />} />
-                <Route path="/reviews/:petId" element={<PublicReviews />} />
-                <Route path="/missing-pet/:petId" element={<PublicMissingPet />} />
-                <Route path="/transfer/:token" element={<TransferAccept />} />
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-            </AuthProvider>
-          </BrowserRouter>
-        </ErrorBoundary>
-      </ThemeProvider>
-    </TooltipProvider>
+          <AuthProvider>
+            <ErrorBoundary>
+              <Toaster />
+              <Sonner />
+              <TestModeRibbon />
+              <BrowserRouter>
+                <Routes>
+                  <Route path="/auth" element={<Auth />} />
+                  <Route path="/" element={<Landing />} />
+                  <Route path="/app" element={
+                    <ProtectedRoute>
+                      <Index />
+                    </ProtectedRoute>
+                  } />
+                  <Route path="/add-pet" element={
+                    <ProtectedRoute>
+                      <AddPet />
+                    </ProtectedRoute>
+                  } />
+                  <Route path="/profile" element={
+                    <ProtectedRoute>
+                      <Profile />
+                    </ProtectedRoute>
+                  } />
+                  <Route path="/lost-pet/:petId?" element={
+                    <ProtectedRoute>
+                      <LostPet />
+                    </ProtectedRoute>
+                  } />
+                  <Route path="/onboarding" element={
+                    <ProtectedRoute>
+                      <Onboarding />
+                    </ProtectedRoute>
+                  } />
+                  <Route path="/profile/:petId" element={<PublicProfile />} />
+                  <Route path="/care/:petId" element={<PublicCareInstructions />} />
+                  <Route path="/credentials/:petId" element={<PublicCredentials />} />
+                  <Route path="/reviews/:petId" element={<PublicReviews />} />
+                  <Route path="/missing-pet/:petId" element={<PublicMissingPet />} />
+                  <Route path="/transfer/:token" element={<TransferAccept />} />
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+              </BrowserRouter>
+            </ErrorBoundary>
+          </AuthProvider>
+        </ThemeProvider>
+      </TooltipProvider>
   </QueryClientProvider>
   );
 };

@@ -2237,6 +2237,7 @@ serve(async (req) => {
           font: regularFont,
           color: rgb(0.83, 0.69, 0.22), // Gold
         })
+      }
     }
 
     // Save the PDF as bytes

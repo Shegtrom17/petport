@@ -24,6 +24,8 @@ import { TestModeRibbon } from "@/components/TestModeRibbon";
 import TransferAccept from "./pages/TransferAccept";
 import PublicCredentials from "./pages/PublicCredentials";
 import PublicReviews from "./pages/PublicReviews";
+import Privacy from "./pages/Privacy";
+import Terms from "./pages/Terms";
 
 const queryClient = new QueryClient();
 
@@ -83,6 +85,8 @@ const App = () => {
                   <Route path="/reviews/:petId" element={<PublicReviews />} />
                   <Route path="/missing-pet/:petId" element={<PublicMissingPet />} />
                   <Route path="/transfer/:token" element={<TransferAccept />} />
+                  <Route path="/privacy" element={<Privacy />} />
+                  <Route path="/terms" element={<Terms />} />
                   <Route path="*" element={<NotFound />} />
                 </Routes>
               </BrowserRouter>

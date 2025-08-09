@@ -30,14 +30,29 @@ self.addEventListener('activate', (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
+  const req = event.request;
+  const url = req.url;
+  const isSupabaseFunction = url.includes('supabase.co/functions');
+  const isOptions = req.method === 'OPTIONS';
+  const isNonGet = req.method !== 'GET';
+
+  // Bypass SW for preflight/edge functions/non-GET to avoid CORS/preflight issues
+  if (isOptions || isSupabaseFunction || isNonGet) {
+    event.respondWith(fetch(req));
+    return;
+  }
+
   event.respondWith(
-    fetch(event.request)
+    fetch(req)
       .then((response) => {
         const respClone = response.clone();
-        caches.open(CACHE_NAME).then((cache) => cache.put(event.request, respClone)).catch(() => {});
+        caches.open(CACHE_NAME).then((cache) => cache.put(req, respClone)).catch(() => {});
         return response;
       })
-      .catch(() => caches.match(event.request))
+      .catch(async () => {
+        const cached = await caches.match(req);
+        return cached || new Response('', { status: 504 });
+      })
   );
 });
 

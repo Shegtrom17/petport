@@ -4,7 +4,7 @@ import { AppHeader } from "@/components/AppHeader";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { PWAInstallCard } from "@/components/PWAInstallCard";
-import { SubscriptionCard } from "@/components/SubscriptionCard";
+
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from "@/components/ui/select";
@@ -15,7 +15,7 @@ import { User, LogOut } from "lucide-react";
 export default function Profile() {
   const { user, signOut } = useAuth();
   const { settings, updateSettings } = useUserSettings(user?.id);
-  const { checkSubscription, openCustomerPortal, isLoading: isSubLoading } = useSubscription();
+  const { createCheckout, isLoading: isSubLoading } = useSubscription();
 
   const handleLogout = async () => {
     try {
@@ -32,20 +32,23 @@ export default function Profile() {
         {/* PWA Install Card */}
         <PWAInstallCard />
         
-        {/* Subscription Card */}
-        <SubscriptionCard />
-
-        {/* Subscription Debug (temporary) */}
+        {/* Pet Slots Quick Add */}
         <Card>
           <CardHeader>
-            <CardTitle>Subscription Debug</CardTitle>
+            <CardTitle className="flex items-center gap-2">
+              <span>Pet Slots</span>
+            </CardTitle>
           </CardHeader>
-          <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-            <Button variant="outline" onClick={checkSubscription} disabled={isSubLoading} className="w-full">
-              Check Subscription Now
-            </Button>
-            <Button variant="ghost" onClick={openCustomerPortal} disabled={isSubLoading} className="w-full">
-              Open Customer Portal
+          <CardContent className="space-y-2">
+            <p className="text-sm text-muted-foreground">
+              Need more pets? Add extra pet slots to your account.
+            </p>
+            <Button 
+              onClick={() => createCheckout('yearly', 1)}
+              disabled={isSubLoading}
+              className="w-full"
+            >
+              Add 1 extra pet slot ($1.99/year)
             </Button>
           </CardContent>
         </Card>

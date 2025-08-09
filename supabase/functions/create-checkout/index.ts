@@ -94,13 +94,16 @@ serve(async (req) => {
 
     logStep("Creating checkout session", { lineItems: lineItems.length });
 
+    const originHeader = req.headers.get("origin") || req.headers.get("referer");
+    const origin = originHeader ? (originHeader.includes('://') ? new URL(originHeader).origin : originHeader) : "https://c2db7d2d-7448-4eaf-945e-d804d3aeaccc.lovableproject.com";
+
     const session = await stripe.checkout.sessions.create({
       customer: customerId,
       customer_email: customerId ? undefined : user.email,
       line_items: lineItems,
       mode: "subscription",
-      success_url: `${req.headers.get("origin")}/app?checkout=success`,
-      cancel_url: `${req.headers.get("origin")}/app?checkout=cancel`,
+      success_url: `${origin}/app?checkout=success`,
+      cancel_url: `${origin}/app?checkout=cancel`,
       metadata: {
         user_id: user.id,
         plan_type: planType,

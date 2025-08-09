@@ -950,9 +950,17 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      can_user_add_pet: {
+        Args: { user_uuid: string }
+        Returns: boolean
+      }
       generate_petport_id: {
         Args: Record<PropertyKey, never>
         Returns: string
+      }
+      get_user_pet_limit: {
+        Args: { user_uuid: string }
+        Returns: number
       }
       handle_care_instructions_upsert: {
         Args: {

@@ -2,7 +2,7 @@
   "name": "PetPort - Digital Pet Passport",
   "short_name": "PetPort",
   "description": "Digital passport for your beloved pets",
-  "start_url": "/",
+  "start_url": "/app",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#C8AA6E",

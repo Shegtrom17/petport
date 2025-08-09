@@ -1,4 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { Button } from "@/components/ui/button";
 import { MetaTags } from "@/components/MetaTags";
@@ -6,6 +7,12 @@ import { MetaTags } from "@/components/MetaTags";
 export default function Landing() {
   const { user } = useAuth();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (user) {
+      navigate('/app', { replace: true });
+    }
+  }, [user, navigate]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">

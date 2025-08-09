@@ -2,7 +2,7 @@ import { NavLink, useLocation } from "react-router-dom";
 import { Home, PlusCircle, Search, User, Map } from "lucide-react";
 
 const tabs = [
-  { path: "/", icon: Home, label: "Home" },
+  { path: "/app", icon: Home, label: "Home" },
   { path: "/add-pet", icon: PlusCircle, label: "Add Pet" },
   { path: "/profile", icon: User, label: "Profile" },
 ];

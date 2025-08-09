@@ -16,7 +16,7 @@ import { SocialShareButtons } from "@/components/SocialShareButtons";
 import { PrivacyHint } from "@/components/PrivacyHint";
 import { LostPetButton } from "@/components/LostPetButton";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { generatePublicProfileUrl, generateQRCodeUrl } from "@/services/pdfService";
+import { generatePublicProfileUrl, generatePublicMissingUrl, generateQRCodeUrl } from "@/services/pdfService";
 interface PetData {
   name: string;
   breed: string;
@@ -519,7 +519,13 @@ export const QuickIDSection = ({ petData }: QuickIDSectionProps) => {
             showToggle={true}
           />
           <div className="flex flex-col sm:flex-row gap-3 mt-4">
-            <SocialShareButtons petId={petData.id || ""} petName={petData.name} />
+            <SocialShareButtons 
+              petId={petData.id || ""} 
+              petName={petData.name}
+              isMissingPet={lostPetData.is_missing}
+              context={lostPetData.is_missing ? 'missing' : 'profile'}
+              shareUrlOverride={lostPetData.is_missing ? generatePublicMissingUrl(petData.id) : undefined}
+            />
             <LostPetButton 
               petId={petData.id || ""}
               petName={petData.name}
@@ -543,8 +549,8 @@ export const QuickIDSection = ({ petData }: QuickIDSectionProps) => {
                 </DialogHeader>
                 <div className="flex justify-center p-4 bg-white rounded-lg border-2 border-gold-500/30">
                   <img
-                    src={generateQRCodeUrl(generatePublicProfileUrl(petData.id), 200)}
-                    alt={`QR Code for ${petData.name}'s profile`}
+                    src={generateQRCodeUrl(lostPetData.is_missing ? generatePublicMissingUrl(petData.id) : generatePublicProfileUrl(petData.id), 200)}
+                    alt={lostPetData.is_missing ? `QR Code for ${petData.name}'s missing alert` : `QR Code for ${petData.name}'s profile`}
                     className="w-48 h-48"
                   />
                 </div>

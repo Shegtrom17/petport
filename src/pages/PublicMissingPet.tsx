@@ -281,6 +281,8 @@ export default function PublicMissingPet() {
                 petName={petData.name}
                 petId={petData.id}
                 isMissingPet={true}
+                context="missing"
+                shareUrlOverride={window.location.href}
               />
             </div>
 

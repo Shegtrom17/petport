@@ -7,13 +7,16 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/components/ui/use-toast";
+import { useAuth } from "@/context/AuthContext";
 import { createPet } from "@/services/petService";
+import { supabase } from "@/integrations/supabase/client";
 import { PWALayout } from "@/components/PWALayout";
 import { AppHeader } from "@/components/AppHeader";
 
 export default function AddPet() {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { user } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
   
   const [petData, setPetData] = useState({
@@ -56,6 +59,33 @@ export default function AddPet() {
         });
         setIsSubmitting(false);
         return;
+      }
+
+      // Check if user can add more pets
+      if (user) {
+        try {
+          const { data: canAdd } = await supabase.rpc('can_user_add_pet', {
+            user_uuid: user.id
+          });
+
+          if (!canAdd) {
+            toast({
+              variant: "destructive",
+              title: "Subscription Required",
+              description: "You've reached your pet limit. Please upgrade your subscription to add more pets."
+            });
+            navigate('/'); // Redirect to main app where they can upgrade
+            return;
+          }
+        } catch (error) {
+          console.error('Error checking pet limit:', error);
+          toast({
+            variant: "destructive",
+            title: "Error",
+            description: "Failed to verify pet limit. Please try again."
+          });
+          return;
+        }
       }
 
       console.log("AddPet: Calling createPet service");

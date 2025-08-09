@@ -36,7 +36,15 @@ const path = isMissing
       : isReviews 
         ? `reviews/${petId}`
         : `profile/${petId}`;
-const shareUrl = shareUrlOverride ?? `${window.location.origin}/${path}?${cacheBuster}`;
+
+// Use SSR-friendly share URL for missing pet alerts via Supabase Edge Function
+const edgeShareBase = `https://dxghbhujugsfmaecilrq.supabase.co/functions/v1/missing-pet-share`;
+const redirectParam = encodeURIComponent(`${window.location.origin}/${path}`);
+const shareUrl = shareUrlOverride ?? (
+  isMissing
+    ? `${edgeShareBase}?petId=${encodeURIComponent(petId)}&redirect=${redirectParam}&${cacheBuster}`
+    : `${window.location.origin}/${path}?${cacheBuster}`
+);
 const shareText = isMissing 
   ? `🚨 MISSING PET ALERT 🚨 Help us bring ${petName} home!`
   : (isCare 

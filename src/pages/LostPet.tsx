@@ -511,6 +511,17 @@ const LostPet = () => {
           </CardContent>
         </Card>
 
+        {/* Share Missing Alert - compact, placed near main hub */}
+        {lostPetData.is_missing && (
+          <SocialShareButtons
+            petName={currentPet.name}
+            petId={currentPet.id || ""}
+            isMissingPet={true}
+            context="missing"
+            defaultOpenOptions={false}
+          />
+        )}
+
         {/* Gallery Photos */}
         {currentPet.gallery_photos && currentPet.gallery_photos.length > 0 && (
           <Card className="bg-white shadow-xl">

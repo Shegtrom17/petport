@@ -1,0 +1,139 @@
+import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.50.3";
+
+// Environment
+const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
+const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+
+// CORS headers
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Methods": "GET, OPTIONS",
+};
+
+serve(async (req) => {
+  if (req.method === "OPTIONS") {
+    return new Response(null, { headers: corsHeaders });
+  }
+
+  try {
+    if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
+      return new Response("Service not configured", {
+        status: 500,
+        headers: { ...corsHeaders, "Content-Type": "text/plain" },
+      });
+    }
+
+    const url = new URL(req.url);
+    const petId = url.searchParams.get("petId");
+    const redirect = url.searchParams.get("redirect");
+
+    if (!petId) {
+      return new Response("petId is required", {
+        status: 400,
+        headers: { ...corsHeaders, "Content-Type": "text/plain" },
+      });
+    }
+
+    const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, {
+      auth: { persistSession: false, autoRefreshToken: false },
+    });
+
+    // Fetch minimal public-safe data
+    const { data: pet, error: petErr } = await supabase
+      .from("pets")
+      .select("id, name, species, breed, age, photo_url, photoUrl")
+      .eq("id", petId)
+      .maybeSingle();
+
+    if (petErr) console.log("WARN: pet fetch error", petErr);
+
+    const { data: lost, error: lostErr } = await supabase
+      .from("lost_pet_data")
+      .select("last_seen_location, last_seen_date, reward_amount")
+      .eq("pet_id", petId)
+      .maybeSingle();
+    if (lostErr) console.log("WARN: lost data fetch error", lostErr);
+
+    // Try to get a photo from pet_photos as fallback
+    let photoUrl = (pet as any)?.photo_url || (pet as any)?.photoUrl || "";
+    if (!photoUrl) {
+      const { data: photos } = await supabase
+        .from("pet_photos")
+        .select("url, photo_url")
+        .eq("pet_id", petId)
+        .limit(1)
+        .maybeSingle();
+      photoUrl = (photos as any)?.url || (photos as any)?.photo_url || photoUrl;
+    }
+
+    const name = pet?.name || "Missing Pet";
+    const safe = (s: string | null | undefined) => (s || "").toString().replace(/</g, "&lt;").replace(/>/g, "&gt;").trim();
+
+    const lastSeenDate = lost?.last_seen_date ? new Date(lost.last_seen_date).toLocaleDateString() : "";
+    const lastSeenStr = [safe(lost?.last_seen_location), lastSeenDate].filter(Boolean).join(" • ");
+    const reward = lost?.reward_amount ? `Reward: ${safe(lost.reward_amount)}` : "";
+
+    const title = `MISSING PET: ${name}`;
+    const description = [
+      lastSeenStr ? `Last seen ${lastSeenStr}.` : "Help bring them home.",
+      reward,
+    ].filter(Boolean).join(" ");
+
+    // Build minimal HTML with OG/Twitter meta and optional redirect for humans
+    const html = `<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>${title}</title>
+  <meta name="description" content="${description}" />
+  <meta name="robots" content="index, follow" />
+  ${redirect ? `<link rel="canonical" href="${redirect}" />` : ""}
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="${title}" />
+  <meta property="og:description" content="${description}" />
+  ${photoUrl ? `<meta property=\"og:image\" content=\"${photoUrl}\" />` : ""}
+  ${redirect ? `<meta property=\"og:url\" content=\"${redirect}\" />` : ""}
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="${title}" />
+  <meta name="twitter:description" content="${description}" />
+  ${photoUrl ? `<meta name=\"twitter:image\" content=\"${photoUrl}\" />` : ""}
+
+  <style>
+    body { font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; padding: 2rem; }
+    .container { max-width: 760px; margin: 0 auto; text-align: center; }
+    .btn { display: inline-block; background: #dc2626; color: #fff; padding: 0.75rem 1rem; border-radius: 0.5rem; text-decoration: none; }
+    .muted { color: #6b7280; margin-top: 0.5rem; }
+    img { max-width: 100%; height: auto; border-radius: 0.75rem; margin-top: 1rem; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>${title}</h1>
+    <p>${description}</p>
+    ${photoUrl ? `<img alt="Photo of ${name}" src="${photoUrl}" />` : ""}
+    ${redirect ? `<p><a class="btn" href="${redirect}">View live alert</a></p>` : ""}
+    ${redirect ? `<p class="muted">If you are not redirected automatically, use the button above.</p>` : ""}
+  </div>
+  ${redirect ? `<script>location.replace(${JSON.stringify(redirect)});</script>` : ""}
+</body>
+</html>`;
+
+    return new Response(html, {
+      status: 200,
+      headers: { ...corsHeaders, "Content-Type": "text/html; charset=utf-8" },
+    });
+  } catch (e) {
+    console.error("missing-pet-share error", e);
+    return new Response("Internal error", {
+      status: 500,
+      headers: { ...corsHeaders, "Content-Type": "text/plain" },
+    });
+  }
+});

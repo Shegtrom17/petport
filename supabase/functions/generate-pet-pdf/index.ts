@@ -2213,14 +2213,14 @@ serve(async (req) => {
       }
 
         // Footer
-        yPosition = 50
+        yPosition = 50;
         page.drawText(`Generated on: ${new Date().toLocaleDateString()}`, {
           x: 50,
           y: yPosition,
           size: 10,
           font: regularFont,
           color: rgb(0.83, 0.69, 0.22), // Gold
-        })
+        });
 
         page.drawText('PetPort™ Official Document', {
           x: width - 200,

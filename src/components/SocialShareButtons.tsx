@@ -10,7 +10,7 @@ import { shareProfileOptimized } from "@/services/pdfService";
   petName: string;
   petId: string;
   isMissingPet?: boolean;
-  context?: 'profile' | 'care' | 'credentials' | 'reviews';
+  context?: 'profile' | 'care' | 'credentials' | 'reviews' | 'missing';
   shareUrlOverride?: string;
   defaultOpenOptions?: boolean;
 }
@@ -25,16 +25,19 @@ export const SocialShareButtons = ({ petName, petId, isMissingPet = false, conte
 const isCare = context === 'care';
 const isCredentials = context === 'credentials';
 const isReviews = context === 'reviews';
+const isMissing = isMissingPet || context === 'missing';
 const cacheBuster = `v=${Date.now()}`;
-const path = isCare 
-  ? `care/${petId}` 
-  : isCredentials 
-    ? `credentials/${petId}` 
-    : isReviews 
-      ? `reviews/${petId}`
-      : `profile/${petId}`;
+const path = isMissing
+  ? `missing-pet/${petId}`
+  : isCare 
+    ? `care/${petId}` 
+    : isCredentials 
+      ? `credentials/${petId}` 
+      : isReviews 
+        ? `reviews/${petId}`
+        : `profile/${petId}`;
 const shareUrl = shareUrlOverride ?? `${window.location.origin}/${path}?${cacheBuster}`;
-const shareText = isMissingPet 
+const shareText = isMissing 
   ? `🚨 MISSING PET ALERT 🚨 Help us bring ${petName} home!`
   : (isCare 
       ? `View ${petName}'s live Care Instructions on PetPort.` 
@@ -48,7 +51,7 @@ const shareText = isMissingPet
   const handleNativeShare = async () => {
     setIsSharing(true);
     try {
-const result = await shareProfileOptimized(shareUrl, petName, isCare ? 'care' : (isCredentials ? 'credentials' : (isReviews ? 'reviews' : 'profile')), isMissingPet);
+const result = await shareProfileOptimized(shareUrl, petName, isMissing ? 'profile' : (isCare ? 'care' : (isCredentials ? 'credentials' : (isReviews ? 'reviews' : 'profile'))), isMissing);
       if (result.success) {
         if (result.shared) {
           toast({
@@ -148,7 +151,7 @@ title: "Link Copied! 📋",
       <CardContent className="space-y-4">
         <p className={`text-sm ${isMissingPet ? 'text-red-700' : 'text-navy-600'} text-center`}>
           {isMissingPet 
-            ? `Help us bring ${petName} home! Share their complete PetPort profile.`
+            ? `Help us bring ${petName} home! Share their live missing alert page with last-seen details and contacts.`
             : (isCare 
                 ? `Share ${petName}'s live care plan (feeding schedule, routines, notes).` 
                 : (isCredentials 

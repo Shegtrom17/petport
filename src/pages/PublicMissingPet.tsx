@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { MapPin, Phone, Calendar, Clock, Share2, AlertTriangle } from 'lucide-react';
 import { SocialShareButtons } from '@/components/SocialShareButtons';
+import { MetaTags } from '@/components/MetaTags';
 import { sanitizeText, truncateText } from '@/utils/inputSanitizer';
 import { toast } from 'sonner';
 
@@ -160,8 +161,14 @@ export default function PublicMissingPet() {
     return new Date(dateString).toLocaleDateString();
   };
 
+  const pageUrl = window.location.href;
+  const metaTitle = `Missing Pet: ${petData.name} (${petData.breed || petData.species})`;
+  const metaDescription = `Help find ${petData.name}. Last seen ${petData.lastSeenLocation || 'unknown'} on ${formatDate(petData.lastSeenDate)}. Contact info on page.`;
+  const metaImage = petData.photoUrl || petData.fullBodyPhotoUrl;
+
   return (
     <div className="min-h-screen bg-background">
+      <MetaTags title={metaTitle} description={metaDescription} url={pageUrl} image={metaImage} type="article" />
       {/* Header Alert */}
       <div className="bg-red-600 text-white py-4">
         <div className="container mx-auto px-4 text-center">

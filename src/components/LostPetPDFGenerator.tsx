@@ -97,7 +97,7 @@ export const LostPetPDFGenerator = ({ petId, petName, isActive, petData }: LostP
     try {
       // Create a temporary URL for the PDF
       const pdfUrl = URL.createObjectURL(pdfBlob);
-      const shareUrl = window.location.origin + `/profile/${petId}`;
+      const shareUrl = generatePublicMissingUrl(petId);
       
       const result = await shareProfile(
         shareUrl,

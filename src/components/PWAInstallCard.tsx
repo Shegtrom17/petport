@@ -10,22 +10,18 @@ export const PWAInstallCard = () => {
   const { 
     isInstalled, 
     isIOS, 
-    installApp, 
-    forceShowInstructions 
+    installNow
   } = usePWAInstall();
   
   const [showInstructions, setShowInstructions] = useState(false);
-  const installInfo = forceShowInstructions();
 
   const handleInstall = async () => {
-    if (installInfo.isIOS) {
+    if (isIOS) {
       setShowInstructions(true);
-    } else if (installInfo.isInstallable) {
-      const success = await installApp();
-      if (!success) {
-        setShowInstructions(true);
-      }
-    } else {
+      return;
+    }
+    const success = await installNow(10000);
+    if (!success) {
       setShowInstructions(true);
     }
   };
@@ -113,7 +109,7 @@ export const PWAInstallCard = () => {
           <>
             {showInstructions ? (
               <div className="space-y-4">
-                {installInfo.isIOS ? <IOSInstructions /> : <AndroidInstructions />}
+                {isIOS ? <IOSInstructions /> : <AndroidInstructions />}
                 <Separator />
                 <AppBenefits />
                 <Button 
@@ -133,7 +129,7 @@ export const PWAInstallCard = () => {
                   className="w-full"
                 >
                   <Download className="w-4 h-4 mr-2" />
-                  {installInfo.isIOS || !installInfo.isInstallable ? "Show Install Instructions" : "Install PetPort App"}
+                  {isIOS ? "Show Install Instructions" : "Install PetPort App"}
                 </Button>
               </div>
             )}

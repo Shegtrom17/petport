@@ -137,6 +137,53 @@ export const usePWAInstall = () => {
     }
   }, [installEvent, saveState]);
 
+  // Try to install now; if event isn't ready yet, wait briefly for it
+  const installNow = useCallback(async (timeoutMs: number = 8000) => {
+    // iOS never supports the native prompt
+    if (state.isIOS) return false;
+
+    // If we already have the event, try immediately
+    if (installEvent) {
+      return await installApp();
+    }
+
+    // Otherwise, wait for the next beforeinstallprompt (once) with a timeout
+    return await new Promise<boolean>((resolve) => {
+      let settled = false;
+      const onBeforeInstallPrompt = async (e: Event) => {
+        if (settled) return;
+        settled = true;
+        e.preventDefault();
+        const ev = e as BeforeInstallPromptEvent;
+        setInstallEvent(ev);
+        setState(prev => ({ ...prev, isInstallable: true }));
+        try {
+          await ev.prompt();
+          const choice = await ev.userChoice;
+          if (choice.outcome === 'accepted') {
+            setState(prev => ({ ...prev, isInstalled: true, showPrompt: false }));
+            saveState({ isInstalled: true });
+            resolve(true);
+            return;
+          }
+        } catch (err) {
+          console.error('Error during deferred PWA install:', err);
+        }
+        resolve(false);
+        window.removeEventListener('beforeinstallprompt', onBeforeInstallPrompt as any);
+      };
+
+      window.addEventListener('beforeinstallprompt', onBeforeInstallPrompt as any, { once: true } as any);
+
+      const t = window.setTimeout(() => {
+        if (settled) return;
+        settled = true;
+        window.removeEventListener('beforeinstallprompt', onBeforeInstallPrompt as any);
+        resolve(false);
+      }, timeoutMs);
+    });
+  }, [installEvent, installApp, saveState, state.isIOS]);
+
   // Dismiss prompt
   const dismissPrompt = useCallback(() => {
     const now = Date.now();
@@ -168,6 +215,7 @@ export const usePWAInstall = () => {
   return {
     ...state,
     installApp,
+    installNow,
     dismissPrompt,
     neverShowAgain,
     forceShowInstructions,

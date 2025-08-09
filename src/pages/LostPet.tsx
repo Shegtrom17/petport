@@ -8,7 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { CalendarIcon, AlertTriangle, Phone, Share, Download, MapPin, Clock, DollarSign, Eye, Search, Heart } from "lucide-react";
+import { CalendarIcon, AlertTriangle, Phone, Share, Download, MapPin, Clock, DollarSign, Eye, Search, Heart, Facebook, Copy, MessageCircle, Mail } from "lucide-react";
 import { format } from "date-fns";
 import { useAuth } from "@/context/AuthContext";
 import { usePetData } from "@/hooks/usePetData";

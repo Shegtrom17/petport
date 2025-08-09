@@ -131,16 +131,10 @@ export const PWAInstallCard = () => {
                 <Button 
                   onClick={handleInstall}
                   className="w-full"
-                  disabled={!installInfo.canInstall}
                 >
                   <Download className="w-4 h-4 mr-2" />
-                  {installInfo.isIOS ? "Show Install Instructions" : "Install PetPort App"}
+                  {installInfo.isIOS || !installInfo.isInstallable ? "Show Install Instructions" : "Install PetPort App"}
                 </Button>
-                {!installInfo.canInstall && (
-                  <p className="text-xs text-muted-foreground text-center">
-                    Installation not available in this browser
-                  </p>
-                )}
               </div>
             )}
           </>

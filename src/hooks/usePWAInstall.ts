@@ -85,6 +85,17 @@ export const usePWAInstall = () => {
     return () => window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
   }, []);
 
+  // Track appinstalled event
+  useEffect(() => {
+    const handleAppInstalled = () => {
+      setState(prev => ({ ...prev, isInstalled: true, showPrompt: false }));
+      saveState({ isInstalled: true });
+    };
+
+    window.addEventListener('appinstalled', handleAppInstalled);
+    return () => window.removeEventListener('appinstalled', handleAppInstalled);
+  }, [saveState]);
+
   // Track user engagement
   useEffect(() => {
     const timer = setTimeout(() => {

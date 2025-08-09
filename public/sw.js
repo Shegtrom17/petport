@@ -1,14 +1,18 @@
-const CACHE_NAME = 'petport-v3';
-const urlsToCache = [
-  '/',
-  '/static/css/main.css',
-  '/static/js/main.js'
-];
+const CACHE_NAME = 'petport-v4';
+const urlsToCache = [];
 
 self.addEventListener('install', (event) => {
   self.skipWaiting();
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(urlsToCache))
+    caches.open(CACHE_NAME).then(async (cache) => {
+      if (urlsToCache.length > 0) {
+        try {
+          await cache.addAll(urlsToCache);
+        } catch (err) {
+          console.warn('SW: Precache skipped due to missing assets', err);
+        }
+      }
+    })
   );
 });
 
@@ -27,12 +31,13 @@ self.addEventListener('activate', (event) => {
 
 self.addEventListener('fetch', (event) => {
   event.respondWith(
-    caches.match(event.request)
+    fetch(event.request)
       .then((response) => {
-        // Return cached version or fetch from network
-        return response || fetch(event.request);
-      }
-    )
+        const respClone = response.clone();
+        caches.open(CACHE_NAME).then((cache) => cache.put(event.request, respClone)).catch(() => {});
+        return response;
+      })
+      .catch(() => caches.match(event.request))
   );
 });
 

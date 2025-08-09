@@ -16,7 +16,7 @@ interface PWAInstallState {
 }
 
 const STORAGE_KEY = 'pwa-install-state';
-const ENGAGEMENT_DELAY = 30000; // 30 seconds
+const ENGAGEMENT_DELAY = 5000; // 5 seconds
 const DISMISS_COOLDOWN = 7 * 24 * 60 * 60 * 1000; // 7 days
 
 export const usePWAInstall = () => {

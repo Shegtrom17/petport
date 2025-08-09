@@ -17,6 +17,7 @@ import { PrivacyHint } from "@/components/PrivacyHint";
 import { LostPetButton } from "@/components/LostPetButton";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { generatePublicProfileUrl, generatePublicMissingUrl, generateQRCodeUrl } from "@/services/pdfService";
+import { Link } from "react-router-dom";
 interface PetData {
   name: string;
   breed: string;
@@ -120,6 +121,10 @@ export const QuickIDSection = ({ petData }: QuickIDSectionProps) => {
     }
   };
 
+  useEffect(() => {
+    console.log("QuickIDSection: showing Missing Pet help card");
+  }, []);
+
   const saveLostPetData = async () => {
     if (!petData?.id) return;
 
@@ -192,7 +197,25 @@ export const QuickIDSection = ({ petData }: QuickIDSectionProps) => {
   return (
     <div className="space-y-6">
 
-
+      {/* Help: Missing Pet directions */}
+      <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 border-2 border-blue-200">
+        <CardContent className="p-4 sm:p-6">
+          <div className="space-y-3">
+            <h3 className="text-base sm:text-lg font-semibold text-blue-900">Missing Pet quick directions</h3>
+            <ol className="list-decimal list-inside text-sm text-blue-800 space-y-1">
+              <li>Tap “Report Missing” and fill last seen details and notes.</li>
+              <li>Add photos showing unique markings and a full-body shot.</li>
+              <li>Use Share/QR to spread the alert and print the flyer.</li>
+            </ol>
+            <div className="flex flex-wrap items-center gap-3 pt-1">
+              {petData?.id && (
+                <Link to={`/lost-pet/${petData.id}`} className="text-blue-700 underline font-medium">Open Missing Pet page</Link>
+              )}
+              <Link to="/profile" className="text-blue-700 underline">Make profile public</Link>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Missing Status Banner */}
       {lostPetData.is_missing && (

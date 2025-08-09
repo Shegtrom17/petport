@@ -2,6 +2,8 @@
 import { Card } from "@/components/ui/card";
 import { PrivacyToggle } from "@/components/PrivacyToggle";
 import { usePetData } from "@/hooks/usePetData";
+import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 
 interface PetPassportCardProps {
   petData: any;
@@ -28,6 +30,14 @@ export const PetPassportCard = ({ petData, onUpdate }: PetPassportCardProps) => 
         isPublic={petData?.is_public || false}
         onToggle={handlePrivacyToggle}
       />
+      <div className="text-sm text-muted-foreground flex flex-wrap items-center gap-2">
+        <span>Need Missing Pet instructions?</span>
+        {petData?.id && (
+          <Button asChild variant="link" className="px-0 h-auto">
+            <Link to={`/lost-pet/${petData.id}`}>Open Missing Pet page</Link>
+          </Button>
+        )}
+      </div>
     <Card className="mb-6 sm:mb-8 overflow-hidden border-0 shadow-xl bg-gradient-to-br from-navy-900 to-slate-800 text-white">
       <div className="bg-gradient-to-r from-navy-900 to-slate-800 p-4 sm:p-6 text-white relative overflow-hidden">
         {/* Simple decorative elements instead of world map */}

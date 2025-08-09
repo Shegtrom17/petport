@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useParams, Navigate } from "react-router-dom";
+import { useParams, Navigate, Link } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -213,25 +213,48 @@ const LostPet = () => {
               <div className="bg-blue-500 rounded-full p-2 flex-shrink-0">
                 <Search className="w-5 h-5 text-white" />
               </div>
-              <div>
-                <h3 className="text-lg font-semibold text-blue-900 mb-3">How to Create a Missing Pet Flyer</h3>
-                <div className="space-y-2 text-blue-800">
-                  <div className="flex items-center space-x-2">
-                    <span className="bg-blue-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold">1</span>
-                    <span>Mark your pet as missing using the button above</span>
+              <div className="space-y-4">
+                <div>
+                  <h3 className="text-lg font-semibold text-blue-900 mb-3">How to use this Missing Pet page</h3>
+                  <div className="space-y-2 text-blue-800">
+                    <div className="flex items-center space-x-2">
+                      <span className="bg-blue-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold">1</span>
+                      <span>Mark your pet as missing using the red button above</span>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <span className="bg-blue-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold">2</span>
+                      <span>Fill in last seen location, time, distinctive features, and contact notes</span>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <span className="bg-blue-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold">3</span>
+                      <span>Tap “Missing Pet Flyer” to generate the printable PDF</span>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <span className="bg-blue-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold">4</span>
+                      <span>Use Share and the QR button to spread the alert (both open the Missing Pet page)</span>
+                    </div>
                   </div>
-                  <div className="flex items-center space-x-2">
-                    <span className="bg-blue-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold">2</span>
-                    <span>Click 'Missing Pet Flyer' button that appears at the top of the page</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <span className="bg-blue-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold">3</span>
-                    <span>Generate a printable PDF with photos, contact details, and pet information</span>
+                  <p className="text-sm text-blue-700 mt-3 font-medium">Found your pet? Tap <span className="font-bold">✓ FOUND</span> above to clear the alert.</p>
+                </div>
+
+                <div className="bg-white/70 border border-blue-200 rounded-md p-3">
+                  <h4 className="text-sm font-semibold text-blue-900">Make your profile public (optional but recommended)</h4>
+                  <p className="text-sm text-blue-800 mt-1">A public profile makes general profile sharing and QR codes more effective beyond the missing alert.</p>
+                  <div className="mt-2">
+                    <Link to="/profile" className="inline-flex items-center px-3 py-1.5 rounded-md bg-blue-600 text-white text-sm hover:bg-blue-700">
+                      Open Profile Settings
+                    </Link>
                   </div>
                 </div>
-                <p className="text-sm text-blue-700 mt-3 font-medium">
-                  The flyer includes all essential information to help bring your pet home safely.
-                </p>
+
+                <div className="bg-white/70 border border-blue-200 rounded-md p-3">
+                  <h4 className="text-sm font-semibold text-blue-900">Photo gallery tips for quick identification</h4>
+                  <ul className="mt-2 text-sm text-blue-800 list-disc list-inside space-y-1">
+                    <li>Upload a clear face photo and a full-body photo</li>
+                    <li>Include close-ups of unique markings, scars, patterns, or collar/harness color</li>
+                    <li>Use recent photos and add short captions if helpful</li>
+                  </ul>
+                </div>
               </div>
             </div>
           </CardContent>

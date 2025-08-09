@@ -768,6 +768,48 @@ export type Database = {
           },
         ]
       }
+      subscribers: {
+        Row: {
+          additional_pets: number
+          created_at: string
+          email: string
+          id: string
+          pet_limit: number
+          stripe_customer_id: string | null
+          subscribed: boolean
+          subscription_end: string | null
+          subscription_tier: string | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          additional_pets?: number
+          created_at?: string
+          email: string
+          id?: string
+          pet_limit?: number
+          stripe_customer_id?: string | null
+          subscribed?: boolean
+          subscription_end?: string | null
+          subscription_tier?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          additional_pets?: number
+          created_at?: string
+          email?: string
+          id?: string
+          pet_limit?: number
+          stripe_customer_id?: string | null
+          subscribed?: boolean
+          subscription_end?: string | null
+          subscription_tier?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       training: {
         Row: {
           completed: string | null

@@ -30,20 +30,25 @@ export function useSubscription() {
 
     setIsLoading(true);
     try {
+      console.debug('[Subscription] Checking subscription...');
+      const session = await supabase.auth.getSession();
+      const token = session.data.session?.access_token;
       const { data, error } = await supabase.functions.invoke('check-subscription', {
         headers: {
-          Authorization: `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`,
+          Authorization: `Bearer ${token}`,
         },
       });
 
-      if (error) throw error;
+      if (error) throw error as any;
 
-      setSubscription(data);
-    } catch (error) {
+      console.debug('[Subscription] Received data:', data);
+      setSubscription(data as SubscriptionData);
+      toast({ title: "Subscription", description: "Status refreshed" });
+    } catch (error: any) {
       console.error('Error checking subscription:', error);
       toast({
-        title: "Error",
-        description: "Failed to check subscription status",
+        title: "Subscription error",
+        description: error?.message || "Failed to check subscription status",
         variant: "destructive",
       });
     } finally {
@@ -56,22 +61,26 @@ export function useSubscription() {
 
     setIsLoading(true);
     try {
+      console.debug('[Subscription] Creating checkout', { planType, additionalPets });
+      const session = await supabase.auth.getSession();
+      const token = session.data.session?.access_token;
       const { data, error } = await supabase.functions.invoke('create-checkout', {
         body: { planType, additionalPets },
         headers: {
-          Authorization: `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`,
+          Authorization: `Bearer ${token}`,
         },
       });
 
-      if (error) throw error;
+      if (error) throw error as any;
 
+      toast({ title: "Redirecting to Stripe", description: "Checkout will open in a new tab" });
       // Open Stripe checkout in a new tab
-      window.open(data.url, '_blank');
-    } catch (error) {
+      window.open((data as any).url, '_blank');
+    } catch (error: any) {
       console.error('Error creating checkout:', error);
       toast({
-        title: "Error",
-        description: "Failed to create checkout session",
+        title: "Checkout error",
+        description: error?.message || "Failed to create checkout session",
         variant: "destructive",
       });
     } finally {
@@ -84,21 +93,25 @@ export function useSubscription() {
 
     setIsLoading(true);
     try {
+      console.debug('[Subscription] Opening customer portal');
+      const session = await supabase.auth.getSession();
+      const token = session.data.session?.access_token;
       const { data, error } = await supabase.functions.invoke('customer-portal', {
         headers: {
-          Authorization: `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`,
+          Authorization: `Bearer ${token}`,
         },
       });
 
-      if (error) throw error;
+      if (error) throw error as any;
 
+      toast({ title: "Opening Stripe Portal", description: "Portal will open in a new tab" });
       // Open customer portal in a new tab
-      window.open(data.url, '_blank');
-    } catch (error) {
+      window.open((data as any).url, '_blank');
+    } catch (error: any) {
       console.error('Error opening customer portal:', error);
       toast({
-        title: "Error",
-        description: "Failed to open customer portal",
+        title: "Portal error",
+        description: error?.message || "Failed to open customer portal",
         variant: "destructive",
       });
     } finally {

@@ -9,11 +9,13 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from "@/components/ui/select";
 import { useUserSettings } from "@/hooks/useUserSettings";
+import { useSubscription } from "@/hooks/useSubscription";
 import { User, LogOut } from "lucide-react";
 
 export default function Profile() {
   const { user, signOut } = useAuth();
   const { settings, updateSettings } = useUserSettings(user?.id);
+  const { checkSubscription, openCustomerPortal, isLoading: isSubLoading } = useSubscription();
 
   const handleLogout = async () => {
     try {
@@ -32,6 +34,21 @@ export default function Profile() {
         
         {/* Subscription Card */}
         <SubscriptionCard />
+
+        {/* Subscription Debug (temporary) */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Subscription Debug</CardTitle>
+          </CardHeader>
+          <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <Button variant="outline" onClick={checkSubscription} disabled={isSubLoading} className="w-full">
+              Check Subscription Now
+            </Button>
+            <Button variant="ghost" onClick={openCustomerPortal} disabled={isSubLoading} className="w-full">
+              Open Customer Portal
+            </Button>
+          </CardContent>
+        </Card>
         
         <Card>
           <CardHeader>

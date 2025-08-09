@@ -2241,22 +2241,22 @@ serve(async (req) => {
     }
 
     // Save the PDF as bytes
-    // console.log('SAVE: Generating PDF bytes...')
-    const pdfBytes = await pdfDoc.save()
-    console.log('SUCCESS: PDF generated successfully for:', petData.name || 'Unknown', 'Type:', type, 'Size:', pdfBytes.length, 'bytes')
+    // console.log('SAVE: Generating PDF bytes...');
+    const pdfBytes = await pdfDoc.save();
+    console.log('SUCCESS: PDF generated successfully for:', petData.name || 'Unknown', 'Type:', type, 'Size:', pdfBytes.length, 'bytes');
     
     // Return JSON response with PDF data for client-side processing
-    const safePetName = sanitizeTextForPDF(petData.name || 'Unknown').replace(/[^a-zA-Z0-9]/g, '_')
-    const fileName = `${safePetName}_${type || 'emergency'}_profile.pdf`
+    const safePetName = sanitizeTextForPDF(petData.name || 'Unknown').replace(/[^a-zA-Z0-9]/g, '_');
+    const fileName = `${safePetName}_${type || 'emergency'}_profile.pdf`;
     
     return new Response(JSON.stringify({
       success: true,
       pdfBytes: Array.from(pdfBytes), // Convert to array for JSON transport
-      fileName: fileName
+      fileName: fileName,
     }), {
       headers: {
         ...corsHeaders,
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
       }
     })
 

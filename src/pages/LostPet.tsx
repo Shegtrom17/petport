@@ -17,6 +17,7 @@ import { useToast } from "@/hooks/use-toast";
 import { SocialShareButtons } from "@/components/SocialShareButtons";
 import { PetPDFGenerator } from "@/components/PetPDFGenerator";
 import { LostPetPDFGenerator } from "@/components/LostPetPDFGenerator";
+import { generatePublicMissingUrl } from "@/services/pdfService";
 
 const LostPet = () => {
   const { petId } = useParams();
@@ -163,6 +164,9 @@ const LostPet = () => {
       </div>
     );
   }
+
+  const missingShareUrl = generatePublicMissingUrl(currentPet.id);
+  console.log('LostPet: using missing share URL', missingShareUrl);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-red-50 via-[#F5F0E0] to-yellow-50">
@@ -518,6 +522,7 @@ const LostPet = () => {
             petId={currentPet.id || ""}
             isMissingPet={true}
             context="missing"
+            shareUrlOverride={missingShareUrl}
             defaultOpenOptions={false}
           />
         )}

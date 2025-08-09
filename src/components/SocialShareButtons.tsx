@@ -13,9 +13,10 @@ import { shareProfileOptimized } from "@/services/pdfService";
   context?: 'profile' | 'care' | 'credentials' | 'reviews' | 'missing';
   shareUrlOverride?: string;
   defaultOpenOptions?: boolean;
+  compact?: boolean;
 }
 
-export const SocialShareButtons = ({ petName, petId, isMissingPet = false, context = 'profile', shareUrlOverride, defaultOpenOptions = false }: SocialShareButtonsProps) => {
+export const SocialShareButtons = ({ petName, petId, isMissingPet = false, context = 'profile', shareUrlOverride, defaultOpenOptions = false, compact = false }: SocialShareButtonsProps) => {
   const [isSharing, setIsSharing] = useState(false);
   const [copied, setCopied] = useState(false);
   const [showOptions, setShowOptions] = useState(defaultOpenOptions);
@@ -150,37 +151,42 @@ title: "Link Copied! 📋",
 
   return (
     <Card className={`${isMissingPet ? 'border-2 border-red-500 bg-red-50' : 'border-2 border-gold-500/30 bg-[#f8f8f8]'} shadow-lg`}>
-      <CardHeader className="pb-3">
-        <CardTitle className={`flex items-center space-x-2 text-lg font-semibold ${isMissingPet ? 'text-red-800' : 'text-navy-900'} border-b-2 ${isMissingPet ? 'border-red-500' : 'border-gold-500'} pb-2`}>
+      <CardHeader className={compact ? "pb-2" : "pb-3"}>
+        <CardTitle className={`flex items-center space-x-2 ${compact ? 'text-base' : 'text-lg'} font-semibold ${isMissingPet ? 'text-red-800' : 'text-navy-900'} border-b-2 ${isMissingPet ? 'border-red-500' : 'border-gold-500'} pb-2`}>
           <Share2 className="w-5 h-5" />
           <span>{isMissingPet ? `Help Find ${petName}!` : (isCare ? `Share ${petName}'s Care Instructions` : (isCredentials ? `Share ${petName}'s Credentials` : (isReviews ? `Share ${petName}'s Reviews` : `Share ${petName}'s Profile`)))}</span>
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        <p className={`text-sm ${isMissingPet ? 'text-red-700' : 'text-navy-600'} text-center`}>
-          {isMissingPet 
-            ? `Help us bring ${petName} home! Share their live missing alert page with last-seen details and contacts.`
-            : (isCare 
-                ? `Share ${petName}'s live care plan (feeding schedule, routines, notes).` 
-                : (isCredentials 
-                    ? `Share ${petName}'s professional credentials (certifications, training, badges).`
-                    : `Share ${petName}'s complete public profile (photos, bio, reviews & more).`)
-              )
-          }
-        </p>
+        {!compact && (
+          <p className={`text-sm ${isMissingPet ? 'text-red-700' : 'text-navy-600'} text-center`}>
+            {isMissingPet 
+              ? `Help us bring ${petName} home! Share their live missing alert page with last-seen details and contacts.`
+              : (isCare 
+                  ? `Share ${petName}'s live care plan (feeding schedule, routines, notes).` 
+                  : (isCredentials 
+                      ? `Share ${petName}'s professional credentials (certifications, training, badges).`
+                      : `Share ${petName}'s complete public profile (photos, bio, reviews & more).`)
+                )
+            }
+          </p>
+        )}
         <div className="space-y-3">
           {!showOptions ? (
             /* Show Options Button */
             <Button
               onClick={() => setShowOptions(true)}
-              className={`w-full h-12 text-base font-semibold ${
+              size={compact ? "sm" : "default"}
+              className={`w-full ${compact ? 'h-10 text-sm' : 'h-12 text-base'} font-semibold ${
                 isMissingPet 
                   ? 'bg-red-600 hover:bg-red-700 text-white' 
                   : 'bg-primary hover:bg-primary/90 text-primary-foreground'
               }`}
             >
                 <Share2 className="w-5 h-5 mr-2" />
-                {isMissingPet ? `Share ${petName}'s Missing Alert` : (isCare ? `Share Care Instructions` : (isCredentials ? `Share Credentials` : (isReviews ? `Share Reviews` : `Share ${petName}'s Profile`)))}
+                {compact 
+                  ? (isMissingPet ? 'Share alert' : 'Share')
+                  : (isMissingPet ? `Share ${petName}'s Missing Alert` : (isCare ? `Share Care Instructions` : (isCredentials ? `Share Credentials` : (isReviews ? `Share Reviews` : `Share ${petName}'s Profile`))))}
               </Button>
           ) : (
             <>
@@ -188,7 +194,8 @@ title: "Link Copied! 📋",
               <Button
                 onClick={handleNativeShare}
                 disabled={isSharing}
-                className={`w-full h-12 text-base font-semibold ${
+                size={compact ? "sm" : "default"}
+                className={`w-full ${compact ? 'h-10 text-sm' : 'h-12 text-base'} font-semibold ${
                   isMissingPet 
                     ? 'bg-red-600 hover:bg-red-700 text-white' 
                     : 'bg-primary hover:bg-primary/90 text-primary-foreground'

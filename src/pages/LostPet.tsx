@@ -547,6 +547,7 @@ const LostPet = () => {
             context="missing"
             shareUrlOverride={missingShareUrl}
             defaultOpenOptions={false}
+            compact={true}
           />
         )}
 

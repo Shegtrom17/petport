@@ -13,6 +13,7 @@ import { User, LogOut, CreditCard } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useState } from "react";
+import { PAYMENT_LINK_URL } from "@/config/payments";
 
 export default function Profile() {
   const { user, signOut } = useAuth();
@@ -40,18 +41,21 @@ export default function Profile() {
         console.log("Opening Stripe Checkout in new tab:", data.url);
         window.open(data.url, '_blank');
       } else {
-        console.error("No checkout URL returned");
+        console.warn("No checkout URL returned; opening backup Payment Link");
         toast({
-          title: "Payment unavailable",
-          description: "No checkout URL returned. Please try again.",
+          title: "Using backup payment link",
+          description: "Opening Stripe in a new tab...",
         });
+        window.open(PAYMENT_LINK_URL, '_blank');
       }
     } catch (err: any) {
       console.error("Payment error:", err);
       toast({
-        title: "Payment failed",
-        description: err?.message ?? "Please try again shortly.",
+        title: "Payment issue",
+        description: "Using backup payment link in a new tab...",
       });
+      console.warn("Payment error; opening backup Payment Link", err);
+      window.open(PAYMENT_LINK_URL, '_blank');
     } finally {
       setIsPaying(false);
     }
@@ -73,11 +77,22 @@ export default function Profile() {
               <span>One-Time Payment</span>
             </CardTitle>
           </CardHeader>
-          <CardContent className="space-y-2">
+          <CardContent className="space-y-3">
             <p className="text-sm text-muted-foreground">Support PetPort with a one-time $12.99 payment.</p>
             <Button onClick={handleOneTimePayment} className="w-full" disabled={isPaying}>
               <CreditCard className="w-4 h-4" />
               <span>{isPaying ? "Processing..." : "Pay $12.99"}</span>
+            </Button>
+            <Button
+              variant="outline"
+              className="w-full"
+              onClick={() => {
+                console.log("Manual backup Payment Link opened");
+                window.open(PAYMENT_LINK_URL, '_blank');
+              }}
+            >
+              <CreditCard className="w-4 h-4" />
+              <span>Use Backup Payment Link</span>
             </Button>
           </CardContent>
         </Card>

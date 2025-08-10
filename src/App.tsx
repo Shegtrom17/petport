@@ -31,7 +31,7 @@ import PaymentCanceled from "./pages/PaymentCanceled";
 import PostCheckout from "./pages/PostCheckout";
 import Subscribe from "./pages/Subscribe";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
-
+import Billing from "./pages/Billing";
 
 
 const queryClient = new QueryClient();
@@ -99,6 +99,11 @@ const App = () => {
                   <Route path="/payment-success" element={<PaymentSuccess />} />
                   <Route path="/payment-canceled" element={<PaymentCanceled />} />
                   <Route path="/post-checkout" element={<PostCheckout />} />
+                  <Route path="/billing" element={
+                    <ProtectedRoute>
+                      <Billing />
+                    </ProtectedRoute>
+                  } />
                   <Route path="/subscribe" element={
                     <ProtectedRoute>
                       <Subscribe />

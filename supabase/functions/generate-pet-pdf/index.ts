@@ -2240,18 +2240,12 @@ serve(async (req) => {
       }
     }
 
-  } catch (error) {
-    console.error('ERROR: Error in generate-pet-pdf function:', error)
-    console.error('ERROR: Error stack:', error.stack)
-    console.error('ERROR: Error details:', {
-      name: error.name,
-      message: error.message,
-      stack: error.stack
-    })
-    
+  } catch (err) {
+    const message = err instanceof Error ? err.message : 'Unknown error';
+    console.error('ERROR: Error in generate-pet-pdf function:', err);
     return new Response(
       JSON.stringify({ 
-        error: 'Internal server error: ' + error.message,
+        error: 'Internal server error: ' + message,
         pdfBytes: null,
         filename: null 
       }),
@@ -2259,7 +2253,7 @@ serve(async (req) => {
         status: 500, 
         headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
       }
-    )
+    );
   }
   // TEMP: Disable PDF byte generation to unblock deployments
   return new Response(

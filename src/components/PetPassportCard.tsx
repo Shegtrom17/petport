@@ -1,7 +1,5 @@
 
 import { Card } from "@/components/ui/card";
-import { PrivacyToggle } from "@/components/PrivacyToggle";
-import { usePetData } from "@/hooks/usePetData";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 
@@ -11,25 +9,8 @@ interface PetPassportCardProps {
 }
 
 export const PetPassportCard = ({ petData, onUpdate }: PetPassportCardProps) => {
-  const { togglePetPublicVisibility } = usePetData();
-
-  const handlePrivacyToggle = async (isPublic: boolean) => {
-    if (petData?.id) {
-      const success = await togglePetPublicVisibility(petData.id, isPublic);
-      if (success && onUpdate) {
-        onUpdate(); // Trigger parent component to refresh data
-      }
-      return success;
-    }
-    return false;
-  };
-
   return (
     <div className="space-y-4">
-      <PrivacyToggle 
-        isPublic={petData?.is_public || false}
-        onToggle={handlePrivacyToggle}
-      />
       <div className="text-sm text-muted-foreground flex flex-wrap items-center gap-2">
         <span>Need Missing Pet instructions?</span>
         {petData?.id && (

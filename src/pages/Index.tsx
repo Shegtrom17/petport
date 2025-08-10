@@ -18,6 +18,7 @@ import { PetHeader } from "@/components/PetHeader";
 import { PetPassportCard } from "@/components/PetPassportCard";
 import { PetSelector } from "@/components/PetSelector";
 import { AuthenticationPrompt } from "@/components/AuthenticationPrompt";
+import { PrivacyToggle } from "@/components/PrivacyToggle";
 import { PetProfileContent } from "@/components/PetProfileContent";
 import { PetProfileCard } from "@/components/PetProfileCard";
 import { usePetData } from "@/hooks/usePetData";
@@ -51,6 +52,11 @@ const Index = () => {
     if (user?.id && settings.rememberLastTab) {
       localStorage.setItem(`pp_last_tab_${user.id}`, tab);
     }
+  };
+
+  const handlePrivacyToggle = async (isPublic: boolean): Promise<boolean> => {
+    if (!selectedPet?.id) return false;
+    return await togglePetPublicVisibility(selectedPet.id, isPublic);
   };
 
   useEffect(() => {
@@ -264,7 +270,18 @@ const Index = () => {
                 onReorderPets={handleReorderPets}
               />
 
-              <PetPassportCard petData={petData} onUpdate={handlePetUpdate} />
+              {/* Privacy Toggle - Global Access */}
+              <div className="mb-4">
+                <PrivacyToggle
+                  isPublic={selectedPet?.is_public || false}
+                  onToggle={handlePrivacyToggle}
+                />
+              </div>
+
+              {/* Show PetPassportCard only on Profile tab */}
+              {activeTab === "profile" && (
+                <PetPassportCard petData={petData} onUpdate={handlePetUpdate} />
+              )}
 
               <div className="mb-4 sm:mb-6">
                 <NavigationTabs activeTab={activeTab} onTabChange={handleTabChange} />

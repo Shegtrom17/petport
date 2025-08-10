@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { PWAInstallCard } from "@/components/PWAInstallCard";
 import PricingSection from "@/components/PricingSection";
+import { supabase } from "@/integrations/supabase/client";
 
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
@@ -33,9 +34,23 @@ export default function Profile() {
         {/* PWA Install Card */}
         <PWAInstallCard />
 
+        {user && (
+          <div>
+            <Button variant="outline" onClick={async () => {
+              try {
+                const { data, error } = await supabase.functions.invoke("customer-portal");
+                if (error) throw error;
+                if (data?.url) window.open(data.url, "_blank");
+              } catch (e: any) {
+                console.error(e);
+              }
+            }}>Manage Subscription</Button>
+          </div>
+        )}
+
         <PricingSection context="profile" />
 
-{/* removed One-Time Payment card */}
+        {/* removed One-Time Payment card */}
 
         <Card>
           <CardHeader>

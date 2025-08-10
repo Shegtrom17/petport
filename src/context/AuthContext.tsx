@@ -53,7 +53,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 .select('id')
                 .eq('id', session.user.id)
                 .maybeSingle();
-              
               // If no profile exists, create one
               if (!existingProfile) {
                 console.log("Auth: Creating profile for new user");
@@ -64,7 +63,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
                     email: session.user.email!,
                     full_name: session.user.user_metadata?.full_name || ''
                   });
-                
                 if (profileError) {
                   console.error("Auth: Error creating profile:", profileError);
                 } else {
@@ -73,6 +71,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
               }
             } catch (error) {
               console.error("Auth: Error handling profile:", error);
+            }
+          }, 0);
+        }
+
+        // Always refresh subscription status when we have a session
+        if (session?.user) {
+          setTimeout(async () => {
+            try {
+              await supabase.functions.invoke('check-subscription');
+            } catch (err) {
+              console.warn('Auth: check-subscription failed', err);
             }
           }, 0);
         }

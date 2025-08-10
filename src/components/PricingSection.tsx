@@ -27,7 +27,7 @@ export const PricingSection: React.FC<PricingSectionProps> = ({ context = "landi
         }
         return;
       }
-      const { data, error } = await supabase.functions.invoke("create-checkout", {
+      const { data, error } = await supabase.functions.invoke("public-create-checkout", {
         body: { plan },
       });
       if (error) throw error;

@@ -23,10 +23,6 @@ export default function Auth() {
   const location = useLocation();
   const { toast } = useToast();
 
-  const searchParams = new URLSearchParams(location.search);
-  const selectedPlan = (searchParams.get("plan") as "monthly" | "yearly" | null);
-  const addonParam = searchParams.get("addon");
-  const selectedAddon = addonParam ? (parseInt(addonParam, 10) as 1 | 3 | 5) : null;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -59,21 +55,7 @@ export default function Auth() {
         await signIn(email, password);
         console.log("Auth: Sign in completed");
 
-        // Auto-start checkout if a plan or addon was selected from landing
-        try {
-          if (selectedPlan) {
-            const { data, error } = await supabase.functions.invoke("create-checkout", { body: { plan: selectedPlan } });
-            if (error) throw error;
-            if (data?.url) window.open(data.url, "_blank");
-          } else if (selectedAddon) {
-            const { data, error } = await supabase.functions.invoke("purchase-addons", { body: { bundle: selectedAddon } });
-            if (error) throw error;
-            if (data?.url) window.open(data.url, "_blank");
-          }
-        } catch (err: any) {
-          toast({ variant: "destructive", title: "Stripe checkout failed", description: err?.message ?? "Please try again." });
-        }
-
+        // Continue to app after sign in
         navigate("/app");
       } else {
         console.log("Auth: Attempting sign up");
@@ -93,20 +75,7 @@ export default function Auth() {
         
         // Small delay to let the auth state settle, then navigate if user is logged in
         setTimeout(async () => {
-          try {
-            if (selectedPlan) {
-              const { data, error } = await supabase.functions.invoke("create-checkout", { body: { plan: selectedPlan } });
-              if (error) throw error;
-              if (data?.url) window.open(data.url, "_blank");
-            } else if (selectedAddon) {
-              const { data, error } = await supabase.functions.invoke("purchase-addons", { body: { bundle: selectedAddon } });
-              if (error) throw error;
-              if (data?.url) window.open(data.url, "_blank");
-            }
-          } catch (err: any) {
-            toast({ title: "Complete signup to subscribe", description: "Please confirm your email, then sign in to finish checkout." });
-          }
-          // If signup was successful and user is immediately logged in, navigate
+          // Navigate to onboarding
           navigate("/onboarding");
         }, 1000);
       }

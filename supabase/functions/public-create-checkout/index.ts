@@ -24,7 +24,7 @@ serve(async (req) => {
     const amount = plan === "monthly" ? 199 : 1299; // cents
     const interval = plan === "monthly" ? "month" : "year";
 
-    const origin = req.headers.get("origin") || "https://";
+    const origin = req.headers.get("origin") || "https://petport.app";
 
     const session = await stripe.checkout.sessions.create({
       mode: "subscription",
@@ -40,7 +40,7 @@ serve(async (req) => {
         },
       ],
       success_url: `${origin}/post-checkout?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${origin}/`,
+      cancel_url: `${origin}/subscribe`,
       allow_promotion_codes: true,
       // Let Stripe collect customer email
     });

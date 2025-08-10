@@ -4,6 +4,7 @@ import { AppHeader } from "@/components/AppHeader";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { PWAInstallCard } from "@/components/PWAInstallCard";
+import PricingSection from "@/components/PricingSection";
 
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
@@ -67,9 +68,9 @@ export default function Profile() {
       <div className="p-4 space-y-4">
         {/* PWA Install Card */}
         <PWAInstallCard />
-        
-        
-        
+
+        <PricingSection context="profile" />
+
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center space-x-2">

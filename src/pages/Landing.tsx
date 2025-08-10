@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { Button } from "@/components/ui/button";
 import { MetaTags } from "@/components/MetaTags";
+import PricingSection from "@/components/PricingSection";
 
 export default function Landing() {
   const { user } = useAuth();
@@ -78,6 +79,10 @@ export default function Landing() {
               <Link to="/auth" className="underline text-navy-900">Get started as a foster →</Link>
             </div>
           </article>
+        </section>
+
+        <section className="mt-8">
+          <PricingSection context="landing" />
         </section>
       </main>
 

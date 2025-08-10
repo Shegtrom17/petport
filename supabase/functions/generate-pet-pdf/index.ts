@@ -2240,20 +2240,6 @@ serve(async (req) => {
       }
     }
 
-    // TEMP: Disable PDF byte generation to unblock deployments
-    ;return new Response(
-      JSON.stringify({
-        success: false,
-        error: 'PDF generation is temporarily disabled while we stabilize deployments.',
-        pdfBytes: null,
-        fileName: null,
-      }),
-      {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        status: 200,
-      }
-    );
-
   } catch (error) {
     console.error('ERROR: Error in generate-pet-pdf function:', error)
     console.error('ERROR: Error stack:', error.stack)
@@ -2275,4 +2261,17 @@ serve(async (req) => {
       }
     )
   }
+  // TEMP: Disable PDF byte generation to unblock deployments
+  return new Response(
+    JSON.stringify({
+      success: false,
+      error: 'PDF generation is temporarily disabled while we stabilize deployments.',
+      pdfBytes: null,
+      fileName: null,
+    }),
+    {
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      status: 200,
+    }
+  );
 })

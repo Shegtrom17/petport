@@ -2241,7 +2241,7 @@ serve(async (req) => {
     }
 
     // TEMP: Disable PDF byte generation to unblock deployments
-    return new Response(
+    ;return new Response(
       JSON.stringify({
         success: false,
         error: 'PDF generation is temporarily disabled while we stabilize deployments.',

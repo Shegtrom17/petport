@@ -472,6 +472,45 @@ export type Database = {
           },
         ]
       }
+      orders: {
+        Row: {
+          amount: number
+          created_at: string
+          currency: string | null
+          id: string
+          product_type: string | null
+          quantity: number | null
+          status: string | null
+          stripe_session_id: string | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          currency?: string | null
+          id?: string
+          product_type?: string | null
+          quantity?: number | null
+          status?: string | null
+          stripe_session_id?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          currency?: string | null
+          id?: string
+          product_type?: string | null
+          quantity?: number | null
+          status?: string | null
+          stripe_session_id?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       organization_members: {
         Row: {
           created_at: string
@@ -771,6 +810,7 @@ export type Database = {
       subscribers: {
         Row: {
           additional_pets: number
+          additional_pets_purchased: number | null
           created_at: string
           email: string
           id: string
@@ -784,6 +824,7 @@ export type Database = {
         }
         Insert: {
           additional_pets?: number
+          additional_pets_purchased?: number | null
           created_at?: string
           email: string
           id?: string
@@ -797,6 +838,7 @@ export type Database = {
         }
         Update: {
           additional_pets?: number
+          additional_pets_purchased?: number | null
           created_at?: string
           email?: string
           id?: string

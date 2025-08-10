@@ -9,8 +9,8 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from "@/components/ui/select";
 import { useUserSettings } from "@/hooks/useUserSettings";
-
-import { User, LogOut } from "lucide-react";
+import { Link } from "react-router-dom";
+import { User, LogOut, CreditCard } from "lucide-react";
 
 export default function Profile() {
   const { user, signOut } = useAuth();
@@ -31,6 +31,26 @@ export default function Profile() {
       <div className="p-4 space-y-4">
         {/* PWA Install Card */}
         <PWAInstallCard />
+        
+        {/* Billing Card */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <CreditCard className="h-5 w-5" />
+              <span>Pet Slots</span>
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-2">
+            <p className="text-sm text-muted-foreground">
+              Need more pets? Purchase additional pet slots to expand your family.
+            </p>
+            <Link to="/billing">
+              <Button className="w-full">
+                Add More Pet Slots
+              </Button>
+            </Link>
+          </CardContent>
+        </Card>
         
         
         <Card>

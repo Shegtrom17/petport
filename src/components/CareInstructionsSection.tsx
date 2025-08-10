@@ -508,9 +508,8 @@ export const CareInstructionsSection = ({ petData }: CareInstructionsSectionProp
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-slate-100">
-            {careData ? "Custom care instructions have been provided." : "Complete care guide for pet sitters, boarding facilities, and emergency caregivers."}
-            All instructions are current as of the last update.
+          <p className="text-navy-800">
+            {careData ? "Custom care instructions have been provided.  All instructions are current as of the last update." : "Complete care guide for pet sitters, boarding facilities, and emergency caregivers.  All instructions are current as of the last update."}
           </p>
         </CardContent>
       </Card>

@@ -9,13 +9,13 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from "@/components/ui/select";
 import { useUserSettings } from "@/hooks/useUserSettings";
-import { useSubscription } from "@/hooks/useSubscription";
+
 import { User, LogOut } from "lucide-react";
 
 export default function Profile() {
   const { user, signOut } = useAuth();
   const { settings, updateSettings } = useUserSettings(user?.id);
-  const { createCheckout, isLoading: isSubLoading } = useSubscription();
+  
 
   const handleLogout = async () => {
     try {
@@ -32,26 +32,6 @@ export default function Profile() {
         {/* PWA Install Card */}
         <PWAInstallCard />
         
-        {/* Pet Slots Quick Add */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <span>Pet Slots</span>
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-2">
-            <p className="text-sm text-muted-foreground">
-              Need more pets? Add extra pet slots to your account.
-            </p>
-            <Button 
-              onClick={() => createCheckout('yearly', 1)}
-              disabled={isSubLoading}
-              className="w-full"
-            >
-              Add 1 extra pet slot ($1.99/year)
-            </Button>
-          </CardContent>
-        </Card>
         
         <Card>
           <CardHeader>

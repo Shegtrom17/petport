@@ -366,20 +366,20 @@ export const CareInstructionsSection = ({ petData }: CareInstructionsSectionProp
             <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2">
               <div 
                 onClick={() => setIsEditing(true)}
-                className="cursor-pointer flex items-center justify-center text-white hover:text-gold-300 hover:scale-110 transition-all duration-200 text-xs sm:text-sm px-2 sm:px-4 py-1 sm:py-2"
+                className="cursor-pointer flex items-center justify-center text-white hover:text-gold-300 hover:scale-110 transition-all duration-200 text-sm sm:text-base px-3 sm:px-5 py-2 sm:py-3"
               >
-                <Edit className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
+                <Edit className="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3" />
                 <span className="hidden sm:inline">Edit Instructions</span>
                 <span className="sm:hidden">Edit</span>
               </div>
               <div
                 onClick={handleGenerateCarePDF}
-                className={`cursor-pointer flex items-center justify-center text-white hover:text-gold-300 hover:scale-110 transition-all duration-200 text-xs sm:text-sm px-2 sm:px-4 py-1 sm:py-2 ${isGeneratingPDF ? 'opacity-50 cursor-not-allowed' : ''}`}
+                className={`cursor-pointer flex items-center justify-center text-white hover:text-gold-300 hover:scale-110 transition-all duration-200 text-sm sm:text-base px-3 sm:px-5 py-2 sm:py-3 ${isGeneratingPDF ? 'opacity-50 cursor-not-allowed' : ''}`}
               >
                 {isGeneratingPDF ? (
-                  <Loader2 className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 animate-spin" />
+                  <Loader2 className="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3 animate-spin" />
                 ) : (
-                  <FileText className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
+                  <FileText className="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3" />
                 )}
                 <span className="hidden sm:inline">Download Care PDF</span>
                 <span className="sm:hidden">PDF</span>
@@ -387,12 +387,12 @@ export const CareInstructionsSection = ({ petData }: CareInstructionsSectionProp
               <Dialog open={careShareDialogOpen} onOpenChange={setCareShareDialogOpen}>
                 <DialogTrigger asChild>
                   <div
-                    className={`cursor-pointer flex items-center justify-center text-white hover:text-gold-300 hover:scale-110 transition-all duration-200 text-xs sm:text-sm px-2 sm:px-4 py-1 sm:py-2 ${isSharing ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    className={`cursor-pointer flex items-center justify-center text-white hover:text-gold-300 hover:scale-110 transition-all duration-200 text-sm sm:text-base px-3 sm:px-5 py-2 sm:py-3 ${isSharing ? 'opacity-50 cursor-not-allowed' : ''}`}
                   >
                     {isSharing ? (
-                      <Loader2 className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 animate-spin" />
+                      <Loader2 className="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3 animate-spin" />
                     ) : (
-                      <Share2 className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
+                      <Share2 className="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3" />
                     )}
                     <span className="hidden sm:inline">Share Care Plan</span>
                     <span className="sm:hidden">Share</span>

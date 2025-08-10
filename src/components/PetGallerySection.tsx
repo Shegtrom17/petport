@@ -286,17 +286,17 @@ export const PetGallerySection = ({ petData, onUpdate }: PetGallerySectionProps)
             <div className="flex space-x-4 sm:justify-end">
               <div 
                 onClick={handleUploadPhotos}
-                className={`cursor-pointer flex items-center justify-center text-white hover:text-yellow-300 hover:scale-110 transition-all duration-200 text-xs sm:text-sm px-2 sm:px-4 py-1 sm:py-2 ${(uploading || isLimitReached) ? 'opacity-50 cursor-not-allowed' : ''}`}
+                className={`cursor-pointer flex items-center justify-center text-white hover:text-yellow-300 hover:scale-110 transition-all duration-200 text-sm sm:text-base px-3 sm:px-5 py-2 sm:py-3 ${(uploading || isLimitReached) ? 'opacity-50 cursor-not-allowed' : ''}`}
               >
-                <Plus className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
+                <Plus className="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3" />
                 <span className="hidden sm:inline">{uploading ? "Uploading..." : "Add Photos"}</span>
                 <span className="sm:hidden">{uploading ? "..." : "Add"}</span>
               </div>
               <div 
                 onClick={showGalleryPDFOptions}
-                className="cursor-pointer flex items-center justify-center text-white hover:text-yellow-300 hover:scale-110 transition-all duration-200 text-xs sm:text-sm px-2 sm:px-4 py-1 sm:py-2"
+                className="cursor-pointer flex items-center justify-center text-white hover:text-yellow-300 hover:scale-110 transition-all duration-200 text-sm sm:text-base px-3 sm:px-5 py-2 sm:py-3"
               >
-                <Download className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
+                <Download className="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3" />
                 <span className="hidden sm:inline">Download PDF</span>
                 <span className="sm:hidden">PDF</span>
               </div>

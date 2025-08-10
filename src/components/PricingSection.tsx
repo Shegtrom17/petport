@@ -5,6 +5,7 @@ import { CreditCard, Crown, Plus } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 interface PricingSectionProps {
   context?: "landing" | "profile";
@@ -12,8 +13,13 @@ interface PricingSectionProps {
 
 export const PricingSection: React.FC<PricingSectionProps> = ({ context = "landing" }) => {
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   const startCheckout = async (plan: "monthly" | "yearly") => {
+    if (context === "landing") {
+      navigate(`/auth?plan=${plan}`);
+      return;
+    }
     try {
       const { data, error } = await supabase.functions.invoke("create-checkout", {
         body: { plan },
@@ -30,6 +36,10 @@ export const PricingSection: React.FC<PricingSectionProps> = ({ context = "landi
   };
 
   const buyAddon = async (count: 1 | 3 | 5) => {
+    if (context === "landing") {
+      navigate(`/auth?addon=${count}`);
+      return;
+    }
     try {
       const { data, error } = await supabase.functions.invoke("purchase-addons", {
         body: { bundle: count },

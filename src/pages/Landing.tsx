@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { Button } from "@/components/ui/button";
@@ -8,12 +8,14 @@ import PricingSection from "@/components/PricingSection";
 export default function Landing() {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
-    if (user) {
+    const isPreview = new URLSearchParams(location.search).get("preview") === "1";
+    if (user && !isPreview) {
       navigate('/app', { replace: true });
     }
-  }, [user, navigate]);
+  }, [user, navigate, location.search]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">

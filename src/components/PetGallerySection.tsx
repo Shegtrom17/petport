@@ -283,23 +283,23 @@ export const PetGallerySection = ({ petData, onUpdate }: PetGallerySectionProps)
                 These help hosts, vets, and rescuers identify your pet quickly and accurately.
               </p>
             </div>
-            <div className="flex space-x-1 sm:space-x-2 sm:justify-end">
-              <Button 
-                onClick={handleUploadPhotos} 
-                variant="secondary" 
-                size="sm" 
-                className="px-2 sm:px-3 py-1 sm:py-2 text-xs sm:text-sm"
-                disabled={uploading || isLimitReached}
+            <div className="flex space-x-4 sm:justify-end">
+              <div 
+                onClick={handleUploadPhotos}
+                className={`cursor-pointer flex items-center justify-center text-white hover:text-yellow-300 hover:scale-110 transition-all duration-200 text-xs sm:text-sm px-2 sm:px-4 py-1 sm:py-2 ${(uploading || isLimitReached) ? 'opacity-50 cursor-not-allowed' : ''}`}
               >
                 <Plus className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
                 <span className="hidden sm:inline">{uploading ? "Uploading..." : "Add Photos"}</span>
                 <span className="sm:hidden">{uploading ? "..." : "Add"}</span>
-              </Button>
-              <Button onClick={showGalleryPDFOptions} variant="secondary" size="sm" className="px-2 sm:px-3 py-1 sm:py-2 text-xs sm:text-sm">
+              </div>
+              <div 
+                onClick={showGalleryPDFOptions}
+                className="cursor-pointer flex items-center justify-center text-white hover:text-yellow-300 hover:scale-110 transition-all duration-200 text-xs sm:text-sm px-2 sm:px-4 py-1 sm:py-2"
+              >
                 <Download className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
                 <span className="hidden sm:inline">Download PDF</span>
                 <span className="sm:hidden">PDF</span>
-              </Button>
+              </div>
             </div>
           </div>
         </CardContent>

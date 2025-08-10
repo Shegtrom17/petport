@@ -11,12 +11,14 @@ import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from "@
 import { useUserSettings } from "@/hooks/useUserSettings";
 import { User, LogOut, CreditCard } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
+import { useState } from "react";
 
 export default function Profile() {
   const { user, signOut } = useAuth();
   const { settings, updateSettings } = useUserSettings(user?.id);
-  
-
+  const { toast } = useToast();
+  const [isPaying, setIsPaying] = useState(false);
   const handleLogout = async () => {
     try {
       await signOut();
@@ -26,16 +28,32 @@ export default function Profile() {
   };
 
   const handleOneTimePayment = async () => {
+    setIsPaying(true);
     try {
+      console.log("Invoking create-payment function...");
       const { data, error } = await supabase.functions.invoke("create-payment");
-      if (error) throw error;
+      if (error) {
+        console.error("create-payment error:", error);
+        throw error;
+      }
       if (data?.url) {
-        window.open(data.url, "_blank");
+        console.log("Redirecting to Stripe Checkout:", data.url);
+        window.location.href = data.url;
       } else {
         console.error("No checkout URL returned");
+        toast({
+          title: "Payment unavailable",
+          description: "No checkout URL returned. Please try again.",
+        });
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error("Payment error:", err);
+      toast({
+        title: "Payment failed",
+        description: err?.message ?? "Please try again shortly.",
+      });
+    } finally {
+      setIsPaying(false);
     }
   };
 
@@ -57,9 +75,9 @@ export default function Profile() {
           </CardHeader>
           <CardContent className="space-y-2">
             <p className="text-sm text-muted-foreground">Support PetPort with a one-time $12.99 payment.</p>
-            <Button onClick={handleOneTimePayment} className="w-full">
+            <Button onClick={handleOneTimePayment} className="w-full" disabled={isPaying}>
               <CreditCard className="w-4 h-4" />
-              <span>Pay $12.99</span>
+              <span>{isPaying ? "Processing..." : "Pay $12.99"}</span>
             </Button>
           </CardContent>
         </Card>

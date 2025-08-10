@@ -18,6 +18,7 @@ serve(async (req) => {
   });
 
   try {
+    console.log("create-payment invoked");
     // Retrieve authenticated user (function requires JWT by config)
     const {
       data: { user },

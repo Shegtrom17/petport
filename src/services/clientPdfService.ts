@@ -10,6 +10,106 @@ export interface ClientPDFGenerationResult {
   type?: string;
 }
 
+// Data normalization helper to unify snake_case and camelCase coming from various sources
+function normalizePetData(raw: any): any {
+  const pet = raw || {};
+  const normalized: any = {
+    // Basic identity
+    id: pet.id,
+    name: pet.name,
+    species: pet.species,
+    breed: pet.breed,
+    age: pet.age,
+    weight: pet.weight,
+    gender: pet.gender || pet.sex,
+    color: pet.color,
+
+    // Photos
+    photoUrl: pet.photoUrl || pet.photo_url || pet.photo || pet.photos?.[0]?.url,
+    fullBodyPhotoUrl: pet.fullBodyPhotoUrl || pet.full_body_photo_url,
+    gallery_photos: (pet.gallery_photos || pet.galleryPhotos || []).map((p: any) => ({
+      url: p.url || p.photo_url || p.src,
+      caption: p.caption || p.alt || '',
+    })),
+
+    // Identifiers
+    microchipId: pet.microchipId || pet.microchip_id,
+    petport_id: pet.petport_id || pet.petportId || pet.petportID,
+
+    // Location
+    county: pet.county,
+    state: pet.state,
+
+    // Bio / notes
+    bio: pet.bio,
+    notes: pet.notes,
+
+    // Medical
+    medicalAlert: pet.medicalAlert ?? pet.medical_alert ?? false,
+    medical_alert: pet.medical_alert ?? pet.medicalAlert ?? false, // keep snake for templates using it
+    medicalConditions: pet.medicalConditions || pet.medical_conditions,
+    medical_conditions: pet.medical_conditions || pet.medicalConditions,
+    medications: Array.isArray(pet.medications) ? pet.medications : (pet.medications ? [pet.medications] : []),
+    last_vaccination: pet.last_vaccination,
+    medical_emergency_document: pet.medical_emergency_document,
+
+    // Care instructions (both nested and flat for compatibility)
+    careInstructions: {
+      feedingSchedule: pet.careInstructions?.feedingSchedule || pet.feeding_schedule,
+      morningRoutine: pet.careInstructions?.morningRoutine || pet.morning_routine,
+      eveningRoutine: pet.careInstructions?.eveningRoutine || pet.evening_routine,
+      allergies: pet.careInstructions?.allergies || pet.allergies,
+      medications: pet.careInstructions?.medications || (Array.isArray(pet.medications) ? pet.medications.join(', ') : pet.medications),
+      specialNeeds: pet.careInstructions?.specialNeeds,
+      exerciseRequirements: pet.careInstructions?.exerciseRequirements,
+      behavioralNotes: pet.careInstructions?.behavioralNotes || pet.behavioral_notes,
+      favoriteActivities: pet.careInstructions?.favoriteActivities || pet.favorite_activities,
+    },
+    feeding_schedule: pet.feeding_schedule || pet.careInstructions?.feedingSchedule,
+    morning_routine: pet.morning_routine || pet.careInstructions?.morningRoutine,
+    evening_routine: pet.evening_routine || pet.careInstructions?.eveningRoutine,
+    allergies: pet.allergies || pet.careInstructions?.allergies,
+    behavioral_notes: pet.behavioral_notes || pet.careInstructions?.behavioralNotes,
+    favorite_activities: pet.favorite_activities || pet.careInstructions?.favoriteActivities,
+
+    // Contacts (both camel and snake)
+    emergencyContact: pet.emergencyContact || pet.emergency_contact || pet.contacts?.emergency_contact,
+    secondEmergencyContact: pet.secondEmergencyContact || pet.second_emergency_contact || pet.contacts?.second_emergency_contact,
+    vetContact: pet.vetContact || pet.vet_contact || pet.contacts?.vet_contact,
+    petCaretaker: pet.petCaretaker || pet.pet_caretaker || pet.contacts?.pet_caretaker,
+    emergency_contact: pet.emergency_contact || pet.emergencyContact,
+    second_emergency_contact: pet.second_emergency_contact || pet.secondEmergencyContact,
+    vet_contact: pet.vet_contact || pet.vetContact,
+    pet_caretaker: pet.pet_caretaker || pet.petCaretaker,
+
+    // Lost pet data
+    is_missing: pet.is_missing ?? pet.lost_pet_data?.is_missing ?? false,
+    last_seen_location: pet.last_seen_location || pet.lost_pet_data?.last_seen_location,
+    last_seen_date: pet.last_seen_date || pet.lost_pet_data?.last_seen_date,
+    last_seen_time: pet.last_seen_time || pet.lost_pet_data?.last_seen_time,
+    distinctive_features: pet.distinctive_features || pet.lost_pet_data?.distinctive_features,
+    finder_instructions: pet.finder_instructions || pet.lost_pet_data?.finder_instructions,
+    reward_amount: pet.reward_amount || pet.lost_pet_data?.reward_amount,
+    contact_priority: pet.contact_priority || pet.lost_pet_data?.contact_priority,
+    emergency_notes: pet.emergency_notes || pet.lost_pet_data?.emergency_notes,
+
+    // Professional / credentials
+    support_animal_status: pet.support_animal_status || pet.professional_data?.support_animal_status,
+    badges: pet.badges || pet.professional_data?.badges || [],
+
+    // Collections
+    documents: pet.documents || [],
+    training: pet.training || [],
+    certifications: pet.certifications || [],
+    reviews: pet.reviews || pet.professional_reviews || [],
+    experiences: pet.experiences || [],
+    achievements: pet.achievements || [],
+    travel_locations: pet.travel_locations || [],
+  };
+
+  return normalized;
+}
+
 // Page management system
 class PDFPageManager {
   private doc: jsPDF;
@@ -1165,6 +1265,9 @@ export async function generateClientPetPDF(
     const doc = new jsPDF('p', 'mm', 'a4');
     const pageManager = new PDFPageManager(doc);
 
+    // Normalize pet data (handles camelCase/snake_case and nested tables)
+    const normalizedPet = normalizePetData(petData);
+
     // Generate content based on type (normalize common synonyms)
     const t = (type || 'emergency').toString().toLowerCase();
     let normalizedType: 'emergency' | 'full' | 'lost_pet' | 'care' | 'gallery' | 'resume';
@@ -1194,25 +1297,25 @@ export async function generateClientPetPDF(
 
     switch (normalizedType) {
       case 'emergency':
-        await generateEmergencyPDF(doc, pageManager, petData);
+        await generateEmergencyPDF(doc, pageManager, normalizedPet);
         break;
       case 'lost_pet':
-        await generateLostPetPDF(doc, pageManager, petData);
+        await generateLostPetPDF(doc, pageManager, normalizedPet);
         break;
       case 'gallery':
-        await generateGalleryPDF(doc, pageManager, petData);
+        await generateGalleryPDF(doc, pageManager, normalizedPet);
         break;
       case 'full':
-        await generateFullPDF(doc, pageManager, petData);
+        await generateFullPDF(doc, pageManager, normalizedPet);
         break;
       case 'care':
-        await generateCarePDF(doc, pageManager, petData);
+        await generateCarePDF(doc, pageManager, normalizedPet);
         break;
       case 'resume':
-        await generateResumePDF(doc, pageManager, petData);
+        await generateResumePDF(doc, pageManager, normalizedPet);
         break;
       default:
-        await generateEmergencyPDF(doc, pageManager, petData);
+        await generateEmergencyPDF(doc, pageManager, normalizedPet);
     }
 
     // Generate blob
@@ -1228,7 +1331,7 @@ export async function generateClientPetPDF(
       success: true,
       pdfBlob,
       blob: pdfBlob, // Alias for compatibility
-      fileName: `${petData.name || 'pet'}_${type}_profile.pdf`,
+      fileName: `${(normalizedPet.name || 'pet')}_${normalizedType}_profile.pdf`,
       type
     };
 

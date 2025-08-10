@@ -272,18 +272,18 @@ export const PetGallerySection = ({ petData, onUpdate }: PetGallerySectionProps)
       {/* Header with guidance */}
       <Card className="border-0 shadow-xl bg-gradient-to-r from-navy-900 to-navy-800 text-white">
         <CardContent className="p-6">
-          <div className="flex justify-between items-start">
-            <div className="flex items-center space-x-3 flex-1">
-              <Camera className="w-8 h-8 text-yellow-400" />
-              <div>
-                <h2 className="text-2xl font-bold mb-2">Pet Photo Gallery</h2>
-                <p className="text-blue-100 text-sm leading-relaxed">
-                  Upload clear photos that show your pet's unique markings, size, or special features. 
-                  These help hosts, vets, and rescuers identify your pet quickly and accurately.
-                </p>
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4">
+            <div className="flex-1">
+              <div className="flex items-center space-x-3">
+                <Camera className="w-8 h-8 text-yellow-400" />
+                <h2 className="text-2xl font-bold">Pet Photo Gallery</h2>
               </div>
+              <p className="text-blue-100 text-sm leading-relaxed mt-2">
+                Upload clear photos that show your pet's unique markings, size, or special features. 
+                These help hosts, vets, and rescuers identify your pet quickly and accurately.
+              </p>
             </div>
-            <div className="flex space-x-1 sm:space-x-2">
+            <div className="flex space-x-1 sm:space-x-2 sm:justify-end">
               <Button 
                 onClick={handleUploadPhotos} 
                 variant="secondary" 

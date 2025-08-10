@@ -9,7 +9,8 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from "@/components/ui/select";
 import { useUserSettings } from "@/hooks/useUserSettings";
-import { User, LogOut } from "lucide-react";
+import { User, LogOut, CreditCard } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
 export default function Profile() {
   const { user, signOut } = useAuth();
@@ -24,6 +25,20 @@ export default function Profile() {
     }
   };
 
+  const handleOneTimePayment = async () => {
+    try {
+      const { data, error } = await supabase.functions.invoke("create-payment");
+      if (error) throw error;
+      if (data?.url) {
+        window.open(data.url, "_blank");
+      } else {
+        console.error("No checkout URL returned");
+      }
+    } catch (err) {
+      console.error("Payment error:", err);
+    }
+  };
+
   return (
     <PWALayout>
       <AppHeader title="Profile" />
@@ -33,6 +48,22 @@ export default function Profile() {
         
         
         
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center space-x-2">
+              <CreditCard className="w-5 h-5" />
+              <span>One-Time Payment</span>
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-2">
+            <p className="text-sm text-muted-foreground">Support PetPort with a one-time $12.99 payment.</p>
+            <Button onClick={handleOneTimePayment} className="w-full">
+              <CreditCard className="w-4 h-4" />
+              <span>Pay $12.99</span>
+            </Button>
+          </CardContent>
+        </Card>
+
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center space-x-2">

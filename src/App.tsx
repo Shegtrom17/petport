@@ -26,6 +26,8 @@ import PublicCredentials from "./pages/PublicCredentials";
 import PublicReviews from "./pages/PublicReviews";
 import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
+import PaymentSuccess from "./pages/PaymentSuccess";
+import PaymentCanceled from "./pages/PaymentCanceled";
 
 
 
@@ -89,6 +91,8 @@ const App = () => {
                   <Route path="/transfer/:token" element={<TransferAccept />} />
                   <Route path="/privacy" element={<Privacy />} />
                   <Route path="/terms" element={<Terms />} />
+                  <Route path="/payment-success" element={<PaymentSuccess />} />
+                  <Route path="/payment-canceled" element={<PaymentCanceled />} />
                   <Route path="*" element={<NotFound />} />
                 </Routes>
               </BrowserRouter>

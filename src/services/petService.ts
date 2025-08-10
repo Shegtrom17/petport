@@ -9,6 +9,7 @@ export type PetWithDetails = {
   species: string | null;
   age: string | null;
   weight: string | null;
+  sex: string | null;
   microchip_id: string | null;
   petport_id: string | null;
   bio: string | null;
@@ -47,6 +48,7 @@ export function transformPetData(pet: PetWithDetails): any {
     species: pet.species,
     age: pet.age,
     weight: pet.weight,
+    sex: pet.sex,
     microchipId: pet.microchip_id,
     petPortId: pet.petport_id,
     petPassId: pet.petport_id, // Map to both for compatibility
@@ -139,7 +141,7 @@ export async function fetchUserPets(): Promise<any[]> {
 
     const { data: pets, error } = await supabase
       .from("pets")
-      .select("id, name, breed, species, age, weight, microchip_id, petport_id, bio, notes, state, county, created_at, updated_at, user_id, is_public, organization_name, organization_email, organization_phone, organization_website, custom_logo_url, adoption_status, adoption_instructions")
+      .select("id, name, breed, species, age, weight, sex, microchip_id, petport_id, bio, notes, state, county, created_at, updated_at, user_id, is_public, organization_name, organization_email, organization_phone, organization_website, custom_logo_url, adoption_status, adoption_instructions")
       .eq('user_id', user.id) // Explicitly filter by user_id
       .order("created_at", { ascending: false });
 
@@ -165,6 +167,7 @@ export async function fetchUserPets(): Promise<any[]> {
         species: pet.species,
         age: pet.age,
         weight: pet.weight,
+        sex: pet.sex,
         microchip_id: pet.microchip_id,
         petport_id: pet.petport_id,
         bio: pet.bio,
@@ -205,7 +208,7 @@ export async function fetchPetDetails(petId: string): Promise<any | null> {
   try {
     const { data: pet, error } = await supabase
       .from("pets")
-      .select("id, name, breed, species, age, weight, microchip_id, petport_id, bio, notes, state, county, created_at, updated_at, user_id, is_public, organization_name, organization_email, organization_phone, organization_website, custom_logo_url, adoption_status, adoption_instructions")
+      .select("id, name, breed, species, age, weight, sex, microchip_id, petport_id, bio, notes, state, county, created_at, updated_at, user_id, is_public, organization_name, organization_email, organization_phone, organization_website, custom_logo_url, adoption_status, adoption_instructions")
       .eq("id", petId)
       .single();
 
@@ -257,6 +260,7 @@ export async function fetchPetDetails(petId: string): Promise<any | null> {
       species: pet.species,
       age: pet.age,
       weight: pet.weight,
+      sex: pet.sex,
       microchip_id: pet.microchip_id,
       petport_id: pet.petport_id,
       bio: pet.bio,
@@ -300,6 +304,7 @@ export async function createPet(petData: {
   species?: string;
   age?: string;
   weight?: string;
+  sex?: string;
   microchip_id?: string;
   bio?: string;
   notes?: string;
@@ -336,6 +341,7 @@ export async function createPet(petData: {
       species: petData.species || null,
       age: petData.age || null,
       weight: petData.weight || null,
+      sex: petData.sex || null,
       microchip_id: petData.microchip_id || null,
       bio: petData.bio || null,
       notes: petData.notes || null,
@@ -444,6 +450,7 @@ export async function updatePetBasicInfo(petId: string, basicData: {
   species?: string;
   age?: string;
   weight?: string;
+  sex?: string;
   microchip_id?: string;
   bio?: string;
   notes?: string;

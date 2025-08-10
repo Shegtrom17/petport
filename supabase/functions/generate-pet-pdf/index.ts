@@ -17,6 +17,16 @@ serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
+  // TEMP: PDF generation globally disabled to stabilize deployments
+  return new Response(
+    JSON.stringify({
+      success: false,
+      error: 'PDF generation is temporarily disabled while we stabilize deployments.',
+      pdfBytes: null,
+      fileName: null,
+    }),
+    { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 200 }
+  );
 
   try {
     console.log('=== PDF Generation Started v3 ===')

@@ -26,7 +26,7 @@ import PublicCredentials from "./pages/PublicCredentials";
 import PublicReviews from "./pages/PublicReviews";
 import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
-import Billing from "./pages/Billing";
+
 
 
 const queryClient = new QueryClient();
@@ -89,11 +89,6 @@ const App = () => {
                   <Route path="/transfer/:token" element={<TransferAccept />} />
                   <Route path="/privacy" element={<Privacy />} />
                   <Route path="/terms" element={<Terms />} />
-                  <Route path="/billing" element={
-                    <ProtectedRoute>
-                      <Billing />
-                    </ProtectedRoute>
-                  } />
                   <Route path="*" element={<NotFound />} />
                 </Routes>
               </BrowserRouter>

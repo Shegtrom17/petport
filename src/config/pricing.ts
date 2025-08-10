@@ -4,8 +4,8 @@ export const PRICING = {
     { id: "yearly", name: "Yearly", priceCents: 1299, interval: "year", priceText: "$12.99/year", includes: "Includes 1 pet account" },
   ],
   addons: [
-    { id: "addon-1", count: 1, priceCents: 199, priceText: "+1 pet for $1.99/year" },
-    { id: "addon-3", count: 3, priceCents: 599, priceText: "+3 pets for $5.99/year" },
-    { id: "addon-5", count: 5, priceCents: 799, priceText: "+5 pets for $7.99/year" },
+    { id: "addon-1", count: 1, priceCents: 199, priceText: "$1.99/year" },
+    { id: "addon-3", count: 3, priceCents: 599, priceText: "$5.99/year" },
+    { id: "addon-5", count: 5, priceCents: 799, priceText: "$7.99/year" },
   ],
 } as const;

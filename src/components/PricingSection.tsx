@@ -76,21 +76,21 @@ export const PricingSection: React.FC<PricingSectionProps> = ({ context = "landi
       </div>
 
       <article className="mt-4">
-        <h3 className="text-lg font-medium mb-3">Additional Pet Accounts (Annual)</h3>
+        <h3 className="text-lg font-medium mb-3">Additional Pet Accounts (annual)</h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {PRICING.addons.map((addon) => (
             <Card key={addon.id}>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Plus className="w-5 h-5" />
-                  <span>+{addon.count} Pet{addon.count > 1 ? "s" : ""}</span>
+                  <span>{addon.count} Pet{addon.count > 1 ? "s" : ""}</span>
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
                 <p className="text-xl font-semibold">{addon.priceText}</p>
                 <Button className="w-full" variant="outline" onClick={() => buyAddon(addon.count as 1 | 3 | 5)}>
                   <CreditCard className="w-4 h-4" />
-                  <span>Add +{addon.count}</span>
+                  <span>Add {addon.count} Pet{addon.count > 1 ? "s" : ""}</span>
                 </Button>
               </CardContent>
             </Card>

@@ -10,13 +10,51 @@ const corsHeaders = {
 
 serve(async (req) => {
   console.log('🔄 Create Payment function called');
+  console.log('📍 Method:', req.method);
+  console.log('📍 URL:', req.url);
   
   // Handle CORS preflight requests
   if (req.method === "OPTIONS") {
-    return new Response(null, { headers: corsHeaders });
+    console.log('✅ Handling CORS preflight');
+    return new Response(null, { 
+      headers: corsHeaders,
+      status: 200 
+    });
+  }
+
+  // Health check endpoint
+  if (req.method === "GET") {
+    console.log('✅ Health check');
+    return new Response(JSON.stringify({ 
+      status: "healthy", 
+      timestamp: new Date().toISOString(),
+      service: "create-payment"
+    }), {
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+      status: 200,
+    });
   }
 
   try {
+    // Verify environment variables
+    const supabaseUrl = Deno.env.get("SUPABASE_URL");
+    const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY");
+    const stripeSecretKey = Deno.env.get("STRIPE_SECRET_KEY");
+    
+    console.log('🔧 Environment check:', {
+      hasSupabaseUrl: !!supabaseUrl,
+      hasSupabaseAnonKey: !!supabaseAnonKey,
+      hasStripeKey: !!stripeSecretKey
+    });
+
+    if (!supabaseUrl || !supabaseAnonKey || !stripeSecretKey) {
+      console.error("❌ Missing environment variables");
+      return new Response(JSON.stringify({ error: "Server configuration error" }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 500,
+      });
+    }
+
     // Get authorization header
     const authHeader = req.headers.get("Authorization");
     if (!authHeader) {
@@ -28,10 +66,7 @@ serve(async (req) => {
     }
 
     // Create Supabase client
-    const supabaseClient = createClient(
-      Deno.env.get("SUPABASE_URL") ?? "",
-      Deno.env.get("SUPABASE_ANON_KEY") ?? ""
-    );
+    const supabaseClient = createClient(supabaseUrl, supabaseAnonKey);
 
     // Get user from auth header
     const token = authHeader.replace("Bearer ", "");
@@ -56,7 +91,7 @@ serve(async (req) => {
     const amount = 199 * quantity;
 
     // Initialize Stripe
-    const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY") || "", {
+    const stripe = new Stripe(stripeSecretKey, {
       apiVersion: "2023-10-16",
     });
 

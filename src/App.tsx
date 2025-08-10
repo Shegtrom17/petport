@@ -30,6 +30,7 @@ import PaymentSuccess from "./pages/PaymentSuccess";
 import PaymentCanceled from "./pages/PaymentCanceled";
 import PostCheckout from "./pages/PostCheckout";
 import Subscribe from "./pages/Subscribe";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
 
 
 
@@ -94,6 +95,7 @@ const App = () => {
                   <Route path="/transfer/:token" element={<TransferAccept />} />
                   <Route path="/privacy" element={<Privacy />} />
                   <Route path="/terms" element={<Terms />} />
+                  <Route path="/privacy-policy" element={<PrivacyPolicy />} />
                   <Route path="/payment-success" element={<PaymentSuccess />} />
                   <Route path="/payment-canceled" element={<PaymentCanceled />} />
                   <Route path="/post-checkout" element={<PostCheckout />} />

@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useNavigate, useLocation } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -218,6 +218,9 @@ export default function Auth() {
             </form>
           </CardContent>
           <CardFooter>
+            <p className="text-xs text-muted-foreground">
+              Read our <Link to="/privacy-policy" className="underline">Privacy Policy</Link>.
+            </p>
           </CardFooter>
         </Card>
       </div>

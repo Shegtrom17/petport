@@ -84,7 +84,7 @@ export default function Landing() {
           <p>© {new Date().getFullYear()} PetPort. All rights reserved.</p>
           <p>PetPort is owned and operated by Cool Change LLC (DBA "PetPort"), Blaine, MN.</p>
           <nav className="flex flex-wrap gap-4">
-            <Link to="/privacy" className="underline text-navy-900">Privacy Policy</Link>
+            <Link to="/privacy-policy" className="underline text-navy-900">Privacy Policy</Link>
             <Link to="/terms" className="underline text-navy-900">Terms of Service</Link>
           </nav>
         </div>

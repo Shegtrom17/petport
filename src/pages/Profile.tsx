@@ -4,7 +4,7 @@ import { AppHeader } from "@/components/AppHeader";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { PWAInstallCard } from "@/components/PWAInstallCard";
-import PricingSection from "@/components/PricingSection";
+
 import { supabase } from "@/integrations/supabase/client";
 
 import { Label } from "@/components/ui/label";
@@ -48,9 +48,17 @@ export default function Profile() {
           </div>
         )}
 
-        <PricingSection context="profile" />
-
-        {/* removed One-Time Payment card */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Billing & Cancellation</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-2">
+            <p className="text-sm text-muted-foreground">
+              You can cancel anytime from the Customer Portal. Your plan stays active until the end of your current billing cycle. No prorated refunds.
+            </p>
+            <a href="/terms#cancellation" className="text-sm underline">Read full cancellation policy</a>
+          </CardContent>
+        </Card>
 
         <Card>
           <CardHeader>

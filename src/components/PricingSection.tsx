@@ -113,6 +113,10 @@ export const PricingSection: React.FC<PricingSectionProps> = ({ context = "landi
           ))}
         </div>
       </article>
+      <p className="text-xs text-muted-foreground text-center">
+        Cancel anytime. Manage from your account or the Customer Portal. See our
+        <a href="/terms#cancellation" className="underline ml-1">cancellation policy</a>.
+      </p>
     </section>
   );
 };

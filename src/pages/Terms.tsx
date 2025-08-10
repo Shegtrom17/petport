@@ -64,7 +64,7 @@ export default function Terms() {
               <li><strong>Payment Method:</strong> You authorize us to charge your chosen payment method for subscription fees.</li>
             </ul>
 
-            <h2 className="text-xl font-semibold text-navy-900">6. Cancellation & Refund Policy</h2>
+            <h2 id="cancellation" className="text-xl font-semibold text-navy-900">6. Cancellation & Refund Policy</h2>
             <ul className="list-disc pl-6 text-navy-700 space-y-1">
               <li><strong>Cancel Anytime:</strong> You may cancel your subscription at any time through your account settings.</li>
               <li><strong>No Prorated Refunds:</strong> We do not offer partial or prorated refunds. Your subscription remains active until the end of your current billing period.
@@ -73,7 +73,7 @@ export default function Terms() {
                   <li><strong>Annual Plans:</strong> Service ends at the close of the paid year.</li>
                 </ul>
               </li>
-              <li><strong>Data Access:</strong> You may export your pet records before your subscription expires. Once expired, your account may be downgraded to a free plan or deleted.</li>
+              <li><strong>Data Access:</strong> Your account and stored pet information will remain accessible until your subscription expires. You may download your records at any time before the end date.</li>
             </ul>
 
             <h2 className="text-xl font-semibold text-navy-900">7. User Content & Intellectual Property</h2>

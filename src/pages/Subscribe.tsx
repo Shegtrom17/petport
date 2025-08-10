@@ -37,6 +37,16 @@ export default function Subscribe() {
           )}
         </header>
         <PricingSection context="profile" />
+        <section aria-labelledby="cancellation-policy" className="mt-6 space-y-3">
+          <h2 id="cancellation-policy" className="text-lg font-medium">Cancellation Policy</h2>
+          <p className="text-sm text-muted-foreground">
+            You may cancel your PetPort subscription at any time by logging into your account settings. When you cancel, your subscription will remain active until the end of your current billing cycle. We do not provide prorated refunds for partial months or years. For monthly plans, access will continue until the end of the current month. For annual plans, access will continue until the end of the current year.
+          </p>
+          <p className="text-sm text-muted-foreground">
+            Your account and stored pet information will remain accessible until your subscription expires. You may download your records at any time before the end date. See our
+            <a href="/terms#cancellation" className="underline ml-1">full cancellation terms</a>.
+          </p>
+        </section>
       </div>
     </div>
   );

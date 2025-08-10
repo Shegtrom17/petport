@@ -36,15 +36,35 @@ export default function Profile() {
 
         {user && (
           <div>
-            <Button variant="outline" onClick={async () => {
-              try {
-                const { data, error } = await supabase.functions.invoke("customer-portal");
-                if (error) throw error;
-                if (data?.url) window.open(data.url, "_blank");
-              } catch (e: any) {
-                console.error(e);
-              }
-            }}>Manage Subscription</Button>
+            <Button 
+              variant="outline" 
+              onClick={async () => {
+                console.log("Manage subscription button clicked");
+                try {
+                  console.log("Calling customer-portal function...");
+                  const { data, error } = await supabase.functions.invoke("customer-portal");
+                  console.log("Response from customer-portal:", { data, error });
+                  
+                  if (error) {
+                    console.error("Error from customer-portal:", error);
+                    throw error;
+                  }
+                  
+                  if (data?.url) {
+                    console.log("Opening customer portal URL:", data.url);
+                    window.open(data.url, "_blank");
+                  } else {
+                    console.error("No URL returned from customer-portal");
+                    throw new Error("No portal URL received");
+                  }
+                } catch (e: any) {
+                  console.error("Error managing subscription:", e);
+                  alert("Error opening customer portal. Please try again or contact support.");
+                }
+              }}
+            >
+              Manage Subscription
+            </Button>
           </div>
         )}
 

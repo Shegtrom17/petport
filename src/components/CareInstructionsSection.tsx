@@ -254,11 +254,11 @@ export const CareInstructionsSection = ({ petData }: CareInstructionsSectionProp
   return (
     <div className="space-y-6">
       {/* Quick Contacts Section */}
-      <Card className="border-0 shadow-lg bg-gradient-to-r from-slate-600 to-slate-700 text-white">
+      <Card className="border-0 shadow-lg bg-passport-section-bg backdrop-blur-sm">
         <CardHeader>
           <CardTitle className="flex items-center space-x-2">
-            <Phone className="w-5 h-5 text-gold-400" />
-            <span>Quick Contacts</span>
+            <Phone className="w-5 h-5 text-navy-700" />
+            <span className="text-navy-900">Quick Contacts</span>
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -356,17 +356,17 @@ export const CareInstructionsSection = ({ petData }: CareInstructionsSectionProp
       </Card>
 
       {/* Care Summary */}
-      <Card className="border-0 shadow-lg bg-gradient-to-r from-slate-600 to-slate-700 text-white">
+      <Card className="border-0 shadow-lg bg-passport-section-bg backdrop-blur-sm">
         <CardHeader>
           <CardTitle className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
-              <Heart className="w-5 h-5" />
-              <span>Care Instructions for {petData.name}</span>
+              <Heart className="w-5 h-5 text-navy-700" />
+              <span className="text-navy-900">Care Instructions for {petData.name}</span>
             </div>
             <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2">
               <div 
                 onClick={() => setIsEditing(true)}
-                className="cursor-pointer flex items-center justify-center text-white hover:text-gold-300 hover:scale-110 transition-all duration-200 text-sm sm:text-base px-3 sm:px-5 py-2 sm:py-3"
+                className="cursor-pointer flex items-center justify-center text-navy-700 hover:text-navy-900 hover:scale-110 transition-all duration-200 text-sm sm:text-base px-3 sm:px-5 py-2 sm:py-3"
               >
                 <Edit className="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3" />
                 <span className="hidden sm:inline">Edit Instructions</span>
@@ -374,7 +374,7 @@ export const CareInstructionsSection = ({ petData }: CareInstructionsSectionProp
               </div>
               <div
                 onClick={handleGenerateCarePDF}
-                className={`cursor-pointer flex items-center justify-center text-white hover:text-gold-300 hover:scale-110 transition-all duration-200 text-sm sm:text-base px-3 sm:px-5 py-2 sm:py-3 ${isGeneratingPDF ? 'opacity-50 cursor-not-allowed' : ''}`}
+                className={`cursor-pointer flex items-center justify-center text-navy-700 hover:text-navy-900 hover:scale-110 transition-all duration-200 text-sm sm:text-base px-3 sm:px-5 py-2 sm:py-3 ${isGeneratingPDF ? 'opacity-50 cursor-not-allowed' : ''}`}
               >
                 {isGeneratingPDF ? (
                   <Loader2 className="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3 animate-spin" />
@@ -387,7 +387,7 @@ export const CareInstructionsSection = ({ petData }: CareInstructionsSectionProp
               <Dialog open={careShareDialogOpen} onOpenChange={setCareShareDialogOpen}>
                 <DialogTrigger asChild>
                   <div
-                    className={`cursor-pointer flex items-center justify-center text-white hover:text-gold-300 hover:scale-110 transition-all duration-200 text-sm sm:text-base px-3 sm:px-5 py-2 sm:py-3 ${isSharing ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    className={`cursor-pointer flex items-center justify-center text-navy-700 hover:text-navy-900 hover:scale-110 transition-all duration-200 text-sm sm:text-base px-3 sm:px-5 py-2 sm:py-3 ${isSharing ? 'opacity-50 cursor-not-allowed' : ''}`}
                   >
                     {isSharing ? (
                       <Loader2 className="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3 animate-spin" />

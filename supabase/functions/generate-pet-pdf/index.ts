@@ -2252,7 +2252,7 @@ serve(async (req) => {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 200,
       }
-    )
+    );
 
   } catch (error) {
     console.error('ERROR: Error in generate-pet-pdf function:', error)

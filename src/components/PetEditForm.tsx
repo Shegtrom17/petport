@@ -24,6 +24,7 @@ interface PetData {
   species: string;
   age: string;
   weight: string;
+  sex: string;
   microchipId: string;
   petport_id: string;
   bio: string;
@@ -91,6 +92,7 @@ export const PetEditForm = ({ petData, onSave, onCancel, togglePetPublicVisibili
     breed: petData.breed || "",
     age: petData.age || "",
     weight: petData.weight || "",
+    sex: petData.sex || "",
     microchipId: petData.microchipId || "",
     species: petData.species || "",
     state: petData.state || "",
@@ -190,6 +192,7 @@ const handleSubmit = async (e: React.FormEvent) => {
       species: sanitizeText(formData.species.trim()),
       age: sanitizeText(formData.age.trim()),
       weight: sanitizeText(formData.weight.trim()),
+      sex: sanitizeText(formData.sex.trim()),
       microchip_id: sanitizeText(formData.microchipId.trim()),
       bio: sanitizeText(formData.bio.trim()),
       notes: sanitizeText(formData.notes.trim()),
@@ -268,7 +271,7 @@ const handleSubmit = async (e: React.FormEvent) => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
             <Label htmlFor="age">Age</Label>
             <Input type="text" id="age" name="age" value={formData.age} onChange={handleChange} />
@@ -276,6 +279,19 @@ const handleSubmit = async (e: React.FormEvent) => {
           <div>
             <Label htmlFor="weight">Weight</Label>
             <Input type="text" id="weight" name="weight" value={formData.weight} onChange={handleChange} />
+          </div>
+          <div>
+            <Label htmlFor="sex">Sex</Label>
+            <Select value={formData.sex} onValueChange={(value) => handleSelectChange('sex', value)}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select sex" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="male">Male</SelectItem>
+                <SelectItem value="female">Female</SelectItem>
+                <SelectItem value="unknown">Unknown</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
         </div>
 

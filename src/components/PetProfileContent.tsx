@@ -512,6 +512,10 @@ export const PetProfileContent = ({
                   <p className="text-gold-400 text-sm font-semibold tracking-wide">WEIGHT</p>
                   <p className="text-lg font-medium">{enhancedPetData?.weight || "Not specified"}</p>
                 </div>
+                <div>
+                  <p className="text-gold-400 text-sm font-semibold tracking-wide">SEX</p>
+                  <p className="text-lg font-medium">{enhancedPetData?.sex ? enhancedPetData.sex.charAt(0).toUpperCase() + enhancedPetData.sex.slice(1) : "Not specified"}</p>
+                </div>
                 <div className="md:col-span-2">
                   <p className="text-gold-400 text-sm font-semibold tracking-wide">MICROCHIP NUMBER</p>
                   <p className="text-lg font-mono bg-slate-700/50 px-3 py-2 rounded border border-gold-600/30">

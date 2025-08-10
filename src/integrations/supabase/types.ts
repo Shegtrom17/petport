@@ -640,6 +640,7 @@ export type Database = {
           organization_phone: string | null
           organization_website: string | null
           petport_id: string | null
+          sex: string | null
           species: string | null
           state: string | null
           updated_at: string
@@ -665,6 +666,7 @@ export type Database = {
           organization_phone?: string | null
           organization_website?: string | null
           petport_id?: string | null
+          sex?: string | null
           species?: string | null
           state?: string | null
           updated_at?: string
@@ -690,6 +692,7 @@ export type Database = {
           organization_phone?: string | null
           organization_website?: string | null
           petport_id?: string | null
+          sex?: string | null
           species?: string | null
           state?: string | null
           updated_at?: string

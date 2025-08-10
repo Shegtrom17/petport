@@ -21,6 +21,7 @@ interface PetData {
   species: string;
   age: string;
   weight: string;
+  sex: string;
   microchipId: string;
   petport_id: string;
   bio: string;
@@ -145,6 +146,7 @@ const handleEditSave = () => {
     species: petData?.species || "",
     age: petData?.age || "",
     weight: petData?.weight || "",
+    sex: petData?.sex || "",
     microchipId: petData?.microchipId || "",
     petport_id: petData?.petport_id || "",
     bio: petData?.bio || "",

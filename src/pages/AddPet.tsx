@@ -25,6 +25,7 @@ export default function AddPet() {
     breed: "",
     age: "",
     weight: "",
+    sex: "",
     microchip_id: "",
     bio: "",
     notes: ""
@@ -209,6 +210,24 @@ export default function AddPet() {
                       onChange={handleChange}
                       placeholder="Weight (e.g., 65 lbs)"
                     />
+                  </div>
+
+                  {/* Sex */}
+                  <div className="space-y-2">
+                    <Label htmlFor="sex">Sex</Label>
+                    <Select
+                      value={petData.sex}
+                      onValueChange={(value) => handleSelectChange("sex", value)}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select sex" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="male">Male</SelectItem>
+                        <SelectItem value="female">Female</SelectItem>
+                        <SelectItem value="unknown">Unknown</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
 
                   {/* Microchip ID */}

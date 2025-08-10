@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
+import { featureFlags } from "@/config/featureFlags";
 
 export function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, isLoading } = useAuth();
@@ -40,8 +41,8 @@ export function ProtectedRoute({ children }: { children: React.ReactNode }) {
     }
   }, [user]);
 
-  // Show loading state
-  if (isLoading || (user && checkingSub)) {
+  // Show loading state (skip subscription check wait in test mode)
+  if (isLoading || (user && checkingSub && !featureFlags.testMode)) {
     console.log("Protected Route - Showing loading state");
     return (
       <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-blue-50 via-indigo-50 to-navy-100">
@@ -54,6 +55,12 @@ export function ProtectedRoute({ children }: { children: React.ReactNode }) {
   if (!user) {
     console.log("Protected Route - No user, redirecting to /auth");
     return <Navigate to="/auth" state={{ from: location }} replace />;
+  }
+
+  // In test mode, bypass subscription gate
+  if (featureFlags.testMode) {
+    console.log("Protected Route - Test mode active; bypassing subscription gate");
+    return <>{children}</>;
   }
 
   // Enforce subscription gate except on allowed pages

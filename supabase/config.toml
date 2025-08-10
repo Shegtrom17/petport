@@ -77,3 +77,9 @@ verify_jwt = true
 
 [functions.purchase-addons]
 verify_jwt = true
+
+[functions.public-create-checkout]
+verify_jwt = false
+
+[functions.verify-checkout]
+verify_jwt = false

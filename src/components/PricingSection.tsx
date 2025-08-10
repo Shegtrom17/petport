@@ -16,11 +16,17 @@ export const PricingSection: React.FC<PricingSectionProps> = ({ context = "landi
   const navigate = useNavigate();
 
   const startCheckout = async (plan: "monthly" | "yearly") => {
-    if (context === "landing") {
-      navigate(`/auth?plan=${plan}`);
-      return;
-    }
     try {
+      if (context === "landing") {
+        const { data, error } = await supabase.functions.invoke("public-create-checkout", { body: { plan } });
+        if (error) throw error;
+        if (data?.url) {
+          window.open(data.url, "_blank");
+        } else {
+          toast({ title: "Unable to start checkout", description: "Please try again." });
+        }
+        return;
+      }
       const { data, error } = await supabase.functions.invoke("create-checkout", {
         body: { plan },
       });

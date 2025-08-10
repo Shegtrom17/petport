@@ -1,0 +1,78 @@
+import { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
+import { MetaTags } from "@/components/MetaTags";
+
+export default function PostCheckout() {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { toast } = useToast();
+  const [state, setState] = useState<"verifying" | "success" | "error">("verifying");
+  const [email, setEmail] = useState<string | null>(null);
+  const [msg, setMsg] = useState<string>("");
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const session_id = params.get("session_id");
+    if (!session_id) {
+      setState("error");
+      setMsg("Missing session id");
+      return;
+    }
+    (async () => {
+      try {
+        const { data, error } = await supabase.functions.invoke("verify-checkout", { body: { session_id } });
+        if (error) throw error;
+        if (data?.success) {
+          setEmail(data.email || null);
+          setState("success");
+          if (data.invited) {
+            setMsg("Payment complete! We've emailed you an invite to finish creating your account.");
+          } else {
+            setMsg("Payment complete! Please sign in to access your account.");
+          }
+        } else {
+          setState("error");
+          setMsg("Unable to verify payment. Please contact support.");
+        }
+      } catch (e: any) {
+        setState("error");
+        setMsg(e?.message ?? "Verification failed");
+        toast({ variant: "destructive", title: "Verification failed", description: e?.message ?? "Try again" });
+      }
+    })();
+  }, [location.search, toast]);
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 flex items-center justify-center p-4">
+      <MetaTags title="Payment Completed - PetPort" description="Complete your account after payment." url={window.location.href} />
+      <Card className="max-w-lg w-full bg-white/90 backdrop-blur-sm">
+        <CardHeader>
+          <CardTitle>{state === "verifying" ? "Verifying your payment" : state === "success" ? "You're all set!" : "Verification issue"}</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          {state === "verifying" && <p>Please wait while we confirm your subscription...</p>}
+          {state === "success" && (
+            <div className="space-y-3">
+              <p>{msg}</p>
+              {email && <p className="text-sm text-muted-foreground">Email: {email}</p>}
+              <div className="flex gap-2">
+                <Button onClick={() => navigate("/auth")}>Go to Sign In</Button>
+                <Button variant="outline" onClick={() => navigate("/")}>Return Home</Button>
+              </div>
+            </div>
+          )}
+          {state === "error" && (
+            <div className="space-y-3">
+              <p>{msg || "We couldn't verify your payment."}</p>
+              <Button onClick={() => navigate("/")}>Return Home</Button>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+    </div>
+  );
+}

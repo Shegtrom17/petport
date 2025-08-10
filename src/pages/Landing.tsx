@@ -45,10 +45,7 @@ export default function Landing() {
           <p className="mt-3 text-navy-700 max-w-2xl mx-auto">
             One place for everything about your pet. Beautiful profiles, emergency info, sharable links, PDFs, documents, and travel maps.
           </p>
-          <div className="mt-6 flex items-center justify-center gap-3">
-            <Button onClick={() => navigate('/auth')}>Get Started</Button>
-            <Button variant="outline" onClick={() => navigate('/auth')}>For Foster Caregivers</Button>
-          </div>
+          <div className="mt-6" />
         </section>
 
         <section className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">

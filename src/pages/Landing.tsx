@@ -60,9 +60,6 @@ export default function Landing() {
               <li><strong>Reviews & Hospitality</strong> — collect, store, and share vet or host reviews for references.</li>
               <li><strong>Easy uploads • Cloud‑secure • Everything in one place</strong> — no more lost papers.</li>
             </ul>
-            <div className="mt-4">
-              <Link to="/auth" className="underline text-navy-900">Create your free profile →</Link>
-            </div>
           </article>
           <article className="bg-white rounded-xl shadow-sm p-6">
             <h2 className="text-2xl font-semibold text-navy-900">For Foster Caregivers</h2>
@@ -74,9 +71,6 @@ export default function Landing() {
             <li><strong>One‑Tap Transfer to Adopter</strong> — move the full pet record to the new owner securely.</li>
             <li><strong>Privacy by Default</strong> — you choose what’s shared publicly.</li>
           </ul>
-            <div className="mt-4">
-              <Link to="/auth" className="underline text-navy-900">Get started as a foster →</Link>
-            </div>
           </article>
         </section>
 

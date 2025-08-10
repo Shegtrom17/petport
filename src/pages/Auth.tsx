@@ -161,11 +161,9 @@ export default function Auth() {
         
         <Card className="border-0 shadow-lg bg-white/90 backdrop-blur-sm">
           <CardHeader>
-            <CardTitle>{isSignIn ? "Sign In" : "Create Account"}</CardTitle>
+            <CardTitle>Sign In</CardTitle>
             <CardDescription>
-              {isSignIn 
-                ? "Enter your credentials to access your pet profiles" 
-                : "Sign up to create and manage pet passports"}
+              Enter your credentials to access your account
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -220,20 +218,6 @@ export default function Auth() {
             </form>
           </CardContent>
           <CardFooter>
-            <Button
-              variant="link"
-              className="w-full text-navy-800"
-              onClick={() => {
-                setIsSignIn(!isSignIn);
-                setEmail("");
-                setPassword("");
-                setFullName("");
-              }}
-            >
-              {isSignIn
-                ? "Don't have an account? Sign Up"
-                : "Already have an account? Sign In"}
-            </Button>
           </CardFooter>
         </Card>
       </div>

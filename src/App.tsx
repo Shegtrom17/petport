@@ -29,6 +29,7 @@ import Terms from "./pages/Terms";
 import PaymentSuccess from "./pages/PaymentSuccess";
 import PaymentCanceled from "./pages/PaymentCanceled";
 import PostCheckout from "./pages/PostCheckout";
+import Subscribe from "./pages/Subscribe";
 
 
 
@@ -96,6 +97,11 @@ const App = () => {
                   <Route path="/payment-success" element={<PaymentSuccess />} />
                   <Route path="/payment-canceled" element={<PaymentCanceled />} />
                   <Route path="/post-checkout" element={<PostCheckout />} />
+                  <Route path="/subscribe" element={
+                    <ProtectedRoute>
+                      <Subscribe />
+                    </ProtectedRoute>
+                  } />
                   <Route path="*" element={<NotFound />} />
                 </Routes>
               </BrowserRouter>

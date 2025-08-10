@@ -26,13 +26,7 @@ export const AuthenticationPrompt = ({ isSignedIn, hasPets }: AuthenticationProm
       {!isSignedIn ? (
         <>
           <h2 className="text-xl sm:text-2xl font-bold text-navy-800 mb-2 sm:mb-3">Welcome to PetPort</h2>
-          <p className="text-navy-600 mb-4 sm:mb-6 text-sm sm:text-base px-4">Sign in or create an account to manage your pet's digital passport!</p>
-          <Button 
-            className="bg-gradient-to-r from-navy-900 to-navy-800 hover:from-navy-800 hover:to-navy-700 text-gold-500 border border-gold-500/30 text-sm sm:text-base px-4 sm:px-6 py-2 sm:py-3"
-            onClick={() => navigate('/auth')}
-          >
-            <LogIn className="mr-2 h-4 w-4 sm:h-5 sm:w-5" /> Get Started
-          </Button>
+          <p className="text-navy-600 mb-4 sm:mb-6 text-sm sm:text-base px-4">Sign in to manage your pet's digital passport.</p>
         </>
       ) : (
         <>

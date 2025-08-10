@@ -264,80 +264,80 @@ export const CareInstructionsSection = ({ petData }: CareInstructionsSectionProp
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {petData.emergencyContact && (
-              <div className="p-3 bg-red-600/30 rounded-lg border border-red-500/30">
-                <p className="text-red-100 text-sm font-semibold tracking-wide mb-1">PRIMARY EMERGENCY</p>
+              <div className="p-3 bg-red-100 rounded-lg border border-red-300">
+                <p className="text-red-800 text-sm font-semibold tracking-wide mb-1">PRIMARY EMERGENCY</p>
                 {(() => {
                   const phoneNumber = extractPhoneNumber(petData.emergencyContact);
                   return phoneNumber ? (
                     <a 
                       href={`tel:${formatPhoneForTel(phoneNumber)}`}
-                      className="font-medium flex items-center gap-2 hover:text-red-200 transition-colors duration-200 cursor-pointer"
+                      className="font-medium flex items-center gap-2 text-red-900 hover:text-red-700 transition-colors duration-200 cursor-pointer"
                     >
                       <Phone className="w-4 h-4" />
                       {petData.emergencyContact}
                     </a>
                   ) : (
-                    <p className="font-medium">{petData.emergencyContact}</p>
+                    <p className="font-medium text-red-900">{petData.emergencyContact}</p>
                   );
                 })()}
               </div>
             )}
             
             {petData.secondEmergencyContact && (
-              <div className="p-3 bg-red-600/30 rounded-lg border border-red-500/30">
-                <p className="text-red-100 text-sm font-semibold tracking-wide mb-1">SECONDARY EMERGENCY</p>
+              <div className="p-3 bg-red-100 rounded-lg border border-red-300">
+                <p className="text-red-800 text-sm font-semibold tracking-wide mb-1">SECONDARY EMERGENCY</p>
                 {(() => {
                   const phoneNumber = extractPhoneNumber(petData.secondEmergencyContact);
                   return phoneNumber ? (
                     <a 
                       href={`tel:${formatPhoneForTel(phoneNumber)}`}
-                      className="font-medium flex items-center gap-2 hover:text-red-200 transition-colors duration-200 cursor-pointer"
+                      className="font-medium flex items-center gap-2 text-red-900 hover:text-red-700 transition-colors duration-200 cursor-pointer"
                     >
                       <Phone className="w-4 h-4" />
                       {petData.secondEmergencyContact}
                     </a>
                   ) : (
-                    <p className="font-medium">{petData.secondEmergencyContact}</p>
+                    <p className="font-medium text-red-900">{petData.secondEmergencyContact}</p>
                   );
                 })()}
               </div>
             )}
             
             {petData.vetContact && (
-              <div className="p-3 bg-blue-600/30 rounded-lg border border-blue-500/30">
-                <p className="text-blue-100 text-sm font-semibold tracking-wide mb-1">VETERINARIAN</p>
+              <div className="p-3 bg-blue-100 rounded-lg border border-blue-300">
+                <p className="text-blue-800 text-sm font-semibold tracking-wide mb-1">VETERINARIAN</p>
                 {(() => {
                   const phoneNumber = extractPhoneNumber(petData.vetContact);
                   return phoneNumber ? (
                     <a 
                       href={`tel:${formatPhoneForTel(phoneNumber)}`}
-                      className="font-medium flex items-center gap-2 hover:text-blue-200 transition-colors duration-200 cursor-pointer"
+                      className="font-medium flex items-center gap-2 text-blue-900 hover:text-blue-700 transition-colors duration-200 cursor-pointer"
                     >
                       <Phone className="w-4 h-4" />
                       {petData.vetContact}
                     </a>
                   ) : (
-                    <p className="font-medium">{petData.vetContact}</p>
+                    <p className="font-medium text-blue-900">{petData.vetContact}</p>
                   );
                 })()}
               </div>
             )}
             
             {petData.petCaretaker && (
-              <div className="p-3 bg-green-600/30 rounded-lg border border-green-500/30">
-                <p className="text-green-100 text-sm font-semibold tracking-wide mb-1">PET CARETAKER</p>
+              <div className="p-3 bg-green-100 rounded-lg border border-green-300">
+                <p className="text-green-800 text-sm font-semibold tracking-wide mb-1">PET CARETAKER</p>
                 {(() => {
                   const phoneNumber = extractPhoneNumber(petData.petCaretaker);
                   return phoneNumber ? (
                     <a 
                       href={`tel:${formatPhoneForTel(phoneNumber)}`}
-                      className="font-medium flex items-center gap-2 hover:text-green-200 transition-colors duration-200 cursor-pointer"
+                      className="font-medium flex items-center gap-2 text-green-900 hover:text-green-700 transition-colors duration-200 cursor-pointer"
                     >
                       <Phone className="w-4 h-4" />
                       {petData.petCaretaker}
                     </a>
                   ) : (
-                    <p className="font-medium">{petData.petCaretaker}</p>
+                    <p className="font-medium text-green-900">{petData.petCaretaker}</p>
                   );
                 })()}
               </div>

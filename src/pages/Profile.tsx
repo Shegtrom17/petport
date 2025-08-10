@@ -37,8 +37,8 @@ export default function Profile() {
         throw error;
       }
       if (data?.url) {
-        console.log("Redirecting to Stripe Checkout:", data.url);
-        window.location.href = data.url;
+        console.log("Opening Stripe Checkout in new tab:", data.url);
+        window.open(data.url, '_blank');
       } else {
         console.error("No checkout URL returned");
         toast({

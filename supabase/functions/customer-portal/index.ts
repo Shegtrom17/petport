@@ -38,9 +38,20 @@ serve(async (req) => {
     if (!user?.email) throw new Error("User not authenticated or email not available");
 
     const stripe = new Stripe(stripeKey, { apiVersion: "2023-10-16" });
+    let customerId: string;
     const customers = await stripe.customers.list({ email: user.email, limit: 1 });
-    if (customers.data.length === 0) throw new Error("No Stripe customer found for this user");
-    const customerId = customers.data[0].id;
+    if (customers.data.length === 0) {
+      logStep("No Stripe customer found, creating one", { email: user.email, userId: user.id });
+      const created = await stripe.customers.create({
+        email: user.email,
+        metadata: { supabase_user_id: user.id },
+      });
+      customerId = created.id;
+      logStep("Created Stripe customer", { customerId });
+    } else {
+      customerId = customers.data[0].id;
+      logStep("Found existing Stripe customer", { customerId });
+    }
 
     const origin = req.headers.get("origin") || "https://petport.app";
     const portalSession = await stripe.billingPortal.sessions.create({

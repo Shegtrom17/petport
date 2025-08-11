@@ -20,9 +20,9 @@ export const NativeModal = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 bg-background">
+    <div className="fixed inset-0 z-50 bg-background flex flex-col">
       {/* Header */}
-      <div className="sticky top-0 bg-background border-b border-border">
+      <div className="flex-shrink-0 bg-background border-b border-border">
         <div className="flex items-center justify-between h-14 px-4">
           <h2 className="text-lg font-semibold">{title}</h2>
           <Button
@@ -37,8 +37,10 @@ export const NativeModal = ({
       </div>
 
       {/* Content */}
-      <div className={`${fullScreen ? 'h-full' : 'p-4'} overflow-y-auto native-scroll`}>
-        {children}
+      <div className="flex-1 overflow-y-auto">
+        <div className={`${fullScreen ? 'min-h-full' : 'p-4'} pb-8`}>
+          {children}
+        </div>
       </div>
     </div>
   );

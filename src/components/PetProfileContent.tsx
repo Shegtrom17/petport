@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
-import { AlertTriangle, Phone, Trash2, Upload, Loader2, Edit, Share2, Facebook, MessageCircle, Mail } from "lucide-react";
+import { AlertTriangle, Phone, Trash2, Upload, Loader2, Edit, Share2, Facebook, MessageCircle, Mail, Camera } from "lucide-react";
 import { PetPDFGenerator } from "@/components/PetPDFGenerator";
 import { SupportAnimalBanner } from "@/components/SupportAnimalBanner";
 import { SocialShareButtons } from "@/components/SocialShareButtons";
@@ -253,6 +253,53 @@ export const PetProfileContent = ({
     input.click();
   };
 
+  const handleCapturePhoto = (photoType: 'profile' | 'fullBody') => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/*';
+    input.capture = 'environment';
+    
+    input.onchange = async (e) => {
+      const file = (e.target as HTMLInputElement).files?.[0];
+      if (!file) return;
+
+      if (!selectedPet?.id && !enhancedPetData?.id) {
+        toast({
+          title: "Error",
+          description: "Pet ID not found",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      const petId = selectedPet?.id || enhancedPetData.id;
+      setPhotoLoading(prev => ({ ...prev, [photoType]: true }));
+
+      try {
+        const success = await replaceOfficialPhoto(petId, file, photoType);
+        if (success) {
+          toast({
+            title: "Photo captured",
+            description: `${photoType === 'profile' ? 'Portrait' : 'Full profile'} photo captured successfully`
+          });
+          onPhotoUpdate?.();
+        } else {
+          throw new Error("Failed to capture photo");
+        }
+      } catch (error) {
+        toast({
+          title: "Capture failed",
+          description: `Failed to capture ${photoType === 'profile' ? 'portrait' : 'full profile'} photo`,
+          variant: "destructive"
+        });
+      } finally {
+        setPhotoLoading(prev => ({ ...prev, [photoType]: false }));
+      }
+    };
+    
+    input.click();
+  };
+
   return (
     <div className="passport-map-container">
       <div className="passport-map-bg" />
@@ -281,21 +328,35 @@ export const PetProfileContent = ({
                 <div className="space-y-3">
                   <div className="flex justify-between items-center min-w-0">
                     <p className="text-gold-400 text-xs sm:text-sm font-semibold tracking-wide truncate">PORTRAIT</p>
-                    <div className="flex gap-1 sm:gap-2 flex-shrink-0">
-                      <div
-                        onClick={() => handleUploadPhoto('profile')}
-                        className="p-2 text-gold-400 hover:text-gold-300 hover:scale-110 transition-all cursor-pointer disabled:opacity-50"
-                        role="button"
-                        tabIndex={0}
-                        aria-label="Upload portrait photo"
-                        onKeyDown={(e) => e.key === 'Enter' && handleUploadPhoto('profile')}
-                      >
-                        {photoLoading.profile ? (
-                          <Loader2 className="w-4 h-4 animate-spin" />
-                        ) : (
-                           <Upload className="w-4 h-4" />
-                        )}
-                      </div>
+                     <div className="flex gap-1 sm:gap-2 flex-shrink-0">
+                       <div
+                         onClick={() => handleUploadPhoto('profile')}
+                         className="p-2 text-gold-400 hover:text-gold-300 hover:scale-110 transition-all cursor-pointer disabled:opacity-50"
+                         role="button"
+                         tabIndex={0}
+                         aria-label="Upload portrait photo"
+                         onKeyDown={(e) => e.key === 'Enter' && handleUploadPhoto('profile')}
+                       >
+                         {photoLoading.profile ? (
+                           <Loader2 className="w-4 h-4 animate-spin" />
+                         ) : (
+                            <Upload className="w-4 h-4" />
+                         )}
+                       </div>
+                       <div
+                         onClick={() => handleCapturePhoto('profile')}
+                         className="p-2 text-gold-400 hover:text-gold-300 hover:scale-110 transition-all cursor-pointer disabled:opacity-50"
+                         role="button"
+                         tabIndex={0}
+                         aria-label="Capture portrait photo"
+                         onKeyDown={(e) => e.key === 'Enter' && handleCapturePhoto('profile')}
+                       >
+                         {photoLoading.profile ? (
+                           <Loader2 className="w-4 h-4 animate-spin" />
+                         ) : (
+                           <Camera className="w-4 h-4" />
+                         )}
+                       </div>
                       {enhancedPetData?.photoUrl && enhancedPetData.photoUrl !== "/placeholder.svg" && (
                         <AlertDialog>
                           <AlertDialogTrigger asChild>
@@ -346,21 +407,35 @@ export const PetProfileContent = ({
                 <div className="space-y-3">
                   <div className="flex justify-between items-center min-w-0">
                     <p className="text-gold-400 text-xs sm:text-sm font-semibold tracking-wide truncate">FULL PROFILE</p>
-                    <div className="flex gap-1 sm:gap-2 flex-shrink-0">
-                      <div
-                        onClick={() => handleUploadPhoto('fullBody')}
-                        className="p-2 text-gold-400 hover:text-gold-300 hover:scale-110 transition-all cursor-pointer disabled:opacity-50"
-                        role="button"
-                        tabIndex={0}
-                        aria-label="Upload full body photo"
-                        onKeyDown={(e) => e.key === 'Enter' && handleUploadPhoto('fullBody')}
-                      >
-                        {photoLoading.fullBody ? (
-                          <Loader2 className="w-4 h-4 animate-spin" />
-                        ) : (
-                          <Upload className="w-4 h-4" />
-                        )}
-                      </div>
+                     <div className="flex gap-1 sm:gap-2 flex-shrink-0">
+                       <div
+                         onClick={() => handleUploadPhoto('fullBody')}
+                         className="p-2 text-gold-400 hover:text-gold-300 hover:scale-110 transition-all cursor-pointer disabled:opacity-50"
+                         role="button"
+                         tabIndex={0}
+                         aria-label="Upload full body photo"
+                         onKeyDown={(e) => e.key === 'Enter' && handleUploadPhoto('fullBody')}
+                       >
+                         {photoLoading.fullBody ? (
+                           <Loader2 className="w-4 h-4 animate-spin" />
+                         ) : (
+                           <Upload className="w-4 h-4" />
+                         )}
+                       </div>
+                       <div
+                         onClick={() => handleCapturePhoto('fullBody')}
+                         className="p-2 text-gold-400 hover:text-gold-300 hover:scale-110 transition-all cursor-pointer disabled:opacity-50"
+                         role="button"
+                         tabIndex={0}
+                         aria-label="Capture full body photo"
+                         onKeyDown={(e) => e.key === 'Enter' && handleCapturePhoto('fullBody')}
+                       >
+                         {photoLoading.fullBody ? (
+                           <Loader2 className="w-4 h-4 animate-spin" />
+                         ) : (
+                           <Camera className="w-4 h-4" />
+                         )}
+                       </div>
                       {enhancedPetData?.fullBodyPhotoUrl && enhancedPetData.fullBodyPhotoUrl !== "/placeholder.svg" && (
                         <AlertDialog>
                           <AlertDialogTrigger asChild>

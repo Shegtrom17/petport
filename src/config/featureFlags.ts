@@ -4,5 +4,5 @@ export type FeatureFlags = {
 
 export const featureFlags: FeatureFlags = {
   // Enable during trusted-friends testing. Set to false for production.
-  testMode: true,
+  testMode: false,
 };

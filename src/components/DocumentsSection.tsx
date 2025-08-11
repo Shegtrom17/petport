@@ -3,7 +3,7 @@ import { useState, useRef } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { FileText, Upload, Download, Eye, Trash2, Loader2, Camera, Shield, Syringe, Receipt, Heart, FileArchive, FolderOpen } from "lucide-react";
+import { FileText, Upload, Download, Eye, Trash2, Loader2, Camera, Shield, Syringe, Receipt, Heart, FileArchive, FolderOpen, IdCard, Plane } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -29,11 +29,16 @@ const DOCUMENT_CATEGORIES = [
   { value: 'medical', label: 'Medical Records', icon: Heart },
   { value: 'medication', label: 'Medication', icon: FileText },
   { value: 'invoices', label: 'Invoices', icon: Receipt },
+  { value: 'registrations', label: 'Registrations', icon: IdCard },
+  { value: 'travel_docs', label: 'Travel Docs', icon: Plane },
   { value: 'misc', label: 'Misc/Other', icon: FolderOpen },
 ];
 
 const getCategoryInfo = (category: string) => {
-  return DOCUMENT_CATEGORIES.find(cat => cat.value === category) || DOCUMENT_CATEGORIES[5]; // Default to Misc
+  return (
+    DOCUMENT_CATEGORIES.find((cat) => cat.value === category) ||
+    DOCUMENT_CATEGORIES.find((cat) => cat.value === 'misc')!
+  );
 };
 
 export const DocumentsSection = ({ petId, documents, onDocumentDeleted }: DocumentsSectionProps) => {

@@ -4,14 +4,13 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/context/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { featureFlags } from "@/config/featureFlags";
 
 export default function Subscribe() {
   const { user } = useAuth();
   const { toast } = useToast();
   const [loadingPortal, setLoadingPortal] = useState(false);
-  const [loadingRefresh, setLoadingRefresh] = useState(false);
-  const [loadingCopy, setLoadingCopy] = useState(false);
 
   const openPortal = async () => {
     setLoadingPortal(true);
@@ -39,43 +38,29 @@ export default function Subscribe() {
     }
   };
 
-  const copyPortalLink = async () => {
-    setLoadingCopy(true);
+  // Auto-refresh subscription status on mount/focus; no manual button
+  const refreshStatus = async () => {
     try {
-      const { data, error } = await supabase.functions.invoke("customer-portal");
-      if (error) throw error;
-      const url = data?.url as string | undefined;
-      if (url) {
-        await navigator.clipboard.writeText(url);
-        toast({ title: "Portal link copied", description: "Paste it in your browser to manage subscription." });
-      } else {
-        toast({ title: "Unable to get link", description: "Please try again." });
-      }
+      await supabase.functions.invoke("check-subscription");
     } catch (e: any) {
-      toast({ title: "Portal error", description: e?.message ?? "Please try again." });
-    } finally {
-      setLoadingCopy(false);
+      toast({ title: "Status check failed", description: e?.message ?? "Please try again." });
     }
   };
 
-  const refreshStatus = async () => {
-    setLoadingRefresh(true);
-    try {
-      const { data, error } = await supabase.functions.invoke("check-subscription");
-      if (error) throw error;
-      const active = data?.subscribed ? "Active" : "Inactive";
-      const tier = data?.subscription_tier ?? "—";
-      const end = data?.subscription_end ? new Date(data.subscription_end).toLocaleDateString() : null;
-      toast({
-        title: `Subscription: ${active}`,
-        description: `Plan: ${tier}${end ? `, current period ends ${end}` : ""}`,
-      });
-    } catch (e: any) {
-      toast({ title: "Status check failed", description: e?.message ?? "Please try again." });
-    } finally {
-      setLoadingRefresh(false);
-    }
-  };
+  useEffect(() => {
+    refreshStatus();
+    const onFocus = () => refreshStatus();
+    const onVisibility = () => {
+      if (document.visibilityState === "visible") refreshStatus();
+    };
+    window.addEventListener("focus", onFocus);
+    document.addEventListener("visibilitychange", onVisibility);
+    return () => {
+      window.removeEventListener("focus", onFocus);
+      document.removeEventListener("visibilitychange", onVisibility);
+    };
+  }, []);
+
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 flex items-center justify-center p-4">
@@ -90,16 +75,12 @@ export default function Subscribe() {
                 <Button onClick={openPortal} disabled={loadingPortal}>
                   {loadingPortal ? "Opening..." : "Manage Subscription"}
                 </Button>
-                <Button variant="outline" onClick={copyPortalLink} disabled={loadingCopy}>
-                  {loadingCopy ? "Copying..." : "Copy portal link"}
-                </Button>
-                <Button variant="ghost" onClick={refreshStatus} disabled={loadingRefresh}>
-                  {loadingRefresh ? "Refreshing..." : "Refresh status"}
-                </Button>
               </div>
-              <p className="text-xs text-muted-foreground">
-                Tip: If the portal doesn't open, allow pop-ups or use the copy link.
-              </p>
+              {featureFlags.showBillingTroubleshooting && (
+                <p className="text-xs text-muted-foreground">
+                  Tip: If the portal doesn't open, allow pop-ups; we’ll copy the link for you.
+                </p>
+              )}
             </div>
           )}
         </header>

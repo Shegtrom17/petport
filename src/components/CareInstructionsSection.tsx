@@ -255,14 +255,6 @@ export const CareInstructionsSection = ({ petData }: CareInstructionsSectionProp
   return (
     <div className="space-y-6">
 
-      {/* Documentation Note */}
-      <Card className="border-0 shadow-lg bg-blue-50 border-l-4 border-blue-500">
-        <CardContent className="p-4">
-          <p className="text-blue-800 text-sm font-medium">
-            📄 For supporting documentation, please see the Documents page.
-          </p>
-        </CardContent>
-      </Card>
 
       {/* Care Summary */}
       <Card className="border-0 shadow-lg bg-passport-section-bg backdrop-blur-sm">
@@ -659,6 +651,15 @@ export const CareInstructionsSection = ({ petData }: CareInstructionsSectionProp
               </div>
             )}
           </div>
+        </CardContent>
+      </Card>
+
+      {/* Documentation Note - Moved below Quick Contacts */}
+      <Card className="border-0 shadow-lg bg-blue-50 border-l-4 border-blue-500">
+        <CardContent className="p-4">
+          <p className="text-blue-800 text-sm font-medium">
+            📄 For supporting documentation, please see the Documents page.
+          </p>
         </CardContent>
       </Card>
     </div>

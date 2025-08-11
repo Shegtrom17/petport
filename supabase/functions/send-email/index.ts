@@ -133,7 +133,7 @@ const handler = async (req: Request): Promise<Response> => {
     const emailTemplate = generateEmailTemplate(emailData);
     
     const emailResponse = await resend.emails.send({
-      from: "PetPort <noreply@petport.app>", // Update with your verified domain
+      from: "PetPort <onboarding@resend.dev>",
       to: [emailData.recipientEmail],
       subject: generateEmailTemplate(emailData).match(/<title>(.*?)<\/title>/)?.[1] || `PetPort - ${emailData.petName}`,
       html: emailTemplate,

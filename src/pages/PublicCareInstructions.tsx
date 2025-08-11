@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
@@ -37,12 +37,40 @@ interface CareData {
 
 const PublicCareInstructions = () => {
   const { petId } = useParams();
+  const navigate = useNavigate();
   const [pet, setPet] = useState<Pet | null>(null);
   const [careData, setCareData] = useState<CareData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   const isValidUUID = (id: string) => /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(id);
+
+  // Redirect logged-in owners if invalid petId is used (e.g., '/care/:petId')
+  useEffect(() => {
+    const attemptRedirect = async () => {
+      if (!petId || petId.startsWith(':') || !isValidUUID(petId)) {
+        console.warn('[PublicCareInstructions] Invalid petId param', { petId, path: window.location.pathname });
+        try {
+          const { data: { user } } = await supabase.auth.getUser();
+          if (user) {
+            const { data, error } = await supabase
+              .from('pets')
+              .select('id')
+              .eq('user_id', user.id)
+              .order('created_at', { ascending: true })
+              .limit(1);
+            if (!error && data && data.length > 0) {
+              navigate(`/care/${data[0].id}`, { replace: true });
+              return;
+            }
+          }
+        } catch (e) {
+          console.warn('[PublicCareInstructions] Redirect check failed', e);
+        }
+      }
+    };
+    attemptRedirect();
+  }, [petId, navigate]);
 
   useEffect(() => {
     const fetchData = async () => {

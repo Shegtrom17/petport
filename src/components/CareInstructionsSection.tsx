@@ -10,6 +10,7 @@ import { generateQRCodeUrl, shareProfile, shareProfileOptimized } from "@/servic
 import { generateClientPetPDF, downloadPDFBlob } from "@/services/clientPdfService";
 import { useToast } from "@/hooks/use-toast";
 import { SocialShareButtons } from "@/components/SocialShareButtons";
+import { VaccinationGuideButton } from "@/components/VaccinationGuide";
 
 interface CareInstructionsSectionProps {
   petData: {
@@ -253,6 +254,11 @@ export const CareInstructionsSection = ({ petData }: CareInstructionsSectionProp
 
   return (
     <div className="space-y-6">
+      {/* Vaccination Guide */}
+      <div className="flex justify-center">
+        <VaccinationGuideButton />
+      </div>
+
       {/* Quick Contacts Section */}
       <Card className="border-0 shadow-lg bg-passport-section-bg backdrop-blur-sm">
         <CardHeader>

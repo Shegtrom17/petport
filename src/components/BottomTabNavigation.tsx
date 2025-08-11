@@ -5,10 +5,8 @@ import { useUserSettings } from "@/hooks/useUserSettings";
 
 export const BottomTabNavigation = () => {
   const location = useLocation();
-  const { user } = useAuth();
-  const { settings } = useUserSettings(user?.id);
 
-  const homePath = settings.homeDestination === 'profile' ? '/profile' : '/app';
+  const homePath = '/app';
   const tabs = [
     { path: homePath, icon: Home, label: 'Home' },
     { path: '/add-pet', icon: PlusCircle, label: 'Add Pet' },

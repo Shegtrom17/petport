@@ -1002,7 +1002,10 @@ const generateResumePDF = async (doc: jsPDF, pageManager: PDFPageManager, petDat
   addTitle(doc, pageManager, `${safeText(petData.name)} - Professional Resume`, '#1e40af', 18);
   pageManager.addY(10);
 
-  // Pet Basic Information
+  // Store the starting position for side-by-side layout
+  const infoStartY = pageManager.getCurrentY();
+  
+  // Pet Basic Information (left side)
   addSubtitle(doc, pageManager, 'Pet Information');
   addText(doc, pageManager, `Name: ${safeText(petData.name)}`);
   addText(doc, pageManager, `Breed: ${safeText(petData.breed)}`);
@@ -1016,17 +1019,45 @@ const generateResumePDF = async (doc: jsPDF, pageManager: PDFPageManager, petDat
   if (petData.registrationNumber) {
     addText(doc, pageManager, `Registration: ${safeText(petData.registrationNumber)}`);
   }
-  pageManager.addY(10);
-
-  // Add pet photo if available
+  
+  // Add pet photo on the right side if available
   if (petData.photoUrl) {
     try {
-      await addImage(doc, pageManager, petData.photoUrl, 60, 60);
-      pageManager.addY(10);
+      // Position photo on the right side, aligned with the pet info
+      const photoX = 120; // Right side positioning
+      const photoY = infoStartY + 20; // Align with the pet info section
+      
+      // Add the image using the existing addImage function but with manual positioning
+      const img = new Image();
+      img.crossOrigin = 'anonymous';
+      
+      await new Promise((resolve, reject) => {
+        img.onload = () => {
+          try {
+            doc.addImage(img, 'JPEG', photoX, photoY, 60, 60);
+            resolve(true);
+          } catch (error) {
+            reject(error);
+          }
+        };
+        img.onerror = reject;
+        img.src = petData.photoUrl;
+      });
+      
     } catch (error) {
       console.error('Error loading pet photo:', error);
     }
   }
+  
+  // Ensure we move past both the text and photo sections
+  const currentTextY = pageManager.getCurrentY();
+  const minY = Math.max(currentTextY, infoStartY + 80); // 80 accounts for photo height + padding
+  
+  // Set the page manager to the appropriate position
+  while (pageManager.getCurrentY() < minY) {
+    pageManager.addY(5);
+  }
+  pageManager.addY(10);
 
   // Reviews Section
   if (petData.reviews && petData.reviews.length > 0) {

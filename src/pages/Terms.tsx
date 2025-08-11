@@ -5,7 +5,7 @@ export default function Terms() {
   const baseUrl = typeof window !== 'undefined' ? window.location.origin : '';
   const url = baseUrl + "/terms";
   // TODO: Replace with confirmed go-live date
-  const effectiveDate = "[Month Day, Year]";
+  const effectiveDate = "August 10, 2025";
 
   useEffect(() => {
     if (typeof document !== "undefined") {

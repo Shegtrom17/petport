@@ -179,14 +179,6 @@ export const PetResumeSection = ({ petData, onUpdate }: PetResumeSectionProps) =
 
   return (
     <div className="space-y-6">
-      {/* Documentation Note */}
-      <Card className="border-0 shadow-lg bg-blue-50 border-l-4 border-blue-500">
-        <CardContent className="p-4">
-          <p className="text-blue-800 text-sm font-medium">
-            📄 For supporting documentation, please see the Documents page.
-          </p>
-        </CardContent>
-      </Card>
 
       {/* Support Animal Status Banner */}
       <SupportAnimalBanner status={petData.supportAnimalStatus || null} />
@@ -750,6 +742,15 @@ export const PetResumeSection = ({ petData, onUpdate }: PetResumeSectionProps) =
           </CardContent>
         </Card>
       )}
+
+      {/* Documentation Note - Moved to bottom */}
+      <Card className="border-0 shadow-lg bg-blue-50 border-l-4 border-blue-500">
+        <CardContent className="p-4">
+          <p className="text-blue-800 text-sm font-medium">
+            📄 For supporting documentation, please see the Documents page.
+          </p>
+        </CardContent>
+      </Card>
 
     </div>
   );

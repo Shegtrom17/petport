@@ -8,6 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { PRICING } from "@/config/pricing";
 import { CreditCard, RefreshCcw, ShieldCheck } from "lucide-react";
+import { featureFlags } from "@/config/featureFlags";
 
 interface SubStatus {
   subscribed?: boolean;
@@ -85,7 +86,8 @@ export default function Billing() {
 
   const buyAddon = async (count: 1 | 3 | 5) => {
     try {
-      const { data, error } = await supabase.functions.invoke("purchase-addons", { body: { bundle: count } });
+      const fn = featureFlags.testMode ? "purchase-addons-sandbox" : "purchase-addons";
+      const { data, error } = await supabase.functions.invoke(fn, { body: { bundle: count } });
       if (error) throw error;
       if (data?.url) {
         await openUrlWithFallback(data.url, (msg) => toast({ title: "Link copied", description: msg }));

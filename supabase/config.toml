@@ -89,3 +89,19 @@ verify_jwt = false
 
 [functions.send-email]
 verify_jwt = false
+
+# Sandbox/Test variants
+[functions.create-checkout-sandbox]
+verify_jwt = true
+
+[functions.public-create-checkout-sandbox]
+verify_jwt = false
+
+[functions.purchase-addons-sandbox]
+verify_jwt = true
+
+[functions.verify-checkout-sandbox]
+verify_jwt = false
+
+[functions.verify-addons-sandbox]
+verify_jwt = false

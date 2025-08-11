@@ -6,6 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import { featureFlags } from "@/config/featureFlags";
 
 interface PricingSectionProps {
   context?: "landing" | "profile";
@@ -17,19 +18,8 @@ export const PricingSection: React.FC<PricingSectionProps> = ({ context = "landi
 
   const startCheckout = async (plan: "monthly" | "yearly") => {
     try {
-      if (context === "landing") {
-        const { data, error } = await supabase.functions.invoke("public-create-checkout", { body: { plan } });
-        if (error) throw error;
-        if (data?.url) {
-          window.open(data.url, "_blank");
-        } else {
-          toast({ title: "Unable to start checkout", description: "Please try again." });
-        }
-        return;
-      }
-      const { data, error } = await supabase.functions.invoke("public-create-checkout", {
-        body: { plan },
-      });
+      const fn = featureFlags.testMode ? "public-create-checkout-sandbox" : "public-create-checkout";
+      const { data, error } = await supabase.functions.invoke(fn, { body: { plan } });
       if (error) throw error;
       if (data?.url) {
         window.open(data.url, "_blank");
@@ -47,7 +37,8 @@ export const PricingSection: React.FC<PricingSectionProps> = ({ context = "landi
       return;
     }
     try {
-      const { data, error } = await supabase.functions.invoke("purchase-addons", {
+      const fn = featureFlags.testMode ? "purchase-addons-sandbox" : "purchase-addons";
+      const { data, error } = await supabase.functions.invoke(fn, {
         body: { bundle: count },
       });
       if (error) throw error;

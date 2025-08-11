@@ -5,6 +5,9 @@ import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { MetaTags } from "@/components/MetaTags";
+import { PRICING } from "@/config/pricing";
+import { featureFlags } from "@/config/featureFlags";
+import { CreditCard, Plus } from "lucide-react";
 
 export default function PostCheckout() {
   const location = useLocation();
@@ -24,12 +27,13 @@ export default function PostCheckout() {
     }
     (async () => {
       try {
-        // Try subscription verification first
-        const { data, error } = await supabase.functions.invoke("verify-checkout", { body: { session_id } });
-        if (!error && data?.success) {
-          setEmail(data.email || null);
+        const verifyFn = featureFlags.testMode ? "verify-checkout-sandbox" : "verify-checkout";
+        const { data, error } = await supabase.functions.invoke(verifyFn, { body: { session_id } });
+        if (!error && (data as any)?.success) {
+          const d: any = data;
+          setEmail(d.email || null);
           setState("success");
-          if (data.invited) {
+          if (d.invited) {
             setMsg("Payment complete! We've emailed you an invite to finish creating your account.");
           } else {
             setMsg("Payment complete! Please sign in to access your account.");
@@ -37,16 +41,17 @@ export default function PostCheckout() {
           return;
         }
 
-        // Fallback: handle add-on purchases
-        const { data: addonData, error: addonError } = await supabase.functions.invoke("verify-addons", { body: { session_id } });
-        if (!addonError && addonData?.success) {
-          setEmail(addonData.email || null);
+        const verifyAddonFn = featureFlags.testMode ? "verify-addons-sandbox" : "verify-addons";
+        const { data: addonData, error: addonError } = await supabase.functions.invoke(verifyAddonFn, { body: { session_id } });
+        if (!addonError && (addonData as any)?.success) {
+          const d: any = addonData;
+          setEmail(d.email || null);
           setState("success");
           setMsg("Add-on purchase complete! Your account has been updated.");
           return;
         }
 
-        throw new Error(addonError?.message || error?.message || "Unable to verify payment. Please contact support.");
+        throw new Error((addonError as any)?.message || (error as any)?.message || "Unable to verify payment. Please contact support.");
       } catch (e: any) {
         setState("error");
         setMsg(e?.message ?? "Verification failed");

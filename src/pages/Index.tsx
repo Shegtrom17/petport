@@ -210,6 +210,15 @@ const Index = () => {
             <PetResumeSection petData={petData} onUpdate={handlePetUpdate} />
             <CertificationSection petData={petData} onUpdate={handlePetUpdate} />
             <ReviewsSection petData={petData} onUpdate={handlePetUpdate} />
+            
+            {/* Documentation Note - Placed after reviews section */}
+            <Card className="border-0 shadow-lg bg-blue-50 border-l-4 border-blue-500">
+              <CardContent className="p-4">
+                <p className="text-blue-800 text-sm font-medium">
+                  📄 For supporting documentation, please see the Documents page.
+                </p>
+              </CardContent>
+            </Card>
           </div>
         );
       case "travel":

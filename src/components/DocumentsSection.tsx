@@ -6,6 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { FileText, Upload, Download, Eye, Trash2, Loader2, Camera, Shield, Syringe, Receipt, Heart, FileArchive, FolderOpen } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { VaccinationGuideButton } from "@/components/VaccinationGuide";
 
 interface Document {
   id: string;
@@ -228,6 +229,11 @@ export const DocumentsSection = ({ petId, documents, onDocumentDeleted }: Docume
 
   return (
     <div className="space-y-6">
+      {/* Vaccination Guide */}
+      <div className="flex justify-center mb-6">
+        <VaccinationGuideButton />
+      </div>
+
       {/* Privacy Info */}
       <Card className="border-0 shadow-lg bg-green-50 border-l-4 border-green-500">
         <CardContent className="p-4">

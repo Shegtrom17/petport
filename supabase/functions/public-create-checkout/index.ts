@@ -39,10 +39,13 @@ serve(async (req) => {
           quantity: 1,
         },
       ],
+      payment_method_collection: "always",
+      subscription_data: {
+        trial_period_days: 7,
+      },
       success_url: `${origin}/post-checkout?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${origin}/subscribe`,
       allow_promotion_codes: true,
-      // Let Stripe collect customer email
     });
 
     return new Response(JSON.stringify({ url: session.url }), {

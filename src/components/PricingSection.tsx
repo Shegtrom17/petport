@@ -82,9 +82,10 @@ export const PricingSection: React.FC<PricingSectionProps> = ({ context = "landi
             <CardContent className="space-y-3">
               <p className="text-2xl font-bold">{plan.priceText}</p>
               <p className="text-sm text-muted-foreground">{plan.includes}</p>
-              <Button className="w-full" onClick={() => startCheckout(plan.id === "monthly" ? "monthly" : "yearly")}> 
+              <p className="text-xs text-muted-foreground">7-day free trial. Card required; billed after trial unless canceled.</p>
+              <Button className="w-full" onClick={() => startCheckout(plan.id === "monthly" ? "monthly" : "yearly")}>
                 <CreditCard className="w-4 h-4" />
-                <span>Subscribe {plan.name}</span>
+                <span>Start 7-day free trial</span>
               </Button>
             </CardContent>
           </Card>
@@ -104,6 +105,7 @@ export const PricingSection: React.FC<PricingSectionProps> = ({ context = "landi
               </CardHeader>
               <CardContent className="space-y-3">
                 <p className="text-xl font-semibold">{addon.priceText}</p>
+                <p className="text-xs text-muted-foreground">No free trial on add-ons.</p>
                 <Button className="w-full" variant="outline" onClick={() => buyAddon(addon.count as 1 | 3 | 5)}>
                   <CreditCard className="w-4 h-4" />
                   <span>Add {addon.count} Pet{addon.count > 1 ? "s" : ""}</span>

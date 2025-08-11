@@ -61,6 +61,10 @@ serve(async (req) => {
         },
       ],
       mode: "subscription",
+      payment_method_collection: "always",
+      subscription_data: {
+        trial_period_days: 7,
+      },
       allow_promotion_codes: true,
       success_url: `${req.headers.get("origin")}/post-checkout?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${req.headers.get("origin")}/subscribe`,

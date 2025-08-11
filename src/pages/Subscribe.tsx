@@ -29,7 +29,7 @@ export default function Subscribe() {
       <div className="w-full max-w-3xl bg-white/90 backdrop-blur-sm rounded-xl shadow-lg p-6">
         <header className="text-center mb-6">
           <h1 className="text-2xl md:text-3xl font-semibold">Complete Your Subscription</h1>
-          <p className="text-sm text-muted-foreground mt-2">An active subscription is required to access the app.</p>
+          <p className="text-sm text-muted-foreground mt-2">All plans include a 7-day free trial. Card required; billed after trial unless canceled.</p>
           {user && (
             <div className="mt-4">
               <Button variant="outline" onClick={openPortal}>Manage Subscription</Button>

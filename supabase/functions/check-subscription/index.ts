@@ -57,16 +57,21 @@ serve(async (req) => {
     }
 
     const customerId = customers.data[0].id;
-    const subscriptions = await stripe.subscriptions.list({ customer: customerId, status: "active", limit: 1 });
-    const hasActiveSub = subscriptions.data.length > 0;
+    const subscriptions = await stripe.subscriptions.list({ customer: customerId, limit: 5 });
+    const matchedSub = subscriptions.data.find((s) => s.status === "active" || s.status === "trialing");
+    const hasActiveSub = Boolean(matchedSub);
 
     let subscriptionTier: string | null = null;
     let subscriptionEnd: string | null = null;
 
-    if (hasActiveSub) {
-      const subscription = subscriptions.data[0];
-      subscriptionEnd = new Date(subscription.current_period_end * 1000).toISOString();
-      const priceId = subscription.items.data[0].price.id;
+    if (hasActiveSub && matchedSub) {
+      // Use trial_end during trial, otherwise current_period_end
+      const endTs = matchedSub.status === "trialing" && matchedSub.trial_end
+        ? matchedSub.trial_end
+        : matchedSub.current_period_end;
+      if (endTs) subscriptionEnd = new Date(endTs * 1000).toISOString();
+
+      const priceId = matchedSub.items.data[0].price.id;
       const price = await stripe.prices.retrieve(priceId);
       const amount = price.unit_amount || 0;
       if (amount <= 999) subscriptionTier = "Basic";

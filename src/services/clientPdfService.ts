@@ -1241,6 +1241,18 @@ const generateCarePDF = async (doc: jsPDF, pageManager: PDFPageManager, petData:
       });
     }
     
+    if (petData.careInstructions.behavioralNotes) {
+      addSection(doc, pageManager, 'BEHAVIORAL NOTES', () => {
+        addText(doc, pageManager, petData.careInstructions.behavioralNotes);
+      });
+    }
+    
+    if (petData.careInstructions.favoriteActivities) {
+      addSection(doc, pageManager, 'FAVORITE ACTIVITIES', () => {
+        addText(doc, pageManager, petData.careInstructions.favoriteActivities);
+      });
+    }
+    
     if (petData.careInstructions.medications) {
       addSection(doc, pageManager, 'MEDICATIONS', () => {
         addText(doc, pageManager, petData.careInstructions.medications);

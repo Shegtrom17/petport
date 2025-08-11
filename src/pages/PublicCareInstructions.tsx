@@ -42,10 +42,12 @@ const PublicCareInstructions = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  const isValidUUID = (id: string) => /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(id);
+
   useEffect(() => {
     const fetchData = async () => {
-      if (!petId) {
-        setError('Pet ID is missing');
+      if (!petId || petId.startsWith(':') || !isValidUUID(petId)) {
+        setError('Invalid or missing pet ID');
         setLoading(false);
         return;
       }
@@ -87,7 +89,7 @@ const PublicCareInstructions = () => {
 
   // Realtime updates for care instructions
   useEffect(() => {
-    if (!petId) return;
+    if (!petId || petId.startsWith(':') || !isValidUUID(petId)) return;
 
     const channel = supabase
       .channel('care-instructions-updates')
@@ -132,6 +134,7 @@ const PublicCareInstructions = () => {
               {error || 'Care Instructions Not Available'}
             </h2>
             <p className="text-navy-600">
+              {error === 'Invalid or missing pet ID' && 'This care link is invalid or incomplete. Please use the correct link from your pet\'s page.'}
               {error === 'Pet ID is missing' && 'The pet ID is missing from the URL.'}
               {error === 'Pet profile not found' && 'The pet profile you\'re looking for doesn\'t exist.'}
               {error === 'This pet profile is not publicly accessible' && 'This pet\'s care instructions are private.'}

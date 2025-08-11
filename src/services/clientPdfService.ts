@@ -731,9 +731,11 @@ const generateFullPDF = async (doc: jsPDF, pageManager: PDFPageManager, petData:
     addText(doc, pageManager, `Breed: ${safeText(petData.breed)}`);
     addText(doc, pageManager, `Age: ${safeText(petData.age)}`);
     addText(doc, pageManager, `Weight: ${safeText(petData.weight)}`);
+    if (petData.height) addText(doc, pageManager, `Height: ${safeText(petData.height)}`);
     addText(doc, pageManager, `Gender: ${safeText(petData.gender)}`);
     if (petData.color) addText(doc, pageManager, `Color: ${safeText(petData.color)}`);
     if (petData.microchipId) addText(doc, pageManager, `Microchip: ${safeText(petData.microchipId)}`);
+    if (petData.registrationNumber) addText(doc, pageManager, `Registration: ${safeText(petData.registrationNumber)}`);
     if (petData.petport_id) addText(doc, pageManager, `PetPort ID: ${safeText(petData.petport_id)}`);
     if (petData.county) addText(doc, pageManager, `Location: ${safeText(petData.county)}, ${safeText(petData.state)}`);
   });
@@ -995,6 +997,12 @@ const generateResumePDF = async (doc: jsPDF, pageManager: PDFPageManager, petDat
   if (petData.weight) {
     addText(doc, pageManager, `Weight: ${safeText(petData.weight)} lbs`);
   }
+  if (petData.height) {
+    addText(doc, pageManager, `Height: ${safeText(petData.height)}`);
+  }
+  if (petData.registrationNumber) {
+    addText(doc, pageManager, `Registration: ${safeText(petData.registrationNumber)}`);
+  }
   pageManager.addY(10);
 
   // Add pet photos if available
@@ -1203,6 +1211,8 @@ const generateCarePDF = async (doc: jsPDF, pageManager: PDFPageManager, petData:
     addText(doc, pageManager, `Breed: ${safeText(petData.breed)}`);
     addText(doc, pageManager, `Age: ${safeText(petData.age)}`);
     addText(doc, pageManager, `Weight: ${safeText(petData.weight)}`);
+    if (petData.height) addText(doc, pageManager, `Height: ${safeText(petData.height)}`);
+    if (petData.registrationNumber) addText(doc, pageManager, `Registration: ${safeText(petData.registrationNumber)}`);
   });
   
   // Care instructions

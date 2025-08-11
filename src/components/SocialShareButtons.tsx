@@ -2,9 +2,15 @@
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Share2, Facebook, Copy, Check, Smartphone, MessageCircle, Mail } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { shareProfileOptimized } from "@/services/pdfService";
+import { useEmailSharing } from "@/hooks/useEmailSharing";
+import { useAuth } from "@/context/AuthContext";
 
   interface SocialShareButtonsProps {
   petName: string;
@@ -20,7 +26,15 @@ export const SocialShareButtons = ({ petName, petId, isMissingPet = false, conte
   const [isSharing, setIsSharing] = useState(false);
   const [copied, setCopied] = useState(false);
   const [showOptions, setShowOptions] = useState(defaultOpenOptions);
+  const [showEmailForm, setShowEmailForm] = useState(false);
+  const [emailData, setEmailData] = useState({
+    recipientEmail: '',
+    recipientName: '',
+    customMessage: ''
+  });
   const { toast } = useToast();
+  const { sendEmail, isLoading: emailLoading } = useEmailSharing();
+  const { user } = useAuth();
   
 // Add cache-busting parameter to ensure fresh loads
 const isCare = context === 'care';
@@ -129,13 +143,37 @@ title: "Link Copied! 📋",
     window.location.href = smsUrl;
   };
 
+  const handleSendEmail = async () => {
+    if (!emailData.recipientEmail.trim()) {
+      toast({
+        title: "Email required",
+        description: "Please enter a recipient email address",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const emailType = context as 'profile' | 'care' | 'credentials' | 'reviews' | 'missing_pet';
+    
+    const success = await sendEmail({
+      type: isMissingPet ? 'missing_pet' : emailType,
+      recipientEmail: emailData.recipientEmail.trim(),
+      recipientName: emailData.recipientName.trim() || undefined,
+      petName,
+      petId,
+      shareUrl,
+      customMessage: emailData.customMessage.trim() || undefined,
+      senderName: user?.user_metadata?.full_name || 'PetPort User'
+    });
+
+    if (success) {
+      setShowEmailForm(false);
+      setEmailData({ recipientEmail: '', recipientName: '', customMessage: '' });
+    }
+  };
+
   const handleEmailShare = () => {
-    const subject = isMissingPet 
-      ? `MISSING PET: ${petName}` 
-      : (isCare ? `${petName}'s Care Instructions` : (isCredentials ? `${petName}'s Credentials` : `${petName}'s PetPort Profile`));
-    const body = `${shareText}\n\n${shareUrl}`;
-    const mailtoUrl = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-    window.location.href = mailtoUrl;
+    setShowEmailForm(true);
   };
   const handleMessengerShare = () => {
     const messengerUrl = `fb-messenger://share?link=${encodeURIComponent(shareUrl)}`;
@@ -236,15 +274,71 @@ title: "Link Copied! 📋",
                   Text/SMS
                 </Button>
                 
-                <Button
-                  onClick={handleEmailShare}
-                  variant="outline"
-                  size="sm"
-                  className={`w-full ${isMissingPet ? 'border-red-600 text-red-700 hover:bg-red-50' : 'border-primary text-primary hover:bg-primary/5'}`}
-                >
-                  <Mail className="w-4 h-4 mr-1" />
-                  Email
-                </Button>
+                <Dialog open={showEmailForm} onOpenChange={setShowEmailForm}>
+                  <DialogTrigger asChild>
+                    <Button
+                      onClick={handleEmailShare}
+                      variant="outline"
+                      size="sm"
+                      className={`w-full ${isMissingPet ? 'border-red-600 text-red-700 hover:bg-red-50' : 'border-primary text-primary hover:bg-primary/5'}`}
+                    >
+                      <Mail className="w-4 h-4 mr-1" />
+                      Email
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="sm:max-w-md">
+                    <DialogHeader>
+                      <DialogTitle>Share via Email</DialogTitle>
+                    </DialogHeader>
+                    <div className="space-y-4">
+                      <div>
+                        <Label htmlFor="recipientEmail">Recipient Email *</Label>
+                        <Input
+                          id="recipientEmail"
+                          type="email"
+                          placeholder="Enter email address"
+                          value={emailData.recipientEmail}
+                          onChange={(e) => setEmailData(prev => ({ ...prev, recipientEmail: e.target.value }))}
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="recipientName">Recipient Name (optional)</Label>
+                        <Input
+                          id="recipientName"
+                          placeholder="Enter recipient's name"
+                          value={emailData.recipientName}
+                          onChange={(e) => setEmailData(prev => ({ ...prev, recipientName: e.target.value }))}
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="customMessage">Personal Message (optional)</Label>
+                        <Textarea
+                          id="customMessage"
+                          placeholder="Add a personal message..."
+                          value={emailData.customMessage}
+                          onChange={(e) => setEmailData(prev => ({ ...prev, customMessage: e.target.value }))}
+                          rows={3}
+                        />
+                      </div>
+                      <div className="flex gap-2">
+                        <Button
+                          onClick={handleSendEmail}
+                          disabled={emailLoading}
+                          className="flex-1"
+                        >
+                          {emailLoading ? 'Sending...' : 'Send Email'}
+                        </Button>
+                        <Button
+                          variant="outline"
+                          onClick={() => setShowEmailForm(false)}
+                          disabled={emailLoading}
+                        >
+                          Cancel
+                        </Button>
+                      </div>
+                    </div>
+                  </DialogContent>
+                </Dialog>
                 
                 <Button
                   onClick={handleFacebookShare}

@@ -101,17 +101,17 @@ export default function PublicCredentials() {
           </p>
         </header>
 
+        {/* Vaccination Guide */}
+        <div className="flex justify-center mb-6">
+          <VaccinationGuideButton />
+        </div>
+
         {/* Support Animal Status */}
         <SupportAnimalBanner status={data.supportAnimalStatus || null} />
 
         {/* Certification Banner */}
         <div className="my-4">
           <CertificationBanner certificationData={certification} />
-        </div>
-
-        {/* Vaccination Guide */}
-        <div className="mb-6 flex justify-center">
-          <VaccinationGuideButton />
         </div>
 
         {/* Certifications Detail */}

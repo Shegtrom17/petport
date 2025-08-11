@@ -60,8 +60,14 @@ serve(async (req) => {
         },
       ],
       mode: "payment",
-      success_url: `${req.headers.get("origin")}/payment-success`,
-      cancel_url: `${req.headers.get("origin")}/payment-canceled`,
+      // Route to a unified verification page so we can apply add-ons server-side
+      success_url: `${req.headers.get("origin")}/post-checkout?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${req.headers.get("origin")}/billing`,
+      metadata: {
+        addon_count: String(bundle),
+        supabase_user_id: user.id,
+        product_type: "pet_slot",
+      },
     });
 
     return new Response(JSON.stringify({ url: session.url }), {

@@ -24,9 +24,9 @@ export default function PostCheckout() {
     }
     (async () => {
       try {
+        // Try subscription verification first
         const { data, error } = await supabase.functions.invoke("verify-checkout", { body: { session_id } });
-        if (error) throw error;
-        if (data?.success) {
+        if (!error && data?.success) {
           setEmail(data.email || null);
           setState("success");
           if (data.invited) {
@@ -34,10 +34,19 @@ export default function PostCheckout() {
           } else {
             setMsg("Payment complete! Please sign in to access your account.");
           }
-        } else {
-          setState("error");
-          setMsg("Unable to verify payment. Please contact support.");
+          return;
         }
+
+        // Fallback: handle add-on purchases
+        const { data: addonData, error: addonError } = await supabase.functions.invoke("verify-addons", { body: { session_id } });
+        if (!addonError && addonData?.success) {
+          setEmail(addonData.email || null);
+          setState("success");
+          setMsg("Add-on purchase complete! Your account has been updated.");
+          return;
+        }
+
+        throw new Error(addonError?.message || error?.message || "Unable to verify payment. Please contact support.");
       } catch (e: any) {
         setState("error");
         setMsg(e?.message ?? "Verification failed");
@@ -54,7 +63,7 @@ export default function PostCheckout() {
           <CardTitle>{state === "verifying" ? "Verifying your payment" : state === "success" ? "You're all set!" : "Verification issue"}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
-          {state === "verifying" && <p>Please wait while we confirm your subscription...</p>}
+          {state === "verifying" && <p>Please wait while we confirm your payment...</p>}
           {state === "success" && (
             <div className="space-y-3">
               <p>{msg}</p>

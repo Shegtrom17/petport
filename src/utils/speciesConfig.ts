@@ -91,7 +91,6 @@ export const getSpeciesConfig = (species: string): SpeciesFieldConfig => {
 };
 
 export const getSpeciesOptions = () => [
-  { value: "", label: "Select Species" },
   { value: "dog", label: "Dog" },
   { value: "cat", label: "Cat" },
   { value: "horse", label: "Horse" },

@@ -400,9 +400,10 @@ const generateEmergencyPDF = async (doc: jsPDF, pageManager: PDFPageManager, pet
   }
   
   // Footer
-  pageManager.addY(20);
-  addText(doc, pageManager, 'Generated from PetPort Digital Pet Passport', '#6b7280', 8);
-  addText(doc, pageManager, `Pet ID: ${safeText(petData.id)} | Generated: ${new Date().toLocaleDateString()}`, '#6b7280', 8);
+  addFooterBottom(doc, pageManager, [
+    'Petport.app - The Ultimate Digital Pet Portfolio',
+    `Pet ID: ${safeText(petData.id)} | Generated: ${new Date().toLocaleDateString()}`,
+  ]);
 };
 
 const generateLostPetPDF = async (doc: jsPDF, pageManager: PDFPageManager, petData: any): Promise<void> => {
@@ -700,8 +701,10 @@ const generateGalleryPDF = async (doc: jsPDF, pageManager: PDFPageManager, petDa
   }
   
   // Footer
-  pageManager.addY(20);
-  addText(doc, pageManager, 'Generated from PetPort Digital Pet Passport', '#6b7280', 8);
+  addFooterBottom(doc, pageManager, [
+    'Petport.app - The Ultimate Digital Pet Portfolio',
+    `Generated: ${new Date().toLocaleDateString()}`,
+  ]);
 };
 
 // Generate comprehensive profile PDF
@@ -983,9 +986,10 @@ const generateFullPDF = async (doc: jsPDF, pageManager: PDFPageManager, petData:
   }
   
   // Footer
-  pageManager.addY(20);
-  addText(doc, pageManager, 'Generated from PetPort Digital Pet Passport', '#6b7280', 8);
-  addText(doc, pageManager, `Pet ID: ${safeText(petData.id)} | Generated: ${new Date().toLocaleDateString()}`, '#6b7280', 8);
+  addFooterBottom(doc, pageManager, [
+    'Petport.app - The Ultimate Digital Pet Portfolio',
+    `Pet ID: ${safeText(petData.id)} | Generated: ${new Date().toLocaleDateString()}`,
+  ]);
 };
 
 /**
@@ -1195,9 +1199,10 @@ const generateResumePDF = async (doc: jsPDF, pageManager: PDFPageManager, petDat
   });
 
   // Footer
-  pageManager.addY(20);
-  addText(doc, pageManager, 'Generated from PetPort Digital Pet Passport', '#6b7280', 8);
-  addText(doc, pageManager, `Pet ID: ${safeText(petData.id)} | Generated: ${new Date().toLocaleDateString()}`, '#6b7280', 8);
+  addFooterBottom(doc, pageManager, [
+    'Petport.app - The Ultimate Digital Pet Portfolio',
+    `Pet ID: ${safeText(petData.id)} | Generated: ${new Date().toLocaleDateString()}`,
+  ]);
 };
 
 // Generate care instructions PDF (ONLY care-related content)
@@ -1282,9 +1287,10 @@ const generateCarePDF = async (doc: jsPDF, pageManager: PDFPageManager, petData:
   }
   
   // Footer
-  pageManager.addY(20);
-  addText(doc, pageManager, 'Generated from PetPort Digital Pet Passport', '#6b7280', 8);
-  addText(doc, pageManager, `Pet ID: ${safeText(petData.id)} | Generated: ${new Date().toLocaleDateString()}`, '#6b7280', 8);
+  addFooterBottom(doc, pageManager, [
+    'Petport.app - The Ultimate Digital Pet Portfolio',
+    `Pet ID: ${safeText(petData.id)} | Generated: ${new Date().toLocaleDateString()}`,
+  ]);
 };
 
 export async function generateClientPetPDF(

@@ -10,9 +10,10 @@ import { Syringe, MapPin, Building, Calendar, Shield, AlertTriangle, Dog, Cat, H
 interface VaccinationGuideProps {
   isOpen: boolean;
   onClose: () => void;
+  isPageMode?: boolean;
 }
 
-export const VaccinationGuide = ({ isOpen, onClose }: VaccinationGuideProps) => {
+export const VaccinationGuide = ({ isOpen, onClose, isPageMode = false }: VaccinationGuideProps) => {
   const [selectedTab, setSelectedTab] = useState("travel");
   const [selectedSpecies, setSelectedSpecies] = useState("dogs");
 
@@ -378,8 +379,8 @@ export const VaccinationGuide = ({ isOpen, onClose }: VaccinationGuideProps) => 
   // Get current species data
   const currentSpecies = speciesData[selectedSpecies as keyof typeof speciesData];
 
-  // If this is being used as a page (isOpen always true and onClose is empty function), don't wrap in modal
-  const isPageMode = isOpen && onClose.toString() === "() => {}";
+  // Check if this is being used as a page or modal
+  const useAsPage = isPageMode || (isOpen && onClose.toString() === "() => {}");
   
   const content = (
     <div className="space-y-6">
@@ -581,7 +582,7 @@ export const VaccinationGuide = ({ isOpen, onClose }: VaccinationGuideProps) => 
   );
 
   // If being used as a page, return content directly; otherwise wrap in modal
-  return isPageMode ? content : (
+  return useAsPage ? content : (
     <NativeModal isOpen={isOpen} onClose={onClose} title="Travel & Vaccination Guide">
       {content}
     </NativeModal>

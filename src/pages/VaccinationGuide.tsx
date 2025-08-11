@@ -9,8 +9,8 @@ export default function VaccinationGuide() {
   const navigate = useNavigate();
 
   const handleGoBack = () => {
-    // Go back to the main app page
-    navigate("/app");
+    // Go back to the main profile page
+    navigate("/profile");
   };
 
   return (
@@ -31,7 +31,7 @@ export default function VaccinationGuide() {
               className="flex items-center gap-2 text-navy-700 hover:text-navy-900 hover:bg-navy-50"
             >
               <ArrowLeft className="w-4 h-4" />
-              Back to App
+              Back to Profile
             </Button>
           </div>
 

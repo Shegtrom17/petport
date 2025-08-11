@@ -4,22 +4,76 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/context/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { useState } from "react";
 
 export default function Subscribe() {
   const { user } = useAuth();
   const { toast } = useToast();
+  const [loadingPortal, setLoadingPortal] = useState(false);
+  const [loadingRefresh, setLoadingRefresh] = useState(false);
+  const [loadingCopy, setLoadingCopy] = useState(false);
 
   const openPortal = async () => {
+    setLoadingPortal(true);
     try {
       const { data, error } = await supabase.functions.invoke("customer-portal");
       if (error) throw error;
-      if (data?.url) {
-        window.open(data.url, "_blank");
+      const url = data?.url as string | undefined;
+      if (url) {
+        const win = window.open(url, "_blank", "noopener,noreferrer");
+        if (!win) {
+          try {
+            await navigator.clipboard.writeText(url);
+            toast({ title: "Pop-up blocked", description: "Link copied. Paste it into a new tab." });
+          } catch {
+            toast({ title: "Pop-up blocked", description: "Copy failed. Please allow pop-ups or try again." });
+          }
+        }
       } else {
         toast({ title: "Unable to open portal", description: "Please try again." });
       }
     } catch (e: any) {
       toast({ title: "Portal error", description: e?.message ?? "Please try again." });
+    } finally {
+      setLoadingPortal(false);
+    }
+  };
+
+  const copyPortalLink = async () => {
+    setLoadingCopy(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("customer-portal");
+      if (error) throw error;
+      const url = data?.url as string | undefined;
+      if (url) {
+        await navigator.clipboard.writeText(url);
+        toast({ title: "Portal link copied", description: "Paste it in your browser to manage subscription." });
+      } else {
+        toast({ title: "Unable to get link", description: "Please try again." });
+      }
+    } catch (e: any) {
+      toast({ title: "Portal error", description: e?.message ?? "Please try again." });
+    } finally {
+      setLoadingCopy(false);
+    }
+  };
+
+  const refreshStatus = async () => {
+    setLoadingRefresh(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("check-subscription");
+      if (error) throw error;
+      const active = data?.subscribed ? "Active" : "Inactive";
+      const tier = data?.subscription_tier ?? "—";
+      const end = data?.subscription_end ? new Date(data.subscription_end).toLocaleDateString() : null;
+      toast({
+        title: `Subscription: ${active}`,
+        description: `Plan: ${tier}${end ? `, current period ends ${end}` : ""}`,
+      });
+    } catch (e: any) {
+      toast({ title: "Status check failed", description: e?.message ?? "Please try again." });
+    } finally {
+      setLoadingRefresh(false);
     }
   };
 
@@ -31,8 +85,21 @@ export default function Subscribe() {
           <h1 className="text-2xl md:text-3xl font-semibold">Complete Your Subscription</h1>
           <p className="text-sm text-muted-foreground mt-2">All plans include a 7-day free trial. Card required; billed after trial unless canceled.</p>
           {user && (
-            <div className="mt-4">
-              <Button variant="outline" onClick={openPortal}>Manage Subscription</Button>
+            <div className="mt-4 space-y-2">
+              <div className="flex flex-wrap items-center justify-center gap-2">
+                <Button onClick={openPortal} disabled={loadingPortal}>
+                  {loadingPortal ? "Opening..." : "Manage Subscription"}
+                </Button>
+                <Button variant="outline" onClick={copyPortalLink} disabled={loadingCopy}>
+                  {loadingCopy ? "Copying..." : "Copy portal link"}
+                </Button>
+                <Button variant="ghost" onClick={refreshStatus} disabled={loadingRefresh}>
+                  {loadingRefresh ? "Refreshing..." : "Refresh status"}
+                </Button>
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Tip: If the portal doesn't open, allow pop-ups or use the copy link.
+              </p>
             </div>
           )}
         </header>

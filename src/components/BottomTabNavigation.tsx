@@ -1,7 +1,5 @@
 import { NavLink, useLocation } from "react-router-dom";
 import { Home, PlusCircle, User } from "lucide-react";
-import { useAuth } from "@/context/AuthContext";
-import { useUserSettings } from "@/hooks/useUserSettings";
 
 export const BottomTabNavigation = () => {
   const location = useLocation();
@@ -22,6 +20,11 @@ export const BottomTabNavigation = () => {
             <NavLink
               key={tab.path}
               to={tab.path}
+              onClick={() => {
+                if (tab.path === homePath) {
+                  window.dispatchEvent(new Event('navigate-to-home'));
+                }
+              }}
               className={`flex flex-col items-center justify-center min-w-0 flex-1 py-1 px-2 transition-colors duration-200 ${
                 isActive 
                   ? "text-primary" 

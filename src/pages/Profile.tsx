@@ -8,7 +8,7 @@ import { useNavigate } from "react-router-dom";
 
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from "@/components/ui/select";
+
 import { useUserSettings } from "@/hooks/useUserSettings";
 import { User, LogOut } from "lucide-react";
 
@@ -87,24 +87,6 @@ export default function Profile() {
             <CardTitle>Settings</CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
-            <div className="flex items-center justify-between gap-4">
-              <div>
-                <Label className="text-sm text-muted-foreground">Home button destination</Label>
-                <p className="text-xs text-muted-foreground">Choose where the bottom Home tab goes</p>
-              </div>
-              <Select
-                value={settings.homeDestination}
-                onValueChange={(val) => updateSettings({ homeDestination: val as 'app' | 'profile' })}
-              >
-                <SelectTrigger className="w-44">
-                  <SelectValue placeholder="Select destination" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="app">My Pet (App)</SelectItem>
-                  <SelectItem value="profile">Profile</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
 
             <div className="flex items-center justify-between gap-4">
               <div>

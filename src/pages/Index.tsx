@@ -73,13 +73,19 @@ const Index = () => {
       handleTabChange("care");
     };
 
+    const handleNavigateToHome = () => {
+      handleTabChange("profile");
+    };
+
     handleHashChange();
     window.addEventListener('hashchange', handleHashChange);
     window.addEventListener('navigate-to-care', handleNavigateToCare);
+    window.addEventListener('navigate-to-home', handleNavigateToHome);
     
     return () => {
       window.removeEventListener('hashchange', handleHashChange);
       window.removeEventListener('navigate-to-care', handleNavigateToCare);
+      window.removeEventListener('navigate-to-home', handleNavigateToHome);
     };
   }, []);
 

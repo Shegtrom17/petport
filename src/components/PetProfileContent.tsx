@@ -516,12 +516,26 @@ export const PetProfileContent = ({
                   <p className="text-gold-400 text-sm font-semibold tracking-wide">SEX</p>
                   <p className="text-lg font-medium">{enhancedPetData?.sex ? enhancedPetData.sex.charAt(0).toUpperCase() + enhancedPetData.sex.slice(1) : "Not specified"}</p>
                 </div>
+                {enhancedPetData?.height && (
+                  <div>
+                    <p className="text-gold-400 text-sm font-semibold tracking-wide">HEIGHT</p>
+                    <p className="text-lg font-medium">{enhancedPetData.height}</p>
+                  </div>
+                )}
                 <div className="md:col-span-2">
                   <p className="text-gold-400 text-sm font-semibold tracking-wide">MICROCHIP NUMBER</p>
                   <p className="text-lg font-mono bg-slate-700/50 px-3 py-2 rounded border border-gold-600/30">
                     {enhancedPetData?.microchipId || "Not specified"}
                   </p>
                 </div>
+                {enhancedPetData?.registrationNumber && (
+                  <div className="md:col-span-2">
+                    <p className="text-gold-400 text-sm font-semibold tracking-wide">REGISTRATION NUMBER</p>
+                    <p className="text-lg font-mono bg-slate-700/50 px-3 py-2 rounded border border-gold-600/30">
+                      {enhancedPetData.registrationNumber}
+                    </p>
+                  </div>
+                )}
               </div>
               
               {enhancedPetData?.bio && (

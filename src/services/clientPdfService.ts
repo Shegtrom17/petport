@@ -35,6 +35,8 @@ function normalizePetData(raw: any): any {
     // Identifiers
     microchipId: pet.microchipId || pet.microchip_id,
     petport_id: pet.petport_id || pet.petportId || pet.petportID,
+    height: pet.height,
+    registrationNumber: pet.registrationNumber || pet.registration_number,
 
     // Location
     county: pet.county,
@@ -355,9 +357,11 @@ const generateEmergencyPDF = async (doc: jsPDF, pageManager: PDFPageManager, pet
     addText(doc, pageManager, `Breed: ${safeText(petData.breed)}`);
     addText(doc, pageManager, `Age: ${safeText(petData.age)}`);
     addText(doc, pageManager, `Weight: ${safeText(petData.weight)}`);
+    if (petData.height) addText(doc, pageManager, `Height: ${safeText(petData.height)}`);
     addText(doc, pageManager, `Gender: ${safeText(petData.gender)}`);
     if (petData.color) addText(doc, pageManager, `Color: ${safeText(petData.color)}`);
     if (petData.microchipId) addText(doc, pageManager, `Microchip: ${safeText(petData.microchipId)}`);
+    if (petData.registrationNumber) addText(doc, pageManager, `Registration: ${safeText(petData.registrationNumber)}`);
   });
   
   // Emergency contacts
@@ -444,8 +448,10 @@ pageManager.addY(6);
     addText(doc, pageManager, `Breed: ${safeText(petData.breed)}`, '#000000', 11);
     addText(doc, pageManager, `Age: ${safeText(petData.age)}`, '#000000', 11);
     addText(doc, pageManager, `Weight: ${safeText(petData.weight)}`, '#000000', 11);
+    if (petData.height) addText(doc, pageManager, `Height: ${safeText(petData.height)}`, '#000000', 11);
     if (petData.species) addText(doc, pageManager, `Color: ${safeText(petData.species)}`, '#000000', 11);
     if (petData.microchipId) addText(doc, pageManager, `Microchip: ${safeText(petData.microchipId)}`, '#000000', 11);
+    if (petData.registrationNumber) addText(doc, pageManager, `Registration: ${safeText(petData.registrationNumber)}`, '#000000', 11);
   });
   
   // Reset X position and move below both columns

@@ -630,6 +630,7 @@ export type Database = {
           county: string | null
           created_at: string
           custom_logo_url: string | null
+          height: string | null
           id: string
           is_public: boolean
           microchip_id: string | null
@@ -640,6 +641,7 @@ export type Database = {
           organization_phone: string | null
           organization_website: string | null
           petport_id: string | null
+          registration_number: string | null
           sex: string | null
           species: string | null
           state: string | null
@@ -656,6 +658,7 @@ export type Database = {
           county?: string | null
           created_at?: string
           custom_logo_url?: string | null
+          height?: string | null
           id?: string
           is_public?: boolean
           microchip_id?: string | null
@@ -666,6 +669,7 @@ export type Database = {
           organization_phone?: string | null
           organization_website?: string | null
           petport_id?: string | null
+          registration_number?: string | null
           sex?: string | null
           species?: string | null
           state?: string | null
@@ -682,6 +686,7 @@ export type Database = {
           county?: string | null
           created_at?: string
           custom_logo_url?: string | null
+          height?: string | null
           id?: string
           is_public?: boolean
           microchip_id?: string | null
@@ -692,6 +697,7 @@ export type Database = {
           organization_phone?: string | null
           organization_website?: string | null
           petport_id?: string | null
+          registration_number?: string | null
           sex?: string | null
           species?: string | null
           state?: string | null

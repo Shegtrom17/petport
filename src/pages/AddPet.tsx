@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -12,6 +12,7 @@ import { createPet } from "@/services/petService";
 import { supabase } from "@/integrations/supabase/client";
 import { PWALayout } from "@/components/PWALayout";
 import { AppHeader } from "@/components/AppHeader";
+import { getSpeciesConfig, getSpeciesOptions } from "@/utils/speciesConfig";
 
 export default function AddPet() {
   const navigate = useNavigate();
@@ -25,11 +26,16 @@ export default function AddPet() {
     breed: "",
     age: "",
     weight: "",
+    height: "",
     sex: "",
     microchip_id: "",
+    registration_number: "",
     bio: "",
     notes: ""
   });
+
+  const speciesConfig = useMemo(() => getSpeciesConfig(petData.species), [petData.species]);
+  const speciesOptions = useMemo(() => getSpeciesOptions(), []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -154,27 +160,25 @@ export default function AddPet() {
                     />
                   </div>
 
-                  {/* Species */}
-                  <div className="space-y-2">
-                    <Label htmlFor="species">Species</Label>
-                    <Select
-                      value={petData.species}
-                      onValueChange={(value) => handleSelectChange("species", value)}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select species" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="dog">Dog</SelectItem>
-                        <SelectItem value="cat">Cat</SelectItem>
-                        <SelectItem value="bird">Bird</SelectItem>
-                        <SelectItem value="horse">Horse</SelectItem>
-                        <SelectItem value="rabbit">Rabbit</SelectItem>
-                        <SelectItem value="reptile">Reptile</SelectItem>
-                        <SelectItem value="other">Other</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
+                   {/* Species */}
+                   <div className="space-y-2">
+                     <Label htmlFor="species">Species</Label>
+                     <Select
+                       value={petData.species}
+                       onValueChange={(value) => handleSelectChange("species", value)}
+                     >
+                       <SelectTrigger>
+                         <SelectValue placeholder="Select species" />
+                       </SelectTrigger>
+                       <SelectContent>
+                         {speciesOptions.map((option) => (
+                           <SelectItem key={option.value} value={option.value}>
+                             {option.label}
+                           </SelectItem>
+                         ))}
+                       </SelectContent>
+                     </Select>
+                   </div>
 
                   {/* Breed */}
                   <div className="space-y-2">
@@ -200,47 +204,77 @@ export default function AddPet() {
                     />
                   </div>
 
-                  {/* Weight */}
-                  <div className="space-y-2">
-                    <Label htmlFor="weight">Weight</Label>
-                    <Input
-                      id="weight"
-                      name="weight"
-                      value={petData.weight}
-                      onChange={handleChange}
-                      placeholder="Weight (e.g., 65 lbs)"
-                    />
-                  </div>
+                   {/* Weight */}
+                   <div className="space-y-2">
+                     <Label htmlFor="weight">{speciesConfig.weightLabel}</Label>
+                     <Input
+                       id="weight"
+                       name="weight"
+                       value={petData.weight}
+                       onChange={handleChange}
+                       placeholder={speciesConfig.weightPlaceholder}
+                     />
+                   </div>
 
-                  {/* Sex */}
-                  <div className="space-y-2">
-                    <Label htmlFor="sex">Sex</Label>
-                    <Select
-                      value={petData.sex}
-                      onValueChange={(value) => handleSelectChange("sex", value)}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select sex" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="male">Male</SelectItem>
-                        <SelectItem value="female">Female</SelectItem>
-                        <SelectItem value="unknown">Unknown</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
+                   {/* Height - conditionally shown */}
+                   {speciesConfig.showHeight && (
+                     <div className="space-y-2">
+                       <Label htmlFor="height">{speciesConfig.heightLabel}</Label>
+                       <Input
+                         id="height"
+                         name="height"
+                         value={petData.height}
+                         onChange={handleChange}
+                         placeholder={speciesConfig.heightPlaceholder}
+                       />
+                     </div>
+                   )}
 
-                  {/* Microchip ID */}
-                  <div className="space-y-2">
-                    <Label htmlFor="microchip_id">Microchip ID</Label>
-                    <Input
-                      id="microchip_id"
-                      name="microchip_id"
-                      value={petData.microchip_id}
-                      onChange={handleChange}
-                      placeholder="Microchip ID"
-                    />
-                  </div>
+                   {/* Sex */}
+                   <div className="space-y-2">
+                     <Label htmlFor="sex">Sex</Label>
+                     <Select
+                       value={petData.sex}
+                       onValueChange={(value) => handleSelectChange("sex", value)}
+                     >
+                       <SelectTrigger>
+                         <SelectValue placeholder="Select sex" />
+                       </SelectTrigger>
+                       <SelectContent>
+                         {speciesConfig.sexOptions.map((option) => (
+                           <SelectItem key={option.value} value={option.value}>
+                             {option.label}
+                           </SelectItem>
+                         ))}
+                       </SelectContent>
+                     </Select>
+                   </div>
+
+                   {/* Microchip ID */}
+                   <div className="space-y-2">
+                     <Label htmlFor="microchip_id">Microchip ID</Label>
+                     <Input
+                       id="microchip_id"
+                       name="microchip_id"
+                       value={petData.microchip_id}
+                       onChange={handleChange}
+                       placeholder="Microchip ID"
+                     />
+                   </div>
+
+                   {/* Registration Number - conditionally shown */}
+                   {speciesConfig.showRegistration && (
+                     <div className="space-y-2">
+                       <Label htmlFor="registration_number">Registration</Label>
+                       <Input
+                         id="registration_number"
+                         name="registration_number"
+                         value={petData.registration_number}
+                         onChange={handleChange}
+                         placeholder={speciesConfig.registrationPlaceholder}
+                       />
+                     </div>
+                   )}
                 </div>
 
                 {/* Bio */}

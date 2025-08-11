@@ -9,8 +9,10 @@ export type PetWithDetails = {
   species: string | null;
   age: string | null;
   weight: string | null;
+  height: string | null;
   sex: string | null;
   microchip_id: string | null;
+  registration_number: string | null;
   petport_id: string | null;
   bio: string | null;
   notes: string | null;
@@ -48,8 +50,10 @@ export function transformPetData(pet: PetWithDetails): any {
     species: pet.species,
     age: pet.age,
     weight: pet.weight,
+    height: pet.height,
     sex: pet.sex,
     microchipId: pet.microchip_id,
+    registrationNumber: pet.registration_number,
     petPortId: pet.petport_id,
     petPassId: pet.petport_id, // Map to both for compatibility
     bio: pet.bio,
@@ -141,7 +145,7 @@ export async function fetchUserPets(): Promise<any[]> {
 
     const { data: pets, error } = await supabase
       .from("pets")
-      .select("id, name, breed, species, age, weight, sex, microchip_id, petport_id, bio, notes, state, county, created_at, updated_at, user_id, is_public, organization_name, organization_email, organization_phone, organization_website, custom_logo_url, adoption_status, adoption_instructions")
+      .select("id, name, breed, species, age, weight, height, sex, microchip_id, registration_number, petport_id, bio, notes, state, county, created_at, updated_at, user_id, is_public, organization_name, organization_email, organization_phone, organization_website, custom_logo_url, adoption_status, adoption_instructions")
       .eq('user_id', user.id) // Explicitly filter by user_id
       .order("created_at", { ascending: false });
 
@@ -167,8 +171,10 @@ export async function fetchUserPets(): Promise<any[]> {
         species: pet.species,
         age: pet.age,
         weight: pet.weight,
+        height: pet.height,
         sex: pet.sex,
         microchip_id: pet.microchip_id,
+        registration_number: pet.registration_number,
         petport_id: pet.petport_id,
         bio: pet.bio,
         notes: pet.notes,
@@ -208,7 +214,7 @@ export async function fetchPetDetails(petId: string): Promise<any | null> {
   try {
     const { data: pet, error } = await supabase
       .from("pets")
-      .select("id, name, breed, species, age, weight, sex, microchip_id, petport_id, bio, notes, state, county, created_at, updated_at, user_id, is_public, organization_name, organization_email, organization_phone, organization_website, custom_logo_url, adoption_status, adoption_instructions")
+      .select("id, name, breed, species, age, weight, height, sex, microchip_id, registration_number, petport_id, bio, notes, state, county, created_at, updated_at, user_id, is_public, organization_name, organization_email, organization_phone, organization_website, custom_logo_url, adoption_status, adoption_instructions")
       .eq("id", petId)
       .single();
 
@@ -260,8 +266,10 @@ export async function fetchPetDetails(petId: string): Promise<any | null> {
       species: pet.species,
       age: pet.age,
       weight: pet.weight,
+      height: pet.height,
       sex: pet.sex,
       microchip_id: pet.microchip_id,
+      registration_number: pet.registration_number,
       petport_id: pet.petport_id,
       bio: pet.bio,
       notes: pet.notes,
@@ -304,8 +312,10 @@ export async function createPet(petData: {
   species?: string;
   age?: string;
   weight?: string;
+  height?: string;
   sex?: string;
   microchip_id?: string;
+  registration_number?: string;
   bio?: string;
   notes?: string;
 }): Promise<string | null> {
@@ -341,8 +351,10 @@ export async function createPet(petData: {
       species: petData.species || null,
       age: petData.age || null,
       weight: petData.weight || null,
+      height: petData.height || null,
       sex: petData.sex || null,
       microchip_id: petData.microchip_id || null,
+      registration_number: petData.registration_number || null,
       bio: petData.bio || null,
       notes: petData.notes || null,
       user_id: user.id  // This is the critical field that links the pet to the user
@@ -450,8 +462,10 @@ export async function updatePetBasicInfo(petId: string, basicData: {
   species?: string;
   age?: string;
   weight?: string;
+  height?: string;
   sex?: string;
   microchip_id?: string;
+  registration_number?: string;
   bio?: string;
   notes?: string;
   state?: string;

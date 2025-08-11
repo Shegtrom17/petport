@@ -1,5 +1,5 @@
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -15,6 +15,7 @@ import { sanitizeText, validateTextLength, containsSuspiciousContent } from "@/u
 import { PrivacyToggle } from "@/components/PrivacyToggle";
 import { supabase } from "@/integrations/supabase/client";
 import { featureFlags } from "@/config/featureFlags";
+import { getSpeciesConfig, getSpeciesOptions } from "@/utils/speciesConfig";
 
 interface PetData {
   id: string;
@@ -24,8 +25,10 @@ interface PetData {
   species: string;
   age: string;
   weight: string;
+  height?: string;
   sex: string;
   microchipId: string;
+  registrationNumber?: string;
   petport_id: string;
   bio: string;
   notes: string;
@@ -92,8 +95,10 @@ export const PetEditForm = ({ petData, onSave, onCancel, togglePetPublicVisibili
     breed: petData.breed || "",
     age: petData.age || "",
     weight: petData.weight || "",
+    height: petData.height || "",
     sex: petData.sex || "",
     microchipId: petData.microchipId || "",
+    registrationNumber: petData.registrationNumber || "",
     species: petData.species || "",
     state: petData.state || "",
     county: petData.county || "",
@@ -115,6 +120,9 @@ export const PetEditForm = ({ petData, onSave, onCancel, togglePetPublicVisibili
     adoptionStatus: petData.adoptionStatus || "not_available",
     adoptionInstructions: petData.adoptionInstructions || ""
   });
+
+  const speciesConfig = useMemo(() => getSpeciesConfig(formData.species), [formData.species]);
+  const speciesOptions = useMemo(() => getSpeciesOptions(), []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -192,8 +200,10 @@ const handleSubmit = async (e: React.FormEvent) => {
       species: sanitizeText(formData.species.trim()),
       age: sanitizeText(formData.age.trim()),
       weight: sanitizeText(formData.weight.trim()),
+      height: sanitizeText(formData.height.trim()),
       sex: sanitizeText(formData.sex.trim()),
       microchip_id: sanitizeText(formData.microchipId.trim()),
+      registration_number: sanitizeText(formData.registrationNumber.trim()),
       bio: sanitizeText(formData.bio.trim()),
       notes: sanitizeText(formData.notes.trim()),
       state: sanitizeText(formData.state.trim()),
@@ -277,8 +287,15 @@ const handleSubmit = async (e: React.FormEvent) => {
             <Input type="text" id="age" name="age" value={formData.age} onChange={handleChange} />
           </div>
           <div>
-            <Label htmlFor="weight">Weight</Label>
-            <Input type="text" id="weight" name="weight" value={formData.weight} onChange={handleChange} />
+            <Label htmlFor="weight">{speciesConfig.weightLabel}</Label>
+            <Input 
+              type="text" 
+              id="weight" 
+              name="weight" 
+              value={formData.weight} 
+              onChange={handleChange}
+              placeholder={speciesConfig.weightPlaceholder}
+            />
           </div>
           <div>
             <Label htmlFor="sex">Sex</Label>
@@ -287,13 +304,32 @@ const handleSubmit = async (e: React.FormEvent) => {
                 <SelectValue placeholder="Select sex" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="male">Male</SelectItem>
-                <SelectItem value="female">Female</SelectItem>
-                <SelectItem value="unknown">Unknown</SelectItem>
+                {speciesConfig.sexOptions.map((option) => (
+                  <SelectItem key={option.value} value={option.value}>
+                    {option.label}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
           </div>
         </div>
+
+        {/* Height field - conditionally shown */}
+        {speciesConfig.showHeight && (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <Label htmlFor="height">{speciesConfig.heightLabel}</Label>
+              <Input 
+                type="text" 
+                id="height" 
+                name="height" 
+                value={formData.height} 
+                onChange={handleChange}
+                placeholder={speciesConfig.heightPlaceholder}
+              />
+            </div>
+          </div>
+        )}
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
@@ -302,9 +338,37 @@ const handleSubmit = async (e: React.FormEvent) => {
           </div>
           <div>
             <Label htmlFor="species">Species</Label>
-            <Input type="text" id="species" name="species" value={formData.species} onChange={handleChange} />
+            <Select value={formData.species} onValueChange={(value) => handleSelectChange('species', value)}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select species" />
+              </SelectTrigger>
+              <SelectContent>
+                {speciesOptions.map((option) => (
+                  <SelectItem key={option.value} value={option.value}>
+                    {option.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
         </div>
+
+        {/* Registration Number - conditionally shown */}
+        {speciesConfig.showRegistration && (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <Label htmlFor="registrationNumber">Registration</Label>
+              <Input 
+                type="text" 
+                id="registrationNumber" 
+                name="registrationNumber" 
+                value={formData.registrationNumber} 
+                onChange={handleChange}
+                placeholder={speciesConfig.registrationPlaceholder}
+              />
+            </div>
+          </div>
+        )}
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>

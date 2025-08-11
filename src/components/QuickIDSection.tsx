@@ -206,12 +206,12 @@ export const QuickIDSection = ({ petData }: QuickIDSectionProps) => {
               <li>Tap “Report Missing” and fill last seen details and notes.</li>
               <li>Add photos showing unique markings and a full-body shot.</li>
               <li>Use Share/QR to spread the alert and print the flyer.</li>
+              <li>Make profile public.</li>
             </ol>
             <div className="flex flex-wrap items-center gap-3 pt-1">
               {petData?.id && (
                 <Link to={`/lost-pet/${petData.id}`} className="text-blue-700 underline font-medium">Open Missing Pet page</Link>
               )}
-              <Link to="/profile" className="text-blue-700 underline">Make profile public</Link>
             </div>
           </div>
         </CardContent>

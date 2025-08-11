@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { Syringe, MapPin, Building, Calendar, Shield, AlertTriangle } from "lucide-react";
+import { Syringe, MapPin, Building, Calendar, Shield, AlertTriangle, Dog, Cat, Heart } from "lucide-react";
 
 interface VaccinationGuideProps {
   isOpen: boolean;
@@ -14,115 +14,369 @@ interface VaccinationGuideProps {
 
 export const VaccinationGuide = ({ isOpen, onClose }: VaccinationGuideProps) => {
   const [selectedTab, setSelectedTab] = useState("travel");
+  const [selectedSpecies, setSelectedSpecies] = useState("dogs");
 
-  const coreVaccines = [
-    {
-      name: "Rabies",
-      required: "Yes",
-      frequency: "Annually or every 3 years",
-      notes: "Required for ALL travel and most daycare facilities",
-      critical: true
-    },
-    {
-      name: "DHPP (Distemper, Hepatitis, Parvovirus, Parainfluenza)",
-      required: "Yes",
-      frequency: "Annually",
-      notes: "Core vaccine series, essential for public spaces",
-      critical: true
-    }
-  ];
-
-  const additionalVaccines = [
-    {
-      name: "Bordetella (Kennel Cough)",
-      required: "Usually",
-      frequency: "Every 6-12 months",
-      notes: "Required by most daycare and boarding facilities"
-    },
-    {
-      name: "Lyme Disease",
-      required: "Regional",
-      frequency: "Annually",
-      notes: "Recommended in tick-endemic areas"
-    },
-    {
-      name: "Canine Influenza",
-      required: "Optional",
-      frequency: "Annually",
-      notes: "Recommended for dogs in group settings"
-    }
-  ];
-
-  const travelRequirements = {
-    domestic: {
-      title: "Domestic Travel (Within Country)",
-      requirements: [
-        "Current rabies vaccination (required)",
-        "DHPP vaccination series (recommended)",
-        "Health certificate from veterinarian (some states/regions)",
-        "Bordetella if staying in kennels or group settings"
+  // Species data structure
+  const speciesData = {
+    dogs: {
+      name: "Dogs",
+      icon: Dog,
+      coreVaccines: [
+        {
+          name: "Rabies",
+          required: "Yes",
+          frequency: "Annually or every 3 years",
+          notes: "Required for ALL travel and most daycare facilities",
+          critical: true
+        },
+        {
+          name: "DHPP (Distemper, Hepatitis, Parvovirus, Parainfluenza)",
+          required: "Yes",
+          frequency: "Annually",
+          notes: "Core vaccine series, essential for public spaces",
+          critical: true
+        }
+      ],
+      additionalVaccines: [
+        {
+          name: "Bordetella (Kennel Cough)",
+          required: "Usually",
+          frequency: "Every 6-12 months",
+          notes: "Required by most daycare and boarding facilities"
+        },
+        {
+          name: "Lyme Disease",
+          required: "Regional",
+          frequency: "Annually",
+          notes: "Recommended in tick-endemic areas"
+        },
+        {
+          name: "Canine Influenza",
+          required: "Optional",
+          frequency: "Annually",
+          notes: "Recommended for dogs in group settings"
+        }
+      ],
+      travelRequirements: {
+        domestic: {
+          title: "Domestic Travel (Within Country)",
+          requirements: [
+            "Current rabies vaccination (required)",
+            "DHPP vaccination series (recommended)",
+            "Health certificate from veterinarian (some states/regions)",
+            "Bordetella if staying in kennels or group settings"
+          ]
+        },
+        international: {
+          title: "International Travel",
+          requirements: [
+            "Rabies vaccination (21+ days old, valid for duration)",
+            "Health certificate from USDA-accredited veterinarian",
+            "USDA endorsement of health certificate",
+            "Country-specific requirements (varies by destination)",
+            "Microchip identification (ISO standard)",
+            "Possible quarantine requirements"
+          ]
+        },
+        airlines: {
+          title: "Airline Travel",
+          requirements: [
+            "Health certificate (within 10 days of travel)",
+            "Current rabies vaccination",
+            "DHPP vaccination series",
+            "Bordetella vaccination (recommended)",
+            "Airline-approved carrier",
+            "Acclimation certificate for extreme temperatures"
+          ]
+        }
+      },
+      boardingRequirements: [
+        {
+          category: "Required Vaccines",
+          vaccines: ["Rabies", "DHPP", "Bordetella"],
+          frequency: "Must be current"
+        },
+        {
+          category: "Recommended Vaccines",
+          vaccines: ["Canine Influenza", "Lyme Disease"],
+          frequency: "Based on regional risk"
+        },
+        {
+          category: "Additional Requirements",
+          vaccines: ["Fecal exam", "Flea/tick prevention", "Spay/neuter"],
+          frequency: "Varies by facility"
+        }
+      ],
+      ageSchedule: [
+        {
+          age: "6-8 weeks",
+          vaccines: ["First DHPP", "Bordetella (intranasal)"]
+        },
+        {
+          age: "10-12 weeks",
+          vaccines: ["Second DHPP", "Lyme Disease (if applicable)"]
+        },
+        {
+          age: "14-16 weeks",
+          vaccines: ["Third DHPP", "Rabies", "Canine Influenza (if applicable)"]
+        },
+        {
+          age: "Annual",
+          vaccines: ["DHPP booster", "Rabies (1 or 3 year)", "Bordetella", "Other boosters as needed"]
+        }
       ]
     },
-    international: {
-      title: "International Travel",
-      requirements: [
-        "Rabies vaccination (21+ days old, valid for duration)",
-        "Health certificate from USDA-accredited veterinarian",
-        "USDA endorsement of health certificate",
-        "Country-specific requirements (varies by destination)",
-        "Microchip identification (ISO standard)",
-        "Possible quarantine requirements"
+    cats: {
+      name: "Cats",
+      icon: Cat,
+      coreVaccines: [
+        {
+          name: "Rabies",
+          required: "Yes",
+          frequency: "Annually or every 3 years",
+          notes: "Required for travel and many boarding facilities",
+          critical: true
+        },
+        {
+          name: "FVRCP (Feline Viral Rhinotracheitis, Calicivirus, Panleukopenia)",
+          required: "Yes",
+          frequency: "Annually",
+          notes: "Core vaccine series, essential for all cats",
+          critical: true
+        }
+      ],
+      additionalVaccines: [
+        {
+          name: "FeLV (Feline Leukemia Virus)",
+          required: "Recommended",
+          frequency: "Annually",
+          notes: "Essential for outdoor cats and multi-cat households"
+        },
+        {
+          name: "FIV (Feline Immunodeficiency Virus)",
+          required: "Optional",
+          frequency: "Annually",
+          notes: "For high-risk cats (outdoor, fighting)"
+        },
+        {
+          name: "Chlamydophila felis",
+          required: "Optional",
+          frequency: "Annually",
+          notes: "For cats in multi-cat environments"
+        },
+        {
+          name: "Bordetella bronchiseptica",
+          required: "Optional",
+          frequency: "Annually",
+          notes: "For cats in boarding or group settings"
+        }
+      ],
+      travelRequirements: {
+        domestic: {
+          title: "Domestic Travel (Within Country)",
+          requirements: [
+            "Current rabies vaccination (required)",
+            "FVRCP vaccination series (recommended)",
+            "Health certificate from veterinarian (some states/regions)",
+            "FeLV testing (some facilities require)"
+          ]
+        },
+        international: {
+          title: "International Travel",
+          requirements: [
+            "Rabies vaccination (21+ days old, valid for duration)",
+            "Health certificate from USDA-accredited veterinarian",
+            "USDA endorsement of health certificate",
+            "Country-specific requirements (varies by destination)",
+            "Microchip identification (ISO standard)",
+            "Possible quarantine requirements"
+          ]
+        },
+        airlines: {
+          title: "Airline Travel",
+          requirements: [
+            "Health certificate (within 10 days of travel)",
+            "Current rabies vaccination",
+            "FVRCP vaccination series",
+            "Airline-approved carrier",
+            "Acclimation certificate for extreme temperatures"
+          ]
+        }
+      },
+      boardingRequirements: [
+        {
+          category: "Required Vaccines",
+          vaccines: ["Rabies", "FVRCP"],
+          frequency: "Must be current"
+        },
+        {
+          category: "Recommended Vaccines",
+          vaccines: ["FeLV", "Bordetella"],
+          frequency: "Based on facility requirements"
+        },
+        {
+          category: "Additional Requirements",
+          vaccines: ["FeLV testing", "Flea/tick prevention", "Spay/neuter"],
+          frequency: "Varies by facility"
+        }
+      ],
+      ageSchedule: [
+        {
+          age: "6-8 weeks",
+          vaccines: ["First FVRCP"]
+        },
+        {
+          age: "10-12 weeks",
+          vaccines: ["Second FVRCP", "FeLV (if outdoor/multi-cat)"]
+        },
+        {
+          age: "14-16 weeks",
+          vaccines: ["Third FVRCP", "Rabies", "FeLV booster (if applicable)"]
+        },
+        {
+          age: "Annual",
+          vaccines: ["FVRCP booster", "Rabies (1 or 3 year)", "FeLV (if applicable)"]
+        }
       ]
     },
-    airlines: {
-      title: "Airline Travel",
-      requirements: [
-        "Health certificate (within 10 days of travel)",
-        "Current rabies vaccination",
-        "DHPP vaccination series",
-        "Bordetella vaccination (recommended)",
-        "Airline-approved carrier",
-        "Acclimation certificate for extreme temperatures"
+    horses: {
+      name: "Horses",
+      icon: Heart,
+      coreVaccines: [
+        {
+          name: "Eastern/Western Equine Encephalomyelitis",
+          required: "Yes",
+          frequency: "Annually",
+          notes: "Core vaccine for all horses",
+          critical: true
+        },
+        {
+          name: "Tetanus",
+          required: "Yes",
+          frequency: "Annually",
+          notes: "Essential due to wound susceptibility",
+          critical: true
+        },
+        {
+          name: "West Nile Virus",
+          required: "Yes",
+          frequency: "Annually",
+          notes: "Core vaccine in endemic areas",
+          critical: true
+        },
+        {
+          name: "Rabies",
+          required: "Yes",
+          frequency: "Annually",
+          notes: "Required for travel and competition",
+          critical: true
+        }
+      ],
+      additionalVaccines: [
+        {
+          name: "Influenza",
+          required: "Recommended",
+          frequency: "Every 6 months",
+          notes: "Essential for horses in training or competition"
+        },
+        {
+          name: "Rhinopneumonitis (EHV-1/EHV-4)",
+          required: "Recommended",
+          frequency: "Every 6 months",
+          notes: "Important for pregnant mares and performance horses"
+        },
+        {
+          name: "Strangles",
+          required: "Risk-based",
+          frequency: "Annually",
+          notes: "For horses with exposure risk"
+        },
+        {
+          name: "Potomac Horse Fever",
+          required: "Regional",
+          frequency: "Annually",
+          notes: "Endemic areas only"
+        },
+        {
+          name: "Botulism",
+          required: "Risk-based",
+          frequency: "Annually",
+          notes: "For horses fed round bales or in endemic areas"
+        }
+      ],
+      travelRequirements: {
+        domestic: {
+          title: "Interstate Travel",
+          requirements: [
+            "Negative Coggins test (within 12 months)",
+            "Health certificate (within 30 days)",
+            "Current vaccination records",
+            "State entry permit (some states)",
+            "Brand inspection (some states)"
+          ]
+        },
+        international: {
+          title: "International Travel",
+          requirements: [
+            "USDA-accredited veterinarian health certificate",
+            "Negative Coggins test",
+            "Complete vaccination records",
+            "Quarantine requirements (varies by country)",
+            "Import/export permits",
+            "Blood testing for specific diseases"
+          ]
+        },
+        competition: {
+          title: "Competition/Show Travel",
+          requirements: [
+            "Negative Coggins test (within 12 months)",
+            "Health certificate (within 30 days)",
+            "Current influenza and rhinopneumonitis vaccines",
+            "Association-specific requirements",
+            "Strangles vaccination (some venues)"
+          ]
+        }
+      },
+      boardingRequirements: [
+        {
+          category: "Required Documents",
+          vaccines: ["Negative Coggins test", "Health certificate", "Vaccination records"],
+          frequency: "Must be current"
+        },
+        {
+          category: "Required Vaccines",
+          vaccines: ["Core vaccines", "Influenza", "Rhinopneumonitis"],
+          frequency: "Must be current"
+        },
+        {
+          category: "Additional Requirements",
+          vaccines: ["Deworming records", "Strangles vaccination", "Insurance documentation"],
+          frequency: "Varies by facility"
+        }
+      ],
+      ageSchedule: [
+        {
+          age: "4-6 months (Foals)",
+          vaccines: ["First core vaccine series", "Rhinopneumonitis"]
+        },
+        {
+          age: "5-7 months",
+          vaccines: ["Second core vaccine series", "Influenza (if applicable)"]
+        },
+        {
+          age: "6-8 months",
+          vaccines: ["Third core vaccine series", "Complete initial series"]
+        },
+        {
+          age: "Annual/Semi-annual",
+          vaccines: ["Core vaccine boosters", "Influenza/Rhino (every 6 months)", "Risk-based vaccines"]
+        }
       ]
     }
   };
 
-  const daycareRequirements = [
-    {
-      category: "Required Vaccines",
-      vaccines: ["Rabies", "DHPP", "Bordetella"],
-      frequency: "Must be current"
-    },
-    {
-      category: "Recommended Vaccines",
-      vaccines: ["Canine Influenza", "Lyme Disease"],
-      frequency: "Based on regional risk"
-    },
-    {
-      category: "Additional Requirements",
-      vaccines: ["Fecal exam", "Flea/tick prevention", "Spay/neuter"],
-      frequency: "Varies by facility"
-    }
-  ];
-
-  const ageSchedule = [
-    {
-      age: "6-8 weeks",
-      vaccines: ["First DHPP", "Bordetella (intranasal)"]
-    },
-    {
-      age: "10-12 weeks",
-      vaccines: ["Second DHPP", "Lyme Disease (if applicable)"]
-    },
-    {
-      age: "14-16 weeks",
-      vaccines: ["Third DHPP", "Rabies", "Canine Influenza (if applicable)"]
-    },
-    {
-      age: "Annual",
-      vaccines: ["DHPP booster", "Rabies (1 or 3 year)", "Bordetella", "Other boosters as needed"]
-    }
-  ];
+  // Get current species data
+  const currentSpecies = speciesData[selectedSpecies as keyof typeof speciesData];
 
   return (
     <NativeModal isOpen={isOpen} onClose={onClose} title="Travel & Vaccination Guide">
@@ -142,10 +396,35 @@ export const VaccinationGuide = ({ isOpen, onClose }: VaccinationGuideProps) => 
           </CardContent>
         </Card>
 
+        {/* Species Selection */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg">Select Species</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-3 gap-2">
+              {Object.entries(speciesData).map(([key, species]) => {
+                const IconComponent = species.icon;
+                return (
+                  <Button
+                    key={key}
+                    variant={selectedSpecies === key ? "default" : "outline"}
+                    onClick={() => setSelectedSpecies(key)}
+                    className="flex items-center gap-2"
+                  >
+                    <IconComponent className="w-4 h-4" />
+                    {species.name}
+                  </Button>
+                );
+              })}
+            </div>
+          </CardContent>
+        </Card>
+
         <Tabs value={selectedTab} onValueChange={setSelectedTab}>
           <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="travel">Travel</TabsTrigger>
-            <TabsTrigger value="daycare">Daycare</TabsTrigger>
+            <TabsTrigger value="daycare">Boarding</TabsTrigger>
             <TabsTrigger value="schedule">Schedule</TabsTrigger>
           </TabsList>
 
@@ -159,7 +438,7 @@ export const VaccinationGuide = ({ isOpen, onClose }: VaccinationGuideProps) => 
               </CardHeader>
               <CardContent>
                 <Accordion type="single" collapsible className="w-full">
-                  {Object.entries(travelRequirements).map(([key, requirement]) => (
+                  {Object.entries(currentSpecies.travelRequirements).map(([key, requirement]) => (
                     <AccordionItem key={key} value={key}>
                       <AccordionTrigger className="text-left">
                         {requirement.title}
@@ -187,7 +466,7 @@ export const VaccinationGuide = ({ isOpen, onClose }: VaccinationGuideProps) => 
                   <CardTitle className="text-lg">Core Vaccines</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-3">
-                  {coreVaccines.map((vaccine, index) => (
+                  {currentSpecies.coreVaccines.map((vaccine, index) => (
                     <div key={index} className="p-3 rounded border">
                       <div className="flex items-center gap-2 mb-1">
                         <strong className="text-sm">{vaccine.name}</strong>
@@ -207,7 +486,7 @@ export const VaccinationGuide = ({ isOpen, onClose }: VaccinationGuideProps) => 
                   <CardTitle className="text-lg">Additional Vaccines</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-3">
-                  {additionalVaccines.map((vaccine, index) => (
+                  {currentSpecies.additionalVaccines.map((vaccine, index) => (
                     <div key={index} className="p-3 rounded border">
                       <div className="flex items-center gap-2 mb-1">
                         <strong className="text-sm">{vaccine.name}</strong>
@@ -233,7 +512,7 @@ export const VaccinationGuide = ({ isOpen, onClose }: VaccinationGuideProps) => 
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                {daycareRequirements.map((category, index) => (
+                {currentSpecies.boardingRequirements.map((category, index) => (
                   <div key={index} className="p-4 rounded border">
                     <h4 className="font-medium mb-2">{category.category}</h4>
                     <div className="flex flex-wrap gap-2 mb-2">
@@ -269,7 +548,7 @@ export const VaccinationGuide = ({ isOpen, onClose }: VaccinationGuideProps) => 
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                {ageSchedule.map((schedule, index) => (
+                {currentSpecies.ageSchedule.map((schedule, index) => (
                   <div key={index} className="p-4 rounded border">
                     <h4 className="font-medium mb-2 text-primary">{schedule.age}</h4>
                     <div className="flex flex-wrap gap-2">

@@ -60,6 +60,7 @@ serve(async (req) => {
         },
       ],
       mode: "payment",
+      allow_promotion_codes: true,
       // Route to a unified verification page so we can apply add-ons server-side
       success_url: `${req.headers.get("origin")}/post-checkout?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${req.headers.get("origin")}/billing`,

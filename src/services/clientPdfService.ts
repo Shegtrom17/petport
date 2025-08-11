@@ -36,7 +36,7 @@ function normalizePetData(raw: any): any {
     microchipId: pet.microchipId || pet.microchip_id,
     petport_id: pet.petport_id || pet.petportId || pet.petportID,
     height: pet.height,
-    registrationNumber: pet.registrationNumber || pet.registration_number,
+    registrationNumber: (pet.registrationNumber ?? pet.registration_number ?? pet.registration ?? pet.registrationNo ?? pet.reg_no ?? pet.regNumber)?.toString?.().trim() || undefined,
 
     // Location
     county: pet.county,
@@ -1283,6 +1283,7 @@ export async function generateClientPetPDF(
 
     // Normalize pet data (handles camelCase/snake_case and nested tables)
     const normalizedPet = normalizePetData(petData);
+    console.log('📎 PDF identifiers', { microchipId: normalizedPet.microchipId, registrationNumber: normalizedPet.registrationNumber });
 
     // Generate content based on type (normalize common synonyms)
     const t = (type || 'emergency').toString().toLowerCase();

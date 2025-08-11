@@ -732,17 +732,6 @@ export const PetResumeSection = ({ petData, onUpdate }: PetResumeSectionProps) =
         </Card>
       )}
 
-      {/* Phase 2 Note for Equine Badges */}
-      {petData.species.toLowerCase() === 'horse' && (
-        <Card className="border-0 shadow-lg bg-amber-50 border-l-4 border-amber-500">
-          <CardContent className="p-4">
-            <p className="text-amber-800 text-sm font-medium">
-              🐴 Note: Equine-specific badges and certifications will be available in Phase 2 to better reflect horse-related skills and achievements.
-            </p>
-          </CardContent>
-        </Card>
-      )}
-
     </div>
   );
 };

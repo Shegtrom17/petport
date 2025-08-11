@@ -206,59 +206,6 @@ const LostPet = () => {
       </div>
 
       <main className="max-w-6xl mx-auto px-4 py-6 space-y-6">
-        {/* Instructions Section - Moved to top */}
-        <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 border-2 border-blue-200">
-          <CardContent className="p-6">
-            <div className="flex items-start space-x-4">
-              <div className="bg-blue-500 rounded-full p-2 flex-shrink-0">
-                <Search className="w-5 h-5 text-white" />
-              </div>
-              <div className="space-y-4">
-                <div>
-                  <h3 className="text-lg font-semibold text-blue-900 mb-3">How to use this Missing Pet page</h3>
-                  <div className="space-y-2 text-blue-800">
-                    <div className="flex items-center space-x-2">
-                      <span className="bg-blue-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold">1</span>
-                      <span>Mark your pet as missing using the red button above</span>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <span className="bg-blue-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold">2</span>
-                      <span>Fill in last seen location, time, distinctive features, and contact notes</span>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <span className="bg-blue-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold">3</span>
-                      <span>Tap “Missing Pet Flyer” to generate the printable PDF</span>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <span className="bg-blue-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold">4</span>
-                      <span>Use Share and the QR button to spread the alert (both open the Missing Pet page)</span>
-                    </div>
-                  </div>
-                  <p className="text-sm text-blue-700 mt-3 font-medium">Found your pet? Tap <span className="font-bold">✓ FOUND</span> above to clear the alert.</p>
-                </div>
-
-                <div className="bg-white/70 border border-blue-200 rounded-md p-3">
-                  <h4 className="text-sm font-semibold text-blue-900">Make your profile public (optional but recommended)</h4>
-                  <p className="text-sm text-blue-800 mt-1">A public profile makes general profile sharing and QR codes more effective beyond the missing alert.</p>
-                  <div className="mt-2">
-                    <Link to="/profile" className="inline-flex items-center px-3 py-1.5 rounded-md bg-blue-600 text-white text-sm hover:bg-blue-700">
-                      Open Profile Settings
-                    </Link>
-                  </div>
-                </div>
-
-                <div className="bg-white/70 border border-blue-200 rounded-md p-3">
-                  <h4 className="text-sm font-semibold text-blue-900">Photo gallery tips for quick identification</h4>
-                  <ul className="mt-2 text-sm text-blue-800 list-disc list-inside space-y-1">
-                    <li>Upload a clear face photo and a full-body photo</li>
-                    <li>Include close-ups of unique markings, scars, patterns, or collar/harness color</li>
-                    <li>Use recent photos and add short captions if helpful</li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
 
         {/* Missing Status Banner */}
         {lostPetData.is_missing && (
@@ -538,24 +485,49 @@ const LostPet = () => {
           </CardContent>
         </Card>
 
-        {/* Share Missing Alert - compact, placed near main hub */}
-        {lostPetData.is_missing && (
-          <SocialShareButtons
-            petName={currentPet.name}
-            petId={currentPet.id || ""}
-            isMissingPet={true}
-            context="missing"
-            shareUrlOverride={missingShareUrl}
-            defaultOpenOptions={false}
-            compact={true}
-          />
-        )}
+        {/* Actions Section - Combined flyer generation and sharing */}
+        <Card className="bg-white shadow-xl">
+          <CardHeader>
+            <CardTitle className="text-xl flex items-center space-x-2">
+              <Share className="w-6 h-6" />
+              <span>Share & Generate Flyer</span>
+            </CardTitle>
+            <p className="text-sm text-muted-foreground">Generate missing pet flyer and share alert</p>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <LostPetPDFGenerator 
+              petId={currentPet.id || ""} 
+              petName={currentPet.name}
+              isActive={lostPetData.is_missing}
+              petData={{
+                ...currentPet,
+                ...lostPetData
+              }}
+            />
+            
+            {lostPetData.is_missing && (
+              <div className="border-t pt-6">
+                <h4 className="font-semibold mb-3">Share Missing Pet Alert</h4>
+                <SocialShareButtons
+                  petName={currentPet.name}
+                  petId={currentPet.id || ""}
+                  isMissingPet={true}
+                  context="missing"
+                  shareUrlOverride={missingShareUrl}
+                  defaultOpenOptions={false}
+                  compact={true}
+                />
+              </div>
+            )}
+          </CardContent>
+        </Card>
 
         {/* Gallery Photos */}
         {currentPet.gallery_photos && currentPet.gallery_photos.length > 0 && (
           <Card className="bg-white shadow-xl">
             <CardHeader>
               <CardTitle className="text-xl">Recent Photos</CardTitle>
+              <p className="text-sm text-muted-foreground">Recent photos for identification</p>
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -572,25 +544,6 @@ const LostPet = () => {
             </CardContent>
           </Card>
         )}
-
-        {/* Only the Missing Pet Flyer - stripped down version */}
-        <Card className="bg-white shadow-xl">
-          <CardHeader>
-            <CardTitle className="text-xl">Missing Pet Flyer</CardTitle>
-            <p className="text-sm text-muted-foreground">Generate flyer to help find your pet</p>
-          </CardHeader>
-          <CardContent>
-            <LostPetPDFGenerator 
-              petId={currentPet.id || ""} 
-              petName={currentPet.name}
-              isActive={lostPetData.is_missing}
-              petData={{
-                ...currentPet,
-                ...lostPetData
-              }}
-            />
-          </CardContent>
-        </Card>
       </main>
     </div>
   );

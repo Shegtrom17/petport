@@ -208,11 +208,6 @@ export const QuickIDSection = ({ petData }: QuickIDSectionProps) => {
               <li>Use Share/QR to spread the alert and print the flyer.</li>
               <li>Make profile public.</li>
             </ol>
-            <div className="flex flex-wrap items-center gap-3 pt-1">
-              {petData?.id && (
-                <Link to={`/lost-pet/${petData.id}`} className="text-blue-700 underline font-medium">Open Missing Pet page</Link>
-              )}
-            </div>
           </div>
         </CardContent>
       </Card>

@@ -378,9 +378,11 @@ export const VaccinationGuide = ({ isOpen, onClose }: VaccinationGuideProps) => 
   // Get current species data
   const currentSpecies = speciesData[selectedSpecies as keyof typeof speciesData];
 
-  return (
-    <NativeModal isOpen={isOpen} onClose={onClose} title="Travel & Vaccination Guide">
-      <div className="space-y-6">
+  // If this is being used as a page (isOpen always true and onClose is empty function), don't wrap in modal
+  const isPageMode = isOpen && onClose.toString() === "() => {}";
+  
+  const content = (
+    <div className="space-y-6">
         {/* Important Notice */}
         <Card className="border-amber-200 bg-amber-50">
           <CardContent className="pt-4">
@@ -576,6 +578,12 @@ export const VaccinationGuide = ({ isOpen, onClose }: VaccinationGuideProps) => 
           </TabsContent>
         </Tabs>
       </div>
+  );
+
+  // If being used as a page, return content directly; otherwise wrap in modal
+  return isPageMode ? content : (
+    <NativeModal isOpen={isOpen} onClose={onClose} title="Travel & Vaccination Guide">
+      {content}
     </NativeModal>
   );
 };

@@ -32,6 +32,7 @@ import PostCheckout from "./pages/PostCheckout";
 import Subscribe from "./pages/Subscribe";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import Billing from "./pages/Billing";
+import VaccinationGuide from "./pages/VaccinationGuide";
 
 
 const queryClient = new QueryClient();
@@ -82,12 +83,17 @@ const App = () => {
                       <LostPet />
                     </ProtectedRoute>
                   } />
-                  <Route path="/onboarding" element={
-                    <ProtectedRoute>
-                      <Onboarding />
-                    </ProtectedRoute>
-                  } />
-                  <Route path="/profile/:petId" element={<PublicProfile />} />
+                   <Route path="/onboarding" element={
+                     <ProtectedRoute>
+                       <Onboarding />
+                     </ProtectedRoute>
+                   } />
+                   <Route path="/vaccination-guide" element={
+                     <ProtectedRoute>
+                       <VaccinationGuide />
+                     </ProtectedRoute>
+                   } />
+                   <Route path="/profile/:petId" element={<PublicProfile />} />
                   <Route path="/care/:petId" element={<PublicCareInstructions />} />
                   <Route path="/credentials/:petId" element={<PublicCredentials />} />
                   <Route path="/reviews/:petId" element={<PublicReviews />} />

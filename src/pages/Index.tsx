@@ -26,12 +26,14 @@ import { ReportIssueModal } from "@/components/ReportIssueModal";
 import { AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useUserSettings } from "@/hooks/useUserSettings";
+import { useNavigate } from "react-router-dom";
 
 const Index = () => {
   console.log("Index component is rendering");
   
   const [activeTab, setActiveTab] = useState("profile");
   const [isInAppSharingOpen, setIsInAppSharingOpen] = useState(false);
+  const navigate = useNavigate();
   
   const { user } = useAuth();
   const { settings } = useUserSettings(user?.id);
@@ -223,6 +225,10 @@ const Index = () => {
       case "lostpet":
         console.log("Rendering LostPet");
         return <LostPet />;
+      case "vaccination":
+        console.log("Navigating to VaccinationGuide page");
+        navigate("/vaccination-guide");
+        return null;
       default:
         return <div>Tab not found</div>;
     }

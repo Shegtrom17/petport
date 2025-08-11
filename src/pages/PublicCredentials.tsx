@@ -6,7 +6,7 @@ import { Shield, Award, GraduationCap, Trophy, Activity } from "lucide-react";
 import { MetaTags } from "@/components/MetaTags";
 import { SupportAnimalBanner } from "@/components/SupportAnimalBanner";
 import { CertificationBanner } from "@/components/CertificationBanner";
-import { VaccinationGuideButton } from "@/components/VaccinationGuide";
+
 import { fetchPetDetails } from "@/services/petService";
 
 interface PublicCredentialsData {
@@ -101,10 +101,6 @@ export default function PublicCredentials() {
           </p>
         </header>
 
-        {/* Vaccination Guide */}
-        <div className="flex justify-center mb-6">
-          <VaccinationGuideButton />
-        </div>
 
         {/* Support Animal Status */}
         <SupportAnimalBanner status={data.supportAnimalStatus || null} />

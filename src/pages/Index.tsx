@@ -51,7 +51,7 @@ const Index = () => {
 
   const handleTabChange = (tab: string) => {
     setActiveTab(tab);
-    if (user?.id && settings.rememberLastTab) {
+    if (user?.id && settings.rememberLastTab && tab !== 'vaccination') {
       localStorage.setItem(`pp_last_tab_${user.id}`, tab);
     }
   };
@@ -86,7 +86,7 @@ const Index = () => {
   useEffect(() => {
     if (user?.id && settings.rememberLastTab) {
       const saved = localStorage.getItem(`pp_last_tab_${user.id}`);
-      if (saved) setActiveTab(saved);
+      if (saved) setActiveTab(saved === 'vaccination' ? 'profile' : saved);
     }
   }, [user?.id, settings.rememberLastTab]);
 

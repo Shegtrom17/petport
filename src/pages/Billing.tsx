@@ -68,7 +68,9 @@ export default function Billing() {
 
   const handleManageSubscription = async () => {
     try {
-      const { data, error } = await supabase.functions.invoke("customer-portal");
+      const { data, error } = await supabase.functions.invoke("customer-portal", {
+        body: { testMode: featureFlags.testMode }
+      });
       if (error) throw error;
       if (data?.url) {
         await openUrlWithFallback(data.url, (msg) => toast({ title: "Link copied", description: msg }));

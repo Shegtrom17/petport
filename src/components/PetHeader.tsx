@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { MobileNavigationMenu } from "@/components/MobileNavigationMenu";
 import { LostPetButton } from "@/components/LostPetButton";
+import { CompactPrivacyToggle } from "@/components/CompactPrivacyToggle";
 import worldMapOutline from "@/assets/world-map-outline.png";
 
 interface PetHeaderProps {
@@ -13,9 +14,10 @@ interface PetHeaderProps {
   selectedPetId?: string;
   selectedPetName?: string;
   selectedPet?: any;
+  onPrivacyToggle?: (isPublic: boolean) => Promise<boolean>;
 }
 
-export const PetHeader = ({ activeTab, onTabChange, selectedPetId, selectedPetName, selectedPet }: PetHeaderProps) => {
+export const PetHeader = ({ activeTab, onTabChange, selectedPetId, selectedPetName, selectedPet, onPrivacyToggle }: PetHeaderProps) => {
   const navigate = useNavigate();
   const { signOut, user } = useAuth();
 
@@ -49,6 +51,12 @@ export const PetHeader = ({ activeTab, onTabChange, selectedPetId, selectedPetNa
           
           {/* Right: Action Buttons (Mobile Only) */}
           <div className="flex items-center space-x-2 flex-shrink-0">
+            {user && selectedPet && onPrivacyToggle && (
+              <CompactPrivacyToggle
+                isPublic={selectedPet.is_public || false}
+                onToggle={onPrivacyToggle}
+              />
+            )}
             {user ? (
               <LostPetButton 
                 petId={selectedPetId} 
@@ -91,6 +99,12 @@ export const PetHeader = ({ activeTab, onTabChange, selectedPetId, selectedPetNa
           </div>
           
           <div className="flex items-center space-x-3 flex-shrink-0">
+            {user && selectedPet && onPrivacyToggle && (
+              <CompactPrivacyToggle
+                isPublic={selectedPet.is_public || false}
+                onToggle={onPrivacyToggle}
+              />
+            )}
             {user ? (
               <LostPetButton 
                 petId={selectedPetId} 

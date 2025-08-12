@@ -18,7 +18,7 @@ import { PetHeader } from "@/components/PetHeader";
 import { PetPassportCard } from "@/components/PetPassportCard";
 import { PetSelector } from "@/components/PetSelector";
 import { AuthenticationPrompt } from "@/components/AuthenticationPrompt";
-import { PrivacyToggle } from "@/components/PrivacyToggle";
+import { CompactPrivacyToggle } from "@/components/CompactPrivacyToggle";
 import { PetProfileContent } from "@/components/PetProfileContent";
 import { PetProfileCard } from "@/components/PetProfileCard";
 import { usePetData } from "@/hooks/usePetData";
@@ -266,10 +266,11 @@ const Index = () => {
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
         <PetHeader 
           activeTab={activeTab} 
-           onTabChange={handleTabChange} 
+          onTabChange={handleTabChange} 
           selectedPetId={selectedPet?.id || petData.id}
           selectedPetName={selectedPet?.name || petData.name}
           selectedPet={selectedPet || petData}
+          onPrivacyToggle={handlePrivacyToggle}
         />
 
         <InAppSharingModal
@@ -291,13 +292,6 @@ const Index = () => {
                 onReorderPets={handleReorderPets}
               />
 
-              {/* Privacy Toggle - Global Access */}
-              <div className="mb-4">
-                <PrivacyToggle
-                  isPublic={selectedPet?.is_public || false}
-                  onToggle={handlePrivacyToggle}
-                />
-              </div>
 
               {/* Show PetPassportCard only on Profile tab */}
               {activeTab === "profile" && (

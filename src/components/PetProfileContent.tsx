@@ -641,16 +641,6 @@ export const PetProfileContent = ({
             <CardContent className="space-y-3">
               {/* Privacy Toggle removed - now in PetPassportCard */}
               
-              {/* Privacy hint for sharing features when profile is private */}
-              {!enhancedPetData?.is_public && (
-                <PrivacyHint 
-                  isPublic={enhancedPetData?.is_public || false} 
-                  feature="sharing and QR code features" 
-                  variant="banner"
-                  showToggle={isOwner}
-                  onTogglePrivacy={isOwner && togglePetPublicVisibility ? () => togglePetPublicVisibility(enhancedPetData.id, true) : undefined}
-                />
-              )}
               
               <div className="space-y-1">
                 <div 
@@ -913,9 +903,6 @@ export const PetProfileContent = ({
                   </Dialog>
                 )}
               </div>
-                {!enhancedPetData?.is_public && (
-                  <PrivacyHint isPublic={enhancedPetData?.is_public || false} feature="profile sharing" variant="inline" />
-                )}
               </CardContent>
             </Card>
 

@@ -308,14 +308,14 @@ export const CareInstructionsSection = ({ petData }: CareInstructionsSectionProp
                   
                   <div className="space-y-6">
                     {/* Public Care Instructions Link */}
-                    <div className="bg-white p-4 rounded-lg border border-sage-500/30 shadow-sm">
-                      <h4 className="font-bold text-navy-900 mb-2 flex items-center gap-2">
-                        <div className="w-6 h-6 bg-sage-500/20 rounded-full flex items-center justify-center">
-                          <ExternalLink className="w-3 h-3 text-sage-600" />
-                        </div>
-                        Public Care Instructions
-                      </h4>
-                      <p className="text-sm text-navy-600 mb-3">Share detailed daily care info with pet sitters and caregivers</p>
+                     <div className="bg-white p-4 rounded-lg border border-sage-500/30 shadow-sm">
+                       <h4 className="font-bold text-navy-900 mb-2 flex items-center gap-2">
+                         <div className="w-6 h-6 bg-sage-500/20 rounded-full flex items-center justify-center">
+                           <ExternalLink className="w-3 h-3 text-sage-600" />
+                         </div>
+                         Public Care Instructions
+                       </h4>
+                       <p className="text-sm text-navy-600 mb-3">Share detailed daily care info with pet sitters and caregivers. <strong>Profile must be public to share.</strong></p>
                       <Button
                         onClick={handleShareCareLink}
                         disabled={isSharing || !petData.is_public}
@@ -410,7 +410,7 @@ export const CareInstructionsSection = ({ petData }: CareInstructionsSectionProp
         </CardHeader>
         <CardContent>
           <p className="text-gray-900">
-            {careData ? "Custom care instructions have been provided.  All instructions are current as of the last update." : "Complete care guide for pet sitters, boarding facilities, and emergency caregivers.  All instructions are current as of the last update."}
+            {careData ? "Custom care instructions have been provided." : "Complete care guide for pet sitters, boarding facilities, and emergency caregivers."}
           </p>
         </CardContent>
       </Card>

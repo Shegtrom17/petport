@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { MobileNavigationMenu } from "@/components/MobileNavigationMenu";
 import { CompactPrivacyToggle } from "@/components/CompactPrivacyToggle";
+import { AppShareButton } from "@/components/AppShareButton";
 import worldMapOutline from "@/assets/world-map-outline.png";
 
 interface PetHeaderProps {
@@ -50,6 +51,7 @@ export const PetHeader = ({ activeTab, onTabChange, selectedPetId, selectedPetNa
           
           {/* Right: Action Buttons (Mobile Only) */}
           <div className="flex items-center space-x-2 flex-shrink-0">
+            <AppShareButton variant="icon" />
             {user && selectedPet && onPrivacyToggle && (
               <CompactPrivacyToggle
                 isPublic={selectedPet.is_public || false}
@@ -91,6 +93,7 @@ export const PetHeader = ({ activeTab, onTabChange, selectedPetId, selectedPetNa
           </div>
           
           <div className="flex items-center space-x-3 flex-shrink-0">
+            <AppShareButton variant="icon" />
             {user && selectedPet && onPrivacyToggle && (
               <CompactPrivacyToggle
                 isPublic={selectedPet.is_public || false}

@@ -37,6 +37,18 @@
         "sizes": "96x96"
         }
       ]
+    },
+    {
+      "name": "Share PetPort",
+      "short_name": "Share App",
+      "description": "Share PetPort with friends and family",
+      "url": "/?share=true",
+      "icons": [
+        {
+        "src": "/lovable-uploads/213ccabc-3918-406d-b844-9c2730b7637d.png",
+        "sizes": "96x96"
+        }
+      ]
     }
   ],
   "screenshots": [],

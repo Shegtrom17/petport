@@ -1,17 +1,25 @@
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { Button } from "@/components/ui/button";
 import { MetaTags } from "@/components/MetaTags";
+import { AppShareButton } from "@/components/AppShareButton";
 import PricingSection from "@/components/PricingSection";
 
 export default function Landing() {
   const { user } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+  const [showSharePrompt, setShowSharePrompt] = useState(false);
 
   useEffect(() => {
     const isPreview = new URLSearchParams(location.search).get("preview") === "1";
+    const isShare = new URLSearchParams(location.search).get("share") === "true";
+    
+    if (isShare) {
+      setShowSharePrompt(true);
+    }
+    
     if (user && !isPreview) {
       navigate('/app', { replace: true });
     }
@@ -31,6 +39,7 @@ export default function Landing() {
           <span className="text-xl font-semibold text-navy-900">PetPort</span>
         </div>
         <div className="flex items-center gap-3">
+          <AppShareButton variant="icon" />
           {user ? (
             <Button onClick={() => navigate('/app')}>Open App</Button>
           ) : (
@@ -73,6 +82,12 @@ export default function Landing() {
           </ul>
           </article>
         </section>
+
+        {showSharePrompt && (
+          <section className="mt-8 max-w-md mx-auto">
+            <AppShareButton variant="full" className="w-full" />
+          </section>
+        )}
 
         <section className="mt-8">
           <PricingSection context="landing" />

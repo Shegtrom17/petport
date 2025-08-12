@@ -1,6 +1,7 @@
 import { ArrowLeft, MoreVertical } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { AppShareButton } from "@/components/AppShareButton";
 
 interface AppHeaderProps {
   title: string;
@@ -39,6 +40,7 @@ export const AppHeader = ({ title, showBack = false, actions }: AppHeaderProps) 
         
         <div className="flex items-center space-x-2">
           {actions}
+          <AppShareButton variant="icon" />
         </div>
       </div>
     </header>

@@ -16,6 +16,7 @@ export default function PostCheckout() {
   const [state, setState] = useState<"verifying" | "success" | "error">("verifying");
   const [email, setEmail] = useState<string | null>(null);
   const [msg, setMsg] = useState<string>("");
+  const [isAddonPurchase, setIsAddonPurchase] = useState<boolean>(false);
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
@@ -47,6 +48,7 @@ export default function PostCheckout() {
           const d: any = addonData;
           setEmail(d.email || null);
           setState("success");
+          setIsAddonPurchase(true);
           setMsg("Add-on purchase complete! Your account has been updated.");
           return;
         }
@@ -74,6 +76,13 @@ export default function PostCheckout() {
               <p>{msg}</p>
               {email && <p className="text-sm text-muted-foreground">Email: {email}</p>}
               <div className="flex gap-2">
+                {/* Show Add Pet button for addon purchases */}
+                {isAddonPurchase && (
+                  <Button onClick={() => navigate("/add-pet")} className="flex items-center gap-2">
+                    <Plus className="h-4 w-4" />
+                    Add Pet Now
+                  </Button>
+                )}
                 <Button onClick={() => navigate("/auth")}>Go to Sign In</Button>
                 <Button variant="outline" onClick={() => navigate("/")}>Return Home</Button>
               </div>

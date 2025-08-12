@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { MobileNavigationMenu } from "@/components/MobileNavigationMenu";
-import { LostPetButton } from "@/components/LostPetButton";
 import { CompactPrivacyToggle } from "@/components/CompactPrivacyToggle";
 import worldMapOutline from "@/assets/world-map-outline.png";
 
@@ -57,14 +56,7 @@ export const PetHeader = ({ activeTab, onTabChange, selectedPetId, selectedPetNa
                 onToggle={onPrivacyToggle}
               />
             )}
-            {user ? (
-              <LostPetButton 
-                petId={selectedPetId} 
-                petName={selectedPetName}
-                petData={selectedPet}
-                className="text-xs px-2 py-1 h-8" 
-              />
-            ) : (
+            {!user && (
               <Button 
                 className="bg-gradient-to-r from-navy-900 to-navy-800 hover:from-navy-800 hover:to-navy-700 text-gold-500 border border-gold-500/30 text-xs px-2 h-8 whitespace-nowrap"
                 onClick={() => navigate('/auth')}
@@ -105,14 +97,7 @@ export const PetHeader = ({ activeTab, onTabChange, selectedPetId, selectedPetNa
                 onToggle={onPrivacyToggle}
               />
             )}
-            {user ? (
-              <LostPetButton 
-                petId={selectedPetId} 
-                petName={selectedPetName}
-                petData={selectedPet}
-                className="text-sm px-3 py-2 h-10" 
-              />
-            ) : (
+            {!user && (
               <Button 
                 className="bg-gradient-to-r from-theme-primary-dark to-theme-primary-medium hover:from-theme-primary-medium hover:to-theme-primary-dark text-theme-accent border border-theme-accent/30 text-sm px-3 h-10 whitespace-nowrap"
                 onClick={() => navigate('/auth')}

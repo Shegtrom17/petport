@@ -205,8 +205,8 @@ export const QuickIDSection = ({ petData }: QuickIDSectionProps) => {
             <ol className="list-decimal list-inside text-sm text-blue-800 space-y-1">
               <li>Tap “Report Missing” and fill last seen details and notes.</li>
               <li>Add photos showing unique markings and a full-body shot.</li>
-              <li>Use Share/QR to spread the alert and print the flyer.</li>
-              <li>Make profile public.</li>
+               <li><strong>Make profile public</strong> to enable sharing features.</li>
+               <li>Use Share/QR to spread the alert and print the flyer.</li>
             </ol>
           </div>
         </CardContent>

@@ -154,7 +154,7 @@ export const PetPDFGenerator = ({ petId, petName, petData }: PetPDFGeneratorProp
             <h3 className="text-xl font-bold text-gold-500 tracking-wide border-b-2 border-gold-500 pb-1 mb-2">
               OFFICIAL DOCUMENTS
             </h3>
-            <p className="text-gold-200 text-sm">Generate and share {petName}'s Petport documents</p>
+            <p className="text-gold-200 text-sm">Generate PDFs for all • Profile must be public to share</p>
           </div>
         </div>
       </div>
@@ -324,6 +324,11 @@ export const PetPDFGenerator = ({ petId, petName, petData }: PetPDFGeneratorProp
 
                 {/* Sharing Options */}
                 <div className="border-t border-gold-500/30 pt-4 space-y-3">
+                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-3">
+                    <p className="text-sm text-blue-800">
+                      <strong>Note:</strong> Your profile must be public to share with others. PDF generation works for all profiles.
+                    </p>
+                  </div>
                   <Button
                     onClick={handleSharePublicProfile}
                     disabled={isSharing}

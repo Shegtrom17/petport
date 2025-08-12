@@ -181,6 +181,15 @@ const ButtonIcon = buttonIcon;
         </Alert>
       )}
 
+      {/* Privacy Information */}
+      {user && (
+        <Alert className="border-blue-200 bg-blue-50 mb-4">
+          <AlertDescription className="text-blue-800 text-sm">
+            <strong>Sharing Notice:</strong> PDF generation works for all profiles. To share via social media or QR codes, your profile must be public.
+          </AlertDescription>
+        </Alert>
+      )}
+
       {/* Generate Button */}
       <Button
         onClick={handleGenerateFlyer}

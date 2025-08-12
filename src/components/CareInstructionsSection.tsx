@@ -299,7 +299,7 @@ export const CareInstructionsSection = ({ petData }: CareInstructionsSectionProp
                     <span className="sm:hidden">Share</span>
                   </div>
                 </DialogTrigger>
-                <DialogContent className="max-w-md bg-[#f8f8f8]">
+                <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto bg-[#f8f8f8]">
                   <DialogHeader>
                     <DialogTitle className="text-navy-900 border-b-2 border-sage-500 pb-2 font-bold">
                       🌿 Share {petData.name}'s Care Instructions

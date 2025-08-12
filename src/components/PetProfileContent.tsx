@@ -640,6 +640,7 @@ export const PetProfileContent = ({
             </CardHeader>
             <CardContent className="space-y-3">
               {/* Privacy Toggle removed - now in PetPassportCard */}
+              <p className="text-xs text-navy-600 text-center"><strong>Profile must be public to share.</strong></p>
               
               
               <div className="space-y-1">

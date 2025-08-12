@@ -412,6 +412,7 @@ export const CareInstructionsSection = ({ petData }: CareInstructionsSectionProp
           <p className="text-gray-900">
             {careData ? "Custom care instructions have been provided." : "Complete care guide for pet sitters, boarding facilities, and emergency caregivers."}
           </p>
+          <p className="text-xs text-navy-600 mt-2"><strong>Profile must be public to share.</strong></p>
         </CardContent>
       </Card>
 

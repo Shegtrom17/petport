@@ -9,7 +9,7 @@ interface PullToRefreshProps {
 }
 
 export const PullToRefresh = ({ children, onRefresh, disabled = false }: PullToRefreshProps) => {
-  const { isRefreshing, pullDistance, isThresholdReached } = usePullToRefresh({
+  const { isRefreshing, pullDistance, isThresholdReached, isPtrActive } = usePullToRefresh({
     onRefresh,
     disabled,
   });

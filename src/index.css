@@ -203,3 +203,13 @@
   transform: scale(1.1);
   z-index: 1000;
 }
+
+/* Prevent nested carousels/maps from triggering page swipes */
+[data-carousel],
+[data-map] {
+  touch-action: pan-y pan-x; /* they own gestures inside */
+}
+
+[data-carousel] * {
+  overscroll-behavior: contain;
+}

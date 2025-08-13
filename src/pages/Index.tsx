@@ -27,6 +27,13 @@ import { AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useUserSettings } from "@/hooks/useUserSettings";
 import { useNavigate } from "react-router-dom";
+import { SwipeContainer } from "@/components/SwipeContainer";
+import { useOverlayOpen } from "@/stores/overlayStore";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { featureFlags } from "@/config/featureFlags";
+
+const TAB_ORDER = ['profile', 'care', 'resume', 'documents', 'travel', 'gallery', 'quickid'] as const;
+type TabId = typeof TAB_ORDER[number];
 
 const Index = () => {
   console.log("Index component is rendering");
@@ -37,6 +44,8 @@ const Index = () => {
   
   const { user } = useAuth();
   const { settings } = useUserSettings(user?.id);
+  const isOverlayOpen = useOverlayOpen();
+  const isMobile = useIsMobile();
   const {
     pets,
     selectedPet,
@@ -55,6 +64,15 @@ const Index = () => {
       localStorage.setItem(`pp_last_tab_${user.id}`, tab);
     }
   };
+
+  const getPrevNext = (tab: TabId) => {
+    const i = TAB_ORDER.indexOf(tab);
+    const prev = TAB_ORDER[(i - 1 + TAB_ORDER.length) % TAB_ORDER.length];
+    const next = TAB_ORDER[(i + 1) % TAB_ORDER.length];
+    return { prev, next };
+  };
+
+  const { prev, next } = getPrevNext(activeTab as TabId);
 
   const handlePrivacyToggle = async (isPublic: boolean): Promise<boolean> => {
     if (!selectedPet?.id) return false;
@@ -302,9 +320,17 @@ const Index = () => {
                 <NavigationTabs activeTab={activeTab} onTabChange={handleTabChange} />
               </div>
 
-              <div className="space-y-4 sm:space-y-6">
-                {renderTabContent()}
-              </div>
+              <SwipeContainer
+                enabled={isMobile && featureFlags.enableSwipeNavigation}
+                isOverlayOpen={isOverlayOpen}
+                isPtrActive={false} // Will be connected to pull-to-refresh later
+                onPrev={() => handleTabChange(prev)}
+                onNext={() => handleTabChange(next)}
+              >
+                <div className="space-y-4 sm:space-y-6">
+                  {renderTabContent()}
+                </div>
+              </SwipeContainer>
               
               {/* Quick Access to Lost Pet Instructions */}
               {activeTab !== "lostpet" && (

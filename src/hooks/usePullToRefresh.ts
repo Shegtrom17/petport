@@ -65,5 +65,6 @@ export const usePullToRefresh = ({
     isRefreshing,
     pullDistance,
     isThresholdReached: pullDistance >= threshold,
+    isPtrActive: pullDistance > 0 || isRefreshing,
   };
 };

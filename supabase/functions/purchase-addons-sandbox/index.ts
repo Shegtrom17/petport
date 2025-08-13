@@ -52,13 +52,21 @@ serve(async (req) => {
         {
           price_data: {
             currency: "usd",
-            product_data: { name: `PetPort Additional Pet Accounts (+${bundle}) - Annual (Sandbox)` },
+            product_data: { 
+              name: `PetPort Additional Pet Accounts (+${bundle}) - Annual (Sandbox)`,
+              metadata: {
+                product_type: "pet_slot",
+                addon_count: String(bundle),
+              },
+            },
             unit_amount: price,
+            recurring: { interval: "year" },
           },
           quantity: 1,
+          adjustable_quantity: { enabled: true, minimum: 1, maximum: 99 },
         },
       ],
-      mode: "payment",
+      mode: "subscription",
       allow_promotion_codes: true,
       success_url: `${req.headers.get("origin")}/post-checkout?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${req.headers.get("origin")}/billing`,

@@ -53,13 +53,21 @@ serve(async (req) => {
         {
           price_data: {
             currency: "usd",
-            product_data: { name: `PetPort Additional Pet Accounts (+${bundle}) - Annual` },
+            product_data: {
+              name: `PetPort Additional Pet Accounts (+${bundle}) - Annual`,
+              metadata: {
+                product_type: "pet_slot",
+                addon_count: String(bundle),
+              },
+            },
             unit_amount: price,
+            recurring: { interval: "year" },
           },
           quantity: 1,
+          adjustable_quantity: { enabled: true, minimum: 1, maximum: 99 },
         },
       ],
-      mode: "payment",
+      mode: "subscription",
       allow_promotion_codes: true,
       // Route to a unified verification page so we can apply add-ons server-side
       success_url: `${req.headers.get("origin")}/post-checkout?session_id={CHECKOUT_SESSION_ID}`,

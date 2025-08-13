@@ -32,23 +32,40 @@ serve(async (req) => {
     const session = await stripe.checkout.sessions.retrieve(session_id);
     log("session retrieved", { id: session.id, mode: session.mode, status: session.payment_status });
 
-    if (session.mode !== "payment") {
-      throw new Error("Session is not a one-time payment");
+    if (session.mode !== "subscription") {
+      throw new Error("Session is not a subscription");
     }
     if (session.payment_status !== "paid") {
       throw new Error("Payment not completed");
     }
 
-    const addonCountStr = (session.metadata as any)?.addon_count as string | undefined;
-    const addonCount = addonCountStr ? parseInt(addonCountStr, 10) : NaN;
-    if (!addonCount || isNaN(addonCount) || ![1, 3, 5].includes(addonCount)) {
-      throw new Error("Invalid or missing add-on count in session metadata");
+    const customerId = typeof session.customer === "string" ? session.customer : session.customer?.id;
+    if (!customerId) throw new Error("No customer on session");
+
+    const customer = await stripe.customers.retrieve(customerId);
+    const email = ("email" in customer ? customer.email : null) || session.customer_details?.email || (session.customer_email as string | undefined);
+    if (!email) throw new Error("No email found for customer");
+
+    const subs = await stripe.subscriptions.list({
+      customer: customerId,
+      limit: 100,
+      expand: ["data.items.data.price.product"],
+    });
+
+    let totalSlots = 0;
+    for (const s of subs.data) {
+      if (s.status !== "active" && s.status !== "trialing") continue;
+      for (const item of s.items.data) {
+        const product: any = (item.price.product as any) || null;
+        const productType = product?.metadata?.product_type;
+        if (productType === "pet_slot") {
+          const addonCountStr = product?.metadata?.addon_count;
+          const addonCount = addonCountStr ? parseInt(addonCountStr, 10) : 1;
+          const qty = item.quantity ?? 1;
+          totalSlots += addonCount * qty;
+        }
+      }
     }
-
-    const email = session.customer_details?.email || (session.customer_email as string | undefined);
-    if (!email) throw new Error("No email found on session");
-
-    const userId = (session.metadata as any)?.supabase_user_id as string | undefined;
 
     const supabaseAdmin = createClient(
       Deno.env.get("SUPABASE_URL") ?? "",
@@ -58,41 +75,29 @@ serve(async (req) => {
 
     const { data: existing } = await supabaseAdmin
       .from("subscribers")
-      .select("email, user_id, additional_pets, additional_pets_purchased")
+      .select("email, user_id")
       .eq("email", email)
       .maybeSingle();
 
-    const newAdditional = (existing?.additional_pets ?? 0) + addonCount;
-    const newPurchased = (existing?.additional_pets_purchased ?? 0) + addonCount;
+    const userId = (session.metadata as any)?.supabase_user_id || existing?.user_id || null;
 
     const { error: upsertErr } = await supabaseAdmin
       .from("subscribers")
       .upsert(
         {
           email,
-          user_id: userId ?? existing?.user_id ?? null,
-          additional_pets: newAdditional,
-          additional_pets_purchased: newPurchased,
+          user_id: userId,
+          stripe_customer_id: customerId,
+          additional_pets: totalSlots,
           updated_at: new Date().toISOString(),
         },
         { onConflict: "email" }
       );
     if (upsertErr) throw upsertErr;
 
-    const { error: orderErr } = await supabaseAdmin.from("orders").insert({
-      user_id: userId ?? existing?.user_id ?? null,
-      amount: session.amount_total ?? 0,
-      currency: session.currency ?? "usd",
-      status: "paid",
-      stripe_session_id: session.id,
-      quantity: addonCount,
-      product_type: "pet_slot",
-    });
-    if (orderErr) throw orderErr;
-
-    log("success", { email, addonCount });
+    log("success", { email, totalSlots });
     return new Response(
-      JSON.stringify({ success: true, email, added: addonCount }),
+      JSON.stringify({ success: true, email, added: totalSlots, additional_pets: totalSlots }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 200 }
     );
   } catch (error) {

@@ -57,15 +57,21 @@ serve(async (req) => {
     }
 
     const customerId = customers.data[0].id;
-    const subscriptions = await stripe.subscriptions.list({ customer: customerId, limit: 5 });
-    const matchedSub = subscriptions.data.find((s) => s.status === "active" || s.status === "trialing");
-    const hasActiveSub = Boolean(matchedSub);
+    const subscriptions = await stripe.subscriptions.list({
+      customer: customerId,
+      limit: 100,
+      expand: ["data.items.data.price.product"],
+    });
+
+    const activeOrTrialing = subscriptions.data.filter((s) => s.status === "active" || s.status === "trialing");
+    const hasActiveSub = activeOrTrialing.length > 0;
 
     let subscriptionTier: string | null = null;
     let subscriptionEnd: string | null = null;
 
-    if (hasActiveSub && matchedSub) {
-      // Use trial_end during trial, otherwise current_period_end
+    // Determine tier/end from the first active or trialing subscription
+    const matchedSub = activeOrTrialing[0];
+    if (matchedSub) {
       const endTs = matchedSub.status === "trialing" && matchedSub.trial_end
         ? matchedSub.trial_end
         : matchedSub.current_period_end;
@@ -79,6 +85,21 @@ serve(async (req) => {
       else subscriptionTier = "Enterprise";
     }
 
+    // Compute total additional pet slots from all active/trialing subscriptions
+    let additionalPets = 0;
+    for (const s of activeOrTrialing) {
+      for (const item of s.items.data) {
+        const product: any = (item.price.product as any) || null;
+        const productType = product?.metadata?.product_type;
+        if (productType === "pet_slot") {
+          const addonCountStr = product?.metadata?.addon_count;
+          const addonCount = addonCountStr ? parseInt(addonCountStr, 10) : 1;
+          const qty = item.quantity ?? 1;
+          additionalPets += addonCount * qty;
+        }
+      }
+    }
+
     await supabaseService.from("subscribers").upsert({
       email: user.email,
       user_id: user.id,
@@ -86,6 +107,7 @@ serve(async (req) => {
       subscribed: hasActiveSub,
       subscription_tier: subscriptionTier,
       subscription_end: subscriptionEnd,
+      additional_pets: additionalPets,
       updated_at: new Date().toISOString(),
     }, { onConflict: 'email' });
 
@@ -93,6 +115,7 @@ serve(async (req) => {
       subscribed: hasActiveSub,
       subscription_tier: subscriptionTier,
       subscription_end: subscriptionEnd,
+      additional_pets: additionalPets,
     }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 200,

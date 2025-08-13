@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { EnhancedDialog } from "@/components/ui/enhanced-dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -72,7 +73,7 @@ export const ReportIssueModal = ({ children }: ReportIssueModalProps) => {
   };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <EnhancedDialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         {children}
       </DialogTrigger>
@@ -134,6 +135,6 @@ export const ReportIssueModal = ({ children }: ReportIssueModalProps) => {
           </div>
         </form>
       </DialogContent>
-    </Dialog>
+    </EnhancedDialog>
   );
 };

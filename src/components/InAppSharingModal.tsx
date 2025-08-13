@@ -1,6 +1,7 @@
 
 import { useState, useEffect } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { EnhancedDialog } from "@/components/ui/enhanced-dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
@@ -141,7 +142,7 @@ export const InAppSharingModal = ({ isOpen, onClose, petId, petName }: InAppShar
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
+    <EnhancedDialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-2xl max-h-[80vh] overflow-hidden flex flex-col">
         <DialogHeader>
           <DialogTitle className="flex items-center space-x-2">
@@ -249,6 +250,6 @@ export const InAppSharingModal = ({ isOpen, onClose, petId, petName }: InAppShar
           </Button>
         </div>
       </DialogContent>
-    </Dialog>
+    </EnhancedDialog>
   );
 };

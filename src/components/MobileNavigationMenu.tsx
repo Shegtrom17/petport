@@ -1,7 +1,8 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { EnhancedSheet } from "@/components/ui/enhanced-sheet";
 import { Menu, X, AlertTriangle } from "lucide-react";
 import { NavigationTabs } from "@/components/NavigationTabs";
 import { ReportIssueModal } from "@/components/ReportIssueModal";
@@ -21,7 +22,7 @@ export const MobileNavigationMenu = ({ activeTab, onTabChange }: MobileNavigatio
 
   return (
     <div className="md:hidden">
-      <Sheet open={isOpen} onOpenChange={setIsOpen}>
+      <EnhancedSheet open={isOpen} onOpenChange={setIsOpen}>
         <SheetTrigger asChild>
           <Button 
             variant="ghost"
@@ -63,7 +64,7 @@ export const MobileNavigationMenu = ({ activeTab, onTabChange }: MobileNavigatio
             </ReportIssueModal>
           </div>
         </SheetContent>
-      </Sheet>
+      </EnhancedSheet>
     </div>
   );
 };

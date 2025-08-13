@@ -323,7 +323,7 @@ const Index = () => {
               <SwipeContainer
                 enabled={isMobile && featureFlags.enableSwipeNavigation}
                 isOverlayOpen={isOverlayOpen}
-                isPtrActive={false} // Will be connected to pull-to-refresh later
+                isPtrActive={false} // PTR integration can be added when needed
                 onPrev={() => handleTabChange(prev)}
                 onNext={() => handleTabChange(next)}
               >

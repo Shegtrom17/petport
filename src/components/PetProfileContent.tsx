@@ -750,7 +750,8 @@ export const PetProfileContent = ({
                           onClick={() => {
                             const shareText = `Meet ${enhancedPetData?.name}! Check out their PetPort profile.`;
                             const smsBody = `${shareText} ${window.location.origin}/profile/${enhancedPetData?.id}?v=${Date.now()}`;
-                            window.location.href = `sms:?&body=${encodeURIComponent(smsBody)}`;
+                            const smsUrl = `sms:?&body=${encodeURIComponent(smsBody)}`;
+                            window.open(smsUrl, '_self');
                           }}
                           variant="outline"
                           size="sm"
@@ -764,7 +765,8 @@ export const PetProfileContent = ({
                           onClick={() => {
                             const subject = `${enhancedPetData?.name}'s PetPort Profile`;
                             const body = `Meet ${enhancedPetData?.name}! Check out their PetPort profile.\n\n${window.location.origin}/profile/${enhancedPetData?.id}?v=${Date.now()}`;
-                            window.location.href = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+                            const mailtoUrl = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+                            window.open(mailtoUrl, '_self');
                           }}
                           variant="outline"
                           size="sm"
@@ -792,7 +794,7 @@ export const PetProfileContent = ({
                           onClick={() => {
                             const shareUrl = `${window.location.origin}/profile/${enhancedPetData?.id}?v=${Date.now()}`;
                             const messengerUrl = `fb-messenger://share?link=${encodeURIComponent(shareUrl)}`;
-                            window.location.href = messengerUrl;
+                            window.open(messengerUrl, '_self');
                             setTimeout(() => {
                               toast({
                                 title: "Messenger share",

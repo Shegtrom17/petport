@@ -751,7 +751,7 @@ export const PetProfileContent = ({
                             const shareText = `Meet ${enhancedPetData?.name}! Check out their PetPort profile.`;
                             const smsBody = `${shareText} ${window.location.origin}/profile/${enhancedPetData?.id}?v=${Date.now()}`;
                             const smsUrl = `sms:?&body=${encodeURIComponent(smsBody)}`;
-                            window.open(smsUrl, '_self');
+                            window.open(smsUrl, '_blank');
                           }}
                           variant="outline"
                           size="sm"
@@ -766,7 +766,7 @@ export const PetProfileContent = ({
                             const subject = `${enhancedPetData?.name}'s PetPort Profile`;
                             const body = `Meet ${enhancedPetData?.name}! Check out their PetPort profile.\n\n${window.location.origin}/profile/${enhancedPetData?.id}?v=${Date.now()}`;
                             const mailtoUrl = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-                            window.open(mailtoUrl, '_self');
+                            window.open(mailtoUrl, '_blank');
                           }}
                           variant="outline"
                           size="sm"
@@ -794,7 +794,7 @@ export const PetProfileContent = ({
                           onClick={() => {
                             const shareUrl = `${window.location.origin}/profile/${enhancedPetData?.id}?v=${Date.now()}`;
                             const messengerUrl = `fb-messenger://share?link=${encodeURIComponent(shareUrl)}`;
-                            window.open(messengerUrl, '_self');
+                            window.location.href = messengerUrl;
                             setTimeout(() => {
                               toast({
                                 title: "Messenger share",

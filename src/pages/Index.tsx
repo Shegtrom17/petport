@@ -27,13 +27,11 @@ import { AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useUserSettings } from "@/hooks/useUserSettings";
 import { useNavigate } from "react-router-dom";
-import { SwipeContainer } from "@/components/SwipeContainer";
+import { SwipeContainer } from "@/components/layout/SwipeContainer";
 import { useOverlayOpen } from "@/stores/overlayStore";
-import { useIsMobile } from "@/hooks/use-mobile";
+import { isTouchDevice } from "@/hooks/useIsTouchDevice";
 import { featureFlags } from "@/config/featureFlags";
-
-const TAB_ORDER = ['profile', 'care', 'resume', 'documents', 'travel', 'gallery', 'quickid'] as const;
-type TabId = typeof TAB_ORDER[number];
+import { getPrevNext, type TabId } from "@/features/navigation/tabOrder";
 
 const Index = () => {
   console.log("Index component is rendering");
@@ -45,7 +43,11 @@ const Index = () => {
   const { user } = useAuth();
   const { settings } = useUserSettings(user?.id);
   const isOverlayOpen = useOverlayOpen();
-  const isMobile = useIsMobile();
+  
+  // Feature flag and touch capability detection
+  const ENABLE_SWIPE_NAV = (import.meta.env.VITE_ENABLE_SWIPE_NAV ?? "true") === "true";
+  const touchCapable = isTouchDevice();
+  const swipeEnabled = ENABLE_SWIPE_NAV && touchCapable;
   const {
     pets,
     selectedPet,
@@ -63,13 +65,6 @@ const Index = () => {
     if (user?.id && settings.rememberLastTab && tab !== 'vaccination') {
       localStorage.setItem(`pp_last_tab_${user.id}`, tab);
     }
-  };
-
-  const getPrevNext = (tab: TabId) => {
-    const i = TAB_ORDER.indexOf(tab);
-    const prev = TAB_ORDER[(i - 1 + TAB_ORDER.length) % TAB_ORDER.length];
-    const next = TAB_ORDER[(i + 1) % TAB_ORDER.length];
-    return { prev, next };
   };
 
   const { prev, next } = getPrevNext(activeTab as TabId);
@@ -321,11 +316,12 @@ const Index = () => {
               </div>
 
               <SwipeContainer
-                enabled={isMobile && featureFlags.enableSwipeNavigation}
+                enabled={swipeEnabled}
                 isOverlayOpen={isOverlayOpen}
                 isPtrActive={false} // PTR integration can be added when needed
                 onPrev={() => handleTabChange(prev)}
                 onNext={() => handleTabChange(next)}
+                debug={true}
               >
                 <div className="space-y-4 sm:space-y-6">
                   {renderTabContent()}

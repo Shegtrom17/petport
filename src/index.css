@@ -154,6 +154,13 @@
   display: none;
 }
 
+/* Add data attributes to carousels/maps that need their own gestures */
+[data-carousel],
+[data-map] {
+  touch-action: pan-y pan-x;
+  overscroll-behavior: contain;
+}
+
 /* Native-like button press feedback */
 .touch-feedback {
   transition: all 0.1s ease;

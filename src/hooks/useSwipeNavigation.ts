@@ -1,15 +1,17 @@
-import { useSwipeable } from 'react-swipeable';
-import { useCallback, useRef } from 'react';
+// src/hooks/useSwipeNavigation.ts
+import { useSwipeable } from "react-swipeable";
+import { useMemo } from "react";
 
-interface SwipeNavigationOptions {
-  enabled: boolean;
+type Opts = {
+  enabled: boolean;          // gate with isTouchDevice() && feature flag
   onPrev: () => void;
   onNext: () => void;
-  isOverlayOpen?: boolean;
-  isPtrActive?: boolean;
-  minDelta?: number;
-  maxAngle?: number;
-}
+  isOverlayOpen?: boolean;   // dialogs/sheets open?
+  isPtrActive?: boolean;     // pull-to-refresh active?
+  minDelta?: number;         // ~56
+  maxAngle?: number;         // ~30
+  debug?: boolean;
+};
 
 export function useSwipeNavigation({
   enabled,
@@ -19,57 +21,35 @@ export function useSwipeNavigation({
   isPtrActive = false,
   minDelta = 56,
   maxAngle = 30,
-}: SwipeNavigationOptions) {
-  const handlersRef = useRef({});
+  debug = false,
+}: Opts) {
+  const cfg = useMemo(
+    () => ({
+      trackTouch: true,
+      trackMouse: false,         // prevents desktop trackpad/mouse swipes
+      delta: minDelta,
+      preventScrollOnSwipe: false, // vertical scroll should win
+      onSwiping: (e: any) => {
+        if (!enabled || isOverlayOpen || isPtrActive) return;
+        if (debug) console.log("[swipe] swiping", { dir: e.dir, dx: e.deltaX, dy: e.deltaY });
+        const angle = Math.abs((Math.atan2(e.deltaY, e.deltaX) * 180) / Math.PI);
+        if (angle > maxAngle) return; // mostly vertical → ignore
+      },
+      onSwipedLeft: () => {
+        if (debug) console.log("[swipe] left", { enabled, isOverlayOpen, isPtrActive });
+        if (!enabled || isOverlayOpen || isPtrActive) return;
+        onNext();
+      },
+      onSwipedRight: () => {
+        if (debug) console.log("[swipe] right", { enabled, isOverlayOpen, isPtrActive });
+        if (!enabled || isOverlayOpen || isPtrActive) return;
+        onPrev();
+      },
+    }),
+    [enabled, isOverlayOpen, isPtrActive, minDelta, maxAngle, onPrev, onNext, debug]
+  );
 
-  const shouldBlockSwipe = useCallback(() => {
-    return !enabled || isOverlayOpen || isPtrActive;
-  }, [enabled, isOverlayOpen, isPtrActive]);
-
-  const handleSwipedLeft = useCallback(() => {
-    if (shouldBlockSwipe()) return;
-    console.log('Swipe left detected - going to next tab');
-    onNext();
-  }, [shouldBlockSwipe, onNext]);
-
-  const handleSwipedRight = useCallback(() => {
-    if (shouldBlockSwipe()) return;
-    console.log('Swipe right detected - going to previous tab');
-    onPrev();
-  }, [shouldBlockSwipe, onPrev]);
-
-  const handleSwiping = useCallback((e: any) => {
-    if (shouldBlockSwipe()) return;
-
-    // prefer vertical scroll: if mostly vertical, ignore
-    const angle = Math.abs(e.dir === 'Left' || e.dir === 'Right'
-      ? Math.atan2(e.deltaY, e.deltaX) * (180 / Math.PI)
-      : 90);
-    
-    if (angle > maxAngle) {
-      console.log(`Swipe blocked - angle too steep: ${angle}°`);
-      return;
-    }
-    
-    console.log(`Swipe detected - direction: ${e.dir}, angle: ${angle}°`);
-  }, [shouldBlockSwipe, maxAngle]);
-
-  const handlers = useSwipeable({
-    trackTouch: true,
-    trackMouse: false,
-    delta: minDelta,
-    preventScrollOnSwipe: false, // let vertical scroll win
-    onSwiping: handleSwiping,
-    onSwipedLeft: handleSwipedLeft,
-    onSwipedRight: handleSwipedRight,
-  });
-
-  // Only return handlers when swipe should be active
-  if (!enabled || isOverlayOpen) {
-    console.log('Swipe handlers disabled:', { enabled, isOverlayOpen, isPtrActive });
-    return {};
-  }
-
-  console.log('Swipe handlers active:', { enabled, isOverlayOpen, isPtrActive });
-  return handlers;
+  const handlers = useSwipeable(cfg);
+  // Return undefined when disabled; consumer should spread only when defined.
+  return enabled && !isOverlayOpen && !isPtrActive ? handlers : undefined;
 }

@@ -257,46 +257,59 @@ export const CareInstructionsSection = ({ petData }: CareInstructionsSectionProp
 
 
       {/* Care Summary */}
-      <Card className="border-0 shadow-lg bg-passport-section-bg backdrop-blur-sm">
-        <CardHeader>
-          <CardTitle className="flex items-center justify-between">
-            <div className="flex items-center space-x-2">
-              <Heart className="w-5 h-5 text-navy-700" />
-              <span className="text-navy-900">Care Instructions for {petData.name}</span>
+      <Card className="border-0 shadow-xl bg-gradient-to-r from-navy-900 to-navy-800 text-white">
+        <CardContent className="p-6">
+          <div className="flex justify-between items-start">
+            <div className="flex items-center space-x-3 flex-1">
+              <Heart className="w-8 h-8 text-yellow-400" />
+              <div>
+                <h2 className="text-2xl font-bold">Care Instructions</h2>
+                <p className="text-blue-100">Complete care guide for {petData.name}</p>
+                <p className="text-xs text-blue-200 mt-2"><strong>Profile must be public to share.</strong></p>
+              </div>
             </div>
-            <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2">
-              <div 
+            <div className="flex flex-col space-y-2 sm:flex-row sm:space-y-0 sm:space-x-4 ml-6">
+              <div
                 onClick={() => setIsEditing(true)}
-                className="cursor-pointer flex items-center justify-center text-navy-700 hover:text-navy-900 hover:scale-110 transition-all duration-200 text-sm sm:text-base px-3 sm:px-5 py-2 sm:py-3"
+                className="flex items-center space-x-2 p-2 text-white hover:text-blue-200 hover:scale-110 transition-all cursor-pointer"
+                role="button"
+                tabIndex={0}
+                aria-label="Edit care instructions"
+                onKeyDown={(e) => e.key === 'Enter' && setIsEditing(true)}
               >
-                <Edit className="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3" />
-                <span className="hidden sm:inline">Edit Instructions</span>
-                <span className="sm:hidden">Edit</span>
+                <Edit className="w-4 h-4" />
+                <span className="text-sm">Edit</span>
               </div>
               <div
                 onClick={handleGenerateCarePDF}
-                className={`cursor-pointer flex items-center justify-center text-navy-700 hover:text-navy-900 hover:scale-110 transition-all duration-200 text-sm sm:text-base px-3 sm:px-5 py-2 sm:py-3 ${isGeneratingPDF ? 'opacity-50 cursor-not-allowed' : ''}`}
+                className={`flex items-center space-x-2 p-2 text-white hover:text-blue-200 hover:scale-110 transition-all cursor-pointer ${isGeneratingPDF ? 'opacity-50 cursor-not-allowed' : ''}`}
+                role="button"
+                tabIndex={0}
+                aria-label="Generate PDF"
+                onKeyDown={(e) => e.key === 'Enter' && !isGeneratingPDF && handleGenerateCarePDF()}
               >
                 {isGeneratingPDF ? (
-                  <Loader2 className="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3 animate-spin" />
+                  <Loader2 className="w-4 h-4 animate-spin" />
                 ) : (
-                  <FileText className="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3" />
+                  <FileText className="w-4 h-4" />
                 )}
-                <span className="hidden sm:inline">Download Care PDF</span>
-                <span className="sm:hidden">PDF</span>
+                <span className="text-sm">PDF</span>
               </div>
               <Dialog open={careShareDialogOpen} onOpenChange={setCareShareDialogOpen}>
                 <DialogTrigger asChild>
                   <div
-                    className={`cursor-pointer flex items-center justify-center text-navy-700 hover:text-navy-900 hover:scale-110 transition-all duration-200 text-sm sm:text-base px-3 sm:px-5 py-2 sm:py-3 ${isSharing ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    className={`flex items-center space-x-2 p-2 text-white hover:text-blue-200 hover:scale-110 transition-all cursor-pointer ${isSharing ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    role="button"
+                    tabIndex={0}
+                    aria-label="Share care instructions"
+                    onKeyDown={(e) => e.key === 'Enter' && !isSharing && setCareShareDialogOpen(true)}
                   >
                     {isSharing ? (
-                      <Loader2 className="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3 animate-spin" />
+                      <Loader2 className="w-4 h-4 animate-spin" />
                     ) : (
-                      <Share2 className="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3" />
+                      <Share2 className="w-4 h-4" />
                     )}
-                    <span className="hidden sm:inline">Share Care Plan</span>
-                    <span className="sm:hidden">Share</span>
+                    <span className="text-sm">Share</span>
                   </div>
                 </DialogTrigger>
                 <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto bg-[#f8f8f8]">
@@ -406,13 +419,14 @@ export const CareInstructionsSection = ({ petData }: CareInstructionsSectionProp
                 </DialogContent>
               </Dialog>
             </div>
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p className="text-gray-900">
-            {careData ? "Custom care instructions have been provided." : "Complete care guide for pet sitters, boarding facilities, and emergency caregivers."}
-          </p>
-          <p className="text-xs text-navy-600 mt-2"><strong>Profile must be public to share.</strong></p>
+          </div>
+          {!petData.is_public && (
+            <div className="mt-4 pt-4 border-t border-blue-400/30">
+              <p className="text-sm text-blue-200 text-center">
+                📝 Make your profile public in the privacy settings above to enable sharing & QR codes
+              </p>
+            </div>
+          )}
         </CardContent>
       </Card>
 

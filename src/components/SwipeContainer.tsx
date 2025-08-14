@@ -34,7 +34,7 @@ export function SwipeContainer({
       {...swipeHandlers}
       ref={ref}
       data-allow-swipe
-      className="h-full w-full"
+      className="h-full w-full relative"
       style={{
         // Let vertical scrolling behave; horizontal swipes are ours
         touchAction: 'pan-y',
@@ -44,6 +44,12 @@ export function SwipeContainer({
         willChange: 'transform',
       }}
     >
+      {/* Debug indicator for swipe capability */}
+      {enabled && process.env.NODE_ENV === 'development' && (
+        <div className="fixed top-2 right-2 bg-primary text-primary-foreground px-2 py-1 rounded text-xs z-50">
+          Swipe Active
+        </div>
+      )}
       {children}
     </div>
   );

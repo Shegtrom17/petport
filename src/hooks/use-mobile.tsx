@@ -1,18 +1,38 @@
 import * as React from "react"
 
-const MOBILE_BREAKPOINT = 768
-
 export function useIsMobile() {
   const [isMobile, setIsMobile] = React.useState<boolean | undefined>(undefined)
 
   React.useEffect(() => {
-    const mql = window.matchMedia(`(max-width: ${MOBILE_BREAKPOINT - 1}px)`)
-    const onChange = () => {
-      setIsMobile(window.innerWidth < MOBILE_BREAKPOINT)
+    const checkTouchCapability = () => {
+      // Check for touch support using multiple methods
+      const hasTouchStart = 'ontouchstart' in window
+      const hasMaxTouchPoints = navigator.maxTouchPoints > 0
+      const hasTouchSupport = window.matchMedia('(hover: none) and (pointer: coarse)').matches
+      
+      // Combine all checks for reliable touch detection
+      return hasTouchStart || hasMaxTouchPoints || hasTouchSupport
     }
-    mql.addEventListener("change", onChange)
-    setIsMobile(window.innerWidth < MOBILE_BREAKPOINT)
-    return () => mql.removeEventListener("change", onChange)
+
+    const updateIsMobile = () => {
+      setIsMobile(checkTouchCapability())
+    }
+
+    // Initial check
+    updateIsMobile()
+
+    // Listen for orientation changes on mobile devices
+    const handleOrientationChange = () => {
+      setTimeout(updateIsMobile, 100) // Small delay to ensure accurate detection
+    }
+
+    window.addEventListener('orientationchange', handleOrientationChange)
+    window.addEventListener('resize', updateIsMobile)
+
+    return () => {
+      window.removeEventListener('orientationchange', handleOrientationChange)
+      window.removeEventListener('resize', updateIsMobile)
+    }
   }, [])
 
   return !!isMobile

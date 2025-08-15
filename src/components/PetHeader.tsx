@@ -75,7 +75,7 @@ export const PetHeader = ({ activeTab, onTabChange, selectedPetId, selectedPetNa
           <div className="flex items-center space-x-2 sm:space-x-3 md:space-x-4 flex-1 min-w-0">
             <div className="w-12 h-12 md:w-16 md:h-16 lg:w-20 lg:h-20 flex-shrink-0">
               <img 
-                src="/lovable-uploads/213ccabc-3918-406d-b844-9c2730b7637d.png" 
+                src="/lovable-uploads/22b5b776-467c-4cee-be36-887346e71205.png" 
                 alt="PetPort Logo"
                 className="w-full h-full object-contain"
                 onError={(e) => {

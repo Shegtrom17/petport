@@ -11,11 +11,17 @@ import { useAuth } from "@/context/AuthContext";
 import { toast } from "@/hooks/use-toast";
 
 interface ReportIssueModalProps {
-  children: React.ReactNode;
+  children?: React.ReactNode;
+  isOpen?: boolean;
+  onClose?: () => void;
 }
 
-export const ReportIssueModal = ({ children }: ReportIssueModalProps) => {
-  const [open, setOpen] = useState(false);
+export const ReportIssueModal = ({ children, isOpen, onClose }: ReportIssueModalProps) => {
+  const [internalOpen, setInternalOpen] = useState(false);
+  const open = isOpen !== undefined ? isOpen : internalOpen;
+  const setOpen = onClose !== undefined ? (value: boolean) => {
+    if (!value) onClose();
+  } : setInternalOpen;
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     title: "",
@@ -74,9 +80,11 @@ export const ReportIssueModal = ({ children }: ReportIssueModalProps) => {
 
   return (
     <EnhancedDialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        {children}
-      </DialogTrigger>
+      {children && (
+        <DialogTrigger asChild>
+          {children}
+        </DialogTrigger>
+      )}
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">

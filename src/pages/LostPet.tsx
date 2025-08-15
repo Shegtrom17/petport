@@ -18,6 +18,7 @@ import { SocialShareButtons } from "@/components/SocialShareButtons";
 import { PetPDFGenerator } from "@/components/PetPDFGenerator";
 import { LostPetPDFGenerator } from "@/components/LostPetPDFGenerator";
 import { generatePublicMissingUrl } from "@/services/pdfService";
+import { PWALayout } from "@/components/PWALayout";
 
 const LostPet = () => {
   const { petId } = useParams();
@@ -87,9 +88,11 @@ const LostPet = () => {
   // Show loading state while data is being loaded
   if (isLoading || !petDataLoaded) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-red-50 via-[#F5F0E0] to-yellow-50 flex items-center justify-center">
-        <div className="text-lg text-red-800">Loading pet data...</div>
-      </div>
+      <PWALayout>
+        <div className="min-h-screen bg-gradient-to-br from-red-50 via-[#F5F0E0] to-yellow-50 flex items-center justify-center">
+          <div className="text-lg text-red-800">Loading pet data...</div>
+        </div>
+      </PWALayout>
     );
   }
 
@@ -159,9 +162,11 @@ const LostPet = () => {
 
   if (!currentPet) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-red-50 via-[#F5F0E0] to-yellow-50 flex items-center justify-center">
-        <div className="text-lg text-red-800">No pet selected</div>
-      </div>
+      <PWALayout>
+        <div className="min-h-screen bg-gradient-to-br from-red-50 via-[#F5F0E0] to-yellow-50 flex items-center justify-center">
+          <div className="text-lg text-red-800">No pet selected</div>
+        </div>
+      </PWALayout>
     );
   }
 
@@ -169,7 +174,8 @@ const LostPet = () => {
   console.log('LostPet: using missing share URL', missingShareUrl);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-red-50 via-[#F5F0E0] to-yellow-50">
+    <PWALayout>
+      <div className="min-h-screen bg-gradient-to-br from-red-50 via-[#F5F0E0] to-yellow-50">
       {/* Emergency Header */}
       <div className={`bg-gradient-to-r ${lostPetData.is_missing ? 'from-red-600 to-red-700' : 'from-gold-500 to-gold-400'} text-white py-6 px-4 shadow-lg`}>
         <div className="max-w-6xl mx-auto">
@@ -545,7 +551,8 @@ const LostPet = () => {
           </Card>
         )}
       </main>
-    </div>
+      </div>
+    </PWALayout>
   );
 };
 

@@ -192,7 +192,7 @@ export const PetProfileContent = ({
       if (success) {
         toast({
           title: "Success",
-          description: `${photoType === 'profile' ? 'Portrait' : 'Full profile'} photo deleted successfully`
+          description: `${photoType === 'profile' ? 'Main Portrait' : '2nd Portrait'} photo deleted successfully`
         });
         onPhotoUpdate?.();
       } else {
@@ -201,7 +201,7 @@ export const PetProfileContent = ({
     } catch (error) {
       toast({
         title: "Error",
-        description: `Failed to delete ${photoType === 'profile' ? 'portrait' : 'full profile'} photo`,
+        description: `Failed to delete ${photoType === 'profile' ? 'main portrait' : '2nd portrait'} photo`,
         variant: "destructive"
       });
     } finally {
@@ -234,7 +234,7 @@ export const PetProfileContent = ({
         if (success) {
           toast({
             title: "Success",
-            description: `${photoType === 'profile' ? 'Portrait' : 'Full profile'} photo updated successfully`
+            description: `${photoType === 'profile' ? 'Main Portrait' : '2nd Portrait'} photo updated successfully`
           });
           onPhotoUpdate?.();
         } else {
@@ -243,7 +243,7 @@ export const PetProfileContent = ({
       } catch (error) {
         toast({
           title: "Error",
-          description: `Failed to upload ${photoType === 'profile' ? 'portrait' : 'full profile'} photo`,
+          description: `Failed to upload ${photoType === 'profile' ? 'main portrait' : '2nd portrait'} photo`,
           variant: "destructive"
         });
       } finally {
@@ -280,7 +280,7 @@ export const PetProfileContent = ({
         if (success) {
           toast({
             title: "Photo captured",
-            description: `${photoType === 'profile' ? 'Portrait' : 'Full profile'} photo captured successfully`
+            description: `${photoType === 'profile' ? 'Main Portrait' : '2nd Portrait'} photo captured successfully`
           });
           onPhotoUpdate?.();
         } else {
@@ -289,7 +289,7 @@ export const PetProfileContent = ({
       } catch (error) {
         toast({
           title: "Capture failed",
-          description: `Failed to capture ${photoType === 'profile' ? 'portrait' : 'full profile'} photo`,
+          description: `Failed to capture ${photoType === 'profile' ? 'main portrait' : '2nd portrait'} photo`,
           variant: "destructive"
         });
       } finally {
@@ -327,14 +327,14 @@ export const PetProfileContent = ({
               <div className="grid grid-cols-1 gap-6">
                 <div className="space-y-3">
                   <div className="flex justify-between items-center min-w-0">
-                    <p className="text-gold-400 text-xs sm:text-sm font-semibold tracking-wide truncate">PORTRAIT</p>
+                    <p className="text-gold-400 text-xs sm:text-sm font-semibold tracking-wide truncate">MAIN PORTRAIT</p>
                      <div className="flex gap-1 sm:gap-2 flex-shrink-0">
                        <div
                          onClick={() => handleUploadPhoto('profile')}
                          className="p-2 text-gold-400 hover:text-gold-300 hover:scale-110 transition-all cursor-pointer disabled:opacity-50"
                          role="button"
                          tabIndex={0}
-                         aria-label="Upload portrait photo"
+                         aria-label="Upload main portrait photo"
                          onKeyDown={(e) => e.key === 'Enter' && handleUploadPhoto('profile')}
                        >
                          {photoLoading.profile ? (
@@ -348,7 +348,7 @@ export const PetProfileContent = ({
                          className="p-2 text-gold-400 hover:text-gold-300 hover:scale-110 transition-all cursor-pointer disabled:opacity-50"
                          role="button"
                          tabIndex={0}
-                         aria-label="Capture portrait photo"
+                         aria-label="Capture main portrait photo"
                          onKeyDown={(e) => e.key === 'Enter' && handleCapturePhoto('profile')}
                        >
                          {photoLoading.profile ? (
@@ -364,7 +364,7 @@ export const PetProfileContent = ({
                               className="p-2 text-gold-400 hover:text-gold-300 hover:scale-110 transition-all cursor-pointer disabled:opacity-50"
                               role="button"
                               tabIndex={0}
-                              aria-label="Delete portrait photo"
+                              aria-label="Delete main portrait photo"
                               onKeyDown={(e) => e.key === 'Enter' && e.currentTarget.click()}
                             >
                                <Trash2 className="w-4 h-4" />
@@ -372,10 +372,10 @@ export const PetProfileContent = ({
                           </AlertDialogTrigger>
                           <AlertDialogContent>
                             <AlertDialogHeader>
-                              <AlertDialogTitle>Delete Portrait Photo?</AlertDialogTitle>
-                              <AlertDialogDescription>
-                                This action cannot be undone. The portrait photo will be permanently deleted.
-                              </AlertDialogDescription>
+                               <AlertDialogTitle>Delete Main Portrait Photo?</AlertDialogTitle>
+                               <AlertDialogDescription>
+                                 This action cannot be undone. The main portrait photo will be permanently deleted.
+                               </AlertDialogDescription>
                             </AlertDialogHeader>
                             <AlertDialogFooter>
                               <AlertDialogCancel>Cancel</AlertDialogCancel>
@@ -394,7 +394,7 @@ export const PetProfileContent = ({
                   <div className="aspect-square rounded-lg overflow-hidden border-4 border-gold-600/50 shadow-lg relative">
                     <img 
                       src={enhancedPetData?.photoUrl || "/placeholder.svg"} 
-                      alt={`${enhancedPetData?.name || "Pet"} portrait`}
+                      alt={`${enhancedPetData?.name || "Pet"} main portrait`}
                       className="w-full h-full object-cover"
                     />
                     {photoLoading.profile && (
@@ -406,7 +406,7 @@ export const PetProfileContent = ({
                 </div>
                 <div className="space-y-3">
                   <div className="flex justify-between items-center min-w-0">
-                    <p className="text-gold-400 text-xs sm:text-sm font-semibold tracking-wide truncate">FULL PROFILE</p>
+                    <p className="text-gold-400 text-xs sm:text-sm font-semibold tracking-wide truncate">2ND PORTRAIT</p>
                      <div className="flex gap-1 sm:gap-2 flex-shrink-0">
                        <div
                          onClick={() => handleUploadPhoto('fullBody')}
@@ -451,10 +451,10 @@ export const PetProfileContent = ({
                           </AlertDialogTrigger>
                           <AlertDialogContent>
                             <AlertDialogHeader>
-                              <AlertDialogTitle>Delete Full Profile Photo?</AlertDialogTitle>
-                              <AlertDialogDescription>
-                                This action cannot be undone. The full profile photo will be permanently deleted.
-                              </AlertDialogDescription>
+                               <AlertDialogTitle>Delete 2nd Portrait Photo?</AlertDialogTitle>
+                               <AlertDialogDescription>
+                                 This action cannot be undone. The 2nd portrait photo will be permanently deleted.
+                               </AlertDialogDescription>
                             </AlertDialogHeader>
                             <AlertDialogFooter>
                               <AlertDialogCancel>Cancel</AlertDialogCancel>
@@ -473,7 +473,7 @@ export const PetProfileContent = ({
                   <div className="aspect-[4/3] rounded-lg overflow-hidden border-4 border-gold-600/50 shadow-lg relative">
                     <img 
                       src={enhancedPetData?.fullBodyPhotoUrl || "/placeholder.svg"} 
-                      alt={`${enhancedPetData?.name || "Pet"} full profile`}
+                      alt={`${enhancedPetData?.name || "Pet"} 2nd portrait`}
                       className="w-full h-full object-cover"
                     />
                     {photoLoading.fullBody && (

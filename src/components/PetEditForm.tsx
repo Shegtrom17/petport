@@ -382,8 +382,8 @@ const handleSubmit = async (e: React.FormEvent) => {
         </div>
 
         <div>
-          <Label htmlFor="notes">Behavioral Notes</Label>
-          <Textarea id="notes" name="notes" value={formData.notes} onChange={handleChange} />
+          <Label htmlFor="notes">Description, Coloring & Unique Traits</Label>
+          <Textarea id="notes" name="notes" value={formData.notes} onChange={handleChange} placeholder="Physical description, coloring, markings, unique identifying features..." />
         </div>
 
         <div>

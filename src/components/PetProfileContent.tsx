@@ -621,8 +621,8 @@ export const PetProfileContent = ({
               )}
               
               <div className="bg-slate-700/30 p-4 rounded-lg border border-gold-600/30">
-                <p className="text-gold-400 text-sm font-semibold tracking-wide mb-2">BEHAVIORAL NOTES</p>
-                <p className="text-slate-200">{enhancedPetData?.notes || "No notes specified"}</p>
+                <p className="text-gold-400 text-sm font-semibold tracking-wide mb-2">DESCRIPTION & UNIQUE TRAITS</p>
+                <p className="text-slate-200">{enhancedPetData?.notes || "No description specified"}</p>
               </div>
             </CardContent>
           </Card>

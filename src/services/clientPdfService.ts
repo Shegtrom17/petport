@@ -938,9 +938,9 @@ const generateFullPDF = async (doc: jsPDF, pageManager: PDFPageManager, petData:
     });
   }
 
-  // Notes
+  // Description & Unique Traits
   if (petData.notes) {
-    addSection(doc, pageManager, 'ADDITIONAL NOTES', () => {
+    addSection(doc, pageManager, 'DESCRIPTION & UNIQUE TRAITS', () => {
       addText(doc, pageManager, petData.notes);
     });
   }

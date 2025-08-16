@@ -99,7 +99,7 @@ export const ReportIssueModal = ({ children, isOpen, onClose }: ReportIssueModal
               id="email"
               type="email"
               placeholder="your.email@example.com"
-              value={formData.email || user?.email || ""}
+              value={formData.email || "info@petport.app"}
               onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
               required
             />

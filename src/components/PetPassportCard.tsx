@@ -28,7 +28,7 @@ export const PetPassportCard = ({ petData, onUpdate }: PetPassportCardProps) => 
             </div>
             <div className="flex-1 text-center sm:text-left">
               <h2 className="text-lg sm:text-xl md:text-3xl font-bold text-gold-400 mb-1 tracking-wide break-words">{petData.name?.toUpperCase()}</h2>
-              <p className="text-gold-200 text-sm sm:text-base md:text-lg mb-2">{petData.breed} • {petData.age}</p>
+              <p className="text-gold-200 text-sm sm:text-base md:text-lg mb-2">{petData.breed} • AGE: {petData.age}</p>
               <div className="flex flex-col sm:flex-row items-center justify-center sm:justify-start space-y-1 sm:space-y-0 sm:space-x-3 md:space-x-6 text-xs sm:text-sm mb-4">
                 <div className="flex items-center space-x-1 sm:space-x-2">
                   <div className="w-1.5 h-1.5 bg-gold-400 rounded-full"></div>
@@ -36,7 +36,7 @@ export const PetPassportCard = ({ petData, onUpdate }: PetPassportCardProps) => 
                 </div>
                 <div className="flex items-center space-x-1 sm:space-x-2">
                   <div className="w-1.5 h-1.5 bg-gold-400 rounded-full"></div>
-                  <span className="text-gold-200">Breed: {petData.breed}</span>
+                  <span className="text-gold-200">Sex: {petData.sex || 'Not specified'}</span>
                 </div>
               </div>
             </div>

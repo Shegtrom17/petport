@@ -67,7 +67,7 @@ const Help = () => {
     {
       id: "medical-records",
       question: "Can I store vaccination records and medical information?",
-      answer: "Yes! You can upload vaccination certificates, medical documents, and add detailed medical history. This information can be shared with vets, pet sitters, or kept private for your records."
+      answer: "Yes! You can store all types of documents including vaccination records, medical certificates, and any other important papers. Upload documents in PDF, JPG, or PNG formats, or take photos directly in the app. All documents are automatically converted to PDFs for easy download and sharing via email with vets, pet sitters, or emergency contacts."
     },
     {
       id: "multiple-pets",

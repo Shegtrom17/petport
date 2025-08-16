@@ -327,27 +327,6 @@ const Index = () => {
                   {renderTabContent()}
                 </div>
               </SwipeContainer>
-              
-              {/* Quick Access to Lost Pet Instructions */}
-              {activeTab !== "lostpet" && (
-                <Card className="bg-red-50 border-red-200">
-                  <CardContent className="p-4">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <h3 className="font-semibold text-red-800">Need Missing Pet Flyer Instructions?</h3>
-                        <p className="text-sm text-red-600">Click the Lost Pet tab above</p>
-                        <p className="text-sm text-red-600">to see step-by-step instructions</p>
-                      </div>
-                      <button 
-                        onClick={() => handleTabChange("lostpet")}
-                        className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors"
-                      >
-                        Go to Lost Pet
-                      </button>
-                    </div>
-                  </CardContent>
-                </Card>
-              )}
             </>
           )}
         </main>

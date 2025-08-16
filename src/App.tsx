@@ -33,6 +33,7 @@ import Subscribe from "./pages/Subscribe";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import Billing from "./pages/Billing";
 import VaccinationGuide from "./pages/VaccinationGuide";
+import Help from "./pages/Help";
 
 
 const queryClient = new QueryClient();
@@ -110,11 +111,16 @@ const App = () => {
                       <Billing />
                     </ProtectedRoute>
                   } />
-                  <Route path="/subscribe" element={
-                    <ProtectedRoute>
-                      <Subscribe />
-                    </ProtectedRoute>
-                  } />
+                   <Route path="/subscribe" element={
+                     <ProtectedRoute>
+                       <Subscribe />
+                     </ProtectedRoute>
+                   } />
+                   <Route path="/help" element={
+                     <ProtectedRoute>
+                       <Help />
+                     </ProtectedRoute>
+                   } />
                   <Route path="*" element={<NotFound />} />
                 </Routes>
               </BrowserRouter>

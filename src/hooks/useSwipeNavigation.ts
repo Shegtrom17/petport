@@ -31,6 +31,8 @@ export function useSwipeNavigation({
       preventScrollOnSwipe: false, // vertical scroll should win
       onSwiping: (e: any) => {
         if (!enabled || isOverlayOpen || isPtrActive) return;
+        // Ignore multi-touch (pinch gestures)
+        if (e.event?.touches && e.event.touches.length > 1) return;
         if (debug) console.log("[swipe] swiping", { dir: e.dir, dx: e.deltaX, dy: e.deltaY });
         const angle = Math.abs((Math.atan2(e.deltaY, e.deltaX) * 180) / Math.PI);
         if (angle > maxAngle) return; // mostly vertical → ignore

@@ -16,12 +16,12 @@ export const usePullToRefresh = ({
   const [startY, setStartY] = useState(0);
 
   const handleTouchStart = useCallback((e: TouchEvent) => {
-    if (disabled || window.scrollY > 0) return;
+    if (disabled || window.scrollY > 0 || e.touches.length > 1) return;
     setStartY(e.touches[0].clientY);
   }, [disabled]);
 
   const handleTouchMove = useCallback((e: TouchEvent) => {
-    if (disabled || window.scrollY > 0 || startY === 0) return;
+    if (disabled || window.scrollY > 0 || startY === 0 || e.touches.length > 1) return;
     
     const currentY = e.touches[0].clientY;
     const distance = Math.max(0, currentY - startY);

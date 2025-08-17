@@ -38,8 +38,8 @@ export function SwipeContainer({
       {...(swipeHandlers ?? {})}
       className={className ?? "h-full w-full"}
       style={{
-        touchAction: "pan-y",           // vertical scroll wins
-        overscrollBehaviorY: "contain", // mitigates iOS PTR bounce
+        touchAction: "pan-y pinch-zoom", // vertical scroll + pinch zoom win
+        overscrollBehaviorY: "contain",  // mitigates iOS PTR bounce
         willChange: "transform",
         ...style,
       }}

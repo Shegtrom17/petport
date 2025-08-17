@@ -157,7 +157,7 @@
 /* Add data attributes to carousels/maps that need their own gestures */
 [data-carousel],
 [data-map] {
-  touch-action: pan-y pan-x;
+  touch-action: pan-y pan-x pinch-zoom;
   overscroll-behavior: contain;
 }
 
@@ -214,7 +214,7 @@
 /* Prevent nested carousels/maps from triggering page swipes */
 [data-carousel],
 [data-map] {
-  touch-action: pan-y pan-x; /* they own gestures inside */
+  touch-action: pan-y pan-x pinch-zoom; /* they own gestures inside */
 }
 
 [data-carousel] * {

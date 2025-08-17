@@ -27,6 +27,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [hasInitialized, setHasInitialized] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -40,7 +41,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         // Update state synchronously
         setSession(session);
         setUser(session?.user ?? null);
-        setIsLoading(false);
+        
+        // Only set loading to false after we've initialized at least once
+        if (!hasInitialized) {
+          setHasInitialized(true);
+          setIsLoading(false);
+        }
         
         // Handle profile creation for new signups
         if (event === 'SIGNED_IN' && session?.user) {
@@ -96,6 +102,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       console.log("Auth: Initial session check", { session: !!session, userId: session?.user?.id });
       setSession(session);
       setUser(session?.user ?? null);
+      
+      // Initialize loading state
+      setHasInitialized(true);
       setIsLoading(false);
     });
 

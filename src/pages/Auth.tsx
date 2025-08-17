@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { StorageWarningBanner } from "@/components/StorageWarningBanner";
 
 export default function Auth() {
   console.log("Auth: Component rendering");
@@ -128,11 +129,13 @@ export default function Auth() {
           <p className="text-gray-600">Digital Pet Passport</p>
         </div>
         
+        <StorageWarningBanner />
+        
         <Card className="border-0 shadow-lg bg-white/90 backdrop-blur-sm">
           <CardHeader>
-            <CardTitle>Sign In</CardTitle>
+            <CardTitle>{isSignIn ? "Sign In" : "Create Account"}</CardTitle>
             <CardDescription>
-              Enter your credentials to access your account
+              {isSignIn ? "Enter your credentials to access your account" : "Create a new PetPort account"}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -186,8 +189,18 @@ export default function Auth() {
               </div>
             </form>
           </CardContent>
-          <CardFooter>
-            <p className="text-xs text-muted-foreground">
+          <CardFooter className="flex-col space-y-2">
+            <div className="text-center">
+              <Button
+                type="button"
+                variant="link"
+                onClick={() => setIsSignIn(!isSignIn)}
+                className="text-sm text-muted-foreground hover:text-primary"
+              >
+                {isSignIn ? "Don't have an account? Create one" : "Already have an account? Sign in"}
+              </Button>
+            </div>
+            <p className="text-xs text-muted-foreground text-center">
               Read our <Link to="/privacy-policy" className="underline">Privacy Policy</Link>.
             </p>
           </CardFooter>

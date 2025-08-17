@@ -50,22 +50,31 @@ export const PetHeader = ({ activeTab, onTabChange, selectedPetId, selectedPetNa
           </div>
           
           {/* Right: Action Buttons (Mobile Only) */}
-          <div className="flex items-center space-x-2 flex-shrink-0">
-            <AppShareButton variant="icon" />
+          <div className="flex items-center space-x-1 flex-shrink-0">
             {user && selectedPet && onPrivacyToggle && (
-              <CompactPrivacyToggle
-                isPublic={selectedPet.is_public || false}
-                onToggle={onPrivacyToggle}
-              />
+              <div className="flex flex-col items-center space-y-1">
+                <div className="scale-75 origin-center">
+                  <CompactPrivacyToggle
+                    isPublic={selectedPet.is_public || false}
+                    onToggle={onPrivacyToggle}
+                  />
+                </div>
+                <div className="scale-75 origin-center">
+                  <AppShareButton variant="icon" />
+                </div>
+              </div>
             )}
             {!user && (
-              <Button 
-                className="bg-gradient-to-r from-navy-900 to-navy-800 hover:from-navy-800 hover:to-navy-700 text-gold-500 border border-gold-500/30 text-xs px-2 h-8 whitespace-nowrap"
-                onClick={() => navigate('/auth')}
-              >
-                <LogIn className="mr-1 h-3 w-3" /> 
-                <span>Sign In</span>
-              </Button>
+              <>
+                <AppShareButton variant="icon" />
+                <Button 
+                  className="bg-gradient-to-r from-navy-900 to-navy-800 hover:from-navy-800 hover:to-navy-700 text-gold-500 border border-gold-500/30 text-xs px-2 h-8 whitespace-nowrap"
+                  onClick={() => navigate('/auth')}
+                >
+                  <LogIn className="mr-1 h-3 w-3" /> 
+                  <span>Sign In</span>
+                </Button>
+              </>
             )}
           </div>
         </div>
@@ -87,34 +96,43 @@ export const PetHeader = ({ activeTab, onTabChange, selectedPetId, selectedPetNa
             </div>
             <div className="min-w-0 flex-1">
               <h1 className="text-lg md:text-xl lg:text-2xl font-bold text-navy-900 tracking-wide truncate">
-                Digital Pet Passport
+                Digital Portfolio
               </h1>
             </div>
           </div>
           
-          <div className="flex items-center space-x-3 flex-shrink-0">
-            <AppShareButton variant="icon" />
+          <div className="flex items-center space-x-2 flex-shrink-0">
             {user && selectedPet && onPrivacyToggle && (
-              <CompactPrivacyToggle
-                isPublic={selectedPet.is_public || false}
-                onToggle={onPrivacyToggle}
-              />
+              <div className="flex flex-col items-center space-y-2">
+                <div className="scale-90 origin-center">
+                  <CompactPrivacyToggle
+                    isPublic={selectedPet.is_public || false}
+                    onToggle={onPrivacyToggle}
+                  />
+                </div>
+                <div className="scale-90 origin-center">
+                  <AppShareButton variant="icon" />
+                </div>
+              </div>
             )}
             {!user && (
-              <Button 
-                className="bg-gradient-to-r from-theme-primary-dark to-theme-primary-medium hover:from-theme-primary-medium hover:to-theme-primary-dark text-theme-accent border border-theme-accent/30 text-sm px-3 h-10 whitespace-nowrap"
-                onClick={() => navigate('/auth')}
-              >
-                <LogIn className="mr-1 h-4 w-4" /> 
-                <span>Sign In</span>
-              </Button>
+              <>
+                <AppShareButton variant="icon" />
+                <Button 
+                  className="bg-gradient-to-r from-theme-primary-dark to-theme-primary-medium hover:from-theme-primary-medium hover:to-theme-primary-dark text-theme-accent border border-theme-accent/30 text-sm px-3 h-10 whitespace-nowrap"
+                  onClick={() => navigate('/auth')}
+                >
+                  <LogIn className="mr-1 h-4 w-4" /> 
+                  <span>Sign In</span>
+                </Button>
+              </>
             )}
           </div>
         </div>
         
         <div className="sm:hidden mt-2 text-center">
           <h1 className="text-sm font-bold text-navy-900 tracking-wide">
-            Digital Pet Passport
+            Digital Portfolio
           </h1>
         </div>
       </div>

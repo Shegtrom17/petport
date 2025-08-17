@@ -41,16 +41,19 @@ export const PetHeader = ({ activeTab, onTabChange, selectedPetId, selectedPetNa
           pointerEvents: 'none'
         }}
       />
-      <div className="max-w-6xl mx-auto px-3 sm:px-4 py-3 sm:py-4 relative z-10">
+      <div className="max-w-6xl mx-auto px-3 sm:px-4 py-2 sm:py-4 relative z-10">
         {/* Mobile Layout */}
         <div className="flex sm:hidden items-center justify-between">
-          {/* Left: Hamburger Menu (Mobile Only) */}
-          <div className="flex-shrink-0">
+          {/* Left: Hamburger Menu + Title */}
+          <div className="flex items-center space-x-3 flex-1 min-w-0">
             {user && <MobileNavigationMenu activeTab={activeTab} onTabChange={onTabChange} />}
+            <h1 className="text-base font-bold text-navy-900 tracking-wide truncate">
+              Digital Portfolio
+            </h1>
           </div>
           
-          {/* Right: Action Buttons (Mobile Only) */}
-          <div className="flex items-center space-x-1 flex-shrink-0">
+          {/* Right: Action Buttons */}
+          <div className="flex items-center space-x-2 flex-shrink-0">
             {user && selectedPet && onPrivacyToggle && (
               <div className="flex flex-col items-center space-y-1">
                 <div className="scale-75 origin-center">
@@ -82,7 +85,7 @@ export const PetHeader = ({ activeTab, onTabChange, selectedPetId, selectedPetNa
         {/* Desktop Layout */}
         <div className="hidden sm:flex items-center justify-between">
           <div className="flex items-center space-x-2 sm:space-x-3 md:space-x-4 flex-1 min-w-0">
-            <div className="w-12 h-12 md:w-16 md:h-16 lg:w-20 lg:h-20 flex-shrink-0">
+            <div className="w-12 h-12 md:w-16 md:h-16 lg:w-18 lg:h-18 flex-shrink-0">
               <img 
                 src="/lovable-uploads/22b5b776-467c-4cee-be36-887346e71205.png" 
                 alt="PetPort Logo"
@@ -128,12 +131,6 @@ export const PetHeader = ({ activeTab, onTabChange, selectedPetId, selectedPetNa
               </>
             )}
           </div>
-        </div>
-        
-        <div className="sm:hidden mt-2 text-center">
-          <h1 className="text-sm font-bold text-navy-900 tracking-wide">
-            Digital Portfolio
-          </h1>
         </div>
       </div>
     </header>

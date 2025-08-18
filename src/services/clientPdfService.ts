@@ -1061,6 +1061,13 @@ const generateResumePDF = async (doc: jsPDF, pageManager: PDFPageManager, petDat
   }
   pageManager.addY(10);
 
+  // Bio section
+  if (petData.bio && petData.bio.trim()) {
+    addSection(doc, pageManager, 'Bio', () => {
+      addText(doc, pageManager, safeText(petData.bio));
+    });
+  }
+
   // Reviews Section
   if (petData.reviews && petData.reviews.length > 0) {
     addSection(doc, pageManager, 'Professional References & Reviews', () => {

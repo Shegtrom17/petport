@@ -194,7 +194,7 @@ export const DocumentShareDialog = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[380px] max-h-[90vh] overflow-hidden">
+      <DialogContent className="sm:max-w-[425px] w-[95vw] max-h-[85vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center space-x-2">
             <Share2 className="w-5 h-5 text-blue-600" />
@@ -210,12 +210,12 @@ export const DocumentShareDialog = ({
           </div>
 
           {!showEmailForm ? (
-          <div className="space-y-2">
+          <div className="space-y-3">
               {/* Quick Share (Native) */}
               <Button
                 onClick={handleNativeShare}
                 disabled={isSharing}
-                className="w-full h-9 text-sm font-medium bg-blue-600 hover:bg-blue-700 text-white"
+                className="w-full h-10 bg-blue-600 hover:bg-blue-700 text-white"
               >
                 {isSharing ? (
                   <>
@@ -234,19 +234,19 @@ export const DocumentShareDialog = ({
               <Button
                 onClick={() => setShowEmailForm(true)}
                 variant="outline"
-                className="w-full h-9 text-sm font-medium border-2 border-green-500 text-green-700 hover:bg-green-50"
+                className="w-full h-10 border-2 border-green-500 text-green-700 hover:bg-green-50"
               >
                 <Mail className="w-5 h-5 mr-2" />
                 📧 Share via Email
               </Button>
 
               {/* Other sharing options */}
-              <div className="grid grid-cols-2 gap-1 text-xs">
+              <div className="grid grid-cols-2 gap-2">
                 <Button
                   onClick={handleCopyLink}
                   variant="outline"
-                  size="sm"
-                  className="h-8 text-xs px-2"
+                  size="default"
+                  className="w-full"
                 >
                   {copied ? <Check className="w-4 h-4 mr-1" /> : <Copy className="w-4 h-4 mr-1" />}
                   {copied ? 'Copied!' : 'Copy Link'}
@@ -255,8 +255,8 @@ export const DocumentShareDialog = ({
                 <Button
                   onClick={handleSMSShare}
                   variant="outline"
-                  size="sm"
-                  className="h-8 text-xs px-2"
+                  size="default"
+                  className="w-full"
                 >
                   <MessageCircle className="w-4 h-4 mr-1" />
                   Text/SMS
@@ -275,8 +275,8 @@ export const DocumentShareDialog = ({
                 <Button
                   onClick={handleMessengerShare}
                   variant="outline"
-                  size="sm"
-                  className="h-8 text-xs px-2"
+                  size="default"
+                  className="w-full"
                 >
                   <MessageCircle className="w-4 h-4 mr-1" />
                   Messenger
@@ -286,8 +286,8 @@ export const DocumentShareDialog = ({
               <Button
                 onClick={handleXShare}
                 variant="outline"
-                size="sm"
-                className="w-full h-8 bg-black hover:bg-gray-800 text-white border-black text-xs"
+                size="default"
+                className="w-full bg-black hover:bg-gray-800 text-white border-black"
               >
                 <X className="w-4 h-4 mr-1" />
                 X/Twitter

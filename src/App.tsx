@@ -35,6 +35,7 @@ import PrivacyPolicy from "./pages/PrivacyPolicy";
 import Billing from "./pages/Billing";
 import VaccinationGuide from "./pages/VaccinationGuide";
 import Help from "./pages/Help";
+import PublicGallery from "./pages/PublicGallery";
 
 
 const queryClient = new QueryClient();
@@ -97,10 +98,11 @@ const App = () => {
                      </ProtectedRoute>
                    } />
                    <Route path="/profile/:petId" element={<PublicProfile />} />
-                  <Route path="/care/:petId" element={<PublicCareInstructions />} />
-                  <Route path="/credentials/:petId" element={<PublicCredentials />} />
-                  <Route path="/reviews/:petId" element={<PublicReviews />} />
-                  <Route path="/missing-pet/:petId" element={<PublicMissingPet />} />
+                   <Route path="/care/:petId" element={<PublicCareInstructions />} />
+                   <Route path="/credentials/:petId" element={<PublicCredentials />} />
+                   <Route path="/reviews/:petId" element={<PublicReviews />} />
+                   <Route path="/missing-pet/:petId" element={<PublicMissingPet />} />
+                   <Route path="/gallery/:petId" element={<PublicGallery />} />
                   <Route path="/transfer/:token" element={<TransferAccept />} />
                   <Route path="/privacy" element={<Navigate to="/privacy-policy" replace />} />
                   <Route path="/terms" element={<Terms />} />

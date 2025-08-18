@@ -102,7 +102,15 @@ function normalizePetData(raw: any): any {
     documents: pet.documents || [],
     training: pet.training || [],
     certifications: pet.certifications || [],
-    reviews: pet.reviews || pet.professional_reviews || [],
+    reviews: (pet.reviews || pet.professional_reviews || []).map((review: any) => ({
+      rating: review.rating,
+      reviewer_name: review.reviewer_name || review.reviewerName,
+      reviewer_contact: review.reviewer_contact || review.reviewerContact,
+      text: review.text || review.review_text || review.reviewText,
+      date: review.date || review.review_date || review.reviewDate,
+      location: review.location,
+      type: review.type || review.service_type || review.serviceType
+    })),
     experiences: pet.experiences || [],
     achievements: pet.achievements || [],
     travel_locations: pet.travel_locations || [],

@@ -76,7 +76,6 @@ export function transformPetData(pet: PetWithDetails): any {
     photoUrl: pet.photos?.photo_url || "",
     fullBodyPhotoUrl: pet.photos?.full_body_photo_url || "",
     // Transform professional data
-    badges: pet.professional_data?.badges || [],
     supportAnimalStatus: pet.professional_data?.support_animal_status || null,
     // Transform care instructions
     careInstructions: pet.care_instructions ? {

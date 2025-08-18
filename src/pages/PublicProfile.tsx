@@ -98,8 +98,7 @@ const PublicProfile = () => {
           petport_id: sanitizeText(data.petport_id || ''),
           professional_data: data.professional_data ? {
             ...data.professional_data,
-            support_animal_status: sanitizeText(data.professional_data.support_animal_status || ''),
-            badges: data.professional_data.badges?.map((badge: string) => sanitizeText(badge)) || []
+            support_animal_status: sanitizeText(data.professional_data.support_animal_status || '')
           } : null,
           medical: data.medical ? {
             ...data.medical,
@@ -432,27 +431,6 @@ const PublicProfile = () => {
               </p>
             </CardContent>
           </Card>
-
-          {/* Badges & Certifications */}
-          {petData.professional_data?.badges && petData.professional_data.badges.length > 0 && (
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
-                  <Award className="w-5 h-5" />
-                  <span>Badges & Certifications</span>
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="flex flex-wrap gap-2">
-                  {petData.professional_data.badges.map((badge: string, index: number) => (
-                    <Badge key={index} variant="secondary" className="bg-blue-100 text-blue-800">
-                      🏅 {badge}
-                    </Badge>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          )}
 
           {/* Reviews */}
           {petData.reviews && petData.reviews.length > 0 && (

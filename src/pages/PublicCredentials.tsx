@@ -26,7 +26,6 @@ interface PublicCredentialsData {
     expiry_date?: string | null;
     notes?: string | null;
   }>;
-  badges?: string[];
   training?: Array<{
     course: string;
     facility?: string | null;
@@ -205,22 +204,6 @@ export default function PublicCredentials() {
           </Card>
         )}
 
-        {/* Badges */}
-        {data.badges && data.badges.length > 0 && (
-          <Card className="mb-12">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-navy-900">
-                <Award className="w-5 h-5 text-primary" />
-                Badges
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="flex flex-wrap gap-2">
-              {data.badges.map((b, idx) => (
-                <Badge key={idx} variant="outline">{b}</Badge>
-              ))}
-            </CardContent>
-          </Card>
-        )}
       </main>
     </div>
   );

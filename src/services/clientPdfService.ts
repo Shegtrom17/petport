@@ -97,7 +97,6 @@ function normalizePetData(raw: any): any {
 
     // Professional / credentials
     support_animal_status: pet.support_animal_status || pet.professional_data?.support_animal_status,
-    badges: pet.badges || pet.professional_data?.badges || [],
 
     // Collections
     documents: pet.documents || [],
@@ -819,14 +818,9 @@ const generateFullPDF = async (doc: jsPDF, pageManager: PDFPageManager, petData:
   });
 
   // Professional Status & Support Animal Information
-  if (petData.support_animal_status || (petData.badges && petData.badges.length > 0)) {
+  if (petData.support_animal_status) {
     addSection(doc, pageManager, 'PROFESSIONAL STATUS', () => {
-      if (petData.support_animal_status) {
-        addText(doc, pageManager, `Support Animal Status: ${safeText(petData.support_animal_status)}`);
-      }
-      if (petData.badges && petData.badges.length > 0) {
-        addText(doc, pageManager, `Professional Badges: ${petData.badges.join(', ')}`);
-      }
+      addText(doc, pageManager, `Support Animal Status: ${safeText(petData.support_animal_status)}`);
     });
   }
 

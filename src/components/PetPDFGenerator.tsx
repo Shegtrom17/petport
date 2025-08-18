@@ -262,16 +262,29 @@ export const PetPDFGenerator = ({ petId, petName, petData }: PetPDFGeneratorProp
                     className="border-gold-500 text-gold-600 hover:bg-gold-50"
                   >
                     <Eye className="w-4 h-4 mr-2" />
-                    View PDF
+                    Generate & View
                   </Button>
                   <Button
                     onClick={() => handlePdfAction('download')}
                     className="bg-gradient-to-r from-gold-500 to-gold-400 text-navy-900 hover:from-gold-400 hover:to-gold-300"
                   >
                     <Download className="w-4 h-4 mr-2" />
-                    Download PDF
+                    Generate & Download
                   </Button>
                 </div>
+                
+                <Button
+                  onClick={() => handlePdfAction('view')}
+                  variant="outline"
+                  className="w-full border-navy-900 text-navy-900 hover:bg-navy-50"
+                >
+                  <Share2 className="w-4 h-4 mr-2" />
+                  Generate & Share PDF
+                </Button>
+                
+                <p className="text-xs text-navy-500 text-center">
+                  💡 After generating, you'll see View | Download | Share options
+                </p>
               </div>
             )}
             

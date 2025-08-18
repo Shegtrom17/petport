@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { EnhancedDialog } from "@/components/ui/enhanced-dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -193,8 +194,8 @@ export const DocumentShareDialog = ({
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[425px] w-[95vw] max-h-[85vh] overflow-y-auto">
+    <EnhancedDialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent className="w-[96vw] sm:max-w-[400px] max-h-[90svh] overflow-hidden flex flex-col native-scroll hide-scrollbar">
         <DialogHeader>
           <DialogTitle className="flex items-center space-x-2">
             <Share2 className="w-5 h-5 text-blue-600" />
@@ -202,20 +203,20 @@ export const DocumentShareDialog = ({
           </DialogTitle>
         </DialogHeader>
         
-        <div className="space-y-4">
+        <div className="flex-1 overflow-y-auto space-y-3 p-1">
           {/* Document Info */}
-          <div className="bg-gray-50 p-3 rounded-lg">
-            <p className="font-medium text-gray-900">{document.name}</p>
-            <p className="text-sm text-gray-500">{categoryLabel} • {document.size}</p>
+          <div className="bg-gray-50 p-2 rounded-lg">
+            <p className="font-medium text-gray-900 text-sm truncate">{document.name}</p>
+            <p className="text-xs text-gray-500">{categoryLabel} • {document.size}</p>
           </div>
 
           {!showEmailForm ? (
-          <div className="space-y-3">
+          <div className="space-y-2">
               {/* Quick Share (Native) */}
               <Button
                 onClick={handleNativeShare}
                 disabled={isSharing}
-                className="w-full h-10 bg-blue-600 hover:bg-blue-700 text-white"
+                className="w-full h-9 text-sm bg-blue-600 hover:bg-blue-700 text-white"
               >
                 {isSharing ? (
                   <>
@@ -234,64 +235,63 @@ export const DocumentShareDialog = ({
               <Button
                 onClick={() => setShowEmailForm(true)}
                 variant="outline"
-                className="w-full h-10 border-2 border-green-500 text-green-700 hover:bg-green-50"
+                className="w-full h-9 text-sm border-2 border-green-500 text-green-700 hover:bg-green-50"
               >
-                <Mail className="w-5 h-5 mr-2" />
+                <Mail className="w-4 h-4 mr-2" />
                 📧 Share via Email
               </Button>
 
               {/* Other sharing options */}
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-2 gap-1">
                 <Button
                   onClick={handleCopyLink}
                   variant="outline"
-                  size="default"
-                  className="w-full"
+                  size="sm"
+                  className="w-full h-8 text-xs px-1"
                 >
-                  {copied ? <Check className="w-4 h-4 mr-1" /> : <Copy className="w-4 h-4 mr-1" />}
-                  {copied ? 'Copied!' : 'Copy Link'}
+                  {copied ? <Check className="w-3 h-3 mr-1" /> : <Copy className="w-3 h-3 mr-1" />}
+                  {copied ? 'Copied!' : 'Copy'}
                 </Button>
                 
                 <Button
                   onClick={handleSMSShare}
                   variant="outline"
-                  size="default"
-                  className="w-full"
+                  size="sm"
+                  className="w-full h-8 text-xs px-1"
                 >
-                  <MessageCircle className="w-4 h-4 mr-1" />
-                  Text/SMS
+                  <MessageCircle className="w-3 h-3 mr-1" />
+                  SMS
                 </Button>
-                
+              </div>
+              
+              <div className="grid grid-cols-3 gap-1">
                 <Button
                   onClick={handleFacebookShare}
                   variant="outline"
                   size="sm"
-                  className="w-full bg-[#1877F2] hover:bg-[#166FE5] text-white border-[#1877F2] text-xs"
+                  className="w-full h-8 bg-[#1877F2] hover:bg-[#166FE5] text-white border-[#1877F2] text-xs px-1"
                 >
-                  <Facebook className="w-4 h-4 mr-1" />
-                  Facebook
+                  <Facebook className="w-3 h-3" />
                 </Button>
                 
                 <Button
                   onClick={handleMessengerShare}
                   variant="outline"
-                  size="default"
-                  className="w-full"
+                  size="sm"
+                  className="w-full h-8 text-xs px-1"
                 >
-                  <MessageCircle className="w-4 h-4 mr-1" />
-                  Messenger
+                  <MessageCircle className="w-3 h-3" />
+                </Button>
+                
+                <Button
+                  onClick={handleXShare}
+                  variant="outline"
+                  size="sm"
+                  className="w-full h-8 bg-black hover:bg-gray-800 text-white border-black text-xs px-1"
+                >
+                  <X className="w-3 h-3" />
                 </Button>
               </div>
-
-              <Button
-                onClick={handleXShare}
-                variant="outline"
-                size="default"
-                className="w-full bg-black hover:bg-gray-800 text-white border-black"
-              >
-                <X className="w-4 h-4 mr-1" />
-                X/Twitter
-              </Button>
             </div>
           ) : (
             /* Email Form */
@@ -348,11 +348,11 @@ export const DocumentShareDialog = ({
           )}
 
           {/* Document URL */}
-          <div className="text-xs text-gray-500 text-center p-2 rounded bg-gray-50 border">
-            📄 Document: {shareUrl}
+          <div className="text-xs text-gray-500 text-center p-2 rounded bg-gray-50 border break-all">
+            📄 {shareUrl}
           </div>
         </div>
       </DialogContent>
-    </Dialog>
+    </EnhancedDialog>
   );
 };

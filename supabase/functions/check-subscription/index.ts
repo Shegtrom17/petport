@@ -60,7 +60,7 @@ serve(async (req) => {
     const subscriptions = await stripe.subscriptions.list({
       customer: customerId,
       limit: 100,
-      expand: ["data.items.data.price.product"],
+      expand: ["data.items.data.price"],
     });
 
     const activeOrTrialing = subscriptions.data.filter((s) => s.status === "active" || s.status === "trialing");
@@ -89,7 +89,10 @@ serve(async (req) => {
     let additionalPets = 0;
     for (const s of activeOrTrialing) {
       for (const item of s.items.data) {
-        const product: any = (item.price.product as any) || null;
+        const priceId = item.price.id;
+        // Retrieve the price with product expanded separately
+        const priceWithProduct = await stripe.prices.retrieve(priceId, { expand: ['product'] });
+        const product: any = priceWithProduct.product || null;
         const productType = product?.metadata?.product_type;
         if (productType === "pet_slot") {
           const addonCountStr = product?.metadata?.addon_count;

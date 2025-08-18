@@ -936,80 +936,96 @@ export const PetProfileContent = ({
               {enhancedPetData?.emergencyContact && (
                 <div className="p-3 bg-gradient-to-r from-navy-900 to-navy-800 text-gold-500 rounded-lg border border-gold-500/30">
                   <p className="text-gold-400 text-sm font-semibold tracking-wide mb-1">PRIMARY EMERGENCY CONTACT</p>
-                  {(() => {
-                    const phoneNumber = extractPhoneNumber(enhancedPetData.emergencyContact);
-                    return phoneNumber ? (
-                      <a 
-                        href={`tel:${formatPhoneForTel(phoneNumber)}`}
-                        className="font-medium flex items-center gap-2 hover:text-gold-300 transition-colors duration-200 cursor-pointer"
-                      >
-                        <Phone className="w-4 h-4" />
-                        {enhancedPetData.emergencyContact}
-                      </a>
-                    ) : (
-                      <p className="font-medium">{enhancedPetData.emergencyContact}</p>
-                    );
-                  })()}
+                   {(() => {
+                     const phoneNumber = extractPhoneNumber(enhancedPetData.emergencyContact);
+                     return phoneNumber ? (
+                       <div>
+                         <a 
+                           href={`tel:${formatPhoneForTel(phoneNumber)}`}
+                           className="font-medium flex items-center gap-2 hover:text-gold-300 transition-colors duration-200 cursor-pointer"
+                           aria-label="Call primary emergency contact"
+                         >
+                           <Phone className="w-4 h-4" />
+                           {enhancedPetData.emergencyContact}
+                         </a>
+                         <p className="text-xs text-gold-400 mt-1 ml-6">Tap to call</p>
+                       </div>
+                     ) : (
+                       <p className="font-medium">{enhancedPetData.emergencyContact}</p>
+                     );
+                   })()}
                 </div>
               )}
               
               {enhancedPetData?.secondEmergencyContact && (
                 <div className="p-3 bg-gradient-to-r from-navy-900 to-navy-800 text-gold-500 rounded-lg border border-gold-500/30">
                   <p className="text-gold-400 text-sm font-semibold tracking-wide mb-1">SECONDARY EMERGENCY CONTACT</p>
-                  {(() => {
-                    const phoneNumber = extractPhoneNumber(enhancedPetData.secondEmergencyContact);
-                    return phoneNumber ? (
-                      <a 
-                        href={`tel:${formatPhoneForTel(phoneNumber)}`}
-                        className="font-medium flex items-center gap-2 hover:text-gold-300 transition-colors duration-200 cursor-pointer"
-                      >
-                        <Phone className="w-4 h-4" />
-                        {enhancedPetData.secondEmergencyContact}
-                      </a>
-                    ) : (
-                      <p className="font-medium">{enhancedPetData.secondEmergencyContact}</p>
-                    );
-                  })()}
+                   {(() => {
+                     const phoneNumber = extractPhoneNumber(enhancedPetData.secondEmergencyContact);
+                     return phoneNumber ? (
+                       <div>
+                         <a 
+                           href={`tel:${formatPhoneForTel(phoneNumber)}`}
+                           className="font-medium flex items-center gap-2 hover:text-gold-300 transition-colors duration-200 cursor-pointer"
+                           aria-label="Call secondary emergency contact"
+                         >
+                           <Phone className="w-4 h-4" />
+                           {enhancedPetData.secondEmergencyContact}
+                         </a>
+                         <p className="text-xs text-gold-400 mt-1 ml-6">Tap to call</p>
+                       </div>
+                     ) : (
+                       <p className="font-medium">{enhancedPetData.secondEmergencyContact}</p>
+                     );
+                   })()}
                 </div>
               )}
               
               {enhancedPetData?.vetContact && (
                 <div className="p-3 bg-gradient-to-r from-navy-900 to-navy-800 text-gold-500 rounded-lg border border-gold-500/30">
                   <p className="text-gold-400 text-sm font-semibold tracking-wide mb-1">VETERINARIAN CONTACT</p>
-                  {(() => {
-                    const phoneNumber = extractPhoneNumber(enhancedPetData.vetContact);
-                    return phoneNumber ? (
-                      <a 
-                        href={`tel:${formatPhoneForTel(phoneNumber)}`}
-                        className="font-medium flex items-center gap-2 hover:text-gold-300 transition-colors duration-200 cursor-pointer"
-                      >
-                        <Phone className="w-4 h-4" />
-                        {enhancedPetData.vetContact}
-                      </a>
-                    ) : (
-                      <p className="font-medium">{enhancedPetData.vetContact}</p>
-                    );
-                  })()}
+                   {(() => {
+                     const phoneNumber = extractPhoneNumber(enhancedPetData.vetContact);
+                     return phoneNumber ? (
+                       <div>
+                         <a 
+                           href={`tel:${formatPhoneForTel(phoneNumber)}`}
+                           className="font-medium flex items-center gap-2 hover:text-gold-300 transition-colors duration-200 cursor-pointer"
+                           aria-label="Call veterinarian"
+                         >
+                           <Phone className="w-4 h-4" />
+                           {enhancedPetData.vetContact}
+                         </a>
+                         <p className="text-xs text-gold-400 mt-1 ml-6">Tap to call</p>
+                       </div>
+                     ) : (
+                       <p className="font-medium">{enhancedPetData.vetContact}</p>
+                     );
+                   })()}
                 </div>
               )}
               
               {enhancedPetData?.petCaretaker && (
                 <div className="p-3 bg-gradient-to-r from-navy-900 to-navy-800 text-gold-500 rounded-lg border border-gold-500/30">
                   <p className="text-gold-400 text-sm font-semibold tracking-wide mb-1">PET CARETAKER</p>
-                  {(() => {
-                    const phoneNumber = extractPhoneNumber(enhancedPetData.petCaretaker);
-                    return phoneNumber ? (
-                      <a 
-                        href={`tel:${formatPhoneForTel(phoneNumber)}`}
-                        className="font-medium flex items-center gap-2 hover:text-gold-300 transition-colors duration-200 cursor-pointer"
-                      >
-                        <Phone className="w-4 h-4" />
-                        {enhancedPetData.petCaretaker}
-                      </a>
-                    ) : (
-                      <p className="font-medium">{enhancedPetData.petCaretaker}</p>
-                    );
-                  })()}
+                   {(() => {
+                     const phoneNumber = extractPhoneNumber(enhancedPetData.petCaretaker);
+                     return phoneNumber ? (
+                       <div>
+                         <a 
+                           href={`tel:${formatPhoneForTel(phoneNumber)}`}
+                           className="font-medium flex items-center gap-2 hover:text-gold-300 transition-colors duration-200 cursor-pointer"
+                           aria-label="Call pet caretaker"
+                         >
+                           <Phone className="w-4 h-4" />
+                           {enhancedPetData.petCaretaker}
+                         </a>
+                         <p className="text-xs text-gold-400 mt-1 ml-6">Tap to call</p>
+                       </div>
+                     ) : (
+                       <p className="font-medium">{enhancedPetData.petCaretaker}</p>
+                     );
+                   })()}
                 </div>
               )}
               

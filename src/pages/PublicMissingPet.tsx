@@ -259,7 +259,20 @@ export default function PublicMissingPet() {
                   <Phone className="w-5 h-5 text-gold-500" />
                   <h3 className="font-semibold">Contact Information</h3>
                 </div>
-                <p className="font-medium">{petData.emergencyContact}</p>
+                {/\d{3}/.test(petData.emergencyContact) ? (
+                  <div>
+                    <a 
+                      href={`tel:${petData.emergencyContact.replace(/\D/g, '')}`}
+                      className="font-medium text-foreground hover:text-primary"
+                      aria-label="Call emergency contact"
+                    >
+                      {petData.emergencyContact}
+                    </a>
+                    <p className="text-xs text-muted-foreground mt-1">Tap to call</p>
+                  </div>
+                ) : (
+                  <p className="font-medium">{petData.emergencyContact}</p>
+                )}
               </div>
             )}
 

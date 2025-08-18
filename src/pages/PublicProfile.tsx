@@ -322,10 +322,13 @@ const PublicProfile = () => {
                         </a>
                       )}
                       {petData.organization_phone && (
-                        <a href={`tel:${petData.organization_phone}`} className="text-blue-600 hover:text-blue-800 underline flex items-center">
-                          <Phone className="w-4 h-4 mr-1" />
-                          {petData.organization_phone}
-                        </a>
+                        <div className="flex flex-col">
+                          <a href={`tel:${petData.organization_phone}`} className="text-blue-600 hover:text-blue-800 underline flex items-center">
+                            <Phone className="w-4 h-4 mr-1" />
+                            {petData.organization_phone}
+                          </a>
+                          <span className="text-xs text-blue-500 ml-5">Tap to call</span>
+                        </div>
                       )}
                       {petData.organization_website && (
                         <a href={petData.organization_website} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 underline flex items-center">

@@ -51,6 +51,12 @@ export const CareInstructionsSection = ({ petData }: CareInstructionsSectionProp
   const { toast } = useToast();
   const isHorse = petData.species?.toLowerCase() === 'horse';
 
+  // Generate QR code for public care URL
+  useEffect(() => {
+    const careUrl = generateCarePublicUrl();
+    setCareQrCodeUrl(generateQRCodeUrl(careUrl));
+  }, [petData.id]);
+
   // Load care instructions from database
   useEffect(() => {
     const loadCareInstructions = async () => {
@@ -98,9 +104,6 @@ export const CareInstructionsSection = ({ petData }: CareInstructionsSectionProp
       
       if (result.success && result.pdfBlob) {
         setCarePdfBlob(result.pdfBlob);
-        // Create a temporary URL for the QR code
-        const tempUrl = URL.createObjectURL(result.pdfBlob);
-        setCareQrCodeUrl(generateQRCodeUrl(tempUrl));
         setCareShareDialogOpen(true);
         
         toast({
@@ -320,7 +323,7 @@ export const CareInstructionsSection = ({ petData }: CareInstructionsSectionProp
                   </DialogHeader>
                   
                   <div className="space-y-6">
-                    {/* Public Care Instructions Link */}
+                     {/* Public Care Instructions Link */}
                      <div className="bg-white p-4 rounded-lg border border-sage-500/30 shadow-sm">
                        <h4 className="font-bold text-navy-900 mb-2 flex items-center gap-2">
                          <div className="w-6 h-6 bg-sage-500/20 rounded-full flex items-center justify-center">
@@ -329,6 +332,19 @@ export const CareInstructionsSection = ({ petData }: CareInstructionsSectionProp
                          Public Care Instructions
                        </h4>
                        <p className="text-sm text-navy-600 mb-3">Share detailed daily care info with pet sitters and caregivers. <strong>Profile must be public to share.</strong></p>
+                       
+                       {careQrCodeUrl && petData.is_public && (
+                         <div className="text-center mb-3">
+                           <img 
+                             src={careQrCodeUrl} 
+                             alt="Care Instructions QR Code" 
+                             className="border-2 border-sage-500/30 rounded-lg mx-auto"
+                             style={{width: '120px', height: '120px'}}
+                           />
+                           <p className="text-xs text-sage-600 mt-2">Scan to access care instructions</p>
+                         </div>
+                       )}
+
                       <Button
                         onClick={handleShareCareLink}
                         disabled={isSharing || !petData.is_public}
@@ -358,56 +374,47 @@ export const CareInstructionsSection = ({ petData }: CareInstructionsSectionProp
                       />
                     ) : null}
 
-                    {/* Care PDF */}
-                    {carePdfBlob && careQrCodeUrl && (
-                      <div className="bg-white p-4 rounded-lg border border-sage-500/30 shadow-sm">
-                        <h4 className="font-bold text-navy-900 mb-3">🌿 Care Instructions PDF</h4>
-                        <div className="text-center mb-3">
-                          <img 
-                            src={careQrCodeUrl} 
-                            alt="Care Instructions QR Code" 
-                            className="border-2 border-sage-500/30 rounded-lg mx-auto"
-                            style={{width: '120px', height: '120px'}}
-                          />
-                          <p className="text-xs text-sage-600 mt-2">Scan to view real-time care updates</p>
-                        </div>
-                        <div className="grid grid-cols-3 gap-2">
-                          <Button
-                            onClick={() => {
-                              if (carePdfBlob) {
-                                const url = URL.createObjectURL(carePdfBlob);
-                                window.open(url, '_blank');
-                              }
-                            }}
-                            variant="outline"
-                            size="sm"
-                            className="border-sage-500 text-sage-600 hover:bg-sage-50 font-semibold"
-                          >
-                            <Eye className="w-4 h-4 mr-1" />
-                            View
-                          </Button>
-                          <Button
-                            onClick={handleDownloadCarePDF}
-                            variant="outline"
-                            size="sm"
-                            className="border-navy-900 text-navy-900 hover:bg-navy-50"
-                          >
-                            <Download className="w-4 h-4 mr-1" />
-                            Download
-                          </Button>
-                          <Button
-                            onClick={handleShareCarePDF}
-                            variant="outline"
-                            size="sm"
-                            disabled={isSharing}
-                            className="border-navy-900 text-navy-900 hover:bg-navy-50"
-                          >
-                            <Share2 className="w-4 h-4 mr-1" />
-                            Share
-                          </Button>
-                        </div>
-                      </div>
-                    )}
+                     {/* Care PDF */}
+                     {carePdfBlob && (
+                       <div className="bg-white p-4 rounded-lg border border-sage-500/30 shadow-sm">
+                         <h4 className="font-bold text-navy-900 mb-3">🌿 Care Instructions PDF</h4>
+                         <div className="grid grid-cols-3 gap-2">
+                           <Button
+                             onClick={() => {
+                               if (carePdfBlob) {
+                                 const url = URL.createObjectURL(carePdfBlob);
+                                 window.open(url, '_blank');
+                               }
+                             }}
+                             variant="outline"
+                             size="sm"
+                             className="border-sage-500 text-sage-600 hover:bg-sage-50 font-semibold"
+                           >
+                             <Eye className="w-4 h-4 mr-1" />
+                             View
+                           </Button>
+                           <Button
+                             onClick={handleDownloadCarePDF}
+                             variant="outline"
+                             size="sm"
+                             className="border-navy-900 text-navy-900 hover:bg-navy-50"
+                           >
+                             <Download className="w-4 h-4 mr-1" />
+                             Download
+                           </Button>
+                           <Button
+                             onClick={handleShareCarePDF}
+                             variant="outline"
+                             size="sm"
+                             disabled={isSharing}
+                             className="border-navy-900 text-navy-900 hover:bg-navy-50"
+                           >
+                             <Share2 className="w-4 h-4 mr-1" />
+                             Share
+                           </Button>
+                         </div>
+                       </div>
+                     )}
 
                     {/* Direct Links */}
                     <div className="text-xs text-navy-500 space-y-1 bg-navy-50 p-3 rounded-lg">

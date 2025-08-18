@@ -6,7 +6,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Heart, Clock, Pill, Coffee, Moon, AlertTriangle, Edit, Loader2, FileText, Download, QrCode, Share2, ExternalLink, Eye, Phone } from "lucide-react";
 import { CareInstructionsEditForm } from "@/components/CareInstructionsEditForm";
 import { fetchCareInstructions } from "@/services/careInstructionsService";
-import { generateQRCodeUrl, shareProfile, shareProfileOptimized } from "@/services/pdfService";
+import { generateQRCodeUrl, shareProfile, shareProfileOptimized, sharePDFBlob } from "@/services/pdfService";
 import { generateClientPetPDF, downloadPDFBlob } from "@/services/clientPdfService";
 import { useToast } from "@/hooks/use-toast";
 import { SocialShareButtons } from "@/components/SocialShareButtons";
@@ -402,16 +402,33 @@ export const CareInstructionsSection = ({ petData }: CareInstructionsSectionProp
                              <Download className="w-4 h-4 mr-1" />
                              Download
                            </Button>
-                           <Button
-                             onClick={handleShareCarePDF}
-                             variant="outline"
-                             size="sm"
-                             disabled={isSharing}
-                             className="border-navy-900 text-navy-900 hover:bg-navy-50"
-                           >
-                             <Share2 className="w-4 h-4 mr-1" />
-                             Share
-                           </Button>
+                            <Button
+                              onClick={async () => {
+                                if (!carePdfBlob) return;
+                                const fileName = `PetPort_Care_Instructions_${petData.name}.pdf`;
+                                const result = await sharePDFBlob(carePdfBlob, fileName, petData.name, 'care');
+                                
+                                if (result.success) {
+                                  toast({
+                                    title: result.shared ? "Care PDF Shared!" : "Link Copied!",
+                                    description: result.message,
+                                  });
+                                } else if (result.error !== 'Share cancelled') {
+                                  toast({
+                                    title: "Unable to Share PDF",
+                                    description: result.error || "Please download and share manually.",
+                                    variant: "destructive",
+                                  });
+                                }
+                              }}
+                              variant="outline"
+                              size="sm"
+                              disabled={isSharing}
+                              className="border-navy-900 text-navy-900 hover:bg-navy-50"
+                            >
+                              <Share2 className="w-4 h-4 mr-1" />
+                              Share
+                            </Button>
                          </div>
                        </div>
                      )}

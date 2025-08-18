@@ -261,6 +261,91 @@ async function fallbackToClipboard(url: string): Promise<ShareResult> {
 }
 
 // Enhanced sharing with better mobile experience
+// PDF Sharing functionality with Web Share API and storage fallback
+export async function sharePDFBlob(
+  pdfBlob: Blob,
+  fileName: string,
+  petName: string,
+  contentType: 'profile' | 'care' | 'emergency' | 'credentials' | 'reviews' = 'profile'
+): Promise<ShareResult> {
+  // Try Web Share API first (mobile browsers)
+  if (navigator.share && navigator.canShare) {
+    try {
+      const file = new File([pdfBlob], fileName, { type: 'application/pdf' });
+      const shareData = {
+        title: `${petName}'s ${contentType} PDF`,
+        text: `${petName}'s ${contentType} information`,
+        files: [file]
+      };
+      
+      if (navigator.canShare(shareData)) {
+        await navigator.share(shareData);
+        return { success: true, shared: true, message: 'PDF shared successfully' };
+      }
+    } catch (error: any) {
+      console.error('Native PDF sharing failed:', error);
+      if (error?.name === 'AbortError' || error?.message?.toLowerCase?.().includes('cancel')) {
+        return { success: false, shared: false, error: 'Share cancelled' };
+      }
+    }
+  }
+  
+  // Fallback: upload to storage and share URL
+  try {
+    const { supabase } = await import("@/integrations/supabase/client");
+    const { data: { user } } = await supabase.auth.getUser();
+    
+    if (!user) {
+      throw new Error('User must be authenticated to share PDFs');
+    }
+    
+    // Create unique file path
+    const timestamp = Date.now();
+    const filePath = `${user.id}/${timestamp}_${fileName}`;
+    
+    // Upload PDF to storage
+    const { data, error } = await supabase.storage
+      .from('shared_exports')
+      .upload(filePath, pdfBlob, {
+        contentType: 'application/pdf',
+        cacheControl: '3600' // 1 hour cache
+      });
+    
+    if (error) throw error;
+    
+    // Create signed URL (valid for 7 days)
+    const { data: signedUrlData, error: signedUrlError } = await supabase.storage
+      .from('shared_exports')
+      .createSignedUrl(filePath, 60 * 60 * 24 * 7); // 7 days
+    
+    if (signedUrlError) throw signedUrlError;
+    
+    // Share the signed URL
+    const title = `${petName}'s ${contentType} PDF`;
+    const description = `Download ${petName}'s ${contentType} information`;
+    
+    const shareResult = await shareProfile(signedUrlData.signedUrl, title, description);
+    
+    // Clean up file after sharing (background task)
+    setTimeout(async () => {
+      try {
+        await supabase.storage.from('shared_exports').remove([filePath]);
+      } catch (error) {
+        console.error('Failed to clean up shared PDF:', error);
+      }
+    }, 60 * 60 * 1000); // Clean up after 1 hour
+    
+    return shareResult;
+  } catch (error) {
+    console.error('PDF sharing fallback failed:', error);
+    return { 
+      success: false, 
+      shared: false, 
+      error: 'Unable to share PDF. Please download and share manually.' 
+    };
+  }
+}
+
 export async function shareProfileOptimized(
   url: string, 
   petName: string, 

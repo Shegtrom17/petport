@@ -4,7 +4,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { Download, Share, Eye, AlertTriangle, FileText } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { useToast } from "@/hooks/use-toast";
-import { shareProfile, generatePublicMissingUrl, generateQRCodeUrl } from "@/services/pdfService";
+import { shareProfile, generatePublicMissingUrl, generateQRCodeUrl, sharePDFBlob } from "@/services/pdfService";
 import { generateClientPetPDF, downloadPDFBlob, viewPDFBlob } from "@/services/clientPdfService";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 
@@ -250,13 +250,30 @@ const ButtonIcon = buttonIcon;
               </Button>
               
               <Button 
-                onClick={handleShare} 
+                onClick={async () => {
+                  if (!pdfBlob) return;
+                  const fileName = `${petName.replace(/[^a-zA-Z0-9]/g, '_')}_Missing_Pet_Flyer.pdf`;
+                  const result = await sharePDFBlob(pdfBlob, fileName, petName, 'profile');
+                  
+                  if (result.success) {
+                    toast({
+                      title: result.shared ? "Missing Pet Flyer Shared!" : "Link Copied!",
+                      description: result.message,
+                    });
+                  } else if (result.error !== 'Share cancelled') {
+                    toast({
+                      title: "Unable to Share PDF",
+                      description: result.error || "Please download and share manually.",
+                      variant: "destructive",
+                    });
+                  }
+                }} 
                 variant="outline" 
                 disabled={isSharing}
                 className="justify-start"
               >
                 <Share className="w-4 h-4 mr-2" />
-                {isSharing ? 'Sharing...' : 'Share Alert'}
+                {isSharing ? 'Sharing...' : 'Share PDF'}
               </Button>
             </div>
 

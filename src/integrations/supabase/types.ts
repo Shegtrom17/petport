@@ -7,7 +7,7 @@ export type Json =
   | Json[]
 
 export type Database = {
-  // Allows to automatically instanciate createClient with right options
+  // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
     PostgrestVersion: "12.2.3 (519615d)"
@@ -1015,59 +1015,59 @@ export type Database = {
       }
       handle_care_instructions_upsert: {
         Args: {
-          _pet_id: string
-          _feeding_schedule?: string
-          _morning_routine?: string
-          _evening_routine?: string
           _allergies?: string
           _behavioral_notes?: string
+          _evening_routine?: string
           _favorite_activities?: string
+          _feeding_schedule?: string
+          _morning_routine?: string
+          _pet_id: string
         }
         Returns: string
       }
       handle_document_upload: {
         Args: {
-          _pet_id: string
-          _name: string
-          _type: string
           _file_url: string
+          _name: string
+          _pet_id: string
           _size?: string
+          _type: string
         }
         Returns: string
       }
       handle_gallery_photo_upload: {
-        Args: { _pet_id: string; _url: string; _caption?: string }
+        Args: { _caption?: string; _pet_id: string; _url: string }
         Returns: string
       }
       handle_lost_pet_data_upsert: {
         Args: {
-          _pet_id: string
-          _is_missing?: boolean
-          _last_seen_location?: string
-          _last_seen_date?: string
-          _last_seen_time?: string
-          _distinctive_features?: string
-          _reward_amount?: string
-          _finder_instructions?: string
           _contact_priority?: string
+          _distinctive_features?: string
           _emergency_notes?: string
+          _finder_instructions?: string
+          _is_missing?: boolean
+          _last_seen_date?: string
+          _last_seen_location?: string
+          _last_seen_time?: string
+          _pet_id: string
+          _reward_amount?: string
         }
         Returns: string
       }
       handle_photo_upload: {
         Args: {
+          _full_body_photo_url?: string
           _pet_id: string
           _photo_url?: string
-          _full_body_photo_url?: string
         }
         Returns: string
       }
       is_org_admin: {
-        Args: { _user_id: string; _org_id: string }
+        Args: { _org_id: string; _user_id: string }
         Returns: boolean
       }
       is_org_member: {
-        Args: { _user_id: string; _org_id: string }
+        Args: { _org_id: string; _user_id: string }
         Returns: boolean
       }
       is_pet_missing: {

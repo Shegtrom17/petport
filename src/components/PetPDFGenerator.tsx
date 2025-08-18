@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { FileText, Download, Share2, Loader2, Users, ExternalLink, LogIn, AlertTriangle, Eye } from "lucide-react";
-import { generateQRCodeUrl, generatePublicProfileUrl, shareProfileOptimized } from "@/services/pdfService";
+import { generateQRCodeUrl, generatePublicProfileUrl, shareProfileOptimized, sharePDFBlob } from "@/services/pdfService";
 import { generateClientPetPDF } from "@/services/clientPdfService";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/context/AuthContext";
@@ -290,7 +290,7 @@ export const PetPDFGenerator = ({ petId, petName, petData }: PetPDFGeneratorProp
                   <h4 className="font-bold text-navy-900 mb-3">
                     {selectedPdfType === 'emergency' ? 'Emergency Profile PDF' : 'Complete Profile PDF'}
                   </h4>
-                  <div className="flex flex-col sm:flex-row gap-2 justify-center mb-3">
+                  <div className="grid grid-cols-3 gap-2 justify-center mb-3">
                     <Button
                       onClick={() => {
                         const url = URL.createObjectURL(generatedPdfBlob);
@@ -298,10 +298,11 @@ export const PetPDFGenerator = ({ petId, petName, petData }: PetPDFGeneratorProp
                         URL.revokeObjectURL(url);
                       }}
                       variant="outline"
+                      size="sm"
                       className="border-gold-500 text-gold-600 hover:bg-gold-50"
                     >
-                      <Eye className="w-4 h-4 mr-2" />
-                      View PDF
+                      <Eye className="w-4 h-4 mr-1" />
+                      View
                     </Button>
                     <Button
                       onClick={() => {
@@ -314,10 +315,40 @@ export const PetPDFGenerator = ({ petId, petName, petData }: PetPDFGeneratorProp
                         document.body.removeChild(a);
                         URL.revokeObjectURL(a.href);
                       }}
+                      variant="outline"
+                      size="sm"
                       className="bg-gradient-to-r from-gold-500 to-gold-400 text-navy-900 hover:from-gold-400 hover:to-gold-300"
                     >
-                      <Download className="w-4 h-4 mr-2" />
-                      Download PDF
+                      <Download className="w-4 h-4 mr-1" />
+                      Download
+                    </Button>
+                    <Button
+                      onClick={async () => {
+                        if (!generatedPdfBlob) return;
+                        const fileName = `PetPort_${selectedPdfType === 'emergency' ? 'Emergency' : 'Complete'}_Profile_${petName}.pdf`;
+                        const contentType = selectedPdfType === 'emergency' ? 'emergency' : 'profile';
+                        const result = await sharePDFBlob(generatedPdfBlob, fileName, petName, contentType);
+                        
+                        if (result.success) {
+                          toast({
+                            title: result.shared ? "PDF Shared!" : "Link Copied!",
+                            description: result.message,
+                          });
+                        } else if (result.error !== 'Share cancelled') {
+                          toast({
+                            title: "Unable to Share PDF",
+                            description: result.error || "Please download and share manually.",
+                            variant: "destructive",
+                          });
+                        }
+                      }}
+                      variant="outline"
+                      size="sm"
+                      disabled={isSharing}
+                      className="border-navy-900 text-navy-900 hover:bg-navy-50"
+                    >
+                      <Share2 className="w-4 h-4 mr-1" />
+                      Share
                     </Button>
                   </div>
                 </div>

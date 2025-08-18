@@ -7,6 +7,8 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { ReportIssueModal } from "@/components/ReportIssueModal";
 import { Link } from "react-router-dom";
 import { MetaTags } from "@/components/MetaTags";
+import { PWALayout } from "@/components/PWALayout";
+import { AppHeader } from "@/components/AppHeader";
 
 const Help = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -103,18 +105,19 @@ const Help = () => {
   );
 
   return (
-    <>
+    <PWALayout>
       <MetaTags 
         title="Help Center - PetPort"
         description="Find answers to common questions about using PetPort. Get help with QR codes, lost pets, privacy settings, and more."
         url="/help"
       />
       
-      <div className="min-h-screen bg-background pb-20">
+      <AppHeader title="Help Center" showBack={true} />
+      
+      <div className="min-h-screen bg-background">
         <div className="container mx-auto px-4 py-6 max-w-4xl">
           {/* Header */}
           <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-foreground mb-2">Help Center</h1>
             <p className="text-muted-foreground">
               Find answers to your questions or get support
             </p>
@@ -210,7 +213,7 @@ const Help = () => {
         isOpen={showReportModal} 
         onClose={() => setShowReportModal(false)} 
       />
-    </>
+    </PWALayout>
   );
 };
 

@@ -325,7 +325,10 @@ export const PetGallerySection = ({ petData, onUpdate }: PetGallerySectionProps)
               </div>
               {galleryPhotos.length > 0 && (
                 <div 
-                  onClick={() => setShowShareOptions(!showShareOptions)}
+                  onClick={() => {
+                    console.log('Share Gallery clicked, current showShareOptions:', showShareOptions);
+                    setShowShareOptions(!showShareOptions);
+                  }}
                   className="cursor-pointer flex items-center justify-center text-white hover:text-yellow-300 hover:scale-110 transition-all duration-200 text-xs sm:text-base px-2 sm:px-4 py-2"
                 >
                   <Share2 className="w-3 h-3 sm:w-5 sm:h-5 mr-1 sm:mr-2" />

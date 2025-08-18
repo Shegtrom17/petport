@@ -453,7 +453,7 @@ export const DocumentsSection = ({ petId, petName, documents, onDocumentDeleted 
                     <Button 
                       variant="ghost" 
                       size="sm" 
-                      className="hover:bg-blue-50 text-blue-600 px-1 sm:px-2 text-xs sm:text-sm"
+                      className="hover:bg-navy-50 text-navy-800 px-1 sm:px-2 text-xs sm:text-sm"
                       onClick={() => handleShareDocument(doc)}
                       title="Share document"
                     >

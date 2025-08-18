@@ -215,7 +215,7 @@ export const DocumentShareDialog = ({
               <Button
                 onClick={handleNativeShare}
                 disabled={isSharing}
-                className="w-full h-12 text-base font-semibold bg-blue-600 hover:bg-blue-700 text-white"
+                className="w-full h-10 text-sm font-semibold bg-blue-600 hover:bg-blue-700 text-white"
               >
                 {isSharing ? (
                   <>
@@ -234,18 +234,19 @@ export const DocumentShareDialog = ({
               <Button
                 onClick={() => setShowEmailForm(true)}
                 variant="outline"
-                className="w-full h-12 text-base font-semibold border-2 border-green-500 text-green-700 hover:bg-green-50"
+                className="w-full h-10 text-sm font-semibold border-2 border-green-500 text-green-700 hover:bg-green-50"
               >
                 <Mail className="w-5 h-5 mr-2" />
                 📧 Share via Email
               </Button>
 
               {/* Other sharing options */}
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-2 gap-1">
                 <Button
                   onClick={handleCopyLink}
                   variant="outline"
-                  className="w-full"
+                  size="sm"
+                  className="w-full text-xs"
                 >
                   {copied ? <Check className="w-4 h-4 mr-1" /> : <Copy className="w-4 h-4 mr-1" />}
                   {copied ? 'Copied!' : 'Copy Link'}
@@ -254,7 +255,8 @@ export const DocumentShareDialog = ({
                 <Button
                   onClick={handleSMSShare}
                   variant="outline"
-                  className="w-full"
+                  size="sm"
+                  className="w-full text-xs"
                 >
                   <MessageCircle className="w-4 h-4 mr-1" />
                   Text/SMS
@@ -263,7 +265,8 @@ export const DocumentShareDialog = ({
                 <Button
                   onClick={handleFacebookShare}
                   variant="outline"
-                  className="w-full bg-[#1877F2] hover:bg-[#166FE5] text-white border-[#1877F2]"
+                  size="sm"
+                  className="w-full bg-[#1877F2] hover:bg-[#166FE5] text-white border-[#1877F2] text-xs"
                 >
                   <Facebook className="w-4 h-4 mr-1" />
                   Facebook
@@ -272,7 +275,8 @@ export const DocumentShareDialog = ({
                 <Button
                   onClick={handleMessengerShare}
                   variant="outline"
-                  className="w-full"
+                  size="sm"
+                  className="w-full text-xs"
                 >
                   <MessageCircle className="w-4 h-4 mr-1" />
                   Messenger
@@ -282,7 +286,8 @@ export const DocumentShareDialog = ({
               <Button
                 onClick={handleXShare}
                 variant="outline"
-                className="w-full bg-black hover:bg-gray-800 text-white border-black"
+                size="sm"
+                className="w-full bg-black hover:bg-gray-800 text-white border-black text-xs"
               >
                 <X className="w-4 h-4 mr-1" />
                 X/Twitter

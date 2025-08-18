@@ -54,12 +54,12 @@ const Help = () => {
     {
       id: "qr-codes",
       question: "How do QR codes work?",
-      answer: "Each pet profile generates a unique QR code that links to their public profile. Anyone can scan this code to view your pet's information, making it perfect for pet tags, sharing with sitters, or emergency situations."
+      answer: "Each pet profile generates a unique QR code that links to their public profile. Anyone can scan this code to view your pet's information, making it perfect for pet tags, sharing with sitters, or emergency situations. Note: Your pet's profile must be set to public (using the toggle at the top of the profile) for QR codes to work properly."
     },
     {
       id: "lost-pet",
       question: "What should I do if my pet goes missing?",
-      answer: "Immediately go to the 'Lost Pet' section and mark your pet as missing. This will generate a missing pet poster with QR codes that you can print and share. The poster includes your contact information and your pet's photo and details."
+      answer: "Immediately go to the 'Lost Pet' section and mark your pet as missing. This will generate a missing pet poster with QR codes that you can print and share. The poster includes your contact information and your pet's photo and details. Important: Make sure your pet's profile is set to public (using the toggle at the top) so people can access the information when they scan the QR code."
     },
     {
       id: "privacy",
@@ -79,12 +79,12 @@ const Help = () => {
     {
       id: "sharing",
       question: "How do I share my pet's profile?",
-      answer: "You can share your pet's profile via QR code, direct link, or by using the share button in the app. Recipients can view the information you've made public without needing an account."
+      answer: "You can share your pet's profile via QR code, direct link, or by using the share button in the app. Recipients can view the information you've made public without needing an account. Remember: You must toggle your pet's profile to public (using the switch at the top of the profile) before sharing for others to access the information."
     },
     {
       id: "emergency-contact",
       question: "How do emergency contacts work?",
-      answer: "Add emergency contacts in your pet's profile. When someone scans your pet's QR code, they can see these contacts if your pet is marked as missing, helping reunite you quickly."
+      answer: "Add emergency contacts in your pet's profile. When someone scans your pet's QR code, they can see these contacts if your pet is marked as missing, helping reunite you quickly. Make sure your pet's profile is set to public so emergency contacts can access this vital information."
     },
     {
       id: "subscription",

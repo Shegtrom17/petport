@@ -26,10 +26,26 @@ const generateEmailTemplate = (data: EmailRequest) => {
   const greeting = recipientName ? `Hi ${recipientName},` : 'Hello,';
   const sender = senderName || 'A PetPort user';
   
+  // Check if this is document sharing based on custom message
+  const isDocumentShare = customMessage && (
+    customMessage.includes('document') || 
+    customMessage.includes('vaccination') || 
+    customMessage.includes('insurance') || 
+    customMessage.includes('medical') ||
+    customMessage.includes('certificate')
+  );
+
   const templates = {
     profile: {
-      subject: `${sender} shared ${petName}'s PetPort profile with you`,
-      content: `
+      subject: isDocumentShare 
+        ? `📄 Document from ${petName} - Shared via PetPort`
+        : `${sender} shared ${petName}'s PetPort profile with you`,
+      content: isDocumentShare ? `
+        <h2>📄 Document Shared: ${petName}</h2>
+        <p>${sender} has shared a document with you for ${petName}.</p>
+        ${customMessage ? `<blockquote style="border-left: 4px solid #3b82f6; padding-left: 16px; margin: 16px 0; font-style: italic; background-color: #f8fafc;">"${customMessage}"</blockquote>` : ''}
+        <p style="color: #4b5563;">Click the button below to view or download the document.</p>
+      ` : `
         <h2>${petName}'s Pet Profile</h2>
         <p>${sender} thought you'd like to see ${petName}'s complete pet profile and information.</p>
         ${customMessage ? `<blockquote style="border-left: 4px solid #e2e8f0; padding-left: 16px; margin: 16px 0; font-style: italic;">"${customMessage}"</blockquote>` : ''}
@@ -106,9 +122,17 @@ const generateEmailTemplate = (data: EmailRequest) => {
           <div style="text-align: center; margin: 30px 0;">
             <a href="${shareUrl}" 
                style="display: inline-block; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; text-decoration: none; padding: 15px 30px; border-radius: 8px; font-weight: bold; font-size: 16px;">
-              View ${petName}'s ${type === 'profile' ? 'Profile' : type === 'missing_pet' ? 'Missing Pet Alert' : type.charAt(0).toUpperCase() + type.slice(1)}
+              ${isDocumentShare ? '📄 View Document' : `View ${petName}'s ${type === 'profile' ? 'Profile' : type === 'missing_pet' ? 'Missing Pet Alert' : type.charAt(0).toUpperCase() + type.slice(1)}`}
             </a>
           </div>
+          
+          ${isDocumentShare ? `
+            <div style="background-color: #f0f9ff; border: 1px solid #0ea5e9; border-radius: 8px; padding: 15px; margin: 20px 0;">
+              <p style="margin: 0; color: #0c4a6e; font-size: 14px;">
+                <strong>💡 Tip:</strong> You can download this document by clicking the link above, then using your browser's download option.
+              </p>
+            </div>
+          ` : ''}
           
           <div style="border-top: 1px solid #e5e7eb; padding-top: 20px; margin-top: 30px; text-align: center; color: #6b7280; font-size: 14px;">
             <p>This email was sent via PetPort - Digital Pet Passport & Care Platform</p>

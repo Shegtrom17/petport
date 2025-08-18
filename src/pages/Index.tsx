@@ -241,6 +241,7 @@ const Index = () => {
         console.log("Rendering DocumentsSection");
         return <DocumentsSection 
           petId={selectedPet?.id || petData.id || ""} 
+          petName={selectedPet?.name || petData.name || 'Your Pet'}
           documents={documents} 
           onDocumentDeleted={handleDocumentUpdate}
         />;

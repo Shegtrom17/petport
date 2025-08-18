@@ -6,7 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { FileText, Upload, Download, Eye, Trash2, Loader2, Camera, Shield, Syringe, Receipt, Heart, FileArchive, FolderOpen, IdCard, Plane, Share2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { shareProfile } from "@/services/pdfService";
+import { DocumentShareDialog } from "@/components/DocumentShareDialog";
 
 
 interface Document {
@@ -20,6 +20,7 @@ interface Document {
 
 interface DocumentsSectionProps {
   petId: string;
+  petName: string; // Add pet name prop
   documents: Document[];
   onDocumentDeleted: () => void;
 }
@@ -42,10 +43,10 @@ const getCategoryInfo = (category: string) => {
   );
 };
 
-export const DocumentsSection = ({ petId, documents, onDocumentDeleted }: DocumentsSectionProps) => {
+export const DocumentsSection = ({ petId, petName, documents, onDocumentDeleted }: DocumentsSectionProps) => {
   const [deletingDocId, setDeletingDocId] = useState<string | null>(null);
   const [viewingDocId, setViewingDocId] = useState<string | null>(null);
-  const [sharingDocId, setSharingDocId] = useState<string | null>(null);
+  const [shareDialogDoc, setShareDialogDoc] = useState<Document | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<string>('misc');
   const [filterCategory, setFilterCategory] = useState<string>('all');
@@ -133,41 +134,9 @@ export const DocumentsSection = ({ petId, documents, onDocumentDeleted }: Docume
     }
   };
 
-  const handleShareDocument = async (doc: Document) => {
-    setSharingDocId(doc.id);
-    
-    try {
-      console.log("Sharing document:", doc.name, "URL:", doc.file_url);
-      
-      const categoryInfo = getCategoryInfo(doc.type);
-      const title = `${doc.name}`;
-      const description = `${categoryInfo.label} document - ${doc.name}`;
-      
-      const result = await shareProfile(doc.file_url, title, description);
-      
-      if (result.success) {
-        toast({
-          title: result.shared ? "Document Shared!" : "Link Copied!",
-          description: result.shared 
-            ? `${doc.name} shared successfully` 
-            : `Document link copied to clipboard`,
-        });
-      } else {
-        if (result.error === 'Share cancelled') {
-          return; // Don't show error for user cancellation
-        }
-        throw new Error(result.error || 'Sharing failed');
-      }
-    } catch (error) {
-      console.error("Error sharing document:", error);
-      toast({
-        variant: "destructive",
-        title: "Unable to Share",
-        description: "Please try again or copy the link manually.",
-      });
-    } finally {
-      setSharingDocId(null);
-    }
+  const handleShareDocument = (doc: Document) => {
+    console.log("Opening share dialog for document:", doc.name);
+    setShareDialogDoc(doc);
   };
 
   const handleCameraCapture = () => {
@@ -486,14 +455,9 @@ export const DocumentsSection = ({ petId, documents, onDocumentDeleted }: Docume
                       size="sm" 
                       className="hover:bg-blue-50 text-blue-600 px-1 sm:px-2 text-xs sm:text-sm"
                       onClick={() => handleShareDocument(doc)}
-                      disabled={sharingDocId === doc.id}
                       title="Share document"
                     >
-                      {sharingDocId === doc.id ? (
-                        <Loader2 className="w-3 h-3 sm:w-4 sm:h-4 animate-spin" />
-                      ) : (
-                        <Share2 className="w-3 h-3 sm:w-4 sm:h-4" />
-                      )}
+                      <Share2 className="w-3 h-3 sm:w-4 sm:h-4" />
                     </Button>
                     <Button 
                       variant="ghost" 
@@ -516,6 +480,17 @@ export const DocumentsSection = ({ petId, documents, onDocumentDeleted }: Docume
           </div>
         </CardContent>
       </Card>
+
+      {/* Document Share Dialog */}
+      {shareDialogDoc && (
+        <DocumentShareDialog
+          document={shareDialogDoc}
+          petName={petName}
+          petId={petId}
+          isOpen={!!shareDialogDoc}
+          onClose={() => setShareDialogDoc(null)}
+        />
+      )}
     </div>
   );
 };

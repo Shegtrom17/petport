@@ -268,8 +268,10 @@ export async function sharePDFBlob(
   petName: string,
   contentType: 'profile' | 'care' | 'emergency' | 'credentials' | 'reviews' = 'profile'
 ): Promise<ShareResult> {
-  // Try Web Share API first (mobile browsers)
-  if (navigator.share && navigator.canShare) {
+  console.log('📤 Starting PDF share process...', { fileName, petName, contentType });
+  
+  // Try Web Share API first (mobile browsers that support file sharing)
+  if (navigator.share) {
     try {
       const file = new File([pdfBlob], fileName, { type: 'application/pdf' });
       const shareData = {
@@ -278,20 +280,27 @@ export async function sharePDFBlob(
         files: [file]
       };
       
-      if (navigator.canShare(shareData)) {
+      // Check if file sharing is supported
+      if (navigator.canShare && navigator.canShare(shareData)) {
+        console.log('📱 Using native file sharing...');
         await navigator.share(shareData);
         return { success: true, shared: true, message: 'PDF shared successfully' };
+      } else {
+        console.log('📱 File sharing not supported, trying text sharing...');
+        // Fallback to storage + text sharing
       }
     } catch (error: any) {
       console.error('Native PDF sharing failed:', error);
       if (error?.name === 'AbortError' || error?.message?.toLowerCase?.().includes('cancel')) {
         return { success: false, shared: false, error: 'Share cancelled' };
       }
+      // Continue to fallback
     }
   }
   
   // Fallback: upload to storage and share URL
   try {
+    console.log('☁️ Using storage fallback for PDF sharing...');
     const { supabase } = await import("@/integrations/supabase/client");
     const { data: { user } } = await supabase.auth.getUser();
     
@@ -301,7 +310,10 @@ export async function sharePDFBlob(
     
     // Create unique file path
     const timestamp = Date.now();
-    const filePath = `${user.id}/${timestamp}_${fileName}`;
+    const sanitizedFileName = fileName.replace(/[^a-zA-Z0-9.-]/g, '_');
+    const filePath = `${user.id}/${timestamp}_${sanitizedFileName}`;
+    
+    console.log('📤 Uploading PDF to storage...', { filePath });
     
     // Upload PDF to storage
     const { data, error } = await supabase.storage
@@ -311,14 +323,24 @@ export async function sharePDFBlob(
         cacheControl: '3600' // 1 hour cache
       });
     
-    if (error) throw error;
+    if (error) {
+      console.error('Storage upload failed:', error);
+      throw error;
+    }
+    
+    console.log('✅ PDF uploaded successfully, creating signed URL...');
     
     // Create signed URL (valid for 7 days)
     const { data: signedUrlData, error: signedUrlError } = await supabase.storage
       .from('shared_exports')
       .createSignedUrl(filePath, 60 * 60 * 24 * 7); // 7 days
     
-    if (signedUrlError) throw signedUrlError;
+    if (signedUrlError) {
+      console.error('Signed URL creation failed:', signedUrlError);
+      throw signedUrlError;
+    }
+    
+    console.log('🔗 Signed URL created, attempting to share...');
     
     // Share the signed URL
     const title = `${petName}'s ${contentType} PDF`;
@@ -326,23 +348,51 @@ export async function sharePDFBlob(
     
     const shareResult = await shareProfile(signedUrlData.signedUrl, title, description);
     
-    // Clean up file after sharing (background task)
+    // Clean up file after 1 hour (background cleanup)
     setTimeout(async () => {
       try {
+        console.log('🧹 Cleaning up shared PDF file...');
         await supabase.storage.from('shared_exports').remove([filePath]);
       } catch (error) {
         console.error('Failed to clean up shared PDF:', error);
       }
     }, 60 * 60 * 1000); // Clean up after 1 hour
     
-    return shareResult;
+    return {
+      ...shareResult,
+      message: shareResult.shared 
+        ? 'PDF uploaded and shared successfully!' 
+        : 'PDF uploaded - download link copied to clipboard!'
+    };
   } catch (error) {
     console.error('PDF sharing fallback failed:', error);
-    return { 
-      success: false, 
-      shared: false, 
-      error: 'Unable to share PDF. Please download and share manually.' 
-    };
+    
+    // Final fallback: create temporary download URL
+    try {
+      console.log('💾 Using final fallback - temporary download...');
+      const tempUrl = URL.createObjectURL(pdfBlob);
+      const a = document.createElement('a');
+      a.href = tempUrl;
+      a.download = fileName;
+      a.style.display = 'none';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(tempUrl);
+      
+      return { 
+        success: true, 
+        shared: false, 
+        message: 'PDF downloaded - you can now share the file manually' 
+      };
+    } catch (downloadError) {
+      console.error('Final fallback failed:', downloadError);
+      return { 
+        success: false, 
+        shared: false, 
+        error: 'Unable to share PDF. Please try downloading and sharing manually.' 
+      };
+    }
   }
 }
 

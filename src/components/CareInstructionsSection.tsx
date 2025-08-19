@@ -571,7 +571,7 @@ export const CareInstructionsSection = ({ petData }: CareInstructionsSectionProp
         </CardHeader>
         <CardContent className="space-y-3">
           <div className="p-3 bg-red-50 rounded border border-red-200">
-            <h4 className="font-medium text-red-900 mb-1">Allergies & Sensitivities</h4>
+            <h4 className="font-medium text-red-900 mb-1">Allergies & Restrictions</h4>
             <p className="text-sm text-red-800">
               {careData?.allergies || (isHorse 
                 ? "Sensitive to alfalfa - stick to timothy hay only. No moldy or dusty feed."

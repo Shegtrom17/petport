@@ -1332,6 +1332,30 @@ const generateCarePDF = async (doc: jsPDF, pageManager: PDFPageManager, petData:
     }
   }
   
+  // Quick Contacts - Essential for caregivers
+  addSection(doc, pageManager, 'QUICK CONTACTS', () => {
+    if (petData.emergencyContact) {
+      addText(doc, pageManager, `Emergency Contact: ${safeText(petData.emergencyContact)}`);
+    }
+    if (petData.ownerPhone) {
+      addText(doc, pageManager, `Owner Phone: ${safeText(petData.ownerPhone)}`);
+    }
+    if (petData.vetPhone) {
+      addText(doc, pageManager, `Veterinarian: ${safeText(petData.vetPhone)}`);
+    }
+    if (petData.alternateContact) {
+      addText(doc, pageManager, `Alternate Contact: ${safeText(petData.alternateContact)}`);
+    }
+    
+    pageManager.addY(10);
+    addText(doc, pageManager, "Pet Profile Link:");
+    const profileUrl = `https://petport.app/profile/${petData.id}`;
+    addText(doc, pageManager, profileUrl);
+    
+    pageManager.addY(5);
+    addText(doc, pageManager, "QR Code for quick access available on the digital profile");
+  });
+  
   // Footer
   addFooterBottom(doc, pageManager, [
     'Petport.app - The Ultimate Digital Pet Portfolio',

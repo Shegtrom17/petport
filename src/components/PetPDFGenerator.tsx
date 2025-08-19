@@ -60,14 +60,14 @@ export const PetPDFGenerator = ({ petId, petName, petData }: PetPDFGeneratorProp
     try {
       const result = await generateClientPetPDF(petData, selectedPdfType);
 
-      if (result.success && result.pdfBlob) {
-        setGeneratedPdfBlob(result.pdfBlob);
+      if (result.success && result.blob) {
+        setGeneratedPdfBlob(result.blob);
         
         if (action === 'download') {
           // Direct download
           const fileName = `${petName}_${selectedPdfType}_profile.pdf`;
           const a = document.createElement('a');
-          a.href = URL.createObjectURL(result.pdfBlob);
+          a.href = URL.createObjectURL(result.blob);
           a.download = fileName;
           document.body.appendChild(a);
           a.click();
@@ -311,9 +311,7 @@ export const PetPDFGenerator = ({ petId, petName, petData }: PetPDFGeneratorProp
                   <div className="grid grid-cols-3 gap-2 justify-center mb-3">
                     <Button
                       onClick={() => {
-                        const url = URL.createObjectURL(generatedPdfBlob);
-                        window.open(url, '_blank')?.focus();
-                        URL.revokeObjectURL(url);
+                        setIsPDFPreviewOpen(true);
                       }}
                       variant="outline"
                       size="sm"

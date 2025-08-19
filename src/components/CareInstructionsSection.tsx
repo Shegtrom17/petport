@@ -561,12 +561,12 @@ export const CareInstructionsSection = ({ petData }: CareInstructionsSectionProp
         </CardContent>
       </Card>
 
-      {/* Emergency & Important Notes */}
-      <Card className="border-0 shadow-lg bg-passport-section-bg backdrop-blur-sm border-l-4 border-red-500">
+      {/* Important Notes */}
+      <Card className="border-0 shadow-lg bg-passport-section-bg backdrop-blur-sm">
         <CardHeader>
-          <CardTitle className="flex items-center space-x-2 text-red-700">
+          <CardTitle className="flex items-center space-x-2">
             <AlertTriangle className="w-5 h-5" />
-            <span>Emergency & Important Notes</span>
+            <span>Important Notes</span>
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">

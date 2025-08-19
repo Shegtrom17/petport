@@ -5,8 +5,9 @@ import { Download, Share, Eye, AlertTriangle, FileText } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import { shareProfile, generatePublicMissingUrl, generateQRCodeUrl, sharePDFBlob } from "@/services/pdfService";
-import { generateClientPetPDF, downloadPDFBlob, viewPDFBlob } from "@/services/clientPdfService";
+import { generateClientPetPDF, downloadPDFBlob, createPDFPreviewUrl } from "@/services/clientPdfService";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { PDFPreviewDialog } from "@/components/PDFPreviewDialog";
 
 interface LostPetPDFGeneratorProps {
   petId: string;
@@ -23,6 +24,7 @@ export const LostPetPDFGenerator = ({ petId, petName, isActive, petData }: LostP
   const [isSharing, setIsSharing] = useState(false);
   const [pdfBlob, setPdfBlob] = useState<Blob | null>(null);
   const [authError, setAuthError] = useState(false);
+  const [isPDFPreviewOpen, setIsPDFPreviewOpen] = useState(false);
 
   const handleGenerateFlyer = async () => {
     if (!user) {
@@ -85,8 +87,7 @@ export const LostPetPDFGenerator = ({ petId, petName, isActive, petData }: LostP
 
   const handleView = async () => {
     if (pdfBlob) {
-      const filename = `${petName.replace(/[^a-zA-Z0-9]/g, '_')}_Missing_Pet_Flyer.pdf`;
-      await viewPDFBlob(pdfBlob, filename);
+      setIsPDFPreviewOpen(true);
     }
   };
 
@@ -300,6 +301,46 @@ const ButtonIcon = buttonIcon;
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* PDF Preview Dialog */}
+      <PDFPreviewDialog
+        isOpen={isPDFPreviewOpen}
+        onClose={() => setIsPDFPreviewOpen(false)}
+        pdfBlob={pdfBlob}
+        fileName={`${petName.replace(/[^a-zA-Z0-9]/g, '_')}_Missing_Pet_Flyer.pdf`}
+        petName={petName}
+        title="Missing Pet Flyer Preview"
+        onShare={async () => {
+          if (pdfBlob) {
+            const fileName = `${petName.replace(/[^a-zA-Z0-9]/g, '_')}_Missing_Pet_Flyer.pdf`;
+            const result = await sharePDFBlob(pdfBlob, fileName, petName, 'profile');
+            
+            if (result.success) {
+              toast({
+                title: result.shared ? "Missing Pet Flyer Shared!" : "Link Copied!",
+                description: result.message,
+              });
+            } else if (result.error !== 'Share cancelled') {
+              toast({
+                title: "Unable to Share PDF",
+                description: result.error || "Please download and share manually.",
+                variant: "destructive",
+              });
+            }
+          }
+        }}
+        onDownload={() => {
+          if (pdfBlob) {
+            const filename = `${petName.replace(/[^a-zA-Z0-9]/g, '_')}_Missing_Pet_Flyer.pdf`;
+            downloadPDFBlob(pdfBlob, filename);
+            
+            toast({
+              title: "Flyer Downloaded",
+              description: "Print and distribute to help find your pet",
+            });
+          }
+        }}
+      />
     </>
   );
 };

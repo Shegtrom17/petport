@@ -9,6 +9,7 @@ import { generateClientPetPDF } from "@/services/clientPdfService";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/context/AuthContext";
 import { useNavigate } from "react-router-dom";
+import { PDFPreviewDialog } from "@/components/PDFPreviewDialog";
 
 interface PetPDFGeneratorProps {
   petId: string;
@@ -23,6 +24,7 @@ export const PetPDFGenerator = ({ petId, petName, petData }: PetPDFGeneratorProp
   
   // Dialog and loading states
   const [isOptionsDialogOpen, setIsOptionsDialogOpen] = useState(false);
+  const [isPDFPreviewOpen, setIsPDFPreviewOpen] = useState(false);
   const [selectedPdfType, setSelectedPdfType] = useState<'emergency' | 'full' | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [isSharing, setIsSharing] = useState(false);
@@ -78,8 +80,11 @@ export const PetPDFGenerator = ({ petId, petName, petData }: PetPDFGeneratorProp
           });
           
           setIsOptionsDialogOpen(false);
+        } else if (action === 'view') {
+          // Open PDF preview dialog instead of window.open
+          setIsOptionsDialogOpen(false);
+          setIsPDFPreviewOpen(true);
         }
-        // If action is 'view', keep dialog open to show PDF options
       } else {
         throw new Error(result.error || 'Failed to generate PDF');
       }
@@ -403,6 +408,53 @@ export const PetPDFGenerator = ({ petId, petName, petData }: PetPDFGeneratorProp
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* PDF Preview Dialog */}
+      <PDFPreviewDialog
+        isOpen={isPDFPreviewOpen}
+        onClose={() => setIsPDFPreviewOpen(false)}
+        pdfBlob={generatedPdfBlob}
+        fileName={`${petName}_${selectedPdfType}_profile.pdf`}
+        petName={petName}
+        title={`${selectedPdfType === 'emergency' ? 'Emergency' : 'Complete'} Profile Preview`}
+        onShare={async () => {
+          if (generatedPdfBlob) {
+            const fileName = `PetPort_${selectedPdfType === 'emergency' ? 'Emergency' : 'Complete'}_Profile_${petName}.pdf`;
+            const contentType = selectedPdfType === 'emergency' ? 'emergency' : 'profile';
+            const result = await sharePDFBlob(generatedPdfBlob, fileName, petName, contentType);
+            
+            if (result.success) {
+              toast({
+                title: result.shared ? "PDF Shared!" : "Link Copied!",
+                description: result.message,
+              });
+            } else if (result.error !== 'Share cancelled') {
+              toast({
+                title: "Unable to Share PDF",
+                description: result.error || "Please download and share manually.",
+                variant: "destructive",
+              });
+            }
+          }
+        }}
+        onDownload={() => {
+          if (generatedPdfBlob) {
+            const fileName = `PetPort_${selectedPdfType === 'emergency' ? 'Emergency' : 'Complete'}_Profile_${petName}.pdf`;
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(generatedPdfBlob);
+            a.download = fileName;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(a.href);
+            
+            toast({
+              title: "Download Started",
+              description: `${fileName} is downloading.`,
+            });
+          }
+        }}
+      />
     </div>
   );
 };

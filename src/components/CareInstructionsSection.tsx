@@ -482,45 +482,6 @@ export const CareInstructionsSection = ({ petData }: CareInstructionsSectionProp
         </CardContent>
       </Card>
 
-      {/* Medications & Health */}
-      <Card className="border-0 shadow-lg bg-passport-section-bg backdrop-blur-sm">
-        <CardHeader>
-          <CardTitle className="flex items-center space-x-2">
-            <Pill className="w-5 h-5 text-red-600" />
-            <span>Medications & Health</span>
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {petData.medications.length > 0 ? (
-            petData.medications.map((medication, index) => (
-              <div key={index} className="p-4 bg-red-50 rounded-lg border-l-4 border-red-500">
-                <div className="flex items-center space-x-2 mb-2">
-                  <Pill className="w-4 h-4 text-red-600" />
-                  <Badge variant="destructive">MEDICATION</Badge>
-                </div>
-                <p className="font-medium">{medication}</p>
-                <p className="text-sm text-gray-600 mt-1">
-                  Administer as prescribed. Contact vet if missed doses or reactions occur.
-                </p>
-              </div>
-            ))
-          ) : (
-            <p className="text-gray-600 italic">No current medications</p>
-          )}
-          
-          <div className="p-4 bg-blue-50 rounded-lg">
-            <h4 className="font-medium text-blue-900 mb-2">Health Monitoring</h4>
-            <ul className="text-sm text-blue-800 space-y-1">
-              <li>• Monitor appetite and water intake daily</li>
-              <li>• Watch for any behavioral changes</li>
-              <li>• Check for signs of distress or discomfort</li>
-              {isHorse && <li>• Check hooves and legs for heat/swelling</li>}
-              <li>• Contact vet immediately if concerns arise</li>
-            </ul>
-          </div>
-        </CardContent>
-      </Card>
-
       {/* Daily Routine */}
       <Card className="border-0 shadow-lg bg-passport-section-bg backdrop-blur-sm">
         <CardHeader>
@@ -557,6 +518,45 @@ export const CareInstructionsSection = ({ petData }: CareInstructionsSectionProp
                 </ul>
               )}
             </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Medications & Health */}
+      <Card className="border-0 shadow-lg bg-passport-section-bg backdrop-blur-sm">
+        <CardHeader>
+          <CardTitle className="flex items-center space-x-2">
+            <Pill className="w-5 h-5 text-red-600" />
+            <span>Medications & Health</span>
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {petData.medications.length > 0 ? (
+            petData.medications.map((medication, index) => (
+              <div key={index} className="p-4 bg-red-50 rounded-lg border-l-4 border-red-500">
+                <div className="flex items-center space-x-2 mb-2">
+                  <Pill className="w-4 h-4 text-red-600" />
+                  <Badge variant="destructive">MEDICATION</Badge>
+                </div>
+                <p className="font-medium">{medication}</p>
+                <p className="text-sm text-gray-600 mt-1">
+                  Administer as prescribed. Contact vet if missed doses or reactions occur.
+                </p>
+              </div>
+            ))
+          ) : (
+            <p className="text-gray-600 italic">No current medications</p>
+          )}
+          
+          <div className="p-4 bg-blue-50 rounded-lg">
+            <h4 className="font-medium text-blue-900 mb-2">Health Monitoring</h4>
+            <ul className="text-sm text-blue-800 space-y-1">
+              <li>• Monitor appetite and water intake daily</li>
+              <li>• Watch for any behavioral changes</li>
+              <li>• Check for signs of distress or discomfort</li>
+              {isHorse && <li>• Check hooves and legs for heat/swelling</li>}
+              <li>• Contact vet immediately if concerns arise</li>
+            </ul>
           </div>
         </CardContent>
       </Card>

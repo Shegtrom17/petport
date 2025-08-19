@@ -1334,17 +1334,24 @@ const generateCarePDF = async (doc: jsPDF, pageManager: PDFPageManager, petData:
   
   // Quick Contacts - Essential for caregivers
   addSection(doc, pageManager, 'QUICK CONTACTS', () => {
+    // Use the transformed contact fields
     if (petData.emergencyContact) {
       addText(doc, pageManager, `Emergency Contact: ${safeText(petData.emergencyContact)}`);
     }
-    if (petData.ownerPhone) {
-      addText(doc, pageManager, `Owner Phone: ${safeText(petData.ownerPhone)}`);
+    if (petData.secondEmergencyContact) {
+      addText(doc, pageManager, `2nd Emergency Contact: ${safeText(petData.secondEmergencyContact)}`);
     }
-    if (petData.vetPhone) {
-      addText(doc, pageManager, `Veterinarian: ${safeText(petData.vetPhone)}`);
+    if (petData.vetContact) {
+      addText(doc, pageManager, `Veterinarian: ${safeText(petData.vetContact)}`);
     }
-    if (petData.alternateContact) {
-      addText(doc, pageManager, `Alternate Contact: ${safeText(petData.alternateContact)}`);
+    if (petData.petCaretaker) {
+      addText(doc, pageManager, `Pet Caretaker: ${safeText(petData.petCaretaker)}`);
+    }
+    
+    // If no contacts are available, show a note
+    if (!petData.emergencyContact && !petData.secondEmergencyContact && 
+        !petData.vetContact && !petData.petCaretaker) {
+      addText(doc, pageManager, "No contact information available - please update in the app");
     }
     
     pageManager.addY(10);

@@ -1303,6 +1303,22 @@ const generateCarePDF = async (doc: jsPDF, pageManager: PDFPageManager, petData:
       });
     }
     
+    // Health Monitoring - Critical information for caregivers
+    addSection(doc, pageManager, 'HEALTH MONITORING', () => {
+      const isHorse = petData.species?.toLowerCase() === 'horse';
+      const healthMonitoring = [
+        '• Monitor appetite and water intake daily',
+        '• Watch for any behavioral changes',
+        '• Check for signs of distress or discomfort',
+        ...(isHorse ? ['• Check hooves and legs for heat/swelling'] : []),
+        '• Contact vet immediately if concerns arise'
+      ];
+      
+      healthMonitoring.forEach(instruction => {
+        addText(doc, pageManager, instruction);
+      });
+    });
+    
     if (petData.careInstructions.specialNeeds) {
       addSection(doc, pageManager, 'SPECIAL NEEDS', () => {
         addText(doc, pageManager, petData.careInstructions.specialNeeds);

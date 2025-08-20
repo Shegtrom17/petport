@@ -19,28 +19,25 @@ export function usePdfPreview(getPdf: GetPdfFn, filename = 'document.pdf') {
     setLoading(true);
     setError(null);
     try {
+      console.log('Generating PDF...');
       const res = await getPdf();
+      console.log('PDF generation result:', res);
       const b = res.blob ?? res.pdfBlob;
-      if (!b) throw new Error('PDF blob missing from generator result');
+      if (!b) {
+        console.error('No blob found in result:', res);
+        throw new Error('PDF blob missing from generator result');
+      }
+      console.log('PDF blob created successfully');
       setBlob(b);
       return b;
     } catch (e: any) {
+      console.error('PDF generation error:', e);
       setError(e?.message || 'Failed to generate PDF');
       throw e;
     } finally {
       setLoading(false);
     }
-  }, [blob, getPdf]);
-
-  const view = React.useCallback(async () => {
-    try {
-      const b = await ensureBlob();
-      setOpen(true);
-    } catch {
-      // As a fallback, try download if preview fails
-      await download();
-    }
-  }, [ensureBlob]);
+  }, [getPdf]);
 
   const download = React.useCallback(async () => {
     try {
@@ -57,6 +54,17 @@ export function usePdfPreview(getPdf: GetPdfFn, filename = 'document.pdf') {
       // no-op
     }
   }, [ensureBlob, filename]);
+
+  const view = React.useCallback(async () => {
+    try {
+      const b = await ensureBlob();
+      setOpen(true);
+    } catch (error) {
+      console.error('View failed, trying download:', error);
+      // As a fallback, try download if preview fails
+      await download();
+    }
+  }, [ensureBlob, download]);
 
   const share = React.useCallback(async () => {
     try {

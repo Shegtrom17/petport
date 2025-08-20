@@ -19,8 +19,8 @@ export const createPDFPreviewUrl = (blob: Blob): string => {
 };
 export interface ClientPDFGenerationResult {
   success: boolean;
-  pdfBlob?: Blob;
-  blob?: Blob; // Alias for compatibility
+  blob?: Blob; // Primary blob property - optional for error cases
+  pdfBlob?: Blob; // Backwards compatibility 
   fileName?: string;
   error?: string;
   type?: string;

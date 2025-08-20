@@ -100,17 +100,17 @@ export const PetResumeSection = ({ petData, onUpdate }: PetResumeSectionProps) =
     try {
       const result = await generateClientPetPDF(petData, 'resume');
       
-      if (result.success && result.pdfBlob) {
-        setGeneratedPdfBlob(result.pdfBlob);
+      if (result.success && result.blob) {
+        setGeneratedPdfBlob(result.blob);
         
         if (action === 'download') {
           const filename = `${petData.name}_Resume.pdf`;
-          await downloadPDFBlob(result.pdfBlob, filename);
+          await downloadPDFBlob(result.blob, filename);
           toast.success("PDF downloaded successfully!");
           setIsPdfDialogOpen(false);
         } else if (action === 'view') {
           const filename = `${petData.name}_Resume.pdf`;
-          await viewPDFBlob(result.pdfBlob, filename);
+          await viewPDFBlob(result.blob, filename);
         }
       } else {
         toast.error(result.error || "Failed to generate PDF");

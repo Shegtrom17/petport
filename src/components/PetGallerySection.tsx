@@ -263,13 +263,13 @@ export const PetGallerySection = ({ petData, onUpdate }: PetGallerySectionProps)
     try {
       const result = await generateClientPetPDF(petData, 'gallery');
       
-      if (result.success && result.pdfBlob) {
-        setGeneratedGalleryPdfBlob(result.pdfBlob);
+      if (result.success && result.blob) {
+        setGeneratedGalleryPdfBlob(result.blob);
         
         if (action === 'download') {
           const fileName = `${petData.name}_Photo_Gallery.pdf`;
           const a = document.createElement('a');
-          a.href = URL.createObjectURL(result.pdfBlob);
+          a.href = URL.createObjectURL(result.blob);
           a.download = fileName;
           document.body.appendChild(a);
           a.click();

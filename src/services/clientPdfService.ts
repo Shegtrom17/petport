@@ -3,8 +3,7 @@ import { sanitizeText } from '@/utils/inputSanitizer';
 import { generatePublicMissingUrl, generateQRCodeUrl } from '@/services/pdfService';
 export interface ClientPDFGenerationResult {
   success: boolean;
-  pdfBlob?: Blob;
-  blob?: Blob; // Alias for compatibility
+  blob?: Blob;
   fileName?: string;
   error?: string;
   type?: string;
@@ -1419,8 +1418,7 @@ export async function generateClientPetPDF(
 
     return {
       success: true,
-      pdfBlob,
-      blob: pdfBlob, // Alias for compatibility
+      blob: pdfBlob,
       fileName: `${(normalizedPet.name || 'pet')}_${normalizedType}_profile.pdf`,
       type
     };
@@ -1463,26 +1461,43 @@ export async function downloadPDFBlob(blob: Blob, filename: string): Promise<voi
 }
 
 export async function viewPDFBlob(blob: Blob, filename: string): Promise<void> {
+  console.log('🔍 PDF Viewer: Starting view process', { filename, blobSize: blob.size });
+  
   try {
-    const viewUrl = window.URL.createObjectURL(blob);
-    const newWindow = window.open();
-    if (newWindow) {
-      newWindow.location.href = viewUrl;
-    } else {
-      const a = document.createElement('a');
-      a.href = viewUrl;
-      a.target = '_blank';
-      a.rel = 'noopener noreferrer';
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-    }
+    const url = URL.createObjectURL(blob);
     
-    setTimeout(() => {
-      window.URL.revokeObjectURL(viewUrl);
-    }, 1000);
+    // Detect if we're in a PWA/standalone mode
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches || 
+                        (window.navigator as any).standalone === true;
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+    
+    console.log('🔍 PDF Viewer: Environment detection', { isStandalone, isIOS });
+    
+    // Try window.open first (works best on desktop and many mobile browsers)
+    const newWindow = window.open(url, '_blank');
+    
+    if (newWindow && newWindow !== window) {
+      console.log('✅ PDF Viewer: Successfully opened in new window');
+      newWindow.focus();
+      // Clean up the URL after navigation completes
+      setTimeout(() => {
+        console.log('🧹 PDF Viewer: Cleaning up object URL');
+        URL.revokeObjectURL(url);
+      }, 3000);
+    } else {
+      console.log('⚠️ PDF Viewer: window.open blocked or failed, using fallback');
+      
+      // Fallback for iOS PWA: navigate in same window
+      if (isIOS && isStandalone) {
+        console.log('📱 PDF Viewer: iOS PWA fallback - navigating in same window');
+        window.location.href = url;
+      } else {
+        console.log('🖥️ PDF Viewer: Desktop/Android fallback - trying location.href');
+        window.location.href = url;
+      }
+    }
   } catch (error) {
-    console.error('Error viewing PDF:', error);
-    throw new Error('Failed to view PDF');
+    console.error('❌ PDF Viewer: Error viewing PDF:', error);
+    throw new Error(`Failed to view PDF: ${error instanceof Error ? error.message : 'Unknown error'}`);
   }
 }

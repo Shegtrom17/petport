@@ -102,8 +102,8 @@ export const CareInstructionsSection = ({ petData }: CareInstructionsSectionProp
       
       const result = await generateClientPetPDF(petData, 'care');
       
-      if (result.success && result.pdfBlob) {
-        setCarePdfBlob(result.pdfBlob);
+      if (result.success && result.blob) {
+        setCarePdfBlob(result.blob);
         setCareShareDialogOpen(true);
         
         toast({
@@ -114,10 +114,10 @@ export const CareInstructionsSection = ({ petData }: CareInstructionsSectionProp
         throw new Error(result.error || 'Failed to generate care instructions PDF');
       }
     } catch (error) {
-      console.error('Care PDF generation error:', error);
+      console.error('❌ Care PDF generation error:', error);
       toast({
-        title: "Error",
-        description: "Failed to generate care instructions PDF. Please try again.",
+        title: "PDF Generation Failed",
+        description: `Failed to generate care instructions PDF: ${error instanceof Error ? error.message : 'Unknown error'}. Please try again.`,
         variant: "destructive",
       });
     } finally {

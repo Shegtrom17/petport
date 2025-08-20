@@ -5,7 +5,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { FileText, Download, Share2, Loader2, Users, ExternalLink, LogIn, AlertTriangle, Eye } from "lucide-react";
 import { generateQRCodeUrl, generatePublicProfileUrl, shareProfileOptimized, sharePDFBlob } from "@/services/pdfService";
-import { generateClientPetPDF } from "@/services/clientPdfService";
+import { generateClientPetPDF, viewPDFBlob } from "@/services/clientPdfService";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/context/AuthContext";
 import { useNavigate } from "react-router-dom";
@@ -58,14 +58,14 @@ export const PetPDFGenerator = ({ petId, petName, petData }: PetPDFGeneratorProp
     try {
       const result = await generateClientPetPDF(petData, selectedPdfType);
 
-      if (result.success && result.pdfBlob) {
-        setGeneratedPdfBlob(result.pdfBlob);
+      if (result.success && result.blob) {
+        setGeneratedPdfBlob(result.blob);
         
         if (action === 'download') {
           // Direct download
           const fileName = `${petName}_${selectedPdfType}_profile.pdf`;
           const a = document.createElement('a');
-          a.href = URL.createObjectURL(result.pdfBlob);
+          a.href = URL.createObjectURL(result.blob);
           a.download = fileName;
           document.body.appendChild(a);
           a.click();
@@ -305,10 +305,20 @@ export const PetPDFGenerator = ({ petId, petName, petData }: PetPDFGeneratorProp
                   </h4>
                   <div className="grid grid-cols-3 gap-2 justify-center mb-3">
                     <Button
-                      onClick={() => {
-                        const url = URL.createObjectURL(generatedPdfBlob);
-                        window.open(url, '_blank')?.focus();
-                        URL.revokeObjectURL(url);
+                      onClick={async () => {
+                        if (generatedPdfBlob) {
+                          const fileName = `PetPort_${selectedPdfType === 'emergency' ? 'Emergency' : 'Complete'}_Profile_${petName}.pdf`;
+                          try {
+                            await viewPDFBlob(generatedPdfBlob, fileName);
+                          } catch (error) {
+                            console.error('PDF view error:', error);
+                            toast({
+                              title: "View Failed",
+                              description: "Could not open PDF. Please try downloading instead.",
+                              variant: "destructive",
+                            });
+                          }
+                        }
                       }}
                       variant="outline"
                       size="sm"

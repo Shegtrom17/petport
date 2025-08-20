@@ -1,26 +1,10 @@
 import jsPDF from 'jspdf';
 import { sanitizeText } from '@/utils/inputSanitizer';
 import { generatePublicMissingUrl, generateQRCodeUrl } from '@/services/pdfService';
-
-// Enhanced PDF blob utilities with PWA-friendly viewing
-export const downloadPDFBlobEnhanced = async (blob: Blob, filename: string): Promise<void> => {
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = filename;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(a.href);
-};
-
-// PWA-friendly PDF viewing - returns the blob URL for inline preview
-export const createPDFPreviewUrl = (blob: Blob): string => {
-  return URL.createObjectURL(blob);
-};
 export interface ClientPDFGenerationResult {
   success: boolean;
-  blob?: Blob; // Primary blob property - optional for error cases
-  pdfBlob?: Blob; // Backwards compatibility 
+  pdfBlob?: Blob;
+  blob?: Blob; // Alias for compatibility
   fileName?: string;
   error?: string;
   type?: string;
@@ -1350,24 +1334,17 @@ const generateCarePDF = async (doc: jsPDF, pageManager: PDFPageManager, petData:
   
   // Quick Contacts - Essential for caregivers
   addSection(doc, pageManager, 'QUICK CONTACTS', () => {
-    // Use the transformed contact fields
     if (petData.emergencyContact) {
       addText(doc, pageManager, `Emergency Contact: ${safeText(petData.emergencyContact)}`);
     }
-    if (petData.secondEmergencyContact) {
-      addText(doc, pageManager, `2nd Emergency Contact: ${safeText(petData.secondEmergencyContact)}`);
+    if (petData.ownerPhone) {
+      addText(doc, pageManager, `Owner Phone: ${safeText(petData.ownerPhone)}`);
     }
-    if (petData.vetContact) {
-      addText(doc, pageManager, `Veterinarian: ${safeText(petData.vetContact)}`);
+    if (petData.vetPhone) {
+      addText(doc, pageManager, `Veterinarian: ${safeText(petData.vetPhone)}`);
     }
-    if (petData.petCaretaker) {
-      addText(doc, pageManager, `Pet Caretaker: ${safeText(petData.petCaretaker)}`);
-    }
-    
-    // If no contacts are available, show a note
-    if (!petData.emergencyContact && !petData.secondEmergencyContact && 
-        !petData.vetContact && !petData.petCaretaker) {
-      addText(doc, pageManager, "No contact information available - please update in the app");
+    if (petData.alternateContact) {
+      addText(doc, pageManager, `Alternate Contact: ${safeText(petData.alternateContact)}`);
     }
     
     pageManager.addY(10);
@@ -1492,11 +1469,44 @@ export async function generatePetPDF(petId: string, type: 'emergency' | 'full' |
   };
 }
 
-// Legacy utility functions - now delegate to the enhanced versions to maintain backward compatibility
+// Keep other utility functions
 export async function downloadPDFBlob(blob: Blob, filename: string): Promise<void> {
-  return downloadPDFBlobEnhanced(blob, filename);
+  try {
+    const downloadUrl = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = downloadUrl;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(downloadUrl);
+  } catch (error) {
+    console.error('Error downloading PDF:', error);
+    throw new Error('Failed to download PDF');
+  }
 }
 
-export async function viewPDFBlob(blob: Blob, filename: string): Promise<string> {
-  return createPDFPreviewUrl(blob);
+export async function viewPDFBlob(blob: Blob, filename: string): Promise<void> {
+  try {
+    const viewUrl = window.URL.createObjectURL(blob);
+    const newWindow = window.open();
+    if (newWindow) {
+      newWindow.location.href = viewUrl;
+    } else {
+      const a = document.createElement('a');
+      a.href = viewUrl;
+      a.target = '_blank';
+      a.rel = 'noopener noreferrer';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    }
+    
+    setTimeout(() => {
+      window.URL.revokeObjectURL(viewUrl);
+    }, 1000);
+  } catch (error) {
+    console.error('Error viewing PDF:', error);
+    throw new Error('Failed to view PDF');
+  }
 }

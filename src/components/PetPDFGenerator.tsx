@@ -9,7 +9,6 @@ import { generateClientPetPDF } from "@/services/clientPdfService";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/context/AuthContext";
 import { useNavigate } from "react-router-dom";
-import { usePdfPreview } from "@/hooks/usePdfPreview";
 
 interface PetPDFGeneratorProps {
   petId: string;
@@ -25,20 +24,11 @@ export const PetPDFGenerator = ({ petId, petName, petData }: PetPDFGeneratorProp
   // Dialog and loading states
   const [isOptionsDialogOpen, setIsOptionsDialogOpen] = useState(false);
   const [selectedPdfType, setSelectedPdfType] = useState<'emergency' | 'full' | null>(null);
+  const [isGenerating, setIsGenerating] = useState(false);
   const [isSharing, setIsSharing] = useState(false);
   const [authError, setAuthError] = useState<string | null>(null);
+  const [generatedPdfBlob, setGeneratedPdfBlob] = useState<Blob | null>(null);
   const { toast } = useToast();
-
-  // PDF Preview Hook
-  const emergencyPdf = usePdfPreview(
-    async () => await generateClientPetPDF(petData, 'emergency'),
-    `PetPort_Emergency_Profile_${petName}.pdf`
-  );
-  
-  const fullPdf = usePdfPreview(
-    async () => await generateClientPetPDF(petData, 'full'),
-    `PetPort_Complete_Profile_${petName}.pdf`
-  );
 
   const publicProfileUrl = generatePublicProfileUrl(petId);
 
@@ -54,8 +44,55 @@ export const PetPDFGenerator = ({ petId, petName, petData }: PetPDFGeneratorProp
     setIsOptionsDialogOpen(true);
   };
 
-  const getCurrentPdfHook = () => {
-    return selectedPdfType === 'emergency' ? emergencyPdf : fullPdf;
+  const handlePdfAction = async (action: 'view' | 'download') => {
+    if (!selectedPdfType || !petData) {
+      toast({
+        title: "Error",
+        description: "Pet data not available for PDF generation.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsGenerating(true);
+    try {
+      const result = await generateClientPetPDF(petData, selectedPdfType);
+
+      if (result.success && result.pdfBlob) {
+        setGeneratedPdfBlob(result.pdfBlob);
+        
+        if (action === 'download') {
+          // Direct download
+          const fileName = `${petName}_${selectedPdfType}_profile.pdf`;
+          const a = document.createElement('a');
+          a.href = URL.createObjectURL(result.pdfBlob);
+          a.download = fileName;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          URL.revokeObjectURL(a.href);
+          
+          toast({
+            title: "Download Started",
+            description: `${selectedPdfType === 'emergency' ? 'Emergency' : 'Complete'} profile PDF is downloading.`,
+          });
+          
+          setIsOptionsDialogOpen(false);
+        }
+        // If action is 'view', keep dialog open to show PDF options
+      } else {
+        throw new Error(result.error || 'Failed to generate PDF');
+      }
+    } catch (error) {
+      console.error('PDF generation error:', error);
+      toast({
+        title: "Error", 
+        description: "Failed to generate PDF. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsGenerating(false);
+    }
   };
 
 
@@ -212,77 +249,160 @@ export const PetPDFGenerator = ({ petId, petName, petData }: PetPDFGeneratorProp
           
           <div className="space-y-6">
             {/* PDF Actions */}
-            <div className="space-y-3">
-              <p className="text-sm text-navy-600 text-center">
-                Choose how you'd like to use {petName}'s {selectedPdfType === 'emergency' ? 'emergency' : 'complete'} profile:
-              </p>
-              
-              <div className="grid grid-cols-3 gap-3">
+            {!generatedPdfBlob && !isGenerating && (
+              <div className="space-y-3">
+                <p className="text-sm text-navy-600 text-center">
+                  Choose how you'd like to use {petName}'s {selectedPdfType === 'emergency' ? 'emergency' : 'complete'} profile:
+                </p>
+                
+                <div className="grid grid-cols-2 gap-3">
+                  <Button
+                    onClick={() => handlePdfAction('view')}
+                    variant="outline"
+                    className="border-gold-500 text-gold-600 hover:bg-gold-50"
+                  >
+                    <Eye className="w-4 h-4 mr-2" />
+                    Generate & View
+                  </Button>
+                  <Button
+                    onClick={() => handlePdfAction('download')}
+                    className="bg-gradient-to-r from-gold-500 to-gold-400 text-navy-900 hover:from-gold-400 hover:to-gold-300"
+                  >
+                    <Download className="w-4 h-4 mr-2" />
+                    Generate & Download
+                  </Button>
+                </div>
+                
                 <Button
-                  onClick={() => getCurrentPdfHook().view()}
+                  onClick={() => handlePdfAction('view')}
                   variant="outline"
-                  className="border-gold-500 text-gold-600 hover:bg-gold-50"
-                >
-                  <Eye className="w-4 h-4 mr-2" />
-                  View
-                </Button>
-                <Button
-                  onClick={() => getCurrentPdfHook().download()}
-                  className="bg-gradient-to-r from-gold-500 to-gold-400 text-navy-900 hover:from-gold-400 hover:to-gold-300"
-                >
-                  <Download className="w-4 h-4 mr-2" />
-                  Download
-                </Button>
-                <Button
-                  onClick={() => getCurrentPdfHook().share()}
-                  variant="outline"
-                  className="border-navy-900 text-navy-900 hover:bg-navy-50"
+                  className="w-full border-navy-900 text-navy-900 hover:bg-navy-50"
                 >
                   <Share2 className="w-4 h-4 mr-2" />
-                  Share
+                  Generate & Share PDF
                 </Button>
-              </div>
-            </div>
-
-            {/* Sharing Options */}
-            <div className="border-t border-gold-500/30 pt-4 space-y-3">
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-3">
-                <p className="text-sm text-blue-800">
-                  <strong>Note:</strong> Your profile must be public to share with others. PDF generation works for all profiles.
+                
+                <p className="text-xs text-navy-500 text-center">
+                  💡 After generating, you'll see View | Download | Share options
                 </p>
               </div>
-              <Button
-                onClick={handleSharePublicProfile}
-                disabled={isSharing}
-                variant="outline"
-                className="w-full border-navy-900 text-navy-900 hover:bg-navy-50"
-              >
-                {isSharing ? (
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                ) : (
-                  <Share2 className="w-4 h-4 mr-2" />
-                )}
-                Share Public Profile
-              </Button>
-              
-              <Button
-                onClick={() => {
-                  setIsOptionsDialogOpen(false);
-                  window.location.hash = 'share-with-members';
-                }}
-                className="w-full bg-gradient-to-r from-navy-900 to-navy-800 text-gold-500 hover:from-navy-800 hover:to-navy-700"
-              >
-                <Users className="w-4 h-4 mr-2" />
-                Share with PetPort Members
-              </Button>
-            </div>
+            )}
+            
+            {/* Loading State */}
+            {isGenerating && (
+              <div className="text-center py-6">
+                <Loader2 className="w-8 h-8 animate-spin mx-auto mb-3 text-gold-500" />
+                <p className="text-navy-600">Generating {selectedPdfType === 'emergency' ? 'emergency' : 'complete'} profile PDF...</p>
+              </div>
+            )}
+            
+            {/* Generated PDF Actions */}
+            {generatedPdfBlob && !isGenerating && (
+              <div className="space-y-4">
+                <div className="bg-white p-4 rounded-lg border border-gold-500/30 shadow-sm">
+                  <h4 className="font-bold text-navy-900 mb-3">
+                    {selectedPdfType === 'emergency' ? 'Emergency Profile PDF' : 'Complete Profile PDF'}
+                  </h4>
+                  <div className="grid grid-cols-3 gap-2 justify-center mb-3">
+                    <Button
+                      onClick={() => {
+                        const url = URL.createObjectURL(generatedPdfBlob);
+                        window.open(url, '_blank')?.focus();
+                        URL.revokeObjectURL(url);
+                      }}
+                      variant="outline"
+                      size="sm"
+                      className="border-gold-500 text-gold-600 hover:bg-gold-50"
+                    >
+                      <Eye className="w-4 h-4 mr-1" />
+                      View
+                    </Button>
+                    <Button
+                      onClick={() => {
+                        const fileName = `PetPort_${selectedPdfType === 'emergency' ? 'Emergency' : 'Complete'}_Profile_${petName}.pdf`;
+                        const a = document.createElement('a');
+                        a.href = URL.createObjectURL(generatedPdfBlob);
+                        a.download = fileName;
+                        document.body.appendChild(a);
+                        a.click();
+                        document.body.removeChild(a);
+                        URL.revokeObjectURL(a.href);
+                      }}
+                      variant="outline"
+                      size="sm"
+                      className="bg-gradient-to-r from-gold-500 to-gold-400 text-navy-900 hover:from-gold-400 hover:to-gold-300"
+                    >
+                      <Download className="w-4 h-4 mr-1" />
+                      Download
+                    </Button>
+                    <Button
+                      onClick={async () => {
+                        if (!generatedPdfBlob) return;
+                        const fileName = `PetPort_${selectedPdfType === 'emergency' ? 'Emergency' : 'Complete'}_Profile_${petName}.pdf`;
+                        const contentType = selectedPdfType === 'emergency' ? 'emergency' : 'profile';
+                        const result = await sharePDFBlob(generatedPdfBlob, fileName, petName, contentType);
+                        
+                        if (result.success) {
+                          toast({
+                            title: result.shared ? "PDF Shared!" : "Link Copied!",
+                            description: result.message,
+                          });
+                        } else if (result.error !== 'Share cancelled') {
+                          toast({
+                            title: "Unable to Share PDF",
+                            description: result.error || "Please download and share manually.",
+                            variant: "destructive",
+                          });
+                        }
+                      }}
+                      variant="outline"
+                      size="sm"
+                      disabled={isSharing}
+                      className="border-navy-900 text-navy-900 hover:bg-navy-50"
+                    >
+                      <Share2 className="w-4 h-4 mr-1" />
+                      Share
+                    </Button>
+                  </div>
+                </div>
+
+                {/* Sharing Options */}
+                <div className="border-t border-gold-500/30 pt-4 space-y-3">
+                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-3">
+                    <p className="text-sm text-blue-800">
+                      <strong>Note:</strong> Your profile must be public to share with others. PDF generation works for all profiles.
+                    </p>
+                  </div>
+                  <Button
+                    onClick={handleSharePublicProfile}
+                    disabled={isSharing}
+                    variant="outline"
+                    className="w-full border-navy-900 text-navy-900 hover:bg-navy-50"
+                  >
+                    {isSharing ? (
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    ) : (
+                      <Share2 className="w-4 h-4 mr-2" />
+                    )}
+                    Share Public Profile
+                  </Button>
+                  
+                  <Button
+                    onClick={() => {
+                      setIsOptionsDialogOpen(false);
+                      window.location.hash = 'share-with-members';
+                    }}
+                    className="w-full bg-gradient-to-r from-navy-900 to-navy-800 text-gold-500 hover:from-navy-800 hover:to-navy-700"
+                  >
+                    <Users className="w-4 h-4 mr-2" />
+                    Share with PetPort Members
+                  </Button>
+                </div>
+              </div>
+            )}
           </div>
         </DialogContent>
       </Dialog>
-
-      {/* PDF Preview Dialogs */}
-      <emergencyPdf.PreviewDialog />
-      <fullPdf.PreviewDialog />
     </div>
   );
 };

@@ -1331,6 +1331,24 @@ const generateCarePDF = async (doc: jsPDF, pageManager: PDFPageManager, petData:
     }
   }
   
+  // Contact Information - Same as credentials/emergency PDF
+  addSubtitle(doc, pageManager, 'EMERGENCY CONTACTS', '#dc2626');
+  
+  if (petData.emergencyContact) {
+    addContactCard(doc, pageManager, 'PRIMARY EMERGENCY CONTACT', petData.emergencyContact, '#dc2626');
+  }
+  
+  if (petData.secondEmergencyContact) {
+    addContactCard(doc, pageManager, 'SECONDARY EMERGENCY CONTACT', petData.secondEmergencyContact, '#f59e0b');
+  }
+  
+  if (petData.vetContact) {
+    addContactCard(doc, pageManager, 'VETERINARIAN', petData.vetContact, '#059669');
+  }
+  
+  if (petData.petCaretaker) {
+    addContactCard(doc, pageManager, 'PET CARETAKER', petData.petCaretaker, '#7c3aed');
+  }
   // Footer
   addFooterBottom(doc, pageManager, [
     'Petport.app - The Ultimate Digital Pet Portfolio',

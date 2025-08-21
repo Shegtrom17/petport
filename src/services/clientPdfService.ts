@@ -1466,14 +1466,27 @@ export async function viewPDFBlob(blob: Blob, filename: string): Promise<void> {
   try {
     const url = URL.createObjectURL(blob);
     
-    // Detect if we're in a PWA/standalone mode
+    // Detect environment constraints
+    const isInIframe = window !== window.top;
     const isStandalone = window.matchMedia('(display-mode: standalone)').matches || 
                         (window.navigator as any).standalone === true;
     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
     
-    console.log('🔍 PDF Viewer: Environment detection', { isStandalone, isIOS });
+    console.log('🔍 PDF Viewer: Environment detection', { 
+      isInIframe, 
+      isStandalone, 
+      isIOS,
+      userAgent: navigator.userAgent.substring(0, 50) + '...'
+    });
     
-    // Try window.open first (works best on desktop and many mobile browsers)
+    // In iframe/sandbox (like Lovable preview), use location.href immediately
+    if (isInIframe) {
+      console.log('🖼️ PDF Viewer: Iframe/sandbox detected - using direct navigation');
+      window.location.href = url;
+      return;
+    }
+    
+    // Try window.open first for non-iframe environments
     const newWindow = window.open(url, '_blank');
     
     if (newWindow && newWindow !== window) {

@@ -1331,24 +1331,21 @@ const generateCarePDF = async (doc: jsPDF, pageManager: PDFPageManager, petData:
     }
   }
   
-  // Contact Information - Same as credentials/emergency PDF
-  addSubtitle(doc, pageManager, 'EMERGENCY CONTACTS', '#dc2626');
-  
-  if (petData.emergencyContact) {
-    addContactCard(doc, pageManager, 'PRIMARY EMERGENCY CONTACT', petData.emergencyContact, '#dc2626');
-  }
-  
-  if (petData.secondEmergencyContact) {
-    addContactCard(doc, pageManager, 'SECONDARY EMERGENCY CONTACT', petData.secondEmergencyContact, '#f59e0b');
-  }
-  
-  if (petData.vetContact) {
-    addContactCard(doc, pageManager, 'VETERINARIAN', petData.vetContact, '#059669');
-  }
-  
-  if (petData.petCaretaker) {
-    addContactCard(doc, pageManager, 'PET CARETAKER', petData.petCaretaker, '#7c3aed');
-  }
+  // Contact Information - EXACTLY like credentials PDF
+  addSection(doc, pageManager, 'CONTACT INFORMATION', () => {
+    if (petData.emergency_contact) {
+      addText(doc, pageManager, `Primary Emergency Contact: ${safeText(petData.emergency_contact)}`);
+    }
+    if (petData.second_emergency_contact) {
+      addText(doc, pageManager, `Secondary Emergency Contact: ${safeText(petData.second_emergency_contact)}`);
+    }
+    if (petData.vet_contact) {
+      addText(doc, pageManager, `Veterinarian: ${safeText(petData.vet_contact)}`);
+    }
+    if (petData.pet_caretaker) {
+      addText(doc, pageManager, `Pet Caretaker: ${safeText(petData.pet_caretaker)}`);
+    }
+  });
   // Footer
   addFooterBottom(doc, pageManager, [
     'Petport.app - The Ultimate Digital Pet Portfolio',

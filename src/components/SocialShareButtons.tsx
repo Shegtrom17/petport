@@ -16,7 +16,7 @@ import { useAuth } from "@/context/AuthContext";
   petName: string;
   petId: string;
   isMissingPet?: boolean;
-  context?: 'profile' | 'care' | 'credentials' | 'reviews' | 'missing';
+  context?: 'profile' | 'care' | 'credentials' | 'resume' | 'reviews' | 'missing';
   shareUrlOverride?: string;
   defaultOpenOptions?: boolean;
   compact?: boolean;
@@ -39,6 +39,7 @@ export const SocialShareButtons = ({ petName, petId, isMissingPet = false, conte
 // Add cache-busting parameter to ensure fresh loads
 const isCare = context === 'care';
 const isCredentials = context === 'credentials';
+const isResume = context === 'resume';
 const isReviews = context === 'reviews';
 const isMissing = isMissingPet || context === 'missing';
 const cacheBuster = `v=${Date.now()}`;
@@ -48,9 +49,11 @@ const path = isMissing
     ? `care/${petId}` 
     : isCredentials 
       ? `credentials/${petId}` 
-      : isReviews 
-        ? `reviews/${petId}`
-        : `profile/${petId}`;
+      : isResume
+        ? `resume/${petId}`
+        : isReviews 
+          ? `reviews/${petId}`
+          : `profile/${petId}`;
 
 // Use SSR-friendly share URL for missing pet alerts via Supabase Edge Function
 const edgeShareBase = `https://dxghbhujugsfmaecilrq.supabase.co/functions/v1/missing-pet-share`;
@@ -66,20 +69,22 @@ const shareText = isMissing
       ? `View ${petName}'s live Care Instructions on PetPort.` 
       : (isCredentials 
           ? `View ${petName}'s professional credentials on PetPort.` 
-          : (isReviews
-              ? `Read ${petName}'s reviews & references on PetPort.`
-              : `Meet ${petName}! Check out their PetPort profile.`)));
+          : (isResume
+              ? `View ${petName}'s professional resume on PetPort.`
+              : (isReviews
+                  ? `Read ${petName}'s reviews & references on PetPort.`
+                  : `Meet ${petName}! Check out their PetPort profile.`))));
 
   // Prioritize native mobile sharing
   const handleNativeShare = async () => {
     setIsSharing(true);
     try {
-const result = await shareProfileOptimized(shareUrl, petName, isMissing ? 'profile' : (isCare ? 'care' : (isCredentials ? 'credentials' : (isReviews ? 'reviews' : 'profile'))), isMissing);
+const result = await shareProfileOptimized(shareUrl, petName, isMissing ? 'profile' : (isCare ? 'care' : (isCredentials ? 'credentials' : (isResume ? 'resume' : (isReviews ? 'reviews' : 'profile')))), isMissing);
       if (result.success) {
         if (result.shared) {
           toast({
-            title: isCare ? "Care Link Shared! 📱" : (isCredentials ? "Credentials Shared! 📱" : (isReviews ? "Reviews Shared! 📱" : "Profile Shared! 📱")),
-            description: isCare ? `${petName}'s care instructions link shared successfully.` : (isCredentials ? `${petName}'s credentials link shared successfully.` : (isReviews ? `${petName}'s reviews link shared successfully.` : `${petName}'s profile has been shared successfully.`)),
+            title: isCare ? "Care Link Shared! 📱" : (isCredentials ? "Credentials Shared! 📱" : (isResume ? "Resume Shared! 📱" : (isReviews ? "Reviews Shared! 📱" : "Profile Shared! 📱"))),
+            description: isCare ? `${petName}'s care instructions link shared successfully.` : (isCredentials ? `${petName}'s credentials link shared successfully.` : (isResume ? `${petName}'s resume link shared successfully.` : (isReviews ? `${petName}'s reviews link shared successfully.` : `${petName}'s profile has been shared successfully.`))),
           });
         } else {
           setCopied(true);
@@ -153,7 +158,7 @@ title: "Link Copied! 📋",
       return;
     }
 
-    const emailType = context as 'profile' | 'care' | 'credentials' | 'reviews' | 'missing_pet';
+    const emailType = context as 'profile' | 'care' | 'credentials' | 'resume' | 'reviews' | 'missing_pet';
     
     const success = await sendEmail({
       type: isMissingPet ? 'missing_pet' : emailType,
@@ -192,7 +197,7 @@ title: "Link Copied! 📋",
       <CardHeader className={compact ? "pb-2" : "pb-3"}>
         <CardTitle className={`flex items-center space-x-2 ${compact ? 'text-base' : 'text-lg'} font-semibold ${isMissingPet ? 'text-red-800' : 'text-navy-900'} border-b-2 ${isMissingPet ? 'border-red-500' : 'border-gold-500'} pb-2`}>
           <Share2 className="w-5 h-5" />
-          <span>{isMissingPet ? `Help Find ${petName}!` : (isCare ? `Share ${petName}'s Care Instructions` : (isCredentials ? `Share ${petName}'s Credentials` : (isReviews ? `Share ${petName}'s Reviews` : `Share ${petName}'s Profile`)))}</span>
+          <span>{isMissingPet ? `Help Find ${petName}!` : (isCare ? `Share ${petName}'s Care Instructions` : (isCredentials ? `Share ${petName}'s Credentials` : (isResume ? `Share ${petName}'s Resume` : (isReviews ? `Share ${petName}'s Reviews` : `Share ${petName}'s Profile`))))}</span>
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -204,7 +209,10 @@ title: "Link Copied! 📋",
                   ? `Share ${petName}'s live care plan (feeding schedule, routines, notes).` 
                   : (isCredentials 
                       ? `Share ${petName}'s professional credentials (certifications, training, badges).`
-                      : `Share ${petName}'s complete public profile (photos, bio, reviews & more).`)
+                      : (isResume
+                          ? `Share ${petName}'s professional resume (training, achievements, experience).`
+                          : `Share ${petName}'s complete public profile (photos, bio, reviews & more).`)
+                    )
                 )
             }
           </p>
@@ -224,7 +232,7 @@ title: "Link Copied! 📋",
                 <Share2 className="w-5 h-5 mr-2" />
                 {compact 
                   ? (isMissingPet ? 'Share alert' : 'Share')
-                  : (isMissingPet ? `Share ${petName}'s Missing Alert` : (isCare ? `Share Care Instructions` : (isCredentials ? `Share Credentials` : (isReviews ? `Share Reviews` : `Share ${petName}'s Profile`))))}
+                  : (isMissingPet ? `Share ${petName}'s Missing Alert` : (isCare ? `Share Care Instructions` : (isCredentials ? `Share Credentials` : (isResume ? `Share Resume` : (isReviews ? `Share Reviews` : `Share ${petName}'s Profile`)))))}
               </Button>
           ) : (
             <>

@@ -399,7 +399,7 @@ export async function sharePDFBlob(
 export async function shareProfileOptimized(
   url: string, 
   petName: string, 
-  contentType: 'profile' | 'care' | 'emergency' | 'credentials' | 'reviews' = 'profile',
+  contentType: 'profile' | 'care' | 'emergency' | 'credentials' | 'resume' | 'reviews' = 'profile',
   isMissingPet: boolean = false
 ): Promise<ShareResult> {
   let title: string;
@@ -415,6 +415,10 @@ export async function shareProfileOptimized(
     case 'credentials':
       title = `${petName}'s Credentials`;
       description = `Professional credentials for ${petName}: certifications, training and badges`;
+      break;
+    case 'resume':
+      title = `${petName}'s Resume`;
+      description = `Professional resume for ${petName}: training, achievements, and experience`;
       break;
     case 'reviews':
       title = `${petName}'s Reviews & References`;

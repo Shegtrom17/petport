@@ -1000,7 +1000,7 @@ const generateResumePDF = async (doc: jsPDF, pageManager: PDFPageManager, petDat
   const safeText = (text: string) => sanitizeText(text || '');
   
   // Header with pet name and title
-  addTitle(doc, pageManager, `${safeText(petData.name)} - Professional Resume`, '#1e40af', 18);
+  addTitle(doc, pageManager, `${safeText(petData.name)} - Resume`, '#1e40af', 18);
   pageManager.addY(10);
 
   // Store the starting position for side-by-side layout

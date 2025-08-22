@@ -9,7 +9,7 @@ import { CertificationBanner } from "@/components/CertificationBanner";
 
 import { fetchPetDetails } from "@/services/petService";
 
-interface PublicCredentialsData {
+interface PublicResumeData {
   id: string;
   name: string;
   species?: string | null;
@@ -43,9 +43,9 @@ interface PublicCredentialsData {
   }>;
 }
 
-export default function PublicCredentials() {
+export default function PublicResume() {
   const { petId } = useParams();
-  const [data, setData] = useState<PublicCredentialsData | null>(null);
+  const [data, setData] = useState<PublicResumeData | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -71,10 +71,10 @@ export default function PublicCredentials() {
       <div className="min-h-screen flex items-center justify-center px-4">
         <Card className="max-w-xl w-full">
           <CardHeader>
-            <CardTitle>Credentials Unavailable</CardTitle>
+            <CardTitle>Resume Unavailable</CardTitle>
           </CardHeader>
           <CardContent>
-            <p>This pet's credentials are not publicly available.</p>
+            <p>This pet's resume is not publicly available.</p>
           </CardContent>
         </Card>
       </div>
@@ -86,20 +86,19 @@ export default function PublicCredentials() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-sage-50 to-cream-50">
       <MetaTags 
-        title={`${data.name} Credentials | PetPort`}
-        description={`Professional credentials for ${data.name}: certifications, training, badges.`}
-        url={`${window.location.origin}/credentials/${data.id}`}
+        title={`${data.name} Resume | PetPort`}
+        description={`Professional resume for ${data.name}: certifications, training, achievements, and experience.`}
+        url={`${window.location.origin}/resume/${data.id}`}
       />
       <main className="container mx-auto px-4 py-8 max-w-4xl">
         <header className="text-center mb-8">
           <h1 className="text-3xl font-extrabold tracking-tight text-navy-900">
-            {data.name} – Credentials
+            {data.name} – Resume
           </h1>
           <p className="mt-2 text-navy-600">
             {data.species || ''} {data.breed ? `• ${data.breed}` : ''}
           </p>
         </header>
-
 
         {/* Support Animal Status */}
         <SupportAnimalBanner status={data.supportAnimalStatus || null} />
@@ -109,13 +108,13 @@ export default function PublicCredentials() {
           <CertificationBanner certificationData={certification} />
         </div>
 
-        {/* Certifications Detail */}
+        {/* Professional Certifications Detail */}
         {data.certifications && data.certifications.length > 0 && (
           <Card className="mb-6">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-navy-900">
                 <Shield className="w-5 h-5 text-primary" />
-                Certifications
+                Professional Certification
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -146,7 +145,7 @@ export default function PublicCredentials() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-navy-900">
                 <GraduationCap className="w-5 h-5 text-primary" />
-                Training & Certifications
+                Notable Training
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">

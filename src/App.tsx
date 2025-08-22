@@ -24,6 +24,7 @@ import NotFound from "./pages/NotFound";
 import { TestModeRibbon } from "@/components/TestModeRibbon";
 import TransferAccept from "./pages/TransferAccept";
 import PublicCredentials from "./pages/PublicCredentials";
+import PublicResume from "./pages/PublicResume";
 import PublicReviews from "./pages/PublicReviews";
 import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
@@ -97,10 +98,11 @@ const App = () => {
                        <VaccinationGuide />
                      </ProtectedRoute>
                    } />
-                   <Route path="/profile/:petId" element={<PublicProfile />} />
-                   <Route path="/care/:petId" element={<PublicCareInstructions />} />
-                   <Route path="/credentials/:petId" element={<PublicCredentials />} />
-                   <Route path="/reviews/:petId" element={<PublicReviews />} />
+                    <Route path="/profile/:petId" element={<PublicProfile />} />
+                    <Route path="/care/:petId" element={<PublicCareInstructions />} />
+                    <Route path="/credentials/:petId" element={<PublicCredentials />} />
+                    <Route path="/resume/:petId" element={<PublicResume />} />
+                    <Route path="/reviews/:petId" element={<PublicReviews />} />
                    <Route path="/missing-pet/:petId" element={<PublicMissingPet />} />
                    <Route path="/gallery/:petId" element={<PublicGallery />} />
                   <Route path="/transfer/:token" element={<TransferAccept />} />

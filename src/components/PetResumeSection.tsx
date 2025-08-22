@@ -449,23 +449,23 @@ export const PetResumeSection = ({ petData, onUpdate }: PetResumeSectionProps) =
             <SocialShareButtons 
               petName={petData.name}
               petId={petData.id}
-              context="credentials"
+              context="resume"
               defaultOpenOptions={false}
-              shareUrlOverride={`${window.location.origin}/credentials/${petData.id}`}
+              shareUrlOverride={`${window.location.origin}/resume/${petData.id}`}
             />
 
             <div className="space-y-3 text-center">
               <p className="text-sm text-navy-600">Or scan to open credentials</p>
               <div className="flex justify-center p-4 bg-white rounded-lg border-2 border-gold-500/30">
                 <img 
-                  src={generateQRCodeUrl(`${window.location.origin}/credentials/${petData.id}`, 200)}
-                  alt={`QR Code for ${petData.name}'s credentials`}
+                  src={generateQRCodeUrl(`${window.location.origin}/resume/${petData.id}`, 200)}
+                  alt={`QR Code for ${petData.name}'s resume`}
                   className="w-48 h-48"
                 />
               </div>
               <div className="bg-white p-3 rounded border border-gray-200">
                 <p className="text-xs text-gray-600 break-all">
-                  {`${window.location.origin}/credentials/${petData.id}`}
+                  {`${window.location.origin}/resume/${petData.id}`}
                 </p>
               </div>
             </div>

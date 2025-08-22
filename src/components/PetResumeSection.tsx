@@ -214,8 +214,9 @@ export const PetResumeSection = ({ petData, onUpdate }: PetResumeSectionProps) =
               <Shield className="w-8 h-8 text-yellow-400" />
               <div>
                 <h2 className="text-2xl font-bold">Pet Resume</h2>
-                <p className="text-blue-100">Professional pet credentials & references</p>
-                <p className="text-xs text-blue-200 mt-2"><strong>Profile must be public to share.</strong></p>
+                <p className="text-blue-100">Pet credentials & references</p>
+                <p className="text-xs text-blue-200 mt-1">Click "Edit" to add training, achievements, certifications, and work experience</p>
+                <p className="text-xs text-blue-200 mt-1"><strong>Profile must be public to share.</strong></p>
               </div>
             </div>
             <div className="flex flex-col space-y-2 sm:flex-row sm:space-y-0 sm:space-x-4 ml-6">

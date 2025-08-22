@@ -7,9 +7,11 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Star, Plus, Share2, Mail, MapPin, Calendar, User, Edit, Send, X } from "lucide-react";
+import { Star, Plus, Share2, Mail, MapPin, Calendar, User, Edit, Send, X, Loader2 } from "lucide-react";
 import { ReviewsEditForm } from "@/components/ReviewsEditForm";
 import { useToast } from "@/hooks/use-toast";
+import { useEmailSharing } from "@/hooks/useEmailSharing";
+import { useAuth } from "@/context/AuthContext";
 import { PrivacyHint } from "@/components/PrivacyHint";
 import { SocialShareButtons } from "@/components/SocialShareButtons";
 
@@ -45,6 +47,8 @@ export const ReviewsSection = ({ petData, onUpdate }: ReviewsSectionProps) => {
     message: ''
   });
   const { toast } = useToast();
+  const { sendEmail, isLoading: isSendingEmail } = useEmailSharing();
+  const { user } = useAuth();
 
   // Use actual reviews from petData or show empty state
   const reviews = petData.reviews && petData.reviews.length > 0 ? petData.reviews : [];
@@ -65,10 +69,18 @@ export const ReviewsSection = ({ petData, onUpdate }: ReviewsSectionProps) => {
   };
 
   const handleRequestReview = () => {
+    if (!petData.is_public) {
+      toast({
+        title: "Profile Not Public",
+        description: "Your pet's profile must be public to request reviews. Please enable public sharing first.",
+        variant: "destructive",
+      });
+      return;
+    }
     setIsRequestModalOpen(true);
   };
 
-  const handleSendReviewRequest = () => {
+  const handleSendReviewRequest = async () => {
     if (!requestForm.name.trim() || (!requestForm.email.trim() && !requestForm.phone.trim())) {
       toast({
         title: "Missing Information",
@@ -78,22 +90,62 @@ export const ReviewsSection = ({ petData, onUpdate }: ReviewsSectionProps) => {
       return;
     }
 
-    console.log("Sending review request:", {
-      petName: petData.name,
-      petId: petData.id,
-      recipient: requestForm
-    });
+    // Check if profile is public
+    if (!petData.is_public) {
+      toast({
+        title: "Profile Not Public",
+        description: "Your pet's profile must be public to send review requests. Please enable public sharing first.",
+        variant: "destructive",
+      });
+      return;
+    }
 
-    // Here you would implement the actual sending logic
-    // For now, we'll just show a success message and reset the form
-    toast({
-      title: "Review Request Sent",
-      description: `A review request has been sent to ${requestForm.name} for ${petData.name}.`,
-    });
+    const shareUrl = `${window.location.origin}/reviews/${petData.id}`;
+    
+    if (requestForm.email.trim()) {
+      // Send email
+      const emailData = {
+        type: 'reviews' as const,
+        recipientEmail: requestForm.email,
+        recipientName: requestForm.name,
+        petName: petData.name,
+        petId: petData.id,
+        shareUrl,
+        customMessage: requestForm.message || `Hi ${requestForm.name}, I'd love to get your feedback about your experience with ${petData.name}. Could you please take a moment to leave a review? Thank you!`,
+        senderName: user?.user_metadata?.full_name || 'PetPort User'
+      };
 
-    // Reset form and close modal
-    setRequestForm({ name: '', email: '', phone: '', message: '' });
-    setIsRequestModalOpen(false);
+      const success = await sendEmail(emailData);
+      
+      if (success) {
+        toast({
+          title: "Review Request Sent",
+          description: `Email sent to ${requestForm.name} (${requestForm.email}) for ${petData.name}.`,
+        });
+        
+        // Reset form and close modal
+        setRequestForm({ name: '', email: '', phone: '', message: '' });
+        setIsRequestModalOpen(false);
+      }
+      // Error handling is done in useEmailSharing hook
+    } else if (requestForm.phone.trim()) {
+      // Send SMS
+      const message = requestForm.message 
+        ? `Hi ${requestForm.name}, ${requestForm.message} View ${petData.name}'s reviews here: ${shareUrl}` 
+        : `Hi ${requestForm.name}, I'd love to get your feedback about your experience with ${petData.name}. Could you please take a moment to leave a review? ${shareUrl}`;
+      
+      const smsUrl = `sms:${requestForm.phone}?body=${encodeURIComponent(message)}`;
+      window.location.href = smsUrl;
+      
+      toast({
+        title: "SMS Opened",
+        description: `SMS composer opened for ${requestForm.name} (${requestForm.phone}).`,
+      });
+      
+      // Reset form and close modal
+      setRequestForm({ name: '', email: '', phone: '', message: '' });
+      setIsRequestModalOpen(false);
+    }
   };
 
   const openShareDialog = () => {
@@ -377,10 +429,20 @@ export const ReviewsSection = ({ petData, onUpdate }: ReviewsSectionProps) => {
               </Button>
               <Button 
                 onClick={handleSendReviewRequest}
+                disabled={isSendingEmail}
                 className="flex-1 bg-blue-600 hover:bg-blue-700"
               >
-                <Send className="w-4 h-4 mr-2" />
-                Send Request
+                {isSendingEmail ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    Sending...
+                  </>
+                ) : (
+                  <>
+                    <Send className="w-4 h-4 mr-2" />
+                    Send Request
+                  </>
+                )}
               </Button>
             </div>
           </div>

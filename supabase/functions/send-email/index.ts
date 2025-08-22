@@ -163,11 +163,42 @@ const handler = async (req: Request): Promise<Response> => {
       html: emailTemplate,
     });
 
+    console.log("Email response:", emailResponse);
+
+    // Check if the email was sent successfully
+    if (emailResponse.error) {
+      console.error("Resend API error:", emailResponse.error);
+      return new Response(JSON.stringify({ 
+        success: false, 
+        error: emailResponse.error.message || "Failed to send email"
+      }), {
+        status: 400,
+        headers: {
+          "Content-Type": "application/json",
+          ...corsHeaders,
+        },
+      });
+    }
+
+    if (!emailResponse.data?.id) {
+      console.error("No message ID returned from Resend");
+      return new Response(JSON.stringify({ 
+        success: false, 
+        error: "Email service did not return a message ID"
+      }), {
+        status: 500,
+        headers: {
+          "Content-Type": "application/json",
+          ...corsHeaders,
+        },
+      });
+    }
+
     console.log("Email sent successfully:", emailResponse);
 
     return new Response(JSON.stringify({ 
       success: true, 
-      messageId: emailResponse.data?.id 
+      messageId: emailResponse.data.id 
     }), {
       status: 200,
       headers: {

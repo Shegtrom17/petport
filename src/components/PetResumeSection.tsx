@@ -516,7 +516,7 @@ export const PetResumeSection = ({ petData, onUpdate }: PetResumeSectionProps) =
           <div className="flex flex-col md:flex-row gap-8">
             {/* Photos */}
             <div className="flex flex-col space-y-4">
-              <div className="w-32 h-32 rounded-lg overflow-hidden border-4 border-yellow-400 shadow-lg">
+              <div className="w-32 h-32 rounded-lg overflow-hidden border-4 border-gray-300 shadow-lg">
                 <img 
                   src={petData.photoUrl} 
                   alt={`${petData.name} headshot`}

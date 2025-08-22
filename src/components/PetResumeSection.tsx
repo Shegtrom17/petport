@@ -707,7 +707,7 @@ export const PetResumeSection = ({ petData, onUpdate }: PetResumeSectionProps) =
           <CardHeader>
             <CardTitle className="flex items-center space-x-2">
               <GraduationCap className="w-5 h-5 text-purple-600" />
-              <span>Training & Certifications</span>
+              <span>Training</span>
             </CardTitle>
           </CardHeader>
           <CardContent>

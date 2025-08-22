@@ -14,6 +14,13 @@ interface PublicResumeData {
   name: string;
   species?: string | null;
   breed?: string | null;
+  age?: string | null;
+  sex?: string | null;
+  weight?: string | null;
+  height?: string | null;
+  microchip_id?: string | null;
+  registration_number?: string | null;
+  petport_id?: string | null;
   is_public?: boolean;
   supportAnimalStatus?: string | null;
   certifications?: Array<{
@@ -99,6 +106,78 @@ export default function PublicResume() {
             {data.species || ''} {data.breed ? `• ${data.breed}` : ''}
           </p>
         </header>
+
+        {/* Pet Information Section */}
+        <Card className="mb-6">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-navy-900">
+              <Shield className="w-5 h-5 text-primary" />
+              Pet Information
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div>
+                <span className="text-sm font-medium text-muted-foreground">Name:</span>
+                <p className="font-semibold">{data.name}</p>
+              </div>
+              {data.species && (
+                <div>
+                  <span className="text-sm font-medium text-muted-foreground">Species:</span>
+                  <p className="font-semibold">{data.species}</p>
+                </div>
+              )}
+              {data.breed && (
+                <div>
+                  <span className="text-sm font-medium text-muted-foreground">Breed:</span>
+                  <p className="font-semibold">{data.breed}</p>
+                </div>
+              )}
+              {data.age && (
+                <div>
+                  <span className="text-sm font-medium text-muted-foreground">Age:</span>
+                  <p className="font-semibold">{data.age}</p>
+                </div>
+              )}
+              {data.sex && (
+                <div>
+                  <span className="text-sm font-medium text-muted-foreground">Sex:</span>
+                  <p className="font-semibold">{data.sex}</p>
+                </div>
+              )}
+              {data.weight && (
+                <div>
+                  <span className="text-sm font-medium text-muted-foreground">Weight:</span>
+                  <p className="font-semibold">{data.weight}</p>
+                </div>
+              )}
+              {data.height && (
+                <div>
+                  <span className="text-sm font-medium text-muted-foreground">Height:</span>
+                  <p className="font-semibold">{data.height}</p>
+                </div>
+              )}
+              {data.registration_number && (
+                <div>
+                  <span className="text-sm font-medium text-muted-foreground">Registration ID:</span>
+                  <p className="font-semibold">{data.registration_number}</p>
+                </div>
+              )}
+              {data.microchip_id && (
+                <div>
+                  <span className="text-sm font-medium text-muted-foreground">Microchip ID:</span>
+                  <p className="font-semibold">{data.microchip_id}</p>
+                </div>
+              )}
+              {data.petport_id && (
+                <div>
+                  <span className="text-sm font-medium text-muted-foreground">PetPort ID:</span>
+                  <p className="font-semibold">{data.petport_id}</p>
+                </div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
 
         {/* Support Animal Status */}
         <SupportAnimalBanner status={data.supportAnimalStatus || null} />

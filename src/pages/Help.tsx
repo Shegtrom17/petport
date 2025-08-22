@@ -54,7 +54,7 @@ const Help = () => {
     {
       id: "qr-codes",
       question: "How do QR codes work?",
-      answer: "Each pet profile generates a unique QR code that links to their public profile. Anyone can scan this code to view your pet's information, making it perfect for pet tags, sharing with sitters, or emergency situations. Note: Your pet's profile must be set to public (using the toggle at the top of the profile) for QR codes to work properly."
+      answer: "Each pet profile generates a unique QR code that links to their public profile. Anyone can scan this code to view your pet's information, making it perfect for pet tags, sharing with sitters, or emergency situations. Note: Your pet's profile must be set to public (using the toggle at the top) for QR codes to work properly."
     },
     {
       id: "lost-pet",
@@ -64,7 +64,7 @@ const Help = () => {
     {
       id: "privacy",
       question: "How do I control what information is visible?",
-      answer: "Each section of your pet's profile has privacy controls. You can choose to make information public, private, or visible only when your pet is marked as missing. Check the privacy toggles in each section."
+      answer: "Your pet's profile has a single privacy toggle at the top that controls whether the entire profile is public or private. When set to public, all sections (Profile, Resume, Care Instructions, Gallery, Reviews) become viewable by anyone with the link. When private, only you can view the profile. Note: Missing pet alerts have separate visibility and don't require the public setting."
     },
     {
       id: "medical-records",
@@ -79,7 +79,7 @@ const Help = () => {
     {
       id: "sharing",
       question: "How do I share my pet's profile?",
-      answer: "You can share your pet's profile via QR code, direct link, or by using the share button in the app. Recipients can view the information you've made public without needing an account. Remember: You must toggle your pet's profile to public (using the switch at the top of the profile) before sharing for others to access the information."
+      answer: "You can share your pet's profile via QR code, direct link, or by using the share button in the app. Recipients can view the information you've made public without needing an account. Remember: You must toggle your pet's profile to public (using the switch at the top) before sharing for others to access the information."
     },
     {
       id: "emergency-contact",

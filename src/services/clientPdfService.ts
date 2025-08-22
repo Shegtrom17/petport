@@ -857,9 +857,9 @@ const generateFullPDF = async (doc: jsPDF, pageManager: PDFPageManager, petData:
     });
   }
 
-  // Professional References & Reviews
+  // Reviews & Reference Contacts
   if (petData.reviews && petData.reviews.length > 0) {
-    addSection(doc, pageManager, 'PROFESSIONAL REFERENCES & REVIEWS', () => {
+    addSection(doc, pageManager, 'REVIEWS & REFERENCE CONTACTS', () => {
       const averageRating = petData.reviews.reduce((sum: number, review: any) => sum + review.rating, 0) / petData.reviews.length;
       addText(doc, pageManager, `Overall Rating: ${averageRating.toFixed(1)}/5 stars (${petData.reviews.length} reviews)`);
       pageManager.addY(3);
@@ -887,9 +887,9 @@ const generateFullPDF = async (doc: jsPDF, pageManager: PDFPageManager, petData:
     });
   }
 
-  // Professional Experiences
+  // Experience & Activities
   if (petData.experiences && petData.experiences.length > 0) {
-    addSection(doc, pageManager, 'PROFESSIONAL EXPERIENCE', () => {
+    addSection(doc, pageManager, 'EXPERIENCE & ACTIVITIES', () => {
       petData.experiences.forEach((experience: any, index: number) => {
         addText(doc, pageManager, `${index + 1}. ${safeText(experience.activity)}`);
         if (experience.description) addText(doc, pageManager, `   Description: ${safeText(experience.description)}`);
@@ -1069,7 +1069,7 @@ const generateResumePDF = async (doc: jsPDF, pageManager: PDFPageManager, petDat
 
   // Reviews Section
   if (petData.reviews && petData.reviews.length > 0) {
-    addSection(doc, pageManager, 'Professional References & Reviews', () => {
+    addSection(doc, pageManager, 'Reviews & Reference Contacts', () => {
       const averageRating = petData.reviews.reduce((sum: number, review: any) => sum + review.rating, 0) / petData.reviews.length;
       addText(doc, pageManager, `Overall Rating: ${averageRating.toFixed(1)}/5 stars (${petData.reviews.length} reviews)`);
       pageManager.addY(5);
@@ -1100,7 +1100,7 @@ const generateResumePDF = async (doc: jsPDF, pageManager: PDFPageManager, petDat
 
   // Experiences Section
   if (petData.experiences && petData.experiences.length > 0) {
-    addSection(doc, pageManager, 'Professional Experience', () => {
+    addSection(doc, pageManager, 'Experience & Activities', () => {
       petData.experiences.forEach((experience: any, index: number) => {
         addText(doc, pageManager, `Experience ${index + 1}:`);
         addText(doc, pageManager, `Activity: ${safeText(experience.activity)}`);

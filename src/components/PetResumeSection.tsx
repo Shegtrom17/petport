@@ -206,77 +206,7 @@ export const PetResumeSection = ({ petData, onUpdate }: PetResumeSectionProps) =
         </Card>
       )}
 
-      {/* Pet Information Section */}
-      <Card className="border-0 shadow-lg">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-navy-900">
-            <Shield className="w-5 h-5 text-primary" />
-            Pet Information
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            <div>
-              <span className="text-sm font-medium text-muted-foreground">Name:</span>
-              <p className="font-semibold">{petData.name}</p>
-            </div>
-            {petData.species && (
-              <div>
-                <span className="text-sm font-medium text-muted-foreground">Species:</span>
-                <p className="font-semibold">{petData.species}</p>
-              </div>
-            )}
-            {petData.breed && (
-              <div>
-                <span className="text-sm font-medium text-muted-foreground">Breed:</span>
-                <p className="font-semibold">{petData.breed}</p>
-              </div>
-            )}
-            {petData.age && (
-              <div>
-                <span className="text-sm font-medium text-muted-foreground">Age:</span>
-                <p className="font-semibold">{petData.age}</p>
-              </div>
-            )}
-            {(petData as any).sex && (
-              <div>
-                <span className="text-sm font-medium text-muted-foreground">Sex:</span>
-                <p className="font-semibold">{(petData as any).sex}</p>
-              </div>
-            )}
-            {petData.weight && (
-              <div>
-                <span className="text-sm font-medium text-muted-foreground">Weight:</span>
-                <p className="font-semibold">{petData.weight}</p>
-              </div>
-            )}
-            {(petData as any).height && (
-              <div>
-                <span className="text-sm font-medium text-muted-foreground">Height:</span>
-                <p className="font-semibold">{(petData as any).height}</p>
-              </div>
-            )}
-            {(petData as any).registration_number && (
-              <div>
-                <span className="text-sm font-medium text-muted-foreground">Registration ID:</span>
-                <p className="font-semibold">{(petData as any).registration_number}</p>
-              </div>
-            )}
-            {petData.microchipId && (
-              <div>
-                <span className="text-sm font-medium text-muted-foreground">Microchip ID:</span>
-                <p className="font-semibold">{petData.microchipId}</p>
-              </div>
-            )}
-            <div>
-              <span className="text-sm font-medium text-muted-foreground">PetPort ID:</span>
-              <p className="font-semibold">{petData.petPassId}</p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Header Actions */}
+      {/* Header Actions - Moved to top */}
       <Card className="border-0 shadow-xl bg-gradient-to-r from-navy-900 to-navy-800 text-white">
         <CardContent className="p-6">
           <div className="flex justify-between items-start">
@@ -579,7 +509,7 @@ export const PetResumeSection = ({ petData, onUpdate }: PetResumeSectionProps) =
         </DialogContent>
       </Dialog>
 
-      {/* Pet Information */}
+      {/* Photos Section */}
       <Card className="border-0 shadow-xl bg-white/90 backdrop-blur-sm">
         <CardContent className="p-8">
           <div className="flex flex-col md:flex-row gap-8">
@@ -700,6 +630,76 @@ export const PetResumeSection = ({ petData, onUpdate }: PetResumeSectionProps) =
                   </span>
                 </div>
               )}
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Pet Information Section */}
+      <Card className="border-0 shadow-lg">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-navy-900">
+            <Shield className="w-5 h-5 text-primary" />
+            Pet Information
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div>
+              <span className="text-sm font-medium text-muted-foreground">Name:</span>
+              <p className="font-semibold">{petData.name}</p>
+            </div>
+            {petData.species && (
+              <div>
+                <span className="text-sm font-medium text-muted-foreground">Species:</span>
+                <p className="font-semibold">{petData.species}</p>
+              </div>
+            )}
+            {petData.breed && (
+              <div>
+                <span className="text-sm font-medium text-muted-foreground">Breed:</span>
+                <p className="font-semibold">{petData.breed}</p>
+              </div>
+            )}
+            {petData.age && (
+              <div>
+                <span className="text-sm font-medium text-muted-foreground">Age:</span>
+                <p className="font-semibold">{petData.age}</p>
+              </div>
+            )}
+            {(petData as any).sex && (
+              <div>
+                <span className="text-sm font-medium text-muted-foreground">Sex:</span>
+                <p className="font-semibold">{(petData as any).sex}</p>
+              </div>
+            )}
+            {petData.weight && (
+              <div>
+                <span className="text-sm font-medium text-muted-foreground">Weight:</span>
+                <p className="font-semibold">{petData.weight}</p>
+              </div>
+            )}
+            {(petData as any).height && (
+              <div>
+                <span className="text-sm font-medium text-muted-foreground">Height:</span>
+                <p className="font-semibold">{(petData as any).height}</p>
+              </div>
+            )}
+            {(petData as any).registration_number && (
+              <div>
+                <span className="text-sm font-medium text-muted-foreground">Registration ID:</span>
+                <p className="font-semibold">{(petData as any).registration_number}</p>
+              </div>
+            )}
+            {petData.microchipId && (
+              <div>
+                <span className="text-sm font-medium text-muted-foreground">Microchip ID:</span>
+                <p className="font-semibold">{petData.microchipId}</p>
+              </div>
+            )}
+            <div>
+              <span className="text-sm font-medium text-muted-foreground">PetPort ID:</span>
+              <p className="font-semibold">{petData.petPassId}</p>
             </div>
           </div>
         </CardContent>

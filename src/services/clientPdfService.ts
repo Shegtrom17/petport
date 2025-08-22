@@ -831,9 +831,9 @@ const generateFullPDF = async (doc: jsPDF, pageManager: PDFPageManager, petData:
     });
   }
 
-  // Training & Education
+  // Notable Training
   if (petData.training && petData.training.length > 0) {
-    addSection(doc, pageManager, 'TRAINING & EDUCATION', () => {
+    addSection(doc, pageManager, 'NOTABLE TRAINING', () => {
       petData.training.forEach((training: any, index: number) => {
         addText(doc, pageManager, `${index + 1}. ${safeText(training.course)}`);
         if (training.facility) addText(doc, pageManager, `   Facility: ${safeText(training.facility)}`);
@@ -1117,7 +1117,7 @@ const generateResumePDF = async (doc: jsPDF, pageManager: PDFPageManager, petDat
 
   // Achievements Section
   if (petData.achievements && petData.achievements.length > 0) {
-    addSection(doc, pageManager, 'Achievements & Awards', () => {
+    addSection(doc, pageManager, 'Notable Achievements', () => {
       petData.achievements.forEach((achievement: any, index: number) => {
         addText(doc, pageManager, `Achievement ${index + 1}:`);
         addText(doc, pageManager, `Title: ${safeText(achievement.title)}`);
@@ -1131,7 +1131,7 @@ const generateResumePDF = async (doc: jsPDF, pageManager: PDFPageManager, petDat
 
   // Training Section
   if (petData.training && petData.training.length > 0) {
-    addSection(doc, pageManager, 'Training & Education', () => {
+    addSection(doc, pageManager, 'Notable Training', () => {
       petData.training.forEach((training: any, index: number) => {
         addText(doc, pageManager, `Training ${index + 1}:`);
         addText(doc, pageManager, `Course: ${safeText(training.course)}`);

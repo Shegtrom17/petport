@@ -255,32 +255,32 @@ export const PetPDFGenerator = ({ petId, petName, petData }: PetPDFGeneratorProp
                   Choose how you'd like to use {petName}'s {selectedPdfType === 'emergency' ? 'emergency' : 'complete'} profile:
                 </p>
                 
-                <div className="grid grid-cols-2 gap-3">
-                  <Button
-                    onClick={() => handlePdfAction('view')}
-                    variant="outline"
-                    className="border-gold-500 text-gold-600 hover:bg-gold-50"
-                  >
-                    <Eye className="w-4 h-4 mr-2" />
-                    Generate & View
-                  </Button>
-                  <Button
-                    onClick={() => handlePdfAction('download')}
-                    className="bg-gradient-to-r from-gold-500 to-gold-400 text-navy-900 hover:from-gold-400 hover:to-gold-300"
-                  >
-                    <Download className="w-4 h-4 mr-2" />
-                    Generate & Download
-                  </Button>
-                </div>
-                
-                <Button
-                  onClick={() => handlePdfAction('view')}
-                  variant="outline"
-                  className="w-full border-navy-900 text-navy-900 hover:bg-navy-50"
-                >
-                  <Share2 className="w-4 h-4 mr-2" />
-                  Generate & Share PDF
-                </Button>
+                 <div className="grid grid-cols-2 gap-3">
+                   <Button
+                     onClick={() => handlePdfAction('view')}
+                     variant="outline"
+                     className="border-gold-500 text-gold-600 hover:bg-gold-50 text-xs sm:text-sm px-2 sm:px-4 h-auto py-2 flex-col sm:flex-row"
+                   >
+                     <Eye className="w-4 h-4 mb-1 sm:mb-0 sm:mr-2" />
+                     <span className="text-center">Generate & View</span>
+                   </Button>
+                   <Button
+                     onClick={() => handlePdfAction('download')}
+                     className="bg-gradient-to-r from-gold-500 to-gold-400 text-navy-900 hover:from-gold-400 hover:to-gold-300 text-xs sm:text-sm px-2 sm:px-4 h-auto py-2 flex-col sm:flex-row"
+                   >
+                     <Download className="w-4 h-4 mb-1 sm:mb-0 sm:mr-2" />
+                     <span className="text-center">Generate & Download</span>
+                   </Button>
+                 </div>
+                 
+                 <Button
+                   onClick={() => handlePdfAction('view')}
+                   variant="outline"
+                   className="w-full border-navy-900 text-navy-900 hover:bg-navy-50 text-xs sm:text-sm px-2 sm:px-4 h-auto py-2 flex-col sm:flex-row"
+                 >
+                   <Share2 className="w-4 h-4 mb-1 sm:mb-0 sm:mr-2" />
+                   <span className="text-center">Generate & Share PDF</span>
+                 </Button>
                 
                 <p className="text-xs text-navy-500 text-center">
                   💡 After generating, you'll see View | Download | Share options
@@ -303,77 +303,77 @@ export const PetPDFGenerator = ({ petId, petName, petData }: PetPDFGeneratorProp
                   <h4 className="font-bold text-navy-900 mb-3">
                     {selectedPdfType === 'emergency' ? 'Emergency Profile PDF' : 'Complete Profile PDF'}
                   </h4>
-                  <div className="grid grid-cols-3 gap-2 justify-center mb-3">
-                    <Button
-                      onClick={async () => {
-                        if (generatedPdfBlob) {
-                          const fileName = `PetPort_${selectedPdfType === 'emergency' ? 'Emergency' : 'Complete'}_Profile_${petName}.pdf`;
-                          try {
-                            await viewPDFBlob(generatedPdfBlob, fileName);
-                          } catch (error) {
-                            console.error('PDF view error:', error);
-                            toast({
-                              title: "View Failed",
-                              description: "Could not open PDF. Please try downloading instead.",
-                              variant: "destructive",
-                            });
-                          }
-                        }
-                      }}
-                      variant="outline"
-                      size="sm"
-                      className="border-gold-500 text-gold-600 hover:bg-gold-50"
-                    >
-                      <Eye className="w-4 h-4 mr-1" />
-                      View
-                    </Button>
-                    <Button
-                      onClick={() => {
-                        const fileName = `PetPort_${selectedPdfType === 'emergency' ? 'Emergency' : 'Complete'}_Profile_${petName}.pdf`;
-                        const a = document.createElement('a');
-                        a.href = URL.createObjectURL(generatedPdfBlob);
-                        a.download = fileName;
-                        document.body.appendChild(a);
-                        a.click();
-                        document.body.removeChild(a);
-                        URL.revokeObjectURL(a.href);
-                      }}
-                      variant="outline"
-                      size="sm"
-                      className="bg-gradient-to-r from-gold-500 to-gold-400 text-navy-900 hover:from-gold-400 hover:to-gold-300"
-                    >
-                      <Download className="w-4 h-4 mr-1" />
-                      Download
-                    </Button>
-                    <Button
-                      onClick={async () => {
-                        if (!generatedPdfBlob) return;
-                        const fileName = `PetPort_${selectedPdfType === 'emergency' ? 'Emergency' : 'Complete'}_Profile_${petName}.pdf`;
-                        const contentType = selectedPdfType === 'emergency' ? 'emergency' : 'profile';
-                        const result = await sharePDFBlob(generatedPdfBlob, fileName, petName, contentType);
-                        
-                        if (result.success) {
-                          toast({
-                            title: result.shared ? "PDF Shared!" : "Link Copied!",
-                            description: result.message,
-                          });
-                        } else if (result.error !== 'Share cancelled') {
-                          toast({
-                            title: "Unable to Share PDF",
-                            description: result.error || "Please download and share manually.",
-                            variant: "destructive",
-                          });
-                        }
-                      }}
-                      variant="outline"
-                      size="sm"
-                      disabled={isSharing}
-                      className="border-navy-900 text-navy-900 hover:bg-navy-50"
-                    >
-                      <Share2 className="w-4 h-4 mr-1" />
-                      Share
-                    </Button>
-                  </div>
+                   <div className="grid grid-cols-3 gap-2 justify-center mb-3">
+                     <Button
+                       onClick={async () => {
+                         if (generatedPdfBlob) {
+                           const fileName = `PetPort_${selectedPdfType === 'emergency' ? 'Emergency' : 'Complete'}_Profile_${petName}.pdf`;
+                           try {
+                             await viewPDFBlob(generatedPdfBlob, fileName);
+                           } catch (error) {
+                             console.error('PDF view error:', error);
+                             toast({
+                               title: "View Failed",
+                               description: "Could not open PDF. Please try downloading instead.",
+                               variant: "destructive",
+                             });
+                           }
+                         }
+                       }}
+                       variant="outline"
+                       size="sm"
+                       className="border-gold-500 text-gold-600 hover:bg-gold-50 text-xs sm:text-sm px-1 sm:px-3 h-auto py-2 flex-col sm:flex-row"
+                     >
+                       <Eye className="w-3 h-3 sm:w-4 sm:h-4 mb-1 sm:mb-0 sm:mr-1" />
+                       <span className="text-center">View</span>
+                     </Button>
+                     <Button
+                       onClick={() => {
+                         const fileName = `PetPort_${selectedPdfType === 'emergency' ? 'Emergency' : 'Complete'}_Profile_${petName}.pdf`;
+                         const a = document.createElement('a');
+                         a.href = URL.createObjectURL(generatedPdfBlob);
+                         a.download = fileName;
+                         document.body.appendChild(a);
+                         a.click();
+                         document.body.removeChild(a);
+                         URL.revokeObjectURL(a.href);
+                       }}
+                       variant="outline"
+                       size="sm"
+                       className="bg-gradient-to-r from-gold-500 to-gold-400 text-navy-900 hover:from-gold-400 hover:to-gold-300 text-xs sm:text-sm px-1 sm:px-3 h-auto py-2 flex-col sm:flex-row"
+                     >
+                       <Download className="w-3 h-3 sm:w-4 sm:h-4 mb-1 sm:mb-0 sm:mr-1" />
+                       <span className="text-center">Download</span>
+                     </Button>
+                     <Button
+                       onClick={async () => {
+                         if (!generatedPdfBlob) return;
+                         const fileName = `PetPort_${selectedPdfType === 'emergency' ? 'Emergency' : 'Complete'}_Profile_${petName}.pdf`;
+                         const contentType = selectedPdfType === 'emergency' ? 'emergency' : 'profile';
+                         const result = await sharePDFBlob(generatedPdfBlob, fileName, petName, contentType);
+                         
+                         if (result.success) {
+                           toast({
+                             title: result.shared ? "PDF Shared!" : "Link Copied!",
+                             description: result.message,
+                           });
+                         } else if (result.error !== 'Share cancelled') {
+                           toast({
+                             title: "Unable to Share PDF",
+                             description: result.error || "Please download and share manually.",
+                             variant: "destructive",
+                           });
+                         }
+                       }}
+                       variant="outline"
+                       size="sm"
+                       disabled={isSharing}
+                       className="border-navy-900 text-navy-900 hover:bg-navy-50 text-xs sm:text-sm px-1 sm:px-3 h-auto py-2 flex-col sm:flex-row"
+                     >
+                       <Share2 className="w-3 h-3 sm:w-4 sm:h-4 mb-1 sm:mb-0 sm:mr-1" />
+                       <span className="text-center">Share</span>
+                     </Button>
+                   </div>
                 </div>
 
                 {/* Sharing Options */}

@@ -33,16 +33,8 @@ export const MobileNavigationMenu = ({ activeTab, onTabChange }: MobileNavigatio
           </Button>
         </SheetTrigger>
         <SheetContent side="left" className="w-72 sm:w-80 p-4 sm:p-6 bg-gradient-to-b from-gold-500 to-gold-400 text-white">
-          <div className="flex items-center justify-between mb-4 sm:mb-6">
+          <div className="mb-4 sm:mb-6">
             <h2 className="text-base sm:text-lg font-semibold text-white">Navigation</h2>
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              onClick={() => setIsOpen(false)}
-              className="h-6 w-6 sm:h-8 sm:w-8 text-white hover:bg-white/10"
-            >
-              <X className="h-4 w-4 text-white" />
-            </Button>
           </div>
           <div className="space-y-2">
             <NavigationTabs 

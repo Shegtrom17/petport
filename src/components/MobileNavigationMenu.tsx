@@ -47,8 +47,8 @@ export const MobileNavigationMenu = ({ activeTab, onTabChange }: MobileNavigatio
           <div className="mt-6 pt-4 border-t border-white/20">
             <ReportIssueModal>
               <Button 
-                variant="outline"
-                className="w-full justify-start space-x-3 text-sm py-3 border-white/30 text-white hover:text-white hover:bg-white/10 hover:border-white/50 transition-all"
+                variant="ghost"
+                className="w-full justify-start space-x-3 text-sm py-3 text-white hover:bg-white/10 transition-all"
               >
                 <AlertTriangle className="w-4 h-4" />
                 <span className="font-medium">Report Issue</span>

@@ -45,6 +45,15 @@ export const PetGallerySection = ({ petData, onUpdate }: PetGallerySectionProps)
   const remainingSlots = MAX_GALLERY_PHOTOS - galleryPhotos.length;
   const isLimitReached = galleryPhotos.length >= MAX_GALLERY_PHOTOS;
 
+  // Debug logging for share button issue
+  console.log("PetGallerySection - Debug:", {
+    galleryPhotosLength: galleryPhotos.length,
+    showShareOptions,
+    hasPhotos: galleryPhotos.length > 0,
+    shouldShowShare: showShareOptions && galleryPhotos.length > 0,
+    petId: petData.id
+  });
+
   const handleTogglePhotoSelection = (photoId: string) => {
     setSelectedPhotos(prev => {
       const newSet = new Set(prev);

@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Camera, Upload, Download, Plus, Eye, Trash2, Edit2, X, Loader2, Share2, CheckSquare, Square } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { uploadGalleryPhoto, uploadMultipleGalleryPhotos, deleteGalleryPhoto, updateGalleryPhotoCaption } from "@/services/petService";
@@ -420,39 +421,74 @@ export const PetGallerySection = ({ petData, onUpdate }: PetGallerySectionProps)
               <span>{petData.name}'s Photo Gallery</span>
             </div>
             <div className="flex flex-wrap items-center gap-2">
-              {galleryPhotos.length > 0 && showShareOptions && (
-                <Button
-                  onClick={handleSelectAllPhotos}
-                  variant="outline"
-                  size="sm"
-                  className="text-xs"
-                >
-                  {selectedPhotos.size === galleryPhotos.length ? (
-                    <>
-                      <CheckSquare className="w-3 h-3 mr-1" />
-                      Deselect All
-                    </>
-                  ) : (
-                    <>
-                      <Square className="w-3 h-3 mr-1" />
-                      Select All
-                    </>
-                  )}
-                </Button>
-              )}
               <Badge 
                 variant={isLimitReached ? "destructive" : "outline"} 
                 className={isLimitReached ? "text-xs px-2 py-1" : "border-navy-800 text-navy-800 text-xs px-2 py-1"}
               >
                 {galleryPhotos.length}/{MAX_GALLERY_PHOTOS} Photos
               </Badge>
-              {selectedPhotos.size > 0 && (
-                <Badge variant="secondary" className="text-xs px-2 py-1">
-                  {selectedPhotos.size} selected
-                </Badge>
-              )}
             </div>
           </CardTitle>
+          
+          {/* Photo Selection Controls - Show when gallery has photos */}
+          {galleryPhotos.length > 0 && (
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mt-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div className="flex items-center gap-4">
+                  <Button
+                    onClick={() => setShowShareOptions(!showShareOptions)}
+                    variant={showShareOptions ? "default" : "outline"}
+                    size="sm"
+                    className="flex items-center gap-2"
+                  >
+                    <Share2 className="w-4 h-4" />
+                    {showShareOptions ? 'Cancel Selection' : 'Select Photos to Share'}
+                  </Button>
+                  
+                  {showShareOptions && (
+                    <>
+                      <Button
+                        onClick={handleSelectAllPhotos}
+                        variant="outline"
+                        size="sm"
+                        className="text-xs"
+                      >
+                        {selectedPhotos.size === galleryPhotos.length ? (
+                          <>
+                            <CheckSquare className="w-3 h-3 mr-1" />
+                            Deselect All
+                          </>
+                        ) : (
+                          <>
+                            <Square className="w-3 h-3 mr-1" />
+                            Select All
+                          </>
+                        )}
+                      </Button>
+                      
+                      {selectedPhotos.size > 0 && (
+                        <Badge variant="secondary" className="text-xs px-2 py-1">
+                          {selectedPhotos.size} photo{selectedPhotos.size !== 1 ? 's' : ''} selected
+                        </Badge>
+                      )}
+                    </>
+                  )}
+                </div>
+                
+                {showShareOptions && selectedPhotos.size > 0 && (
+                  <div className="text-sm text-blue-600 font-medium">
+                    👆 Selected photos will be shared
+                  </div>
+                )}
+              </div>
+              
+              {showShareOptions && (
+                <div className="text-xs text-blue-600 mt-2">
+                  💡 Check the boxes on photos below, then use the share options that appear
+                </div>
+              )}
+            </div>
+          )}
         </CardHeader>
         <CardContent>
           {galleryPhotos.length > 0 ? (
@@ -599,40 +635,54 @@ export const PetGallerySection = ({ petData, onUpdate }: PetGallerySectionProps)
             </div>
           )}
         </CardContent>
-      </Card>
-
-      {/* Share Gallery Section */}
-      {showShareOptions && galleryPhotos.length > 0 && (
-        <div className="space-y-4">
-          <SocialShareButtons
-            petName={petData.name}
-            petId={petData.id}
-            context="profile"
-            shareUrlOverride={getGalleryShareUrl()}
-            compact={true}
-          />
-          
-          {selectedPhotos.size > 0 && (
-            <Card className="border-2 border-blue-500/30 bg-blue-50/50">
-              <CardContent className="p-4">
-                <div className="flex items-center justify-between">
-                  <p className="text-sm text-blue-700">
-                    <strong>{selectedPhotos.size}</strong> photos selected for sharing
-                  </p>
-                  <Button
-                    onClick={() => setSelectedPhotos(new Set())}
-                    variant="outline"
-                    size="sm"
-                    className="text-xs"
-                  >
-                    Clear Selection
-                  </Button>
+        
+        {/* Share Gallery Section - Moved inside the card for better UX */}
+        {showShareOptions && galleryPhotos.length > 0 && (
+          <CardContent className="pt-0">
+            <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg p-4 space-y-4">
+              <div className="flex items-center gap-2">
+                <Share2 className="w-5 h-5 text-blue-600" />
+                <h3 className="font-semibold text-blue-900">Share Selected Photos</h3>
+              </div>
+              
+              {selectedPhotos.size > 0 ? (
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between bg-white rounded-md p-3 border border-blue-300">
+                    <p className="text-sm text-blue-800">
+                      <strong>{selectedPhotos.size}</strong> photo{selectedPhotos.size !== 1 ? 's' : ''} will be shared
+                    </p>
+                    <Button
+                      onClick={() => setSelectedPhotos(new Set())}
+                      variant="outline"
+                      size="sm"
+                      className="text-xs border-blue-300 hover:bg-blue-50"
+                    >
+                      Clear Selection
+                    </Button>
+                  </div>
+                  
+                  <SocialShareButtons
+                    petName={petData.name}
+                    petId={petData.id}
+                    context="profile"
+                    shareUrlOverride={getGalleryShareUrl()}
+                    compact={true}
+                  />
                 </div>
-              </CardContent>
-            </Card>
-          )}
-        </div>
-      )}
+              ) : (
+                <div className="bg-white rounded-md p-4 border border-blue-300 text-center">
+                  <p className="text-sm text-blue-700 mb-2">
+                    👆 Select photos using the checkboxes above to share them
+                  </p>
+                  <p className="text-xs text-blue-600">
+                    You can share individual photos or select multiple photos to create a custom gallery
+                  </p>
+                </div>
+              )}
+            </div>
+          </CardContent>
+        )}
+      </Card>
 
       {/* Photo Guidelines */}
       <Card className="border-0 shadow-lg bg-passport-section-bg backdrop-blur-sm">

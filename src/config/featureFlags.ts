@@ -2,6 +2,7 @@ export type FeatureFlags = {
   testMode: boolean;
   showBillingTroubleshooting: boolean;
   enableSwipeNavigation: boolean;
+  enableGuidedTour: boolean;
 };
 
 export const featureFlags: FeatureFlags = {
@@ -9,4 +10,5 @@ export const featureFlags: FeatureFlags = {
   testMode: true,
   showBillingTroubleshooting: false,
   enableSwipeNavigation: true,
+  enableGuidedTour: true,
 };

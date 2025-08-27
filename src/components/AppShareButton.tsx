@@ -69,6 +69,7 @@ export const AppShareButton = ({ variant = "icon", className = "" }: AppShareBut
           onClick={() => setIsExpanded(!isExpanded)}
           className="p-2 touch-feedback"
           aria-label="Share PetPort app"
+          data-coach-id="share-button"
         >
           <Share2 className="w-5 h-5" />
         </Button>

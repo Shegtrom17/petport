@@ -5,11 +5,13 @@ export type HomeDestination = "app" | "profile";
 export interface UserSettings {
   homeDestination: HomeDestination;
   rememberLastTab: boolean;
+  tourVersionSeen: string;
 }
 
 const DEFAULT_SETTINGS: UserSettings = {
   homeDestination: "app",
   rememberLastTab: true,
+  tourVersionSeen: "",
 };
 
 const storageKey = (userId?: string) =>

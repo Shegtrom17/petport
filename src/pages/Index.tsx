@@ -32,6 +32,8 @@ import { useOverlayOpen } from "@/stores/overlayStore";
 import { isTouchDevice } from "@/hooks/useIsTouchDevice";
 import { featureFlags } from "@/config/featureFlags";
 import { getPrevNext, type TabId } from "@/features/navigation/tabOrder";
+import { useCoachTour } from "@/hooks/useCoachTour";
+import { CoachOverlay } from "@/components/CoachOverlay";
 
 const Index = () => {
   console.log("Index component is rendering");
@@ -43,6 +45,7 @@ const Index = () => {
   const { user } = useAuth();
   const { settings } = useUserSettings(user?.id);
   const isOverlayOpen = useOverlayOpen();
+  const coachTour = useCoachTour();
   
   // Feature flag and touch capability detection
   const ENABLE_SWIPE_NAV = (import.meta.env.VITE_ENABLE_SWIPE_NAV ?? "true") === "true";
@@ -333,6 +336,17 @@ const Index = () => {
         </main>
 
         {/* Floating Report Issue Button */}
+        
+        {/* Coach Tour Overlay */}
+        <CoachOverlay
+          isActive={coachTour.isActive}
+          step={coachTour.currentStep}
+          stepNumber={coachTour.stepNumber}
+          totalSteps={coachTour.totalSteps}
+          targetElement={coachTour.targetElement}
+          onNext={coachTour.nextStep}
+          onSkip={coachTour.skipTour}
+        />
       </div>
     </PWALayout>
   );

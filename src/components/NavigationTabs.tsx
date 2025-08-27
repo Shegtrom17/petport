@@ -54,7 +54,7 @@ export const NavigationTabs = ({ activeTab, onTabChange, isMobile = false }: Nav
               ? "bg-gradient-to-r from-theme-primary-dark to-theme-primary-medium text-theme-accent shadow-lg border border-theme-accent/30 hover:from-theme-primary-medium hover:to-theme-primary-dark" 
               : "text-theme-primary-dark hover:text-theme-primary-medium hover:bg-theme-primary-dark/20 hover:shadow-md border border-transparent hover:border-theme-primary-dark/30"
           }`}
-          data-coach-id={tab.coachId || undefined}
+          
         >
           <tab.icon className="w-3 h-3 sm:w-4 sm:h-4" />
           <span className="hidden sm:inline font-medium">{tab.label}</span>

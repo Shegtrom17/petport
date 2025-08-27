@@ -9,14 +9,14 @@ import { Link } from "react-router-dom";
 import { MetaTags } from "@/components/MetaTags";
 import { PWALayout } from "@/components/PWALayout";
 import { AppHeader } from "@/components/AppHeader";
-import { useCoachTour } from "@/hooks/useCoachTour";
+
 import { useAuth } from "@/context/AuthContext";
 
 const Help = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [showReportModal, setShowReportModal] = useState(false);
   const { user } = useAuth();
-  const { canReplay, replayTour } = useCoachTour();
+  
 
   const quickLinks = [
     {
@@ -138,24 +138,6 @@ const Help = () => {
             />
           </div>
 
-          {/* Replay Tour Button (only for authenticated users who have completed tour) */}
-          {user && canReplay && (
-            <div className="mb-8">
-              <Card>
-                <CardContent className="p-6 text-center">
-                  <RotateCcw className="w-12 h-12 text-primary mx-auto mb-4" />
-                  <h3 className="text-lg font-semibold mb-2">Replay App Tour</h3>
-                  <p className="text-muted-foreground mb-4">
-                    Want to see the quick tips again? Replay the app tour to refresh your memory.
-                  </p>
-                  <Button onClick={replayTour}>
-                    <RotateCcw className="w-4 h-4 mr-2" />
-                    Replay Tour
-                  </Button>
-                </CardContent>
-              </Card>
-            </div>
-          )}
 
           {/* Report Issue Button */}
           <div className="mb-8">

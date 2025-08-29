@@ -157,7 +157,7 @@ const handler = async (req: Request): Promise<Response> => {
     const emailTemplate = generateEmailTemplate(emailData);
     
     const emailResponse = await resend.emails.send({
-      from: "PetPort <onboarding@resend.dev>",
+      from: "PetPort <noreply@petport.app>",
       to: [emailData.recipientEmail],
       subject: generateEmailTemplate(emailData).match(/<title>(.*?)<\/title>/)?.[1] || `PetPort - ${emailData.petName}`,
       html: emailTemplate,

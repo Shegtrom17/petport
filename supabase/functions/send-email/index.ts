@@ -1,7 +1,6 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
-import { Resend } from "npm:resend@2.0.0";
 
-const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
+const POSTMARK_API_KEY = Deno.env.get("POSTMARK_API_KEY");
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -156,23 +155,39 @@ const handler = async (req: Request): Promise<Response> => {
 
     const emailTemplate = generateEmailTemplate(emailData);
     
-    const emailResponse = await resend.emails.send({
-      from: "PetPort <noreply@petport.app>",
-      to: [emailData.recipientEmail],
-      subject: generateEmailTemplate(emailData).match(/<title>(.*?)<\/title>/)?.[1] || `PetPort - ${emailData.petName}`,
-      html: emailTemplate,
+    // Extract subject from template
+    const subjectMatch = emailTemplate.match(/<title>(.*?)<\/title>/);
+    const subject = subjectMatch?.[1] || `PetPort - ${emailData.petName}`;
+
+    // Send email via Postmark API
+    const emailResponse = await fetch("https://api.postmarkapp.com/email", {
+      method: "POST",
+      headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+        "X-Postmark-Server-Token": POSTMARK_API_KEY!,
+      },
+      body: JSON.stringify({
+        From: "PetPort <noreply@petport.app>",
+        To: emailData.recipientEmail,
+        Subject: subject,
+        HtmlBody: emailTemplate,
+        MessageStream: "outbound"
+      }),
     });
 
-    console.log("Email response:", emailResponse);
+    const result = await emailResponse.json();
+    
+    console.log("Postmark response:", result);
 
     // Check if the email was sent successfully
-    if (emailResponse.error) {
-      console.error("Resend API error:", emailResponse.error);
+    if (!emailResponse.ok) {
+      console.error("Postmark API error:", result);
       return new Response(JSON.stringify({ 
         success: false, 
-        error: emailResponse.error.message || "Failed to send email"
+        error: result.Message || "Failed to send email"
       }), {
-        status: 400,
+        status: emailResponse.status,
         headers: {
           "Content-Type": "application/json",
           ...corsHeaders,
@@ -180,8 +195,8 @@ const handler = async (req: Request): Promise<Response> => {
       });
     }
 
-    if (!emailResponse.data?.id) {
-      console.error("No message ID returned from Resend");
+    if (!result.MessageID) {
+      console.error("No message ID returned from Postmark");
       return new Response(JSON.stringify({ 
         success: false, 
         error: "Email service did not return a message ID"
@@ -194,11 +209,11 @@ const handler = async (req: Request): Promise<Response> => {
       });
     }
 
-    console.log("Email sent successfully:", emailResponse);
+    console.log("Email sent successfully via Postmark:", result);
 
     return new Response(JSON.stringify({ 
       success: true, 
-      messageId: emailResponse.data.id 
+      messageId: result.MessageID 
     }), {
       status: 200,
       headers: {

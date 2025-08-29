@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Search, MessageSquare, AlertTriangle, Heart, FileText, Settings, Home, RotateCcw } from "lucide-react";
+import { Search, MessageSquare, AlertTriangle, Heart, FileText, Settings, Home, RotateCcw, Mail } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -46,6 +46,13 @@ const Help = () => {
       icon: Settings,
       link: "/profile",
       color: "text-muted-foreground"
+    },
+    {
+      title: "Email Test",
+      description: "Test email configuration and sending",
+      icon: Mail,
+      link: "/email-test",
+      color: "text-blue-600"
     }
   ];
 

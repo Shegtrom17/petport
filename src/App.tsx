@@ -37,6 +37,7 @@ import Billing from "./pages/Billing";
 import VaccinationGuide from "./pages/VaccinationGuide";
 import Help from "./pages/Help";
 import PublicGallery from "./pages/PublicGallery";
+import EmailTest from "./pages/EmailTest";
 
 
 const queryClient = new QueryClient();
@@ -122,12 +123,17 @@ const App = () => {
                        <Subscribe />
                      </ProtectedRoute>
                    } />
-                   <Route path="/help" element={
-                     <ProtectedRoute>
-                       <Help />
-                     </ProtectedRoute>
-                   } />
-                  <Route path="*" element={<NotFound />} />
+                    <Route path="/help" element={
+                      <ProtectedRoute>
+                        <Help />
+                      </ProtectedRoute>
+                    } />
+                    <Route path="/email-test" element={
+                      <ProtectedRoute>
+                        <EmailTest />
+                      </ProtectedRoute>
+                    } />
+                   <Route path="*" element={<NotFound />} />
                 </Routes>
                 </BrowserRouter>
               </ErrorBoundary>

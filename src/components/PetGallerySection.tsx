@@ -514,12 +514,12 @@ export const PetGallerySection = ({ petData, onUpdate }: PetGallerySectionProps)
                         {selectedPhotos.length === galleryPhotos.length ? (
                           <>
                             <CheckSquare className="w-4 h-4 mr-1" />
-                            Deselect All
+                            <span className="text-responsive-sm">Deselect All</span>
                           </>
                         ) : (
                           <>
                             <Square className="w-4 h-4 mr-1" />
-                            Select All
+                            <span className="text-responsive-sm">Select All</span>
                           </>
                         )}
                       </Button>
@@ -537,7 +537,7 @@ export const PetGallerySection = ({ petData, onUpdate }: PetGallerySectionProps)
                       onClick={handleCancelSelection}
                     >
                       <X className="w-4 h-4 mr-1" />
-                      Cancel
+                      <span className="text-responsive-sm">Cancel</span>
                     </Button>
                   </div>
                   
@@ -550,7 +550,7 @@ export const PetGallerySection = ({ petData, onUpdate }: PetGallerySectionProps)
                           disabled={selectedPhotos.length === 0}
                         >
                           <Share2 className="w-4 h-4 mr-2" />
-                          {getShareButtonText()}
+                          <span className="text-responsive-sm">{getShareButtonText()}</span>
                         </Button>
                       </SheetTrigger>
                     </Sheet>
@@ -744,7 +744,7 @@ export const PetGallerySection = ({ petData, onUpdate }: PetGallerySectionProps)
                 >
                   <X className="w-4 h-4" />
                 </Button>
-                <span className="text-sm font-medium">
+                <span className="text-responsive-sm font-medium">
                   {selectedPhotos.length} selected
                 </span>
               </div>
@@ -757,7 +757,7 @@ export const PetGallerySection = ({ petData, onUpdate }: PetGallerySectionProps)
                       disabled={selectedPhotos.length === 0}
                     >
                       <Share2 className="w-4 h-4 mr-1" />
-                      Share
+                      <span className="text-responsive-sm">Share</span>
                     </Button>
                   </SheetTrigger>
                 </Sheet>

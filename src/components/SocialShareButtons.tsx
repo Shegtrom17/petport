@@ -195,9 +195,9 @@ title: "Link Copied! 📋",
   return (
     <Card className={`${isMissingPet ? 'border-2 border-red-500 bg-red-50' : 'border-2 border-gold-500/30 bg-[#f8f8f8]'} shadow-lg`}>
       <CardHeader className={compact ? "pb-2" : "pb-3"}>
-        <CardTitle className={`flex items-center space-x-2 ${compact ? 'text-base' : 'text-lg'} font-semibold ${isMissingPet ? 'text-red-800' : 'text-navy-900'} border-b-2 ${isMissingPet ? 'border-red-500' : 'border-gold-500'} pb-2`}>
-          <Share2 className="w-5 h-5" />
-          <span>{isMissingPet ? `Help Find ${petName}!` : (isCare ? `Share ${petName}'s Care Instructions` : (isCredentials ? `Share ${petName}'s Credentials` : (isResume ? `Share ${petName}'s Resume` : (isReviews ? `Share ${petName}'s Reviews` : `Share ${petName}'s Profile`))))}</span>
+        <CardTitle className={`flex items-center space-x-2 ${compact ? 'text-responsive-base' : 'text-responsive-lg'} font-semibold ${isMissingPet ? 'text-red-800' : 'text-navy-900'} border-b-2 ${isMissingPet ? 'border-red-500' : 'border-gold-500'} pb-2 text-wrap-safe`}>
+          <Share2 className="w-5 h-5 flex-shrink-0" />
+          <span className="min-w-0 truncate">{isMissingPet ? `Help Find ${petName}!` : (isCare ? `Share ${petName}'s Care Instructions` : (isCredentials ? `Share ${petName}'s Credentials` : (isResume ? `Share ${petName}'s Resume` : (isReviews ? `Share ${petName}'s Reviews` : `Share ${petName}'s Profile`))))}</span>
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -223,16 +223,18 @@ title: "Link Copied! 📋",
             <Button
               onClick={() => setShowOptions(true)}
               size={compact ? "sm" : "default"}
-              className={`w-full ${compact ? 'h-10 text-sm' : 'h-12 text-base'} font-semibold ${
+              className={`w-full ${compact ? 'h-10' : 'h-12'} font-semibold ${
                 isMissingPet 
                   ? 'bg-red-600 hover:bg-red-700 text-white' 
                   : 'bg-primary hover:bg-primary/90 text-primary-foreground'
               }`}
             >
-                <Share2 className="w-5 h-5 mr-2" />
-                {compact 
-                  ? (isMissingPet ? 'Share alert' : 'Share')
-                  : (isMissingPet ? `Share ${petName}'s Missing Alert` : (isCare ? `Share Care Instructions` : (isCredentials ? `Share Credentials` : (isResume ? `Share Resume` : (isReviews ? `Share Reviews` : `Share ${petName}'s Profile`)))))}
+                <Share2 className="w-5 h-5 mr-2 flex-shrink-0" />
+                <span className="text-responsive-sm truncate">
+                  {compact 
+                    ? (isMissingPet ? 'Share alert' : 'Share')
+                    : (isMissingPet ? `Share ${petName}'s Missing Alert` : (isCare ? `Share Care Instructions` : (isCredentials ? `Share Credentials` : (isResume ? `Share Resume` : (isReviews ? `Share Reviews` : `Share ${petName}'s Profile`)))))}
+                </span>
               </Button>
           ) : (
             <>
@@ -241,7 +243,7 @@ title: "Link Copied! 📋",
                 onClick={handleNativeShare}
                 disabled={isSharing}
                 size={compact ? "sm" : "default"}
-                className={`w-full ${compact ? 'h-10 text-sm' : 'h-12 text-base'} font-semibold ${
+                className={`w-full ${compact ? 'h-10' : 'h-12'} font-semibold ${
                   isMissingPet 
                     ? 'bg-red-600 hover:bg-red-700 text-white' 
                     : 'bg-primary hover:bg-primary/90 text-primary-foreground'
@@ -249,13 +251,13 @@ title: "Link Copied! 📋",
               >
                 {isSharing ? (
                   <>
-                    <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent mr-2" />
-                    Sharing...
+                    <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent mr-2 flex-shrink-0" />
+                    <span className="text-responsive-sm">Sharing...</span>
                   </>
                 ) : (
                   <>
-                    <Smartphone className="w-5 h-5 mr-2" />
-                    Quick Share
+                    <Smartphone className="w-5 h-5 mr-2 flex-shrink-0" />
+                    <span className="text-responsive-sm">Quick Share</span>
                   </>
                 )}
               </Button>
@@ -268,8 +270,8 @@ title: "Link Copied! 📋",
                   size="sm"
                   className={`w-full ${isMissingPet ? 'border-red-600 text-red-700 hover:bg-red-50' : 'border-primary text-primary hover:bg-primary/5'}`}
                 >
-                  {copied ? <Check className="w-4 h-4 mr-1" /> : <Copy className="w-4 h-4 mr-1" />}
-                  {copied ? 'Copied!' : 'Copy Link'}
+                  {copied ? <Check className="w-4 h-4 mr-1 flex-shrink-0" /> : <Copy className="w-4 h-4 mr-1 flex-shrink-0" />}
+                  <span className="text-responsive-xs">{copied ? 'Copied!' : 'Copy Link'}</span>
                 </Button>
                 
                 <Button
@@ -278,8 +280,8 @@ title: "Link Copied! 📋",
                   size="sm"
                   className={`w-full ${isMissingPet ? 'border-red-600 text-red-700 hover:bg-red-50' : 'border-primary text-primary hover:bg-primary/5'}`}
                 >
-                  <MessageCircle className="w-4 h-4 mr-1" />
-                  Text/SMS
+                  <MessageCircle className="w-4 h-4 mr-1 flex-shrink-0" />
+                  <span className="text-responsive-xs">Text/SMS</span>
                 </Button>
                 
                 <Dialog open={showEmailForm} onOpenChange={setShowEmailForm}>
@@ -290,8 +292,8 @@ title: "Link Copied! 📋",
                       size="sm"
                       className={`w-full ${isMissingPet ? 'border-red-600 text-red-700 hover:bg-red-50' : 'border-primary text-primary hover:bg-primary/5'}`}
                     >
-                      <Mail className="w-4 h-4 mr-1" />
-                      Email
+                      <Mail className="w-4 h-4 mr-1 flex-shrink-0" />
+                      <span className="text-responsive-xs">Email</span>
                     </Button>
                   </DialogTrigger>
                   <DialogContent className="sm:max-w-md">
@@ -334,14 +336,14 @@ title: "Link Copied! 📋",
                           disabled={emailLoading}
                           className="flex-1"
                         >
-                          {emailLoading ? 'Sending...' : 'Send Email'}
+                          <span className="text-responsive-sm">{emailLoading ? 'Sending...' : 'Send Email'}</span>
                         </Button>
                         <Button
                           variant="outline"
                           onClick={() => setShowEmailForm(false)}
                           disabled={emailLoading}
                         >
-                          Cancel
+                          <span className="text-responsive-sm">Cancel</span>
                         </Button>
                       </div>
                     </div>
@@ -354,8 +356,8 @@ title: "Link Copied! 📋",
                   size="sm"
                   className="w-full bg-[#1877F2] hover:bg-[#166FE5] text-white border-[#1877F2]"
                 >
-                  <Facebook className="w-4 h-4 mr-1" />
-                  Facebook
+                  <Facebook className="w-4 h-4 mr-1 flex-shrink-0" />
+                  <span className="text-responsive-xs">Facebook</span>
                 </Button>
                 
                 <Button
@@ -364,8 +366,8 @@ title: "Link Copied! 📋",
                   size="sm"
                   className={`w-full ${isMissingPet ? 'border-red-600 text-red-700 hover:bg-red-50' : 'border-primary text-primary hover:bg-primary/5'}`}
                 >
-                  <MessageCircle className="w-4 h-4 mr-1" />
-                  Messenger
+                  <MessageCircle className="w-4 h-4 mr-1 flex-shrink-0" />
+                  <span className="text-responsive-xs">Messenger</span>
                 </Button>
                 
                 <Button
@@ -374,10 +376,10 @@ title: "Link Copied! 📋",
                   size="sm"
                   className="w-full bg-black hover:bg-gray-800 text-white border-black"
                 >
-                  <svg className="w-4 h-4 mr-1" viewBox="0 0 24 24" fill="currentColor">
+                  <svg className="w-4 h-4 mr-1 flex-shrink-0" viewBox="0 0 24 24" fill="currentColor">
                     <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
                   </svg>
-                  X/Twitter
+                  <span className="text-responsive-xs">X/Twitter</span>
                 </Button>
               </div>
               
@@ -387,7 +389,7 @@ title: "Link Copied! 📋",
                 size="sm"
                 className="w-full text-muted-foreground"
               >
-                ← Back to options
+                <span className="text-responsive-sm">← Back to options</span>
               </Button>
             </>
           )}

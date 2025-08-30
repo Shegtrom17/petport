@@ -195,6 +195,156 @@ const loadImageAsBase64 = async (url: string): Promise<string> => {
   }
 };
 
+// EXIF orientation correction utilities
+const getImageOrientation = async (blob: Blob): Promise<number> => {
+  if (blob.type !== 'image/jpeg') return 1; // Only JPEG has EXIF
+  
+  try {
+    const arrayBuffer = await blob.arrayBuffer();
+    const dataView = new DataView(arrayBuffer);
+    
+    // Check for JPEG signature
+    if (dataView.getUint16(0) !== 0xFFD8) return 1;
+    
+    let offset = 2;
+    let marker = dataView.getUint16(offset);
+    
+    while (offset < dataView.byteLength && marker !== 0xFFE1) {
+      offset += 2 + dataView.getUint16(offset + 2);
+      marker = dataView.getUint16(offset);
+    }
+    
+    if (marker !== 0xFFE1) return 1;
+    
+    const exifLength = dataView.getUint16(offset + 2);
+    const exifOffset = offset + 4;
+    
+    // Check for EXIF identifier
+    if (dataView.getUint32(exifOffset) !== 0x45786966) return 1;
+    
+    const tiffOffset = exifOffset + 6;
+    const byteOrder = dataView.getUint16(tiffOffset);
+    const littleEndian = byteOrder === 0x4949;
+    
+    const ifdOffset = tiffOffset + dataView.getUint32(tiffOffset + 4, littleEndian);
+    const tagCount = dataView.getUint16(ifdOffset, littleEndian);
+    
+    for (let i = 0; i < tagCount; i++) {
+      const tagOffset = ifdOffset + 2 + (i * 12);
+      const tag = dataView.getUint16(tagOffset, littleEndian);
+      
+      if (tag === 0x0112) { // Orientation tag
+        return dataView.getUint16(tagOffset + 8, littleEndian);
+      }
+    }
+    
+    return 1;
+  } catch (error) {
+    console.warn('Failed to read EXIF orientation:', error);
+    return 1;
+  }
+};
+
+const applyOrientationToCanvas = (ctx: CanvasRenderingContext2D, orientation: number, width: number, height: number): void => {
+  switch (orientation) {
+    case 2:
+      ctx.scale(-1, 1);
+      ctx.translate(-width, 0);
+      break;
+    case 3:
+      ctx.translate(width, height);
+      ctx.rotate(Math.PI);
+      break;
+    case 4:
+      ctx.scale(1, -1);
+      ctx.translate(0, -height);
+      break;
+    case 5:
+      ctx.rotate(0.5 * Math.PI);
+      ctx.scale(1, -1);
+      break;
+    case 6:
+      ctx.rotate(0.5 * Math.PI);
+      ctx.translate(0, -height);
+      break;
+    case 7:
+      ctx.rotate(0.5 * Math.PI);
+      ctx.translate(width, -height);
+      ctx.scale(-1, 1);
+      break;
+    case 8:
+      ctx.rotate(-0.5 * Math.PI);
+      ctx.translate(-width, 0);
+      break;
+  }
+};
+
+// Orientation-aware image loader for PDFs
+const loadOrientedImageAsBase64 = async (url: string): Promise<string> => {
+  try {
+    const response = await fetch(url);
+    const blob = await response.blob();
+    
+    // Get EXIF orientation
+    const orientation = await getImageOrientation(blob);
+    
+    // If orientation is normal (1), use standard loading
+    if (orientation === 1) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result as string);
+        reader.onerror = reject;
+        reader.readAsDataURL(blob);
+      });
+    }
+    
+    // Create image element to load the image
+    const img = new Image();
+    const imageUrl = URL.createObjectURL(blob);
+    
+    return new Promise((resolve, reject) => {
+      img.onload = () => {
+        try {
+          // Calculate canvas dimensions based on orientation
+          const needsSwap = orientation >= 5 && orientation <= 8;
+          const canvasWidth = needsSwap ? img.height : img.width;
+          const canvasHeight = needsSwap ? img.width : img.height;
+          
+          // Create canvas and apply orientation
+          const canvas = document.createElement('canvas');
+          canvas.width = canvasWidth;
+          canvas.height = canvasHeight;
+          const ctx = canvas.getContext('2d')!;
+          
+          // Apply orientation transformation
+          applyOrientationToCanvas(ctx, orientation, img.width, img.height);
+          
+          // Draw the corrected image
+          ctx.drawImage(img, 0, 0);
+          
+          // Convert to base64
+          const correctedBase64 = canvas.toDataURL('image/jpeg', 0.9);
+          URL.revokeObjectURL(imageUrl);
+          resolve(correctedBase64);
+        } catch (error) {
+          URL.revokeObjectURL(imageUrl);
+          reject(error);
+        }
+      };
+      
+      img.onerror = () => {
+        URL.revokeObjectURL(imageUrl);
+        reject(new Error('Failed to load image'));
+      };
+      
+      img.src = imageUrl;
+    });
+  } catch (error) {
+    console.error('Failed to load oriented image:', error);
+    throw error;
+  }
+};
+
 const getImageDimensions = (base64: string): Promise<{ width: number; height: number }> => {
   return new Promise((resolve, reject) => {
     const img = new Image();
@@ -271,7 +421,7 @@ const addImage = async (doc: jsPDF, pageManager: PDFPageManager, imageUrl: strin
   try {
     pageManager.checkPageSpace(maxHeight + 10);
     
-    const base64 = await loadImageAsBase64(imageUrl);
+    const base64 = await loadOrientedImageAsBase64(imageUrl);
     const dimensions = await getImageDimensions(base64);
     
     // Calculate scaled dimensions
@@ -648,7 +798,7 @@ pageManager.addY(6);
 try {
   const publicUrl = generatePublicMissingUrl(petData.id);
   const qrUrl = generateQRCodeUrl(publicUrl, 240);
-  const base64 = await loadImageAsBase64(qrUrl);
+  const base64 = await loadImageAsBase64(qrUrl); // QR codes don't need orientation correction
   const qrSize = 36; // mm (reduced to fit within 2 pages)
   const x = (210 - qrSize) / 2;
   const y = pageManager.getCurrentY();
@@ -671,7 +821,7 @@ addFooterBottom(doc, pageManager, [
 ]);
 };
 
-// Enhanced image handling with proper aspect ratio
+// Enhanced image handling with proper aspect ratio and EXIF orientation correction
 const addGalleryImage = async (
   doc: jsPDF, 
   pageManager: PDFPageManager, 
@@ -682,7 +832,7 @@ const addGalleryImage = async (
   maxHeight: number = 60
 ): Promise<{ width: number; height: number }> => {
   try {
-    const base64 = await loadImageAsBase64(imageUrl);
+    const base64 = await loadOrientedImageAsBase64(imageUrl);
     const dimensions = await getImageDimensions(base64);
     
     // Calculate scaled dimensions maintaining aspect ratio
@@ -738,7 +888,10 @@ const generateGalleryPDF = async (doc: jsPDF, pageManager: PDFPageManager, petDa
       if (photosInCurrentRow >= photosPerRow) {
         // Move to next row
         pageManager.addY(maxRowHeight + 15); // Row height + caption space
-        pageManager.checkPageSpace(maxPhotoHeight + 15); // Check for page break
+        
+        // Better page break logic - check if next row will fit completely
+        const nextRowHeight = maxPhotoHeight + 15; // Estimate for next row
+        pageManager.checkPageSpace(nextRowHeight);
         
         startY = pageManager.getCurrentY();
         photosInCurrentRow = 0;

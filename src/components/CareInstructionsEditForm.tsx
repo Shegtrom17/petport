@@ -18,6 +18,9 @@ interface CareInstructionsEditFormProps {
 }
 
 export const CareInstructionsEditForm = ({ petData, onSave, onCancel }: CareInstructionsEditFormProps) => {
+  console.log("CareInstructionsEditForm petData:", petData);
+  console.log("CareInstructionsEditForm medications:", petData.medications);
+  
   const { register, handleSubmit, formState: { isDirty } } = useForm({
     defaultValues: {
       feedingSchedule: petData.careInstructions?.feedingSchedule || "",
@@ -26,7 +29,7 @@ export const CareInstructionsEditForm = ({ petData, onSave, onCancel }: CareInst
       allergies: petData.careInstructions?.allergies || "",
       behavioralNotes: petData.careInstructions?.behavioralNotes || "",
       favoriteActivities: petData.careInstructions?.favoriteActivities || "",
-      medications: petData.medications?.join(", ") || "",
+      medications: Array.isArray(petData.medications) ? petData.medications.join(", ") : (petData.medications || ""),
     }
   });
 

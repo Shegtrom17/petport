@@ -43,7 +43,7 @@ export const BottomTabNavigation = () => {
                     isActive ? "scale-110" : ""
                   }`} 
                 />
-                <span className="text-xs font-medium truncate">
+                <span className="text-responsive-xs font-medium text-ellipsis-2 max-w-full text-center leading-tight">
                   {tab.label}
                 </span>
               </NavLink>

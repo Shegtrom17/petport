@@ -67,9 +67,10 @@ const formatPhoneForTel = (phone: string) => {
 
 interface QuickIDSectionProps {
   petData: PetData;
+  onUpdate?: () => void;
 }
 
-export const QuickIDSection = ({ petData }: QuickIDSectionProps) => {
+export const QuickIDSection = ({ petData, onUpdate }: QuickIDSectionProps) => {
   const { toast } = useToast();
   const [isEditing, setIsEditing] = useState(false);
   const [lostPetData, setLostPetData] = useState<LostPetData>({
@@ -149,6 +150,11 @@ export const QuickIDSection = ({ petData }: QuickIDSectionProps) => {
         description: lostPetData.is_missing ? "Your pet is now marked as missing" : "Lost pet status updated"
       });
 
+      // Trigger parent data refresh
+      if (onUpdate) {
+        onUpdate();
+      }
+
       setIsEditing(false);
     } catch (error) {
       console.error('Error saving lost pet data:', error);
@@ -177,6 +183,11 @@ export const QuickIDSection = ({ petData }: QuickIDSectionProps) => {
         description: newStatus ? "Lost pet alert is now active" : "Missing status has been cleared",
         variant: newStatus ? "destructive" : "default"
       });
+
+      // Trigger parent data refresh
+      if (onUpdate) {
+        onUpdate();
+      }
     } catch (error) {
       console.error('Error updating missing status:', error);
       setLostPetData(prev => ({ ...prev, is_missing: !newStatus }));

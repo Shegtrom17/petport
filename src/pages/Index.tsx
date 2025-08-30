@@ -245,7 +245,7 @@ const Index = () => {
         );
       case "travel":
         console.log("Rendering TravelMapSection");
-        return <TravelMapSection petData={petData} />;
+        return <TravelMapSection petData={petData} onUpdate={handlePetUpdate} />;
       case "documents":
         console.log("Rendering DocumentsSection");
         return <DocumentsSection 
@@ -259,7 +259,7 @@ const Index = () => {
         return <PetGallerySection petData={petData} onUpdate={handlePetUpdate} />;
       case "quickid":
         console.log("Rendering QuickIDSection");
-        return <QuickIDSection petData={petData} />;
+        return <QuickIDSection petData={petData} onUpdate={handlePetUpdate} />;
       case "lostpet":
         console.log("Rendering LostPet");
         return <LostPet />;

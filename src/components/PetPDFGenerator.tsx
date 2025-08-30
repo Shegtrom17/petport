@@ -5,7 +5,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { FileText, Download, Share2, Loader2, Users, ExternalLink, LogIn, AlertTriangle, Eye } from "lucide-react";
 import { generateQRCodeUrl, generatePublicProfileUrl, shareProfileOptimized, sharePDFBlob } from "@/services/pdfService";
-import { generateClientPetPDF, viewPDFBlob } from "@/services/clientPdfService";
+import { generateClientPetPDF, viewPDFBlob, downloadPDFBlob, isIOS, isStandalonePWA } from "@/services/clientPdfService";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/context/AuthContext";
 import { useNavigate } from "react-router-dom";
@@ -62,22 +62,23 @@ export const PetPDFGenerator = ({ petId, petName, petData }: PetPDFGeneratorProp
         setGeneratedPdfBlob(result.blob);
         
         if (action === 'download') {
-          // Direct download
+          // Use environment-aware download
           const fileName = `${petName}_${selectedPdfType}_profile.pdf`;
-          const a = document.createElement('a');
-          a.href = URL.createObjectURL(result.blob);
-          a.download = fileName;
-          document.body.appendChild(a);
-          a.click();
-          document.body.removeChild(a);
-          URL.revokeObjectURL(a.href);
-          
-          toast({
-            title: "Download Started",
-            description: `${selectedPdfType === 'emergency' ? 'Emergency' : 'Complete'} profile PDF is downloading.`,
-          });
-          
-          setIsOptionsDialogOpen(false);
+          try {
+            await downloadPDFBlob(result.blob, fileName);
+            toast({
+              title: "Download Started",
+              description: `${selectedPdfType === 'emergency' ? 'Emergency' : 'Complete'} profile PDF is downloading.`,
+            });
+            setIsOptionsDialogOpen(false);
+          } catch (downloadError) {
+            console.error('Download failed:', downloadError);
+            toast({
+              title: "Download Failed",
+              description: "Please try using the Preview option and save from there.",
+              variant: "destructive",
+            });
+          }
         }
         // If action is 'view', keep dialog open to show PDF options
       } else {
@@ -327,25 +328,37 @@ export const PetPDFGenerator = ({ petId, petName, petData }: PetPDFGeneratorProp
                        <Eye className="w-3 h-3 sm:w-4 sm:h-4 mb-1 sm:mb-0 sm:mr-1" />
                        <span className="text-center">View</span>
                      </Button>
-                     <Button
-                       onClick={() => {
-                         const fileName = `PetPort_${selectedPdfType === 'emergency' ? 'Emergency' : 'Complete'}_Profile_${petName}.pdf`;
-                         const a = document.createElement('a');
-                         a.href = URL.createObjectURL(generatedPdfBlob);
-                         a.download = fileName;
-                         document.body.appendChild(a);
-                         a.click();
-                         document.body.removeChild(a);
-                         URL.revokeObjectURL(a.href);
-                       }}
+                      <Button
+                        onClick={async () => {
+                          const fileName = `PetPort_${selectedPdfType === 'emergency' ? 'Emergency' : 'Complete'}_Profile_${petName}.pdf`;
+                          try {
+                            await downloadPDFBlob(generatedPdfBlob, fileName);
+                            toast({
+                              title: "Download Started",
+                              description: "PDF download initiated.",
+                            });
+                          } catch (downloadError) {
+                            console.error('Download failed:', downloadError);
+                            toast({
+                              title: "Download Failed", 
+                              description: "Please try using Preview and save from there.",
+                              variant: "destructive",
+                            });
+                          }
+                        }}
                        variant="outline"
                        size="sm"
                        className="bg-gradient-to-r from-gold-500 to-gold-400 text-navy-900 hover:from-gold-400 hover:to-gold-300 text-xs sm:text-sm px-1 sm:px-3 h-auto py-2 flex-col sm:flex-row"
                      >
                        <Download className="w-3 h-3 sm:w-4 sm:h-4 mb-1 sm:mb-0 sm:mr-1" />
-                       <span className="text-center">Download</span>
-                     </Button>
-                     <Button
+                        <span className="text-center">Download</span>
+                      </Button>
+                      {(isIOS() || isStandalonePWA()) && (
+                        <div className="col-span-3 text-xs text-blue-600 text-center bg-blue-50 p-2 rounded border border-blue-200">
+                          💡 On iPhone: Use Preview then Share → Save to Files
+                        </div>
+                      )}
+                      <Button
                        onClick={async () => {
                          if (!generatedPdfBlob) return;
                          const fileName = `PetPort_${selectedPdfType === 'emergency' ? 'Emergency' : 'Complete'}_Profile_${petName}.pdf`;

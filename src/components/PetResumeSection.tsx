@@ -7,7 +7,7 @@ import { Download, Share2, QrCode, Star, Shield, Heart, Phone, Mail, Award, Aler
 import { SupportAnimalBanner } from "@/components/SupportAnimalBanner";
 import { PetResumeEditForm } from "@/components/PetResumeEditForm";
 import { generatePublicProfileUrl, shareProfileOptimized, generateQRCodeUrl } from "@/services/pdfService";
-import { generateClientPetPDF, downloadPDFBlob, viewPDFBlob } from "@/services/clientPdfService";
+import { generateClientPetPDF, downloadPDFBlob, viewPDFBlob, isIOS, isStandalonePWA } from "@/services/clientPdfService";
 import { PrivacyHint } from "@/components/PrivacyHint";
 import { toast } from "sonner";
 import { SocialShareButtons } from "@/components/SocialShareButtons";
@@ -105,9 +105,14 @@ export const PetResumeSection = ({ petData, onUpdate }: PetResumeSectionProps) =
         
         if (action === 'download') {
           const filename = `${petData.name}_Resume.pdf`;
-          await downloadPDFBlob(result.blob, filename);
-          toast.success("PDF downloaded successfully!");
-          setIsPdfDialogOpen(false);
+          try {
+            await downloadPDFBlob(result.blob, filename);
+            toast.success("PDF downloaded successfully!");
+            setIsPdfDialogOpen(false);
+          } catch (downloadError) {
+            console.error('Download failed:', downloadError);
+            toast.error("Download failed. Please try using Preview and save from there.");
+          }
         } else if (action === 'view') {
           const filename = `${petData.name}_Resume.pdf`;
           await viewPDFBlob(result.blob, filename);
@@ -364,16 +369,15 @@ export const PetResumeSection = ({ petData, onUpdate }: PetResumeSectionProps) =
                       View PDF
                     </Button>
                     <Button
-                      onClick={() => {
+                      onClick={async () => {
                         const fileName = `${petData.name}_Resume.pdf`;
-                        const a = document.createElement('a');
-                        a.href = URL.createObjectURL(generatedPdfBlob);
-                        a.download = fileName;
-                        document.body.appendChild(a);
-                        a.click();
-                        document.body.removeChild(a);
-                        URL.revokeObjectURL(a.href);
-                        toast.success("PDF downloaded successfully!");
+                        try {
+                          await downloadPDFBlob(generatedPdfBlob, fileName);
+                          toast.success("PDF downloaded successfully!");
+                        } catch (downloadError) {
+                          console.error('Download failed:', downloadError);
+                          toast.error("Download failed. Please try using Preview and save from there.");
+                        }
                       }}
                       className="bg-gradient-to-r from-gold-500 to-gold-400 text-navy-900 hover:from-gold-400 hover:to-gold-300"
                     >
@@ -381,6 +385,11 @@ export const PetResumeSection = ({ petData, onUpdate }: PetResumeSectionProps) =
                       Download PDF
                     </Button>
                   </div>
+                  {(isIOS() || isStandalonePWA()) && (
+                    <div className="text-xs text-blue-600 bg-blue-50 p-2 rounded border border-blue-200 mt-2">
+                      💡 On iPhone: Use Preview then Share → Save to Files
+                    </div>
+                  )}
                 </div>
               </div>
             )}

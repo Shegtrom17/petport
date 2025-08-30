@@ -5,7 +5,7 @@ import { Download, Share, Eye, AlertTriangle, FileText } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import { shareProfile, generatePublicMissingUrl, generateQRCodeUrl, sharePDFBlob } from "@/services/pdfService";
-import { generateClientPetPDF, downloadPDFBlob, viewPDFBlob } from "@/services/clientPdfService";
+import { generateClientPetPDF, downloadPDFBlob, viewPDFBlob, isIOS, isStandalonePWA } from "@/services/clientPdfService";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 
 interface LostPetPDFGeneratorProps {
@@ -74,12 +74,20 @@ export const LostPetPDFGenerator = ({ petId, petName, isActive, petData }: LostP
   const handleDownload = async () => {
     if (pdfBlob) {
       const filename = `${petName.replace(/[^a-zA-Z0-9]/g, '_')}_Missing_Pet_Flyer.pdf`;
-      await downloadPDFBlob(pdfBlob, filename);
-      
-      toast({
-        title: "Flyer Downloaded",
-        description: "Print and distribute to help find your pet",
-      });
+      try {
+        await downloadPDFBlob(pdfBlob, filename);
+        toast({
+          title: "Flyer Downloaded",
+          description: "Print and distribute to help find your pet",
+        });
+      } catch (downloadError) {
+        console.error('Download failed:', downloadError);
+        toast({
+          title: "Download Failed",
+          description: "Please try using Preview and save from there.",
+          variant: "destructive",
+        });
+      }
     }
   };
 
@@ -248,6 +256,12 @@ const ButtonIcon = buttonIcon;
                 <Download className="w-4 h-4 mr-2" />
                 Download PDF
               </Button>
+              
+              {(isIOS() || isStandalonePWA()) && (
+                <div className="text-xs text-blue-600 bg-blue-50 p-2 rounded border border-blue-200">
+                  💡 On iPhone: Use Preview → Share → Save to Files
+                </div>
+              )}
               
               <Button 
                 onClick={async () => {

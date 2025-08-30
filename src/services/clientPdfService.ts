@@ -9,6 +9,25 @@ export interface ClientPDFGenerationResult {
   type?: string;
 }
 
+// Platform detection utilities
+export const isIOS = (): boolean => {
+  return /iPad|iPhone|iPod/.test(navigator.userAgent);
+};
+
+export const isStandalonePWA = (): boolean => {
+  return window.matchMedia('(display-mode: standalone)').matches || 
+         (window.navigator as any).standalone === true;
+};
+
+export const isSafari = (): boolean => {
+  return /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+};
+
+export const supportsFileSharing = (): boolean => {
+  return navigator.share && 
+         typeof (navigator as any).canShare === 'function';
+};
+
 // Data normalization helper to unify snake_case and camelCase coming from various sources
 function normalizePetData(raw: any): any {
   const pet = raw || {};
@@ -1745,21 +1764,6 @@ export async function generatePetPDF(petId: string, type: 'emergency' | 'full' |
 }
 
 // Keep other utility functions
-export async function downloadPDFBlob(blob: Blob, filename: string): Promise<void> {
-  try {
-    const downloadUrl = window.URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = downloadUrl;
-    link.download = filename;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    window.URL.revokeObjectURL(downloadUrl);
-  } catch (error) {
-    console.error('Error downloading PDF:', error);
-    throw new Error('Failed to download PDF');
-  }
-}
 
 export async function viewPDFBlob(blob: Blob, filename: string): Promise<void> {
   console.log('🔍 PDF Viewer: Starting view process', { filename, blobSize: blob.size });
@@ -1815,3 +1819,77 @@ export async function viewPDFBlob(blob: Blob, filename: string): Promise<void> {
     throw new Error(`Failed to view PDF: ${error instanceof Error ? error.message : 'Unknown error'}`);
   }
 }
+
+// Environment-aware download function
+export const downloadPDFBlob = async (blob: Blob, fileName: string): Promise<void> => {
+  console.log('📥 PDF Download: Starting download for', fileName);
+  console.log('📱 Platform detection:', { 
+    isIOS: isIOS(), 
+    isPWA: isStandalonePWA(), 
+    isSafari: isSafari(),
+    supportsFileSharing: supportsFileSharing()
+  });
+
+  try {
+    // iOS/PWA: Try file sharing first, then fallback to viewer
+    if (isIOS() || isStandalonePWA()) {
+      console.log('📱 iOS/PWA detected - attempting file share');
+      
+      if (supportsFileSharing()) {
+        try {
+          const file = new File([blob], fileName, { type: 'application/pdf' });
+          const canShareFiles = (navigator as any).canShare({ files: [file] });
+          
+          if (canShareFiles) {
+            await (navigator as any).share({
+              title: fileName,
+              files: [file]
+            });
+            console.log('✅ PDF shared via native file sharing');
+            return;
+          }
+        } catch (shareError) {
+          console.log('⚠️ File sharing failed, falling back to viewer:', shareError);
+        }
+      }
+      
+      // Fallback: Open in viewer with instructions
+      console.log('📱 iOS fallback: Opening PDF in viewer for manual save');
+      await viewPDFBlob(blob, fileName);
+      
+      // Show helpful toast for iOS users
+      if (typeof window !== 'undefined' && (window as any).toast) {
+        (window as any).toast({
+          title: "PDF Ready to Save",
+          description: "Use the Share button in the PDF viewer to save or share the file.",
+        });
+      }
+      
+      return;
+    }
+
+    // Desktop/Android: Standard download
+    console.log('🖥️ Desktop/Android - using standard download');
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = fileName;
+    a.style.display = 'none';
+    
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    
+    // Clean up after a delay
+    setTimeout(() => {
+      URL.revokeObjectURL(url);
+      console.log('🧹 PDF Download: Cleaned up object URL');
+    }, 1000);
+    
+    console.log('✅ PDF Download: Standard download completed');
+    
+  } catch (error) {
+    console.error('❌ PDF Download: Error downloading PDF:', error);
+    throw new Error(`Failed to download PDF: ${error instanceof Error ? error.message : 'Unknown error'}`);
+  }
+};

@@ -10,6 +10,7 @@ import { generateQRCodeUrl, shareProfile, shareProfileOptimized, sharePDFBlob } 
 import { generateClientPetPDF, downloadPDFBlob } from "@/services/clientPdfService";
 import { useToast } from "@/hooks/use-toast";
 import { SocialShareButtons } from "@/components/SocialShareButtons";
+import { supabase } from "@/integrations/supabase/client";
 
 
 interface CareInstructionsSectionProps {
@@ -106,7 +107,23 @@ export const CareInstructionsSection = ({ petData, onUpdate }: CareInstructionsS
     try {
       console.log('Starting care instructions PDF generation for pet:', petData.id);
       
-      const result = await generateClientPetPDF(petData, 'care');
+      // Fetch medical data to include in PDF
+      const { data: medicalData } = await supabase
+        .from('medical')
+        .select('medical_conditions, medical_alert, last_vaccination, medical_emergency_document')
+        .eq('pet_id', petData.id)
+        .single();
+      
+      // Combine pet data with medical data for PDF generation
+      const enhancedPetData = {
+        ...petData,
+        medical_conditions: medicalData?.medical_conditions,
+        medical_alert: medicalData?.medical_alert,
+        last_vaccination: medicalData?.last_vaccination,
+        medical_emergency_document: medicalData?.medical_emergency_document
+      };
+      
+      const result = await generateClientPetPDF(enhancedPetData, 'care');
       
       if (result.success && result.blob) {
         setCarePdfBlob(result.blob);

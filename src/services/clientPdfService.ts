@@ -1369,6 +1369,31 @@ const generateCarePDF = async (doc: jsPDF, pageManager: PDFPageManager, petData:
       });
     });
     
+    // Medical Information Section
+    if (petData.medical_alert || petData.medical_conditions || petData.last_vaccination || petData.medical_emergency_document) {
+      addSection(doc, pageManager, 'MEDICAL INFORMATION', () => {
+        if (petData.medical_alert) {
+          addText(doc, pageManager, '⚠️ MEDICAL ALERT: This pet requires immediate medical attention', '#dc2626', 12);
+          pageManager.addY(3);
+        }
+        
+        if (petData.medical_conditions) {
+          addText(doc, pageManager, `Medical Conditions: ${safeText(petData.medical_conditions)}`);
+          pageManager.addY(3);
+        }
+        
+        if (petData.last_vaccination) {
+          addText(doc, pageManager, `Last Vaccination: ${safeText(petData.last_vaccination)}`);
+          pageManager.addY(3);
+        }
+        
+        if (petData.medical_emergency_document) {
+          addText(doc, pageManager, `Emergency Medical Instructions: ${safeText(petData.medical_emergency_document)}`);
+          pageManager.addY(3);
+        }
+      });
+    }
+    
     if (petData.careInstructions.specialNeeds) {
       addSection(doc, pageManager, 'SPECIAL NEEDS', () => {
         addText(doc, pageManager, petData.careInstructions.specialNeeds);

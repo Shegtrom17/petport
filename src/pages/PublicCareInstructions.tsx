@@ -24,6 +24,7 @@ interface Pet {
   vetContact?: string;
   petCaretaker?: string;
   medications?: string[];
+  daily_routine?: string;
 }
 
 interface CareData {
@@ -305,7 +306,7 @@ const PublicCareInstructions = () => {
           )}
 
           {/* Daily Care Schedule */}
-          {(careData?.feeding_schedule || careData?.morning_routine || careData?.evening_routine) && (
+          {(careData?.feeding_schedule || careData?.morning_routine || careData?.evening_routine || pet.daily_routine) && (
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-navy-900">
@@ -314,6 +315,18 @@ const PublicCareInstructions = () => {
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
+                {pet.daily_routine && (
+                  <div>
+                    <h4 className="font-medium text-navy-800 mb-2 flex items-center gap-2">
+                      <Clock className="w-4 h-4" />
+                      Daily Routine & Preferences
+                    </h4>
+                    <p className="text-navy-600 leading-relaxed whitespace-pre-wrap">
+                      {pet.daily_routine}
+                    </p>
+                  </div>
+                )}
+
                 {careData.morning_routine && (
                   <div>
                     <h4 className="font-medium text-navy-800 mb-2 flex items-center gap-2">

@@ -224,7 +224,7 @@ const Index = () => {
         );
       case "care":
         console.log("Rendering CareInstructionsSection");
-        return <CareInstructionsSection petData={petData} />;
+        return <CareInstructionsSection petData={petData} onUpdate={handlePetUpdate} />;
       case "resume":
         console.log("Rendering PetResumeSection with integrated certifications and reviews");
         return (

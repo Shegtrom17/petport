@@ -24,6 +24,7 @@ interface CareInstructionsSectionProps {
     petCaretaker?: string;
     is_public?: boolean;
   };
+  onUpdate?: () => void;
 }
 
 // Helper function to extract phone number and create tel link
@@ -39,7 +40,7 @@ const formatPhoneForTel = (phone: string) => {
   return `+1${phone}`; // Assuming US numbers, adjust as needed
 };
 
-export const CareInstructionsSection = ({ petData }: CareInstructionsSectionProps) => {
+export const CareInstructionsSection = ({ petData, onUpdate }: CareInstructionsSectionProps) => {
   const [isEditing, setIsEditing] = useState(false);
   const [careData, setCareData] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -84,10 +85,15 @@ export const CareInstructionsSection = ({ petData }: CareInstructionsSectionProp
     setIsEditing(false);
     setIsLoading(true);
     
-    // Reload the data after saving
+    // Reload the care data after saving
     try {
       const data = await fetchCareInstructions(petData.id);
       setCareData(data);
+      
+      // Trigger parent data refresh to update medications display
+      if (onUpdate) {
+        onUpdate();
+      }
     } catch (error) {
       console.error("Error reloading care instructions:", error);
     } finally {

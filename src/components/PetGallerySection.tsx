@@ -67,7 +67,7 @@ export const PetGallerySection = ({ petData, onUpdate }: PetGallerySectionProps)
   };
 
   const generateShareableUrl = () => {
-    const baseUrl = `${window.location.origin}/public/gallery/${petData.id}`;
+    const baseUrl = `${window.location.origin}/gallery/${petData.id}`;
     if (selectedPhotos.length > 0 && selectedPhotos.length < galleryPhotos.length) {
       return `${baseUrl}?photos=${selectedPhotos.join(',')}`;
     }

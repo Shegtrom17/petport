@@ -1771,6 +1771,15 @@ export async function viewPDFBlob(blob: Blob, filename: string): Promise<void> {
   try {
     const url = URL.createObjectURL(blob);
     
+    // Store the URL for cleanup but don't revoke it immediately - let the viewer handle it
+    const cleanup = () => {
+      URL.revokeObjectURL(url);
+      console.log('🧹 PDF Viewer: Cleaned up object URL');
+    };
+    
+    // Clean up after 30 seconds to allow time for viewing and downloading
+    setTimeout(cleanup, 30000);
+    
     // Detect environment constraints
     const isInIframe = window !== window.top;
     const isStandalone = window.matchMedia('(display-mode: standalone)').matches || 

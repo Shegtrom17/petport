@@ -138,7 +138,9 @@ export const PetResumeSection = ({ petData, onUpdate }: PetResumeSectionProps) =
   const handleDownloadGeneratedPDF = async () => {
     if (generatedPdfBlob) {
       const filename = `${petData.name}_Resume.pdf`;
-      await downloadPDFBlob(generatedPdfBlob, filename);
+      // Create a fresh blob for download to avoid security issues
+      const freshBlob = new Blob([await generatedPdfBlob.arrayBuffer()], { type: 'application/pdf' });
+      await downloadPDFBlob(freshBlob, filename);
       toast.success("PDF downloaded successfully!");
     }
   };
@@ -370,9 +372,12 @@ export const PetResumeSection = ({ petData, onUpdate }: PetResumeSectionProps) =
                     </Button>
                     <Button
                       onClick={async () => {
+                        if (!generatedPdfBlob) return;
                         const fileName = `${petData.name}_Resume.pdf`;
                         try {
-                          await downloadPDFBlob(generatedPdfBlob, fileName);
+                          // Create a fresh blob for download to avoid security issues
+                          const freshBlob = new Blob([await generatedPdfBlob.arrayBuffer()], { type: 'application/pdf' });
+                          await downloadPDFBlob(freshBlob, fileName);
                           toast.success("PDF downloaded successfully!");
                         } catch (downloadError) {
                           console.error('Download failed:', downloadError);

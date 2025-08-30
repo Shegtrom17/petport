@@ -328,24 +328,27 @@ export const PetPDFGenerator = ({ petId, petName, petData }: PetPDFGeneratorProp
                        <Eye className="w-3 h-3 sm:w-4 sm:h-4 mb-1 sm:mb-0 sm:mr-1" />
                        <span className="text-center">View</span>
                      </Button>
-                      <Button
-                        onClick={async () => {
-                          const fileName = `PetPort_${selectedPdfType === 'emergency' ? 'Emergency' : 'Complete'}_Profile_${petName}.pdf`;
-                          try {
-                            await downloadPDFBlob(generatedPdfBlob, fileName);
-                            toast({
-                              title: "Download Started",
-                              description: "PDF download initiated.",
-                            });
-                          } catch (downloadError) {
-                            console.error('Download failed:', downloadError);
-                            toast({
-                              title: "Download Failed", 
-                              description: "Please try using Preview and save from there.",
-                              variant: "destructive",
-                            });
-                          }
-                        }}
+                       <Button
+                         onClick={async () => {
+                           if (!generatedPdfBlob) return;
+                           const fileName = `PetPort_${selectedPdfType === 'emergency' ? 'Emergency' : 'Complete'}_Profile_${petName}.pdf`;
+                           try {
+                             // Create a fresh blob for download to avoid security issues
+                             const freshBlob = new Blob([await generatedPdfBlob.arrayBuffer()], { type: 'application/pdf' });
+                             await downloadPDFBlob(freshBlob, fileName);
+                             toast({
+                               title: "Download Started",
+                               description: "PDF download initiated.",
+                             });
+                           } catch (downloadError) {
+                             console.error('Download failed:', downloadError);
+                             toast({
+                               title: "Download Failed", 
+                               description: "Please try using Preview and save from there.",
+                               variant: "destructive",
+                             });
+                           }
+                         }}
                        variant="outline"
                        size="sm"
                        className="bg-gradient-to-r from-gold-500 to-gold-400 text-navy-900 hover:from-gold-400 hover:to-gold-300 text-xs sm:text-sm px-1 sm:px-3 h-auto py-2 flex-col sm:flex-row"

@@ -75,7 +75,9 @@ export const LostPetPDFGenerator = ({ petId, petName, isActive, petData }: LostP
     if (pdfBlob) {
       const filename = `${petName.replace(/[^a-zA-Z0-9]/g, '_')}_Missing_Pet_Flyer.pdf`;
       try {
-        await downloadPDFBlob(pdfBlob, filename);
+        // Create a fresh blob for download to avoid security issues
+        const freshBlob = new Blob([await pdfBlob.arrayBuffer()], { type: 'application/pdf' });
+        await downloadPDFBlob(freshBlob, filename);
         toast({
           title: "Flyer Downloaded",
           description: "Print and distribute to help find your pet",

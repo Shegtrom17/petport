@@ -386,67 +386,93 @@ const PublicCareInstructions = () => {
           )}
 
           {/* Health Monitoring */}
-          {(medicalData?.medical_conditions || medicalData?.medical_alert || medicalData?.last_vaccination || medicalData?.medical_emergency_document) && (
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-navy-900">
-                  <Heart className="w-5 h-5 text-red-600" />
-                  Health Monitoring
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {medicalData.medical_alert && (
-                  <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-                    <div className="flex items-center gap-2 mb-2">
-                      <AlertTriangle className="w-5 h-5 text-red-600" />
-                      <h4 className="font-medium text-red-800">Medical Alert</h4>
-                    </div>
-                    <p className="text-red-700 font-medium">This pet has active medical alerts requiring immediate attention.</p>
-                  </div>
-                )}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-navy-900">
+                <Heart className="w-5 h-5 text-red-600" />
+                Health Monitoring
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {/* General Health Monitoring Guidelines */}
+              <div>
+                <h4 className="font-medium text-navy-800 mb-3">Daily Monitoring Guidelines</h4>
+                <ul className="space-y-2 text-navy-600">
+                  <li className="flex items-start gap-2">
+                    <span className="text-sage-600 mt-1">•</span>
+                    Monitor appetite and water intake daily
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-sage-600 mt-1">•</span>
+                    Watch for any behavioral changes
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-sage-600 mt-1">•</span>
+                    Check for signs of distress or discomfort
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-sage-600 mt-1">•</span>
+                    Contact vet immediately if concerns arise
+                  </li>
+                </ul>
+              </div>
 
-                {medicalData.medical_conditions && (
-                  <div>
-                    <h4 className="font-medium text-navy-800 mb-2 flex items-center gap-2">
-                      <Heart className="w-4 h-4" />
-                      Medical Conditions
-                    </h4>
-                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
-                      <p className="text-blue-800 leading-relaxed whitespace-pre-wrap">
-                        {medicalData.medical_conditions}
+              {/* Medical Information */}
+              {(medicalData?.medical_conditions || medicalData?.medical_alert || medicalData?.last_vaccination || medicalData?.medical_emergency_document) && (
+                <div className="space-y-4 pt-4 border-t border-sage-200">
+                  {medicalData.medical_alert && (
+                    <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+                      <div className="flex items-center gap-2 mb-2">
+                        <AlertTriangle className="w-5 h-5 text-red-600" />
+                        <h4 className="font-medium text-red-800">Medical Alert</h4>
+                      </div>
+                      <p className="text-red-700 font-medium">This pet has active medical alerts requiring immediate attention.</p>
+                    </div>
+                  )}
+
+                  {medicalData.medical_conditions && (
+                    <div>
+                      <h4 className="font-medium text-navy-800 mb-2 flex items-center gap-2">
+                        <Heart className="w-4 h-4" />
+                        Medical Conditions
+                      </h4>
+                      <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                        <p className="text-blue-800 leading-relaxed whitespace-pre-wrap">
+                          {medicalData.medical_conditions}
+                        </p>
+                      </div>
+                    </div>
+                  )}
+
+                  {medicalData.last_vaccination && (
+                    <div>
+                      <h4 className="font-medium text-navy-800 mb-2 flex items-center gap-2">
+                        <Heart className="w-4 h-4" />
+                        Last Vaccination
+                      </h4>
+                      <p className="text-navy-600 bg-sage-50 border border-sage-200 rounded-lg p-3">
+                        {medicalData.last_vaccination}
                       </p>
                     </div>
-                  </div>
-                )}
+                  )}
 
-                {medicalData.last_vaccination && (
-                  <div>
-                    <h4 className="font-medium text-navy-800 mb-2 flex items-center gap-2">
-                      <Heart className="w-4 h-4" />
-                      Last Vaccination
-                    </h4>
-                    <p className="text-navy-600 bg-sage-50 border border-sage-200 rounded-lg p-3">
-                      {medicalData.last_vaccination}
-                    </p>
-                  </div>
-                )}
-
-                {medicalData.medical_emergency_document && (
-                  <div>
-                    <h4 className="font-medium text-navy-800 mb-2 flex items-center gap-2">
-                      <AlertTriangle className="w-4 h-4" />
-                      Emergency Medical Document
-                    </h4>
-                    <div className="bg-amber-50 border border-amber-200 rounded-lg p-3">
-                      <p className="text-amber-800 leading-relaxed whitespace-pre-wrap">
-                        {medicalData.medical_emergency_document}
-                      </p>
+                  {medicalData.medical_emergency_document && (
+                    <div>
+                      <h4 className="font-medium text-navy-800 mb-2 flex items-center gap-2">
+                        <AlertTriangle className="w-4 h-4" />
+                        Emergency Medical Document
+                      </h4>
+                      <div className="bg-amber-50 border border-amber-200 rounded-lg p-3">
+                        <p className="text-amber-800 leading-relaxed whitespace-pre-wrap">
+                          {medicalData.medical_emergency_document}
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          )}
+                  )}
+                </div>
+              )}
+            </CardContent>
+          </Card>
 
           {/* Medications & Health */}
           {pet.medications && pet.medications.length > 0 && (

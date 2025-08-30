@@ -821,6 +821,25 @@ const generateFullPDF = async (doc: jsPDF, pageManager: PDFPageManager, petData:
       if (petData.favorite_activities) {
         addText(doc, pageManager, `Favorite Activities: ${safeText(petData.favorite_activities)}`);
       }
+      
+      // Health Monitoring section
+      pageManager.addY(8);
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(12);
+      addText(doc, pageManager, 'Health Monitoring', '#000000', 12);
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(10);
+      
+      const healthGuidelines = [
+        '• Monitor appetite and water intake daily',
+        '• Watch for any behavioral changes', 
+        '• Check for signs of distress or discomfort',
+        '• Contact vet immediately if concerns arise'
+      ];
+      
+      healthGuidelines.forEach(guideline => {
+        addText(doc, pageManager, guideline);
+      });
     });
   }
 

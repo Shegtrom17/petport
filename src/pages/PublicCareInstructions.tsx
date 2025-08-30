@@ -36,11 +36,19 @@ interface CareData {
   favorite_activities?: string;
 }
 
+interface MedicalData {
+  medical_conditions?: string;
+  medical_alert?: boolean;
+  last_vaccination?: string;
+  medical_emergency_document?: string;
+}
+
 const PublicCareInstructions = () => {
   const { petId } = useParams();
   const navigate = useNavigate();
   const [pet, setPet] = useState<Pet | null>(null);
   const [careData, setCareData] = useState<CareData | null>(null);
+  const [medicalData, setMedicalData] = useState<MedicalData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -104,6 +112,17 @@ const PublicCareInstructions = () => {
         // Fetch care instructions
         const careInstructions = await fetchCareInstructions(petId);
         setCareData(careInstructions);
+
+        // Fetch medical data
+        const { data: medical } = await supabase
+          .from('medical')
+          .select('medical_conditions, medical_alert, last_vaccination, medical_emergency_document')
+          .eq('pet_id', petId)
+          .single();
+        
+        if (medical) {
+          setMedicalData(medical);
+        }
 
       } catch (err) {
         console.error('Error fetching data:', err);
@@ -360,6 +379,69 @@ const PublicCareInstructions = () => {
                     <p className="text-navy-600 leading-relaxed whitespace-pre-wrap">
                       {careData.evening_routine}
                     </p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Health Monitoring */}
+          {(medicalData?.medical_conditions || medicalData?.medical_alert || medicalData?.last_vaccination || medicalData?.medical_emergency_document) && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-navy-900">
+                  <Heart className="w-5 h-5 text-red-600" />
+                  Health Monitoring
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {medicalData.medical_alert && (
+                  <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+                    <div className="flex items-center gap-2 mb-2">
+                      <AlertTriangle className="w-5 h-5 text-red-600" />
+                      <h4 className="font-medium text-red-800">Medical Alert</h4>
+                    </div>
+                    <p className="text-red-700 font-medium">This pet has active medical alerts requiring immediate attention.</p>
+                  </div>
+                )}
+
+                {medicalData.medical_conditions && (
+                  <div>
+                    <h4 className="font-medium text-navy-800 mb-2 flex items-center gap-2">
+                      <Heart className="w-4 h-4" />
+                      Medical Conditions
+                    </h4>
+                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                      <p className="text-blue-800 leading-relaxed whitespace-pre-wrap">
+                        {medicalData.medical_conditions}
+                      </p>
+                    </div>
+                  </div>
+                )}
+
+                {medicalData.last_vaccination && (
+                  <div>
+                    <h4 className="font-medium text-navy-800 mb-2 flex items-center gap-2">
+                      <Heart className="w-4 h-4" />
+                      Last Vaccination
+                    </h4>
+                    <p className="text-navy-600 bg-sage-50 border border-sage-200 rounded-lg p-3">
+                      {medicalData.last_vaccination}
+                    </p>
+                  </div>
+                )}
+
+                {medicalData.medical_emergency_document && (
+                  <div>
+                    <h4 className="font-medium text-navy-800 mb-2 flex items-center gap-2">
+                      <AlertTriangle className="w-4 h-4" />
+                      Emergency Medical Document
+                    </h4>
+                    <div className="bg-amber-50 border border-amber-200 rounded-lg p-3">
+                      <p className="text-amber-800 leading-relaxed whitespace-pre-wrap">
+                        {medicalData.medical_emergency_document}
+                      </p>
+                    </div>
                   </div>
                 )}
               </CardContent>

@@ -46,7 +46,7 @@ export const CompactPrivacyToggle: React.FC<CompactPrivacyToggleProps> = ({
         ) : (
           <Lock className="h-4 w-4 text-muted-foreground" />
         )}
-        <span className="text-sm font-medium hidden sm:inline">
+        <span className="text-sm font-medium">
           {isPublic ? 'Public' : 'Private'}
         </span>
       </div>

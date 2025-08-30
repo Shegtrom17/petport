@@ -106,6 +106,9 @@ export const PublicGallery = () => {
     ? galleryPhotos.filter(photo => selectedPhotoIds.includes(photo.id))
     : galleryPhotos;
 
+  // Show warning if selected photos don't match any gallery photos
+  const hasInvalidSelection = selectedPhotoIds.length > 0 && photosToShow.length === 0;
+
   const pageTitle = selectedPhotoIds.length > 0 
     ? `${petData.name}'s Selected Photos`
     : `${petData.name}'s Photo Gallery`;
@@ -147,7 +150,18 @@ export const PublicGallery = () => {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            {photosToShow.length > 0 ? (
+            {hasInvalidSelection ? (
+              <div className="text-center py-12">
+                <Camera className="w-16 h-16 text-amber-400 mx-auto mb-4" />
+                <h3 className="text-lg font-semibold text-gray-800 mb-2">Selected Photos Not Found</h3>
+                <p className="text-gray-600 mb-4">The selected photos are no longer available in this gallery.</p>
+                <Link to={`/gallery/${petId}`}>
+                  <Button variant="outline">
+                    View Complete Gallery
+                  </Button>
+                </Link>
+              </div>
+            ) : photosToShow.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {photosToShow.map((photo, index) => (
                   <div key={photo.id} className="space-y-3">

@@ -14,6 +14,7 @@ import { compressMultipleImages, formatFileSize } from "@/utils/imageCompression
 import { generateClientPetPDF } from "@/services/clientPdfService";
 import { SocialShareButtons } from "@/components/SocialShareButtons";
 import { useIsMobile } from "@/hooks/useIsMobile";
+import { featureFlags } from '@/config/featureFlags';
 
 const MAX_GALLERY_PHOTOS = 12;
 
@@ -489,14 +490,16 @@ export const PetGallerySection = ({ petData, onUpdate }: PetGallerySectionProps)
                         </Button>
                       </SheetTrigger>
                     </Sheet>
-                    <Button 
-                      variant="outline" 
-                      size="sm"
-                      onClick={handleStartSelection}
-                    >
-                      <CheckSquare className="w-4 h-4 mr-2" />
-                      <span className="text-responsive-sm">Select photos</span>
-                    </Button>
+                    {featureFlags.enableSelectPhotos && (
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        onClick={handleStartSelection}
+                      >
+                        <CheckSquare className="w-4 h-4 mr-2" />
+                        <span className="text-responsive-sm">Select photos</span>
+                      </Button>
+                    )}
                   </div>
                 </div>
               ) : (

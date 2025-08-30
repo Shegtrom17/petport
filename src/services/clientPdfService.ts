@@ -368,15 +368,19 @@ const generateEmergencyPDF = async (doc: jsPDF, pageManager: PDFPageManager, pet
   
   // Pet information
   addSection(doc, pageManager, 'PET INFORMATION', () => {
+    addText(doc, pageManager, `Name: ${safeText(petData.name)}`);
     addText(doc, pageManager, `Species: ${safeText(petData.species)}`);
     addText(doc, pageManager, `Breed: ${safeText(petData.breed)}`);
     addText(doc, pageManager, `Age: ${safeText(petData.age)}`);
+    addText(doc, pageManager, `Sex/Gender: ${safeText(petData.gender || petData.sex)}`);
     addText(doc, pageManager, `Weight: ${safeText(petData.weight)}`);
     if (petData.height) addText(doc, pageManager, `Height: ${safeText(petData.height)}`);
-    addText(doc, pageManager, `Gender: ${safeText(petData.gender)}`);
     if (petData.color) addText(doc, pageManager, `Color: ${safeText(petData.color)}`);
-    if (petData.microchipId) addText(doc, pageManager, `Microchip: ${safeText(petData.microchipId)}`);
-    if (petData.registrationNumber) addText(doc, pageManager, `Registration: ${safeText(petData.registrationNumber)}`);
+    if (petData.microchipId) addText(doc, pageManager, `Microchip ID: ${safeText(petData.microchipId)}`);
+    if (petData.registrationNumber) addText(doc, pageManager, `Registration #: ${safeText(petData.registrationNumber)}`);
+    if (petData.petport_id) addText(doc, pageManager, `PetPort ID: ${safeText(petData.petport_id)}`);
+    if (petData.county) addText(doc, pageManager, `County: ${safeText(petData.county)}`);
+    if (petData.state) addText(doc, pageManager, `State: ${safeText(petData.state)}`);
   });
   
   // Emergency contacts
@@ -461,7 +465,15 @@ pageManager.addY(6);
   
   addSection(doc, pageManager, 'PET DETAILS', () => {
     addText(doc, pageManager, `Name: ${safeText(petData.name)}`, '#000000', 11);
+    addText(doc, pageManager, `Species: ${safeText(petData.species)}`, '#000000', 11);
     addText(doc, pageManager, `Breed: ${safeText(petData.breed)}`, '#000000', 11);
+    addText(doc, pageManager, `Age: ${safeText(petData.age)}`, '#000000', 11);
+    addText(doc, pageManager, `Sex/Gender: ${safeText(petData.gender || petData.sex)}`, '#000000', 11);
+    addText(doc, pageManager, `Weight: ${safeText(petData.weight)}`, '#000000', 11);
+    if (petData.height) addText(doc, pageManager, `Height: ${safeText(petData.height)}`, '#000000', 11);
+    if (petData.color) addText(doc, pageManager, `Color: ${safeText(petData.color)}`, '#000000', 11);
+    if (petData.microchipId) addText(doc, pageManager, `Microchip ID: ${safeText(petData.microchipId)}`, '#dc2626', 11);
+    if (petData.registrationNumber) addText(doc, pageManager, `Registration #: ${safeText(petData.registrationNumber)}`, '#dc2626', 11);
     addText(doc, pageManager, `Age: ${safeText(petData.age)}`, '#000000', 11);
     addText(doc, pageManager, `Weight: ${safeText(petData.weight)}`, '#000000', 11);
     if (petData.height) addText(doc, pageManager, `Height: ${safeText(petData.height)}`, '#000000', 11);
@@ -745,17 +757,21 @@ const generateFullPDF = async (doc: jsPDF, pageManager: PDFPageManager, petData:
   
   // Basic Pet Information
   addSection(doc, pageManager, 'PET INFORMATION', () => {
+    addText(doc, pageManager, `Name: ${safeText(petData.name)}`);
     addText(doc, pageManager, `Species: ${safeText(petData.species)}`);
     addText(doc, pageManager, `Breed: ${safeText(petData.breed)}`);
     addText(doc, pageManager, `Age: ${safeText(petData.age)}`);
+    addText(doc, pageManager, `Sex/Gender: ${safeText(petData.gender || petData.sex)}`);
     addText(doc, pageManager, `Weight: ${safeText(petData.weight)}`);
     if (petData.height) addText(doc, pageManager, `Height: ${safeText(petData.height)}`);
-    addText(doc, pageManager, `Gender: ${safeText(petData.gender)}`);
     if (petData.color) addText(doc, pageManager, `Color: ${safeText(petData.color)}`);
-    if (petData.microchipId) addText(doc, pageManager, `Microchip: ${safeText(petData.microchipId)}`);
-    if (petData.registrationNumber) addText(doc, pageManager, `Registration: ${safeText(petData.registrationNumber)}`);
+    if (petData.microchipId) addText(doc, pageManager, `Microchip ID: ${safeText(petData.microchipId)}`);
+    if (petData.registrationNumber) addText(doc, pageManager, `Registration #: ${safeText(petData.registrationNumber)}`);
     if (petData.petport_id) addText(doc, pageManager, `PetPort ID: ${safeText(petData.petport_id)}`);
-    if (petData.county) addText(doc, pageManager, `Location: ${safeText(petData.county)}, ${safeText(petData.state)}`);
+    if (petData.county || petData.state) {
+      const location = [petData.county, petData.state].filter(Boolean).join(', ');
+      addText(doc, pageManager, `Location: ${safeText(location)}`);
+    }
   });
   
   // Biography
@@ -1009,16 +1025,27 @@ const generateResumePDF = async (doc: jsPDF, pageManager: PDFPageManager, petDat
   // Pet Basic Information (left side)
   addSubtitle(doc, pageManager, 'Pet Information');
   addText(doc, pageManager, `Name: ${safeText(petData.name)}`);
+  addText(doc, pageManager, `Species: ${safeText(petData.species)}`);
   addText(doc, pageManager, `Breed: ${safeText(petData.breed)}`);
   addText(doc, pageManager, `Age: ${safeText(petData.age)}`);
+  addText(doc, pageManager, `Sex/Gender: ${safeText(petData.gender || petData.sex)}`);
   if (petData.weight) {
-    addText(doc, pageManager, `Weight: ${safeText(petData.weight)} lbs`);
+    addText(doc, pageManager, `Weight: ${safeText(petData.weight)}`);
   }
   if (petData.height) {
     addText(doc, pageManager, `Height: ${safeText(petData.height)}`);
   }
+  if (petData.color) {
+    addText(doc, pageManager, `Color: ${safeText(petData.color)}`);
+  }
+  if (petData.microchipId) {
+    addText(doc, pageManager, `Microchip ID: ${safeText(petData.microchipId)}`);
+  }
   if (petData.registrationNumber) {
-    addText(doc, pageManager, `Registration: ${safeText(petData.registrationNumber)}`);
+    addText(doc, pageManager, `Registration #: ${safeText(petData.registrationNumber)}`);
+  }
+  if (petData.petport_id) {
+    addText(doc, pageManager, `PetPort ID: ${safeText(petData.petport_id)}`);
   }
   
   // Add pet photo on the right side if available
@@ -1250,12 +1277,17 @@ const generateCarePDF = async (doc: jsPDF, pageManager: PDFPageManager, petData:
   
   // Basic pet info for context
   addSection(doc, pageManager, 'PET INFORMATION', () => {
+    addText(doc, pageManager, `Name: ${safeText(petData.name)}`);
     addText(doc, pageManager, `Species: ${safeText(petData.species)}`);
     addText(doc, pageManager, `Breed: ${safeText(petData.breed)}`);
     addText(doc, pageManager, `Age: ${safeText(petData.age)}`);
+    addText(doc, pageManager, `Sex/Gender: ${safeText(petData.gender || petData.sex)}`);
     addText(doc, pageManager, `Weight: ${safeText(petData.weight)}`);
     if (petData.height) addText(doc, pageManager, `Height: ${safeText(petData.height)}`);
-    if (petData.registrationNumber) addText(doc, pageManager, `Registration: ${safeText(petData.registrationNumber)}`);
+    if (petData.color) addText(doc, pageManager, `Color: ${safeText(petData.color)}`);
+    if (petData.microchipId) addText(doc, pageManager, `Microchip ID: ${safeText(petData.microchipId)}`);
+    if (petData.registrationNumber) addText(doc, pageManager, `Registration #: ${safeText(petData.registrationNumber)}`);
+    if (petData.petport_id) addText(doc, pageManager, `PetPort ID: ${safeText(petData.petport_id)}`);
   });
   
   // Care instructions

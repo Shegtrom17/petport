@@ -470,62 +470,65 @@ export const PetGallerySection = ({ petData, onUpdate }: PetGallerySectionProps)
           
           {/* Improved Share Controls */}
           {galleryPhotos.length > 0 && (
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mt-4">
+            <>
               {!isSelectionMode ? (
-                <div className="flex flex-col sm:flex-row gap-3">
-                  <div className="flex-1">
-                    <h4 className="font-medium text-blue-900 mb-2">Share Gallery</h4>
-                    <p className="text-sm text-blue-700">Share all photos or select specific ones to create a custom gallery link.</p>
-                  </div>
-                  <div className="flex gap-2">
-                    <Sheet open={isShareSheetOpen} onOpenChange={setIsShareSheetOpen}>
-                      <SheetTrigger asChild>
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mt-4">
+                  <div className="flex flex-col sm:flex-row gap-3">
+                    <div className="flex-1">
+                      <h4 className="font-medium text-blue-900 mb-2">Share Gallery</h4>
+                      <p className="text-sm text-blue-700">Share all photos or select specific ones to create a custom gallery link.</p>
+                    </div>
+                    <div className="flex gap-2">
+                      <Sheet open={isShareSheetOpen} onOpenChange={setIsShareSheetOpen}>
+                        <SheetTrigger asChild>
+                          <Button 
+                            size="sm" 
+                            className="bg-blue-600 hover:bg-blue-700 text-white"
+                            onClick={() => setSelectedPhotos([])}
+                          >
+                            <Share2 className="w-4 h-4 mr-2" />
+                            <span className="text-responsive-sm">Share all ({galleryPhotos.length})</span>
+                          </Button>
+                        </SheetTrigger>
+                      </Sheet>
+                      {featureFlags.enableSelectPhotos && (
                         <Button 
-                          size="sm" 
-                          className="bg-blue-600 hover:bg-blue-700 text-white"
-                          onClick={() => setSelectedPhotos([])}
+                          variant="outline" 
+                          size="sm"
+                          onClick={handleStartSelection}
                         >
-                          <Share2 className="w-4 h-4 mr-2" />
-                          <span className="text-responsive-sm">Share all ({galleryPhotos.length})</span>
+                          <CheckSquare className="w-4 h-4 mr-2" />
+                          <span className="text-responsive-sm">Select photos</span>
                         </Button>
-                      </SheetTrigger>
-                    </Sheet>
-                    {featureFlags.enableSelectPhotos && (
-                      <Button 
-                        variant="outline" 
-                        size="sm"
-                        onClick={handleStartSelection}
-                      >
-                        <CheckSquare className="w-4 h-4 mr-2" />
-                        <span className="text-responsive-sm">Select photos</span>
-                      </Button>
-                    )}
+                      )}
+                    </div>
                   </div>
                 </div>
               ) : (
-                <div className="space-y-3">
+                <div className="mt-4 p-4 space-y-4">
+                  {/* Selection Controls - No constraining box */}
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
                       <Button
                         onClick={selectAllPhotos}
                         variant="outline"
-                        size="sm"
+                        size="default"
                       >
                         {selectedPhotos.length === galleryPhotos.length ? (
                           <>
-                            <CheckSquare className="w-4 h-4 mr-1" />
+                            <CheckSquare className="w-4 h-4 mr-2" />
                             <span className="text-responsive-sm">Deselect All</span>
                           </>
                         ) : (
                           <>
-                            <Square className="w-4 h-4 mr-1" />
+                            <Square className="w-4 h-4 mr-2" />
                             <span className="text-responsive-sm">Select All</span>
                           </>
                         )}
                       </Button>
                       
                       {selectedPhotos.length > 0 && (
-                        <Badge variant="secondary" className="text-xs px-2 py-1">
+                        <Badge variant="secondary" className="text-responsive-sm px-3 py-1">
                           {selectedPhotos.length} selected
                         </Badge>
                       )}
@@ -533,55 +536,55 @@ export const PetGallerySection = ({ petData, onUpdate }: PetGallerySectionProps)
                     
                     <Button
                       variant="ghost"
-                      size="sm"
+                      size="default"
                       onClick={handleCancelSelection}
                     >
-                      <X className="w-4 h-4 mr-1" />
+                      <X className="w-4 h-4 mr-2" />
                       <span className="text-responsive-sm">Cancel</span>
                     </Button>
                   </div>
                   
-                  <div className="flex gap-2">
-                    <Sheet open={isShareSheetOpen} onOpenChange={setIsShareSheetOpen}>
-                      <SheetTrigger asChild>
-                        <Button 
-                          size="sm"
-                          className="bg-blue-600 hover:bg-blue-700 text-white"
-                          disabled={selectedPhotos.length === 0}
-                        >
-                          <Share2 className="w-4 h-4 mr-2" />
-                          <span className="text-responsive-sm">{getShareButtonText()}</span>
-                        </Button>
-                      </SheetTrigger>
-                    </Sheet>
-                    
+                  {/* Action Buttons - Spaced out without constraining boxes */}
+                  <div className="flex flex-col sm:flex-row gap-3">
                     <Button 
                       variant="outline" 
-                      size="sm"
+                      size="default"
                       onClick={handleCopyLink}
                       disabled={selectedPhotos.length === 0}
+                      className="flex-1"
                     >
                       <Copy className="w-4 h-4 mr-2" />
-                      Copy link
+                      <span className="text-responsive-sm">Copy link</span>
                     </Button>
                     
                     <Button 
                       variant="outline" 
-                      size="sm"
+                      size="default"
                       onClick={handlePreview}
                       disabled={selectedPhotos.length === 0}
+                      className="flex-1"
                     >
                       <ExternalLink className="w-4 h-4 mr-2" />
-                      Preview
+                      <span className="text-responsive-sm">Preview</span>
                     </Button>
                   </div>
-                  
-                  <p className="text-xs text-blue-600">
-                    💡 Tap photos below to select them, then use the share options above
-                  </p>
+
+                  {/* Main Share Button - Standalone at bottom */}
+                  <Sheet open={isShareSheetOpen} onOpenChange={setIsShareSheetOpen}>
+                    <SheetTrigger asChild>
+                      <Button 
+                        size="lg"
+                        className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+                        disabled={selectedPhotos.length === 0}
+                      >
+                        <Share2 className="w-5 h-5 mr-3" />
+                        <span className="text-responsive-base font-medium">{getShareButtonText()}</span>
+                      </Button>
+                    </SheetTrigger>
+                  </Sheet>
                 </div>
               )}
-            </div>
+            </>
           )}
         </CardHeader>
         <CardContent>

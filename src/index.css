@@ -136,6 +136,15 @@
   .safe-area-bottom {
     padding-bottom: env(safe-area-inset-bottom);
   }
+  
+  .pb-safe-area-inset-bottom {
+    padding-bottom: calc(1rem + env(safe-area-inset-bottom));
+  }
+}
+
+/* Fallback for devices without safe area */
+.pb-safe-area-inset-bottom {
+  padding-bottom: 1rem;
 }
 
 /* Native-like scroll behavior */

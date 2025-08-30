@@ -32,6 +32,7 @@ import { useOverlayOpen } from "@/stores/overlayStore";
 import { isTouchDevice } from "@/hooks/useIsTouchDevice";
 import { featureFlags } from "@/config/featureFlags";
 import { getPrevNext, type TabId } from "@/features/navigation/tabOrder";
+import { PullToRefresh } from "@/components/PullToRefresh";
 
 const Index = () => {
   console.log("Index component is rendering");
@@ -73,6 +74,13 @@ const Index = () => {
   const handlePrivacyToggle = async (isPublic: boolean): Promise<boolean> => {
     if (!selectedPet?.id) return false;
     return await togglePetPublicVisibility(selectedPet.id, isPublic);
+  };
+
+  const handleRefresh = async () => {
+    // Refresh pet data when user pulls to refresh
+    if (selectedPet?.id) {
+      await handlePetUpdate();
+    }
   };
 
   useEffect(() => {
@@ -295,43 +303,45 @@ const Index = () => {
           petName={petData.name}
         />
 
-        <main className="max-w-6xl mx-auto px-3 sm:px-4 py-4 sm:py-6 lg:py-8">
-          <AuthenticationPrompt isSignedIn={!!user} hasPets={pets.length > 0} />
-          
-          {user && pets.length > 0 && (
-            <>
-              <PetSelector 
-                pets={pets}
-                selectedPet={selectedPet}
-                onSelectPet={handleSelectPet}
-                onReorderPets={handleReorderPets}
-              />
+        <PullToRefresh onRefresh={handleRefresh} disabled={!user || pets.length === 0}>
+          <main className="max-w-6xl mx-auto px-3 sm:px-4 py-4 sm:py-6 lg:py-8 pb-20 sm:pb-24">
+            <AuthenticationPrompt isSignedIn={!!user} hasPets={pets.length > 0} />
+            
+            {user && pets.length > 0 && (
+              <>
+                <PetSelector 
+                  pets={pets}
+                  selectedPet={selectedPet}
+                  onSelectPet={handleSelectPet}
+                  onReorderPets={handleReorderPets}
+                />
 
 
-              {/* Show PetPassportCard only on Profile tab */}
-              {activeTab === "profile" && (
-                <PetPassportCard petData={petData} onUpdate={handlePetUpdate} />
-              )}
+                {/* Show PetPassportCard only on Profile tab */}
+                {activeTab === "profile" && (
+                  <PetPassportCard petData={petData} onUpdate={handlePetUpdate} />
+                )}
 
-              <div className="mb-4 sm:mb-6">
-                <NavigationTabs activeTab={activeTab} onTabChange={handleTabChange} />
-              </div>
-
-              <SwipeContainer
-                enabled={swipeEnabled}
-                isOverlayOpen={isOverlayOpen}
-                isPtrActive={false} // PTR integration can be added when needed
-                onPrev={() => handleTabChange(prev)}
-                onNext={() => handleTabChange(next)}
-                debug={true}
-              >
-                <div className="space-y-4 sm:space-y-6">
-                  {renderTabContent()}
+                <div className="mb-4 sm:mb-6">
+                  <NavigationTabs activeTab={activeTab} onTabChange={handleTabChange} />
                 </div>
-              </SwipeContainer>
-            </>
-          )}
-        </main>
+
+                <SwipeContainer
+                  enabled={swipeEnabled}
+                  isOverlayOpen={isOverlayOpen}
+                  isPtrActive={false}
+                  onPrev={() => handleTabChange(prev)}
+                  onNext={() => handleTabChange(next)}
+                  debug={false}
+                >
+                  <div className="space-y-4 sm:space-y-6">
+                    {renderTabContent()}
+                  </div>
+                </SwipeContainer>
+              </>
+            )}
+          </main>
+        </PullToRefresh>
 
         {/* Floating Report Issue Button */}
         

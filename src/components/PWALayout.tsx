@@ -14,7 +14,7 @@ export const PWALayout = ({ children, showBottomNav = true }: PWALayoutProps) =>
       <PWAInstallPrompt />
       
       {/* Main content with bottom padding for tab navigation */}
-      <main className={`${showBottomNav ? "pb-16" : ""}`}>
+      <main className={`${showBottomNav ? "pb-16 pb-safe-area-inset-bottom" : ""}`}>
         {children}
       </main>
       

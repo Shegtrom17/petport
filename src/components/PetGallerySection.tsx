@@ -505,83 +505,89 @@ export const PetGallerySection = ({ petData, onUpdate }: PetGallerySectionProps)
                   </div>
                 </div>
               ) : (
-                <div className="mt-4 p-4 space-y-4">
-                  {/* Selection Controls - No constraining box */}
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <Button
-                        onClick={selectAllPhotos}
-                        variant="outline"
-                        size="default"
-                      >
-                        {selectedPhotos.length === galleryPhotos.length ? (
-                          <>
-                            <CheckSquare className="w-4 h-4 mr-2" />
-                            <span className="text-responsive-sm">Deselect All</span>
-                          </>
-                        ) : (
-                          <>
-                            <Square className="w-4 h-4 mr-2" />
-                            <span className="text-responsive-sm">Select All</span>
-                          </>
+                <div className="mt-4 space-y-4">
+                  {/* Selection Controls */}
+                  <div className="p-4 border border-blue-200 rounded-lg bg-blue-50/50">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <Button
+                          onClick={selectAllPhotos}
+                          variant="outline"
+                          size="default"
+                        >
+                          {selectedPhotos.length === galleryPhotos.length ? (
+                            <>
+                              <CheckSquare className="w-4 h-4 mr-2" />
+                              <span className="text-responsive-sm">Deselect All</span>
+                            </>
+                          ) : (
+                            <>
+                              <Square className="w-4 h-4 mr-2" />
+                              <span className="text-responsive-sm">Select All</span>
+                            </>
+                          )}
+                        </Button>
+                        
+                        {selectedPhotos.length > 0 && (
+                          <Badge variant="secondary" className="text-responsive-sm px-3 py-1">
+                            {selectedPhotos.length} selected
+                          </Badge>
                         )}
-                      </Button>
+                      </div>
                       
-                      {selectedPhotos.length > 0 && (
-                        <Badge variant="secondary" className="text-responsive-sm px-3 py-1">
-                          {selectedPhotos.length} selected
-                        </Badge>
-                      )}
+                      <Button
+                        variant="ghost"
+                        size="default"
+                        onClick={handleCancelSelection}
+                      >
+                        <X className="w-4 h-4 mr-2" />
+                        <span className="text-responsive-sm">Cancel</span>
+                      </Button>
                     </div>
-                    
-                    <Button
-                      variant="ghost"
-                      size="default"
-                      onClick={handleCancelSelection}
-                    >
-                      <X className="w-4 h-4 mr-2" />
-                      <span className="text-responsive-sm">Cancel</span>
-                    </Button>
                   </div>
                   
-                  {/* Action Buttons - Spaced out without constraining boxes */}
-                  <div className="flex flex-col sm:flex-row gap-3">
-                    <Button 
-                      variant="outline" 
-                      size="default"
-                      onClick={handleCopyLink}
-                      disabled={selectedPhotos.length === 0}
-                      className="flex-1"
-                    >
-                      <Copy className="w-4 h-4 mr-2" />
-                      <span className="text-responsive-sm">Copy link</span>
-                    </Button>
-                    
-                    <Button 
-                      variant="outline" 
-                      size="default"
-                      onClick={handlePreview}
-                      disabled={selectedPhotos.length === 0}
-                      className="flex-1"
-                    >
-                      <ExternalLink className="w-4 h-4 mr-2" />
-                      <span className="text-responsive-sm">Preview</span>
-                    </Button>
+                  {/* Action Buttons */}
+                  <div className="p-4 border border-blue-200 rounded-lg bg-blue-50/50">
+                    <div className="flex flex-col sm:flex-row gap-3">
+                      <Button 
+                        variant="outline" 
+                        size="default"
+                        onClick={handleCopyLink}
+                        disabled={selectedPhotos.length === 0}
+                        className="flex-1"
+                      >
+                        <Copy className="w-4 h-4 mr-2" />
+                        <span className="text-responsive-sm">Copy link</span>
+                      </Button>
+                      
+                      <Button 
+                        variant="outline" 
+                        size="default"
+                        onClick={handlePreview}
+                        disabled={selectedPhotos.length === 0}
+                        className="flex-1"
+                      >
+                        <ExternalLink className="w-4 h-4 mr-2" />
+                        <span className="text-responsive-sm">Preview</span>
+                      </Button>
+                    </div>
                   </div>
 
-                  {/* Main Share Button - Standalone at bottom */}
-                  <Sheet open={isShareSheetOpen} onOpenChange={setIsShareSheetOpen}>
-                    <SheetTrigger asChild>
-                      <Button 
-                        size="lg"
-                        className="w-full bg-blue-600 hover:bg-blue-700 text-white"
-                        disabled={selectedPhotos.length === 0}
-                      >
-                        <Share2 className="w-5 h-5 mr-3" />
-                        <span className="text-responsive-base font-medium">{getShareButtonText()}</span>
-                      </Button>
-                    </SheetTrigger>
-                  </Sheet>
+                  {/* Main Share Button */}
+                  <div className="p-4 border border-blue-200 rounded-lg bg-blue-50/50">
+                    <Sheet open={isShareSheetOpen} onOpenChange={setIsShareSheetOpen}>
+                      <SheetTrigger asChild>
+                        <Button 
+                          size="lg"
+                          className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+                          disabled={selectedPhotos.length === 0}
+                        >
+                          <Share2 className="w-5 h-5 mr-3" />
+                          <span className="text-responsive-base font-medium">{getShareButtonText()}</span>
+                        </Button>
+                      </SheetTrigger>
+                    </Sheet>
+                  </div>
                 </div>
               )}
             </>

@@ -485,7 +485,7 @@ export const PetGallerySection = ({ petData, onUpdate }: PetGallerySectionProps)
                           onClick={() => setSelectedPhotos([])}
                         >
                           <Share2 className="w-4 h-4 mr-2" />
-                          Share all ({galleryPhotos.length})
+                          <span className="text-responsive-sm">Share all ({galleryPhotos.length})</span>
                         </Button>
                       </SheetTrigger>
                     </Sheet>
@@ -495,7 +495,7 @@ export const PetGallerySection = ({ petData, onUpdate }: PetGallerySectionProps)
                       onClick={handleStartSelection}
                     >
                       <CheckSquare className="w-4 h-4 mr-2" />
-                      Select photos
+                      <span className="text-responsive-sm">Select photos</span>
                     </Button>
                   </div>
                 </div>

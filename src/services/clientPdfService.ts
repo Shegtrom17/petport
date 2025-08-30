@@ -279,69 +279,55 @@ const applyOrientationToCanvas = (ctx: CanvasRenderingContext2D, orientation: nu
   }
 };
 
-// Orientation-aware image loader for PDFs
+// Simpler orientation-aware image loader that lets browser handle EXIF automatically
 const loadOrientedImageAsBase64 = async (url: string): Promise<string> => {
   try {
-    const response = await fetch(url);
-    const blob = await response.blob();
+    console.log('Loading image for PDF with orientation correction:', url);
     
-    // Get EXIF orientation
-    const orientation = await getImageOrientation(blob);
-    
-    // If orientation is normal (1), use standard loading
-    if (orientation === 1) {
-      return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onloadend = () => resolve(reader.result as string);
-        reader.onerror = reject;
-        reader.readAsDataURL(blob);
-      });
-    }
-    
-    // Create image element to load the image
+    // Create image element - browser will automatically handle EXIF orientation
     const img = new Image();
-    const imageUrl = URL.createObjectURL(blob);
+    img.crossOrigin = 'anonymous';
     
     return new Promise((resolve, reject) => {
       img.onload = () => {
         try {
-          // Calculate canvas dimensions based on orientation
-          const needsSwap = orientation >= 5 && orientation <= 8;
-          const canvasWidth = needsSwap ? img.height : img.width;
-          const canvasHeight = needsSwap ? img.width : img.height;
+          console.log('Image loaded, original dimensions:', img.naturalWidth, 'x', img.naturalHeight);
+          console.log('Image displayed dimensions:', img.width, 'x', img.height);
           
-          // Create canvas and apply orientation
+          // Create canvas with the image's natural dimensions
           const canvas = document.createElement('canvas');
-          canvas.width = canvasWidth;
-          canvas.height = canvasHeight;
+          canvas.width = img.naturalWidth;
+          canvas.height = img.naturalHeight;
           const ctx = canvas.getContext('2d')!;
           
-          // Apply orientation transformation
-          applyOrientationToCanvas(ctx, orientation, img.width, img.height);
+          // Set white background to avoid transparency issues
+          ctx.fillStyle = '#FFFFFF';
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
           
-          // Draw the corrected image
+          // Draw the image - browser has already applied EXIF orientation
           ctx.drawImage(img, 0, 0);
           
           // Convert to base64
-          const correctedBase64 = canvas.toDataURL('image/jpeg', 0.9);
-          URL.revokeObjectURL(imageUrl);
-          resolve(correctedBase64);
+          const base64 = canvas.toDataURL('image/jpeg', 0.9);
+          console.log('Image converted to base64 for PDF, canvas dimensions:', canvas.width, 'x', canvas.height);
+          resolve(base64);
         } catch (error) {
-          URL.revokeObjectURL(imageUrl);
+          console.error('Canvas operation failed:', error);
           reject(error);
         }
       };
       
-      img.onerror = () => {
-        URL.revokeObjectURL(imageUrl);
-        reject(new Error('Failed to load image'));
+      img.onerror = (error) => {
+        console.error('Image failed to load:', error);
+        reject(new Error('Failed to load image for PDF'));
       };
       
-      img.src = imageUrl;
+      img.src = url;
     });
   } catch (error) {
     console.error('Failed to load oriented image:', error);
-    throw error;
+    // Fallback to standard loading
+    return loadImageAsBase64(url);
   }
 };
 

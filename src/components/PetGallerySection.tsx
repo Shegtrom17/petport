@@ -4,15 +4,16 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
-import { Camera, Upload, Download, Plus, Eye, Trash2, Edit2, X, Loader2, Share2, CheckSquare, Square } from "lucide-react";
-import { Checkbox } from "@/components/ui/checkbox";
+import { Camera, Upload, Download, Plus, Eye, Trash2, Edit2, X, Loader2, Share2, CheckSquare, Square, Copy, ExternalLink } from "lucide-react";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { uploadGalleryPhoto, uploadMultipleGalleryPhotos, deleteGalleryPhoto, updateGalleryPhotoCaption } from "@/services/petService";
 import { compressMultipleImages, formatFileSize } from "@/utils/imageCompression";
-import { generateClientPetPDF, downloadPDFBlob } from "@/services/clientPdfService";
+import { generateClientPetPDF } from "@/services/clientPdfService";
 import { SocialShareButtons } from "@/components/SocialShareButtons";
+import { useIsMobile } from "@/hooks/useIsMobile";
 
 const MAX_GALLERY_PHOTOS = 12;
 
@@ -33,57 +34,90 @@ interface PetGallerySectionProps {
 
 export const PetGallerySection = ({ petData, onUpdate }: PetGallerySectionProps) => {
   const [uploading, setUploading] = useState(false);
-  const [isUploading, setIsUploading] = useState(false);
   const [editingCaption, setEditingCaption] = useState<string | null>(null);
   const [editCaptionValue, setEditCaptionValue] = useState("");
   const [isGalleryPDFDialogOpen, setIsGalleryPDFDialogOpen] = useState(false);
   const [generatedGalleryPdfBlob, setGeneratedGalleryPdfBlob] = useState<Blob | null>(null);
   const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
-  const [selectedPhotos, setSelectedPhotos] = useState<Set<string>>(new Set());
-  const [showShareOptions, setShowShareOptions] = useState(false);
+  const [selectedPhotos, setSelectedPhotos] = useState<string[]>([]);
+  const [isSelectionMode, setIsSelectionMode] = useState(false);
+  const [isShareSheetOpen, setIsShareSheetOpen] = useState(false);
   const { toast } = useToast();
+  const isMobile = useIsMobile();
 
   const galleryPhotos = petData.gallery_photos || [];
   const remainingSlots = MAX_GALLERY_PHOTOS - galleryPhotos.length;
   const isLimitReached = galleryPhotos.length >= MAX_GALLERY_PHOTOS;
 
-  // Debug logging for share button issue
-  console.log("PetGallerySection - Debug:", {
-    galleryPhotosLength: galleryPhotos.length,
-    showShareOptions,
-    hasPhotos: galleryPhotos.length > 0,
-    shouldShowShare: showShareOptions && galleryPhotos.length > 0,
-    petId: petData.id
-  });
-
-  const handleTogglePhotoSelection = (photoId: string) => {
-    setSelectedPhotos(prev => {
-      const newSet = new Set(prev);
-      if (newSet.has(photoId)) {
-        newSet.delete(photoId);
-      } else {
-        newSet.add(photoId);
-      }
-      return newSet;
-    });
+  // Helper functions
+  const togglePhotoSelection = (photoId: string) => {
+    setSelectedPhotos(prev =>
+      prev.includes(photoId)
+        ? prev.filter(id => id !== photoId)
+        : [...prev, photoId]
+    );
   };
 
-  const handleSelectAllPhotos = () => {
-    if (selectedPhotos.size === galleryPhotos.length) {
-      setSelectedPhotos(new Set());
+  const selectAllPhotos = () => {
+    if (selectedPhotos.length === galleryPhotos.length) {
+      setSelectedPhotos([]);
     } else {
-      setSelectedPhotos(new Set(galleryPhotos.map(photo => photo.id)));
+      setSelectedPhotos(galleryPhotos.map(photo => photo.id));
     }
   };
 
-  const getGalleryShareUrl = () => {
-    const baseUrl = `${window.location.origin}/gallery/${petData.id}`;
-    if (selectedPhotos.size > 0 && selectedPhotos.size < galleryPhotos.length) {
-      return `${baseUrl}?photos=${Array.from(selectedPhotos).join(',')}`;
+  const generateShareableUrl = () => {
+    const baseUrl = `${window.location.origin}/public/gallery/${petData.id}`;
+    if (selectedPhotos.length > 0 && selectedPhotos.length < galleryPhotos.length) {
+      return `${baseUrl}?photos=${selectedPhotos.join(',')}`;
     }
     return baseUrl;
   };
 
+  const getShareButtonText = () => {
+    if (selectedPhotos.length === 0) {
+      return `Share all (${galleryPhotos.length})`;
+    }
+    return `Share selected (${selectedPhotos.length})`;
+  };
+
+  const handleCopyLink = async () => {
+    const url = generateShareableUrl();
+    try {
+      await navigator.clipboard.writeText(url);
+      toast({
+        title: "Link copied!",
+        description: "Gallery link has been copied to your clipboard.",
+      });
+    } catch (err) {
+      toast({
+        title: "Failed to copy",
+        description: "Please try again or manually copy the URL.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handlePreview = () => {
+    const url = generateShareableUrl();
+    window.open(url, '_blank');
+  };
+
+  const handleStartSelection = () => {
+    setIsSelectionMode(true);
+    setSelectedPhotos([]);
+  };
+
+  const handleCancelSelection = () => {
+    setIsSelectionMode(false);
+    setSelectedPhotos([]);
+  };
+
+  const handleShareAction = () => {
+    setIsShareSheetOpen(true);
+  };
+
+  // Upload functions
   const handleUploadPhotos = () => {
     if (isLimitReached) {
       toast({
@@ -102,7 +136,6 @@ export const PetGallerySection = ({ petData, onUpdate }: PetGallerySectionProps)
       const files = Array.from((e.target as HTMLInputElement).files || []);
       if (files.length === 0) return;
 
-      // Limit files to remaining slots
       let filesToUpload = files.slice(0, remainingSlots);
       if (files.length > remainingSlots) {
         toast({
@@ -113,7 +146,6 @@ export const PetGallerySection = ({ petData, onUpdate }: PetGallerySectionProps)
 
       setUploading(true);
       try {
-        // Compress images before upload for better performance and storage
         const compressionResults = await compressMultipleImages(filesToUpload, {
           maxWidth: 1200,
           maxHeight: 1200,
@@ -121,21 +153,7 @@ export const PetGallerySection = ({ petData, onUpdate }: PetGallerySectionProps)
           maxSizeKB: 800
         });
         
-        // Extract compressed files
         const compressedFiles = compressionResults.map(result => result.file);
-        
-        // Show compression stats if significant compression achieved
-        const totalOriginalSize = compressionResults.reduce((sum, result) => sum + result.originalSize, 0);
-        const totalCompressedSize = compressionResults.reduce((sum, result) => sum + result.compressedSize, 0);
-        const avgCompressionRatio = totalOriginalSize / totalCompressedSize;
-        
-        if (avgCompressionRatio > 1.5) {
-          toast({
-            title: "Photos optimized",
-            description: `Compressed from ${formatFileSize(totalOriginalSize)} to ${formatFileSize(totalCompressedSize)} for faster upload`,
-          });
-        }
-        
         const result = await uploadMultipleGalleryPhotos(petData.id, compressedFiles);
         
         if (result.success) {
@@ -186,7 +204,6 @@ export const PetGallerySection = ({ petData, onUpdate }: PetGallerySectionProps)
 
       setUploading(true);
       try {
-        // Compress captured photo
         const compressionResults = await compressMultipleImages([file], {
           maxWidth: 1200,
           maxHeight: 1200,
@@ -366,19 +383,6 @@ export const PetGallerySection = ({ petData, onUpdate }: PetGallerySectionProps)
                 <span className="hidden sm:inline">{uploading ? "Uploading..." : "Add Photos"}</span>
                 <span className="sm:hidden">{uploading ? "..." : "Add"}</span>
               </div>
-              {galleryPhotos.length > 0 && (
-                <div 
-                  onClick={() => {
-                    console.log('Share Gallery clicked, current showShareOptions:', showShareOptions);
-                    setShowShareOptions(!showShareOptions);
-                  }}
-                  className="cursor-pointer flex items-center justify-center text-white hover:text-yellow-300 hover:scale-110 transition-all duration-200 text-xs sm:text-base px-2 sm:px-4 py-2"
-                >
-                  <Share2 className="w-3 h-3 sm:w-5 sm:h-5 mr-1 sm:mr-2" />
-                  <span className="hidden sm:inline">Share Gallery</span>
-                  <span className="sm:hidden">Share</span>
-                </div>
-              )}
               <div 
                 onClick={showGalleryPDFOptions}
                 className="cursor-pointer flex items-center justify-center text-white hover:text-yellow-300 hover:scale-110 transition-all duration-200 text-xs sm:text-base px-2 sm:px-4 py-2"
@@ -463,61 +467,115 @@ export const PetGallerySection = ({ petData, onUpdate }: PetGallerySectionProps)
             </div>
           </CardTitle>
           
-          {/* Photo Selection Controls - Show when gallery has photos */}
+          {/* Improved Share Controls */}
           {galleryPhotos.length > 0 && (
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mt-4">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                <div className="flex items-center gap-4">
-                  <Button
-                    onClick={() => setShowShareOptions(!showShareOptions)}
-                    variant={showShareOptions ? "default" : "outline"}
-                    size="sm"
-                    className="flex items-center gap-2"
-                  >
-                    <Share2 className="w-4 h-4" />
-                    {showShareOptions ? 'Cancel Selection' : 'Select Photos to Share'}
-                  </Button>
-                  
-                  {showShareOptions && (
-                    <>
+              {!isSelectionMode ? (
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <div className="flex-1">
+                    <h4 className="font-medium text-blue-900 mb-2">Share Gallery</h4>
+                    <p className="text-sm text-blue-700">Share all photos or select specific ones to create a custom gallery link.</p>
+                  </div>
+                  <div className="flex gap-2">
+                    <Sheet open={isShareSheetOpen} onOpenChange={setIsShareSheetOpen}>
+                      <SheetTrigger asChild>
+                        <Button 
+                          size="sm" 
+                          className="bg-blue-600 hover:bg-blue-700 text-white"
+                          onClick={() => setSelectedPhotos([])}
+                        >
+                          <Share2 className="w-4 h-4 mr-2" />
+                          Share all ({galleryPhotos.length})
+                        </Button>
+                      </SheetTrigger>
+                    </Sheet>
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={handleStartSelection}
+                    >
+                      <CheckSquare className="w-4 h-4 mr-2" />
+                      Select photos
+                    </Button>
+                  </div>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
                       <Button
-                        onClick={handleSelectAllPhotos}
+                        onClick={selectAllPhotos}
                         variant="outline"
                         size="sm"
-                        className="text-xs"
                       >
-                        {selectedPhotos.size === galleryPhotos.length ? (
+                        {selectedPhotos.length === galleryPhotos.length ? (
                           <>
-                            <CheckSquare className="w-3 h-3 mr-1" />
+                            <CheckSquare className="w-4 h-4 mr-1" />
                             Deselect All
                           </>
                         ) : (
                           <>
-                            <Square className="w-3 h-3 mr-1" />
+                            <Square className="w-4 h-4 mr-1" />
                             Select All
                           </>
                         )}
                       </Button>
                       
-                      {selectedPhotos.size > 0 && (
+                      {selectedPhotos.length > 0 && (
                         <Badge variant="secondary" className="text-xs px-2 py-1">
-                          {selectedPhotos.size} photo{selectedPhotos.size !== 1 ? 's' : ''} selected
+                          {selectedPhotos.length} selected
                         </Badge>
                       )}
-                    </>
-                  )}
-                </div>
-                
-                {showShareOptions && selectedPhotos.size > 0 && (
-                  <div className="text-sm text-blue-600 font-medium">
-                    👆 Selected photos will be shared
+                    </div>
+                    
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={handleCancelSelection}
+                    >
+                      <X className="w-4 h-4 mr-1" />
+                      Cancel
+                    </Button>
                   </div>
-                )}
-              </div>
-              
-              {showShareOptions && (
-                <div className="text-xs text-blue-600 mt-2">
-                  💡 Check the boxes on photos below, then use the share options that appear
+                  
+                  <div className="flex gap-2">
+                    <Sheet open={isShareSheetOpen} onOpenChange={setIsShareSheetOpen}>
+                      <SheetTrigger asChild>
+                        <Button 
+                          size="sm"
+                          className="bg-blue-600 hover:bg-blue-700 text-white"
+                          disabled={selectedPhotos.length === 0}
+                        >
+                          <Share2 className="w-4 h-4 mr-2" />
+                          {getShareButtonText()}
+                        </Button>
+                      </SheetTrigger>
+                    </Sheet>
+                    
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={handleCopyLink}
+                      disabled={selectedPhotos.length === 0}
+                    >
+                      <Copy className="w-4 h-4 mr-2" />
+                      Copy link
+                    </Button>
+                    
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={handlePreview}
+                      disabled={selectedPhotos.length === 0}
+                    >
+                      <ExternalLink className="w-4 h-4 mr-2" />
+                      Preview
+                    </Button>
+                  </div>
+                  
+                  <p className="text-xs text-blue-600">
+                    💡 Tap photos below to select them, then use the share options above
+                  </p>
                 </div>
               )}
             </div>
@@ -536,15 +594,15 @@ export const PetGallerySection = ({ petData, onUpdate }: PetGallerySectionProps)
                     />
                     
                     {/* Selection checkbox */}
-                    {showShareOptions && (
+                    {isSelectionMode && (
                       <div className="absolute top-2 left-2">
                         <Button
                           size="sm"
-                          variant={selectedPhotos.has(photo.id) ? "default" : "secondary"}
+                          variant={selectedPhotos.includes(photo.id) ? "default" : "secondary"}
                           className="h-8 w-8 p-0 bg-white/90 hover:bg-white"
-                          onClick={() => handleTogglePhotoSelection(photo.id)}
+                          onClick={() => togglePhotoSelection(photo.id)}
                         >
-                          {selectedPhotos.has(photo.id) ? (
+                          {selectedPhotos.includes(photo.id) ? (
                             <CheckSquare className="h-4 w-4 text-blue-600" />
                           ) : (
                             <Square className="h-4 w-4" />
@@ -668,54 +726,89 @@ export const PetGallerySection = ({ petData, onUpdate }: PetGallerySectionProps)
             </div>
           )}
         </CardContent>
-        
-        {/* Share Gallery Section - Moved inside the card for better UX */}
-        {showShareOptions && galleryPhotos.length > 0 && (
-          <CardContent className="pt-0">
-            <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg p-4 space-y-4">
+      </Card>
+
+      {/* Mobile sticky bottom bar when in selection mode */}
+      {isMobile && isSelectionMode && galleryPhotos.length > 0 && (
+        <div className="fixed bottom-4 left-4 right-4 z-50">
+          <div className="bg-white border border-blue-200 rounded-lg p-3 shadow-lg">
+            <div className="flex items-center justify-between gap-2">
               <div className="flex items-center gap-2">
-                <Share2 className="w-5 h-5 text-blue-600" />
-                <h3 className="font-semibold text-blue-900">Share Selected Photos</h3>
+                <Button
+                  size="sm"
+                  onClick={handleCancelSelection}
+                  variant="outline"
+                >
+                  <X className="w-4 h-4" />
+                </Button>
+                <span className="text-sm font-medium">
+                  {selectedPhotos.length} selected
+                </span>
               </div>
               
-              {selectedPhotos.size > 0 ? (
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between bg-white rounded-md p-3 border border-blue-300">
-                    <p className="text-sm text-blue-800">
-                      <strong>{selectedPhotos.size}</strong> photo{selectedPhotos.size !== 1 ? 's' : ''} will be shared
-                    </p>
-                    <Button
-                      onClick={() => setSelectedPhotos(new Set())}
-                      variant="outline"
+              <div className="flex gap-2">
+                <Sheet open={isShareSheetOpen} onOpenChange={setIsShareSheetOpen}>
+                  <SheetTrigger asChild>
+                    <Button 
                       size="sm"
-                      className="text-xs border-blue-300 hover:bg-blue-50"
+                      disabled={selectedPhotos.length === 0}
                     >
-                      Clear Selection
+                      <Share2 className="w-4 h-4 mr-1" />
+                      Share
                     </Button>
-                  </div>
-                  
-                  <SocialShareButtons
-                    petName={petData.name}
-                    petId={petData.id}
-                    context="profile"
-                    shareUrlOverride={getGalleryShareUrl()}
-                    compact={true}
-                  />
-                </div>
-              ) : (
-                <div className="bg-white rounded-md p-4 border border-blue-300 text-center">
-                  <p className="text-sm text-blue-700 mb-2">
-                    👆 Select photos using the checkboxes above to share them
-                  </p>
-                  <p className="text-xs text-blue-600">
-                    You can share individual photos or select multiple photos to create a custom gallery
-                  </p>
-                </div>
-              )}
+                  </SheetTrigger>
+                </Sheet>
+                
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={handleCopyLink}
+                  disabled={selectedPhotos.length === 0}
+                >
+                  <Copy className="w-4 h-4" />
+                </Button>
+              </div>
             </div>
-          </CardContent>
-        )}
-      </Card>
+          </div>
+        </div>
+      )}
+
+      {/* Share Sheet */}
+      <Sheet open={isShareSheetOpen} onOpenChange={setIsShareSheetOpen}>
+        <SheetContent>
+          <SheetHeader>
+            <SheetTitle>Share Gallery</SheetTitle>
+          </SheetHeader>
+          
+          <div className="space-y-4 mt-6">
+            <div className="bg-blue-50 rounded-lg p-4">
+              <h4 className="font-medium text-blue-900 mb-2">
+                {selectedPhotos.length === 0 
+                  ? `Sharing all ${galleryPhotos.length} photos`
+                  : `Sharing ${selectedPhotos.length} selected photos`
+                }
+              </h4>
+              <p className="text-sm text-blue-700">
+                Recipients will see {selectedPhotos.length === 0 ? 'the complete gallery' : 'only your selected photos'} when they visit the link.
+              </p>
+            </div>
+
+            <SocialShareButtons
+              petName={petData.name}
+              petId={petData.id}
+              context="profile"
+              shareUrlOverride={generateShareableUrl()}
+              compact={false}
+            />
+
+            <div className="mt-4 pt-4 border-t">
+              <p className="text-xs text-gray-500">
+                💡 <strong>Email sharing:</strong> If you don't have email configured, the system will open your device's default email app with a pre-filled message.
+              </p>
+            </div>
+          </div>
+        </SheetContent>
+      </Sheet>
 
       {/* Photo Guidelines */}
       <Card className="border-0 shadow-lg bg-passport-section-bg backdrop-blur-sm">
@@ -758,7 +851,6 @@ export const PetGallerySection = ({ petData, onUpdate }: PetGallerySectionProps)
           </DialogHeader>
           
           <div className="space-y-6">
-            {/* PDF Actions */}
             {!generatedGalleryPdfBlob && !isGeneratingPDF && (
               <div className="space-y-3">
                 <p className="text-sm text-navy-600 text-center">
@@ -785,7 +877,6 @@ export const PetGallerySection = ({ petData, onUpdate }: PetGallerySectionProps)
               </div>
             )}
             
-            {/* Loading State */}
             {isGeneratingPDF && (
               <div className="text-center py-6">
                 <Loader2 className="w-8 h-8 animate-spin mx-auto mb-3 text-gold-500" />
@@ -793,7 +884,6 @@ export const PetGallerySection = ({ petData, onUpdate }: PetGallerySectionProps)
               </div>
             )}
             
-            {/* Generated PDF Actions */}
             {generatedGalleryPdfBlob && !isGeneratingPDF && (
               <div className="space-y-4">
                 <div className="bg-white p-4 rounded-lg border border-gold-500/30 shadow-sm">

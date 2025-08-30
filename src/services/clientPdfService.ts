@@ -671,6 +671,38 @@ addFooterBottom(doc, pageManager, [
 ]);
 };
 
+// Enhanced image handling with proper aspect ratio
+const addGalleryImage = async (
+  doc: jsPDF, 
+  pageManager: PDFPageManager, 
+  imageUrl: string, 
+  x: number, 
+  y: number, 
+  maxWidth: number = 50, 
+  maxHeight: number = 60
+): Promise<{ width: number; height: number }> => {
+  try {
+    const base64 = await loadImageAsBase64(imageUrl);
+    const dimensions = await getImageDimensions(base64);
+    
+    // Calculate scaled dimensions maintaining aspect ratio
+    const aspectRatio = dimensions.width / dimensions.height;
+    let width = Math.min(maxWidth, dimensions.width);
+    let height = width / aspectRatio;
+    
+    if (height > maxHeight) {
+      height = maxHeight;
+      width = height * aspectRatio;
+    }
+    
+    doc.addImage(base64, 'JPEG', x, y, width, height);
+    return { width, height };
+  } catch (error) {
+    console.error('Failed to add gallery image:', error);
+    return { width: 0, height: 0 };
+  }
+};
+
 const generateGalleryPDF = async (doc: jsPDF, pageManager: PDFPageManager, petData: any): Promise<void> => {
   const safeText = (text: string) => sanitizeText(text || '');
   
@@ -683,37 +715,76 @@ const generateGalleryPDF = async (doc: jsPDF, pageManager: PDFPageManager, petDa
   const galleryPhotos = petData.gallery_photos || [];
   
   if (galleryPhotos.length > 0) {
-    const photoSize = 55;
-    const spacing = 60; // 55 photo width + 5 margin
-    const startX = 20;
-    const photosPerRow = 3;
+    // Responsive layout based on page width
+    const pageWidth = pageManager.getContentWidth();
+    const photoSpacing = 5;
+    const maxPhotoWidth = Math.min(50, (pageWidth - photoSpacing * 2) / 3);
+    const maxPhotoHeight = 60;
+    const photosPerRow = Math.floor((pageWidth + photoSpacing) / (maxPhotoWidth + photoSpacing));
     
-    for (let i = 0; i < galleryPhotos.length; i += photosPerRow) {
-      const startY = pageManager.getCurrentY();
-      const rowPhotos = galleryPhotos.slice(i, i + photosPerRow);
+    let currentRow = 0;
+    let photosInCurrentRow = 0;
+    let maxRowHeight = 0;
+    let startX = pageManager.getLeftMargin();
+    let startY = pageManager.getCurrentY();
+    
+    for (let i = 0; i < galleryPhotos.length; i++) {
+      const photo = galleryPhotos[i];
       
-      // Place photos horizontally in the same row
-      for (let j = 0; j < rowPhotos.length; j++) {
-        const photoX = startX + (j * spacing);
+      // Calculate position for current photo
+      const photoX = startX + (photosInCurrentRow * (maxPhotoWidth + photoSpacing));
+      
+      // Check if we need a new row
+      if (photosInCurrentRow >= photosPerRow) {
+        // Move to next row
+        pageManager.addY(maxRowHeight + 15); // Row height + caption space
+        pageManager.checkPageSpace(maxPhotoHeight + 15); // Check for page break
         
-        // Draw photo without advancing Y cursor
-        try {
-          const base64 = await loadImageAsBase64(rowPhotos[j].url);
-          doc.addImage(base64, 'JPEG', photoX, startY, photoSize, photoSize);
-        } catch (error) {
-          console.error('Error adding image:', error);
-        }
-        
-        // Add caption below photo
-        if (rowPhotos[j].caption) {
-          const captionY = startY + photoSize + 5;
-          doc.text(rowPhotos[j].caption, photoX, captionY, { maxWidth: photoSize });
-        }
+        startY = pageManager.getCurrentY();
+        photosInCurrentRow = 0;
+        maxRowHeight = 0;
+        currentRow++;
       }
       
-      // Advance Y position for next row
-      pageManager.addY(photoSize + 20); // Photo height + space for caption and row spacing
+      // Add photo maintaining aspect ratio
+      const photoPosition = {
+        x: startX + (photosInCurrentRow * (maxPhotoWidth + photoSpacing)),
+        y: startY
+      };
+      
+      const { width, height } = await addGalleryImage(
+        doc, 
+        pageManager, 
+        photo.url, 
+        photoPosition.x, 
+        photoPosition.y, 
+        maxPhotoWidth, 
+        maxPhotoHeight
+      );
+      
+      // Track the tallest photo in this row
+      maxRowHeight = Math.max(maxRowHeight, height);
+      
+      // Add caption below photo
+      if (photo.caption) {
+        doc.setFontSize(8);
+        doc.setTextColor('#374151');
+        doc.setFont('helvetica', 'normal');
+        
+        const captionLines = doc.splitTextToSize(sanitizeText(photo.caption), width);
+        const captionY = photoPosition.y + height + 3;
+        doc.text(captionLines, photoPosition.x, captionY);
+      }
+      
+      photosInCurrentRow++;
+      
+      // If this is the last photo, add the final row height
+      if (i === galleryPhotos.length - 1) {
+        pageManager.addY(maxRowHeight + 15);
+      }
     }
+    
+    pageManager.addY(10); // Extra space after gallery
   } else {
     addText(doc, pageManager, 'No photos available', '#6b7280');
   }

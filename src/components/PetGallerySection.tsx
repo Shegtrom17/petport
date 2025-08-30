@@ -10,6 +10,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { uploadGalleryPhoto, uploadMultipleGalleryPhotos, deleteGalleryPhoto, updateGalleryPhotoCaption } from "@/services/petService";
+import { compressMultipleImages, formatFileSize } from "@/utils/imageCompression";
 import { generateClientPetPDF, downloadPDFBlob } from "@/services/clientPdfService";
 import { SocialShareButtons } from "@/components/SocialShareButtons";
 
@@ -102,7 +103,7 @@ export const PetGallerySection = ({ petData, onUpdate }: PetGallerySectionProps)
       if (files.length === 0) return;
 
       // Limit files to remaining slots
-      const filesToUpload = files.slice(0, remainingSlots);
+      let filesToUpload = files.slice(0, remainingSlots);
       if (files.length > remainingSlots) {
         toast({
           title: `Limited to ${remainingSlots} photos`,
@@ -112,7 +113,30 @@ export const PetGallerySection = ({ petData, onUpdate }: PetGallerySectionProps)
 
       setUploading(true);
       try {
-        const result = await uploadMultipleGalleryPhotos(petData.id, filesToUpload);
+        // Compress images before upload for better performance and storage
+        const compressionResults = await compressMultipleImages(filesToUpload, {
+          maxWidth: 1200,
+          maxHeight: 1200,
+          quality: 0.85,
+          maxSizeKB: 800
+        });
+        
+        // Extract compressed files
+        const compressedFiles = compressionResults.map(result => result.file);
+        
+        // Show compression stats if significant compression achieved
+        const totalOriginalSize = compressionResults.reduce((sum, result) => sum + result.originalSize, 0);
+        const totalCompressedSize = compressionResults.reduce((sum, result) => sum + result.compressedSize, 0);
+        const avgCompressionRatio = totalOriginalSize / totalCompressedSize;
+        
+        if (avgCompressionRatio > 1.5) {
+          toast({
+            title: "Photos optimized",
+            description: `Compressed from ${formatFileSize(totalOriginalSize)} to ${formatFileSize(totalCompressedSize)} for faster upload`,
+          });
+        }
+        
+        const result = await uploadMultipleGalleryPhotos(petData.id, compressedFiles);
         
         if (result.success) {
           toast({
@@ -162,7 +186,16 @@ export const PetGallerySection = ({ petData, onUpdate }: PetGallerySectionProps)
 
       setUploading(true);
       try {
-        const success = await uploadGalleryPhoto(petData.id, file, `Captured on ${new Date().toLocaleDateString()}`);
+        // Compress captured photo
+        const compressionResults = await compressMultipleImages([file], {
+          maxWidth: 1200,
+          maxHeight: 1200,
+          quality: 0.85,
+          maxSizeKB: 800
+        });
+        
+        const compressedFile = compressionResults[0].file;
+        const success = await uploadGalleryPhoto(petData.id, compressedFile, `Captured on ${new Date().toLocaleDateString()}`);
         
         if (success) {
           toast({

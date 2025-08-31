@@ -20,14 +20,10 @@ export function ProtectedRoute({ children }: { children: React.ReactNode }) {
       if (!user) return;
       try {
         const { data, error } = await supabase
-          .from("subscribers")
-          .select("subscribed")
-          .eq("user_id", user.id)
-          .maybeSingle();
+          .rpc("is_user_subscription_active", { user_uuid: user.id });
         if (error) throw error;
-        const isSub = data?.subscribed === true;
-        setSubscribed(isSub);
-        console.log("Protected Route - Subscription status:", isSub);
+        setSubscribed(data === true);
+        console.log("Protected Route - Subscription status:", data === true);
       } catch (e) {
         console.warn("Protected Route - Subscription check failed, treating as unsubscribed", e);
         setSubscribed(false);
@@ -64,10 +60,10 @@ export function ProtectedRoute({ children }: { children: React.ReactNode }) {
   }
 
   // Enforce subscription gate except on allowed pages
-  const allowedPaths = ["/subscribe", "/post-checkout"];
+  const allowedPaths = ["/subscribe", "/post-checkout", "/reactivate"];
   if (subscribed === false && !allowedPaths.includes(location.pathname)) {
-    console.log("Protected Route - Unsubscribed, redirecting to /subscribe");
-    return <Navigate to="/subscribe" state={{ from: location }} replace />;
+    console.log("Protected Route - Unsubscribed, redirecting to /reactivate");
+    return <Navigate to="/reactivate" state={{ from: location }} replace />;
   }
 
   console.log("Protected Route - User authenticated (and subscribed if required), rendering children");

@@ -667,6 +667,11 @@ export const EnhancedInteractiveMap = ({ petId, petName, pins, locations, onPins
                 <p className="text-sm text-navy-600 text-center">
                   Choose how you'd like to use {petName}'s travel map:
                 </p>
+                <div className="mt-3 p-2 bg-blue-50 rounded-md border border-blue-200">
+                  <p className="text-xs text-blue-700">
+                    💡 <strong>Tip:</strong> To include the map in your Pet Resume PDF, download it here and attach it separately.
+                  </p>
+                </div>
                 
                 <div className="grid grid-cols-2 gap-3">
                   <Button

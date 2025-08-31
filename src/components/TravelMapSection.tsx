@@ -181,6 +181,11 @@ export const TravelMapSection = ({ petData, onUpdate }: TravelMapSectionProps) =
             <div className="w-full sm:w-auto">
               <h2 className="text-xl sm:text-2xl font-bold mb-2">{petData.name}'s Travel Adventures</h2>
               <p className="text-blue-100 text-sm sm:text-base">Places we've explored together</p>
+              <div className="mt-2 p-2 bg-blue-500/20 rounded-md border border-blue-400/30">
+                <p className="text-xs sm:text-sm text-blue-100">
+                  📄 <strong>PDF Note:</strong> Travel locations you enter are included in the Pet Resume PDF, but the global map image is not automatically included.
+                </p>
+              </div>
             </div>
             <div className="flex space-x-4">
               <div

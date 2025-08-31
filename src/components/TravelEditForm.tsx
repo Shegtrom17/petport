@@ -262,7 +262,7 @@ export const TravelEditForm = ({ petData, onSave, onCancel, mode = 'edit' }: Tra
           <Button type="button" variant="outline" onClick={onCancel} className="px-3 sm:px-4 py-1 sm:py-2 text-xs sm:text-sm">
             Cancel
           </Button>
-          <Button type="submit" disabled={isLoading} className="px-3 sm:px-4 py-1 sm:py-2 text-xs sm:text-sm">
+          <Button type="submit" variant="outline" disabled={isLoading} className="px-3 sm:px-4 py-1 sm:py-2 text-xs sm:text-sm">
             <span className="hidden sm:inline">{isLoading ? "Saving..." : (mode === 'add' ? "Add Locations" : "Save Changes")}</span>
             <span className="sm:hidden">{isLoading ? "Saving..." : "Save"}</span>
           </Button>

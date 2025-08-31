@@ -541,10 +541,11 @@ export const EnhancedInteractiveMap = ({ petId, petName, pins, locations, onPins
               onClick={clearAllPins}
               variant="outline"
               size="sm"
-              className="text-red-600 hover:text-red-700 hover:bg-red-50"
+              className="text-red-600 hover:text-red-700 hover:bg-red-50 px-2 py-1 text-xs h-7"
             >
-              <Trash2 className="w-4 h-4 mr-2" />
-              Clear All
+              <Trash2 className="w-3 h-3 mr-1" />
+              <span className="hidden sm:inline">Clear All</span>
+              <span className="sm:hidden">Clear</span>
             </Button>
           )}
         </CardTitle>

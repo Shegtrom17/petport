@@ -182,25 +182,29 @@ export const TravelMapSection = ({ petData, onUpdate }: TravelMapSectionProps) =
               <h2 className="text-xl sm:text-2xl font-bold mb-2">{petData.name}'s Travel Adventures</h2>
               <p className="text-blue-100 text-sm sm:text-base">Places we've explored together</p>
             </div>
-            <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2 w-full sm:w-auto">
-              <Button 
-                onClick={handleEditLocations} 
-                variant="secondary" 
-                size="sm"
-                className="w-full sm:w-auto text-xs sm:text-sm"
+            <div className="flex space-x-4">
+              <div
+                onClick={handleEditLocations}
+                className="flex items-center space-x-2 p-2 text-white hover:text-blue-200 hover:scale-110 transition-all cursor-pointer"
+                role="button"
+                tabIndex={0}
+                aria-label="Edit travel locations"
+                onKeyDown={(e) => e.key === 'Enter' && handleEditLocations()}
               >
-                <Edit className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
-                Edit
-              </Button>
-              <Button 
-                onClick={handleAddNewLocation} 
-                variant="secondary" 
-                size="sm"
-                className="w-full sm:w-auto text-xs sm:text-sm"
+                <Edit className="w-4 h-4" />
+                <span className="text-sm">Edit</span>
+              </div>
+              <div
+                onClick={handleAddNewLocation}
+                className="flex items-center space-x-2 p-2 text-white hover:text-blue-200 hover:scale-110 transition-all cursor-pointer"
+                role="button"
+                tabIndex={0}
+                aria-label="Add travel location"
+                onKeyDown={(e) => e.key === 'Enter' && handleAddNewLocation()}
               >
-                <Plus className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
-                Add
-              </Button>
+                <Plus className="w-4 h-4" />
+                <span className="text-sm">Add</span>
+              </div>
             </div>
           </div>
 

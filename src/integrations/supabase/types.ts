@@ -820,44 +820,62 @@ export type Database = {
         Row: {
           additional_pets: number
           additional_pets_purchased: number | null
+          canceled_at: string | null
           created_at: string
           email: string
+          grace_period_end: string | null
           id: string
+          payment_failed_at: string | null
           pet_limit: number
+          reactivated_at: string | null
+          status: Database["public"]["Enums"]["subscription_status"]
           stripe_customer_id: string | null
           subscribed: boolean
           subscription_end: string | null
           subscription_tier: string | null
+          suspended_at: string | null
           updated_at: string
-          user_id: string | null
+          user_id: string
         }
         Insert: {
           additional_pets?: number
           additional_pets_purchased?: number | null
+          canceled_at?: string | null
           created_at?: string
           email: string
+          grace_period_end?: string | null
           id?: string
+          payment_failed_at?: string | null
           pet_limit?: number
+          reactivated_at?: string | null
+          status?: Database["public"]["Enums"]["subscription_status"]
           stripe_customer_id?: string | null
           subscribed?: boolean
           subscription_end?: string | null
           subscription_tier?: string | null
+          suspended_at?: string | null
           updated_at?: string
-          user_id?: string | null
+          user_id: string
         }
         Update: {
           additional_pets?: number
           additional_pets_purchased?: number | null
+          canceled_at?: string | null
           created_at?: string
           email?: string
+          grace_period_end?: string | null
           id?: string
+          payment_failed_at?: string | null
           pet_limit?: number
+          reactivated_at?: string | null
+          status?: Database["public"]["Enums"]["subscription_status"]
           stripe_customer_id?: string | null
           subscribed?: boolean
           subscription_end?: string | null
           subscription_tier?: string | null
+          suspended_at?: string | null
           updated_at?: string
-          user_id?: string | null
+          user_id?: string
         }
         Relationships: []
       }
@@ -996,6 +1014,30 @@ export type Database = {
           },
         ]
       }
+      webhook_events: {
+        Row: {
+          created_at: string
+          event_id: string
+          event_type: string
+          id: string
+          processed_at: string
+        }
+        Insert: {
+          created_at?: string
+          event_id: string
+          event_type: string
+          id?: string
+          processed_at?: string
+        }
+        Update: {
+          created_at?: string
+          event_id?: string
+          event_type?: string
+          id?: string
+          processed_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -1074,9 +1116,13 @@ export type Database = {
         Args: { pet_uuid: string }
         Returns: boolean
       }
+      is_user_subscription_active: {
+        Args: { user_uuid: string }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      subscription_status: "active" | "grace" | "suspended" | "canceled"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1203,6 +1249,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      subscription_status: ["active", "grace", "suspended", "canceled"],
+    },
   },
 } as const

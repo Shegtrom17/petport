@@ -19,11 +19,27 @@ export function ProtectedRoute({ children }: { children: React.ReactNode }) {
     const checkSubscription = async () => {
       if (!user) return;
       try {
+        // Use direct query until types are regenerated
         const { data, error } = await supabase
-          .rpc("is_user_subscription_active", { user_uuid: user.id });
+          .from("subscribers")
+          .select("status, grace_period_end")
+          .eq("user_id", user.id)
+          .maybeSingle();
+        
         if (error) throw error;
-        setSubscribed(data === true);
-        console.log("Protected Route - Subscription status:", data === true);
+        
+        // Check if subscription is active (active status or grace period not expired)
+        let isActive = false;
+        if (data) {
+          if (data.status === 'active') {
+            isActive = true;
+          } else if (data.status === 'grace' && data.grace_period_end) {
+            isActive = new Date(data.grace_period_end) > new Date();
+          }
+        }
+        
+        setSubscribed(isActive);
+        console.log("Protected Route - Subscription status:", isActive);
       } catch (e) {
         console.warn("Protected Route - Subscription check failed, treating as unsubscribed", e);
         setSubscribed(false);

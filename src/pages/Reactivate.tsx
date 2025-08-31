@@ -39,7 +39,7 @@ export default function Reactivate() {
         
         if (error) throw error;
         if (data) {
-          setStatus(data as SubscriptionStatus);
+          setStatus(data);
           // If user is actually active, redirect to app
           if (data.status === 'active') {
             navigate('/app');

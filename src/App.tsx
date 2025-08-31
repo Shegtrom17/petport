@@ -32,6 +32,7 @@ import PaymentSuccess from "./pages/PaymentSuccess";
 import PaymentCanceled from "./pages/PaymentCanceled";
 import PostCheckout from "./pages/PostCheckout";
 import Subscribe from "./pages/Subscribe";
+import Reactivate from "./pages/Reactivate";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import Billing from "./pages/Billing";
 import VaccinationGuide from "./pages/VaccinationGuide";
@@ -118,11 +119,16 @@ const App = () => {
                       <Billing />
                     </ProtectedRoute>
                   } />
-                   <Route path="/subscribe" element={
-                     <ProtectedRoute>
-                       <Subscribe />
-                     </ProtectedRoute>
-                   } />
+                     <Route path="/subscribe" element={
+                       <ProtectedRoute>
+                         <Subscribe />
+                       </ProtectedRoute>
+                     } />
+                     <Route path="/reactivate" element={
+                       <ProtectedRoute>
+                         <Reactivate />
+                       </ProtectedRoute>
+                     } />
                     <Route path="/help" element={
                       <ProtectedRoute>
                         <Help />

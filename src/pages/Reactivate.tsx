@@ -11,9 +11,7 @@ import { useToast } from "@/hooks/use-toast";
 import { AlertCircle, CreditCard, RefreshCw } from "lucide-react";
 
 interface SubscriptionStatus {
-  status: 'active' | 'grace' | 'suspended' | 'canceled';
-  grace_period_end?: string;
-  payment_failed_at?: string;
+  subscribed?: boolean;
 }
 
 export default function Reactivate() {
@@ -31,22 +29,25 @@ export default function Reactivate() {
     
     const checkStatus = async () => {
       try {
+        // Use old schema until migration is properly applied
         const { data, error } = await supabase
           .from("subscribers")
-          .select("status, grace_period_end, payment_failed_at")
+          .select("subscribed")
           .eq("user_id", user.id)
           .maybeSingle();
         
         if (error) throw error;
-        if (data) {
-          setStatus(data);
-          // If user is actually active, redirect to app
-          if (data.status === 'active') {
-            navigate('/app');
-          }
+        
+        if (data?.subscribed) {
+          // If user is subscribed, redirect to app
+          navigate('/app');
+          return;
         }
+        
+        setStatus({ subscribed: false });
       } catch (error) {
         console.error("Error checking subscription status:", error);
+        setStatus({ subscribed: false });
       } finally {
         setLoading(false);
       }
@@ -92,37 +93,6 @@ export default function Reactivate() {
     }
   };
 
-  const getStatusMessage = () => {
-    if (!status) return { title: "Subscription Required", message: "Please reactivate your subscription to continue." };
-    
-    switch (status.status) {
-      case 'grace':
-        const graceEnd = status.grace_period_end ? new Date(status.grace_period_end) : null;
-        const daysLeft = graceEnd ? Math.ceil((graceEnd.getTime() - Date.now()) / (1000 * 60 * 60 * 24)) : 0;
-        return {
-          title: "Payment Failed - Grace Period",
-          message: `Your payment failed but you have ${daysLeft} day${daysLeft !== 1 ? 's' : ''} left to resolve this. Please update your payment method to continue using PetPort.`
-        };
-      case 'suspended':
-        return {
-          title: "Subscription Suspended",
-          message: "Your subscription has been suspended due to payment issues. Please reactivate your subscription to regain access to your pet profiles."
-        };
-      case 'canceled':
-        return {
-          title: "Subscription Canceled",
-          message: "Your subscription has been canceled. Reactivate your subscription to continue managing your pet profiles."
-        };
-      default:
-        return {
-          title: "Subscription Required",
-          message: "Please activate a subscription to access your pet profiles."
-        };
-    }
-  };
-
-  const statusInfo = getStatusMessage();
-
   if (loading) {
     return (
       <PWALayout>
@@ -149,27 +119,13 @@ export default function Reactivate() {
               <AlertCircle className="h-16 w-16 text-destructive" />
             </div>
             <CardTitle className="text-2xl text-destructive">
-              {statusInfo.title}
+              Subscription Required
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
             <p className="text-muted-foreground text-center leading-relaxed">
-              {statusInfo.message}
+              Please reactivate your subscription to continue managing your pet profiles.
             </p>
-            
-            {status?.status === 'grace' && status.grace_period_end && (
-              <div className="bg-orange-50 border border-orange-200 rounded-lg p-4">
-                <p className="text-sm text-orange-800">
-                  <strong>Grace period ends:</strong>{' '}
-                  {new Date(status.grace_period_end).toLocaleDateString('en-US', {
-                    weekday: 'long',
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric'
-                  })}
-                </p>
-              </div>
-            )}
 
             <div className="flex flex-col gap-3">
               <Button 
@@ -183,7 +139,7 @@ export default function Reactivate() {
                 ) : (
                   <CreditCard className="h-4 w-4 mr-2" />
                 )}
-                {status?.status === 'grace' ? 'Update Payment Method' : 'Reactivate Subscription'}
+                Reactivate Subscription
               </Button>
               
               <Button 

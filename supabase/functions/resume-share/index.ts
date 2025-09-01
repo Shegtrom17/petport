@@ -59,8 +59,8 @@ serve(async (req) => {
     const name = pet.name || "Pet";
     const safe = (s: string | null | undefined) => (s || "").toString().replace(/</g, "&lt;").replace(/>/g, "&gt;").trim();
 
-    // Always use the dedicated resume OG image  
-    const ogImageUrl = `${url.protocol}//${url.host}/lovable-uploads/1a0d3abc-61d2-4b3b-9c39-9fe8c777dc80.png`;
+    // Always use the dedicated resume OG image from app domain with HTTPS
+    const ogImageUrl = "https://www.lovable.app/lovable-uploads/1a0d3abc-61d2-4b3b-9c39-9fe8c777dc80.png";
     
     const title = "Pet Profiles";
     const description = "Skills, certifications, training, and referrals at a glance";

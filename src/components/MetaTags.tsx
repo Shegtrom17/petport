@@ -1,7 +1,5 @@
 import { useEffect } from 'react';
 
-import ogImageDefault from "@/assets/og-image.png";
-
 interface MetaTagsProps {
   title: string;
   description: string;
@@ -80,7 +78,7 @@ export const MetaTags = ({ title, description, image, url, type = "website" }: M
         }
       });
     };
-  }, [title, description, image, url, type]);
+  }, [title, description, image, url, type, ogImage]);
 
   return null; // This component doesn't render anything
 };

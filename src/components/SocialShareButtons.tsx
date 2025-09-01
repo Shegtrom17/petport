@@ -55,13 +55,15 @@ const path = isMissing
           ? `reviews/${petId}`
           : `profile/${petId}`;
 
-// Use SSR-friendly share URL for missing pet alerts via Supabase Edge Function
-const edgeShareBase = `https://dxghbhujugsfmaecilrq.supabase.co/functions/v1/missing-pet-share`;
+// Use SSR-friendly share URLs for social media OG via Supabase Edge Functions
+const edgeShareBase = `https://dxghbhujugsfmaecilrq.supabase.co/functions/v1`;
 const redirectParam = encodeURIComponent(`${window.location.origin}/${path}`);
 const shareUrl = shareUrlOverride ?? (
   isMissing
-    ? `${edgeShareBase}?petId=${encodeURIComponent(petId)}&redirect=${redirectParam}&${cacheBuster}`
-    : `${window.location.origin}/${path}?${cacheBuster}`
+    ? `${edgeShareBase}/missing-pet-share?petId=${encodeURIComponent(petId)}&redirect=${redirectParam}&${cacheBuster}`
+    : isResume
+      ? `${edgeShareBase}/resume-share?petId=${encodeURIComponent(petId)}&redirect=${redirectParam}&${cacheBuster}`
+      : `${window.location.origin}/${path}?${cacheBuster}`
 );
 const shareText = isMissing 
   ? `🚨 MISSING PET ALERT 🚨 Help us bring ${petName} home!`

@@ -90,6 +90,9 @@ verify_jwt = false
 [functions.send-email]
 verify_jwt = false
 
+[functions.resume-share]
+verify_jwt = false
+
 # Sandbox/Test variants
 [functions.create-checkout-sandbox]
 verify_jwt = true

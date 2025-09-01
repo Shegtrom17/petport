@@ -1,5 +1,7 @@
 import { useEffect } from 'react';
 
+import ogImageDefault from "@/assets/og-image.png";
+
 interface MetaTagsProps {
   title: string;
   description: string;
@@ -9,6 +11,7 @@ interface MetaTagsProps {
 }
 
 export const MetaTags = ({ title, description, image, url, type = "website" }: MetaTagsProps) => {
+  const ogImage = image || `${window.location.origin}/lovable-uploads/6afab988-451d-44ae-97dd-1e575f9e12c9.png`;
   useEffect(() => {
     // Update document title
     document.title = title;
@@ -41,20 +44,16 @@ export const MetaTags = ({ title, description, image, url, type = "website" }: M
     updateMetaTag('og:type', type);
     updateMetaTag('og:site_name', 'PetPort');
     
-    if (image) {
-      updateMetaTag('og:image', image);
-      updateMetaTag('og:image:type', 'image/jpeg');
-      updateMetaTag('og:image:width', '1200');
-      updateMetaTag('og:image:height', '630');
-    }
+    updateMetaTag('og:image', ogImage);
+    updateMetaTag('og:image:type', 'image/png');
+    updateMetaTag('og:image:width', '1200');
+    updateMetaTag('og:image:height', '630');
 
     // Twitter Card tags
     updateNameTag('twitter:card', 'summary_large_image');
     updateNameTag('twitter:title', title);
     updateNameTag('twitter:description', description);
-    if (image) {
-      updateNameTag('twitter:image', image);
-    }
+    updateNameTag('twitter:image', ogImage);
 
     // Facebook specific tags
     updateMetaTag('fb:app_id', ''); // Add your Facebook App ID if you have one

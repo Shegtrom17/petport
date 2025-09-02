@@ -60,7 +60,7 @@ serve(async (req) => {
     const safe = (s: string | null | undefined) => (s || "").toString().replace(/</g, "&lt;").replace(/>/g, "&gt;").trim();
 
     // Use static OG image from public path with proper headers
-    const ogImageUrl = "https://www.lovable.app/og/resume-og-v1.png?v=4";
+    const ogImageUrl = "https://www.lovable.app/og/resume-og-v1.png?v=5";
     
     const title = "Pet Profiles";
     const description = "Skills, certifications, training, and referrals at a glance";
@@ -81,13 +81,13 @@ serve(async (req) => {
   <meta property="og:title" content="${title}" />
   <meta property="og:description" content="${description}" />
   <meta property="og:image" content="${ogImageUrl}" />
+  <meta property="og:image:secure_url" content="${ogImageUrl}" />
   <meta property="og:image:type" content="image/png" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
-  <meta property="og:image:alt" content="PetPort digital pet résumé preview" />
+  <meta property="og:image:alt" content="PetPort digital pet resume preview" />
   ${redirect ? `<meta property="og:url" content="${redirect}" />` : ""}
   <meta property="og:site_name" content="PetPort" />
-  <meta property="fb:app_id" content="petport-app" />
 
   <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image" />

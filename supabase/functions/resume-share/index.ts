@@ -59,8 +59,8 @@ serve(async (req) => {
     const name = pet.name || "Pet";
     const safe = (s: string | null | undefined) => (s || "").toString().replace(/</g, "&lt;").replace(/>/g, "&gt;").trim();
 
-    // Use the high-quality Cloudflare R2 image (1200x630 for optimal Facebook display)
-    const ogImageUrl = "https://pub-a7c2c18b8d6143b9a256105ef44f2da0.r2.dev/resume-og-hd.png";
+    // Use the ultra high-quality 1MB Cloudflare R2 image (1200x630 for optimal Facebook display)
+    const ogImageUrl = "https://pub-a7c2c18b8d6143b9a256105ef44f2da0.r2.dev/resume-og-1mb.png";
     
     const title = `${safe(name)}'s Professional Resume - PetPort`;
     const description = `View ${safe(name)}'s professional certifications, training, achievements, and work experience on PetPort.`;

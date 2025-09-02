@@ -108,3 +108,6 @@ verify_jwt = false
 
 [functions.verify-addons-sandbox]
 verify_jwt = false
+
+[functions.upload-og-image]
+verify_jwt = false

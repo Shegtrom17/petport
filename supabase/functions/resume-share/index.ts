@@ -59,9 +59,8 @@ serve(async (req) => {
     const name = pet.name || "Pet";
     const safe = (s: string | null | undefined) => (s || "").toString().replace(/</g, "&lt;").replace(/>/g, "&gt;").trim();
 
-    // Use the correct static asset URL
-    const baseUrl = new URL(req.url).origin;
-    const ogImageUrl = `${baseUrl}/og/resume-og-v1.png?v=9`;
+    // Use the Supabase storage URL for OG image
+    const ogImageUrl = "https://dxghbhujugsfmaecilrq.supabase.co/storage/v1/object/public/og-images/resume-og-v1.png?v=9";
     
     const title = "Pet Profiles";
     const description = "Skills, certifications, training, and referrals at a glance";

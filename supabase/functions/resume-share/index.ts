@@ -59,8 +59,9 @@ serve(async (req) => {
     const name = pet.name || "Pet";
     const safe = (s: string | null | undefined) => (s || "").toString().replace(/</g, "&lt;").replace(/>/g, "&gt;").trim();
 
-    // Use static OG image from public path with proper headers
-    const ogImageUrl = "https://www.lovable.app/og/resume-og-v1.png?v=5";
+    // Use existing working OG image pattern from the platform
+    const baseUrl = new URL(req.url).origin;
+    const ogImageUrl = `${baseUrl}/lovable-uploads/1ed4995c-88e6-4ebc-9489-abe9515bc64c.png?v=6`;
     
     const title = "Pet Profiles";
     const description = "Skills, certifications, training, and referrals at a glance";

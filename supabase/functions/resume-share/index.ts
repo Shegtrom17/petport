@@ -62,8 +62,8 @@ serve(async (req) => {
     // Use the Supabase storage URL for OG image
     const ogImageUrl = "https://dxghbhujugsfmaecilrq.supabase.co/storage/v1/object/public/og-images/resume-og-v1.png?v=9";
     
-    const title = "Pet Profiles";
-    const description = "Skills, certifications, training, and referrals at a glance";
+    const title = `${safe(name)}'s Professional Resume - PetPort`;
+    const description = `View ${safe(name)}'s professional certifications, training, achievements, and work experience on PetPort.`;
 
     // Build minimal HTML with OG/Twitter meta and optional redirect for humans
     const html = `<!doctype html>

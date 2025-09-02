@@ -465,7 +465,6 @@ export const PetResumeSection = ({ petData, onUpdate }: PetResumeSectionProps) =
               petId={petData.id}
               context="resume"
               defaultOpenOptions={false}
-              shareUrlOverride={`${window.location.origin}/resume/${petData.id}`}
             />
 
             <div className="space-y-3 text-center">

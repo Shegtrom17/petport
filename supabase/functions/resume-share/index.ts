@@ -84,9 +84,10 @@ serve(async (req) => {
   <meta property="og:image:type" content="image/png" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
-  <meta property="og:image:alt" content="Pet Profiles - Skills, certifications, training, and referrals at a glance" />
+  <meta property="og:image:alt" content="PetPort digital pet résumé preview" />
   ${redirect ? `<meta property="og:url" content="${redirect}" />` : ""}
   <meta property="og:site_name" content="PetPort" />
+  <meta property="fb:app_id" content="petport-app" />
 
   <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image" />

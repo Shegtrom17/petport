@@ -61,7 +61,7 @@ serve(async (req) => {
 
     // Use the correct static asset URL
     const baseUrl = new URL(req.url).origin;
-    const ogImageUrl = `${baseUrl}/og/resume-og-v1.png?v=8`;
+    const ogImageUrl = `${baseUrl}/og/resume-og-v1.png?v=9`;
     
     const title = "Pet Profiles";
     const description = "Skills, certifications, training, and referrals at a glance";

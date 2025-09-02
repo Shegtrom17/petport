@@ -9,7 +9,7 @@ interface MetaTagsProps {
 }
 
 export const MetaTags = ({ title, description, image, url, type = "website" }: MetaTagsProps) => {
-  const ogImage = image || "https://www.lovable.app/og/resume-og-v1.png?v=8";
+  const ogImage = image || `${window.location.origin}/og/resume-og-v1.png?v=9`;
   useEffect(() => {
     // Update document title
     document.title = title;

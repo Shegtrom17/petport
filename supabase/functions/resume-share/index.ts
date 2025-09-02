@@ -59,8 +59,8 @@ serve(async (req) => {
     const name = pet.name || "Pet";
     const safe = (s: string | null | undefined) => (s || "").toString().replace(/</g, "&lt;").replace(/>/g, "&gt;").trim();
 
-    // Use the Supabase storage URL for OG image
-    const ogImageUrl = "https://dxghbhujugsfmaecilrq.supabase.co/storage/v1/object/public/og-images/resume-og-v1.png?v=9";
+    // Use the Cloudflare R2 URL for OG image
+    const ogImageUrl = "https://pub-a7c2c18b8d6143b9a256105ef44f2da0.r2.dev/og-resume.png";
     
     const title = `${safe(name)}'s Professional Resume - PetPort`;
     const description = `View ${safe(name)}'s professional certifications, training, achievements, and work experience on PetPort.`;

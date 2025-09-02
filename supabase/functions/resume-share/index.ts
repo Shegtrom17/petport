@@ -59,8 +59,9 @@ serve(async (req) => {
     const name = pet.name || "Pet";
     const safe = (s: string | null | undefined) => (s || "").toString().replace(/</g, "&lt;").replace(/>/g, "&gt;").trim();
 
-    // Use absolute URL for static OG image on app domain
-    const ogImageUrl = `https://www.lovable.app/og/resume-og-v1.png?v=8`;
+    // Use the correct static asset URL
+    const baseUrl = new URL(req.url).origin;
+    const ogImageUrl = `${baseUrl}/og/resume-og-v1.png?v=8`;
     
     const title = "Pet Profiles";
     const description = "Skills, certifications, training, and referrals at a glance";

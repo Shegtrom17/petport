@@ -9,7 +9,7 @@ interface MetaTagsProps {
 }
 
 export const MetaTags = ({ title, description, image, url, type = "website" }: MetaTagsProps) => {
-  const ogImage = image || `${window.location.origin}/lovable-uploads/6afab988-451d-44ae-97dd-1e575f9e12c9.png`;
+  const ogImage = image || "https://www.lovable.app/og/resume-og-v1.png?v=8";
   useEffect(() => {
     // Update document title
     document.title = title;
@@ -43,9 +43,11 @@ export const MetaTags = ({ title, description, image, url, type = "website" }: M
     updateMetaTag('og:site_name', 'PetPort');
     
     updateMetaTag('og:image', ogImage);
+    updateMetaTag('og:image:secure_url', ogImage);
     updateMetaTag('og:image:type', 'image/png');
     updateMetaTag('og:image:width', '1200');
     updateMetaTag('og:image:height', '630');
+    updateMetaTag('og:image:alt', 'PetPort digital pet resume preview');
 
     // Twitter Card tags
     updateNameTag('twitter:card', 'summary_large_image');
@@ -53,8 +55,7 @@ export const MetaTags = ({ title, description, image, url, type = "website" }: M
     updateNameTag('twitter:description', description);
     updateNameTag('twitter:image', ogImage);
 
-    // Facebook specific tags
-    updateMetaTag('fb:app_id', ''); // Add your Facebook App ID if you have one
+    // Facebook specific tags removed (no fb:app_id without numeric value)
     
     // Additional SEO tags
     updateNameTag('description', description);

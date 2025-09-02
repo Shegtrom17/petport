@@ -59,9 +59,8 @@ serve(async (req) => {
     const name = pet.name || "Pet";
     const safe = (s: string | null | undefined) => (s || "").toString().replace(/</g, "&lt;").replace(/>/g, "&gt;").trim();
 
-    // Use Lovable platform URL for static assets (not Supabase direct)
-    const baseUrl = new URL(req.url).origin.replace('dxghbhujugsfmaecilrq.supabase.co', 'c2db7d2d-7448-4eaf-945e-d804d3aeaccc.sandbox.lovable.dev');
-    const ogImageUrl = `${baseUrl}/lovable-uploads/1ed4995c-88e6-4ebc-9489-abe9515bc64c.png?v=7`;
+    // Use absolute URL for static OG image on app domain
+    const ogImageUrl = `https://www.lovable.app/og/resume-og-v1.png?v=8`;
     
     const title = "Pet Profiles";
     const description = "Skills, certifications, training, and referrals at a glance";

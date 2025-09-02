@@ -59,8 +59,8 @@ serve(async (req) => {
     const name = pet.name || "Pet";
     const safe = (s: string | null | undefined) => (s || "").toString().replace(/</g, "&lt;").replace(/>/g, "&gt;").trim();
 
-    // Use OG image with cache-busting for Facebook
-    const ogImageUrl = "https://www.lovable.app/lovable-uploads/1a0d3abc-61d2-4b3b-9c39-9fe8c777dc80.png?v=3";
+    // Use static OG image from public path with proper headers
+    const ogImageUrl = "https://www.lovable.app/og/resume-og-v1.png?v=4";
     
     const title = "Pet Profiles";
     const description = "Skills, certifications, training, and referrals at a glance";
@@ -84,6 +84,7 @@ serve(async (req) => {
   <meta property="og:image:type" content="image/png" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="Pet Profiles - Skills, certifications, training, and referrals at a glance" />
   ${redirect ? `<meta property="og:url" content="${redirect}" />` : ""}
   <meta property="og:site_name" content="PetPort" />
 

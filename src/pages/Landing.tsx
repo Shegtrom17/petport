@@ -26,7 +26,7 @@ export default function Landing() {
   }, [user, navigate, location.search]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
+    <div className="min-h-screen bg-white">
       <MetaTags
         title="PetPort: Digital Pet Passport"
         description="Create a digital pet passport for pet owners and foster caregivers."
@@ -92,7 +92,7 @@ export default function Landing() {
         </section>
 
         {/* Trust Indicators / Social Proof */}
-        <section className="bg-white/50 py-12">
+        <section className="bg-white py-12">
           <div className="max-w-7xl mx-auto px-4 text-center">
             <p className="text-navy-600 mb-8">Trusted by pet parents worldwide</p>
             {/* PLACEHOLDER: Logo strip or user count */}
@@ -163,7 +163,7 @@ export default function Landing() {
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
               {/* Pet Owners Section */}
-              <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-8">
+              <div className="bg-white rounded-2xl p-8 border border-gray-200">
                 <div className="flex items-center gap-4 mb-6">
                   {/* PLACEHOLDER: Pet Owner Icon/Image */}
                   <div className="w-16 h-16 bg-blue-200 rounded-full flex items-center justify-center border-2 border-dashed border-blue-400">
@@ -242,7 +242,7 @@ export default function Landing() {
               </div>
 
               {/* Foster Caregivers Section */}
-              <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-2xl p-8">
+              <div className="bg-white rounded-2xl p-8 border border-gray-200">
                 <div className="flex items-center gap-4 mb-6">
                   {/* PLACEHOLDER: Foster Caregiver Icon/Image */}
                   <div className="w-16 h-16 bg-green-200 rounded-full flex items-center justify-center border-2 border-dashed border-green-400">

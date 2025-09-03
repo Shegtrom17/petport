@@ -70,7 +70,7 @@ export default function Landing() {
                     Start Free Trial
                   </Button>
                 )}
-                <Button variant="outline" size="lg" className="text-lg px-8 py-3">
+                <Button variant="outline" size="lg" className="text-lg px-8 py-3 text-navy-900 border-navy-300 hover:bg-navy-50">
                   Watch Demo
                 </Button>
               </div>
@@ -476,7 +476,7 @@ export default function Landing() {
                   Start Free Trial
                 </Button>
               )}
-              <Button variant="outline" size="lg" className="text-lg px-8 py-3 border-white text-white hover:bg-white/10">
+              <Button variant="outline" size="lg" className="text-lg px-8 py-3 border-white text-white hover:bg-white hover:text-navy-900">
                 Learn More
               </Button>
             </div>

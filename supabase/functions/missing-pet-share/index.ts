@@ -75,11 +75,12 @@ serve(async (req) => {
     const lastSeenStr = [safe(lost?.last_seen_location), lastSeenDate].filter(Boolean).join(" • ");
     const reward = lost?.reward_amount ? `Reward: ${safe(lost.reward_amount)}` : "";
 
-    const title = `MISSING PET: ${name}`;
-    const description = [
-      lastSeenStr ? `Last seen ${lastSeenStr}.` : "Help bring them home.",
-      reward,
-    ].filter(Boolean).join(" ");
+    // Use the Cloudflare R2 lost pet image
+    const ogImageUrl = "https://pub-a7c2c18b8d6143b9a256105ef44f2da0.r2.dev/og-lostpet.png";
+    
+    const petName = safe(name);
+    const title = `MISSING: ${petName} - Help Bring Them Home | PetPort`;
+    const description = `Help us find ${petName}! Share this post to spread the word. Every share increases the chance of a safe return. View full details and contact information.`;
 
     // Build minimal HTML with OG/Twitter meta and optional redirect for humans
     const html = `<!doctype html>
@@ -96,14 +97,20 @@ serve(async (req) => {
   <meta property="og:type" content="website" />
   <meta property="og:title" content="${title}" />
   <meta property="og:description" content="${description}" />
-  ${photoUrl ? `<meta property=\"og:image\" content=\"${photoUrl}\" />` : ""}
-  ${redirect ? `<meta property=\"og:url\" content=\"${redirect}\" />` : ""}
+  <meta property="og:image" content="${ogImageUrl}" />
+  <meta property="og:image:secure_url" content="${ogImageUrl}" />
+  <meta property="og:image:type" content="image/png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="Missing pet alert from PetPort" />
+  ${redirect ? `<meta property="og:url" content="${redirect}" />` : ""}
+  <meta property="og:site_name" content="PetPort" />
 
   <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="${title}" />
   <meta name="twitter:description" content="${description}" />
-  ${photoUrl ? `<meta name=\"twitter:image\" content=\"${photoUrl}\" />` : ""}
+  <meta name="twitter:image" content="${ogImageUrl}" />
 
   <style>
     body { font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; padding: 2rem; }

@@ -61,9 +61,9 @@ const redirectParam = encodeURIComponent(`${window.location.origin}/${path}`);
 const shareUrl = shareUrlOverride ?? (
   isMissing
     ? `${edgeShareBase}/missing-pet-share?petId=${encodeURIComponent(petId)}&redirect=${redirectParam}&${cacheBuster}`
-    : isResume
+    : (isResume || isCredentials)
       ? `${edgeShareBase}/resume-share?petId=${encodeURIComponent(petId)}&redirect=${redirectParam}&${cacheBuster}`
-      : `${window.location.origin}/${path}?${cacheBuster}`
+      : `${edgeShareBase}/profile-share?petId=${encodeURIComponent(petId)}&redirect=${redirectParam}&${cacheBuster}`
 );
 const shareText = isMissing 
   ? `🚨 MISSING PET ALERT 🚨 Help us bring ${petName} home!`

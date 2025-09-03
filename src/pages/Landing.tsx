@@ -485,7 +485,7 @@ export default function Landing() {
       </main>
 
       {/* Footer */}
-      <footer className="bg-navy-950 text-navy-300 py-16">
+      <footer className="bg-gray-900 text-gray-300 py-16">
         <div className="max-w-7xl mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             <div className="col-span-1 md:col-span-2">
@@ -493,11 +493,11 @@ export default function Landing() {
                 <img src="/lovable-uploads/213ccabc-3918-406d-b844-9c2730b7637d.png" alt="PetPort logo" className="w-8 h-8" />
                 <span className="text-xl font-semibold text-white">PetPort</span>
               </div>
-              <p className="text-navy-400 mb-4 max-w-md">
+              <p className="text-gray-400 mb-4 max-w-md">
                 The complete digital pet passport solution for pet owners and foster caregivers.
               </p>
-              <p className="text-sm text-navy-500">© {new Date().getFullYear()} PetPort. All rights reserved.</p>
-              <p className="text-sm text-navy-500 mt-1">PetPort, Blaine, MN</p>
+              <p className="text-sm text-gray-500">© {new Date().getFullYear()} PetPort. All rights reserved.</p>
+              <p className="text-sm text-gray-500 mt-1">PetPort, Blaine, MN</p>
             </div>
             
             <div>

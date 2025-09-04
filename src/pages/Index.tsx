@@ -234,9 +234,9 @@ const Index = () => {
             <ReviewsSection petData={petData} onUpdate={handlePetUpdate} />
             
             {/* Documentation Note - Placed after reviews section */}
-            <Card className="border-0 shadow-lg bg-blue-50 border-l-4 border-blue-500">
+            <Card className="border-0 shadow-sm bg-brand-primary/5 border-l-4 border-brand-primary">
               <CardContent className="p-4">
-                <p className="text-blue-800 text-sm font-medium">
+                <p className="text-brand-primary-dark text-sm font-medium">
                   📄 For supporting documentation, please see the Documents page.
                 </p>
               </CardContent>
@@ -277,8 +277,8 @@ const Index = () => {
   if (isLoading) {
     return (
       <PWALayout>
-        <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 flex items-center justify-center">
-          <div className="text-lg md:text-xl text-navy-800 animate-pulse">Loading your pets...</div>
+        <div className="min-h-screen bg-white flex items-center justify-center">
+          <div className="text-lg md:text-xl text-brand-primary animate-pulse">Loading your pets...</div>
         </div>
       </PWALayout>
     );
@@ -286,7 +286,7 @@ const Index = () => {
 
   return (
     <PWALayout>
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
+      <div className="min-h-screen bg-white">
         <PetHeader 
           activeTab={activeTab} 
           onTabChange={handleTabChange} 

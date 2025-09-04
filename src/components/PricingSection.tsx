@@ -74,7 +74,7 @@ export const PricingSection: React.FC<PricingSectionProps> = ({ context = "landi
               <p className="text-2xl font-bold">{plan.priceText}</p>
               <p className="text-sm text-muted-foreground">{plan.includes}</p>
               <p className="text-xs text-muted-foreground">7-day free trial. Card required; billed after trial unless canceled.</p>
-              <Button className="w-full bg-primary text-primary-foreground hover:bg-primary/90" onClick={() => startCheckout(plan.id === "monthly" ? "monthly" : "yearly")}>
+              <Button className="w-full bg-brand-primary text-white hover:bg-brand-primary-dark" onClick={() => startCheckout(plan.id === "monthly" ? "monthly" : "yearly")}>
                 <CreditCard className="w-4 h-4" />
                 <span>Start 7-day free trial</span>
               </Button>
@@ -97,7 +97,7 @@ export const PricingSection: React.FC<PricingSectionProps> = ({ context = "landi
               <CardContent className="space-y-3">
                 <p className="text-xl font-semibold">{addon.priceText}</p>
                 <p className="text-xs text-muted-foreground">No free trial on add-ons.</p>
-                <Button className="w-full border-input bg-background hover:bg-accent hover:text-accent-foreground" variant="outline" onClick={() => buyAddon(addon.count as 1 | 3 | 5)}>
+                <Button className="w-full border-brand-primary text-brand-primary bg-background hover:bg-brand-primary hover:text-white" variant="outline" onClick={() => buyAddon(addon.count as 1 | 3 | 5)}>
                   <CreditCard className="w-4 h-4" />
                   <span>Add {addon.count} Pet{addon.count > 1 ? "s" : ""}</span>
                 </Button>

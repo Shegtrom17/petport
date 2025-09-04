@@ -308,7 +308,7 @@ export const PetProfileContent = ({
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Left Column - Official Photographs */}
         <div className="space-y-4">
-          <Card className="border-2 border-gold-600 shadow-xl bg-gradient-to-br from-slate-800 to-slate-900 text-white">
+          <Card className="border-2 border-gold-600 shadow-xl bg-brand-primary text-white">
             <CardHeader>
               <CardTitle className="flex items-center justify-between text-gold-400">
                 <div className="flex items-center space-x-2">
@@ -514,7 +514,7 @@ export const PetProfileContent = ({
           <CertificationBanner certificationData={enhancedPetData?.certificationData} />
 
           {/* Basic Information Section */}
-          <Card className="border-2 border-gold-600 shadow-xl bg-gradient-to-br from-slate-800 to-slate-900 text-white">
+          <Card className="border-2 border-gold-600 shadow-xl bg-brand-primary text-white">
             <CardHeader>
               <CardTitle className="flex items-center justify-between text-gold-400">
                 <div className="flex items-center space-x-2">
@@ -599,14 +599,14 @@ export const PetProfileContent = ({
                 )}
                 <div className="md:col-span-2">
                   <p className="text-gold-400 text-sm font-semibold tracking-wide">MICROCHIP NUMBER</p>
-                  <p className="text-lg font-mono bg-slate-700/50 px-3 py-2 rounded border border-gold-600/30">
+                   <p className="text-lg font-mono bg-brand-primary/20 px-3 py-2 rounded border border-gold-600/30">
                     {enhancedPetData?.microchipId || "Not specified"}
                   </p>
                 </div>
                 {enhancedPetData?.registrationNumber && (
                   <div className="md:col-span-2">
                     <p className="text-gold-400 text-sm font-semibold tracking-wide">REGISTRATION NUMBER</p>
-                    <p className="text-lg font-mono bg-slate-700/50 px-3 py-2 rounded border border-gold-600/30">
+                    <p className="text-lg font-mono bg-brand-primary/20 px-3 py-2 rounded border border-gold-600/30">
                       {enhancedPetData.registrationNumber}
                     </p>
                   </div>
@@ -614,16 +614,16 @@ export const PetProfileContent = ({
               </div>
               
               {enhancedPetData?.bio && (
-                <div className="bg-slate-700/30 p-4 rounded-lg border border-gold-600/30">
-                  <p className="text-gold-400 text-sm font-semibold tracking-wide mb-2">BIO</p>
-                  <p className="text-slate-200">{enhancedPetData.bio}</p>
-                </div>
+                 <div className="bg-brand-primary/10 p-4 rounded-lg border border-gold-600/30">
+                   <p className="text-gold-400 text-sm font-semibold tracking-wide mb-2">BIO</p>
+                   <p className="text-white/90">{enhancedPetData.bio}</p>
+                 </div>
               )}
               
-              <div className="bg-slate-700/30 p-4 rounded-lg border border-gold-600/30">
-                <p className="text-gold-400 text-sm font-semibold tracking-wide mb-2">DESCRIPTION & UNIQUE TRAITS</p>
-                <p className="text-slate-200">{enhancedPetData?.notes || "No description specified"}</p>
-              </div>
+               <div className="bg-brand-primary/10 p-4 rounded-lg border border-gold-600/30">
+                 <p className="text-gold-400 text-sm font-semibold tracking-wide mb-2">DESCRIPTION & UNIQUE TRAITS</p>
+                 <p className="text-white/90">{enhancedPetData?.notes || "No description specified"}</p>
+               </div>
             </CardContent>
           </Card>
         </div>

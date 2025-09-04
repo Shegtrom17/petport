@@ -141,7 +141,7 @@ export const PetPDFGenerator = ({ petId, petName, petData }: PetPDFGeneratorProp
   return (
     <div className="space-y-4">
       {/* Passport-style header with circular pet photo */}
-      <div className="bg-gradient-to-r from-navy-900 to-slate-800 p-4 rounded-lg text-white relative overflow-hidden">
+      <div className="bg-brand-primary p-4 rounded-lg text-white relative overflow-hidden">
         <div className="absolute top-0 right-0 w-16 h-16 bg-gold-500/10 rounded-full -translate-y-8 translate-x-8"></div>
         <div className="absolute bottom-0 left-0 w-12 h-12 bg-gold-500/10 rounded-full translate-y-6 -translate-x-6"></div>
         
@@ -418,7 +418,7 @@ export const PetPDFGenerator = ({ petId, petName, petData }: PetPDFGeneratorProp
                       setIsOptionsDialogOpen(false);
                       window.location.hash = 'share-with-members';
                     }}
-                    className="w-full bg-gradient-to-r from-navy-900 to-navy-800 text-gold-500 hover:from-navy-800 hover:to-navy-700"
+                    className="w-full bg-brand-primary hover:bg-brand-primary-dark text-white"
                   >
                     <Users className="w-4 h-4 mr-2" />
                     Share with PetPort Members

@@ -71,15 +71,11 @@ export default {
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
 				},
-				// Azure color palette (was navy)
-				navy: {
-					900: '#2C4A63', // Darkest azure
-					800: '#3D5A78', // Medium dark azure
-					700: '#4E6B8D', // Medium azure
-					600: '#5691af', // Base azure (#5691af)
-					500: '#6BA4C4', // Light azure
-					400: '#89BBD6', // Lighter azure
-					300: '#A7D2E8', // Very light azure
+				// Brand Azure color
+				brand: {
+					primary: 'hsl(var(--brand-primary))',
+					'primary-dark': 'hsl(var(--brand-primary-dark))',
+					'primary-light': 'hsl(var(--brand-primary-light))',
 				},
 				gold: {
 					500: '#C8AA6E',
@@ -116,11 +112,11 @@ export default {
 					foreground: 'hsl(var(--mustard-foreground))',
 				},
 				passport: {
-					navy: '#2C4A63', // Updated to azure dark
-					'light-navy': '#3D5A78', // Updated to azure medium
+					accent: 'hsl(var(--brand-primary))',
+					'accent-dark': 'hsl(var(--brand-primary-dark))',
 					gold: '#C8AA6E',
-					white: '#F5F5F5',
-					'section-bg': '#E8F1F8', // Updated to light azure-gray for sections
+					white: '#FFFFFF',
+					'section-bg': '#FFFFFF', // Clean white sections
 				}
 			},
 			borderRadius: {

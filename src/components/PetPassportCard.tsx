@@ -11,8 +11,8 @@ interface PetPassportCardProps {
 export const PetPassportCard = ({ petData, onUpdate }: PetPassportCardProps) => {
   return (
     <div className="space-y-4">
-    <Card className="mb-6 sm:mb-8 overflow-hidden border-0 shadow-xl bg-gradient-to-br from-navy-900 to-slate-800 text-white">
-      <div className="bg-gradient-to-r from-navy-900 to-slate-800 p-4 sm:p-6 text-white relative overflow-hidden">
+    <Card className="mb-6 sm:mb-8 overflow-hidden border-0 shadow-xl bg-brand-primary text-white">
+      <div className="bg-brand-primary p-4 sm:p-6 text-white relative overflow-hidden">
         {/* Simple decorative elements instead of world map */}
         <div className="absolute top-0 right-0 w-16 h-16 sm:w-24 sm:h-24 md:w-32 md:h-32 bg-gold-500/10 rounded-full -translate-y-8 sm:-translate-y-12 md:-translate-y-16 translate-x-8 sm:translate-x-12 md:translate-x-16"></div>
         <div className="absolute bottom-0 left-0 w-12 h-12 sm:w-18 sm:h-18 md:w-24 md:h-24 bg-gold-500/10 rounded-full translate-y-6 sm:translate-y-9 md:translate-y-12 -translate-x-6 sm:-translate-x-9 md:-translate-x-12"></div>

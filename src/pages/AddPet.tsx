@@ -425,7 +425,7 @@ export default function AddPet() {
                   <Button 
                     type="submit"
                     disabled={isSubmitting}
-                    className="bg-gradient-to-r from-navy-900 to-navy-800 hover:from-navy-800 hover:to-navy-700 text-gold-500 border border-gold-500/30"
+                    className="bg-brand-primary hover:bg-brand-primary-dark text-white border border-white/20"
                   >
                     {isSubmitting ? "Creating..." : "Create Pet Port"}
                   </Button>

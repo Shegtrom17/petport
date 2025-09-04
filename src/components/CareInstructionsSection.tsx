@@ -283,7 +283,7 @@ export const CareInstructionsSection = ({ petData, onUpdate }: CareInstructionsS
 
 
       {/* Care Summary */}
-      <Card className="border-0 shadow-xl bg-gradient-to-r from-navy-900 to-navy-800 text-white">
+      <Card className="border-0 shadow-xl bg-brand-primary text-white">
         <CardContent className="p-6">
           <div className="flex justify-between items-start">
             <div className="flex items-center space-x-3 flex-1">
@@ -340,7 +340,7 @@ export const CareInstructionsSection = ({ petData, onUpdate }: CareInstructionsS
                 </DialogTrigger>
                 <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto bg-[#f8f8f8]">
                   <DialogHeader>
-                    <DialogTitle className="text-navy-900 border-b-2 border-sage-500 pb-2 font-bold">
+                    <DialogTitle className="text-foreground border-b-2 border-green-500 pb-2 font-bold">
                       🌿 Share {petData.name}'s Care Instructions
                     </DialogTitle>
                   </DialogHeader>
@@ -348,13 +348,13 @@ export const CareInstructionsSection = ({ petData, onUpdate }: CareInstructionsS
                   <div className="space-y-6">
                      {/* Public Care Instructions Link */}
                      <div className="bg-white p-4 rounded-lg border border-sage-500/30 shadow-sm">
-                       <h4 className="font-bold text-navy-900 mb-2 flex items-center gap-2">
+                       <h4 className="font-bold text-foreground mb-2 flex items-center gap-2">
                          <div className="w-6 h-6 bg-sage-500/20 rounded-full flex items-center justify-center">
                            <ExternalLink className="w-3 h-3 text-sage-600" />
                          </div>
                          Public Care Instructions
                        </h4>
-                       <p className="text-sm text-navy-600 mb-3">Share detailed daily care info with pet sitters and caregivers. <strong>Profile must be public to share.</strong></p>
+                       <p className="text-sm text-muted-foreground mb-3">Share detailed daily care info with pet sitters and caregivers. <strong>Profile must be public to share.</strong></p>
                        
                        {careQrCodeUrl && petData.is_public && (
                          <div className="text-center mb-3">
@@ -372,7 +372,7 @@ export const CareInstructionsSection = ({ petData, onUpdate }: CareInstructionsS
                         onClick={handleShareCareLink}
                         disabled={isSharing || !petData.is_public}
                         variant="outline"
-                        className="w-full border-navy-900 text-navy-900 hover:bg-navy-50"
+                        className="w-full border-border text-foreground hover:bg-muted"
                       >
                         {isSharing ? (
                           <Loader2 className="w-4 h-4 mr-2 animate-spin" />
@@ -400,7 +400,7 @@ export const CareInstructionsSection = ({ petData, onUpdate }: CareInstructionsS
                      {/* Care PDF */}
                      {carePdfBlob && (
                        <div className="bg-white p-4 rounded-lg border border-sage-500/30 shadow-sm">
-                         <h4 className="font-bold text-navy-900 mb-3">🌿 Care Instructions PDF</h4>
+                         <h4 className="font-bold text-foreground mb-3">🌿 Care Instructions PDF</h4>
                          <div className="grid grid-cols-3 gap-2">
                            <Button
                              onClick={() => {
@@ -420,7 +420,7 @@ export const CareInstructionsSection = ({ petData, onUpdate }: CareInstructionsS
                              onClick={handleDownloadCarePDF}
                              variant="outline"
                              size="sm"
-                             className="border-navy-900 text-navy-900 hover:bg-navy-50"
+                              className="border-border text-foreground hover:bg-muted"
                            >
                              <Download className="w-4 h-4 mr-1" />
                              Download
@@ -447,7 +447,7 @@ export const CareInstructionsSection = ({ petData, onUpdate }: CareInstructionsS
                               variant="outline"
                               size="sm"
                               disabled={isSharing}
-                              className="border-navy-900 text-navy-900 hover:bg-navy-50"
+                              className="border-border text-foreground hover:bg-muted"
                             >
                               <Share2 className="w-4 h-4 mr-1" />
                               Share
@@ -457,7 +457,7 @@ export const CareInstructionsSection = ({ petData, onUpdate }: CareInstructionsS
                      )}
 
                     {/* Direct Links */}
-                    <div className="text-xs text-navy-500 space-y-1 bg-navy-50 p-3 rounded-lg">
+                    <div className="text-xs text-muted-foreground space-y-1 bg-muted p-3 rounded-lg">
                       <p className="font-medium">Direct Links:</p>
                       <p className="break-all">Care: {generateCarePublicUrl()}</p>
                       {carePdfBlob && <p className="break-all">PDF: Available after generation</p>}
@@ -627,8 +627,8 @@ export const CareInstructionsSection = ({ petData, onUpdate }: CareInstructionsS
       <Card className="border-0 shadow-lg bg-passport-section-bg backdrop-blur-sm">
         <CardHeader>
           <CardTitle className="flex items-center space-x-2">
-            <Phone className="w-5 h-5 text-navy-700" />
-            <span className="text-navy-900">Quick Contacts</span>
+             <Phone className="w-5 h-5 text-brand-primary" />
+             <span className="text-foreground">Quick Contacts</span>
           </CardTitle>
         </CardHeader>
         <CardContent>

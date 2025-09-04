@@ -170,7 +170,7 @@ export const ReviewsSection = ({ petData, onUpdate }: ReviewsSectionProps) => {
   return (
     <div className="space-y-6">
       {/* Header with Summary */}
-      <Card className="border-0 shadow-xl bg-gradient-to-r from-navy-900 to-navy-800 text-white">
+      <Card className="border-0 shadow-xl bg-brand-primary text-white">
         <CardContent className="p-4 md:p-6">
           <div className="flex flex-col lg:flex-row lg:justify-between lg:items-center mb-4 gap-4">
             <div>

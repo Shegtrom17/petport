@@ -31,18 +31,16 @@
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
     
-    /* Custom colors - Azure palette (was navy) */
-    --navy-900: 202 38% 28%; /* #2C4A63 - Darkest azure */
-    --navy-800: 202 33% 36%; /* #3D5A78 - Medium dark azure */
-    --navy-700: 202 29% 42%; /* #4E6B8D - Medium azure */
-    --navy-600: 202 33% 54%; /* #5691af - Base azure */
-    --navy-500: 202 39% 60%; /* #6BA4C4 - Light azure */
+    /* Brand colors - Azure (#5691af) */
+    --brand-primary: 202 33% 54%; /* #5691af - Azure primary */
+    --brand-primary-dark: 202 38% 28%; /* Darker azure for contrast */
+    --brand-primary-light: 202 39% 60%; /* Lighter azure */
     --gold-500: 45 86% 62%;
     --gold-400: 45 84% 68%;
     
-    /* Theme System - Passport Colors */
-    --theme-primary-dark: var(--navy-900);
-    --theme-primary-medium: var(--navy-800);
+    /* Theme System - Azure Brand Colors */
+    --theme-primary-dark: var(--brand-primary-dark);
+    --theme-primary-medium: var(--brand-primary);
     --theme-accent: var(--gold-500);
     --theme-accent-light: var(--gold-400);
   }
@@ -71,8 +69,8 @@
   
   /* Classic Theme Variant */
   .theme-classic {
-    --theme-primary-dark: var(--navy-900);
-    --theme-primary-medium: var(--navy-800);
+    --theme-primary-dark: var(--brand-primary-dark);
+    --theme-primary-medium: var(--brand-primary);
     --theme-accent: var(--gold-500);
     --theme-accent-light: var(--gold-400);
     --radius: 0.5rem;

@@ -214,7 +214,7 @@ export const PetResumeSection = ({ petData, onUpdate }: PetResumeSectionProps) =
       )}
 
       {/* Header Actions - Moved to top */}
-      <Card className="border-0 shadow-xl bg-gradient-to-r from-navy-900 to-navy-800 text-white">
+      <Card className="border-0 shadow-xl bg-brand-primary text-white">
         <CardContent className="p-6">
           <div className="flex justify-between items-start">
             <div className="flex items-center space-x-3 flex-1">

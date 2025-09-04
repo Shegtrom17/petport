@@ -123,7 +123,7 @@ export default function Auth() {
               />
             </div>
           </div>
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-navy-900 to-gold-500 bg-clip-text text-transparent">
+          <h1 className="text-3xl font-bold text-brand-primary">
             PetPort
           </h1>
           <p className="text-gray-600">Digital Pet Passport</p>
@@ -181,7 +181,7 @@ export default function Auth() {
                 
                 <Button 
                   type="submit" 
-                  className="w-full bg-gradient-to-r from-navy-900 to-navy-800 hover:from-navy-800 hover:to-navy-700 text-gold-500 border border-gold-500/30"
+                  className="w-full bg-brand-primary hover:bg-brand-primary-dark text-white border border-white/20"
                   disabled={isSubmitting}
                 >
                   {isSubmitting ? "Processing..." : isSignIn ? "Sign In" : "Create Account"}

@@ -362,7 +362,7 @@ export const PetGallerySection = ({ petData, onUpdate }: PetGallerySectionProps)
   return (
     <div className="space-y-6">
       {/* Header with guidance */}
-      <Card className="border-0 shadow-xl bg-gradient-to-r from-navy-900 to-navy-800 text-white">
+      <Card className="border-0 shadow-xl bg-brand-primary text-white">
         <CardContent className="p-6">
           <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4">
             <div className="flex-1">
@@ -422,7 +422,7 @@ export const PetGallerySection = ({ petData, onUpdate }: PetGallerySectionProps)
             </p>
             <div className="flex justify-center space-x-2 sm:space-x-3">
               <Button 
-                className="bg-gradient-to-r from-navy-900 to-navy-800 text-gold-500 border border-gold-500/30 px-2 sm:px-4 py-1 sm:py-2 text-xs sm:text-sm"
+                className="bg-brand-primary hover:bg-brand-primary-dark text-white border border-white/20 px-2 sm:px-4 py-1 sm:py-2 text-xs sm:text-sm"
                 onClick={(e) => {
                   e.stopPropagation();
                   handleUploadPhotos();
@@ -718,7 +718,7 @@ export const PetGallerySection = ({ petData, onUpdate }: PetGallerySectionProps)
               <div className="flex justify-center space-x-2 sm:space-x-3">
                 <Button 
                   onClick={handleUploadPhotos}
-                  className="bg-gradient-to-r from-navy-900 to-navy-800 text-gold-500 border border-gold-500/30 px-2 sm:px-4 py-1 sm:py-2 text-xs sm:text-sm"
+                  className="bg-brand-primary hover:bg-brand-primary-dark text-white border border-white/20 px-2 sm:px-4 py-1 sm:py-2 text-xs sm:text-sm"
                   disabled={uploading || isLimitReached}
                 >
                   <Plus className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />

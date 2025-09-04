@@ -47,7 +47,7 @@ export const PetHeader = ({ activeTab, onTabChange, selectedPetId, selectedPetNa
           {/* Left: Hamburger Menu + Title */}
           <div className="flex items-center space-x-3 flex-1 min-w-0">
             {user && <MobileNavigationMenu activeTab={activeTab} onTabChange={onTabChange} />}
-            <h1 className="text-base font-bold text-navy-900 tracking-wide truncate">
+            <h1 className="text-base font-bold text-foreground tracking-wide truncate">
               Digital Portfolio
             </h1>
           </div>
@@ -71,7 +71,7 @@ export const PetHeader = ({ activeTab, onTabChange, selectedPetId, selectedPetNa
               <>
                 <AppShareButton variant="icon" />
                 <Button 
-                  className="bg-gradient-to-r from-navy-900 to-navy-800 hover:from-navy-800 hover:to-navy-700 text-gold-500 border border-gold-500/30 text-xs px-2 h-8 whitespace-nowrap"
+                  className="bg-brand-primary hover:bg-brand-primary-dark text-white border border-white/20 text-xs px-2 h-8 whitespace-nowrap"
                   onClick={() => navigate('/auth')}
                 >
                   <LogIn className="mr-1 h-3 w-3" /> 
@@ -98,7 +98,7 @@ export const PetHeader = ({ activeTab, onTabChange, selectedPetId, selectedPetNa
               />
             </div>
             <div className="min-w-0 flex-1">
-              <h1 className="text-lg md:text-xl lg:text-2xl font-bold text-navy-900 tracking-wide truncate">
+              <h1 className="text-lg md:text-xl lg:text-2xl font-bold text-foreground tracking-wide truncate">
                 Digital Portfolio
               </h1>
             </div>
@@ -122,7 +122,7 @@ export const PetHeader = ({ activeTab, onTabChange, selectedPetId, selectedPetNa
               <>
                 <AppShareButton variant="icon" />
                 <Button 
-                  className="bg-gradient-to-r from-theme-primary-dark to-theme-primary-medium hover:from-theme-primary-medium hover:to-theme-primary-dark text-theme-accent border border-theme-accent/30 text-sm px-3 h-10 whitespace-nowrap"
+                  className="bg-brand-primary hover:bg-brand-primary-dark text-white border border-white/20 text-sm px-3 h-10 whitespace-nowrap"
                   onClick={() => navigate('/auth')}
                 >
                   <LogIn className="mr-1 h-4 w-4" /> 

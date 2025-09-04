@@ -934,7 +934,7 @@ export const PetProfileContent = ({
             </CardHeader>
             <CardContent className="space-y-4">
               {enhancedPetData?.emergencyContact && (
-                <div className="p-3 bg-gradient-to-r from-navy-900 to-navy-800 text-gold-500 rounded-lg border border-gold-500/30">
+                <div className="p-3 bg-brand-primary text-white rounded-lg border border-white/20">
                   <p className="text-gold-400 text-sm font-semibold tracking-wide mb-1">PRIMARY EMERGENCY CONTACT</p>
                    {(() => {
                      const phoneNumber = extractPhoneNumber(enhancedPetData.emergencyContact);
@@ -958,7 +958,7 @@ export const PetProfileContent = ({
               )}
               
               {enhancedPetData?.secondEmergencyContact && (
-                <div className="p-3 bg-gradient-to-r from-navy-900 to-navy-800 text-gold-500 rounded-lg border border-gold-500/30">
+                <div className="p-3 bg-brand-primary text-white rounded-lg border border-white/20">
                   <p className="text-gold-400 text-sm font-semibold tracking-wide mb-1">SECONDARY EMERGENCY CONTACT</p>
                    {(() => {
                      const phoneNumber = extractPhoneNumber(enhancedPetData.secondEmergencyContact);
@@ -982,7 +982,7 @@ export const PetProfileContent = ({
               )}
               
               {enhancedPetData?.vetContact && (
-                <div className="p-3 bg-gradient-to-r from-navy-900 to-navy-800 text-gold-500 rounded-lg border border-gold-500/30">
+                <div className="p-3 bg-brand-primary text-white rounded-lg border border-white/20">
                   <p className="text-gold-400 text-sm font-semibold tracking-wide mb-1">VETERINARIAN CONTACT</p>
                    {(() => {
                      const phoneNumber = extractPhoneNumber(enhancedPetData.vetContact);
@@ -1006,7 +1006,7 @@ export const PetProfileContent = ({
               )}
               
               {enhancedPetData?.petCaretaker && (
-                <div className="p-3 bg-gradient-to-r from-navy-900 to-navy-800 text-gold-500 rounded-lg border border-gold-500/30">
+                <div className="p-3 bg-brand-primary text-white rounded-lg border border-white/20">
                   <p className="text-gold-400 text-sm font-semibold tracking-wide mb-1">PET CARETAKER</p>
                    {(() => {
                      const phoneNumber = extractPhoneNumber(enhancedPetData.petCaretaker);
@@ -1030,7 +1030,7 @@ export const PetProfileContent = ({
               )}
               
               {(enhancedPetData?.county || enhancedPetData?.state) && (
-                <div className="p-3 bg-gradient-to-r from-navy-900 to-navy-800 text-gold-500 rounded-lg border border-gold-500/30">
+                <div className="p-3 bg-brand-primary text-white rounded-lg border border-white/20">
                   <p className="text-gold-400 text-sm font-semibold tracking-wide mb-1">LOCATION</p>
                   <p className="font-medium">
                     {enhancedPetData.county && `${enhancedPetData.county} County`}

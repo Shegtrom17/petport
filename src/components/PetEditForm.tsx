@@ -265,7 +265,7 @@ const handleSubmit = async (e: React.FormEvent) => {
   return (
     <Card className="bg-[#f8f8f8] shadow-md">
       <CardHeader>
-        <CardTitle className="text-xl font-serif text-navy-900 border-b-2 border-gold-500 pb-2">
+        <CardTitle className="text-xl font-serif text-foreground border-b-2 border-gold-500 pb-2">
           ✏️ Edit Pet Profile
         </CardTitle>
       </CardHeader>
@@ -393,7 +393,7 @@ const handleSubmit = async (e: React.FormEvent) => {
 
         {/* Medical Information Section */}
         <div className="border-t pt-6">
-          <h3 className="text-lg font-serif text-navy-900 mb-4">Medical Information</h3>
+          <h3 className="text-lg font-serif text-foreground mb-4">Medical Information</h3>
           
           <div className="space-y-4">
             <div className="flex items-center space-x-3">
@@ -425,7 +425,7 @@ const handleSubmit = async (e: React.FormEvent) => {
 
         {/* Contact Information Section */}
         <div className="border-t pt-6">
-          <h3 className="text-lg font-serif text-navy-900 mb-4">Contact Information</h3>
+          <h3 className="text-lg font-serif text-foreground mb-4">Contact Information</h3>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
             <div>
@@ -481,7 +481,7 @@ const handleSubmit = async (e: React.FormEvent) => {
         {/* Organization Information Section - visible to organization members only */}
         {(isOrgUser || featureFlags.testMode) && (
           <div className="border-t pt-6">
-            <h3 className="text-lg font-serif text-navy-900 mb-4">Rescue, Shelter, or Foster Program (Optional)</h3>
+            <h3 className="text-lg font-serif text-foreground mb-4">Rescue, Shelter, or Foster Program (Optional)</h3>
             {featureFlags.testMode && !isOrgUser && (
               <p className="text-xs text-muted-foreground mb-2">Visible due to Test Mode; changes may be restricted by server policies.</p>
             )}
@@ -580,7 +580,7 @@ const handleSubmit = async (e: React.FormEvent) => {
         {/* Privacy Settings */}
         {togglePetPublicVisibility && (
           <div className="border-t pt-6">
-            <h3 className="text-lg font-serif text-navy-900 mb-4">Privacy Settings</h3>
+            <h3 className="text-lg font-serif text-foreground mb-4">Privacy Settings</h3>
             <PrivacyToggle
               isPublic={petData.is_public || false}
               onToggle={(isPublic) => togglePetPublicVisibility(petData.id, isPublic)}
@@ -592,7 +592,7 @@ const handleSubmit = async (e: React.FormEvent) => {
           <Button 
             onClick={handleSubmit}
             disabled={isSaving}
-            className="flex-1 bg-gradient-to-r from-navy-900 to-navy-800 hover:from-navy-800 hover:to-navy-700 text-gold-500 border border-gold-500/30 px-3 sm:px-4 py-2 text-sm sm:text-base"
+            className="flex-1 bg-brand-primary hover:bg-brand-primary-dark text-white border border-white/20 px-3 sm:px-4 py-2 text-sm sm:text-base"
           >
             {isSaving && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
             <span className="hidden sm:inline">{isSaving ? "Saving..." : "Save Changes"}</span>
@@ -602,7 +602,7 @@ const handleSubmit = async (e: React.FormEvent) => {
             onClick={onCancel}
             variant="outline"
             disabled={isSaving}
-            className="flex-1 border-navy-900 text-navy-900 hover:bg-navy-50 px-3 sm:px-4 py-2 text-sm sm:text-base"
+            className="flex-1 border-border text-foreground hover:bg-muted px-3 sm:px-4 py-2 text-sm sm:text-base"
           >
             Cancel
           </Button>

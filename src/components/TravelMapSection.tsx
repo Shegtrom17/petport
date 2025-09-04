@@ -175,7 +175,7 @@ export const TravelMapSection = ({ petData, onUpdate }: TravelMapSectionProps) =
   return (
     <div className="space-y-4 sm:space-y-6">
       {/* Header with Stats */}
-      <Card className="border-0 shadow-xl bg-gradient-to-r from-navy-900 to-navy-800 text-white">
+      <Card className="border-0 shadow-xl bg-brand-primary text-white">
         <CardContent className="p-4 sm:p-6">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 space-y-3 sm:space-y-0">
             <div className="w-full sm:w-auto">

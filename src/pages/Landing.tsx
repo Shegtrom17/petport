@@ -28,8 +28,8 @@ export default function Landing() {
   return (
     <div className="min-h-screen bg-white">
       <MetaTags
-        title="PetPort: Digital Pet Passport"
-        description="Create a digital pet passport for pet owners and foster caregivers."
+        title="PetPort: Digital Pet Portfolio"
+        description="Create a digital pet portfolio for pet owners and foster caregivers."
         url={window.location.origin + "/"}
       />
 
@@ -55,7 +55,7 @@ export default function Landing() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div className="text-left lg:text-left">
               <h1 className="text-5xl lg:text-6xl font-bold text-brand-primary leading-tight">
-                Digital Pet Passport
+                Digital Pet Portfolio
               </h1>
               <p className="mt-6 text-xl text-brand-primary-dark leading-relaxed">
                 One place for everything about your pet. Beautiful profiles, emergency info, sharable links, PDFs, documents, and travel maps.
@@ -494,7 +494,7 @@ export default function Landing() {
                 <span className="text-xl font-semibold text-white">PetPort</span>
               </div>
               <p className="text-gray-400 mb-4 max-w-md">
-                The complete digital pet passport solution for pet owners and foster caregivers.
+                The complete digital pet portfolio solution for pet owners and foster caregivers.
               </p>
               <p className="text-sm text-gray-500">© {new Date().getFullYear()} PetPort. All rights reserved.</p>
               <p className="text-sm text-gray-500 mt-1">PetPort, Blaine, MN</p>

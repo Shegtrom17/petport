@@ -62,7 +62,7 @@ export default function Landing() {
               </p>
               <div className="mt-8 flex flex-col sm:flex-row gap-4">
                 {user ? (
-                  <Button onClick={() => navigate('/app')} size="lg" className="text-lg px-8 py-3">
+                  <Button onClick={() => navigate('/app')} variant="outline" size="lg" className="text-lg px-8 py-3 text-brand-primary border-brand-primary/30 hover:bg-brand-primary/10">
                     Open App
                   </Button>
                 ) : (

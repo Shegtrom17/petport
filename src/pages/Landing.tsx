@@ -37,7 +37,7 @@ export default function Landing() {
       <header className="max-w-7xl mx-auto px-4 py-6 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <img src="/lovable-uploads/213ccabc-3918-406d-b844-9c2730b7637d.png" alt="PetPort logo" className="w-10 h-10" />
-          <span className="text-xl font-semibold text-navy-900">PetPort</span>
+          <span className="text-xl font-semibold text-brand-primary">PetPort</span>
         </div>
         <div className="flex items-center gap-3">
           <AppShareButton variant="icon" />
@@ -54,10 +54,10 @@ export default function Landing() {
         <section className="max-w-7xl mx-auto px-4 py-16 text-center">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div className="text-left lg:text-left">
-              <h1 className="text-5xl lg:text-6xl font-bold text-navy-900 leading-tight">
+              <h1 className="text-5xl lg:text-6xl font-bold text-brand-primary leading-tight">
                 Digital Pet Passport
               </h1>
-              <p className="mt-6 text-xl text-navy-700 leading-relaxed">
+              <p className="mt-6 text-xl text-brand-primary-dark leading-relaxed">
                 One place for everything about your pet. Beautiful profiles, emergency info, sharable links, PDFs, documents, and travel maps.
               </p>
               <div className="mt-8 flex flex-col sm:flex-row gap-4">
@@ -70,7 +70,7 @@ export default function Landing() {
                     Start Free Trial
                   </Button>
                 )}
-                <Button variant="outline" size="lg" className="text-lg px-8 py-3 text-navy-900 border-navy-300 hover:bg-navy-50">
+                <Button variant="outline" size="lg" className="text-lg px-8 py-3 text-brand-primary border-brand-primary/30 hover:bg-brand-primary/10">
                   Watch Demo
                 </Button>
               </div>
@@ -94,7 +94,7 @@ export default function Landing() {
         {/* Trust Indicators / Social Proof */}
         <section className="bg-white py-12">
           <div className="max-w-7xl mx-auto px-4 text-center">
-            <p className="text-navy-600 mb-8">Trusted by pet parents worldwide</p>
+            <p className="text-brand-primary mb-8">Trusted by pet parents worldwide</p>
             {/* PLACEHOLDER: Logo strip or user count */}
             <div className="flex justify-center items-center gap-8 opacity-60">
               <div className="bg-gray-200 h-12 w-32 rounded flex items-center justify-center text-xs">Logo 1</div>
@@ -107,8 +107,8 @@ export default function Landing() {
         {/* PWA Benefits Section */}
         <section className="max-w-7xl mx-auto px-4 py-20">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-navy-900 mb-4">Works Like a Native App</h2>
-            <p className="text-xl text-navy-700 max-w-3xl mx-auto">
+            <h2 className="text-4xl font-bold text-brand-primary mb-4">Works Like a Native App</h2>
+            <p className="text-xl text-brand-primary-dark max-w-3xl mx-auto">
               Install PetPort on your phone for instant access, offline capabilities, and push notifications when your pet goes missing.
             </p>
           </div>
@@ -123,8 +123,8 @@ export default function Landing() {
                   <p className="text-xs mt-1">Animation showing "Add to Home Screen"</p>
                 </div>
               </div>
-              <h3 className="text-xl font-semibold text-navy-900 mb-2">One-Tap Install</h3>
-              <p className="text-navy-600">Add to your home screen like any app store app. No app store required.</p>
+              <h3 className="text-xl font-semibold text-brand-primary mb-2">One-Tap Install</h3>
+              <p className="text-brand-primary-dark">Add to your home screen like any app store app. No app store required.</p>
             </div>
 
             <div className="text-center p-6">
@@ -135,8 +135,8 @@ export default function Landing() {
                   <p className="text-xs mt-1">Show app working without internet</p>
                 </div>
               </div>
-              <h3 className="text-xl font-semibold text-navy-900 mb-2">Works Offline</h3>
-              <p className="text-navy-600">Access your pet's info even without internet. Perfect for emergencies.</p>
+              <h3 className="text-xl font-semibold text-brand-primary mb-2">Works Offline</h3>
+              <p className="text-brand-primary-dark">Access your pet's info even without internet. Perfect for emergencies.</p>
             </div>
 
             <div className="text-center p-6">
@@ -147,8 +147,8 @@ export default function Landing() {
                   <p className="text-xs mt-1">Show push notification on phone</p>
                 </div>
               </div>
-              <h3 className="text-xl font-semibold text-navy-900 mb-2">Instant Alerts</h3>
-              <p className="text-navy-600">Get notified immediately when someone finds your missing pet.</p>
+              <h3 className="text-xl font-semibold text-brand-primary mb-2">Instant Alerts</h3>
+              <p className="text-brand-primary-dark">Get notified immediately when someone finds your missing pet.</p>
             </div>
           </div>
         </section>
@@ -157,8 +157,8 @@ export default function Landing() {
         <section className="bg-white py-20">
           <div className="max-w-7xl mx-auto px-4">
             <div className="text-center mb-16">
-              <h2 className="text-4xl font-bold text-navy-900 mb-4">Everything Your Pet Needs</h2>
-              <p className="text-xl text-navy-700">Two powerful modes for different needs</p>
+              <h2 className="text-4xl font-bold text-brand-primary mb-4">Everything Your Pet Needs</h2>
+              <p className="text-xl text-brand-primary-dark">Two powerful modes for different needs</p>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
@@ -169,7 +169,7 @@ export default function Landing() {
                   <div className="w-16 h-16 bg-blue-200 rounded-full flex items-center justify-center border-2 border-dashed border-blue-400">
                     <span className="text-blue-600">👨‍👩‍👧‍👦</span>
                   </div>
-                  <h3 className="text-2xl font-semibold text-navy-900">For Pet Owners</h3>
+                  <h3 className="text-2xl font-semibold text-brand-primary">For Pet Owners</h3>
                 </div>
                 
                 <div className="grid gap-4">
@@ -178,8 +178,8 @@ export default function Landing() {
                       <span className="text-white text-xs">🚨</span>
                     </div>
                     <div>
-                      <strong className="text-navy-900">One‑Tap Missing Pet Flyer</strong>
-                      <p className="text-navy-700 text-sm">with photos, last-seen details, and a shareable QR code.</p>
+                      <strong className="text-brand-primary">One‑Tap Missing Pet Flyer</strong>
+                      <p className="text-brand-primary-dark text-sm">with photos, last-seen details, and a shareable QR code.</p>
                     </div>
                   </div>
                   
@@ -188,8 +188,8 @@ export default function Landing() {
                       <span className="text-white text-xs">📁</span>
                     </div>
                     <div>
-                      <strong className="text-navy-900">Digital Pet File</strong>
-                      <p className="text-navy-700 text-sm">for vaccines, health records, medications, insurance, and adoption/certification—snap a photo and upload.</p>
+                      <strong className="text-brand-primary">Digital Pet File</strong>
+                      <p className="text-brand-primary-dark text-sm">for vaccines, health records, medications, insurance, and adoption/certification—snap a photo and upload.</p>
                     </div>
                   </div>
 
@@ -198,8 +198,8 @@ export default function Landing() {
                       <span className="text-white text-xs">💊</span>
                     </div>
                     <div>
-                      <strong className="text-navy-900">Care & Handling</strong>
-                      <p className="text-navy-700 text-sm">routines, diet, meds, allergies, and behaviors so any caregiver has precise instructions.</p>
+                      <strong className="text-brand-primary">Care & Handling</strong>
+                      <p className="text-brand-primary-dark text-sm">routines, diet, meds, allergies, and behaviors so any caregiver has precise instructions.</p>
                     </div>
                   </div>
 
@@ -208,8 +208,8 @@ export default function Landing() {
                       <span className="text-white text-xs">🏆</span>
                     </div>
                     <div>
-                      <strong className="text-navy-900">Pet Credentials</strong>
-                      <p className="text-navy-700 text-sm">resume, referrals, and achievements for hotels, groomers, and sitters.</p>
+                      <strong className="text-brand-primary">Pet Credentials</strong>
+                      <p className="text-brand-primary-dark text-sm">resume, referrals, and achievements for hotels, groomers, and sitters.</p>
                     </div>
                   </div>
 
@@ -218,8 +218,8 @@ export default function Landing() {
                       <span className="text-white text-xs">🗺️</span>
                     </div>
                     <div>
-                      <strong className="text-navy-900">Travel Map</strong>
-                      <p className="text-navy-700 text-sm">drop pins to track trips and attach proof for pet‑friendly stays.</p>
+                      <strong className="text-brand-primary">Travel Map</strong>
+                      <p className="text-brand-primary-dark text-sm">drop pins to track trips and attach proof for pet‑friendly stays.</p>
                     </div>
                   </div>
 
@@ -228,8 +228,8 @@ export default function Landing() {
                       <span className="text-white text-xs">⭐</span>
                     </div>
                     <div>
-                      <strong className="text-navy-900">Reviews & Hospitality</strong>
-                      <p className="text-navy-700 text-sm">collect, store, and share vet or host reviews for references.</p>
+                      <strong className="text-brand-primary">Reviews & Hospitality</strong>
+                      <p className="text-brand-primary-dark text-sm">collect, store, and share vet or host reviews for references.</p>
                     </div>
                   </div>
 
@@ -248,7 +248,7 @@ export default function Landing() {
                   <div className="w-16 h-16 bg-green-200 rounded-full flex items-center justify-center border-2 border-dashed border-green-400">
                     <span className="text-green-600">🤝</span>
                   </div>
-                  <h3 className="text-2xl font-semibold text-navy-900">For Foster Caregivers</h3>
+                  <h3 className="text-2xl font-semibold text-brand-primary">For Foster Caregivers</h3>
                 </div>
                 
                 <div className="grid gap-4">
@@ -257,8 +257,8 @@ export default function Landing() {
                       <span className="text-white text-xs">📦</span>
                     </div>
                     <div>
-                      <strong className="text-navy-900">Handoff Kit</strong>
-                      <p className="text-navy-700 text-sm">everything an adopter needs in one link and PDF.</p>
+                      <strong className="text-brand-primary">Handoff Kit</strong>
+                      <p className="text-brand-primary-dark text-sm">everything an adopter needs in one link and PDF.</p>
                     </div>
                   </div>
                   
@@ -267,8 +267,8 @@ export default function Landing() {
                       <span className="text-white text-xs">📅</span>
                     </div>
                     <div>
-                      <strong className="text-navy-900">Care & Medication Schedule</strong>
-                      <p className="text-navy-700 text-sm">diets, routines, meds, allergies, behaviors.</p>
+                      <strong className="text-brand-primary">Care & Medication Schedule</strong>
+                      <p className="text-brand-primary-dark text-sm">diets, routines, meds, allergies, behaviors.</p>
                     </div>
                   </div>
 
@@ -277,8 +277,8 @@ export default function Landing() {
                       <span className="text-white text-xs">📝</span>
                     </div>
                     <div>
-                      <strong className="text-navy-900">Behavior & Notes</strong>
-                      <p className="text-navy-700 text-sm">track quirks, training progress, and tips.</p>
+                      <strong className="text-brand-primary">Behavior & Notes</strong>
+                      <p className="text-brand-primary-dark text-sm">track quirks, training progress, and tips.</p>
                     </div>
                   </div>
 
@@ -287,8 +287,8 @@ export default function Landing() {
                       <span className="text-white text-xs">📸</span>
                     </div>
                     <div>
-                      <strong className="text-navy-900">Photos & Bio Builder</strong>
-                      <p className="text-navy-700 text-sm">create a great adoption profile fast.</p>
+                      <strong className="text-brand-primary">Photos & Bio Builder</strong>
+                      <p className="text-brand-primary-dark text-sm">create a great adoption profile fast.</p>
                     </div>
                   </div>
 
@@ -297,8 +297,8 @@ export default function Landing() {
                       <span className="text-white text-xs">🔄</span>
                     </div>
                     <div>
-                      <strong className="text-navy-900">One‑Tap Transfer to Adopter</strong>
-                      <p className="text-navy-700 text-sm">move the full pet record to the new owner securely.</p>
+                      <strong className="text-brand-primary">One‑Tap Transfer to Adopter</strong>
+                      <p className="text-brand-primary-dark text-sm">move the full pet record to the new owner securely.</p>
                     </div>
                   </div>
 
@@ -307,8 +307,8 @@ export default function Landing() {
                       <span className="text-white text-xs">🔒</span>
                     </div>
                     <div>
-                      <strong className="text-navy-900">Privacy by Default</strong>
-                      <p className="text-navy-700 text-sm">you choose what's shared publicly.</p>
+                      <strong className="text-brand-primary">Privacy by Default</strong>
+                      <p className="text-brand-primary-dark text-sm">you choose what's shared publicly.</p>
                     </div>
                   </div>
 
@@ -326,8 +326,8 @@ export default function Landing() {
         {/* How It Works Section */}
         <section className="max-w-7xl mx-auto px-4 py-20">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-navy-900 mb-4">How It Works</h2>
-            <p className="text-xl text-navy-700">Get started in minutes</p>
+            <h2 className="text-4xl font-bold text-brand-primary mb-4">How It Works</h2>
+            <p className="text-xl text-brand-primary-dark">Get started in minutes</p>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -340,8 +340,8 @@ export default function Landing() {
                   <p className="text-xs mt-1">Show pet profile creation screen</p>
                 </div>
               </div>
-              <h3 className="text-xl font-semibold text-navy-900 mb-2">1. Create Profile</h3>
-              <p className="text-navy-600">Add your pet's basic info, photos, and personality details in under 5 minutes.</p>
+              <h3 className="text-xl font-semibold text-brand-primary mb-2">1. Create Profile</h3>
+              <p className="text-brand-primary-dark">Add your pet's basic info, photos, and personality details in under 5 minutes.</p>
             </div>
 
             <div className="text-center">
@@ -353,8 +353,8 @@ export default function Landing() {
                   <p className="text-xs mt-1">Show document upload interface</p>
                 </div>
               </div>
-              <h3 className="text-xl font-semibold text-navy-900 mb-2">2. Upload Documents</h3>
-              <p className="text-navy-600">Snap photos of vaccines, health records, and certifications. We'll organize everything.</p>
+              <h3 className="text-xl font-semibold text-brand-primary mb-2">2. Upload Documents</h3>
+              <p className="text-brand-primary-dark">Snap photos of vaccines, health records, and certifications. We'll organize everything.</p>
             </div>
 
             <div className="text-center">
@@ -366,8 +366,8 @@ export default function Landing() {
                   <p className="text-xs mt-1">Show sharing options and QR code</p>
                 </div>
               </div>
-              <h3 className="text-xl font-semibold text-navy-900 mb-2">3. Share & Go</h3>
-              <p className="text-navy-600">Share with vets, sitters, or hotels instantly. Generate PDFs and QR codes on demand.</p>
+              <h3 className="text-xl font-semibold text-brand-primary mb-2">3. Share & Go</h3>
+              <p className="text-brand-primary-dark">Share with vets, sitters, or hotels instantly. Generate PDFs and QR codes on demand.</p>
             </div>
           </div>
         </section>
@@ -376,8 +376,8 @@ export default function Landing() {
         <section className="bg-white py-20">
           <div className="max-w-7xl mx-auto px-4">
             <div className="text-center mb-16">
-              <h2 className="text-4xl font-bold text-navy-900 mb-4">Pet Parents Love PetPort</h2>
-              <p className="text-xl text-navy-700">Real stories from our community</p>
+              <h2 className="text-4xl font-bold text-brand-primary mb-4">Pet Parents Love PetPort</h2>
+              <p className="text-xl text-brand-primary-dark">Real stories from our community</p>
             </div>
             
             {/* PLACEHOLDER: Testimonial Cards */}
@@ -421,28 +421,28 @@ export default function Landing() {
         {/* FAQ Section */}
         <section className="max-w-4xl mx-auto px-4 py-20">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-navy-900 mb-4">Frequently Asked Questions</h2>
+            <h2 className="text-4xl font-bold text-brand-primary mb-4">Frequently Asked Questions</h2>
           </div>
           
           <div className="space-y-6">
             <div className="bg-white rounded-xl shadow-sm p-6">
-              <h3 className="text-lg font-semibold text-navy-900 mb-2">Is my pet's data secure?</h3>
-              <p className="text-navy-700">Yes! All data is encrypted and stored securely. You control what's shared publicly vs. kept private.</p>
+              <h3 className="text-lg font-semibold text-brand-primary mb-2">Is my pet's data secure?</h3>
+              <p className="text-brand-primary-dark">Yes! All data is encrypted and stored securely. You control what's shared publicly vs. kept private.</p>
             </div>
             
             <div className="bg-white rounded-xl shadow-sm p-6">
-              <h3 className="text-lg font-semibold text-navy-900 mb-2">How many pets can I add?</h3>
-              <p className="text-navy-700">Each plan includes 1 pet. You can add more pets with our affordable add-on packages.</p>
+              <h3 className="text-lg font-semibold text-brand-primary mb-2">How many pets can I add?</h3>
+              <p className="text-brand-primary-dark">Each plan includes 1 pet. You can add more pets with our affordable add-on packages.</p>
             </div>
             
             <div className="bg-white rounded-xl shadow-sm p-6">
-              <h3 className="text-lg font-semibold text-navy-900 mb-2">Does it work on all devices?</h3>
-              <p className="text-navy-700">Yes! PetPort works on phones, tablets, and computers. Install it like an app or use it in your browser.</p>
+              <h3 className="text-lg font-semibold text-brand-primary mb-2">Does it work on all devices?</h3>
+              <p className="text-brand-primary-dark">Yes! PetPort works on phones, tablets, and computers. Install it like an app or use it in your browser.</p>
             </div>
             
             <div className="bg-white rounded-xl shadow-sm p-6">
-              <h3 className="text-lg font-semibold text-navy-900 mb-2">Can I cancel anytime?</h3>
-              <p className="text-navy-700">Absolutely. Cancel anytime from your account settings. No long-term commitments.</p>
+              <h3 className="text-lg font-semibold text-brand-primary mb-2">Can I cancel anytime?</h3>
+              <p className="text-brand-primary-dark">Absolutely. Cancel anytime from your account settings. No long-term commitments.</p>
             </div>
           </div>
         </section>
@@ -462,21 +462,21 @@ export default function Landing() {
         </section>
 
         {/* Final CTA */}
-        <section className="bg-navy-900 text-white py-20">
+        <section className="bg-brand-primary text-white py-20">
           <div className="max-w-4xl mx-auto px-4 text-center">
             <h2 className="text-4xl font-bold mb-4">Ready to Create Your Pet's Digital Passport?</h2>
-            <p className="text-xl text-navy-200 mb-8">Join thousands of pet parents who never worry about lost paperwork again.</p>
+            <p className="text-xl text-white/80 mb-8">Join thousands of pet parents who never worry about lost paperwork again.</p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               {user ? (
-                <Button onClick={() => navigate('/app')} size="lg" className="text-lg px-8 py-3 bg-white text-navy-900 hover:bg-gray-100">
+                <Button onClick={() => navigate('/app')} size="lg" className="text-lg px-8 py-3 bg-white text-brand-primary hover:bg-gray-100">
                   Open App
                 </Button>
               ) : (
-                <Button onClick={() => navigate('/auth')} size="lg" className="text-lg px-8 py-3 bg-white text-navy-900 hover:bg-gray-100">
+                <Button onClick={() => navigate('/auth')} size="lg" className="text-lg px-8 py-3 bg-white text-brand-primary hover:bg-gray-100">
                   Start Free Trial
                 </Button>
               )}
-              <Button variant="outline" size="lg" className="text-lg px-8 py-3 border-white text-white hover:bg-white hover:text-navy-900">
+              <Button variant="outline" size="lg" className="text-lg px-8 py-3 border-white text-white hover:bg-white hover:text-brand-primary">
                 Learn More
               </Button>
             </div>

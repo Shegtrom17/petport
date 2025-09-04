@@ -1033,10 +1033,11 @@ export const PetProfileContent = ({
                   </p>
                  </div>
                )}
-             </div>
-           </div>
-         </div>
-       </div>
-     </div>
-   );
- };
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};

@@ -89,8 +89,8 @@ const LostPet = () => {
   if (isLoading || !petDataLoaded) {
     return (
       <PWALayout>
-        <div className="min-h-screen bg-gradient-to-br from-red-50 via-[#F5F0E0] to-yellow-50 flex items-center justify-center">
-          <div className="text-lg text-red-800">Loading pet data...</div>
+        <div className="min-h-screen bg-white flex items-center justify-center">
+          <div className="text-lg text-brand-primary">Loading pet data...</div>
         </div>
       </PWALayout>
     );
@@ -163,8 +163,8 @@ const LostPet = () => {
   if (!currentPet) {
     return (
       <PWALayout>
-        <div className="min-h-screen bg-gradient-to-br from-red-50 via-[#F5F0E0] to-yellow-50 flex items-center justify-center">
-          <div className="text-lg text-red-800">No pet selected</div>
+        <div className="min-h-screen bg-white flex items-center justify-center">
+          <div className="text-lg text-brand-primary">No pet selected</div>
         </div>
       </PWALayout>
     );
@@ -175,9 +175,9 @@ const LostPet = () => {
 
   return (
     <PWALayout>
-      <div className="min-h-screen bg-gradient-to-br from-red-50 via-[#F5F0E0] to-yellow-50">
+      <div className="min-h-screen bg-white">
       {/* Emergency Header */}
-      <div className={`bg-gradient-to-r ${lostPetData.is_missing ? 'from-red-600 to-red-700' : 'from-gold-500 to-gold-400'} text-white py-6 px-4 shadow-lg`}>
+      <div className={`bg-gradient-to-r ${lostPetData.is_missing ? 'from-red-600 to-red-700' : 'from-brand-primary to-brand-primary-dark'} text-white py-6 px-4 shadow-lg`}>
         <div className="max-w-6xl mx-auto">
           <div className="flex flex-col space-y-4 md:flex-row md:items-center md:justify-between md:space-y-0">
             <div className="flex items-center space-x-4">
@@ -192,7 +192,7 @@ const LostPet = () => {
                 <h1 className="text-2xl md:text-3xl font-bold">
                   {lostPetData.is_missing ? 'MISSING PET ALERT' : 'Missing Pet Info'}
                 </h1>
-                <p className="text-red-100">
+                <p className={lostPetData.is_missing ? "text-red-100" : "text-white/80"}>
                   {lostPetData.is_missing ? 'Help bring them home safely' : 'Prepare for emergencies'}
                 </p>
               </div>
@@ -233,8 +233,8 @@ const LostPet = () => {
         )}
 
         {/* Pet Information Card */}
-        <Card className="bg-white shadow-xl border-2 border-gold-500">
-          <CardHeader className="bg-gradient-to-r from-gold-500 to-gold-400 text-white">
+        <Card className="bg-white shadow-sm border border-border">
+          <CardHeader className="bg-gradient-to-r from-brand-primary to-brand-primary-dark text-white">
             <CardTitle className="text-xl flex items-center space-x-3">
               <img 
                 src={currentPet.photoUrl || "/placeholder.svg"} 
@@ -243,7 +243,7 @@ const LostPet = () => {
               />
               <div>
                 <h3 className="text-2xl font-bold">{currentPet.name}</h3>
-                <p className="text-[#E6D89C]">{currentPet.breed} • {currentPet.age}</p>
+                <p className="text-white/80">{currentPet.breed} • {currentPet.age}</p>
               </div>
             </CardTitle>
           </CardHeader>
@@ -251,7 +251,7 @@ const LostPet = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Pet Details */}
               <div className="space-y-4">
-                <h4 className="font-bold text-lg text-gray-800">Pet Details</h4>
+                <h4 className="font-bold text-lg text-brand-primary">Pet Details</h4>
                 <div className="grid grid-cols-2 gap-2 text-sm">
                   <div><strong>Breed:</strong> {currentPet.breed}</div>
                   <div><strong>Age:</strong> {currentPet.age}</div>
@@ -259,7 +259,7 @@ const LostPet = () => {
                   <div><strong>Color:</strong> {currentPet.species}</div>
                 </div>
                 {currentPet.microchip_id && (
-                  <div className="bg-blue-50 p-3 rounded-lg">
+                  <div className="bg-brand-primary/10 p-3 rounded-lg border border-brand-primary/20">
                     <strong>Microchip ID:</strong> {currentPet.microchip_id}
                   </div>
                 )}
@@ -267,7 +267,7 @@ const LostPet = () => {
 
               {/* Emergency Contacts */}
               <div className="space-y-4">
-                <h4 className="font-bold text-lg text-gray-800">Emergency Contacts</h4>
+                <h4 className="font-bold text-lg text-brand-primary">Emergency Contacts</h4>
                 <div className="space-y-2">
                   <div className="bg-red-50 p-3 rounded-lg">
                     <div className="flex items-center space-x-2">
@@ -277,9 +277,9 @@ const LostPet = () => {
                     <p className="ml-6">{currentPet.emergency_contact || 'Not set'}</p>
                   </div>
                   {currentPet.second_emergency_contact && (
-                    <div className="bg-gold-300/20 p-3 rounded-lg">
+                    <div className="bg-brand-primary/10 p-3 rounded-lg border border-brand-primary/20">
                       <div className="flex items-center space-x-2">
-                        <Phone className="w-4 h-4 text-gold-500" />
+                        <Phone className="w-4 h-4 text-brand-primary" />
                         <strong>Secondary:</strong>
                       </div>
                       <p className="ml-6">{currentPet.second_emergency_contact}</p>
@@ -292,17 +292,17 @@ const LostPet = () => {
         </Card>
 
         {/* Lost Pet Information */}
-        <Card className="bg-white shadow-xl border-2 border-red-200">
+        <Card className="bg-white shadow-sm border border-border">
           <CardHeader>
             <div className="flex items-center justify-between">
-              <CardTitle className="text-xl text-red-800 flex items-center space-x-2">
+              <CardTitle className="text-xl text-brand-primary flex items-center space-x-2">
                 <AlertTriangle className="w-6 h-6" />
                 <span>Missing Pet Information</span>
               </CardTitle>
               <Button
                 onClick={() => setIsEditing(!isEditing)}
                 variant="outline"
-                className="border-red-500 text-red-600 hover:bg-red-50"
+                className="border-brand-primary text-brand-primary hover:bg-brand-primary/10"
               >
                 {isEditing ? 'Cancel' : 'Edit'}
               </Button>

@@ -464,7 +464,7 @@ export default function Landing() {
         {/* Final CTA */}
         <section className="bg-brand-primary text-white py-20">
           <div className="max-w-4xl mx-auto px-4 text-center">
-            <h2 className="text-4xl font-bold mb-4">Ready to Create Your Pet's Digital Passport?</h2>
+            <h2 className="text-4xl font-bold mb-4">Ready to Create Your Pet's Digital Portfolio?</h2>
             <p className="text-xl text-white/80 mb-8">Join thousands of pet parents who never worry about lost paperwork again.</p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               {user ? (

@@ -514,9 +514,9 @@ export const PetProfileContent = ({
           <CertificationBanner certificationData={enhancedPetData?.certificationData} />
 
           {/* Basic Information Section */}
-          <Card className="border-2 border-gold-600 shadow-xl bg-brand-primary text-white">
+          <Card className="border-2 border-brand-primary shadow-xl bg-white">
             <CardHeader>
-              <CardTitle className="flex items-center justify-between text-gold-400">
+              <CardTitle className="flex items-center justify-between text-brand-primary">
                 <div className="flex items-center space-x-2">
                   <span className="tracking-wide text-sm">BASIC INFO</span>
                 </div>
@@ -524,7 +524,7 @@ export const PetProfileContent = ({
                   <div className="flex items-center space-x-2">
                     <div
                       onClick={handleProfileEdit}
-                      className="flex items-center space-x-2 p-3 text-gold-400 hover:text-gold-300 hover:scale-110 transition-all cursor-pointer"
+                      className="flex items-center space-x-2 p-3 text-brand-primary hover:text-brand-primary-dark hover:scale-110 transition-all cursor-pointer"
                       role="button"
                       tabIndex={0}
                       aria-label="Edit pet profile"
@@ -536,7 +536,7 @@ export const PetProfileContent = ({
                     <AlertDialog>
                       <AlertDialogTrigger asChild>
                         <div
-                          className="flex items-center space-x-2 p-3 text-gold-400 hover:text-gold-300 hover:scale-110 transition-all cursor-pointer"
+                          className="flex items-center space-x-2 p-3 text-brand-primary hover:text-brand-primary-dark hover:scale-110 transition-all cursor-pointer"
                           role="button"
                           tabIndex={0}
                           aria-label="Delete pet"
@@ -572,41 +572,41 @@ export const PetProfileContent = ({
             <CardContent className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <p className="text-gold-400 text-sm font-semibold tracking-wide">NAME</p>
-                  <p className="text-lg font-medium">{enhancedPetData?.name || "Not specified"}</p>
+                  <p className="text-brand-primary text-sm font-semibold tracking-wide">NAME</p>
+                  <p className="text-lg font-medium text-brand-primary">{enhancedPetData?.name || "Not specified"}</p>
                 </div>
                 <div>
-                  <p className="text-gold-400 text-sm font-semibold tracking-wide">BREED</p>
-                  <p className="text-lg font-medium">{enhancedPetData?.breed || "Not specified"}</p>
+                  <p className="text-brand-primary text-sm font-semibold tracking-wide">BREED</p>
+                  <p className="text-lg font-medium text-brand-primary">{enhancedPetData?.breed || "Not specified"}</p>
                 </div>
                 <div>
-                  <p className="text-gold-400 text-sm font-semibold tracking-wide">AGE</p>
-                  <p className="text-lg font-medium">{enhancedPetData?.age || "Not specified"}</p>
+                  <p className="text-brand-primary text-sm font-semibold tracking-wide">AGE</p>
+                  <p className="text-lg font-medium text-brand-primary">{enhancedPetData?.age || "Not specified"}</p>
                 </div>
                 <div>
-                  <p className="text-gold-400 text-sm font-semibold tracking-wide">WEIGHT</p>
-                  <p className="text-lg font-medium">{enhancedPetData?.weight || "Not specified"}</p>
+                  <p className="text-brand-primary text-sm font-semibold tracking-wide">WEIGHT</p>
+                  <p className="text-lg font-medium text-brand-primary">{enhancedPetData?.weight || "Not specified"}</p>
                 </div>
                 <div>
-                  <p className="text-gold-400 text-sm font-semibold tracking-wide">SEX</p>
-                  <p className="text-lg font-medium">{enhancedPetData?.sex ? enhancedPetData.sex.charAt(0).toUpperCase() + enhancedPetData.sex.slice(1) : "Not specified"}</p>
+                  <p className="text-brand-primary text-sm font-semibold tracking-wide">SEX</p>
+                  <p className="text-lg font-medium text-brand-primary">{enhancedPetData?.sex ? enhancedPetData.sex.charAt(0).toUpperCase() + enhancedPetData.sex.slice(1) : "Not specified"}</p>
                 </div>
                 {enhancedPetData?.height && (
                   <div>
-                    <p className="text-gold-400 text-sm font-semibold tracking-wide">HEIGHT</p>
-                    <p className="text-lg font-medium">{enhancedPetData.height}</p>
+                    <p className="text-brand-primary text-sm font-semibold tracking-wide">HEIGHT</p>
+                    <p className="text-lg font-medium text-brand-primary">{enhancedPetData.height}</p>
                   </div>
                 )}
                 <div className="md:col-span-2">
-                  <p className="text-gold-400 text-sm font-semibold tracking-wide">MICROCHIP NUMBER</p>
-                   <p className="text-lg font-mono bg-brand-primary/20 px-3 py-2 rounded border border-gold-600/30">
+                  <p className="text-brand-primary text-sm font-semibold tracking-wide">MICROCHIP NUMBER</p>
+                   <p className="text-lg font-mono bg-white px-3 py-2 rounded border border-brand-primary text-brand-primary">
                     {enhancedPetData?.microchipId || "Not specified"}
                   </p>
                 </div>
                 {enhancedPetData?.registrationNumber && (
                   <div className="md:col-span-2">
-                    <p className="text-gold-400 text-sm font-semibold tracking-wide">REGISTRATION NUMBER</p>
-                    <p className="text-lg font-mono bg-brand-primary/20 px-3 py-2 rounded border border-gold-600/30">
+                    <p className="text-brand-primary text-sm font-semibold tracking-wide">REGISTRATION NUMBER</p>
+                    <p className="text-lg font-mono bg-white px-3 py-2 rounded border border-brand-primary text-brand-primary">
                       {enhancedPetData.registrationNumber}
                     </p>
                   </div>
@@ -614,15 +614,15 @@ export const PetProfileContent = ({
               </div>
               
               {enhancedPetData?.bio && (
-                 <div className="bg-brand-primary/10 p-4 rounded-lg border border-gold-600/30">
-                   <p className="text-gold-400 text-sm font-semibold tracking-wide mb-2">BIO</p>
-                   <p className="text-white/90">{enhancedPetData.bio}</p>
+                 <div className="bg-white p-4 rounded-lg border border-brand-primary">
+                   <p className="text-brand-primary text-sm font-semibold tracking-wide mb-2">BIO</p>
+                   <p className="text-brand-primary">{enhancedPetData.bio}</p>
                  </div>
               )}
               
-               <div className="bg-brand-primary/10 p-4 rounded-lg border border-gold-600/30">
-                 <p className="text-gold-400 text-sm font-semibold tracking-wide mb-2">DESCRIPTION & UNIQUE TRAITS</p>
-                 <p className="text-white/90">{enhancedPetData?.notes || "No description specified"}</p>
+               <div className="bg-white p-4 rounded-lg border border-brand-primary">
+                 <p className="text-brand-primary text-sm font-semibold tracking-wide mb-2">DESCRIPTION & UNIQUE TRAITS</p>
+                 <p className="text-brand-primary">{enhancedPetData?.notes || "No description specified"}</p>
                </div>
             </CardContent>
           </Card>

@@ -31,9 +31,12 @@
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
     
-    /* Custom colors */
-    --navy-900: 221 39% 11%;
-    --navy-800: 221 39% 16%;
+    /* Custom colors - Azure palette (was navy) */
+    --navy-900: 202 38% 28%; /* #2C4A63 - Darkest azure */
+    --navy-800: 202 33% 36%; /* #3D5A78 - Medium dark azure */
+    --navy-700: 202 29% 42%; /* #4E6B8D - Medium azure */
+    --navy-600: 202 33% 54%; /* #5691af - Base azure */
+    --navy-500: 202 39% 60%; /* #6BA4C4 - Light azure */
     --gold-500: 45 86% 62%;
     --gold-400: 45 84% 68%;
     

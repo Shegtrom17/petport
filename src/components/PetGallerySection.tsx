@@ -407,7 +407,7 @@ export const PetGallerySection = ({ petData, onUpdate }: PetGallerySectionProps)
         </CardHeader>
         <CardContent>
           <div 
-            className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-navy-800 transition-colors cursor-pointer"
+            className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-brand-primary transition-colors cursor-pointer"
             onClick={handleUploadPhotos}
           >
             <Camera className="w-12 h-12 text-gray-400 mx-auto mb-4" />
@@ -461,7 +461,7 @@ export const PetGallerySection = ({ petData, onUpdate }: PetGallerySectionProps)
             <div className="flex flex-wrap items-center gap-2">
               <Badge 
                 variant={isLimitReached ? "destructive" : "outline"} 
-                className={isLimitReached ? "text-xs px-2 py-1" : "border-navy-800 text-navy-800 text-xs px-2 py-1"}
+                className={isLimitReached ? "text-xs px-2 py-1" : "border-brand-primary text-brand-primary text-xs px-2 py-1"}
               >
                 {galleryPhotos.length}/{MAX_GALLERY_PHOTOS} Photos
               </Badge>

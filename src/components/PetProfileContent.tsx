@@ -316,7 +316,7 @@ export const PetProfileContent = ({
                 </div>
                 <Button 
                   onClick={() => setActiveTab("gallery")}
-                  className="bg-gradient-to-r from-gold-500 to-gold-400 text-navy-900 hover:from-gold-400 hover:to-gold-300 border border-gold-500/50 shadow-md font-medium text-xs px-1.5 py-0.5"
+                  className="bg-brand-primary hover:bg-brand-primary-dark text-white border border-white/20 shadow-md font-medium text-xs px-1.5 py-0.5"
                   size="sm"
                 >
                   Gallery
@@ -381,7 +381,7 @@ export const PetProfileContent = ({
                               <AlertDialogCancel>Cancel</AlertDialogCancel>
                               <AlertDialogAction
                                 onClick={() => handleDeletePhoto('profile')}
-                                className="bg-gradient-to-r from-gold-500 to-gold-400 text-navy-900 hover:from-gold-400 hover:to-gold-300"
+                                className="bg-brand-primary hover:bg-brand-primary-dark text-white"
                               >
                                 Delete
                               </AlertDialogAction>
@@ -460,7 +460,7 @@ export const PetProfileContent = ({
                               <AlertDialogCancel>Cancel</AlertDialogCancel>
                               <AlertDialogAction
                                 onClick={() => handleDeletePhoto('fullBody')}
-                                className="bg-gradient-to-r from-gold-500 to-gold-400 text-navy-900 hover:from-gold-400 hover:to-gold-300"
+                                className="bg-brand-primary hover:bg-brand-primary-dark text-white"
                               >
                                 Delete
                               </AlertDialogAction>
@@ -633,33 +633,33 @@ export const PetProfileContent = ({
           {/* 1. QUICK ACTIONS - Immediate actions available */}
           <Card className="bg-[#f8f8f8] shadow-md">
             <CardHeader className="pb-3">
-              <CardTitle className="text-lg font-bold text-navy-900 border-b-2 border-gold-500 pb-2 flex items-center justify-between">
+              <CardTitle className="text-lg font-bold text-foreground border-b-2 border-brand-primary pb-2 flex items-center justify-between">
                 <span>⚡ QUICK ACTIONS</span>
                 <PrivacyHint isPublic={enhancedPetData?.is_public || false} feature="" variant="badge" />
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
               {/* Privacy Toggle removed - now in PetPassportCard */}
-              <p className="text-xs text-navy-600 text-center"><strong>Profile must be public to share.</strong></p>
+              <p className="text-xs text-muted-foreground text-center"><strong>Profile must be public to share.</strong></p>
               
               
               <div className="space-y-1">
                 <div 
                   onClick={() => setActiveTab("documents")}
-                  className="w-full cursor-pointer flex items-center justify-center text-navy-900 hover:text-gold-600 hover:scale-110 transition-all duration-200 py-2"
+                  className="w-full cursor-pointer flex items-center justify-center text-brand-primary hover:text-brand-primary-dark hover:scale-110 transition-all duration-200 py-2"
                 >
                   📄 Manage Documents
                 </div>
                 <div 
                   onClick={() => setActiveTab("quickid")}
-                  className="w-full cursor-pointer flex items-center justify-center text-navy-900 hover:text-gold-600 hover:scale-110 transition-all duration-200 py-2"
+                  className="w-full cursor-pointer flex items-center justify-center text-brand-primary hover:text-brand-primary-dark hover:scale-110 transition-all duration-200 py-2"
                 >
                   🆔 Lost Pet
                 </div>
                 <Dialog>
                   <DialogTrigger asChild>
                     <div 
-                      className="w-full cursor-pointer flex items-center justify-center text-navy-900 hover:text-gold-600 hover:scale-110 transition-all duration-200 py-2"
+                      className="w-full cursor-pointer flex items-center justify-center text-brand-primary hover:text-brand-primary-dark hover:scale-110 transition-all duration-200 py-2"
                       role="button"
                       tabIndex={0}
                       aria-label="Share profile"
@@ -837,7 +837,7 @@ export const PetProfileContent = ({
                   <Dialog open={transferOpen} onOpenChange={setTransferOpen}>
                     <DialogTrigger asChild>
                       <div
-                        className="w-full cursor-pointer flex items-center justify-center text-navy-900 hover:text-gold-600 hover:scale-110 transition-all duration-200 py-2"
+                        className="w-full cursor-pointer flex items-center justify-center text-brand-primary hover:text-brand-primary-dark hover:scale-110 transition-all duration-200 py-2"
                         role="button"
                         tabIndex={0}
                         aria-label="Transfer to adopter"
@@ -912,7 +912,7 @@ export const PetProfileContent = ({
           {/* 2. PASSPORT DOCUMENTS - Most important action */}
           <Card className="bg-[#f8f8f8] shadow-md">
             <CardHeader className="pb-3">
-              <CardTitle className="text-lg font-bold text-navy-900 border-b-2 border-gold-500 pb-2">
+              <CardTitle className="text-lg font-bold text-foreground border-b-2 border-brand-primary pb-2">
                 🛂 PETPORT QUICK PDF'S
               </CardTitle>
             </CardHeader>
@@ -928,7 +928,7 @@ export const PetProfileContent = ({
           {/* 3. CONTACT & IDENTIFICATION - Reference information */}
           <Card className="bg-[#f8f8f8] shadow-md">
             <CardHeader className="pb-3">
-              <CardTitle className="text-lg font-bold text-navy-900 border-b-2 border-gold-500 pb-2">
+              <CardTitle className="text-lg font-bold text-foreground border-b-2 border-brand-primary pb-2">
                 📋 CONTACT & IDENTIFICATION
               </CardTitle>
             </CardHeader>

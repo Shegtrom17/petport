@@ -305,13 +305,12 @@ export const PetProfileContent = ({
       <div className="passport-map-bg" />
       
       {/* Basic Information Section - Full Width at Top */}
-      <div className="mb-6">
-        <Card className="border-2 border-brand-primary shadow-xl bg-white">
-          <CardHeader>
-            <CardTitle className="flex items-center justify-between text-brand-primary">
-              <div className="flex items-center space-x-2">
-                <span className="tracking-wide text-sm">BASIC INFO</span>
-              </div>
+      <div className="mb-8">
+        <div className="bg-white/50 backdrop-blur-sm rounded-2xl p-6">
+          <div className="flex items-center justify-between text-brand-primary mb-6">
+            <div className="flex items-center space-x-2">
+              <span className="tracking-wide text-sm font-semibold">BASIC INFO</span>
+            </div>
               {isOwner && (
                 <div className="flex items-center space-x-2">
                   <div
@@ -359,9 +358,8 @@ export const PetProfileContent = ({
                   </AlertDialog>
                 </div>
               )}
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
+            </div>
+          <div className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
               <div>
                 <p className="text-brand-primary text-sm font-semibold tracking-wide">NAME</p>
@@ -419,30 +417,27 @@ export const PetProfileContent = ({
               <p className="text-brand-primary text-sm font-semibold tracking-wide mb-2">DESCRIPTION & UNIQUE TRAITS</p>
               <p className="text-brand-primary">{enhancedPetData?.notes || "No description specified"}</p>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Left Column - Official Photographs */}
-        <div className="space-y-4">
-          <Card className="border-2 border-gold-600 shadow-xl bg-brand-primary text-white">
-            <CardHeader>
-              <CardTitle className="flex items-center justify-between text-gold-400">
-                <div className="flex items-center space-x-2">
-                  <span className="tracking-wide">OFFICIAL PHOTOGRAPHS</span>
-                </div>
-                <Button 
-                  onClick={() => setActiveTab("gallery")}
-                  className="bg-brand-primary hover:bg-brand-primary-dark text-white border border-white/20 shadow-md font-medium text-xs px-1.5 py-0.5"
-                  size="sm"
-                >
-                  Gallery
-                </Button>
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 gap-6">
+        <div className="space-y-6">
+          <div className="bg-brand-primary/5 backdrop-blur-sm rounded-2xl p-6">
+            <div className="flex items-center justify-between text-brand-primary mb-6">
+              <div className="flex items-center space-x-2">
+                <span className="tracking-wide font-semibold">OFFICIAL PHOTOGRAPHS</span>
+              </div>
+              <Button 
+                onClick={() => setActiveTab("gallery")}
+                className="bg-brand-primary hover:bg-brand-primary-dark text-white rounded-xl font-medium text-xs px-3 py-2"
+                size="sm"
+              >
+                Gallery
+              </Button>
+            </div>
+             <div className="grid grid-cols-1 gap-6">
                 <div className="space-y-3">
                   <div className="flex justify-between items-center min-w-0">
                     <p className="text-gold-400 text-xs sm:text-sm font-semibold tracking-wide truncate">MAIN PORTRAIT</p>
@@ -602,15 +597,15 @@ export const PetProfileContent = ({
                   </div>
                 </div>
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
 
           {/* Medical Alert Banner - Moved to left column */}
           {enhancedPetData?.medicalAlert && (
-            <Card className="border-2 border-red-600 shadow-xl bg-gradient-to-r from-red-500 to-red-600 text-white relative overflow-hidden cursor-pointer transition-all hover:shadow-2xl hover:scale-[1.02] hover:border-red-400"
+            <div className="bg-gradient-to-r from-red-500 to-red-600 text-white relative overflow-hidden cursor-pointer transition-all hover:scale-[1.02] rounded-2xl shadow-xl"
                   onClick={() => window.dispatchEvent(new CustomEvent('navigate-to-care'))}>
               <div className="absolute inset-0 bg-black/10"></div>
-              <CardContent className="p-4 relative">
+              <div className="p-6 relative">
                 <div className="flex items-center justify-center space-x-3">
                   <AlertTriangle className="w-8 h-8 text-white animate-pulse" />
                   <div className="text-center">
@@ -623,10 +618,10 @@ export const PetProfileContent = ({
                     </div>
                   </div>
                   <AlertTriangle className="w-8 h-8 text-white animate-pulse" />
-                </div>
-              </CardContent>
-            </Card>
-          )}
+                 </div>
+               </div>
+             </div>
+           )}
 
           {/* Certification Banner - Compact display */}
           <CertificationBanner certificationData={enhancedPetData?.certificationData} />
@@ -636,14 +631,12 @@ export const PetProfileContent = ({
         {/* Right Column - Action-First Flow */}
         <div className="space-y-4">
           {/* 1. QUICK ACTIONS - Immediate actions available */}
-          <Card className="bg-[#f8f8f8] shadow-md">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-lg font-bold text-foreground border-b-2 border-brand-primary pb-2 flex items-center justify-between">
-                <span>⚡ QUICK ACTIONS</span>
-                <PrivacyHint isPublic={enhancedPetData?.is_public || false} feature="" variant="badge" />
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
+          <div className="bg-white/70 backdrop-blur-sm rounded-2xl p-6 shadow-sm">
+            <div className="flex items-center justify-between text-brand-primary mb-6">
+              <span className="font-semibold tracking-wide">⚡ QUICK ACTIONS</span>
+              <PrivacyHint isPublic={enhancedPetData?.is_public || false} feature="" variant="badge" />
+            </div>
+            <div className="space-y-3">
               {/* Privacy Toggle removed - now in PetPassportCard */}
               <p className="text-xs text-muted-foreground text-center"><strong>Profile must be public to share.</strong></p>
               
@@ -911,33 +904,29 @@ export const PetProfileContent = ({
                   </Dialog>
                 )}
               </div>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
 
           {/* 2. PASSPORT DOCUMENTS - Most important action */}
-          <Card className="bg-[#f8f8f8] shadow-md">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-lg font-bold text-foreground border-b-2 border-brand-primary pb-2">
-                🛂 PETPORT QUICK PDF'S
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
+          <div className="bg-white/70 backdrop-blur-sm rounded-2xl p-6 shadow-sm">
+            <div className="text-brand-primary font-semibold tracking-wide mb-6">
+              🛂 PETPORT QUICK PDF'S
+            </div>
+            <div className="space-y-3">
               <PetPDFGenerator 
                 petId={petData?.id || ""} 
                 petName={petData?.name || "Pet"} 
                 petData={petData}
               />
-            </CardContent>
-          </Card>
+            </div>
+          </div>
 
           {/* 3. CONTACT & IDENTIFICATION - Reference information */}
-          <Card className="bg-[#f8f8f8] shadow-md">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-lg font-bold text-foreground border-b-2 border-brand-primary pb-2">
-                📋 CONTACT & IDENTIFICATION
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
+          <div className="bg-white/70 backdrop-blur-sm rounded-2xl p-6 shadow-sm">
+            <div className="text-brand-primary font-semibold tracking-wide mb-6">
+              📋 CONTACT & IDENTIFICATION
+            </div>
+            <div className="space-y-4">
               {enhancedPetData?.emergencyContact && (
                 <div className="p-3 bg-brand-primary text-white rounded-lg border border-white/20">
                   <p className="text-gold-400 text-sm font-semibold tracking-wide mb-1">PRIMARY EMERGENCY CONTACT</p>
@@ -1042,12 +1031,12 @@ export const PetProfileContent = ({
                     {enhancedPetData.county && enhancedPetData.state && ', '}
                     {enhancedPetData.state}
                   </p>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-    </div>
-  );
-};
+                 </div>
+               )}
+             </div>
+           </div>
+         </div>
+       </div>
+     </div>
+   );
+ };

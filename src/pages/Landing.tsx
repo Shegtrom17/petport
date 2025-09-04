@@ -476,7 +476,7 @@ export default function Landing() {
                   Start Free Trial
                 </Button>
               )}
-              <Button variant="outline" size="lg" className="text-lg px-8 py-3 border-white text-white hover:bg-white hover:text-brand-primary">
+              <Button size="lg" className="text-lg px-8 py-3 bg-white text-brand-primary hover:bg-gray-100">
                 Learn More
               </Button>
             </div>

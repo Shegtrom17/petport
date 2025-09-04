@@ -176,7 +176,7 @@ export default function AddPet() {
     return (
       <PWALayout>
         <AppHeader title="Add New Pet" showBack />
-        <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-navy-100 py-8">
+          <div className="min-h-screen bg-gradient-to-br from-brand-primary/10 via-brand-primary/5 to-brand-primary/15 py-8">
           <main className="max-w-4xl mx-auto px-4 py-8">
             <Card className="border-0 shadow-xl bg-white/90 backdrop-blur-sm">
               <CardContent className="flex items-center justify-center py-20">
@@ -195,7 +195,7 @@ export default function AddPet() {
   return (
     <PWALayout>
       <AppHeader title="Add New Pet" showBack />
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-navy-100 py-8">
+      <div className="min-h-screen bg-gradient-to-br from-brand-primary/10 via-brand-primary/5 to-brand-primary/15 py-8">
         <main className="max-w-4xl mx-auto px-4 py-8">
           <Card className="border-0 shadow-xl bg-white/90 backdrop-blur-sm">
             <CardHeader>
@@ -210,9 +210,9 @@ export default function AddPet() {
               
               {/* Upgrade Prompt - shown at limit */}
               {showUpgradePrompt && !canAddPet && (
-                <Alert className="mt-4 border-blue-200 bg-blue-50">
-                  <InfoIcon className="h-4 w-4 text-blue-600" />
-                  <AlertDescription className="text-blue-800">
+                <Alert className="mt-4 border-brand-primary/30 bg-brand-primary/10">
+                  <InfoIcon className="h-4 w-4 text-brand-primary" />
+                  <AlertDescription className="text-brand-primary-dark">
                     <div className="space-y-3">
                       <p>
                         <strong>You've reached your pet limit ({currentPetCount}/{petLimit}).</strong>
@@ -231,7 +231,7 @@ export default function AddPet() {
                       <div className="flex gap-3 pt-2">
                         <Button 
                           onClick={handleUpgradeClick}
-                          className="bg-blue-600 hover:bg-blue-700 text-white"
+                          className="bg-brand-primary hover:bg-brand-primary-dark text-white"
                           size="sm"
                         >
                           Upgrade Now

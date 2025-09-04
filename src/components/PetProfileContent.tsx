@@ -19,6 +19,7 @@ import { useNavigate } from "react-router-dom";
 import { shareProfileOptimized } from "@/services/pdfService";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { CompactPrivacyToggle } from "@/components/CompactPrivacyToggle";
 
 
 interface PetProfileContentProps {
@@ -175,11 +176,302 @@ export const PetProfileContent = ({
 
   // ... rest of the handlers ...
 
+  const handlePhotoUpload = async (type: 'profile' | 'fullBody', file: File) => {
+    setPhotoLoading(prev => ({ ...prev, [type]: true }));
+    try {
+      await replaceOfficialPhoto(enhancedPetData.id, file, type);
+      toast({
+        title: "Photo uploaded successfully",
+        description: `${enhancedPetData.name}'s ${type === 'profile' ? 'profile' : 'full body'} photo has been updated.`,
+      });
+      onPhotoUpdate?.();
+    } catch (error) {
+      console.error('Photo upload error:', error);
+      toast({
+        title: "Upload failed",
+        description: "Failed to upload photo. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setPhotoLoading(prev => ({ ...prev, [type]: false }));
+    }
+  };
+
+  const handlePhotoDelete = async (type: 'profile' | 'fullBody') => {
+    try {
+      await deleteOfficialPhoto(enhancedPetData.id, type);
+      toast({
+        title: "Photo deleted",
+        description: `${enhancedPetData.name}'s ${type === 'profile' ? 'profile' : 'full body'} photo has been removed.`,
+      });
+      onPhotoUpdate?.();
+    } catch (error) {
+      console.error('Photo delete error:', error);
+      toast({
+        title: "Delete failed",
+        description: "Failed to delete photo. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleShare = async () => {
+    try {
+      const profileUrl = `${window.location.origin}/profile/${enhancedPetData.id}`;
+      const result = await shareProfileOptimized(profileUrl, enhancedPetData.name, 'profile');
+      
+      if (result.success) {
+        toast({
+          title: result.shared ? "Profile Shared!" : "Link Copied!",
+          description: result.message,
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "Share failed",
+        description: "Failed to share profile. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
   return (
     <div className="passport-map-container">
       <div className="passport-map-bg" />
       
-      {/* Basic Information Section - Full Width at Top */}
+      {/* Official Photo Section */}
+      <div className="mb-8">
+        <div className="bg-white/50 backdrop-blur-sm rounded-2xl p-6">
+          <div className="flex items-center justify-between text-brand-primary mb-6">
+            <div className="flex items-center space-x-2">
+              <Camera className="w-5 h-5" />
+              <span className="tracking-wide text-sm font-semibold">OFFICIAL PHOTOS</span>
+            </div>
+            {isOwner && (
+              <div className="flex items-center space-x-2">
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => e.target.files?.[0] && handlePhotoUpload('profile', e.target.files[0])}
+                  className="hidden"
+                  id="profile-photo-upload"
+                />
+                <label
+                  htmlFor="profile-photo-upload"
+                  className="flex items-center space-x-2 p-3 text-brand-primary hover:text-brand-primary-dark hover:scale-110 transition-all cursor-pointer"
+                >
+                  <Upload className="w-5 h-5" />
+                  <span className="text-sm hidden sm:inline">Upload</span>
+                </label>
+              </div>
+            )}
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="text-center">
+              <p className="text-brand-primary text-sm font-semibold mb-3">PROFILE PHOTO</p>
+              <div className="relative w-48 h-48 mx-auto">
+                {enhancedPetData?.photoUrl ? (
+                  <img
+                    src={enhancedPetData.photoUrl}
+                    alt={`${enhancedPetData.name} profile photo`}
+                    className="w-full h-full object-cover rounded-lg border-2 border-brand-primary"
+                  />
+                ) : (
+                  <div className="w-full h-full bg-gray-100 rounded-lg border-2 border-brand-primary flex items-center justify-center">
+                    <Camera className="w-12 h-12 text-gray-400" />
+                  </div>
+                )}
+                {photoLoading.profile && (
+                  <div className="absolute inset-0 bg-white/80 rounded-lg flex items-center justify-center">
+                    <Loader2 className="w-8 h-8 animate-spin text-brand-primary" />
+                  </div>
+                )}
+              </div>
+              {isOwner && enhancedPetData?.photoUrl && (
+                <Button
+                  onClick={() => handlePhotoDelete('profile')}
+                  variant="outline"
+                  size="sm"
+                  className="mt-2 text-red-600 border-red-300"
+                >
+                  <Trash2 className="w-4 h-4 mr-2" />
+                  Remove
+                </Button>
+              )}
+            </div>
+            
+            <div className="text-center">
+              <p className="text-brand-primary text-sm font-semibold mb-3">FULL BODY PHOTO</p>
+              <div className="relative w-48 h-48 mx-auto">
+                {enhancedPetData?.fullBodyPhotoUrl ? (
+                  <img
+                    src={enhancedPetData.fullBodyPhotoUrl}
+                    alt={`${enhancedPetData.name} full body photo`}
+                    className="w-full h-full object-cover rounded-lg border-2 border-brand-primary"
+                  />
+                ) : (
+                  <div className="w-full h-full bg-gray-100 rounded-lg border-2 border-brand-primary flex items-center justify-center">
+                    <Camera className="w-12 h-12 text-gray-400" />
+                  </div>
+                )}
+                {photoLoading.fullBody && (
+                  <div className="absolute inset-0 bg-white/80 rounded-lg flex items-center justify-center">
+                    <Loader2 className="w-8 h-8 animate-spin text-brand-primary" />
+                  </div>
+                )}
+              </div>
+              {isOwner && enhancedPetData?.fullBodyPhotoUrl && (
+                <Button
+                  onClick={() => handlePhotoDelete('fullBody')}
+                  variant="outline"
+                  size="sm"
+                  className="mt-2 text-red-600 border-red-300"
+                >
+                  <Trash2 className="w-4 h-4 mr-2" />
+                  Remove
+                </Button>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Contact Numbers Section */}
+      <div className="mb-8">
+        <div className="bg-white/50 backdrop-blur-sm rounded-2xl p-6">
+          <div className="flex items-center space-x-2 text-brand-primary mb-6">
+            <Phone className="w-5 h-5" />
+            <span className="tracking-wide text-sm font-semibold">EMERGENCY CONTACTS</span>
+          </div>
+          
+          <div className="space-y-4">
+            {enhancedPetData?.emergencyContact && (
+              <div className="bg-white p-4 rounded-lg border border-brand-primary">
+                <p className="text-brand-primary text-sm font-semibold mb-2">PRIMARY EMERGENCY CONTACT</p>
+                {(() => {
+                  const phoneNumber = extractPhoneNumber(enhancedPetData.emergencyContact);
+                  return phoneNumber ? (
+                    <a
+                      href={`tel:${formatPhoneForTel(phoneNumber)}`}
+                      className="text-lg font-medium text-brand-primary hover:text-brand-primary-dark underline"
+                      aria-label="Call primary emergency contact"
+                    >
+                      {enhancedPetData.emergencyContact}
+                    </a>
+                  ) : (
+                    <p className="text-lg font-medium text-brand-primary">{enhancedPetData.emergencyContact}</p>
+                  );
+                })()}
+              </div>
+            )}
+            
+            {enhancedPetData?.secondEmergencyContact && (
+              <div className="bg-white p-4 rounded-lg border border-brand-primary">
+                <p className="text-brand-primary text-sm font-semibold mb-2">SECONDARY EMERGENCY CONTACT</p>
+                {(() => {
+                  const phoneNumber = extractPhoneNumber(enhancedPetData.secondEmergencyContact);
+                  return phoneNumber ? (
+                    <a
+                      href={`tel:${formatPhoneForTel(phoneNumber)}`}
+                      className="text-lg font-medium text-brand-primary hover:text-brand-primary-dark underline"
+                      aria-label="Call secondary emergency contact"
+                    >
+                      {enhancedPetData.secondEmergencyContact}
+                    </a>
+                  ) : (
+                    <p className="text-lg font-medium text-brand-primary">{enhancedPetData.secondEmergencyContact}</p>
+                  );
+                })()}
+              </div>
+            )}
+            
+            {enhancedPetData?.vetContact && (
+              <div className="bg-white p-4 rounded-lg border border-brand-primary">
+                <p className="text-brand-primary text-sm font-semibold mb-2">VETERINARIAN CONTACT</p>
+                {(() => {
+                  const phoneNumber = extractPhoneNumber(enhancedPetData.vetContact);
+                  return phoneNumber ? (
+                    <a
+                      href={`tel:${formatPhoneForTel(phoneNumber)}`}
+                      className="text-lg font-medium text-brand-primary hover:text-brand-primary-dark underline"
+                      aria-label="Call veterinarian"
+                    >
+                      {enhancedPetData.vetContact}
+                    </a>
+                  ) : (
+                    <p className="text-lg font-medium text-brand-primary">{enhancedPetData.vetContact}</p>
+                  );
+                })()}
+              </div>
+            )}
+            
+            {!enhancedPetData?.emergencyContact && !enhancedPetData?.secondEmergencyContact && !enhancedPetData?.vetContact && (
+              <div className="bg-white p-4 rounded-lg border border-brand-primary text-center">
+                <p className="text-brand-primary">No emergency contacts added yet.</p>
+                {isOwner && (
+                  <Button
+                    onClick={handleProfileEdit}
+                    variant="outline"
+                    size="sm"
+                    className="mt-2"
+                  >
+                    Add Contacts
+                  </Button>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Quick Actions Section */}
+      <div className="mb-8">
+        <div className="bg-white/50 backdrop-blur-sm rounded-2xl p-6">
+          <div className="flex items-center justify-between text-brand-primary mb-6">
+            <div className="flex items-center space-x-2">
+              <Share2 className="w-5 h-5" />
+              <span className="tracking-wide text-sm font-semibold">QUICK ACTIONS</span>
+            </div>
+            {isOwner && togglePetPublicVisibility && (
+              <CompactPrivacyToggle
+                isPublic={enhancedPetData?.isPublic || false}
+                onToggle={(isPublic) => togglePetPublicVisibility(enhancedPetData.id, isPublic)}
+              />
+            )}
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <Button
+              onClick={handleShare}
+              className="bg-brand-primary hover:bg-brand-primary-dark text-white"
+            >
+              <Share2 className="w-4 h-4 mr-2" />
+              Share Profile
+            </Button>
+            
+            <Button
+              onClick={() => setIsInAppSharingOpen(true)}
+              variant="outline"
+              className="border-brand-primary text-brand-primary hover:bg-brand-primary hover:text-white"
+            >
+              <MessageCircle className="w-4 h-4 mr-2" />
+              In-App Share
+            </Button>
+          </div>
+        </div>
+      </div>
+
+      {/* PDF Generator Section */}
+      <div className="mb-8">
+        <PetPDFGenerator
+          petId={enhancedPetData.id}
+          petName={enhancedPetData.name}
+          petData={enhancedPetData}
+        />
+      </div>
+
+      {/* Basic Information Section */}
       <div className="mb-8">
         <div className="bg-white/50 backdrop-blur-sm rounded-2xl p-6">
           <div className="flex items-center justify-between text-brand-primary mb-6">

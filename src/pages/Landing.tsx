@@ -485,36 +485,36 @@ export default function Landing() {
       </main>
 
       {/* Footer */}
-      <footer className="bg-gray-900 text-gray-300 py-16">
+      <footer className="bg-white text-brand-primary-dark py-16 border-t border-gray-200">
         <div className="max-w-7xl mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             <div className="col-span-1 md:col-span-2">
               <div className="flex items-center gap-3 mb-4">
                 <img src="/lovable-uploads/213ccabc-3918-406d-b844-9c2730b7637d.png" alt="PetPort logo" className="w-8 h-8" />
-                <span className="text-xl font-semibold text-white">PetPort</span>
+                <span className="text-xl font-semibold text-brand-primary">PetPort</span>
               </div>
-              <p className="text-gray-400 mb-4 max-w-md">
+              <p className="text-brand-primary-dark mb-4 max-w-md">
                 The complete digital pet portfolio solution for pet owners and foster caregivers.
               </p>
-              <p className="text-sm text-gray-500">© {new Date().getFullYear()} PetPort. All rights reserved.</p>
-              <p className="text-sm text-gray-500 mt-1">PetPort, Blaine, MN</p>
+              <p className="text-sm text-brand-primary/70">© {new Date().getFullYear()} PetPort. All rights reserved.</p>
+              <p className="text-sm text-brand-primary/70 mt-1">PetPort, Blaine, MN</p>
             </div>
             
             <div>
-              <h4 className="font-semibold text-white mb-4">Product</h4>
+              <h4 className="font-semibold text-brand-primary mb-4">Product</h4>
               <ul className="space-y-2 text-sm">
-                <li><Link to="/auth" className="hover:text-white transition-colors">Sign Up</Link></li>
-                <li><a href="#features" className="hover:text-white transition-colors">Features</a></li>
-                <li><a href="#pricing" className="hover:text-white transition-colors">Pricing</a></li>
-                <li><a href="#faq" className="hover:text-white transition-colors">FAQ</a></li>
+                <li><Link to="/auth" className="text-brand-primary-dark hover:text-brand-primary transition-colors">Sign Up</Link></li>
+                <li><a href="#features" className="text-brand-primary-dark hover:text-brand-primary transition-colors">Features</a></li>
+                <li><a href="#pricing" className="text-brand-primary-dark hover:text-brand-primary transition-colors">Pricing</a></li>
+                <li><a href="#faq" className="text-brand-primary-dark hover:text-brand-primary transition-colors">FAQ</a></li>
               </ul>
             </div>
             
             <div>
-              <h4 className="font-semibold text-white mb-4">Legal</h4>
+              <h4 className="font-semibold text-brand-primary mb-4">Legal</h4>
               <ul className="space-y-2 text-sm">
-                <li><Link to="/privacy-policy" className="hover:text-white transition-colors">Privacy Policy</Link></li>
-                <li><Link to="/terms" className="hover:text-white transition-colors">Terms of Service</Link></li>
+                <li><Link to="/privacy-policy" className="text-brand-primary-dark hover:text-brand-primary transition-colors">Privacy Policy</Link></li>
+                <li><Link to="/terms" className="text-brand-primary-dark hover:text-brand-primary transition-colors">Terms of Service</Link></li>
               </ul>
             </div>
           </div>

@@ -31,6 +31,13 @@ export const CompactPrivacyToggle: React.FC<CompactPrivacyToggleProps> = ({
             : "Only you can view this profile"
         });
       }
+    } catch (error) {
+      console.error('Privacy toggle error:', error);
+      toast({
+        title: "Error",
+        description: "Failed to update privacy setting. Please try again.",
+        variant: "destructive",
+      });
     } finally {
       setIsToggling(false);
     }

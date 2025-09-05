@@ -20,6 +20,7 @@ import { shareProfileOptimized } from "@/services/pdfService";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { CompactPrivacyToggle } from "@/components/CompactPrivacyToggle";
+import { SectionHeader } from "@/components/ui/section-header";
 
 
 interface PetProfileContentProps {
@@ -36,10 +37,10 @@ interface PetProfileContentProps {
 const extractPhoneNumber = (contactString: string) => {
   if (!contactString) return null;
   
-  // Extract phone number using regex - supports various formats
-  const phoneMatch = contactString.match(/\(\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}/);
+  // More flexible regex to match various phone formats
+  const phoneMatch = contactString.match(/(\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}|\d{3}[-.\s]?\d{3}[-.\s]?\d{4})/);
   if (phoneMatch) {
-    return phoneMatch[0].replace(/[^\\d]/g, ''); // Remove non-digit characters
+    return phoneMatch[0].replace(/[^\d]/g, ''); // Remove non-digit characters
   }
   return null;
 };
@@ -217,7 +218,8 @@ export const PetProfileContent = ({
 
   const handleShare = async () => {
     try {
-      const profileUrl = `${window.location.origin}/profile/${enhancedPetData.id}`;
+      // Use the edge function URL for better social media previews
+      const profileUrl = `${window.location.origin}/functions/v1/profile-share?petId=${enhancedPetData.id}&redirect=${encodeURIComponent(`${window.location.origin}/profile/${enhancedPetData.id}`)}`;
       const result = await shareProfileOptimized(profileUrl, enhancedPetData.name, 'profile');
       
       if (result.success) {
@@ -242,15 +244,13 @@ export const PetProfileContent = ({
       {/* Basic Information Section - First */}
       <div className="mb-8">
         <div className="bg-white/50 backdrop-blur-sm rounded-2xl p-6">
-          <div className="flex items-center justify-between text-brand-primary mb-6">
-            <div className="flex items-center space-x-2">
-              <span className="tracking-wide text-sm font-semibold">BASIC INFO</span>
-            </div>
-            {isOwner && (
+          <SectionHeader
+            title="Basic Information"
+            action={isOwner && (
               <div className="flex items-center space-x-2">
                 <div
                   onClick={handleProfileEdit}
-                  className="flex items-center space-x-2 p-3 text-brand-primary hover:text-brand-primary-dark hover:scale-110 transition-all cursor-pointer"
+                  className="flex items-center space-x-2 p-3 text-primary hover:text-primary/80 hover:scale-110 transition-all cursor-pointer"
                   role="button"
                   tabIndex={0}
                   aria-label="Edit pet profile"
@@ -262,7 +262,7 @@ export const PetProfileContent = ({
                 <AlertDialog>
                   <AlertDialogTrigger asChild>
                     <div
-                      className="flex items-center space-x-2 p-3 text-brand-primary hover:text-brand-primary-dark hover:scale-110 transition-all cursor-pointer"
+                      className="flex items-center space-x-2 p-3 text-primary hover:text-primary/80 hover:scale-110 transition-all cursor-pointer"
                       role="button"
                       tabIndex={0}
                       aria-label="Delete pet"
@@ -293,48 +293,48 @@ export const PetProfileContent = ({
                 </AlertDialog>
               </div>
             )}
-          </div>
+          />
           <div className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6">
               <div>
-                <p className="text-brand-primary text-sm font-semibold tracking-wide">NAME</p>
-                <p className="text-lg font-medium text-brand-primary">{enhancedPetData?.name || "Not specified"}</p>
+                <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-2">NAME</p>
+                <p className="text-base font-medium text-foreground">{enhancedPetData?.name || "Not specified"}</p>
               </div>
               <div>
-                <p className="text-brand-primary text-sm font-semibold tracking-wide">BREED</p>
-                <p className="text-lg font-medium text-brand-primary">{enhancedPetData?.breed || "Not specified"}</p>
+                <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-2">BREED</p>
+                <p className="text-base font-medium text-foreground">{enhancedPetData?.breed || "Not specified"}</p>
               </div>
               <div>
-                <p className="text-brand-primary text-sm font-semibold tracking-wide">AGE</p>
-                <p className="text-lg font-medium text-brand-primary">{enhancedPetData?.age || "Not specified"}</p>
+                <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-2">AGE</p>
+                <p className="text-base font-medium text-foreground">{enhancedPetData?.age || "Not specified"}</p>
               </div>
               <div>
-                <p className="text-brand-primary text-sm font-semibold tracking-wide">WEIGHT</p>
-                <p className="text-lg font-medium text-brand-primary">{enhancedPetData?.weight || "Not specified"}</p>
+                <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-2">WEIGHT</p>
+                <p className="text-base font-medium text-foreground">{enhancedPetData?.weight || "Not specified"}</p>
               </div>
               <div>
-                <p className="text-brand-primary text-sm font-semibold tracking-wide">SEX</p>
-                <p className="text-lg font-medium text-brand-primary">{enhancedPetData?.sex ? enhancedPetData.sex.charAt(0).toUpperCase() + enhancedPetData.sex.slice(1) : "Not specified"}</p>
+                <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-2">SEX</p>
+                <p className="text-base font-medium text-foreground">{enhancedPetData?.sex ? enhancedPetData.sex.charAt(0).toUpperCase() + enhancedPetData.sex.slice(1) : "Not specified"}</p>
               </div>
               {enhancedPetData?.height && (
                 <div>
-                  <p className="text-brand-primary text-sm font-semibold tracking-wide">HEIGHT</p>
-                  <p className="text-lg font-medium text-brand-primary">{enhancedPetData.height}</p>
+                  <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-2">HEIGHT</p>
+                  <p className="text-base font-medium text-foreground">{enhancedPetData.height}</p>
                 </div>
               )}
             </div>
             
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <div>
-                <p className="text-brand-primary text-sm font-semibold tracking-wide">MICROCHIP NUMBER</p>
-                <p className="text-lg font-mono bg-white px-3 py-2 rounded border border-brand-primary text-brand-primary">
+                <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-2">MICROCHIP NUMBER</p>
+                <p className="text-base font-mono bg-background px-4 py-3 rounded-md border text-foreground">
                   {enhancedPetData?.microchipId || "Not specified"}
                 </p>
               </div>
               {enhancedPetData?.registrationNumber && (
                 <div>
-                  <p className="text-brand-primary text-sm font-semibold tracking-wide">REGISTRATION NUMBER</p>
-                  <p className="text-lg font-mono bg-white px-3 py-2 rounded border border-brand-primary text-brand-primary">
+                  <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-2">REGISTRATION NUMBER</p>
+                  <p className="text-base font-mono bg-background px-4 py-3 rounded-md border text-foreground">
                     {enhancedPetData.registrationNumber}
                   </p>
                 </div>
@@ -342,15 +342,15 @@ export const PetProfileContent = ({
             </div>
             
             {enhancedPetData?.bio && (
-              <div className="bg-white p-4 rounded-lg border border-brand-primary">
-                <p className="text-brand-primary text-sm font-semibold tracking-wide mb-2">BIO</p>
-                <p className="text-brand-primary">{enhancedPetData.bio}</p>
+              <div className="bg-background p-6 rounded-lg border">
+                <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-3">BIO</p>
+                <p className="text-foreground leading-relaxed">{enhancedPetData.bio}</p>
               </div>
             )}
             
-            <div className="bg-white p-4 rounded-lg border border-brand-primary">
-              <p className="text-brand-primary text-sm font-semibold tracking-wide mb-2">DESCRIPTION & UNIQUE TRAITS</p>
-              <p className="text-brand-primary">{enhancedPetData?.notes || "No description specified"}</p>
+            <div className="bg-background p-6 rounded-lg border">
+              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-3">DESCRIPTION & UNIQUE TRAITS</p>
+              <p className="text-foreground leading-relaxed">{enhancedPetData?.notes || "No description specified"}</p>
             </div>
           </div>
         </div>
@@ -359,12 +359,10 @@ export const PetProfileContent = ({
       {/* Official Photo Section */}
       <div className="mb-8">
         <div className="bg-white/50 backdrop-blur-sm rounded-2xl p-6">
-          <div className="flex items-center justify-between text-brand-primary mb-6">
-            <div className="flex items-center space-x-2">
-              <Camera className="w-5 h-5" />
-              <span className="tracking-wide text-sm font-semibold">OFFICIAL PHOTOS</span>
-            </div>
-            {isOwner && (
+          <SectionHeader
+            title="Official Photos"
+            icon={<Camera className="w-5 h-5" />}
+            action={isOwner && (
               <div className="flex items-center space-x-2">
                 <input
                   type="file"
@@ -375,18 +373,18 @@ export const PetProfileContent = ({
                 />
                 <label
                   htmlFor="profile-photo-upload"
-                  className="flex items-center space-x-2 p-3 text-brand-primary hover:text-brand-primary-dark hover:scale-110 transition-all cursor-pointer"
+                  className="flex items-center space-x-2 p-3 text-primary hover:text-primary/80 hover:scale-110 transition-all cursor-pointer"
                 >
                   <Upload className="w-5 h-5" />
                   <span className="text-sm hidden sm:inline">Upload</span>
                 </label>
               </div>
             )}
-          </div>
+          />
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="text-center">
-              <p className="text-brand-primary text-sm font-semibold mb-3">PROFILE PHOTO</p>
+              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-4">PROFILE PHOTO</p>
               <div className="relative w-48 h-48 mx-auto">
                 {enhancedPetData?.photoUrl ? (
                   <img
@@ -419,7 +417,7 @@ export const PetProfileContent = ({
             </div>
             
             <div className="text-center">
-              <p className="text-brand-primary text-sm font-semibold mb-3">FULL BODY PHOTO</p>
+              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-4">FULL BODY PHOTO</p>
               <div className="relative w-48 h-48 mx-auto">
                 {enhancedPetData?.fullBodyPhotoUrl ? (
                   <img

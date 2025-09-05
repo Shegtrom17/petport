@@ -588,20 +588,20 @@ export const PetProfileContent = ({
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Button
-              onClick={handleShare}
+              onClick={enhancedPetData?.is_public ? handleShare : () => isOwner && togglePetPublicVisibility && togglePetPublicVisibility(enhancedPetData.id, true)}
               className="bg-brand-primary hover:bg-brand-primary-dark text-white"
             >
               <Share2 className="w-4 h-4 mr-2" />
-              Share Profile
+              {enhancedPetData?.is_public ? 'Share Profile' : 'Make Public to Share'}
             </Button>
             
             <Button
-              onClick={() => setIsInAppSharingOpen(true)}
+              onClick={enhancedPetData?.is_public ? () => setIsInAppSharingOpen(true) : () => isOwner && togglePetPublicVisibility && togglePetPublicVisibility(enhancedPetData.id, true)}
               variant="outline"
               className="border-brand-primary text-brand-primary hover:bg-brand-primary hover:text-white"
             >
               <MessageCircle className="w-4 h-4 mr-2" />
-              In-App Share
+              {enhancedPetData?.is_public ? 'In-App Share' : 'Make Public to Share'}
             </Button>
           </div>
         </div>

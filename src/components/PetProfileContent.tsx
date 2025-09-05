@@ -21,6 +21,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { CompactPrivacyToggle } from "@/components/CompactPrivacyToggle";
 import { SectionHeader } from "@/components/ui/section-header";
+import { GuidanceHint } from "@/components/ui/guidance-hint";
 
 
 interface PetProfileContentProps {
@@ -294,6 +295,22 @@ export const PetProfileContent = ({
               </div>
             )}
           />
+          
+          {/* Show guidance hint for new users when basic info is incomplete */}
+          {isOwner && (
+            !enhancedPetData?.name || 
+            !enhancedPetData?.breed || 
+            !enhancedPetData?.age || 
+            !enhancedPetData?.weight
+          ) && (
+            <GuidanceHint
+              message="Start by adding your pet's basic information using the Edit button above. This is essential for creating a complete profile."
+              actionLabel="Edit Now"
+              onAction={handleProfileEdit}
+              variant="gentle"
+            />
+          )}
+          
           <div className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6">
               <div>

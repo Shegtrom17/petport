@@ -135,7 +135,11 @@ export const PetPDFGenerator = ({ petId, petName, petData }: PetPDFGeneratorProp
   };
 
   const handleSharePublicProfile = async () => {
-    await handleShare(publicProfileUrl, "public");
+    // Use profile-share edge function for better social previews
+    const baseUrl = window.location.origin;
+    const profileUrl = `${baseUrl}/profile/${petId}`;
+    const shareUrl = `${baseUrl}/functions/v1/profile-share?petId=${petId}&redirect=${encodeURIComponent(profileUrl)}`;
+    await handleShare(shareUrl, "public");
   };
 
   return (

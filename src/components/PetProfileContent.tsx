@@ -472,10 +472,11 @@ export const PetProfileContent = ({
       {/* Contact Numbers Section */}
       <div className="mb-8">
         <div className="bg-white/50 backdrop-blur-sm rounded-2xl p-6">
-          <div className="flex items-center space-x-2 text-brand-primary mb-6">
-            <Phone className="w-5 h-5" />
-            <span className="tracking-wide text-sm font-semibold">EMERGENCY CONTACTS</span>
-          </div>
+          <SectionHeader
+            overline="Contacts"
+            title="Emergency Contacts"
+            icon={<Phone className="w-5 h-5" />}
+          />
           
           <div className="space-y-4">
             {enhancedPetData?.emergencyContact && (
@@ -560,18 +561,30 @@ export const PetProfileContent = ({
       {/* Quick Actions Section */}
       <div className="mb-8">
         <div className="bg-white/50 backdrop-blur-sm rounded-2xl p-6">
-          <div className="flex items-center justify-between text-brand-primary mb-6">
-            <div className="flex items-center space-x-2">
-              <Share2 className="w-5 h-5" />
-              <span className="tracking-wide text-sm font-semibold">QUICK ACTIONS</span>
-            </div>
-            {isOwner && togglePetPublicVisibility && (
-              <CompactPrivacyToggle
-                isPublic={enhancedPetData?.isPublic || false}
-                onToggle={(isPublic) => togglePetPublicVisibility(enhancedPetData.id, isPublic)}
-              />
-            )}
-          </div>
+          <SectionHeader
+            overline="Share"
+            title="Quick Actions"
+            icon={<Share2 className="w-5 h-5" />}
+            action={
+              isOwner && togglePetPublicVisibility && (
+                <CompactPrivacyToggle
+                  isPublic={enhancedPetData?.is_public || false}
+                  onToggle={(isPublic) => togglePetPublicVisibility(enhancedPetData.id, isPublic)}
+                />
+              )
+            }
+          />
+          
+          {/* Show guidance hint when profile is private and user tries to share */}
+          {!enhancedPetData?.is_public && (
+            <GuidanceHint
+              message="Your pet's profile is currently private. Make it public to enable sharing with others."
+              actionLabel="Make Public"
+              onAction={() => isOwner && togglePetPublicVisibility && togglePetPublicVisibility(enhancedPetData.id, true)}
+              variant="info"
+              className="mb-4"
+            />
+          )}
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Button

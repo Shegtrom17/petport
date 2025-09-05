@@ -381,6 +381,7 @@ export const PetProfileContent = ({
             icon={<Camera className="w-5 h-5" />}
             action={isOwner && (
               <div className="flex items-center space-x-2">
+                {/* Upload from gallery */}
                 <input
                   type="file"
                   accept="image/*"
@@ -394,6 +395,23 @@ export const PetProfileContent = ({
                 >
                   <Upload className="w-5 h-5" />
                   <span className="text-sm hidden sm:inline">Upload</span>
+                </label>
+                
+                {/* Take photo with camera */}
+                <input
+                  type="file"
+                  accept="image/*"
+                  capture="environment"
+                  onChange={(e) => e.target.files?.[0] && handlePhotoUpload('profile', e.target.files[0])}
+                  className="hidden"
+                  id="profile-photo-camera"
+                />
+                <label
+                  htmlFor="profile-photo-camera"
+                  className="flex items-center space-x-2 p-3 text-primary hover:text-primary/80 hover:scale-110 transition-all cursor-pointer"
+                >
+                  <Camera className="w-5 h-5" />
+                  <span className="text-sm hidden sm:inline">Camera</span>
                 </label>
               </div>
             )}

@@ -438,16 +438,52 @@ export const PetProfileContent = ({
                   </div>
                 )}
               </div>
-              {isOwner && enhancedPetData?.photoUrl && (
-                <Button
-                  onClick={() => handlePhotoDelete('profile')}
-                  variant="outline"
-                  size="sm"
-                  className="mt-2 text-red-600 border-red-300"
-                >
-                  <Trash2 className="w-4 h-4 mr-2" />
-                  Remove
-                </Button>
+              {isOwner && (
+                <div className="mt-3 flex justify-center space-x-2">
+                  {/* Upload from gallery */}
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => e.target.files?.[0] && handlePhotoUpload('profile', e.target.files[0])}
+                    className="hidden"
+                    id="profile-photo-upload-individual"
+                  />
+                  <label
+                    htmlFor="profile-photo-upload-individual"
+                    className="flex items-center space-x-1 px-3 py-2 text-sm bg-brand-primary text-white rounded-lg hover:bg-brand-primary-dark transition-colors cursor-pointer"
+                  >
+                    <Upload className="w-4 h-4" />
+                    <span>Upload</span>
+                  </label>
+                  
+                  {/* Take photo with camera */}
+                  <input
+                    type="file"
+                    accept="image/*"
+                    capture="environment"
+                    onChange={(e) => e.target.files?.[0] && handlePhotoUpload('profile', e.target.files[0])}
+                    className="hidden"
+                    id="profile-photo-camera-individual"
+                  />
+                  <label
+                    htmlFor="profile-photo-camera-individual"
+                    className="flex items-center space-x-1 px-3 py-2 text-sm bg-brand-primary text-white rounded-lg hover:bg-brand-primary-dark transition-colors cursor-pointer"
+                  >
+                    <Camera className="w-4 h-4" />
+                    <span>Camera</span>
+                  </label>
+                  
+                  {enhancedPetData?.photoUrl && (
+                    <Button
+                      onClick={() => handlePhotoDelete('profile')}
+                      variant="outline"
+                      size="sm"
+                      className="text-red-600 border-red-300 hover:bg-red-50"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
+                  )}
+                </div>
               )}
             </div>
             
@@ -471,16 +507,52 @@ export const PetProfileContent = ({
                   </div>
                 )}
               </div>
-              {isOwner && enhancedPetData?.fullBodyPhotoUrl && (
-                <Button
-                  onClick={() => handlePhotoDelete('fullBody')}
-                  variant="outline"
-                  size="sm"
-                  className="mt-2 text-red-600 border-red-300"
-                >
-                  <Trash2 className="w-4 h-4 mr-2" />
-                  Remove
-                </Button>
+              {isOwner && (
+                <div className="mt-3 flex justify-center space-x-2">
+                  {/* Upload from gallery */}
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => e.target.files?.[0] && handlePhotoUpload('fullBody', e.target.files[0])}
+                    className="hidden"
+                    id="fullbody-photo-upload-individual"
+                  />
+                  <label
+                    htmlFor="fullbody-photo-upload-individual"
+                    className="flex items-center space-x-1 px-3 py-2 text-sm bg-brand-primary text-white rounded-lg hover:bg-brand-primary-dark transition-colors cursor-pointer"
+                  >
+                    <Upload className="w-4 h-4" />
+                    <span>Upload</span>
+                  </label>
+                  
+                  {/* Take photo with camera */}
+                  <input
+                    type="file"
+                    accept="image/*"
+                    capture="environment"
+                    onChange={(e) => e.target.files?.[0] && handlePhotoUpload('fullBody', e.target.files[0])}
+                    className="hidden"
+                    id="fullbody-photo-camera-individual"
+                  />
+                  <label
+                    htmlFor="fullbody-photo-camera-individual"
+                    className="flex items-center space-x-1 px-3 py-2 text-sm bg-brand-primary text-white rounded-lg hover:bg-brand-primary-dark transition-colors cursor-pointer"
+                  >
+                    <Camera className="w-4 h-4" />
+                    <span>Camera</span>
+                  </label>
+                  
+                  {enhancedPetData?.fullBodyPhotoUrl && (
+                    <Button
+                      onClick={() => handlePhotoDelete('fullBody')}
+                      variant="outline"
+                      size="sm"
+                      className="text-red-600 border-red-300 hover:bg-red-50"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
+                  )}
+                </div>
               )}
             </div>
           </div>

@@ -9,6 +9,7 @@ interface PublicReviewsData {
   id: string;
   name: string;
   is_public?: boolean;
+  photoUrl?: string;
   reviews?: Array<{
     reviewerName: string;
     reviewerContact?: string | null;
@@ -70,6 +71,15 @@ export default function PublicReviews() {
       />
       <main className="container mx-auto px-4 py-8 max-w-3xl">
         <header className="text-center mb-8">
+          {data.photoUrl && (
+            <div className="mb-6">
+              <img 
+                src={data.photoUrl} 
+                alt={data.name}
+                className="w-32 h-32 rounded-full mx-auto object-cover border-4 border-sage-200"
+              />
+            </div>
+          )}
           <h1 className="text-3xl font-extrabold tracking-tight text-navy-900">
             {data.name} – Reviews & References
           </h1>

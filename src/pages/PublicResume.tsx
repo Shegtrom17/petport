@@ -23,6 +23,7 @@ interface PublicResumeData {
   petport_id?: string | null;
   is_public?: boolean;
   supportAnimalStatus?: string | null;
+  photoUrl?: string;
   certifications?: Array<{
     id: string;
     type: string;
@@ -99,6 +100,15 @@ export default function PublicResume() {
       />
       <main className="container mx-auto px-4 py-8 max-w-4xl">
         <header className="text-center mb-8">
+          {data.photoUrl && (
+            <div className="mb-6">
+              <img 
+                src={data.photoUrl} 
+                alt={data.name}
+                className="w-32 h-32 rounded-full mx-auto object-cover border-4 border-sage-200"
+              />
+            </div>
+          )}
           <h1 className="text-3xl font-extrabold tracking-tight text-navy-900">
             {data.name} – Resume
           </h1>

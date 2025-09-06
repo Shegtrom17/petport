@@ -25,6 +25,7 @@ interface Pet {
   petCaretaker?: string;
   medications?: string[];
   daily_routine?: string;
+  photoUrl?: string;
 }
 
 interface CareData {
@@ -107,7 +108,17 @@ const PublicCareInstructions = () => {
           return;
         }
 
-        setPet(petDetails);
+        // Fetch pet photo
+        const { data: photoData } = await supabase
+          .from('pet_photos')
+          .select('photo_url')
+          .eq('pet_id', petId)
+          .single();
+
+        setPet({
+          ...petDetails,
+          photoUrl: photoData?.photo_url
+        });
 
         // Fetch care instructions
         const careInstructions = await fetchCareInstructions(petId);
@@ -214,6 +225,15 @@ const PublicCareInstructions = () => {
       <div className="container mx-auto px-4 py-8 max-w-4xl">
         {/* Header */}
         <div className="text-center mb-8">
+          {pet.photoUrl && (
+            <div className="mb-6">
+              <img 
+                src={pet.photoUrl} 
+                alt={pet.name}
+                className="w-32 h-32 rounded-full mx-auto object-cover border-4 border-sage-200"
+              />
+            </div>
+          )}
           <h1 className="text-3xl font-serif font-bold text-navy-900 mb-2">
             {pet.name}'s Care Instructions
           </h1>

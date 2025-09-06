@@ -170,30 +170,30 @@ export default function PublicMissingPet() {
     <div className="min-h-screen bg-background">
       <MetaTags title={metaTitle} description={metaDescription} url={pageUrl} image={metaImage} type="article" />
       {/* Header Alert */}
-      <div className="bg-red-600 text-white py-4">
+      <div className="bg-brand-primary text-white py-4">
         <div className="container mx-auto px-4 text-center">
-          <h1 className="text-2xl font-bold mb-2">⚠️ MISSING PET ALERT ⚠️</h1>
-          <p className="text-red-100">Please help us find {petData.name}</p>
+          <h1 className="text-2xl font-bold mb-2">⚠️ LOST PET ALERT ⚠️</h1>
+          <p className="text-white/80">Please help us find {petData.name}</p>
         </div>
       </div>
 
       <div className="container mx-auto px-4 py-8 max-w-4xl">
         {/* Pet Info Card */}
-        <Card className="mb-6">
-          <CardHeader className="bg-gradient-to-r from-red-600 to-red-700 text-white">
+        <Card className="mb-6 bg-white/60 backdrop-blur-sm border-white/30">
+          <CardHeader className="bg-brand-primary text-white">
             <CardTitle className="flex flex-col md:flex-row items-start md:items-center gap-4">
               <div className="flex-shrink-0">
                 <img 
                   src={petData.photoUrl || "/placeholder.svg"} 
                   alt={petData.name}
-                  className="w-24 h-24 rounded-full border-4 border-white object-cover"
+                  className="w-24 h-24 rounded-full border-2 border-white/20 object-cover"
                 />
               </div>
               <div className="flex-grow">
                 <h2 className="text-3xl font-bold">{petData.name}</h2>
-                <p className="text-red-100 text-lg">{petData.breed} • {petData.species} • {petData.age}</p>
-                <Badge variant="destructive" className="mt-2 bg-white text-red-600">
-                  MISSING
+                <p className="text-white/80 text-lg">{petData.breed} • {petData.species} • {petData.age}</p>
+                <Badge variant="destructive" className="mt-2 bg-white/20 text-white border-white/30">
+                  LOST
                 </Badge>
               </div>
             </CardTitle>
@@ -204,17 +204,17 @@ export default function PublicMissingPet() {
                 <img 
                   src={petData.fullBodyPhotoUrl} 
                   alt={`${petData.name} full body`}
-                  className="max-w-full h-auto max-h-96 mx-auto rounded-lg border-2 border-red-200"
+                  className="max-w-full h-auto max-h-96 mx-auto rounded-2xl border border-white/30"
                 />
               </div>
             )}
 
             {/* Last Seen Information */}
             {(petData.lastSeenLocation || petData.lastSeenDate) && (
-              <div className="bg-red-50 p-4 rounded-lg mb-6">
+              <div className="bg-white/60 p-4 rounded-2xl border border-white/30 mb-6">
                 <div className="flex items-center space-x-2 mb-3">
-                  <MapPin className="w-5 h-5 text-red-600" />
-                  <h3 className="font-semibold text-red-800">Last Seen</h3>
+                  <MapPin className="w-5 h-5 text-brand-primary" />
+                  <h3 className="font-semibold text-brand-primary">Last Seen</h3>
                 </div>
                 {petData.lastSeenLocation && (
                   <p className="mb-2"><strong>Location:</strong> {petData.lastSeenLocation}</p>
@@ -222,13 +222,13 @@ export default function PublicMissingPet() {
                 <div className="flex flex-wrap gap-4">
                   {petData.lastSeenDate && (
                     <div className="flex items-center space-x-1">
-                      <Calendar className="w-4 h-4 text-red-600" />
+                      <Calendar className="w-4 h-4 text-brand-primary" />
                       <span>{formatDate(petData.lastSeenDate)}</span>
                     </div>
                   )}
                   {petData.lastSeenTime && (
                     <div className="flex items-center space-x-1">
-                      <Clock className="w-4 h-4 text-red-600" />
+                      <Clock className="w-4 h-4 text-brand-primary" />
                       <span>{petData.lastSeenTime}</span>
                     </div>
                   )}
@@ -238,26 +238,26 @@ export default function PublicMissingPet() {
 
             {/* Distinctive Features */}
             {petData.distinctiveFeatures && (
-              <div className="bg-blue-50 p-4 rounded-lg mb-6">
-                <h3 className="font-semibold text-blue-800 mb-2">Distinctive Features</h3>
-                <p className="text-blue-700">{truncateText(petData.distinctiveFeatures, 300)}</p>
+              <div className="bg-white/60 p-4 rounded-2xl border border-white/30 mb-6">
+                <h3 className="font-semibold text-brand-primary mb-2">Distinctive Features</h3>
+                <p className="text-foreground">{truncateText(petData.distinctiveFeatures, 300)}</p>
               </div>
             )}
 
             {/* Reward */}
             {petData.rewardAmount && (
-              <div className="bg-green-50 p-4 rounded-lg mb-6">
-                <h3 className="font-semibold text-green-800 mb-2">Reward Offered</h3>
-                <p className="text-green-700 text-lg font-medium">{petData.rewardAmount}</p>
+              <div className="bg-white/60 p-4 rounded-2xl border border-white/30 mb-6">
+                <h3 className="font-semibold text-brand-primary mb-2">Reward Offered</h3>
+                <p className="text-foreground text-lg font-medium">{petData.rewardAmount}</p>
               </div>
             )}
 
             {/* Contact Information */}
             {petData.emergencyContact && (
-              <div className="bg-gold-300/20 p-4 rounded-lg mb-6">
+              <div className="bg-white/60 p-4 rounded-2xl border border-white/30 mb-6">
                 <div className="flex items-center space-x-2 mb-2">
-                  <Phone className="w-5 h-5 text-gold-500" />
-                  <h3 className="font-semibold">Contact Information</h3>
+                  <Phone className="w-5 h-5 text-brand-primary" />
+                  <h3 className="font-semibold text-brand-primary">Contact Information</h3>
                 </div>
                 {/\d{3}/.test(petData.emergencyContact) ? (
                   <div>
@@ -278,15 +278,15 @@ export default function PublicMissingPet() {
 
             {/* Finder Instructions */}
             {petData.finderInstructions && (
-              <div className="bg-purple-50 p-4 rounded-lg mb-6">
-                <h3 className="font-semibold text-purple-800 mb-2">If Found - Instructions</h3>
-                <p className="text-purple-700">{truncateText(petData.finderInstructions, 200)}</p>
+              <div className="bg-white/60 p-4 rounded-2xl border border-white/30 mb-6">
+                <h3 className="font-semibold text-brand-primary mb-2">If Found - Instructions</h3>
+                <p className="text-foreground">{truncateText(petData.finderInstructions, 200)}</p>
               </div>
             )}
 
             {/* Share Buttons */}
             <div className="flex flex-col sm:flex-row gap-4 items-center justify-center mt-8">
-              <Button onClick={handleShare} className="bg-blue-600 hover:bg-blue-700">
+              <Button onClick={handleShare} className="bg-brand-primary hover:bg-brand-primary/90 text-white">
                 <Share2 className="w-4 h-4 mr-2" />
                 Share This Alert
               </Button>

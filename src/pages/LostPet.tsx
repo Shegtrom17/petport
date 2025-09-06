@@ -177,7 +177,7 @@ const LostPet = () => {
     <PWALayout>
       <div className="min-h-screen bg-white">
       {/* Emergency Header */}
-      <div className={`bg-gradient-to-r ${lostPetData.is_missing ? 'from-red-600 to-red-700' : 'from-brand-primary to-brand-primary-dark'} text-white py-6 px-4 shadow-lg`}>
+      <div className={`bg-gradient-to-r ${lostPetData.is_missing ? 'from-red-600 to-red-700' : 'from-brand-primary to-brand-primary-dark'} text-white py-6 px-4 shadow-sm`}>
         <div className="max-w-6xl mx-auto">
           <div className="flex flex-col space-y-4 md:flex-row md:items-center md:justify-between md:space-y-0">
             <div className="flex items-center space-x-4">
@@ -215,7 +215,7 @@ const LostPet = () => {
 
         {/* Missing Status Banner */}
         {lostPetData.is_missing && (
-          <Card className="border-4 border-red-500 bg-red-50">
+          <Card className="border border-red-300 bg-red-50">
             <CardContent className="p-6">
               <div className="flex items-center justify-center space-x-4 text-red-800">
                 <AlertTriangle className="w-8 h-8 animate-pulse" />

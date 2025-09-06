@@ -312,7 +312,7 @@ export const PetPDFGenerator = ({ petId, petName, petData }: PetPDFGeneratorProp
           
           return (
             <div key={pdfType.key} className={`bg-white p-3 rounded-lg border-2 shadow-sm relative ${
-              isAvailable ? 'border-gold-500/30' : 'border-gray-300/50'
+              isAvailable ? 'border-[#5691af]/30' : 'border-gray-300/50'
             }`}>
               <div 
                 onClick={() => !isDisabled && showPdfOptions(pdfType.key)}

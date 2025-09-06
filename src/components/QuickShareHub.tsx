@@ -64,6 +64,8 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
   // Debug logging
   console.log('QuickShareHub - petData:', petData);
   console.log('QuickShareHub - petData.id:', petData.id);
+  console.log('QuickShareHub - isLost prop:', isLost);
+  console.log('QuickShareHub - typeof isLost:', typeof isLost);
 
   // Don't render if no pet ID or empty string
   if (!petData.id || petData.id.trim() === '') {

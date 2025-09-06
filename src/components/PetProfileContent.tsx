@@ -111,6 +111,11 @@ export const PetProfileContent = ({
     user_id: selectedPet?.user_id || petData.user_id
   };
 
+  // Debug logging for lost pet status
+  console.log('PetProfileContent - enhancedPetData:', enhancedPetData);
+  console.log('PetProfileContent - enhancedPetData.is_lost:', enhancedPetData.is_lost);
+  console.log('PetProfileContent - enhancedPetData.lost_pet_data:', enhancedPetData.lost_pet_data);
+
   // Check if current user owns this pet
   const isOwner = user?.id === enhancedPetData?.user_id;
 

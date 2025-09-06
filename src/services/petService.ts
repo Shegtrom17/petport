@@ -39,6 +39,7 @@ export type PetWithDetails = {
   travel_locations?: Tables<"travel_locations">[];
   documents?: Tables<"documents">[];
   certifications?: Tables<"certifications">[];
+  lost_pet_data?: Tables<"lost_pet_data"> | null;
 };
 
 // Transform database data to component-expected format
@@ -120,7 +121,10 @@ export function transformPetData(pet: PetWithDetails): any {
     organizationWebsite: pet.organization_website || "",
     customLogoUrl: pet.custom_logo_url || "",
     adoptionStatus: pet.adoption_status || "not_available",
-    adoptionInstructions: pet.adoption_instructions || ""
+    adoptionInstructions: pet.adoption_instructions || "",
+    // Transform lost pet data
+    is_lost: pet.lost_pet_data?.is_missing || false,
+    lost_pet_data: pet.lost_pet_data
   };
 }
 
@@ -235,7 +239,8 @@ export async function fetchPetDetails(petId: string): Promise<any | null> {
       reviewsResponse,
       travelResponse,
       documentsResponse,
-      certificationsResponse
+      certificationsResponse,
+      lostPetResponse
     ] = await Promise.all([
       supabase.from("contacts").select("*").eq("pet_id", petId).order("updated_at", { ascending: false }).limit(1).maybeSingle(),
       supabase.from("medical").select("*").eq("pet_id", petId).order("updated_at", { ascending: false }).limit(1).maybeSingle(),
@@ -249,7 +254,8 @@ export async function fetchPetDetails(petId: string): Promise<any | null> {
       supabase.from("reviews").select("*").eq("pet_id", petId),
       supabase.from("travel_locations").select("*").eq("pet_id", petId),
       supabase.from("documents").select("*").eq("pet_id", petId),
-      supabase.from("certifications").select("*").eq("pet_id", petId)
+      supabase.from("certifications").select("*").eq("pet_id", petId),
+      supabase.from("lost_pet_data").select("*").eq("pet_id", petId).order("updated_at", { ascending: false }).limit(1).maybeSingle()
     ]);
 
     if (contactsResponse.error) console.error("Error fetching contacts:", contactsResponse.error);
@@ -294,7 +300,8 @@ export async function fetchPetDetails(petId: string): Promise<any | null> {
       reviews: reviewsResponse.data || [],
       travel_locations: travelResponse.data || [],
       documents: documentsResponse.data || [],
-      certifications: certificationsResponse.data || []
+      certifications: certificationsResponse.data || [],
+      lost_pet_data: lostPetResponse.data
     };
 
     console.log("Fetched pet with details:", petWithDetails);

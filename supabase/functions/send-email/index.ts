@@ -8,7 +8,7 @@ const corsHeaders = {
 };
 
 interface EmailRequest {
-  type: 'profile' | 'care' | 'credentials' | 'reviews' | 'missing_pet';
+  type: 'profile' | 'care' | 'credentials' | 'resume' | 'reviews' | 'missing_pet';
   recipientEmail: string;
   recipientName?: string;
   petName: string;
@@ -59,12 +59,12 @@ const generateEmailTemplate = (data: EmailRequest) => {
         ${customMessage ? `<blockquote style="border-left: 4px solid #e2e8f0; padding-left: 16px; margin: 16px 0; font-style: italic;">"${customMessage}"</blockquote>` : ''}
       `
     },
-    credentials: {
-      subject: `${sender} shared ${petName}'s credentials with you`,
+    resume: {
+      subject: `${sender} shared ${petName}'s resume with you`,
       content: `
-        <h2>${petName}'s Credentials & Certifications</h2>
-        <p>${sender} has shared ${petName}'s official credentials and certifications with you.</p>
-        <p>View training certificates, service animal documentation, and other important credentials.</p>
+        <h2>${petName}'s Professional Resume</h2>
+        <p>${sender} has shared ${petName}'s professional resume with you.</p>
+        <p>View training, achievements, experience, and professional credentials.</p>
         ${customMessage ? `<blockquote style="border-left: 4px solid #e2e8f0; padding-left: 16px; margin: 16px 0; font-style: italic;">"${customMessage}"</blockquote>` : ''}
       `
     },
@@ -121,7 +121,7 @@ const generateEmailTemplate = (data: EmailRequest) => {
           <div style="text-align: center; margin: 30px 0;">
             <a href="${shareUrl}" 
                style="display: inline-block; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; text-decoration: none; padding: 15px 30px; border-radius: 8px; font-weight: bold; font-size: 16px;">
-              ${isDocumentShare ? '📄 View Document' : `View ${petName}'s ${type === 'profile' ? 'Profile' : type === 'missing_pet' ? 'Missing Pet Alert' : type.charAt(0).toUpperCase() + type.slice(1)}`}
+              ${isDocumentShare ? '📄 View Document' : `View ${petName}'s ${type === 'profile' ? 'Profile' : type === 'missing_pet' ? 'Missing Pet Alert' : type === 'resume' ? 'Resume' : type.charAt(0).toUpperCase() + type.slice(1)}`}
             </a>
           </div>
           
@@ -153,11 +153,34 @@ const handler = async (req: Request): Promise<Response> => {
     
     console.log("Sending email:", emailData);
 
+    const templates = {
+      profile: {
+        subject: emailData.customMessage && (
+          emailData.customMessage.includes('document') || 
+          emailData.customMessage.includes('vaccination') || 
+          emailData.customMessage.includes('insurance') || 
+          emailData.customMessage.includes('medical') ||
+          emailData.customMessage.includes('certificate')
+        ) 
+          ? `📄 Document from ${emailData.petName} - Shared via PetPort`
+          : `${emailData.senderName || 'A PetPort user'} shared ${emailData.petName}'s PetPort profile with you`
+      },
+      care: {
+        subject: `${emailData.senderName || 'A PetPort user'} shared ${emailData.petName}'s care instructions with you`
+      },
+      resume: {
+        subject: `${emailData.senderName || 'A PetPort user'} shared ${emailData.petName}'s resume with you`
+      },
+      reviews: {
+        subject: `${emailData.senderName || 'A PetPort user'} shared ${emailData.petName}'s reviews with you`
+      },
+      missing_pet: {
+        subject: `🚨 MISSING PET ALERT - ${emailData.petName} needs your help!`
+      }
+    };
+
     const emailTemplate = generateEmailTemplate(emailData);
-    
-    // Extract subject from template
-    const subjectMatch = emailTemplate.match(/<title>(.*?)<\/title>/);
-    const subject = subjectMatch?.[1] || `PetPort - ${emailData.petName}`;
+    const subject = templates[emailData.type]?.subject || `PetPort - ${emailData.petName}`;
 
     // Send email via Postmark API
     const emailResponse = await fetch("https://api.postmarkapp.com/email", {

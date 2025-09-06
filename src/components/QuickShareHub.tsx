@@ -118,7 +118,7 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
     {
       id: 'missing',
       title: 'Lost Pet Flyer',
-      description: 'Missing pet alert with contact info',
+      description: isLost ? 'Missing pet alert with contact info' : 'Mark pet as lost to activate',
       icon: <Search className="w-5 h-5 text-red-600" />,
       path: `/missing-pet/${petData.id}`,
       available: isLost,
@@ -251,7 +251,8 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
     window.open(fullUrl, '_blank');
   };
 
-  const availablePages = sharePages.filter(page => page.available);
+  // Show all pages, but Lost Pet will be disabled if not available
+  const availablePages = sharePages;
 
   return (
     <Card className="bg-white shadow-xl">
@@ -294,29 +295,34 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
                 {showOptionsFor !== page.id ? (
                   /* Show Options Button */
                   <Button
-                    onClick={() => setShowOptionsFor(page.id)}
+                    onClick={() => page.available ? setShowOptionsFor(page.id) : null}
                     size="sm"
+                    disabled={!page.available}
                     className={`w-full text-xs ${
                       page.variant === 'missing' 
-                        ? 'bg-red-600 hover:bg-red-700 text-white' 
+                        ? page.available
+                          ? 'bg-red-600 hover:bg-red-700 text-white' 
+                          : 'bg-gray-400 text-gray-600 cursor-not-allowed'
                         : 'bg-primary hover:bg-primary/90'
                     }`}
                   >
                     <Share2 className="w-3 h-3 mr-1" />
-                    Share
+                    {page.available ? 'Share' : 'Unavailable'}
                   </Button>
                 ) : (
                   <>
                     {/* Quick Share Button */}
                     <Button
-                      onClick={() => handleNativeShare(page)}
+                      onClick={() => page.available ? handleNativeShare(page) : null}
                       size="sm"
+                      disabled={!page.available || sharingId === page.id}
                       className={`w-full text-xs ${
                         page.variant === 'missing' 
-                          ? 'bg-red-600 hover:bg-red-700 text-white' 
+                          ? page.available
+                            ? 'bg-red-600 hover:bg-red-700 text-white' 
+                            : 'bg-gray-400 text-gray-600 cursor-not-allowed'
                           : 'bg-primary hover:bg-primary/90'
                       }`}
-                      disabled={sharingId === page.id}
                     >
                       {sharingId === page.id ? (
                         <>
@@ -334,15 +340,17 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
                     {/* Secondary Options */}
                     <div className="grid grid-cols-3 gap-1">
                       <Button
-                        onClick={() => handleCopyLink(page)}
+                        onClick={() => page.available ? handleCopyLink(page) : null}
                         variant="outline"
                         size="sm"
+                        disabled={!page.available || copyingId === page.id}
                         className={`text-xs ${
                           page.variant === 'missing' 
-                            ? 'border-red-600 text-red-700 hover:bg-red-50' 
+                            ? page.available
+                              ? 'border-red-600 text-red-700 hover:bg-red-50' 
+                              : 'border-gray-300 text-gray-400 cursor-not-allowed'
                             : 'border-primary text-primary hover:bg-primary/5'
                         }`}
-                        disabled={copyingId === page.id}
                       >
                         {copyingId === page.id ? (
                           <Check className="w-3 h-3" />
@@ -352,12 +360,15 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
                       </Button>
                       
                       <Button
-                        onClick={() => handleSMSShare(page)}
+                        onClick={() => page.available ? handleSMSShare(page) : null}
                         variant="outline"
                         size="sm"
+                        disabled={!page.available}
                         className={`text-xs ${
                           page.variant === 'missing' 
-                            ? 'border-red-600 text-red-700 hover:bg-red-50' 
+                            ? page.available
+                              ? 'border-red-600 text-red-700 hover:bg-red-50' 
+                              : 'border-gray-300 text-gray-400 cursor-not-allowed'
                             : 'border-primary text-primary hover:bg-primary/5'
                         }`}
                       >
@@ -365,12 +376,15 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
                       </Button>
                       
                       <Button
-                        onClick={() => handleEmailShare(page)}
+                        onClick={() => page.available ? handleEmailShare(page) : null}
                         variant="outline"
                         size="sm"
+                        disabled={!page.available}
                         className={`text-xs ${
                           page.variant === 'missing' 
-                            ? 'border-red-600 text-red-700 hover:bg-red-50' 
+                            ? page.available
+                              ? 'border-red-600 text-red-700 hover:bg-red-50' 
+                              : 'border-gray-300 text-gray-400 cursor-not-allowed'
                             : 'border-primary text-primary hover:bg-primary/5'
                         }`}
                       >
@@ -380,12 +394,15 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
                     
                     <div className="grid grid-cols-3 gap-1">
                       <Button
-                        onClick={() => handleFacebookShare(page)}
+                        onClick={() => page.available ? handleFacebookShare(page) : null}
                         variant="outline"
                         size="sm"
+                        disabled={!page.available}
                         className={`text-xs ${
                           page.variant === 'missing' 
-                            ? 'border-red-600 text-red-700 hover:bg-red-50' 
+                            ? page.available
+                              ? 'border-red-600 text-red-700 hover:bg-red-50' 
+                              : 'border-gray-300 text-gray-400 cursor-not-allowed'
                             : 'border-primary text-primary hover:bg-primary/5'
                         }`}
                       >
@@ -393,12 +410,15 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
                       </Button>
                       
                       <Button
-                        onClick={() => handleMessengerShare(page)}
+                        onClick={() => page.available ? handleMessengerShare(page) : null}
                         variant="outline"
                         size="sm"
+                        disabled={!page.available}
                         className={`text-xs ${
                           page.variant === 'missing' 
-                            ? 'border-red-600 text-red-700 hover:bg-red-50' 
+                            ? page.available
+                              ? 'border-red-600 text-red-700 hover:bg-red-50' 
+                              : 'border-gray-300 text-gray-400 cursor-not-allowed'
                             : 'border-primary text-primary hover:bg-primary/5'
                         }`}
                       >
@@ -406,12 +426,15 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
                       </Button>
                       
                       <Button
-                        onClick={() => handleOpenLink(page)}
+                        onClick={() => page.available ? handleOpenLink(page) : null}
                         variant="outline"
                         size="sm"
+                        disabled={!page.available}
                         className={`text-xs ${
                           page.variant === 'missing' 
-                            ? 'border-red-600 text-red-700 hover:bg-red-50' 
+                            ? page.available
+                              ? 'border-red-600 text-red-700 hover:bg-red-50' 
+                              : 'border-gray-300 text-gray-400 cursor-not-allowed'
                             : 'border-primary text-primary hover:bg-primary/5'
                         }`}
                       >

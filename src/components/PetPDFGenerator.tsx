@@ -157,7 +157,7 @@ export const PetPDFGenerator = ({ petId, petName, petData }: PetPDFGeneratorProp
           </div>
           <div>
             <h3 className="text-xl font-bold text-gold-500 tracking-wide border-b-2 border-gold-500 pb-1 mb-2">
-              OFFICIAL DOCUMENTS
+              GENERATE PROFILE PDFS
             </h3>
             <p className="text-gold-200 text-sm">Generate PDFs for all • Profile must be public to share</p>
           </div>

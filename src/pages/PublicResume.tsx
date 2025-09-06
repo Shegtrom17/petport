@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Shield, Award, GraduationCap, Trophy, Activity } from "lucide-react";
+import { Shield, Award, GraduationCap, Trophy, Activity, Star, MapPin } from "lucide-react";
 import { MetaTags } from "@/components/MetaTags";
 import { SupportAnimalBanner } from "@/components/SupportAnimalBanner";
 import { CertificationBanner } from "@/components/CertificationBanner";
@@ -48,6 +48,23 @@ interface PublicResumeData {
     activity: string;
     description?: string | null;
     contact?: string | null;
+  }>;
+  reviews?: Array<{
+    reviewerName: string;
+    reviewerContact?: string | null;
+    rating: number;
+    text?: string | null;
+    date?: string | null;
+    location?: string | null;
+  }>;
+  travel_locations?: Array<{
+    id: string;
+    name: string;
+    type: string;
+    code?: string | null;
+    date_visited?: string | null;
+    photo_url?: string | null;
+    notes?: string | null;
   }>;
 }
 
@@ -286,6 +303,77 @@ export default function PublicResume() {
                 <div key={idx} className="p-3 rounded border">
                   <div className="font-medium">{e.activity}</div>
                   {e.description && <div className="text-sm text-muted-foreground">{e.description}</div>}
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+        )}
+
+        {/* References & Reviews */}
+        {data.reviews && data.reviews.length > 0 && (
+          <Card className="mb-6">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-navy-900">
+                <Star className="w-5 h-5 text-primary" />
+                References & Reviews
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {data.reviews.map((review, idx) => (
+                <div key={idx} className="p-4 rounded border">
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="font-medium">{review.reviewerName}</div>
+                    <div className="flex items-center gap-1">
+                      {[1,2,3,4,5].map(i => (
+                        <Star key={i} className={`w-4 h-4 ${i <= review.rating ? 'text-yellow-500 fill-current' : 'text-yellow-300'}`} />
+                      ))}
+                    </div>
+                  </div>
+                  {review.text && (
+                    <p className="text-sm text-muted-foreground mb-2">{review.text}</p>
+                  )}
+                  <div className="text-xs text-muted-foreground">
+                    {review.location && <span>{review.location}</span>}
+                    {review.date && <span> • {review.date}</span>}
+                  </div>
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Travel History */}
+        {data.travel_locations && data.travel_locations.length > 0 && (
+          <Card className="mb-6">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-navy-900">
+                <MapPin className="w-5 h-5 text-primary" />
+                Travel History
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              {data.travel_locations.map((location, idx) => (
+                <div key={idx} className="p-3 rounded border">
+                  <div className="flex items-start justify-between">
+                    <div className="flex-grow">
+                      <div className="font-medium">{location.name}</div>
+                      <div className="text-sm text-muted-foreground">
+                        <Badge variant="outline" className="mr-2">{location.type}</Badge>
+                        {location.code && <span className="mr-2">Code: {location.code}</span>}
+                        {location.date_visited && <span>Visited: {location.date_visited}</span>}
+                      </div>
+                      {location.notes && (
+                        <p className="text-sm text-muted-foreground mt-1">{location.notes}</p>
+                      )}
+                    </div>
+                    {location.photo_url && (
+                      <img 
+                        src={location.photo_url} 
+                        alt={location.name}
+                        className="w-16 h-16 rounded object-cover ml-3"
+                      />
+                    )}
+                  </div>
                 </div>
               ))}
             </CardContent>

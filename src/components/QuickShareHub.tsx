@@ -2,7 +2,12 @@ import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
+import { useEmailSharing } from "@/hooks/useEmailSharing";
 import { 
   Heart, 
   Shield, 
@@ -12,7 +17,13 @@ import {
   Star,
   Share2,
   Copy,
-  ExternalLink
+  ExternalLink,
+  Smartphone,
+  MessageCircle,
+  Mail,
+  Check,
+  Facebook,
+  MessageSquare
 } from "lucide-react";
 
 interface QuickShareHubProps {
@@ -35,7 +46,18 @@ interface SharePage {
 
 export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost }) => {
   const [copyingId, setCopyingId] = useState<string | null>(null);
+  const [sharingId, setSharingId] = useState<string | null>(null);
+  const [showOptionsFor, setShowOptionsFor] = useState<string | null>(null);
+  const [showEmailForm, setShowEmailForm] = useState(false);
+  const [currentPage, setCurrentPage] = useState<SharePage | null>(null);
+  const [emailData, setEmailData] = useState({
+    recipientEmail: '',
+    recipientName: '',
+    customMessage: ''
+  });
+  
   const { toast } = useToast();
+  const { sendEmail, isLoading: emailLoading } = useEmailSharing();
 
   const baseUrl = window.location.origin;
 
@@ -144,6 +166,7 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
   };
 
   const handleNativeShare = async (page: SharePage) => {
+    setSharingId(page.id);
     const fullUrl = `${baseUrl}${page.path}`;
     
     if (navigator.share) {
@@ -162,6 +185,64 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
     } else {
       // Fallback to copy for desktop
       handleCopyLink(page);
+    }
+    setSharingId(null);
+  };
+
+  const handleSMSShare = (page: SharePage) => {
+    const fullUrl = `${baseUrl}${page.path}`;
+    const message = `Check out ${petData.name}'s ${page.title}: ${fullUrl}`;
+    window.location.href = `sms:?body=${encodeURIComponent(message)}`;
+  };
+
+  const handleFacebookShare = (page: SharePage) => {
+    const fullUrl = `${baseUrl}${page.path}`;
+    const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(fullUrl)}`;
+    window.open(facebookUrl, '_blank');
+  };
+
+  const handleMessengerShare = (page: SharePage) => {
+    const fullUrl = `${baseUrl}${page.path}`;
+    const messengerUrl = `https://www.facebook.com/dialog/send?link=${encodeURIComponent(fullUrl)}&app_id=YOUR_APP_ID&redirect_uri=${encodeURIComponent(fullUrl)}`;
+    window.open(messengerUrl, '_blank');
+  };
+
+  const handleEmailShare = (page: SharePage) => {
+    setCurrentPage(page);
+    setShowEmailForm(true);
+  };
+
+  const handleSendEmail = async () => {
+    if (!currentPage || !emailData.recipientEmail) {
+      toast({
+        title: "Email Required",
+        description: "Please enter a recipient email address",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const fullUrl = `${baseUrl}${currentPage.path}`;
+    const shareType = currentPage.id === 'profile' ? 'profile' : 
+                      currentPage.id === 'care' ? 'care' : 
+                      currentPage.id === 'resume' ? 'resume' : 
+                      currentPage.id === 'reviews' ? 'reviews' : 
+                      currentPage.id === 'missing' ? 'missing_pet' : 'profile';
+
+    const success = await sendEmail({
+      type: shareType,
+      recipientEmail: emailData.recipientEmail,
+      recipientName: emailData.recipientName,
+      petName: petData.name,
+      petId: petData.id!,
+      shareUrl: fullUrl,
+      customMessage: emailData.customMessage,
+    });
+
+    if (success) {
+      setShowEmailForm(false);
+      setEmailData({ recipientEmail: '', recipientName: '', customMessage: '' });
+      setCurrentPage(null);
     }
   };
 
@@ -209,39 +290,136 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
                 )}
               </div>
               
-              <div className="flex gap-2">
-                <Button
-                  onClick={() => handleNativeShare(page)}
-                  size="sm"
-                  className="flex-1 text-xs"
-                  disabled={copyingId === page.id}
-                >
-                  <Share2 className="w-3 h-3 mr-1" />
-                  Share
-                </Button>
-                
-                <Button
-                  onClick={() => handleCopyLink(page)}
-                  variant="outline"
-                  size="sm"
-                  className="text-xs"
-                  disabled={copyingId === page.id}
-                >
-                  {copyingId === page.id ? (
-                    <div className="w-3 h-3 animate-spin rounded-full border border-gray-400 border-t-transparent" />
-                  ) : (
-                    <Copy className="w-3 h-3" />
-                  )}
-                </Button>
-                
-                <Button
-                  onClick={() => handleOpenLink(page)}
-                  variant="ghost"
-                  size="sm"
-                  className="text-xs"
-                >
-                  <ExternalLink className="w-3 h-3" />
-                </Button>
+              <div className="space-y-2">
+                {showOptionsFor !== page.id ? (
+                  /* Show Options Button */
+                  <Button
+                    onClick={() => setShowOptionsFor(page.id)}
+                    size="sm"
+                    className={`w-full text-xs ${
+                      page.variant === 'missing' 
+                        ? 'bg-red-600 hover:bg-red-700 text-white' 
+                        : 'bg-primary hover:bg-primary/90'
+                    }`}
+                  >
+                    <Share2 className="w-3 h-3 mr-1" />
+                    Share
+                  </Button>
+                ) : (
+                  <>
+                    {/* Quick Share Button */}
+                    <Button
+                      onClick={() => handleNativeShare(page)}
+                      size="sm"
+                      className={`w-full text-xs ${
+                        page.variant === 'missing' 
+                          ? 'bg-red-600 hover:bg-red-700 text-white' 
+                          : 'bg-primary hover:bg-primary/90'
+                      }`}
+                      disabled={sharingId === page.id}
+                    >
+                      {sharingId === page.id ? (
+                        <>
+                          <div className="w-3 h-3 animate-spin rounded-full border border-white border-t-transparent mr-1" />
+                          Sharing...
+                        </>
+                      ) : (
+                        <>
+                          <Smartphone className="w-3 h-3 mr-1" />
+                          Quick Share
+                        </>
+                      )}
+                    </Button>
+                    
+                    {/* Secondary Options */}
+                    <div className="grid grid-cols-3 gap-1">
+                      <Button
+                        onClick={() => handleCopyLink(page)}
+                        variant="outline"
+                        size="sm"
+                        className={`text-xs ${
+                          page.variant === 'missing' 
+                            ? 'border-red-600 text-red-700 hover:bg-red-50' 
+                            : 'border-primary text-primary hover:bg-primary/5'
+                        }`}
+                        disabled={copyingId === page.id}
+                      >
+                        {copyingId === page.id ? (
+                          <Check className="w-3 h-3" />
+                        ) : (
+                          <Copy className="w-3 h-3" />
+                        )}
+                      </Button>
+                      
+                      <Button
+                        onClick={() => handleSMSShare(page)}
+                        variant="outline"
+                        size="sm"
+                        className={`text-xs ${
+                          page.variant === 'missing' 
+                            ? 'border-red-600 text-red-700 hover:bg-red-50' 
+                            : 'border-primary text-primary hover:bg-primary/5'
+                        }`}
+                      >
+                        <MessageCircle className="w-3 h-3" />
+                      </Button>
+                      
+                      <Button
+                        onClick={() => handleEmailShare(page)}
+                        variant="outline"
+                        size="sm"
+                        className={`text-xs ${
+                          page.variant === 'missing' 
+                            ? 'border-red-600 text-red-700 hover:bg-red-50' 
+                            : 'border-primary text-primary hover:bg-primary/5'
+                        }`}
+                      >
+                        <Mail className="w-3 h-3" />
+                      </Button>
+                    </div>
+                    
+                    <div className="grid grid-cols-3 gap-1">
+                      <Button
+                        onClick={() => handleFacebookShare(page)}
+                        variant="outline"
+                        size="sm"
+                        className={`text-xs ${
+                          page.variant === 'missing' 
+                            ? 'border-red-600 text-red-700 hover:bg-red-50' 
+                            : 'border-primary text-primary hover:bg-primary/5'
+                        }`}
+                      >
+                        <Facebook className="w-3 h-3" />
+                      </Button>
+                      
+                      <Button
+                        onClick={() => handleMessengerShare(page)}
+                        variant="outline"
+                        size="sm"
+                        className={`text-xs ${
+                          page.variant === 'missing' 
+                            ? 'border-red-600 text-red-700 hover:bg-red-50' 
+                            : 'border-primary text-primary hover:bg-primary/5'
+                        }`}
+                      >
+                        <MessageSquare className="w-3 h-3" />
+                      </Button>
+                      
+                      <Button
+                        onClick={() => handleOpenLink(page)}
+                        variant="outline"
+                        size="sm"
+                        className={`text-xs ${
+                          page.variant === 'missing' 
+                            ? 'border-red-600 text-red-700 hover:bg-red-50' 
+                            : 'border-primary text-primary hover:bg-primary/5'
+                        }`}
+                      >
+                        <ExternalLink className="w-3 h-3" />
+                      </Button>
+                    </div>
+                  </>
+                )}
               </div>
             </div>
           ))}
@@ -249,10 +427,66 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
         
         <div className="mt-4 p-3 bg-blue-50 rounded-lg">
           <p className="text-xs text-blue-700">
-            💡 <strong>Marketing Tip:</strong> Each link includes optimized social media previews that help attract new users to PetPort!
+            💡 <strong>Centralized Tip:</strong> Each link includes optimized social media previews that help attract new users to PetPort!
           </p>
         </div>
       </CardContent>
+
+      {/* Email Dialog */}
+      <Dialog open={showEmailForm} onOpenChange={setShowEmailForm}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Share via Email</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <Label htmlFor="recipientEmail">Recipient Email *</Label>
+              <Input
+                id="recipientEmail"
+                type="email"
+                placeholder="Enter email address"
+                value={emailData.recipientEmail}
+                onChange={(e) => setEmailData(prev => ({ ...prev, recipientEmail: e.target.value }))}
+              />
+            </div>
+            <div>
+              <Label htmlFor="recipientName">Recipient Name (optional)</Label>
+              <Input
+                id="recipientName"
+                placeholder="Enter recipient's name"
+                value={emailData.recipientName}
+                onChange={(e) => setEmailData(prev => ({ ...prev, recipientName: e.target.value }))}
+              />
+            </div>
+            <div>
+              <Label htmlFor="customMessage">Personal Message (optional)</Label>
+              <Textarea
+                id="customMessage"
+                placeholder="Add a personal message..."
+                value={emailData.customMessage}
+                onChange={(e) => setEmailData(prev => ({ ...prev, customMessage: e.target.value }))}
+                rows={3}
+              />
+            </div>
+            <div className="flex gap-2">
+              <Button
+                onClick={handleSendEmail}
+                disabled={emailLoading}
+                className="flex-1"
+              >
+                {emailLoading ? 'Sending...' : 'Send Email'}
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => setShowEmailForm(false)}
+                disabled={emailLoading}
+              >
+                Cancel
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </Card>
   );
 };

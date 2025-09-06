@@ -18,6 +18,7 @@ import { LostPetButton } from "@/components/LostPetButton";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { generatePublicProfileUrl, generatePublicMissingUrl, generateQRCodeUrl } from "@/services/pdfService";
 import { Link } from "react-router-dom";
+
 interface PetData {
   name: string;
   breed: string;

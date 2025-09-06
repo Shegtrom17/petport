@@ -245,8 +245,8 @@ export const QuickIDSection = ({ petData, onUpdate }: QuickIDSectionProps) => {
       )}
 
       {/* Pet Basic Information */}
-      <Card className="bg-white shadow-xl border-2 border-gold-300">
-        <CardHeader className="bg-gradient-to-r from-gold-500 to-gold-400 text-white">
+      <Card className="bg-white shadow-sm border border-gray-200">
+        <CardHeader className="bg-white border-b border-gray-100">
           <CardTitle className="text-xl flex items-center space-x-3">
             <img 
               src={petData.photoUrl || "/placeholder.svg"} 
@@ -254,8 +254,8 @@ export const QuickIDSection = ({ petData, onUpdate }: QuickIDSectionProps) => {
               className="w-16 h-16 rounded-full border-4 border-white object-cover"
             />
             <div>
-              <h3 className="text-2xl font-bold">{petData.name}</h3>
-              <p className="text-gold-100">{petData.breed} • {petData.age}</p>
+              <h3 className="text-2xl font-bold text-brand-primary">{petData.name}</h3>
+              <p className="text-muted-foreground">{petData.breed} • {petData.age}</p>
             </div>
           </CardTitle>
         </CardHeader>
@@ -263,7 +263,7 @@ export const QuickIDSection = ({ petData, onUpdate }: QuickIDSectionProps) => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Pet Details */}
             <div className="space-y-4">
-              <h4 className="font-bold text-lg text-gray-800">Pet Details</h4>
+              <h4 className="font-bold text-lg text-brand-primary">Pet Details</h4>
               <div className="grid grid-cols-2 gap-2 text-sm">
                 <div><strong>Breed:</strong> {petData.breed}</div>
                 <div><strong>Age:</strong> {petData.age}</div>
@@ -279,7 +279,7 @@ export const QuickIDSection = ({ petData, onUpdate }: QuickIDSectionProps) => {
 
             {/* Emergency Contacts */}
             <div className="space-y-4">
-              <h4 className="font-bold text-lg text-gray-800">Emergency Contacts</h4>
+              <h4 className="font-bold text-lg text-brand-primary">Emergency Contacts</h4>
               <div className="space-y-2">
                 <div className="bg-red-50 p-3 rounded-lg">
                   <div className="flex items-center space-x-2">
@@ -289,9 +289,9 @@ export const QuickIDSection = ({ petData, onUpdate }: QuickIDSectionProps) => {
                   <p className="ml-6">{petData.emergencyContact || 'Not set'}</p>
                 </div>
                 {petData.secondEmergencyContact && (
-                  <div className="bg-gold-300/20 p-3 rounded-lg">
+                  <div className="bg-gray-50 p-3 rounded-lg">
                     <div className="flex items-center space-x-2">
-                      <Phone className="w-4 h-4 text-gold-500" />
+                      <Phone className="w-4 h-4 text-brand-primary" />
                       <strong>Secondary:</strong>
                     </div>
                     <p className="ml-6">{petData.secondEmergencyContact}</p>
@@ -304,7 +304,7 @@ export const QuickIDSection = ({ petData, onUpdate }: QuickIDSectionProps) => {
       </Card>
 
       {/* Lost Pet Information */}
-      <Card className="bg-white shadow-xl border-2 border-red-200">
+      <Card className="bg-white shadow-sm border border-gray-200">
         <CardHeader>
           <div className="flex items-center justify-between">
             <CardTitle className="text-xl text-red-800 flex items-center space-x-2">
@@ -461,9 +461,9 @@ export const QuickIDSection = ({ petData, onUpdate }: QuickIDSectionProps) => {
                   )}
 
                   {(lostPetData.last_seen_date || lostPetData.last_seen_time) && (
-                    <div className="bg-gold-300/20 p-4 rounded-lg">
+                    <div className="bg-gray-50 p-4 rounded-lg">
                       <div className="flex items-center space-x-2 mb-2">
-                        <Clock className="w-5 h-5 text-gold-500" />
+                        <Clock className="w-5 h-5 text-brand-primary" />
                         <strong>Last Seen:</strong>
                       </div>
                       <p className="ml-7">
@@ -514,9 +514,9 @@ export const QuickIDSection = ({ petData, onUpdate }: QuickIDSectionProps) => {
 
       {/* Recent Photos */}
       {petData.gallery_photos && petData.gallery_photos.length > 0 && (
-        <Card className="bg-white shadow-xl">
+        <Card className="bg-white shadow-sm border border-gray-200">
           <CardHeader>
-            <CardTitle className="text-xl">Recent Photos</CardTitle>
+            <CardTitle className="text-xl text-brand-primary">Recent Photos</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -541,9 +541,9 @@ export const QuickIDSection = ({ petData, onUpdate }: QuickIDSectionProps) => {
       />
 
       {/* QR Code Section */}
-      <Card className="bg-white shadow-xl">
+      <Card className="bg-white shadow-sm border border-gray-200">
         <CardHeader>
-          <CardTitle className="text-xl flex items-center justify-between">
+          <CardTitle className="text-xl flex items-center justify-between text-brand-primary">
             <span>QR Code</span>
             <PrivacyHint isPublic={true} feature="" variant="badge" />
           </CardTitle>
@@ -571,13 +571,13 @@ export const QuickIDSection = ({ petData, onUpdate }: QuickIDSectionProps) => {
                   Show QR Code
                 </Button>
               </DialogTrigger>
-              <DialogContent className="max-w-md bg-[#f8f8f8]">
+              <DialogContent className="max-w-md bg-white">
                 <DialogHeader>
-                  <DialogTitle className="font-bold text-navy-900 border-b-2 border-gold-500 pb-2">
+                  <DialogTitle className="font-bold text-brand-primary border-b-2 border-brand-primary pb-2">
                     QR Code for {petData.name}
                   </DialogTitle>
                 </DialogHeader>
-                <div className="flex justify-center p-4 bg-white rounded-lg border-2 border-gold-500/30">
+                <div className="flex justify-center p-4 bg-white rounded-lg border border-gray-200">
                   <img
                     src={generateQRCodeUrl(lostPetData.is_missing ? generatePublicMissingUrl(petData.id) : generatePublicProfileUrl(petData.id), 200)}
                     alt={lostPetData.is_missing ? `QR Code for ${petData.name}'s missing alert` : `QR Code for ${petData.name}'s profile`}

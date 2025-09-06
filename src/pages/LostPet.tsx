@@ -233,82 +233,78 @@ const LostPet = () => {
         )}
 
         {/* Pet Information Card */}
-        <Card className="bg-white shadow-sm border border-border">
-          <CardHeader className="bg-gradient-to-r from-brand-primary to-brand-primary-dark text-white">
-            <CardTitle className="text-xl flex items-center space-x-3">
-              <img 
-                src={currentPet.photoUrl || "/placeholder.svg"} 
-                alt={currentPet.name}
-                className="w-16 h-16 rounded-full border-4 border-white object-cover"
-              />
-              <div>
-                <h3 className="text-2xl font-bold">{currentPet.name}</h3>
-                <p className="text-white/80">{currentPet.breed} • {currentPet.age}</p>
+        <div className="bg-white/50 backdrop-blur-sm rounded-2xl p-6">
+          <div className="flex items-center space-x-4 mb-6">
+            <img 
+              src={currentPet.photoUrl || "/placeholder.svg"} 
+              alt={currentPet.name}
+              className="w-16 h-16 rounded-full border-2 border-white/20 object-cover"
+            />
+            <div>
+              <h3 className="text-2xl font-bold" style={{ color: '#5691af' }}>{currentPet.name}</h3>
+              <p className="text-muted-foreground">{currentPet.breed} • {currentPet.age}</p>
+            </div>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Pet Details */}
+            <div className="space-y-4">
+              <h4 className="font-semibold text-lg" style={{ color: '#5691af' }}>Pet Details</h4>
+              <div className="grid grid-cols-2 gap-2 text-sm">
+                <div><strong>Breed:</strong> {currentPet.breed}</div>
+                <div><strong>Age:</strong> {currentPet.age}</div>
+                <div><strong>Weight:</strong> {currentPet.weight}</div>
+                <div><strong>Color:</strong> {currentPet.species}</div>
               </div>
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="p-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Pet Details */}
-              <div className="space-y-4">
-                <h4 className="font-bold text-lg text-brand-primary">Pet Details</h4>
-                <div className="grid grid-cols-2 gap-2 text-sm">
-                  <div><strong>Breed:</strong> {currentPet.breed}</div>
-                  <div><strong>Age:</strong> {currentPet.age}</div>
-                  <div><strong>Weight:</strong> {currentPet.weight}</div>
-                  <div><strong>Color:</strong> {currentPet.species}</div>
+              {currentPet.microchip_id && (
+                <div className="bg-white/60 p-3 rounded-lg border border-white/30">
+                  <strong>Microchip ID:</strong> {currentPet.microchip_id}
                 </div>
-                {currentPet.microchip_id && (
-                  <div className="bg-brand-primary/10 p-3 rounded-lg border border-brand-primary/20">
-                    <strong>Microchip ID:</strong> {currentPet.microchip_id}
+              )}
+            </div>
+
+            {/* Emergency Contacts */}
+            <div className="space-y-4">
+              <h4 className="font-semibold text-lg" style={{ color: '#5691af' }}>Emergency Contacts</h4>
+              <div className="space-y-2">
+                <div className="bg-white/60 p-3 rounded-lg border border-white/30">
+                  <div className="flex items-center space-x-2">
+                    <Phone className="w-4 h-4" style={{ color: '#5691af' }} />
+                    <strong>Primary:</strong>
+                  </div>
+                  <p className="ml-6">{currentPet.emergency_contact || 'Not set'}</p>
+                </div>
+                {currentPet.second_emergency_contact && (
+                  <div className="bg-white/60 p-3 rounded-lg border border-white/30">
+                    <div className="flex items-center space-x-2">
+                      <Phone className="w-4 h-4" style={{ color: '#5691af' }} />
+                      <strong>Secondary:</strong>
+                    </div>
+                    <p className="ml-6">{currentPet.second_emergency_contact}</p>
                   </div>
                 )}
               </div>
-
-              {/* Emergency Contacts */}
-              <div className="space-y-4">
-                <h4 className="font-bold text-lg text-brand-primary">Emergency Contacts</h4>
-                <div className="space-y-2">
-                  <div className="bg-red-50 p-3 rounded-lg">
-                    <div className="flex items-center space-x-2">
-                      <Phone className="w-4 h-4 text-red-600" />
-                      <strong>Primary:</strong>
-                    </div>
-                    <p className="ml-6">{currentPet.emergency_contact || 'Not set'}</p>
-                  </div>
-                  {currentPet.second_emergency_contact && (
-                    <div className="bg-brand-primary/10 p-3 rounded-lg border border-brand-primary/20">
-                      <div className="flex items-center space-x-2">
-                        <Phone className="w-4 h-4 text-brand-primary" />
-                        <strong>Secondary:</strong>
-                      </div>
-                      <p className="ml-6">{currentPet.second_emergency_contact}</p>
-                    </div>
-                  )}
-                </div>
-              </div>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
 
         {/* Lost Pet Information */}
-        <Card className="bg-white shadow-sm border border-border">
-          <CardHeader>
-            <div className="flex items-center justify-between">
-              <CardTitle className="text-xl text-brand-primary flex items-center space-x-2">
-                <AlertTriangle className="w-6 h-6" />
-                <span>Missing Pet Information</span>
-              </CardTitle>
-              <Button
-                onClick={() => setIsEditing(!isEditing)}
-                variant="outline"
-                className="border-brand-primary text-brand-primary hover:bg-brand-primary/10"
-              >
-                {isEditing ? 'Cancel' : 'Edit'}
-              </Button>
-            </div>
-          </CardHeader>
-          <CardContent className="p-6 space-y-6">
+        <div className="bg-white/50 backdrop-blur-sm rounded-2xl p-6">
+          <div className="flex items-center justify-between mb-6">
+            <h3 className="text-xl font-semibold flex items-center space-x-2" style={{ color: '#5691af' }}>
+              <AlertTriangle className="w-6 h-6" />
+              <span>Missing Pet Information</span>
+            </h3>
+            <Button
+              onClick={() => setIsEditing(!isEditing)}
+              variant="outline"
+              className="text-white hover:bg-white/20"
+              style={{ borderColor: '#5691af', color: '#5691af' }}
+            >
+              {isEditing ? 'Cancel' : 'Edit'}
+            </Button>
+          </div>
+          <div className="space-y-6">
             {isEditing ? (
               <>
                 {/* Last Seen Location */}
@@ -414,93 +410,94 @@ const LostPet = () => {
                   />
                 </div>
 
-                <Button 
-                  onClick={saveLostPetData}
-                  className="w-full bg-red-600 hover:bg-red-700 text-white py-3 text-lg font-bold"
-                >
-                  Save Missing Pet Information
-                </Button>
-              </>
-            ) : (
-              <>
-                {/* Display Mode */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="space-y-4">
-                    {lostPetData.last_seen_location && (
-                      <div className="bg-red-50 p-4 rounded-lg">
-                        <div className="flex items-center space-x-2 mb-2">
-                          <MapPin className="w-5 h-5 text-red-600" />
-                          <strong>Last Seen Location:</strong>
-                        </div>
-                        <p className="ml-7">{lostPetData.last_seen_location}</p>
-                      </div>
-                    )}
+                 <Button 
+                   onClick={saveLostPetData}
+                   className="w-full text-white py-3 text-lg font-bold"
+                   style={{ backgroundColor: '#5691af' }}
+                 >
+                   Save Missing Pet Information
+                 </Button>
+               </>
+             ) : (
+               <>
+                 {/* Display Mode */}
+                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                   <div className="space-y-4">
+                     {lostPetData.last_seen_location && (
+                       <div className="bg-white/60 p-4 rounded-lg border border-white/30">
+                         <div className="flex items-center space-x-2 mb-2">
+                           <MapPin className="w-5 h-5" style={{ color: '#5691af' }} />
+                           <strong>Last Seen Location:</strong>
+                         </div>
+                         <p className="ml-7">{lostPetData.last_seen_location}</p>
+                       </div>
+                     )}
 
-                    {(lostPetData.last_seen_date || lostPetData.last_seen_time) && (
-                      <div className="bg-[#F5F0E0] p-4 rounded-lg">
-                        <div className="flex items-center space-x-2 mb-2">
-                          <Clock className="w-5 h-5 text-[#B8860B]" />
-                          <strong>Last Seen:</strong>
-                        </div>
-                        <p className="ml-7">
-                          {lostPetData.last_seen_date && format(lostPetData.last_seen_date, 'PPP')}
-                          {lostPetData.last_seen_time && ` at ${lostPetData.last_seen_time}`}
-                        </p>
-                      </div>
-                    )}
+                     {(lostPetData.last_seen_date || lostPetData.last_seen_time) && (
+                       <div className="bg-white/60 p-4 rounded-lg border border-white/30">
+                         <div className="flex items-center space-x-2 mb-2">
+                           <Clock className="w-5 h-5" style={{ color: '#5691af' }} />
+                           <strong>Last Seen:</strong>
+                         </div>
+                         <p className="ml-7">
+                           {lostPetData.last_seen_date && format(lostPetData.last_seen_date, 'PPP')}
+                           {lostPetData.last_seen_time && ` at ${lostPetData.last_seen_time}`}
+                         </p>
+                       </div>
+                     )}
 
-                    {lostPetData.reward_amount && (
-                      <div className="bg-green-50 p-4 rounded-lg border-2 border-green-200">
-                        <div className="flex items-center space-x-2 mb-2">
-                          <DollarSign className="w-5 h-5 text-green-600" />
-                          <strong>Reward Offered:</strong>
-                        </div>
-                        <p className="ml-7 text-lg font-bold text-green-700">{lostPetData.reward_amount}</p>
-                      </div>
-                    )}
-                  </div>
+                     {lostPetData.reward_amount && (
+                       <div className="bg-white/60 p-4 rounded-lg border border-white/30">
+                         <div className="flex items-center space-x-2 mb-2">
+                           <DollarSign className="w-5 h-5" style={{ color: '#5691af' }} />
+                           <strong>Reward Offered:</strong>
+                         </div>
+                         <p className="ml-7 text-lg font-bold" style={{ color: '#5691af' }}>{lostPetData.reward_amount}</p>
+                       </div>
+                     )}
+                   </div>
 
-                  <div className="space-y-4">
-                    {lostPetData.distinctive_features && (
-                      <div className="bg-blue-50 p-4 rounded-lg">
-                        <div className="flex items-center space-x-2 mb-2">
-                          <Eye className="w-5 h-5 text-blue-600" />
-                          <strong>Distinctive Features:</strong>
-                        </div>
-                        <p className="ml-7">{lostPetData.distinctive_features}</p>
-                      </div>
-                    )}
+                   <div className="space-y-4">
+                     {lostPetData.distinctive_features && (
+                       <div className="bg-white/60 p-4 rounded-lg border border-white/30">
+                         <div className="flex items-center space-x-2 mb-2">
+                           <Eye className="w-5 h-5" style={{ color: '#5691af' }} />
+                           <strong>Distinctive Features:</strong>
+                         </div>
+                         <p className="ml-7">{lostPetData.distinctive_features}</p>
+                       </div>
+                     )}
 
-                    {lostPetData.finder_instructions && (
-                      <div className="bg-yellow-50 p-4 rounded-lg">
-                        <strong>If Found:</strong>
-                        <p className="mt-2">{lostPetData.finder_instructions}</p>
-                      </div>
-                    )}
+                     {lostPetData.finder_instructions && (
+                       <div className="bg-white/60 p-4 rounded-lg border border-white/30">
+                         <strong>If Found:</strong>
+                         <p className="mt-2">{lostPetData.finder_instructions}</p>
+                       </div>
+                     )}
 
-                    {lostPetData.emergency_notes && (
-                      <div className="bg-red-50 p-4 rounded-lg">
-                        <strong>Important Notes:</strong>
-                        <p className="mt-2">{lostPetData.emergency_notes}</p>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </>
-            )}
-          </CardContent>
-        </Card>
+                     {lostPetData.emergency_notes && (
+                       <div className="bg-white/60 p-4 rounded-lg border border-white/30">
+                         <strong>Important Notes:</strong>
+                         <p className="mt-2">{lostPetData.emergency_notes}</p>
+                       </div>
+                     )}
+                   </div>
+                 </div>
+               </>
+             )}
+           </div>
+         </div>
 
         {/* Actions Section - Combined flyer generation and sharing */}
-        <Card className="bg-white shadow-xl">
-          <CardHeader>
-            <CardTitle className="text-xl flex items-center space-x-2">
+        <div className="bg-white/50 backdrop-blur-sm rounded-2xl p-6">
+          <div className="mb-6">
+            <h3 className="text-xl font-semibold flex items-center space-x-2" style={{ color: '#5691af' }}>
               <Share className="w-6 h-6" />
               <span>Share & Generate Flyer</span>
-            </CardTitle>
+            </h3>
             <p className="text-sm text-muted-foreground">Generate missing pet flyer and share alert</p>
-          </CardHeader>
-          <CardContent className="space-y-6">
+          </div>
+          <div className="space-y-6">
             <LostPetPDFGenerator 
               petId={currentPet.id || ""} 
               petName={currentPet.name}
@@ -525,17 +522,17 @@ const LostPet = () => {
                 />
               </div>
             )}
-          </CardContent>
-        </Card>
+           </div>
+         </div>
 
         {/* Gallery Photos */}
         {currentPet.gallery_photos && currentPet.gallery_photos.length > 0 && (
-          <Card className="bg-white shadow-xl">
-            <CardHeader>
-              <CardTitle className="text-xl">Recent Photos</CardTitle>
+          <div className="bg-white/50 backdrop-blur-sm rounded-2xl p-6">
+            <div className="mb-6">
+              <h3 className="text-xl font-semibold" style={{ color: '#5691af' }}>Recent Photos</h3>
               <p className="text-sm text-muted-foreground">Recent photos for identification</p>
-            </CardHeader>
-            <CardContent>
+            </div>
+            <div>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 {currentPet.gallery_photos.map((photo: any, index: number) => (
                   <div key={index} className="aspect-square rounded-lg overflow-hidden border-2 border-gray-200">
@@ -546,10 +543,10 @@ const LostPet = () => {
                     />
                   </div>
                 ))}
-              </div>
-            </CardContent>
-          </Card>
-        )}
+               </div>
+             </div>
+           </div>
+         )}
       </main>
       </div>
     </PWALayout>

@@ -67,7 +67,15 @@ export const PetPDFGenerator = ({ petId, petName, petData }: PetPDFGeneratorProp
       editLocation: 'Care Instructions section',
       editPath: '#care-instructions',
       icon: Heart,
-      available: !!petData?.care_instructions || false
+      available: !!(petData?.careInstructions && (
+        petData.careInstructions.feedingSchedule || 
+        petData.careInstructions.morningRoutine || 
+        petData.careInstructions.eveningRoutine || 
+        petData.careInstructions.allergies || 
+        petData.careInstructions.behavioralNotes || 
+        petData.careInstructions.favoriteActivities || 
+        petData.careInstructions.medications
+      ))
     },
     {
       key: 'resume',
@@ -76,7 +84,12 @@ export const PetPDFGenerator = ({ petId, petName, petData }: PetPDFGeneratorProp
       editLocation: 'Resume section',
       editPath: '#resume',
       icon: User,
-      available: !!petData?.resume || false
+      available: !!(petData && (
+        (petData.experiences && petData.experiences.length > 0) ||
+        (petData.achievements && petData.achievements.length > 0) ||
+        (petData.training && petData.training.length > 0) ||
+        (petData.reviews && petData.reviews.length > 0)
+      ))
     },
     {
       key: 'lost_pet',
@@ -94,7 +107,7 @@ export const PetPDFGenerator = ({ petId, petName, petData }: PetPDFGeneratorProp
       editLocation: 'Gallery section',
       editPath: '#gallery',
       icon: Camera,
-      available: (petData?.photos && petData.photos.length > 0) || false
+      available: !!(petData?.galleryPhotos && petData.galleryPhotos.length > 0)
     }
   ];
 

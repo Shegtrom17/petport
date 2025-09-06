@@ -237,23 +237,15 @@ export const PetPDFGenerator = ({ petId, petName, petData }: PetPDFGeneratorProp
   return (
     <div className="space-y-4">
       {/* Passport-style header with circular pet photo */}
-      <div className="bg-brand-primary p-4 rounded-lg text-white relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-16 h-16 bg-gold-500/10 rounded-full -translate-y-8 translate-x-8"></div>
-        <div className="absolute bottom-0 left-0 w-12 h-12 bg-gold-500/10 rounded-full translate-y-6 -translate-x-6"></div>
-        
-        <div className="flex items-center space-x-4 relative z-10">
-          <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-gold-500/50 flex-shrink-0">
-            <div className="w-full h-full bg-gold-500/20 flex items-center justify-center">
-              <FileText className="w-8 h-8 text-gold-500" />
-            </div>
-          </div>
-          <div>
-            <h3 className="text-xl font-bold text-gold-500 tracking-wide border-b-2 border-gold-500 pb-1 mb-2">
-              GENERATE PROFILE PDFS
-            </h3>
-            <p className="text-gold-200 text-sm">Centralized PDF hub • Edit content in specific sections</p>
-          </div>
-        </div>
+      {/* Section Header */}
+      <div className="mb-6">
+        <h3 className="text-xl font-semibold flex items-center gap-2" style={{ color: '#5691af' }}>
+          <FileText className="w-6 h-6" style={{ color: '#5691af' }} />
+          Generate Profile PDFs
+        </h3>
+        <p className="text-sm mt-1" style={{ color: '#5691af' }}>
+          Centralized PDF hub • Edit content in specific sections
+        </p>
       </div>
 
       {/* Authentication Alert */}

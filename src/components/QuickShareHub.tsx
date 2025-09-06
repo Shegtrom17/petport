@@ -305,10 +305,10 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
                         ? page.available
                           ? 'bg-red-600 hover:bg-red-700 text-white' 
                           : 'bg-gray-400 text-gray-600 cursor-not-allowed'
-                        : 'bg-primary hover:bg-primary/90'
+                        : 'bg-primary hover:bg-primary/90 text-white'
                     }`}
                   >
-                    <Share2 className="w-3 h-3 mr-1" />
+                    <Share2 className="w-3 h-3 mr-1 text-white" />
                     {page.available ? 'Share' : 'Unavailable'}
                   </Button>
                 ) : (
@@ -323,7 +323,7 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
                           ? page.available
                             ? 'bg-red-600 hover:bg-red-700 text-white' 
                             : 'bg-gray-400 text-gray-600 cursor-not-allowed'
-                          : 'bg-primary hover:bg-primary/90'
+                          : 'bg-primary hover:bg-primary/90 text-white'
                       }`}
                     >
                       {sharingId === page.id ? (
@@ -333,7 +333,7 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
                         </>
                       ) : (
                         <>
-                          <Smartphone className="w-3 h-3 mr-1" />
+                          <Smartphone className="w-3 h-3 mr-1 text-white" />
                           Quick Share
                         </>
                       )}

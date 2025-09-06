@@ -653,7 +653,7 @@ export const PetProfileContent = ({
       <div className="mb-8">
         <div className="bg-white/50 backdrop-blur-sm rounded-2xl p-6">
           <SectionHeader
-            overline="Marketing"
+            overline="Centralized"
             title="Quick Share Hub"
             icon={<Share2 className="w-5 h-5" />}
             action={

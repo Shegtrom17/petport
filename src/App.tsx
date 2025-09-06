@@ -4,7 +4,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate, useParams } from "react-router-dom";
 import { AuthProvider } from "@/context/AuthContext";
 import { ThemeProvider } from "@/context/ThemeContext";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
@@ -23,7 +23,6 @@ import PublicMissingPet from "./pages/PublicMissingPet";
 import NotFound from "./pages/NotFound";
 import { TestModeRibbon } from "@/components/TestModeRibbon";
 import TransferAccept from "./pages/TransferAccept";
-import PublicCredentials from "./pages/PublicCredentials";
 import PublicResume from "./pages/PublicResume";
 import PublicReviews from "./pages/PublicReviews";
 import Privacy from "./pages/Privacy";
@@ -40,6 +39,11 @@ import Help from "./pages/Help";
 import PublicGallery from "./pages/PublicGallery";
 import EmailTest from "./pages/EmailTest";
 
+// Redirect component for credentials -> resume consolidation
+const CredentialsRedirect = () => {
+  const { petId } = useParams();
+  return <Navigate to={`/resume/${petId}`} replace />;
+};
 
 const queryClient = new QueryClient();
 
@@ -102,8 +106,8 @@ const App = () => {
                    } />
                     <Route path="/profile/:petId" element={<PublicProfile />} />
                     <Route path="/care/:petId" element={<PublicCareInstructions />} />
-                    <Route path="/credentials/:petId" element={<PublicCredentials />} />
-                    <Route path="/resume/:petId" element={<PublicResume />} />
+                     <Route path="/credentials/:petId" element={<CredentialsRedirect />} />
+                     <Route path="/resume/:petId" element={<PublicResume />} />
                     <Route path="/reviews/:petId" element={<PublicReviews />} />
                    <Route path="/missing-pet/:petId" element={<PublicMissingPet />} />
                    <Route path="/gallery/:petId" element={<PublicGallery />} />

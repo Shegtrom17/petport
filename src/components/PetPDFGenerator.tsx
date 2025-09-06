@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { FileText, Download, Share2, Loader2, Users, ExternalLink, LogIn, AlertTriangle, Eye, Heart, Coffee, Camera, User } from "lucide-react";
+import { FileText, Download, Share2, Loader2, Users, ExternalLink, LogIn, AlertTriangle, Eye, Heart, Dog, Camera, User } from "lucide-react";
 import { generateQRCodeUrl, generatePublicProfileUrl, shareProfileOptimized, sharePDFBlob } from "@/services/pdfService";
 import { generateClientPetPDF, viewPDFBlob, downloadPDFBlob, isIOS, isStandalonePWA } from "@/services/clientPdfService";
 import { useToast } from "@/hooks/use-toast";
@@ -84,7 +84,7 @@ export const PetPDFGenerator = ({ petId, petName, petData }: PetPDFGeneratorProp
       description: 'Missing pet alert document',
       editLocation: 'Basic Information section',
       editPath: '#basic-info',
-      icon: Coffee,
+      icon: Dog,
       available: true
     },
     {

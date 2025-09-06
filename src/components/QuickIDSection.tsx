@@ -18,6 +18,7 @@ import { LostPetButton } from "@/components/LostPetButton";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { generatePublicProfileUrl, generatePublicMissingUrl, generateQRCodeUrl } from "@/services/pdfService";
 import { Link } from "react-router-dom";
+import { QuickShareHub } from "@/components/QuickShareHub";
 
 interface PetData {
   name: string;
@@ -533,29 +534,28 @@ export const QuickIDSection = ({ petData, onUpdate }: QuickIDSectionProps) => {
         </Card>
       )}
 
-      {/* Quick Share Section */}
+      {/* Quick Share Hub */}
+      <QuickShareHub 
+        petData={petData}
+        isLost={lostPetData.is_missing}
+      />
+
+      {/* QR Code Section */}
       <Card className="bg-white shadow-xl">
         <CardHeader>
           <CardTitle className="text-xl flex items-center justify-between">
-            <span>Quick Share & QR</span>
+            <span>QR Code</span>
             <PrivacyHint isPublic={true} feature="" variant="badge" />
           </CardTitle>
         </CardHeader>
         <CardContent>
           <PrivacyHint 
             isPublic={true} 
-            feature="sharing and QR code generation" 
+            feature="QR code generation" 
             variant="banner" 
             showToggle={true}
           />
           <div className="flex flex-col sm:flex-row gap-3 mt-4">
-            <SocialShareButtons 
-              petId={petData.id || ""} 
-              petName={petData.name}
-              isMissingPet={lostPetData.is_missing}
-              context={lostPetData.is_missing ? 'missing' : 'profile'}
-              shareUrlOverride={lostPetData.is_missing ? generatePublicMissingUrl(petData.id) : undefined}
-            />
             <LostPetButton 
               petId={petData.id || ""}
               petName={petData.name}

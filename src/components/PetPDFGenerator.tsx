@@ -107,7 +107,7 @@ export const PetPDFGenerator = ({ petId, petName, petData }: PetPDFGeneratorProp
       editLocation: 'Gallery section',
       editPath: '#gallery',
       icon: Camera,
-      available: !!(petData?.galleryPhotos && petData.galleryPhotos.length > 0)
+      available: !!(petData?.gallery_photos && petData.gallery_photos.length > 0)
     }
   ];
 

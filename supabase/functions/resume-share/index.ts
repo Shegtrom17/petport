@@ -111,7 +111,16 @@ serve(async (req) => {
     ${redirect ? `<p><a class="btn" href="${redirect}">View ${safe(name)}'s Resume</a></p>` : ""}
     ${redirect ? `<p class="muted">If you are not redirected automatically, use the button above.</p>` : ""}
   </div>
-  ${redirect ? `<script>setTimeout(() => location.replace(${JSON.stringify(redirect)}), 1000);</script>` : ""}
+  ${redirect ? `<script>
+    // Immediate redirect for better user experience
+    if (window.location !== window.parent.location) {
+      // In iframe, open in new tab
+      window.open(${JSON.stringify(redirect)}, '_blank');
+    } else {
+      // Direct redirect
+      window.location.href = ${JSON.stringify(redirect)};
+    }
+  </script>` : ""}
 </body>
 </html>`;
 

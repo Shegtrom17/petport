@@ -39,9 +39,30 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
 
   const baseUrl = window.location.origin;
 
-  // Don't render if no pet ID
-  if (!petData.id) {
-    return null;
+  // Debug logging
+  console.log('QuickShareHub - petData:', petData);
+  console.log('QuickShareHub - petData.id:', petData.id);
+
+  // Don't render if no pet ID or empty string
+  if (!petData.id || petData.id.trim() === '') {
+    console.log('QuickShareHub - No valid pet ID, showing placeholder');
+    return (
+      <Card className="bg-white shadow-xl">
+        <CardHeader>
+          <CardTitle className="text-xl flex items-center gap-2">
+            <Share2 className="w-6 h-6 text-gray-400" />
+            Quick Share Hub
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="p-4 text-center text-gray-500">
+            <p className="text-sm">
+              Share hub will be available once your pet profile is fully loaded
+            </p>
+          </div>
+        </CardContent>
+      </Card>
+    );
   }
 
   const sharePages: SharePage[] = [

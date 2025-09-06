@@ -28,6 +28,12 @@ serve(async (req) => {
     const url = new URL(req.url);
     const petId = url.searchParams.get("petId");
     const redirect = url.searchParams.get("redirect");
+    
+    // Check if this is a crawler/bot request
+    const userAgent = req.headers.get("user-agent") || "";
+    const isCrawler = /facebookexternalhit|twitterbot|linkedinbot|slackbot|whatsapp|telegrambot|discordbot|googlebot|bingbot/i.test(userAgent);
+    
+    console.log("Request from:", userAgent, "- Detected as crawler:", isCrawler);
 
     if (!petId) {
       return new Response("petId is required", {
@@ -53,6 +59,18 @@ serve(async (req) => {
       return new Response("Pet resume not available", {
         status: 404,
         headers: { ...corsHeaders, "Content-Type": "text/plain" },
+      });
+    }
+
+    // If this is a human request (not a crawler) and we have a redirect URL, redirect immediately
+    if (!isCrawler && redirect) {
+      console.log("Redirecting human request to:", redirect);
+      return new Response(null, {
+        status: 302,
+        headers: {
+          ...corsHeaders,
+          "Location": redirect
+        }
       });
     }
 

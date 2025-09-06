@@ -119,7 +119,16 @@ const generateEmailTemplate = (data: EmailRequest) => {
           ${template.content}
           
           <div style="text-align: center; margin: 30px 0;">
-            <a href="${shareUrl}" 
+            <a href="${(() => {
+              // Extract direct URL from shareUrl if it contains a redirect parameter
+              try {
+                const url = new URL(shareUrl);
+                const redirectParam = url.searchParams.get('redirect');
+                return redirectParam ? decodeURIComponent(redirectParam) : shareUrl;
+              } catch {
+                return shareUrl; // Fallback to original if URL parsing fails
+              }
+            })()} " 
                style="display: inline-block; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; text-decoration: none; padding: 15px 30px; border-radius: 8px; font-weight: bold; font-size: 16px;">
               ${isDocumentShare ? '📄 View Document' : `View ${petName}'s ${type === 'profile' ? 'Profile' : type === 'missing_pet' ? 'Missing Pet Alert' : type === 'resume' ? 'Resume' : type.charAt(0).toUpperCase() + type.slice(1)}`}
             </a>

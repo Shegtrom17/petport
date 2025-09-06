@@ -52,16 +52,22 @@ const path = isMissing
         ? `reviews/${petId}`
         : `profile/${petId}`;
 
-// Use SSR-friendly share URLs for social media OG via Supabase Edge Functions
+// Generate direct SPA URLs for human-friendly sharing
+const directUrl = `${window.location.origin}/${path}`;
+
+// Use edge function URLs ONLY for social media OG tags, direct URLs for human sharing
 const edgeShareBase = `https://dxghbhujugsfmaecilrq.supabase.co/functions/v1`;
-const redirectParam = encodeURIComponent(`${window.location.origin}/${path}`);
-const shareUrl = shareUrlOverride ?? (
-  isMissing
-    ? `${edgeShareBase}/missing-pet-share?petId=${encodeURIComponent(petId)}&redirect=${redirectParam}&${cacheBuster}`
-    : isResume  // Now covers both resume and credentials contexts
-      ? `${edgeShareBase}/resume-share?petId=${encodeURIComponent(petId)}&redirect=${redirectParam}&${cacheBuster}`
-      : `${edgeShareBase}/profile-share?petId=${encodeURIComponent(petId)}&redirect=${redirectParam}&${cacheBuster}`
-);
+const redirectParam = encodeURIComponent(directUrl);
+
+// Social media share URL (for OG tags) vs Direct URL (for humans)
+const socialShareUrl = isMissing
+  ? `${edgeShareBase}/missing-pet-share?petId=${encodeURIComponent(petId)}&redirect=${redirectParam}&${cacheBuster}`
+  : isResume
+    ? `${edgeShareBase}/resume-share?petId=${encodeURIComponent(petId)}&redirect=${redirectParam}&${cacheBuster}`
+    : `${edgeShareBase}/profile-share?petId=${encodeURIComponent(petId)}&redirect=${redirectParam}&${cacheBuster}`;
+
+// Use direct URL for human sharing (copy, email, SMS), social URL for Facebook/Twitter
+const shareUrl = shareUrlOverride ?? directUrl;
 const shareText = isMissing 
   ? `🚨 MISSING PET ALERT 🚨 Help us bring ${petName} home!`
   : (isCare 
@@ -130,12 +136,14 @@ title: "Link Copied! 📋",
   };
 
   const handleFacebookShare = () => {
-    const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`;
+    // Use social share URL for Facebook to get proper OG tags
+    const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(socialShareUrl)}`;
     window.open(facebookUrl, '_blank', 'width=600,height=400');
   };
 
   const handleXShare = () => {
-    const xUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`;
+    // Use social share URL for Twitter to get proper OG tags
+    const xUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(socialShareUrl)}`;
     window.open(xUrl, '_blank', 'width=600,height=400');
   };
 

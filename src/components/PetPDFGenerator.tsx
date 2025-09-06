@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { FileText, Download, Share2, Loader2, Users, ExternalLink, LogIn, AlertTriangle, Eye } from "lucide-react";
+import { FileText, Download, Share2, Loader2, Users, ExternalLink, LogIn, AlertTriangle, Eye, Heart, Coffee, Camera, User } from "lucide-react";
 import { generateQRCodeUrl, generatePublicProfileUrl, shareProfileOptimized, sharePDFBlob } from "@/services/pdfService";
 import { generateClientPetPDF, viewPDFBlob, downloadPDFBlob, isIOS, isStandalonePWA } from "@/services/clientPdfService";
 import { useToast } from "@/hooks/use-toast";
@@ -16,6 +16,16 @@ interface PetPDFGeneratorProps {
   petData?: any; // Add pet data prop for client-side generation
 }
 
+interface PDFTypeConfig {
+  key: 'emergency' | 'full' | 'care' | 'resume' | 'lost_pet' | 'gallery';
+  title: string;
+  description: string;
+  editLocation: string;
+  editPath: string;
+  icon: any;
+  available: boolean;
+}
+
 export const PetPDFGenerator = ({ petId, petName, petData }: PetPDFGeneratorProps) => {
   // Auth state
   const { user, isLoading: authLoading } = useAuth();
@@ -23,20 +33,89 @@ export const PetPDFGenerator = ({ petId, petName, petData }: PetPDFGeneratorProp
   
   // Dialog and loading states
   const [isOptionsDialogOpen, setIsOptionsDialogOpen] = useState(false);
-  const [selectedPdfType, setSelectedPdfType] = useState<'emergency' | 'full' | null>(null);
+  const [selectedPdfType, setSelectedPdfType] = useState<'emergency' | 'full' | 'care' | 'resume' | 'lost_pet' | 'gallery' | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [isSharing, setIsSharing] = useState(false);
   const [authError, setAuthError] = useState<string | null>(null);
   const [generatedPdfBlob, setGeneratedPdfBlob] = useState<Blob | null>(null);
   const { toast } = useToast();
 
+  // Define all PDF types
+  const pdfTypes: PDFTypeConfig[] = [
+    {
+      key: 'emergency',
+      title: 'Emergency Profile',
+      description: 'Essential contact & medical info',
+      editLocation: 'Basic Information & Medical sections',
+      editPath: '#basic-info',
+      icon: AlertTriangle,
+      available: true
+    },
+    {
+      key: 'full',
+      title: 'Complete Profile',
+      description: 'Full pet portfolio with all sections',
+      editLocation: 'All profile sections',
+      editPath: '#profile',
+      icon: FileText,
+      available: true
+    },
+    {
+      key: 'care',
+      title: 'Care & Handling',
+      description: 'Detailed care instructions',
+      editLocation: 'Care Instructions section',
+      editPath: '#care-instructions',
+      icon: Heart,
+      available: !!petData?.care_instructions || false
+    },
+    {
+      key: 'resume',
+      title: 'Pet Resume',
+      description: 'Skills, training & achievements',
+      editLocation: 'Resume section',
+      editPath: '#resume',
+      icon: User,
+      available: !!petData?.resume || false
+    },
+    {
+      key: 'lost_pet',
+      title: 'Lost Pet Flyer',
+      description: 'Missing pet alert document',
+      editLocation: 'Basic Information section',
+      editPath: '#basic-info',
+      icon: Coffee,
+      available: true
+    },
+    {
+      key: 'gallery',
+      title: 'Portrait Gallery',
+      description: 'Photo collection document',
+      editLocation: 'Gallery section',
+      editPath: '#gallery',
+      icon: Camera,
+      available: (petData?.photos && petData.photos.length > 0) || false
+    }
+  ];
+
   const publicProfileUrl = generatePublicProfileUrl(petId);
 
-  const showPdfOptions = (type: 'emergency' | 'full') => {
+  const showPdfOptions = (type: 'emergency' | 'full' | 'care' | 'resume' | 'lost_pet' | 'gallery') => {
     setAuthError(null);
 
     if (!user) {
       setAuthError("You must be signed in to generate PDF documents.");
+      return;
+    }
+
+    // Check if the PDF type has required data
+    const pdfConfig = pdfTypes.find(pdf => pdf.key === type);
+    if (!pdfConfig?.available) {
+      toast({
+        title: "Missing Information",
+        description: `Please add content to the ${pdfConfig?.editLocation} before generating this PDF.`,
+        variant: "destructive",
+      });
       return;
     }
 
@@ -159,7 +238,7 @@ export const PetPDFGenerator = ({ petId, petName, petData }: PetPDFGeneratorProp
             <h3 className="text-xl font-bold text-gold-500 tracking-wide border-b-2 border-gold-500 pb-1 mb-2">
               GENERATE PROFILE PDFS
             </h3>
-            <p className="text-gold-200 text-sm">Generate PDFs for all • Profile must be public to share</p>
+            <p className="text-gold-200 text-sm">Centralized PDF hub • Edit content in specific sections</p>
           </div>
         </div>
       </div>
@@ -204,40 +283,58 @@ export const PetPDFGenerator = ({ petId, petName, petData }: PetPDFGeneratorProp
         </Alert>
       )}
 
-      {/* Document generation buttons in stamped boxes */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-        <div className="bg-white p-3 rounded-lg border-2 border-gold-500/30 shadow-sm relative">
-          <div 
-            onClick={() => showPdfOptions('emergency')}
-            className={`w-full cursor-pointer flex items-center justify-center text-navy-900 hover:text-gold-600 hover:scale-110 transition-all duration-200 py-2 ${(authLoading || (!user && !authError)) ? 'opacity-50 cursor-not-allowed' : ''}`}
-          >
-            {!user ? (
-              <LogIn className="w-4 h-4 mr-2" />
-            ) : (
-              <FileText className="w-4 h-4 mr-2" />
-            )}
-            {!user ? 'Sign In to Generate' : 'Generate Emergency PDF'}
-          </div>
-        </div>
+      {/* Instructions */}
+      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
+        <p className="text-sm text-blue-800">
+          <strong>💡 How to use:</strong> PDF content comes from specific profile sections. Use the Edit buttons in each section to add/update information, then return here for quick PDF generation.
+        </p>
+      </div>
 
-        <div className="bg-white p-3 rounded-lg border-2 border-gold-500/30 shadow-sm relative">
-          <div 
-            onClick={() => showPdfOptions('full')}
-            className={`w-full cursor-pointer flex items-center justify-center text-navy-900 hover:text-gold-600 hover:scale-110 transition-all duration-200 py-2 ${(authLoading || (!user && !authError)) ? 'opacity-50 cursor-not-allowed' : ''}`}
-          >
-            {!user ? (
-              <>
-                <LogIn className="w-4 h-4 mr-2" />
-                Sign In to Generate
-              </>
-            ) : (
-              <>
-                <FileText className="w-4 h-4 mr-2" />
-                Generate Complete Profile PDF
-              </>
-            )}
-          </div>
-        </div>
+      {/* Document generation buttons in grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+        {pdfTypes.map((pdfType) => {
+          const IconComponent = pdfType.icon;
+          const isAvailable = pdfType.available;
+          const isDisabled = authLoading || (!user && !authError) || !isAvailable;
+          
+          return (
+            <div key={pdfType.key} className={`bg-white p-3 rounded-lg border-2 shadow-sm relative ${
+              isAvailable ? 'border-gold-500/30' : 'border-gray-300/50'
+            }`}>
+              <div 
+                onClick={() => !isDisabled && showPdfOptions(pdfType.key)}
+                className={`w-full cursor-pointer text-center transition-all duration-200 py-2 ${
+                  isDisabled ? 'opacity-50 cursor-not-allowed' : 'hover:scale-105'
+                } ${isAvailable ? 'text-navy-900 hover:text-gold-600' : 'text-gray-500'}`}
+              >
+                <div className="flex flex-col items-center space-y-2">
+                  {!user ? (
+                    <LogIn className="w-5 h-5" />
+                  ) : (
+                    <IconComponent className={`w-5 h-5 ${isAvailable ? 'text-gold-600' : 'text-gray-400'}`} />
+                  )}
+                  <div>
+                    <div className="font-semibold text-sm">
+                      {!user ? 'Sign In Required' : pdfType.title}
+                    </div>
+                    {user && (
+                      <>
+                        <div className="text-xs text-gray-600 mt-1">
+                          {pdfType.description}
+                        </div>
+                        {!isAvailable && (
+                          <div className="text-xs text-orange-600 mt-1">
+                            Add content in {pdfType.editLocation}
+                          </div>
+                        )}
+                      </>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          );
+        })}
       </div>
 
       {/* PDF Options Dialog */}
@@ -245,10 +342,10 @@ export const PetPDFGenerator = ({ petId, petName, petData }: PetPDFGeneratorProp
         <DialogContent className="max-w-md bg-[#f8f8f8]">
           <DialogHeader>
             <DialogTitle className="font-bold text-navy-900 border-b-2 border-gold-500 pb-2">
-              {selectedPdfType === 'emergency' ? 'Emergency' : 'Complete'} Profile Options
+              {selectedPdfType && pdfTypes.find(p => p.key === selectedPdfType)?.title} Options
             </DialogTitle>
             <DialogDescription>
-              Generate, view, or download {petName}'s {selectedPdfType === 'emergency' ? 'emergency' : 'complete'} profile document.
+              Generate, view, or download {petName}'s {selectedPdfType && pdfTypes.find(p => p.key === selectedPdfType)?.title.toLowerCase()} document.
             </DialogDescription>
           </DialogHeader>
           
@@ -257,7 +354,7 @@ export const PetPDFGenerator = ({ petId, petName, petData }: PetPDFGeneratorProp
             {!generatedPdfBlob && !isGenerating && (
               <div className="space-y-3">
                 <p className="text-sm text-navy-600 text-center">
-                  Choose how you'd like to use {petName}'s {selectedPdfType === 'emergency' ? 'emergency' : 'complete'} profile:
+                  Choose how you'd like to use {petName}'s {selectedPdfType && pdfTypes.find(p => p.key === selectedPdfType)?.title.toLowerCase()}:
                 </p>
                 
                  <div className="grid grid-cols-2 gap-3">
@@ -297,7 +394,7 @@ export const PetPDFGenerator = ({ petId, petName, petData }: PetPDFGeneratorProp
             {isGenerating && (
               <div className="text-center py-6">
                 <Loader2 className="w-8 h-8 animate-spin mx-auto mb-3 text-gold-500" />
-                <p className="text-navy-600">Generating {selectedPdfType === 'emergency' ? 'emergency' : 'complete'} profile PDF...</p>
+                <p className="text-navy-600">Generating {selectedPdfType && pdfTypes.find(p => p.key === selectedPdfType)?.title.toLowerCase()} PDF...</p>
               </div>
             )}
             
@@ -306,13 +403,13 @@ export const PetPDFGenerator = ({ petId, petName, petData }: PetPDFGeneratorProp
               <div className="space-y-4">
                 <div className="bg-white p-4 rounded-lg border border-gold-500/30 shadow-sm">
                   <h4 className="font-bold text-navy-900 mb-3">
-                    {selectedPdfType === 'emergency' ? 'Emergency Profile PDF' : 'Complete Profile PDF'}
+                    {selectedPdfType && pdfTypes.find(p => p.key === selectedPdfType)?.title} PDF
                   </h4>
                    <div className="grid grid-cols-3 gap-2 justify-center mb-3">
                      <Button
                        onClick={async () => {
-                         if (generatedPdfBlob) {
-                           const fileName = `PetPort_${selectedPdfType === 'emergency' ? 'Emergency' : 'Complete'}_Profile_${petName}.pdf`;
+                          if (generatedPdfBlob) {
+                            const fileName = `PetPort_${selectedPdfType && pdfTypes.find(p => p.key === selectedPdfType)?.title.replace(/\s+/g, '_')}_${petName}.pdf`;
                            try {
                              await viewPDFBlob(generatedPdfBlob, fileName);
                            } catch (error) {
@@ -333,9 +430,9 @@ export const PetPDFGenerator = ({ petId, petName, petData }: PetPDFGeneratorProp
                        <span className="text-center">View</span>
                      </Button>
                        <Button
-                         onClick={async () => {
-                           if (!generatedPdfBlob) return;
-                           const fileName = `PetPort_${selectedPdfType === 'emergency' ? 'Emergency' : 'Complete'}_Profile_${petName}.pdf`;
+                          onClick={async () => {
+                            if (!generatedPdfBlob) return;
+                            const fileName = `PetPort_${selectedPdfType && pdfTypes.find(p => p.key === selectedPdfType)?.title.replace(/\s+/g, '_')}_${petName}.pdf`;
                            try {
                              // Create a fresh blob for download to avoid security issues
                              const freshBlob = new Blob([await generatedPdfBlob.arrayBuffer()], { type: 'application/pdf' });
@@ -366,10 +463,19 @@ export const PetPDFGenerator = ({ petId, petName, petData }: PetPDFGeneratorProp
                         </div>
                       )}
                       <Button
-                       onClick={async () => {
-                         if (!generatedPdfBlob) return;
-                         const fileName = `PetPort_${selectedPdfType === 'emergency' ? 'Emergency' : 'Complete'}_Profile_${petName}.pdf`;
-                         const contentType = selectedPdfType === 'emergency' ? 'emergency' : 'profile';
+                        onClick={async () => {
+                          if (!generatedPdfBlob) return;
+                          const fileName = `PetPort_${selectedPdfType && pdfTypes.find(p => p.key === selectedPdfType)?.title.replace(/\s+/g, '_')}_${petName}.pdf`;
+                          // Map our PDF types to the accepted content types for sharing
+                          const contentTypeMap: Record<string, 'profile' | 'care' | 'emergency' | 'credentials' | 'reviews'> = {
+                            'emergency': 'emergency',
+                            'full': 'profile',
+                            'care': 'care',
+                            'resume': 'credentials',
+                            'lost_pet': 'profile',
+                            'gallery': 'profile'
+                          };
+                          const contentType = contentTypeMap[selectedPdfType || 'full'] || 'profile';
                          const result = await sharePDFBlob(generatedPdfBlob, fileName, petName, contentType);
                          
                          if (result.success) {

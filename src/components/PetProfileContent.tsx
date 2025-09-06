@@ -22,6 +22,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { CompactPrivacyToggle } from "@/components/CompactPrivacyToggle";
 import { SectionHeader } from "@/components/ui/section-header";
 import { GuidanceHint } from "@/components/ui/guidance-hint";
+import { QuickShareHub } from "@/components/QuickShareHub";
 
 
 interface PetProfileContentProps {
@@ -648,12 +649,12 @@ export const PetProfileContent = ({
         </div>
       </div>
 
-      {/* Quick Actions Section */}
+      {/* Quick Share Hub Section */}
       <div className="mb-8">
         <div className="bg-white/50 backdrop-blur-sm rounded-2xl p-6">
           <SectionHeader
-            overline="Share"
-            title="Quick Actions"
+            overline="Marketing"
+            title="Quick Share Hub"
             icon={<Share2 className="w-5 h-5" />}
             action={
               isOwner && togglePetPublicVisibility && (
@@ -676,24 +677,27 @@ export const PetProfileContent = ({
             />
           )}
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <Button
-              onClick={enhancedPetData?.is_public ? handleShare : () => isOwner && togglePetPublicVisibility && togglePetPublicVisibility(enhancedPetData.id, true)}
-              className="bg-brand-primary hover:bg-brand-primary-dark text-white"
-            >
-              <Share2 className="w-4 h-4 mr-2" />
-              {enhancedPetData?.is_public ? 'Share Profile' : 'Make Public to Share'}
-            </Button>
-            
-            <Button
-              onClick={enhancedPetData?.is_public ? () => setIsInAppSharingOpen(true) : () => isOwner && togglePetPublicVisibility && togglePetPublicVisibility(enhancedPetData.id, true)}
-              variant="outline"
-              className="border-brand-primary text-brand-primary hover:bg-brand-primary hover:text-white"
-            >
-              <MessageCircle className="w-4 h-4 mr-2" />
-              {enhancedPetData?.is_public ? 'In-App Share' : 'Make Public to Share'}
-            </Button>
-          </div>
+          {/* Quick Share Hub Component */}
+          {enhancedPetData?.is_public ? (
+            <QuickShareHub 
+              petData={{
+                id: enhancedPetData.id,
+                name: enhancedPetData.name
+              }}
+              isLost={enhancedPetData?.is_lost || false}
+            />
+          ) : (
+            <div className="text-center p-8 bg-gray-50 rounded-lg">
+              <p className="text-gray-600 mb-4">Share hub will be available once your pet profile is public</p>
+              <Button
+                onClick={() => isOwner && togglePetPublicVisibility && togglePetPublicVisibility(enhancedPetData.id, true)}
+                className="bg-brand-primary hover:bg-brand-primary-dark text-white"
+              >
+                <Share2 className="w-4 h-4 mr-2" />
+                Make Public to Share
+              </Button>
+            </div>
+          )}
         </div>
       </div>
 

@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Download, Share2, QrCode, Star, Shield, Heart, Phone, Mail, Award, AlertTriangle, MapPin, GraduationCap, Trophy, Activity, Edit, Eye } from "lucide-react";
+import { Download, Share2, QrCode, Star, Shield, Heart, Phone, Mail, Award, AlertTriangle, MapPin, GraduationCap, Trophy, Activity, Edit, Eye, Users } from "lucide-react";
 import { SupportAnimalBanner } from "@/components/SupportAnimalBanner";
 import { PetResumeEditForm } from "@/components/PetResumeEditForm";
 import { generatePublicProfileUrl, shareProfileOptimized, generateQRCodeUrl } from "@/services/pdfService";
@@ -43,6 +43,7 @@ interface PetResumeSectionProps {
     vetContact: string;
     emergencyContact: string;
     secondEmergencyContact: string;
+    petCaretaker: string;
     badges: string[];
     bio?: string;
     supportAnimalStatus?: string | null;
@@ -614,6 +615,28 @@ export const PetResumeSection = ({ petData, onUpdate }: PetResumeSectionProps) =
                     })()}
                   </div>
                 </div>
+                {petData.petCaretaker && (
+                  <div className="flex items-center space-x-2">
+                    <Users className="w-4 h-4 text-blue-600" />
+                    <div>
+                      <p className="text-sm font-semibold text-blue-900">Pet Caretaker</p>
+                      {(() => {
+                        const phoneNumber = extractPhoneNumber(petData.petCaretaker);
+                        return phoneNumber ? (
+                          <a 
+                            href={`tel:${formatPhoneForTel(phoneNumber)}`}
+                            className="text-sm text-blue-700 hover:text-blue-900 transition-colors duration-200 cursor-pointer flex items-center gap-1"
+                          >
+                            <Phone className="w-3 h-3" />
+                            {petData.petCaretaker}
+                          </a>
+                        ) : (
+                          <p className="text-sm text-blue-700">{petData.petCaretaker}</p>
+                        );
+                      })()}
+                    </div>
+                  </div>
+                )}
                 <div className="flex items-center space-x-2">
                   <Shield className="w-4 h-4 text-blue-600" />
                   <div>

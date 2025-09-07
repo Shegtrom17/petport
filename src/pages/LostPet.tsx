@@ -8,7 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { CalendarIcon, AlertTriangle, Phone, Share, Download, MapPin, Clock, DollarSign, Eye, Search, Heart, Facebook, Copy, MessageCircle, Mail } from "lucide-react";
+import { CalendarIcon, AlertTriangle, Phone, Share, Download, MapPin, Clock, DollarSign, Eye, Search, Heart, Facebook, Copy, MessageCircle, Mail, Stethoscope, Users } from "lucide-react";
 import { format } from "date-fns";
 import { useAuth } from "@/context/AuthContext";
 import { usePetData } from "@/hooks/usePetData";
@@ -281,6 +281,24 @@ const LostPet = () => {
                       <strong>Secondary:</strong>
                     </div>
                     <p className="ml-6">{currentPet.second_emergency_contact}</p>
+                  </div>
+                )}
+                {currentPet.vet_contact && (
+                  <div className="bg-white/60 p-3 rounded-lg border border-white/30">
+                    <div className="flex items-center space-x-2">
+                      <Stethoscope className="w-4 h-4" style={{ color: '#5691af' }} />
+                      <strong>Veterinarian:</strong>
+                    </div>
+                    <p className="ml-6">{currentPet.vet_contact}</p>
+                  </div>
+                )}
+                {currentPet.pet_caretaker && (
+                  <div className="bg-white/60 p-3 rounded-lg border border-white/30">
+                    <div className="flex items-center space-x-2">
+                      <Users className="w-4 h-4" style={{ color: '#5691af' }} />
+                      <strong>Pet Caretaker:</strong>
+                    </div>
+                    <p className="ml-6">{currentPet.pet_caretaker}</p>
                   </div>
                 )}
               </div>

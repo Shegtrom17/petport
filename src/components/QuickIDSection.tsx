@@ -7,7 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { QrCode, Download, Share, Phone, Pill, Shield, Heart, Award, AlertTriangle, MapPin, Clock, DollarSign, CalendarIcon } from "lucide-react";
+import { QrCode, Download, Share, Phone, Pill, Shield, Heart, Award, AlertTriangle, MapPin, Clock, DollarSign, CalendarIcon, Stethoscope, Users } from "lucide-react";
 import { format } from "date-fns";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -295,6 +295,24 @@ export const QuickIDSection = ({ petData, onUpdate }: QuickIDSectionProps) => {
                       <strong>Secondary:</strong>
                     </div>
                     <p className="ml-6">{petData.secondEmergencyContact}</p>
+                  </div>
+                )}
+                {petData.vetContact && (
+                  <div className="bg-blue-50 p-3 rounded-lg">
+                    <div className="flex items-center space-x-2">
+                      <Stethoscope className="w-4 h-4 text-blue-600" />
+                      <strong>Veterinarian:</strong>
+                    </div>
+                    <p className="ml-6">{petData.vetContact}</p>
+                  </div>
+                )}
+                {petData.petCaretaker && (
+                  <div className="bg-green-50 p-3 rounded-lg">
+                    <div className="flex items-center space-x-2">
+                      <Users className="w-4 h-4 text-green-600" />
+                      <strong>Pet Caretaker:</strong>
+                    </div>
+                    <p className="ml-6">{petData.petCaretaker}</p>
                   </div>
                 )}
               </div>

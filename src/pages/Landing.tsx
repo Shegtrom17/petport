@@ -59,7 +59,7 @@ export default function Landing() {
                 Digital Pet Portfolio
               </h1>
               <p className="mt-6 text-xl text-brand-primary-dark leading-relaxed">
-                One place for everything about your pet. Beautiful profiles, emergency info, sharable links, PDFs, documents, and travel maps.
+                One place for everything about your pet. Beautiful profiles, emergency info, instant lost pet flyers, shareable links, PDFs, documents, and travel maps.
               </p>
               <div className="mt-8 flex flex-col sm:flex-row gap-4">
                 {user ? (

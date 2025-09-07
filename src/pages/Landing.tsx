@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { MetaTags } from "@/components/MetaTags";
 import { AppShareButton } from "@/components/AppShareButton";
 import PricingSection from "@/components/PricingSection";
+import { Testimonials } from "@/components/Testimonials";
 
 export default function Landing() {
   const { user } = useAuth();
@@ -372,51 +373,7 @@ export default function Landing() {
           </div>
         </section>
 
-        {/* Social Proof / Testimonials */}
-        <section className="bg-white py-20">
-          <div className="max-w-7xl mx-auto px-4">
-            <div className="text-center mb-16">
-              <h2 className="text-4xl font-bold text-brand-primary mb-4">Pet Parents Love PetPort</h2>
-              <p className="text-xl text-brand-primary-dark">Real stories from our community</p>
-            </div>
-            
-            {/* PLACEHOLDER: Testimonial Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-6 border-2 border-dashed border-blue-200">
-                <div className="text-center text-blue-600">
-                  <div className="w-16 h-16 mx-auto mb-4 bg-blue-200 rounded-full flex items-center justify-center">
-                    <span className="text-2xl">👩</span>
-                  </div>
-                  <p className="text-sm font-medium">PLACEHOLDER: Testimonial 1</p>
-                  <p className="text-xs mt-2">"Quote about missing pet recovery"</p>
-                  <p className="text-xs mt-1">- Pet Owner Name</p>
-                </div>
-              </div>
-              
-              <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-2xl p-6 border-2 border-dashed border-green-200">
-                <div className="text-center text-green-600">
-                  <div className="w-16 h-16 mx-auto mb-4 bg-green-200 rounded-full flex items-center justify-center">
-                    <span className="text-2xl">👨</span>
-                  </div>
-                  <p className="text-sm font-medium">PLACEHOLDER: Testimonial 2</p>
-                  <p className="text-xs mt-2">"Quote about travel convenience"</p>
-                  <p className="text-xs mt-1">- Foster Volunteer Name</p>
-                </div>
-              </div>
-              
-              <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl p-6 border-2 border-dashed border-purple-200">
-                <div className="text-center text-purple-600">
-                  <div className="w-16 h-16 mx-auto mb-4 bg-purple-200 rounded-full flex items-center justify-center">
-                    <span className="text-2xl">👩‍⚕️</span>
-                  </div>
-                  <p className="text-sm font-medium">PLACEHOLDER: Testimonial 3</p>
-                  <p className="text-xs mt-2">"Quote from veterinarian"</p>
-                  <p className="text-xs mt-1">- Vet Clinic Name</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
+        <Testimonials />
 
         {/* FAQ Section */}
         <section className="max-w-4xl mx-auto px-4 py-20">

@@ -50,10 +50,10 @@ export const UnifiedContactsSection = ({ petId, isOwner }: UnifiedContactsSectio
   };
 
   const contactTypeColors: Record<string, string> = {
-    emergency: 'bg-red-50 border-red-200 text-red-800',
-    veterinary: 'bg-blue-50 border-blue-200 text-blue-800',
-    caretaker: 'bg-green-50 border-green-200 text-green-800',
-    general: 'bg-gray-50 border-gray-200 text-gray-800'
+    emergency: 'bg-destructive/10 border-destructive/20 text-destructive',
+    veterinary: 'bg-primary/10 border-primary/20 text-primary',
+    caretaker: 'bg-secondary border-border text-foreground',
+    general: 'bg-muted border-border text-muted-foreground'
   };
 
   useEffect(() => {
@@ -216,7 +216,7 @@ export const UnifiedContactsSection = ({ petId, isOwner }: UnifiedContactsSectio
         <div className="space-y-4">
           {/* Add new contact form */}
           {addingNew && (
-            <div className="border rounded-lg p-4 bg-gray-50">
+            <div className="border rounded-lg p-4 bg-muted">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                 <div>
                   <Label htmlFor="new-name">Contact Name</Label>
@@ -330,23 +330,16 @@ export const UnifiedContactsSection = ({ petId, isOwner }: UnifiedContactsSectio
                       </div>
                     )}
                   </div>
-                  {(() => {
-                    const phoneNumber = extractPhoneNumber(contact.contact_phone);
-                    return phoneNumber ? (
-                      <div>
-                        <a 
-                          href={`tel:${formatPhoneForTel(phoneNumber)}`}
-                          className="text-lg font-medium hover:underline cursor-pointer"
-                          aria-label={`Call ${contact.contact_name}`}
-                        >
-                          {contact.contact_phone}
-                        </a>
-                        <p className="text-xs mt-1 opacity-75">Tap to call</p>
-                      </div>
-                    ) : (
-                      <p className="text-lg font-medium">{contact.contact_phone}</p>
-                    );
-                  })()}
+                  <div>
+                    <a 
+                      href={`tel:${contact.contact_phone.replace(/[^\d]/g, '')}`}
+                      className="text-lg font-medium text-primary hover:underline cursor-pointer"
+                      aria-label={`Call ${contact.contact_name}`}
+                    >
+                      {contact.contact_phone}
+                    </a>
+                    <p className="text-xs mt-1 text-muted-foreground">Tap to call</p>
+                  </div>
                 </>
               )}
             </div>

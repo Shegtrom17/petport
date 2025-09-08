@@ -108,23 +108,13 @@ export const ContactsDisplay = ({ petId }: ContactsDisplayProps) => {
                   </h4>
                   <p className="text-sm text-muted-foreground">{contact.contact_name}</p>
                 </div>
-                
-                {contact.contact_phone && (
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => handlePhoneCall(contact.contact_phone)}
-                    className={`ml-4 ${labelColor} border-current hover:bg-current hover:text-white`}
-                  >
-                    <Phone className="w-4 h-4 mr-1" />
-                    <span className="hidden sm:inline">Tap to call</span>
-                    <span className="sm:hidden">{contact.contact_phone}</span>
-                  </Button>
-                )}
               </div>
               
               {contact.contact_phone && (
-                <p className={`text-sm mt-2 ${labelColor}`}>
+                <p 
+                  className={`text-sm mt-2 ${labelColor} cursor-pointer hover:underline`}
+                  onClick={() => handlePhoneCall(contact.contact_phone)}
+                >
                   {contact.contact_phone}
                 </p>
               )}

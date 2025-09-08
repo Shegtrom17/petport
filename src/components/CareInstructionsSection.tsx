@@ -468,7 +468,7 @@ export const CareInstructionsSection = ({ petData, onUpdate }: CareInstructionsS
       </Card>
 
       {/* Feeding Schedule */}
-      <Card className="border-0 shadow-lg bg-passport-section-bg backdrop-blur-sm">
+      <Card className="border-0 shadow-lg border-l-4 border-l-[#5691af]">
         <CardHeader>
           <CardTitle className="flex items-center space-x-2">
             <Coffee className="w-5 h-5 text-[#5691af]" />
@@ -478,7 +478,7 @@ export const CareInstructionsSection = ({ petData, onUpdate }: CareInstructionsS
         <CardContent>
           <div className="space-y-4">
             {feedingScheduleItems.map((feeding, index) => (
-              <div key={index} className="flex flex-col md:flex-row md:items-start space-y-2 md:space-y-0 md:space-x-4 p-4 bg-[#5691af]/10 rounded-lg border-l-4 border-[#5691af]">
+              <div key={index} className="flex flex-col md:flex-row md:items-start space-y-2 md:space-y-0 md:space-x-4 p-4 rounded-lg border border-gray-200">
                 <div className="flex items-center space-x-2">
                   <Clock className="w-4 h-4 text-[#5691af] flex-shrink-0" />
                   <Badge variant="outline" className="text-[#5691af] border-[#5691af]/30">
@@ -496,7 +496,7 @@ export const CareInstructionsSection = ({ petData, onUpdate }: CareInstructionsS
       </Card>
 
       {/* Daily Routine */}
-      <Card className="border-0 shadow-lg bg-passport-section-bg backdrop-blur-sm">
+      <Card className="border-0 shadow-lg border-l-4 border-l-[#5691af]">
         <CardHeader>
           <CardTitle className="flex items-center space-x-2">
             <Moon className="w-5 h-5 text-[#5691af]" />
@@ -505,12 +505,12 @@ export const CareInstructionsSection = ({ petData, onUpdate }: CareInstructionsS
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="p-4 bg-[#5691af]/10 rounded-lg">
+            <div className="p-4 rounded-lg border border-gray-200">
               <h4 className="font-medium text-[#5691af] mb-2">Morning Routine</h4>
               {careData?.morning_routine ? (
-                <p className="text-sm text-[#5691af]">{careData.morning_routine}</p>
+                <p className="text-sm text-gray-700">{careData.morning_routine}</p>
               ) : (
-                <ul className="text-sm text-[#5691af] space-y-1">
+                <ul className="text-sm text-gray-700 space-y-1">
                   <li>• Wake up around 7:00 AM</li>
                   <li>• {isHorse ? 'Check water buckets and hay' : 'Potty break immediately'}</li>
                   <li>• {isHorse ? 'Quick health check' : 'Short walk before breakfast'}</li>
@@ -518,12 +518,12 @@ export const CareInstructionsSection = ({ petData, onUpdate }: CareInstructionsS
                 </ul>
               )}
             </div>
-            <div className="p-4 bg-[#5691af]/10 rounded-lg">
+            <div className="p-4 rounded-lg border border-gray-200">
               <h4 className="font-medium text-[#5691af] mb-2">Evening Routine</h4>
               {careData?.evening_routine ? (
-                <p className="text-sm text-[#5691af]">{careData.evening_routine}</p>
+                <p className="text-sm text-gray-700">{careData.evening_routine}</p>
               ) : (
-                <ul className="text-sm text-[#5691af] space-y-1">
+                <ul className="text-sm text-gray-700 space-y-1">
                   <li>• Dinner around 6:00 PM</li>
                   <li>• {isHorse ? 'Turn out or bring in from pasture' : 'Play time after dinner'}</li>
                   <li>• {isHorse ? 'Final hay feeding' : 'Final potty break at 10 PM'}</li>
@@ -536,7 +536,7 @@ export const CareInstructionsSection = ({ petData, onUpdate }: CareInstructionsS
       </Card>
 
       {/* Medications & Health */}
-      <Card className="border-0 shadow-lg bg-passport-section-bg backdrop-blur-sm">
+      <Card className="border-0 shadow-lg border-l-4 border-l-red-500">
         <CardHeader>
           <CardTitle className="flex items-center space-x-2">
             <Pill className="w-5 h-5 text-red-600" />
@@ -546,13 +546,13 @@ export const CareInstructionsSection = ({ petData, onUpdate }: CareInstructionsS
         <CardContent className="space-y-4">
           {petData.medications.length > 0 ? (
             petData.medications.map((medication, index) => (
-              <div key={index} className="p-4 bg-red-50 rounded-lg border-l-4 border-red-500">
+              <div key={index} className="p-4 bg-red-50 rounded-lg border border-red-200">
                 <div className="flex items-center space-x-2 mb-2">
                   <Pill className="w-4 h-4 text-red-600" />
                   <Badge variant="destructive">MEDICATION</Badge>
                 </div>
-                <p className="font-medium">{medication}</p>
-                <p className="text-sm text-gray-600 mt-1">
+                <p className="font-medium text-red-900">{medication}</p>
+                <p className="text-sm text-red-700 mt-1">
                   Administer as prescribed. Contact vet if missed doses or reactions occur.
                 </p>
               </div>
@@ -561,9 +561,9 @@ export const CareInstructionsSection = ({ petData, onUpdate }: CareInstructionsS
             <p className="text-gray-600 italic">No current medications</p>
           )}
           
-          <div className="p-4 bg-[#5691af]/10 rounded-lg">
+          <div className="p-4 rounded-lg border border-gray-200">
             <h4 className="font-medium text-[#5691af] mb-2">Health Monitoring</h4>
-            <ul className="text-sm text-[#5691af] space-y-1">
+            <ul className="text-sm text-gray-700 space-y-1">
               <li>• Monitor appetite and water intake daily</li>
               <li>• Watch for any behavioral changes</li>
               <li>• Check for signs of distress or discomfort</li>
@@ -575,7 +575,7 @@ export const CareInstructionsSection = ({ petData, onUpdate }: CareInstructionsS
       </Card>
 
       {/* Important Notes */}
-      <Card className="border-0 shadow-lg bg-passport-section-bg backdrop-blur-sm">
+      <Card className="border-0 shadow-lg border-l-4 border-l-[#5691af]">
         <CardHeader>
           <CardTitle className="flex items-center space-x-2">
             <AlertTriangle className="w-5 h-5 text-[#5691af]" />
@@ -583,27 +583,27 @@ export const CareInstructionsSection = ({ petData, onUpdate }: CareInstructionsS
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
-          <div className="p-3 bg-[#5691af]/10 rounded border border-[#5691af]/30">
+          <div className="p-3 rounded border border-gray-200">
             <h4 className="font-medium text-[#5691af] mb-1">Allergies & Restrictions</h4>
-            <p className="text-sm text-[#5691af]">
+            <p className="text-sm text-gray-700">
               {careData?.allergies || (isHorse 
                 ? "Sensitive to alfalfa - stick to timothy hay only. No moldy or dusty feed."
                 : "Sensitive to chicken - avoid all poultry-based treats and foods."
               )}
             </p>
           </div>
-          <div className="p-3 bg-[#5691af]/10 rounded border border-[#5691af]/30">
+          <div className="p-3 rounded border border-gray-200">
             <h4 className="font-medium text-[#5691af] mb-1">Behavioral Notes</h4>
-            <p className="text-sm text-[#5691af]">
+            <p className="text-sm text-gray-700">
               {careData?.behavioral_notes || (isHorse
                 ? "Generally calm but can be anxious during storms. Provide extra hay for comfort."
                 : "Friendly with other dogs but needs slow introductions. Afraid of thunderstorms - provide comfort."
               )}
             </p>
           </div>
-          <div className="p-3 bg-[#5691af]/10 rounded border border-[#5691af]/30">
+          <div className="p-3 rounded border border-gray-200">
             <h4 className="font-medium text-[#5691af] mb-1">Favorite Activities</h4>
-            <p className="text-sm text-[#5691af]">
+            <p className="text-sm text-gray-700">
               {careData?.favorite_activities || (isHorse
                 ? "Enjoys trail rides and groundwork. Loves grooming sessions."
                 : "Loves swimming, fetch, and puzzle toys. Great with children."
@@ -614,10 +614,10 @@ export const CareInstructionsSection = ({ petData, onUpdate }: CareInstructionsS
       </Card>
 
       {/* Quick Contacts Section - Moved to bottom */}
-      <Card className="border-0 shadow-lg bg-passport-section-bg backdrop-blur-sm">
+      <Card className="border-0 shadow-lg border-l-4 border-l-[#5691af]">
         <CardHeader>
           <CardTitle className="flex items-center space-x-2">
-             <Phone className="w-5 h-5 text-brand-primary" />
+             <Phone className="w-5 h-5 text-[#5691af]" />
              <span className="text-foreground">Quick Contacts</span>
           </CardTitle>
         </CardHeader>
@@ -729,7 +729,7 @@ export const CareInstructionsSection = ({ petData, onUpdate }: CareInstructionsS
       </Card>
 
       {/* Documentation Note - Moved below Quick Contacts */}
-      <Card className="border-0 shadow-lg bg-[#5691af]/10 border-l-4 border-[#5691af]">
+      <Card className="border-0 shadow-lg border-l-4 border-l-[#5691af]">
         <CardContent className="p-4">
           <p className="text-[#5691af] text-sm font-medium">
             📄 For supporting documentation, please see the Documents page.

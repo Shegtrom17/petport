@@ -2,6 +2,7 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { Button } from "@/components/ui/button";
+import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { MetaTags } from "@/components/MetaTags";
 import { AppShareButton } from "@/components/AppShareButton";
 import PricingSection from "@/components/PricingSection";
@@ -333,39 +334,60 @@ export default function Landing() {
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="text-center">
-              {/* PLACEHOLDER: Step 1 Screenshot */}
-              <div className="bg-gradient-to-br from-blue-100 to-purple-100 rounded-2xl p-8 mb-6 min-h-[250px] flex items-center justify-center border-2 border-dashed border-blue-300">
-                <div className="text-center text-blue-600">
-                  <div className="w-16 h-16 mx-auto mb-4 bg-blue-200 rounded-full flex items-center justify-center text-2xl">1</div>
-                  <p className="text-sm font-medium">PLACEHOLDER: Setup Screenshot</p>
-                  <p className="text-xs mt-1">Show pet profile creation screen</p>
-                </div>
+              {/* Step 1 Screenshot */}
+              <div className="mb-6 rounded-2xl overflow-hidden shadow-lg">
+                <AspectRatio ratio={4 / 3}>
+                  <img 
+                    src="/lovable-uploads/how-it-works-1-create.webp" 
+                    alt="Creating a pet profile - Add your pet's basic info, photos, and personality details"
+                    className="w-full h-full object-cover"
+                    loading="lazy"
+                    onError={(e) => {
+                      // Fallback to placeholder if image doesn't exist yet
+                      e.currentTarget.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='300' viewBox='0 0 400 300'%3E%3Crect width='400' height='300' fill='%23f3f4f6'/%3E%3Ctext x='200' y='150' text-anchor='middle' dy='.3em' fill='%236b7280' font-family='sans-serif' font-size='14'%3EStep 1 Screenshot%3C/text%3E%3C/svg%3E";
+                    }}
+                  />
+                </AspectRatio>
               </div>
               <h3 className="text-xl font-semibold text-brand-primary mb-2">1. Create Profile</h3>
               <p className="text-brand-primary-dark">Add your pet's basic info, photos, and personality details in under 5 minutes.</p>
             </div>
 
             <div className="text-center">
-              {/* PLACEHOLDER: Step 2 Screenshot */}
-              <div className="bg-gradient-to-br from-green-100 to-blue-100 rounded-2xl p-8 mb-6 min-h-[250px] flex items-center justify-center border-2 border-dashed border-green-300">
-                <div className="text-center text-green-600">
-                  <div className="w-16 h-16 mx-auto mb-4 bg-green-200 rounded-full flex items-center justify-center text-2xl">2</div>
-                  <p className="text-sm font-medium">PLACEHOLDER: Upload Screenshot</p>
-                  <p className="text-xs mt-1">Show document upload interface</p>
-                </div>
+              {/* Step 2 Screenshot */}
+              <div className="mb-6 rounded-2xl overflow-hidden shadow-lg">
+                <AspectRatio ratio={4 / 3}>
+                  <img 
+                    src="/lovable-uploads/how-it-works-2-upload.webp" 
+                    alt="Uploading documents - Snap photos of vaccines, health records, and certifications"
+                    className="w-full h-full object-cover"
+                    loading="lazy"
+                    onError={(e) => {
+                      // Fallback to placeholder if image doesn't exist yet
+                      e.currentTarget.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='300' viewBox='0 0 400 300'%3E%3Crect width='400' height='300' fill='%23f3f4f6'/%3E%3Ctext x='200' y='150' text-anchor='middle' dy='.3em' fill='%236b7280' font-family='sans-serif' font-size='14'%3EStep 2 Screenshot%3C/text%3E%3C/svg%3E";
+                    }}
+                  />
+                </AspectRatio>
               </div>
               <h3 className="text-xl font-semibold text-brand-primary mb-2">2. Upload Documents</h3>
               <p className="text-brand-primary-dark">Snap photos of vaccines, health records, and certifications. We'll organize everything.</p>
             </div>
 
             <div className="text-center">
-              {/* PLACEHOLDER: Step 3 Screenshot */}
-              <div className="bg-gradient-to-br from-purple-100 to-pink-100 rounded-2xl p-8 mb-6 min-h-[250px] flex items-center justify-center border-2 border-dashed border-purple-300">
-                <div className="text-center text-purple-600">
-                  <div className="w-16 h-16 mx-auto mb-4 bg-purple-200 rounded-full flex items-center justify-center text-2xl">3</div>
-                  <p className="text-sm font-medium">PLACEHOLDER: Share Screenshot</p>
-                  <p className="text-xs mt-1">Show sharing options and QR code</p>
-                </div>
+              {/* Step 3 Screenshot */}
+              <div className="mb-6 rounded-2xl overflow-hidden shadow-lg">
+                <AspectRatio ratio={4 / 3}>
+                  <img 
+                    src="/lovable-uploads/how-it-works-3-share.webp" 
+                    alt="Sharing pet information - Generate PDFs, QR codes, and share instantly with vets, sitters, or hotels"
+                    className="w-full h-full object-cover"
+                    loading="lazy"
+                    onError={(e) => {
+                      // Fallback to placeholder if image doesn't exist yet
+                      e.currentTarget.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='300' viewBox='0 0 400 300'%3E%3Crect width='400' height='300' fill='%23f3f4f6'/%3E%3Ctext x='200' y='150' text-anchor='middle' dy='.3em' fill='%236b7280' font-family='sans-serif' font-size='14'%3EStep 3 Screenshot%3C/text%3E%3C/svg%3E";
+                    }}
+                  />
+                </AspectRatio>
               </div>
               <h3 className="text-xl font-semibold text-brand-primary mb-2">3. Share & Go</h3>
               <p className="text-brand-primary-dark">Share with vets, sitters, or hotels instantly. Generate PDFs and QR codes on demand.</p>

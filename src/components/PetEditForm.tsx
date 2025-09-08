@@ -523,7 +523,7 @@ export const PetEditForm = ({ petData, onSave, onCancel, togglePetPublicVisibili
 
           {/* Action Buttons */}
           <div className="flex gap-4 pt-6">
-            <Button type="submit" disabled={isSaving}>
+            <Button type="submit" disabled={isSaving} className="text-white">
               {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Save Changes
             </Button>

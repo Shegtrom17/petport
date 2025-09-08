@@ -245,7 +245,7 @@ export const ReviewsEditForm = ({ petData, onSave, onCancel }: ReviewsEditFormPr
           <Button type="button" variant="outline" onClick={onCancel} disabled={isLoading}>
             Cancel
           </Button>
-          <Button type="submit" disabled={isLoading || isSubmitting}>
+          <Button type="submit" disabled={isLoading || isSubmitting} className="text-white">
             {isLoading ? (
               <>
                 <Loader2 className="w-4 h-4 mr-2 animate-spin" />

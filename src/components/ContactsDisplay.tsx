@@ -44,7 +44,6 @@ export const ContactsDisplay = ({ petId }: ContactsDisplayProps) => {
   return (
     <div>
       <SectionHeader
-        overline="Emergency"
         title="Contact Information"
       />
       

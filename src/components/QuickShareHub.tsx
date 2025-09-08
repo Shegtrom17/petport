@@ -351,7 +351,7 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
                             ? page.available
                               ? 'border-red-600 text-red-700 hover:bg-red-50' 
                               : 'border-gray-300 text-gray-400 cursor-not-allowed'
-                            : 'border-primary text-primary hover:bg-primary/5'
+                            : 'border-primary text-primary hover:bg-primary hover:text-primary-foreground'
                         }`}
                       >
                         {copyingId === page.id ? (
@@ -374,7 +374,7 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
                             ? page.available
                               ? 'border-red-600 text-red-700 hover:bg-red-50' 
                               : 'border-gray-300 text-gray-400 cursor-not-allowed'
-                            : 'border-primary text-primary hover:bg-primary/5'
+                            : 'border-primary text-primary hover:bg-primary hover:text-primary-foreground'
                         }`}
                       >
                         <MessageCircle className="w-3 h-3 mb-1" />
@@ -391,7 +391,7 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
                             ? page.available
                               ? 'border-red-600 text-red-700 hover:bg-red-50' 
                               : 'border-gray-300 text-gray-400 cursor-not-allowed'
-                            : 'border-primary text-primary hover:bg-primary/5'
+                            : 'border-primary text-primary hover:bg-primary hover:text-primary-foreground'
                         }`}
                       >
                         <Mail className="w-3 h-3 mb-1" />
@@ -410,7 +410,7 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
                             ? page.available
                               ? 'border-red-600 text-red-700 hover:bg-red-50' 
                               : 'border-gray-300 text-gray-400 cursor-not-allowed'
-                            : 'border-primary text-primary hover:bg-primary/5'
+                            : 'border-primary text-primary hover:bg-primary hover:text-primary-foreground'
                         }`}
                       >
                         <Facebook className="w-3 h-3 mb-1" />
@@ -427,7 +427,7 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
                             ? page.available
                               ? 'border-red-600 text-red-700 hover:bg-red-50' 
                               : 'border-gray-300 text-gray-400 cursor-not-allowed'
-                            : 'border-primary text-primary hover:bg-primary/5'
+                            : 'border-primary text-primary hover:bg-primary hover:text-primary-foreground'
                         }`}
                       >
                         <MessageSquare className="w-3 h-3 mb-1" />
@@ -444,7 +444,7 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
                             ? page.available
                               ? 'border-red-600 text-red-700 hover:bg-red-50' 
                               : 'border-gray-300 text-gray-400 cursor-not-allowed'
-                            : 'border-primary text-primary hover:bg-primary/5'
+                            : 'border-primary text-primary hover:bg-primary hover:text-primary-foreground'
                         }`}
                       >
                         <ExternalLink className="w-3 h-3 mb-1" />
@@ -505,7 +505,7 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
               <Button
                 onClick={handleSendEmail}
                 disabled={emailLoading}
-                className="flex-1"
+                className="flex-1 bg-brand-secondary hover:bg-brand-secondary/90 text-white"
               >
                 {emailLoading ? 'Sending...' : 'Send Email'}
               </Button>
@@ -513,6 +513,7 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
                 variant="outline"
                 onClick={() => setShowEmailForm(false)}
                 disabled={emailLoading}
+                className="text-muted-foreground border-muted-foreground hover:bg-muted/10"
               >
                 Cancel
               </Button>

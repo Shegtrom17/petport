@@ -719,28 +719,28 @@ export const PetResumeSection = ({ petData, onUpdate }: PetResumeSectionProps) =
 
       {/* Training & Education Section */}
       {petData.training && petData.training.length > 0 && (
-        <Card className="border-0 shadow-xl bg-white/90 backdrop-blur-sm">
+        <Card className="border-0 shadow-xl bg-white/90 backdrop-blur-sm border-l-4 border-brand-primary">
           <CardHeader>
             <CardTitle className="flex items-center space-x-2">
-              <GraduationCap className="w-5 h-5 text-purple-600" />
+              <GraduationCap className="w-5 h-5 text-brand-primary" />
               <span>Training</span>
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
               {petData.training.map((course, index) => (
-                <div key={index} className="bg-purple-50 border border-purple-200 rounded-lg p-4">
-                  <h4 className="font-semibold text-purple-800">{course.course}</h4>
-                  <div className="mt-2 space-y-1 text-sm text-purple-700">
+                <div key={index} className="bg-white border border-gray-200 rounded-lg p-4">
+                  <h4 className="font-semibold text-gray-800">{course.course}</h4>
+                  <div className="mt-2 space-y-1 text-sm text-gray-700">
                     <div className="flex items-center space-x-2">
-                      <MapPin className="w-3 h-3" />
+                      <MapPin className="w-3 h-3 text-brand-primary" />
                       <span>{course.facility}</span>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <Phone className="w-3 h-3" />
+                      <Phone className="w-3 h-3 text-brand-primary" />
                       <span>{course.phone}</span>
                     </div>
-                    <p className="text-xs text-purple-600">Completed: {course.completed}</p>
+                    <p className="text-xs text-gray-600">Completed: {course.completed}</p>
                   </div>
                 </div>
               ))}

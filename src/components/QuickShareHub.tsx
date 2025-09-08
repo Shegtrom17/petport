@@ -346,7 +346,7 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
                         variant="outline"
                         size="sm"
                         disabled={!page.available || copyingId === page.id}
-                        className={`text-xs flex flex-col items-center py-2 px-1 h-auto ${
+                        className={`text-sm flex flex-col items-center py-3 px-2 h-16 min-h-16 ${
                           page.variant === 'missing' 
                             ? page.available
                               ? 'border-red-600 text-red-700 hover:bg-red-50' 
@@ -355,11 +355,11 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
                         }`}
                       >
                         {copyingId === page.id ? (
-                          <Check className="w-3 h-3 mb-1" />
+                          <Check className="w-4 h-4 mb-1" />
                         ) : (
-                          <Copy className="w-3 h-3 mb-1" />
+                          <Copy className="w-4 h-4 mb-1" />
                         )}
-                        <span className="text-xs leading-none">
+                        <span className="text-xs font-medium leading-tight">
                           {copyingId === page.id ? 'Copied' : 'Copy'}
                         </span>
                       </Button>
@@ -369,7 +369,7 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
                         variant="outline"
                         size="sm"
                         disabled={!page.available}
-                        className={`text-xs flex flex-col items-center py-2 px-1 h-auto ${
+                        className={`text-sm flex flex-col items-center py-3 px-2 h-16 min-h-16 ${
                           page.variant === 'missing' 
                             ? page.available
                               ? 'border-red-600 text-red-700 hover:bg-red-50' 
@@ -377,8 +377,8 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
                             : 'border-primary text-primary hover:bg-primary hover:text-primary-foreground'
                         }`}
                       >
-                        <MessageCircle className="w-3 h-3 mb-1" />
-                        <span className="text-xs leading-none">SMS</span>
+                        <MessageCircle className="w-4 h-4 mb-1" />
+                        <span className="text-xs font-medium leading-tight">SMS</span>
                       </Button>
                       
                       <Button
@@ -386,7 +386,7 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
                         variant="outline"
                         size="sm"
                         disabled={!page.available}
-                        className={`text-xs flex flex-col items-center py-2 px-1 h-auto ${
+                        className={`text-sm flex flex-col items-center py-3 px-2 h-16 min-h-16 ${
                           page.variant === 'missing' 
                             ? page.available
                               ? 'border-red-600 text-red-700 hover:bg-red-50' 
@@ -394,8 +394,8 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
                             : 'border-primary text-primary hover:bg-primary hover:text-primary-foreground'
                         }`}
                       >
-                        <Mail className="w-3 h-3 mb-1" />
-                        <span className="text-xs leading-none">Email</span>
+                        <Mail className="w-4 h-4 mb-1" />
+                        <span className="text-xs font-medium leading-tight">Email</span>
                       </Button>
                     </div>
                     
@@ -405,7 +405,7 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
                         variant="outline"
                         size="sm"
                         disabled={!page.available}
-                        className={`text-xs flex flex-col items-center py-2 px-1 h-auto ${
+                        className={`text-sm flex flex-col items-center py-3 px-2 h-16 min-h-16 ${
                           page.variant === 'missing' 
                             ? page.available
                               ? 'border-red-600 text-red-700 hover:bg-red-50' 
@@ -413,8 +413,8 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
                             : 'border-primary text-primary hover:bg-primary hover:text-primary-foreground'
                         }`}
                       >
-                        <Facebook className="w-3 h-3 mb-1" />
-                        <span className="text-xs leading-none">Facebook</span>
+                        <Facebook className="w-4 h-4 mb-1" />
+                        <span className="text-xs font-medium leading-tight">Facebook</span>
                       </Button>
                       
                       <Button
@@ -422,7 +422,7 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
                         variant="outline"
                         size="sm"
                         disabled={!page.available}
-                        className={`text-xs flex flex-col items-center py-2 px-1 h-auto ${
+                        className={`text-sm flex flex-col items-center py-3 px-2 h-16 min-h-16 ${
                           page.variant === 'missing' 
                             ? page.available
                               ? 'border-red-600 text-red-700 hover:bg-red-50' 
@@ -430,8 +430,8 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
                             : 'border-primary text-primary hover:bg-primary hover:text-primary-foreground'
                         }`}
                       >
-                        <MessageSquare className="w-3 h-3 mb-1" />
-                        <span className="text-xs leading-none">Messenger</span>
+                        <MessageSquare className="w-4 h-4 mb-1" />
+                        <span className="text-xs font-medium leading-tight">Messenger</span>
                       </Button>
                       
                       <Button
@@ -439,7 +439,7 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
                         variant="outline"
                         size="sm"
                         disabled={!page.available}
-                        className={`text-xs flex flex-col items-center py-2 px-1 h-auto ${
+                        className={`text-sm flex flex-col items-center py-3 px-2 h-16 min-h-16 ${
                           page.variant === 'missing' 
                             ? page.available
                               ? 'border-red-600 text-red-700 hover:bg-red-50' 
@@ -447,8 +447,8 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
                             : 'border-primary text-primary hover:bg-primary hover:text-primary-foreground'
                         }`}
                       >
-                        <ExternalLink className="w-3 h-3 mb-1" />
-                        <span className="text-xs leading-none">Open</span>
+                        <ExternalLink className="w-4 h-4 mb-1" />
+                        <span className="text-xs font-medium leading-tight">Open</span>
                       </Button>
                     </div>
                   </>

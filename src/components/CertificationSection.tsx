@@ -137,18 +137,18 @@ export const CertificationSection = ({ petData, onUpdate }: CertificationSection
   ];
 
   return (
-    <Card className="border-0 shadow-xl bg-white/90 backdrop-blur-sm">
+    <Card className="border-0 shadow-xl bg-white/90 backdrop-blur-sm border-l-4 border-brand-primary">
       <CardHeader>
         <CardTitle className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
-            <Shield className="w-5 h-5 text-purple-600" />
+            <Shield className="w-5 h-5 text-brand-primary" />
             <span>Professional Certifications</span>
           </div>
           <Button 
             onClick={() => setIsEditModalOpen(true)} 
             variant="outline" 
             size="sm"
-            className="border-purple-600 text-purple-600 hover:bg-purple-50"
+            className="border-brand-primary text-brand-primary hover:bg-brand-primary hover:text-white"
           >
             <Edit className="w-4 h-4 mr-2" />
             Manage
@@ -159,10 +159,10 @@ export const CertificationSection = ({ petData, onUpdate }: CertificationSection
         {currentCertification.type ? (
           <div className="space-y-6">
             {/* Main Certification Display */}
-            <div className="bg-gradient-to-br from-purple-50 to-indigo-50 border-2 border-purple-200 rounded-lg p-6">
+            <div className="bg-white border border-gray-200 rounded-lg p-6">
               <div className="flex items-start justify-between mb-4">
                 <div>
-                  <h3 className="text-2xl font-bold text-purple-800 mb-2">
+                  <h3 className="text-2xl font-bold text-gray-800 mb-2">
                     {currentCertification.type}
                   </h3>
                   <Badge 
@@ -172,58 +172,58 @@ export const CertificationSection = ({ petData, onUpdate }: CertificationSection
                     {(currentCertification.status || 'active').toUpperCase()}
                   </Badge>
                 </div>
-                <Shield className="w-12 h-12 text-purple-600" />
+                <Shield className="w-12 h-12 text-brand-primary" />
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {currentCertification.issuer && (
-                  <div className="flex items-center space-x-3 p-3 bg-white/80 rounded-lg">
-                    <Building className="w-5 h-5 text-purple-600" />
+                  <div className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
+                    <Building className="w-5 h-5 text-brand-primary" />
                     <div>
-                      <p className="text-sm font-semibold text-purple-900">Issuing Organization</p>
-                      <p className="text-purple-700">{currentCertification.issuer}</p>
+                      <p className="text-sm font-semibold text-gray-800">Issuing Organization</p>
+                      <p className="text-gray-700">{currentCertification.issuer}</p>
                     </div>
                   </div>
                 )}
 
                 {currentCertification.certification_number && (
-                  <div className="flex items-center space-x-3 p-3 bg-white/80 rounded-lg">
-                    <Hash className="w-5 h-5 text-purple-600" />
+                  <div className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
+                    <Hash className="w-5 h-5 text-brand-primary" />
                     <div>
-                      <p className="text-sm font-semibold text-purple-900">Certification Number</p>
-                      <p className="text-purple-700 font-mono">{currentCertification.certification_number}</p>
+                      <p className="text-sm font-semibold text-gray-800">Certification Number</p>
+                      <p className="text-gray-700 font-mono">{currentCertification.certification_number}</p>
                     </div>
                   </div>
                 )}
 
                 {currentCertification.issue_date && (
-                  <div className="flex items-center space-x-3 p-3 bg-white/80 rounded-lg">
-                    <Calendar className="w-5 h-5 text-purple-600" />
+                  <div className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
+                    <Calendar className="w-5 h-5 text-brand-primary" />
                     <div>
-                      <p className="text-sm font-semibold text-purple-900">Issue Date</p>
-                      <p className="text-purple-700">{formatDate(currentCertification.issue_date)}</p>
+                      <p className="text-sm font-semibold text-gray-800">Issue Date</p>
+                      <p className="text-gray-700">{formatDate(currentCertification.issue_date)}</p>
                     </div>
                   </div>
                 )}
 
                 {currentCertification.expiry_date && (
-                  <div className="flex items-center space-x-3 p-3 bg-white/80 rounded-lg">
-                    <Calendar className="w-5 h-5 text-purple-600" />
+                  <div className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
+                    <Calendar className="w-5 h-5 text-brand-primary" />
                     <div>
-                      <p className="text-sm font-semibold text-purple-900">Expiry Date</p>
-                      <p className="text-purple-700">{formatDate(currentCertification.expiry_date)}</p>
+                      <p className="text-sm font-semibold text-gray-800">Expiry Date</p>
+                      <p className="text-gray-700">{formatDate(currentCertification.expiry_date)}</p>
                     </div>
                   </div>
                 )}
               </div>
 
               {currentCertification.notes && (
-                <div className="mt-4 p-3 bg-white/80 rounded-lg">
+                <div className="mt-4 p-3 bg-gray-50 rounded-lg">
                   <div className="flex items-start space-x-3">
-                    <FileText className="w-5 h-5 text-purple-600 mt-0.5" />
+                    <FileText className="w-5 h-5 text-brand-primary mt-0.5" />
                     <div>
-                      <p className="text-sm font-semibold text-purple-900 mb-1">Additional Notes</p>
-                      <p className="text-purple-700 text-sm leading-relaxed">{currentCertification.notes}</p>
+                      <p className="text-sm font-semibold text-gray-800 mb-1">Additional Notes</p>
+                      <p className="text-gray-700 text-sm leading-relaxed">{currentCertification.notes}</p>
                     </div>
                   </div>
                 </div>
@@ -239,7 +239,7 @@ export const CertificationSection = ({ petData, onUpdate }: CertificationSection
             </p>
             <Button 
               onClick={() => setIsEditModalOpen(true)}
-              className="bg-purple-600 hover:bg-purple-700 text-white"
+              className="bg-brand-primary hover:bg-brand-primary-dark text-white"
             >
               <Shield className="w-4 h-4 mr-2" />
               Add Certification
@@ -346,7 +346,7 @@ export const CertificationSection = ({ petData, onUpdate }: CertificationSection
               <Button 
                 onClick={handleSave}
                 disabled={isLoading}
-                className="bg-purple-600 hover:bg-purple-700 text-white"
+                className="bg-brand-primary hover:bg-brand-primary-dark text-white"
               >
                 <Check className="w-4 h-4 mr-2" />
                 {isLoading ? "Saving..." : "Save Certification"}

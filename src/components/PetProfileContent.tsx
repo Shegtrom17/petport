@@ -3,7 +3,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
-import { AlertTriangle, Phone, Trash2, Upload, Loader2, Edit, Share2, Facebook, MessageCircle, Mail, Camera } from "lucide-react";
+import { AlertTriangle, Phone, Trash2, Upload, Loader2, Edit, Share2, Facebook, MessageCircle, Mail, Camera, UserX } from "lucide-react";
+import { PetTransferDialog } from "@/components/PetTransferDialog";
 import { PetPDFGenerator } from "@/components/PetPDFGenerator";
 import { SupportAnimalBanner } from "@/components/SupportAnimalBanner";
 import { SocialShareButtons } from "@/components/SocialShareButtons";
@@ -624,6 +625,27 @@ export const PetProfileContent = ({
           )}
         </div>
       </div>
+
+      {/* Transfer Section - Only for owners */}
+      {isOwner && (
+        <div className="mb-8">
+          <SectionHeader
+            overline="Transfer"
+            title="Transfer Pet to Another Owner"
+            icon={<UserX className="w-5 h-5" />}
+          />
+          <div className="bg-gray-50 rounded-lg p-4">
+            <p className="text-sm text-gray-600 mb-4">
+              Transfer ownership of {enhancedPetData.name} to another PetPort user. 
+              This action is permanent and cannot be undone.
+            </p>
+            <PetTransferDialog
+              petId={enhancedPetData.id}
+              petName={enhancedPetData.name}
+            />
+          </div>
+        </div>
+      )}
 
       {/* PDF Generator Section */}
       <div className="mb-8">

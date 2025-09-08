@@ -684,8 +684,7 @@ export const PetResumeSection = ({ petData, onUpdate }: PetResumeSectionProps) =
                   {exp.contact && (
                     <div className="flex items-center space-x-2 text-sm text-brand-primary">
                       <Phone className="w-3 h-3" />
-                       <span>Contact: {exp.contact}</span>
-                       <span className="text-xs text-muted-foreground ml-2">• Tap to call</span>
+                      <span>Contact: {exp.contact}</span>
                     </div>
                   )}
                 </div>

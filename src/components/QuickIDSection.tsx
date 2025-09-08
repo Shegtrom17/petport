@@ -286,7 +286,10 @@ export const QuickIDSection = ({ petData, onUpdate }: QuickIDSectionProps) => {
                     <Phone className="w-4 h-4 text-red-600" />
                     <strong>Primary:</strong>
                   </div>
-                  <p className="ml-6">{petData.emergencyContact || 'Not set'}</p>
+                   <p className="ml-6">{petData.emergencyContact || 'Not set'}</p>
+                   {petData.emergencyContact && petData.emergencyContact !== 'Not set' && (
+                     <p className="ml-6 text-xs text-muted-foreground">Tap to call</p>
+                   )}
                 </div>
                 {petData.secondEmergencyContact && (
                   <div className="bg-gray-50 p-3 rounded-lg">
@@ -294,7 +297,8 @@ export const QuickIDSection = ({ petData, onUpdate }: QuickIDSectionProps) => {
                       <Phone className="w-4 h-4 text-brand-primary" />
                       <strong>Secondary:</strong>
                     </div>
-                    <p className="ml-6">{petData.secondEmergencyContact}</p>
+                     <p className="ml-6">{petData.secondEmergencyContact}</p>
+                     <p className="ml-6 text-xs text-muted-foreground">Tap to call</p>
                   </div>
                 )}
                 {petData.vetContact && (
@@ -303,7 +307,8 @@ export const QuickIDSection = ({ petData, onUpdate }: QuickIDSectionProps) => {
                       <Stethoscope className="w-4 h-4 text-blue-600" />
                       <strong>Veterinarian:</strong>
                     </div>
-                    <p className="ml-6">{petData.vetContact}</p>
+                     <p className="ml-6">{petData.vetContact}</p>
+                     <p className="ml-6 text-xs text-muted-foreground">Tap to call</p>
                   </div>
                 )}
                 {petData.petCaretaker && (
@@ -312,7 +317,8 @@ export const QuickIDSection = ({ petData, onUpdate }: QuickIDSectionProps) => {
                       <Users className="w-4 h-4 text-green-600" />
                       <strong>Pet Caretaker:</strong>
                     </div>
-                    <p className="ml-6">{petData.petCaretaker}</p>
+                     <p className="ml-6">{petData.petCaretaker}</p>
+                     <p className="ml-6 text-xs text-muted-foreground">Tap to call</p>
                   </div>
                 )}
               </div>

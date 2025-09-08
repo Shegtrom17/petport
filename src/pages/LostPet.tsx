@@ -272,7 +272,10 @@ const LostPet = () => {
                     <Phone className="w-4 h-4" style={{ color: '#5691af' }} />
                     <strong>Primary:</strong>
                   </div>
-                  <p className="ml-6">{currentPet.emergency_contact || 'Not set'}</p>
+                   <p className="ml-6">{currentPet.emergency_contact || 'Not set'}</p>
+                   {currentPet.emergency_contact && currentPet.emergency_contact !== 'Not set' && (
+                     <p className="ml-6 text-xs opacity-70">Tap to call</p>
+                   )}
                 </div>
                 {currentPet.second_emergency_contact && (
                   <div className="bg-white/60 p-3 rounded-lg border border-white/30">
@@ -280,7 +283,8 @@ const LostPet = () => {
                       <Phone className="w-4 h-4" style={{ color: '#5691af' }} />
                       <strong>Secondary:</strong>
                     </div>
-                    <p className="ml-6">{currentPet.second_emergency_contact}</p>
+                     <p className="ml-6">{currentPet.second_emergency_contact}</p>
+                     <p className="ml-6 text-xs opacity-70">Tap to call</p>
                   </div>
                 )}
                 {currentPet.vet_contact && (
@@ -289,7 +293,8 @@ const LostPet = () => {
                       <Stethoscope className="w-4 h-4" style={{ color: '#5691af' }} />
                       <strong>Veterinarian:</strong>
                     </div>
-                    <p className="ml-6">{currentPet.vet_contact}</p>
+                     <p className="ml-6">{currentPet.vet_contact}</p>
+                     <p className="ml-6 text-xs opacity-70">Tap to call</p>
                   </div>
                 )}
                 {currentPet.pet_caretaker && (
@@ -298,7 +303,8 @@ const LostPet = () => {
                       <Users className="w-4 h-4" style={{ color: '#5691af' }} />
                       <strong>Pet Caretaker:</strong>
                     </div>
-                    <p className="ml-6">{currentPet.pet_caretaker}</p>
+                     <p className="ml-6">{currentPet.pet_caretaker}</p>
+                     <p className="ml-6 text-xs opacity-70">Tap to call</p>
                   </div>
                 )}
               </div>

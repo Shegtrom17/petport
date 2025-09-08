@@ -580,17 +580,20 @@ export const PetProfileContent = ({
                 <p className="text-brand-primary text-sm font-semibold mb-2">PRIMARY EMERGENCY CONTACT</p>
                 {(() => {
                   const phoneNumber = extractPhoneNumber(enhancedPetData.emergencyContact);
-                  return phoneNumber ? (
-                    <a
-                      href={`tel:${formatPhoneForTel(phoneNumber)}`}
-                      className="text-lg font-medium text-brand-primary hover:text-brand-primary-dark underline"
-                      aria-label="Call primary emergency contact"
-                    >
-                      {enhancedPetData.emergencyContact}
-                    </a>
-                  ) : (
-                    <p className="text-lg font-medium text-brand-primary">{enhancedPetData.emergencyContact}</p>
-                  );
+                   return phoneNumber ? (
+                     <div>
+                       <a
+                         href={`tel:${formatPhoneForTel(phoneNumber)}`}
+                         className="text-lg font-medium text-brand-primary hover:text-brand-primary-dark underline"
+                         aria-label="Call primary emergency contact"
+                       >
+                         {enhancedPetData.emergencyContact}
+                       </a>
+                       <p className="text-xs text-muted-foreground mt-1">Tap to call</p>
+                     </div>
+                   ) : (
+                     <p className="text-lg font-medium text-brand-primary">{enhancedPetData.emergencyContact}</p>
+                   );
                 })()}
               </div>
             )}
@@ -600,17 +603,20 @@ export const PetProfileContent = ({
                 <p className="text-brand-primary text-sm font-semibold mb-2">SECONDARY EMERGENCY CONTACT</p>
                 {(() => {
                   const phoneNumber = extractPhoneNumber(enhancedPetData.secondEmergencyContact);
-                  return phoneNumber ? (
-                    <a
-                      href={`tel:${formatPhoneForTel(phoneNumber)}`}
-                      className="text-lg font-medium text-brand-primary hover:text-brand-primary-dark underline"
-                      aria-label="Call secondary emergency contact"
-                    >
-                      {enhancedPetData.secondEmergencyContact}
-                    </a>
-                  ) : (
-                    <p className="text-lg font-medium text-brand-primary">{enhancedPetData.secondEmergencyContact}</p>
-                  );
+                   return phoneNumber ? (
+                     <div>
+                       <a
+                         href={`tel:${formatPhoneForTel(phoneNumber)}`}
+                         className="text-lg font-medium text-brand-primary hover:text-brand-primary-dark underline"
+                         aria-label="Call secondary emergency contact"
+                       >
+                         {enhancedPetData.secondEmergencyContact}
+                       </a>
+                       <p className="text-xs text-muted-foreground mt-1">Tap to call</p>
+                     </div>
+                   ) : (
+                     <p className="text-lg font-medium text-brand-primary">{enhancedPetData.secondEmergencyContact}</p>
+                   );
                 })()}
               </div>
             )}
@@ -620,17 +626,20 @@ export const PetProfileContent = ({
                 <p className="text-brand-primary text-sm font-semibold mb-2">VETERINARIAN CONTACT</p>
                 {(() => {
                   const phoneNumber = extractPhoneNumber(enhancedPetData.vetContact);
-                  return phoneNumber ? (
-                    <a
-                      href={`tel:${formatPhoneForTel(phoneNumber)}`}
-                      className="text-lg font-medium text-brand-primary hover:text-brand-primary-dark underline"
-                      aria-label="Call veterinarian"
-                    >
-                      {enhancedPetData.vetContact}
-                    </a>
-                  ) : (
-                    <p className="text-lg font-medium text-brand-primary">{enhancedPetData.vetContact}</p>
-                  );
+                   return phoneNumber ? (
+                     <div>
+                       <a
+                         href={`tel:${formatPhoneForTel(phoneNumber)}`}
+                         className="text-lg font-medium text-brand-primary hover:text-brand-primary-dark underline"
+                         aria-label="Call veterinarian"
+                       >
+                         {enhancedPetData.vetContact}
+                       </a>
+                       <p className="text-xs text-muted-foreground mt-1">Tap to call</p>
+                     </div>
+                   ) : (
+                     <p className="text-lg font-medium text-brand-primary">{enhancedPetData.vetContact}</p>
+                   );
                 })()}
               </div>
             )}
@@ -641,13 +650,16 @@ export const PetProfileContent = ({
                  {(() => {
                    const phoneNumber = extractPhoneNumber(enhancedPetData.petCaretaker);
                    return phoneNumber ? (
-                     <a
-                       href={`tel:${formatPhoneForTel(phoneNumber)}`}
-                       className="text-lg font-medium text-brand-primary hover:text-brand-primary-dark underline"
-                       aria-label="Call pet caretaker"
-                     >
-                       {enhancedPetData.petCaretaker}
-                     </a>
+                     <div>
+                       <a
+                         href={`tel:${formatPhoneForTel(phoneNumber)}`}
+                         className="text-lg font-medium text-brand-primary hover:text-brand-primary-dark underline"
+                         aria-label="Call pet caretaker"
+                       >
+                         {enhancedPetData.petCaretaker}
+                       </a>
+                       <p className="text-xs text-muted-foreground mt-1">Tap to call</p>
+                     </div>
                    ) : (
                      <p className="text-lg font-medium text-brand-primary">{enhancedPetData.petCaretaker}</p>
                    );

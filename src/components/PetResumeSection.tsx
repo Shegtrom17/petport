@@ -581,17 +581,20 @@ export const PetResumeSection = ({ petData, onUpdate }: PetResumeSectionProps) =
                     <p className="text-sm font-semibold text-blue-900">Primary Emergency</p>
                     {(() => {
                       const phoneNumber = extractPhoneNumber(petData.emergencyContact);
-                      return phoneNumber ? (
-                        <a 
-                          href={`tel:${formatPhoneForTel(phoneNumber)}`}
-                          className="text-sm text-blue-700 hover:text-blue-900 transition-colors duration-200 cursor-pointer flex items-center gap-1"
-                        >
-                          <Phone className="w-3 h-3" />
-                          {petData.emergencyContact}
-                        </a>
-                      ) : (
-                        <p className="text-sm text-blue-700">{petData.emergencyContact}</p>
-                      );
+                       return phoneNumber ? (
+                         <div>
+                           <a 
+                             href={`tel:${formatPhoneForTel(phoneNumber)}`}
+                             className="text-sm text-blue-700 hover:text-blue-900 transition-colors duration-200 cursor-pointer flex items-center gap-1"
+                           >
+                             <Phone className="w-3 h-3" />
+                             {petData.emergencyContact}
+                           </a>
+                           <p className="text-xs text-muted-foreground ml-4">Tap to call</p>
+                         </div>
+                       ) : (
+                         <p className="text-sm text-blue-700">{petData.emergencyContact}</p>
+                       );
                     })()}
                   </div>
                 </div>
@@ -601,17 +604,20 @@ export const PetResumeSection = ({ petData, onUpdate }: PetResumeSectionProps) =
                     <p className="text-sm font-semibold text-blue-900">Secondary Emergency</p>
                     {(() => {
                       const phoneNumber = extractPhoneNumber(petData.secondEmergencyContact);
-                      return phoneNumber ? (
-                        <a 
-                          href={`tel:${formatPhoneForTel(phoneNumber)}`}
-                          className="text-sm text-blue-700 hover:text-blue-900 transition-colors duration-200 cursor-pointer flex items-center gap-1"
-                        >
-                          <Phone className="w-3 h-3" />
-                          {petData.secondEmergencyContact}
-                        </a>
-                      ) : (
-                        <p className="text-sm text-blue-700">{petData.secondEmergencyContact}</p>
-                      );
+                       return phoneNumber ? (
+                         <div>
+                           <a 
+                             href={`tel:${formatPhoneForTel(phoneNumber)}`}
+                             className="text-sm text-blue-700 hover:text-blue-900 transition-colors duration-200 cursor-pointer flex items-center gap-1"
+                           >
+                             <Phone className="w-3 h-3" />
+                             {petData.secondEmergencyContact}
+                           </a>
+                           <p className="text-xs text-muted-foreground ml-4">Tap to call</p>
+                         </div>
+                       ) : (
+                         <p className="text-sm text-blue-700">{petData.secondEmergencyContact}</p>
+                       );
                     })()}
                   </div>
                 </div>
@@ -622,17 +628,20 @@ export const PetResumeSection = ({ petData, onUpdate }: PetResumeSectionProps) =
                       <p className="text-sm font-semibold text-blue-900">Pet Caretaker</p>
                       {(() => {
                         const phoneNumber = extractPhoneNumber(petData.petCaretaker);
-                        return phoneNumber ? (
-                          <a 
-                            href={`tel:${formatPhoneForTel(phoneNumber)}`}
-                            className="text-sm text-blue-700 hover:text-blue-900 transition-colors duration-200 cursor-pointer flex items-center gap-1"
-                          >
-                            <Phone className="w-3 h-3" />
-                            {petData.petCaretaker}
-                          </a>
-                        ) : (
-                          <p className="text-sm text-blue-700">{petData.petCaretaker}</p>
-                        );
+                         return phoneNumber ? (
+                           <div>
+                             <a 
+                               href={`tel:${formatPhoneForTel(phoneNumber)}`}
+                               className="text-sm text-blue-700 hover:text-blue-900 transition-colors duration-200 cursor-pointer flex items-center gap-1"
+                             >
+                               <Phone className="w-3 h-3" />
+                               {petData.petCaretaker}
+                             </a>
+                             <p className="text-xs text-muted-foreground ml-4">Tap to call</p>
+                           </div>
+                         ) : (
+                           <p className="text-sm text-blue-700">{petData.petCaretaker}</p>
+                         );
                       })()}
                     </div>
                   </div>
@@ -775,7 +784,8 @@ export const PetResumeSection = ({ petData, onUpdate }: PetResumeSectionProps) =
                   {exp.contact && (
                     <div className="flex items-center space-x-2 text-sm text-green-600">
                       <Phone className="w-3 h-3" />
-                      <span>Contact: {exp.contact}</span>
+                       <span>Contact: {exp.contact}</span>
+                       <span className="text-xs text-muted-foreground ml-2">• Tap to call</span>
                     </div>
                   )}
                 </div>

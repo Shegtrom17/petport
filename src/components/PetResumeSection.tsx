@@ -668,21 +668,21 @@ export const PetResumeSection = ({ petData, onUpdate }: PetResumeSectionProps) =
 
       {/* Experience Section */}
       {petData.experiences && petData.experiences.length > 0 && (
-        <Card className="border-0 shadow-xl bg-white/90 backdrop-blur-sm">
+        <Card className="border-0 shadow-xl bg-white/90 backdrop-blur-sm border-l-4 border-brand-primary">
           <CardHeader>
             <CardTitle className="flex items-center space-x-2">
-              <Activity className="w-5 h-5 text-green-600" />
+              <Activity className="w-5 h-5 text-brand-primary" />
               <span>Experience & Activities</span>
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
               {petData.experiences.map((exp, index) => (
-                <div key={index} className="border-l-4 border-green-500 pl-4 py-2">
+                <div key={index} className="bg-white border border-gray-200 rounded-lg p-4">
                   <h4 className="font-semibold text-gray-800">{exp.activity}</h4>
                   <p className="text-gray-600 text-sm mb-2">{exp.description}</p>
                   {exp.contact && (
-                    <div className="flex items-center space-x-2 text-sm text-green-600">
+                    <div className="flex items-center space-x-2 text-sm text-brand-primary">
                       <Phone className="w-3 h-3" />
                        <span>Contact: {exp.contact}</span>
                        <span className="text-xs text-muted-foreground ml-2">• Tap to call</span>

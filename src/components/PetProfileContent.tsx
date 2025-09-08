@@ -570,7 +570,7 @@ export const PetProfileContent = ({
         <div className="bg-white/50 backdrop-blur-sm rounded-2xl p-6">
           <SectionHeader
             overline="Contacts"
-            title="Emergency Contacts"
+            title="Contacts"
             icon={<Phone className="w-5 h-5" />}
           />
           
@@ -635,9 +635,29 @@ export const PetProfileContent = ({
               </div>
             )}
             
-            {!enhancedPetData?.emergencyContact && !enhancedPetData?.secondEmergencyContact && !enhancedPetData?.vetContact && (
+             {enhancedPetData?.petCaretaker && (
+               <div className="bg-white p-4 rounded-lg border border-brand-primary">
+                 <p className="text-brand-primary text-sm font-semibold mb-2">PET CARETAKER</p>
+                 {(() => {
+                   const phoneNumber = extractPhoneNumber(enhancedPetData.petCaretaker);
+                   return phoneNumber ? (
+                     <a
+                       href={`tel:${formatPhoneForTel(phoneNumber)}`}
+                       className="text-lg font-medium text-brand-primary hover:text-brand-primary-dark underline"
+                       aria-label="Call pet caretaker"
+                     >
+                       {enhancedPetData.petCaretaker}
+                     </a>
+                   ) : (
+                     <p className="text-lg font-medium text-brand-primary">{enhancedPetData.petCaretaker}</p>
+                   );
+                 })()}
+               </div>
+             )}
+             
+             {!enhancedPetData?.emergencyContact && !enhancedPetData?.secondEmergencyContact && !enhancedPetData?.vetContact && !enhancedPetData?.petCaretaker && (
               <div className="bg-white p-4 rounded-lg border border-brand-primary text-center">
-                <p className="text-brand-primary">No emergency contacts added yet.</p>
+                <p className="text-brand-primary">No contacts added yet.</p>
                 {isOwner && (
                   <Button
                     onClick={handleProfileEdit}

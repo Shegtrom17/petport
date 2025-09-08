@@ -279,7 +279,7 @@ export const QuickIDSection = ({ petData, onUpdate }: QuickIDSectionProps) => {
 
             {/* Emergency Contacts */}
             <div className="space-y-4">
-              <h4 className="font-bold text-lg text-brand-primary">Emergency Contacts</h4>
+              <h4 className="font-bold text-lg text-brand-primary">Contacts</h4>
               <div className="space-y-2">
                 <div className="bg-red-50 p-3 rounded-lg">
                   <div className="flex items-center space-x-2">

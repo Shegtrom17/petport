@@ -257,7 +257,7 @@ const PublicCareInstructions = () => {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-navy-900">
                   <Phone className="w-5 h-5 text-red-600" />
-                  Emergency Contacts
+                   Contacts
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">

@@ -265,7 +265,7 @@ const LostPet = () => {
 
             {/* Emergency Contacts */}
             <div className="space-y-4">
-              <h4 className="font-semibold text-lg" style={{ color: '#5691af' }}>Emergency Contacts</h4>
+              <h4 className="font-semibold text-lg" style={{ color: '#5691af' }}>Contacts</h4>
               <div className="space-y-2">
                 <div className="bg-white/60 p-3 rounded-lg border border-white/30">
                   <div className="flex items-center space-x-2">

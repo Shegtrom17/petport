@@ -697,19 +697,19 @@ export const PetResumeSection = ({ petData, onUpdate }: PetResumeSectionProps) =
 
       {/* Achievements Section */}
       {petData.achievements && petData.achievements.length > 0 && (
-        <Card className="border-0 shadow-xl bg-white/90 backdrop-blur-sm">
+        <Card className="border-0 shadow-xl bg-white/90 backdrop-blur-sm border-l-4 border-brand-primary">
           <CardHeader>
             <CardTitle className="flex items-center space-x-2">
-              <Trophy className="w-5 h-5 text-yellow-600" />
+              <Trophy className="w-5 h-5 text-brand-primary" />
               <span>Notable Achievements</span>
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
               {petData.achievements.map((achievement, index) => (
-                <div key={index} className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-                  <h4 className="font-bold text-yellow-800 mb-2">{achievement.title}</h4>
-                  <p className="text-yellow-700 text-sm">{achievement.description}</p>
+                <div key={index} className="bg-white border border-gray-200 rounded-lg p-4">
+                  <h4 className="font-bold text-gray-800 mb-2">{achievement.title}</h4>
+                  <p className="text-gray-700 text-sm">{achievement.description}</p>
                 </div>
               ))}
             </div>

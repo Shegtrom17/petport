@@ -67,12 +67,15 @@ export const ContactsDisplay = ({ petId, hideHeader = false }: ContactsDisplayPr
               </div>
               
               {!contact.isEmpty && contact.phone && (
-                <p 
-                  className={`text-sm mt-2 ${labelColor} cursor-pointer hover:underline`}
-                  onClick={() => handlePhoneCall(contact.phone)}
-                >
-                  {contact.phone}
-                </p>
+                <div className="flex items-center space-x-2 mt-2">
+                  <p 
+                    className={`text-sm ${labelColor} cursor-pointer hover:underline`}
+                    onClick={() => handlePhoneCall(contact.phone)}
+                  >
+                    {contact.phone}
+                  </p>
+                  <span className="text-xs text-muted-foreground">• Tap to call</span>
+                </div>
               )}
             </div>
           );

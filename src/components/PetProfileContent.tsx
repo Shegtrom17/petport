@@ -23,6 +23,7 @@ import { CompactPrivacyToggle } from "@/components/CompactPrivacyToggle";
 import { SectionHeader } from "@/components/ui/section-header";
 import { GuidanceHint } from "@/components/ui/guidance-hint";
 import { QuickShareHub } from "@/components/QuickShareHub";
+import { UnifiedContactsSection } from "@/components/UnifiedContactsSection";
 
 
 interface PetProfileContentProps {
@@ -565,124 +566,10 @@ export const PetProfileContent = ({
         </div>
       </div>
 
-      {/* Contact Numbers Section */}
+      {/* Unified Contacts Section */}
       <div className="mb-8">
         <div className="bg-white/50 backdrop-blur-sm rounded-2xl p-6">
-          <SectionHeader
-            overline="Contacts"
-            title="Contacts"
-            icon={<Phone className="w-5 h-5" />}
-          />
-          
-          <div className="space-y-4">
-            {enhancedPetData?.emergencyContact && (
-              <div className="bg-white p-4 rounded-lg border border-brand-primary">
-                <p className="text-brand-primary text-sm font-semibold mb-2">PRIMARY EMERGENCY CONTACT</p>
-                {(() => {
-                  const phoneNumber = extractPhoneNumber(enhancedPetData.emergencyContact);
-                   return phoneNumber ? (
-                     <div>
-                       <a
-                         href={`tel:${formatPhoneForTel(phoneNumber)}`}
-                         className="text-lg font-medium text-brand-primary hover:text-brand-primary-dark underline"
-                         aria-label="Call primary emergency contact"
-                       >
-                         {enhancedPetData.emergencyContact}
-                       </a>
-                       <p className="text-xs text-muted-foreground mt-1">Tap to call</p>
-                     </div>
-                   ) : (
-                     <p className="text-lg font-medium text-brand-primary">{enhancedPetData.emergencyContact}</p>
-                   );
-                })()}
-              </div>
-            )}
-            
-            {enhancedPetData?.secondEmergencyContact && (
-              <div className="bg-white p-4 rounded-lg border border-brand-primary">
-                <p className="text-brand-primary text-sm font-semibold mb-2">SECONDARY EMERGENCY CONTACT</p>
-                {(() => {
-                  const phoneNumber = extractPhoneNumber(enhancedPetData.secondEmergencyContact);
-                   return phoneNumber ? (
-                     <div>
-                       <a
-                         href={`tel:${formatPhoneForTel(phoneNumber)}`}
-                         className="text-lg font-medium text-brand-primary hover:text-brand-primary-dark underline"
-                         aria-label="Call secondary emergency contact"
-                       >
-                         {enhancedPetData.secondEmergencyContact}
-                       </a>
-                       <p className="text-xs text-muted-foreground mt-1">Tap to call</p>
-                     </div>
-                   ) : (
-                     <p className="text-lg font-medium text-brand-primary">{enhancedPetData.secondEmergencyContact}</p>
-                   );
-                })()}
-              </div>
-            )}
-            
-            {enhancedPetData?.vetContact && (
-              <div className="bg-white p-4 rounded-lg border border-brand-primary">
-                <p className="text-brand-primary text-sm font-semibold mb-2">VETERINARIAN CONTACT</p>
-                {(() => {
-                  const phoneNumber = extractPhoneNumber(enhancedPetData.vetContact);
-                   return phoneNumber ? (
-                     <div>
-                       <a
-                         href={`tel:${formatPhoneForTel(phoneNumber)}`}
-                         className="text-lg font-medium text-brand-primary hover:text-brand-primary-dark underline"
-                         aria-label="Call veterinarian"
-                       >
-                         {enhancedPetData.vetContact}
-                       </a>
-                       <p className="text-xs text-muted-foreground mt-1">Tap to call</p>
-                     </div>
-                   ) : (
-                     <p className="text-lg font-medium text-brand-primary">{enhancedPetData.vetContact}</p>
-                   );
-                })()}
-              </div>
-            )}
-            
-             {enhancedPetData?.petCaretaker && (
-               <div className="bg-white p-4 rounded-lg border border-brand-primary">
-                 <p className="text-brand-primary text-sm font-semibold mb-2">PET CARETAKER</p>
-                 {(() => {
-                   const phoneNumber = extractPhoneNumber(enhancedPetData.petCaretaker);
-                   return phoneNumber ? (
-                     <div>
-                       <a
-                         href={`tel:${formatPhoneForTel(phoneNumber)}`}
-                         className="text-lg font-medium text-brand-primary hover:text-brand-primary-dark underline"
-                         aria-label="Call pet caretaker"
-                       >
-                         {enhancedPetData.petCaretaker}
-                       </a>
-                       <p className="text-xs text-muted-foreground mt-1">Tap to call</p>
-                     </div>
-                   ) : (
-                     <p className="text-lg font-medium text-brand-primary">{enhancedPetData.petCaretaker}</p>
-                   );
-                 })()}
-               </div>
-             )}
-             
-             {!enhancedPetData?.emergencyContact && !enhancedPetData?.secondEmergencyContact && !enhancedPetData?.vetContact && !enhancedPetData?.petCaretaker && (
-              <div className="bg-white p-4 rounded-lg border border-brand-primary text-center">
-                <p className="text-brand-primary">No contacts added yet.</p>
-                {isOwner && (
-                  <Button
-                    onClick={handleProfileEdit}
-                    variant="outline"
-                    size="sm"
-                    className="mt-2"
-                  >
-                    Add Contacts
-                  </Button>
-                )}
-              </div>
-            )}
-          </div>
+          <UnifiedContactsSection petId={enhancedPetData?.id} isOwner={isOwner} />
         </div>
       </div>
 

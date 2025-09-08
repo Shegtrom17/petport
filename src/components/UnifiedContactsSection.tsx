@@ -44,6 +44,7 @@ export const UnifiedContactsSection = ({ petId, isOwner }: UnifiedContactsSectio
 
   const contactTypeLabels = {
     emergency: 'Emergency Contact',
+    emergency_secondary: 'Second Emergency Contact',
     veterinary: 'Veterinarian',
     caretaker: 'Pet Caretaker',
     general: 'General Contact'
@@ -51,6 +52,7 @@ export const UnifiedContactsSection = ({ petId, isOwner }: UnifiedContactsSectio
 
   const contactTypeColors: Record<string, string> = {
     emergency: 'bg-destructive/10 border-destructive/20 text-destructive',
+    emergency_secondary: 'bg-destructive/10 border-destructive/20 text-destructive',
     veterinary: 'bg-primary/10 border-primary/20 text-primary',
     caretaker: 'bg-secondary border-border text-foreground',
     general: 'bg-muted border-border text-muted-foreground'
@@ -244,6 +246,7 @@ export const UnifiedContactsSection = ({ petId, isOwner }: UnifiedContactsSectio
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="emergency">Emergency Contact</SelectItem>
+                      <SelectItem value="emergency_secondary">Second Emergency Contact</SelectItem>
                       <SelectItem value="veterinary">Veterinarian</SelectItem>
                       <SelectItem value="caretaker">Pet Caretaker</SelectItem>
                       <SelectItem value="general">General Contact</SelectItem>
@@ -294,6 +297,7 @@ export const UnifiedContactsSection = ({ petId, isOwner }: UnifiedContactsSectio
                         </SelectTrigger>
                         <SelectContent>
                           <SelectItem value="emergency">Emergency Contact</SelectItem>
+                          <SelectItem value="emergency_secondary">Second Emergency Contact</SelectItem>
                           <SelectItem value="veterinary">Veterinarian</SelectItem>
                           <SelectItem value="caretaker">Pet Caretaker</SelectItem>
                           <SelectItem value="general">General Contact</SelectItem>

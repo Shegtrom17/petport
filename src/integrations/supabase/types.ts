@@ -585,6 +585,44 @@ export type Database = {
         }
         Relationships: []
       }
+      pet_contacts: {
+        Row: {
+          contact_name: string
+          contact_phone: string
+          contact_type: string
+          created_at: string
+          id: string
+          pet_id: string
+          updated_at: string
+        }
+        Insert: {
+          contact_name: string
+          contact_phone: string
+          contact_type?: string
+          created_at?: string
+          id?: string
+          pet_id: string
+          updated_at?: string
+        }
+        Update: {
+          contact_name?: string
+          contact_phone?: string
+          contact_type?: string
+          created_at?: string
+          id?: string
+          pet_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pet_contacts_pet_id_fkey"
+            columns: ["pet_id"]
+            isOneToOne: false
+            referencedRelation: "pets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       pet_photos: {
         Row: {
           created_at: string

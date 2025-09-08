@@ -124,7 +124,7 @@ export const ContactsDisplay = ({ petId }: ContactsDisplayProps) => {
               </div>
               
               {contact.contact_phone && (
-                <p className={`text-sm mt-2 ${labelColor} sm:hidden`}>
+                <p className={`text-sm mt-2 ${labelColor}`}>
                   {contact.contact_phone}
                 </p>
               )}

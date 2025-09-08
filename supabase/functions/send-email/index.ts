@@ -102,9 +102,9 @@ const generateEmailTemplate = (data: EmailRequest) => {
         <title>${template.subject}</title>
       </head>
       <body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #374151; max-width: 600px; margin: 0 auto; padding: 20px;">
-        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px; text-align: center; border-radius: 12px 12px 0 0;">
+        <div style="background: linear-gradient(135deg, #5691af 0%, #4a7c95 100%); padding: 30px; text-align: center; border-radius: 12px 12px 0 0;">
           <h1 style="color: white; margin: 0; font-size: 28px; font-weight: bold;">PetPort</h1>
-          <p style="color: rgba(255,255,255,0.9); margin: 8px 0 0 0; font-size: 16px;">Digital Pet Passport & Care Platform</p>
+          <p style="color: rgba(255,255,255,0.9); margin: 8px 0 0 0; font-size: 16px;">Digital Pet Profile & Information Sharing Platform</p>
         </div>
         
         <div style="background: white; padding: 40px; border-radius: 0 0 12px 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
@@ -129,7 +129,7 @@ const generateEmailTemplate = (data: EmailRequest) => {
                 return shareUrl; // Fallback to original if URL parsing fails
               }
             })()} " 
-               style="display: inline-block; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; text-decoration: none; padding: 15px 30px; border-radius: 8px; font-weight: bold; font-size: 16px;">
+               style="display: inline-block; background: linear-gradient(135deg, #5691af 0%, #4a7c95 100%); color: white; text-decoration: none; padding: 15px 30px; border-radius: 8px; font-weight: bold; font-size: 16px;">
               ${isDocumentShare ? '📄 View Document' : `View ${petName}'s ${type === 'profile' ? 'Profile' : type === 'missing_pet' ? 'Missing Pet Alert' : type === 'resume' ? 'Resume' : type.charAt(0).toUpperCase() + type.slice(1)}`}
             </a>
           </div>
@@ -143,8 +143,8 @@ const generateEmailTemplate = (data: EmailRequest) => {
           ` : ''}
           
           <div style="border-top: 1px solid #e5e7eb; padding-top: 20px; margin-top: 30px; text-align: center; color: #6b7280; font-size: 14px;">
-            <p>This email was sent via PetPort - Digital Pet Passport & Care Platform</p>
-            <p>Visit <a href="https://petport.app" style="color: #667eea;">petport.app</a> to create your own pet profile</p>
+            <p>This email was sent via PetPort - Digital Pet Profile & Information Sharing Platform</p>
+            <p>Visit <a href="https://petport.app" style="color: #5691af;">petport.app</a> to create your own pet profile</p>
           </div>
         </div>
       </body>

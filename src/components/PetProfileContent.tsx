@@ -24,7 +24,7 @@ import { CompactPrivacyToggle } from "@/components/CompactPrivacyToggle";
 import { SectionHeader } from "@/components/ui/section-header";
 import { GuidanceHint } from "@/components/ui/guidance-hint";
 import { QuickShareHub } from "@/components/QuickShareHub";
-import { UnifiedContactsSection } from "@/components/UnifiedContactsSection";
+import { ContactsDisplay } from "@/components/ContactsDisplay";
 
 
 interface PetProfileContentProps {
@@ -570,7 +570,7 @@ export const PetProfileContent = ({
       {/* Contacts Display Section */}
       <div className="mb-8">
         <div className="bg-white/50 backdrop-blur-sm rounded-2xl p-6">
-          <UnifiedContactsSection petId={enhancedPetData?.id} isOwner={false} />
+          <ContactsDisplay petId={enhancedPetData?.id} />
         </div>
       </div>
 

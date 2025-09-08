@@ -1,4 +1,3 @@
-
 import { useEffect, useState, useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -9,14 +8,20 @@ import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/context/AuthContext";
-import { updatePetBasicInfo, updatePetContacts, updatePetMedical } from "@/services/petService";
+import { updatePetBasicInfo, updatePetMedical } from "@/services/petService";
 import { Loader2 } from "lucide-react";
 import { sanitizeText, validateTextLength, containsSuspiciousContent } from "@/utils/inputSanitizer";
 import { PrivacyToggle } from "@/components/PrivacyToggle";
-import { UnifiedContactsSection } from "@/components/UnifiedContactsSection";
 import { supabase } from "@/integrations/supabase/client";
 import { featureFlags } from "@/config/featureFlags";
 import { getSpeciesConfig, getSpeciesOptions } from "@/utils/speciesConfig";
+
+interface Contact {
+  id?: string;
+  contact_name: string;
+  contact_phone: string;
+  contact_type: string;
+}
 
 interface PetData {
   id: string;
@@ -38,11 +43,6 @@ interface PetData {
   is_public: boolean;
   created_at: string;
   updated_at: string;
-  // Contact information
-  vetContact?: string;
-  emergencyContact?: string;
-  secondEmergencyContact?: string;
-  petCaretaker?: string;
   // Medical information
   medicalAlert?: boolean;
   medicalConditions?: string;
@@ -51,7 +51,6 @@ interface PetData {
   organizationEmail?: string;
   organizationPhone?: string;
   organizationWebsite?: string;
-  customLogoUrl?: string;
   adoptionStatus?: string;
   adoptionInstructions?: string;
 }
@@ -60,208 +59,210 @@ interface PetEditFormProps {
   petData: PetData;
   onSave: () => void;
   onCancel: () => void;
-  togglePetPublicVisibility?: (petId: string, isPublic: boolean) => Promise<boolean>;
+  togglePetPublicVisibility?: (petId: string, isPublic: boolean) => void;
 }
 
 export const PetEditForm = ({ petData, onSave, onCancel, togglePetPublicVisibility }: PetEditFormProps) => {
-  const { toast } = useToast();
   const { user } = useAuth();
+  const { toast } = useToast();
+  const [formData, setFormData] = useState<PetData>(petData);
   const [isSaving, setIsSaving] = useState(false);
   const [isOrgUser, setIsOrgUser] = useState(false);
+  const [contacts, setContacts] = useState<Contact[]>([]);
 
-  // Determine if current user is part of any organization (owner or member)
+  // Check organization membership and fetch contacts
   useEffect(() => {
-    let active = true;
-    const checkOrgStatus = async () => {
+    const fetchData = async () => {
       if (!user?.id) return;
+      
       try {
+        // Check organization membership
         const [membershipsRes, ownedOrgsRes] = await Promise.all([
           supabase.from('organization_members').select('id').eq('user_id', user.id).limit(1),
           supabase.from('organizations').select('id').eq('owner_id', user.id).limit(1),
         ]);
-        if (membershipsRes.error || ownedOrgsRes.error) {
-          console.warn('Org check error', membershipsRes.error || ownedOrgsRes.error);
+        
+        const hasOrg = (membershipsRes.data && membershipsRes.data.length > 0) || 
+                      (ownedOrgsRes.data && ownedOrgsRes.data.length > 0);
+        setIsOrgUser(!!hasOrg);
+
+        // Fetch contacts
+        const { data: contactsData, error: contactsError } = await supabase
+          .from('pet_contacts')
+          .select('*')
+          .eq('pet_id', petData.id);
+        
+        if (!contactsError && contactsData) {
+          setContacts(contactsData);
         }
-        const hasOrg = (membershipsRes.data && membershipsRes.data.length > 0) || (ownedOrgsRes.data && ownedOrgsRes.data.length > 0);
-        if (active) setIsOrgUser(!!hasOrg);
-      } catch (e) {
-        console.warn('Org check exception', e);
+      } catch (error) {
+        console.error('Error fetching data:', error);
       }
     };
-    checkOrgStatus();
-    return () => { active = false; };
-  }, [user?.id]);
-  const [formData, setFormData] = useState({
-    name: petData.name || "",
-    breed: petData.breed || "",
-    age: petData.age || "",
-    weight: petData.weight || "",
-    height: petData.height || "",
-    sex: petData.sex || "",
-    microchipId: petData.microchipId || "",
-    registrationNumber: petData.registrationNumber || "",
-    species: petData.species || "",
-    state: petData.state || "",
-    county: petData.county || "",
-    notes: petData.notes || "",
-    bio: petData.bio || "",
-    // Contact information
-    vetContact: petData.vetContact || "",
-    emergencyContact: petData.emergencyContact || "",
-    secondEmergencyContact: petData.secondEmergencyContact || "",
-    petCaretaker: petData.petCaretaker || "",
-    // Medical information
-    medicalAlert: petData.medicalAlert || false,
-    medicalConditions: petData.medicalConditions || "",
-    // Organization information
-    organizationName: petData.organizationName || "",
-    organizationEmail: petData.organizationEmail || "",
-    organizationPhone: petData.organizationPhone || "",
-    organizationWebsite: petData.organizationWebsite || "",
-    adoptionStatus: petData.adoptionStatus || "not_available",
-    adoptionInstructions: petData.adoptionInstructions || ""
-  });
+    
+    fetchData();
+  }, [user?.id, petData.id]);
 
-  const speciesConfig = useMemo(() => getSpeciesConfig(formData.species), [formData.species]);
-  const speciesOptions = useMemo(() => getSpeciesOptions(), []);
+  const speciesConfig = useMemo(() => {
+    return getSpeciesConfig(formData.species);
+  }, [formData.species]);
+
+  const speciesOptions = useMemo(() => {
+    return getSpeciesOptions();
+  }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    
-    // Security: Check for suspicious content
-    if (containsSuspiciousContent(value)) {
-      toast({
-        variant: "destructive",
-        title: "Invalid Input",
-        description: "The input contains invalid characters. Please remove any script tags or suspicious content.",
-      });
-      return;
-    }
-    
-    // Security: Validate text length (max 1000 chars for most fields, 5000 for bio/notes)
-    const maxLength = (name === 'bio' || name === 'notes') ? 5000 : 1000;
-    if (!validateTextLength(value, maxLength)) {
-      toast({
-        variant: "destructive", 
-        title: "Input Too Long",
-        description: `${name} must be less than ${maxLength} characters.`,
-      });
-      return;
-    }
-    
-    setFormData(prevData => ({
-      ...prevData,
-      [name]: value
-    }));
+    setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleSelectChange = (name: string, value: string) => {
-    setFormData(prevData => ({
-      ...prevData,
-      [name]: value
-    }));
+  const handleSelectChange = (field: string, value: string) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
   };
 
-  const handleSwitchChange = (name: string, checked: boolean) => {
-    setFormData(prevData => ({
-      ...prevData,
-      [name]: checked
-    }));
+  const handleSwitchChange = (field: string, checked: boolean) => {
+    setFormData(prev => ({ ...prev, [field]: checked }));
   };
 
-const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
-  
-  if (!petData?.id) {
-    toast({
-      variant: "destructive",
-      title: "Error",
-      description: "Pet ID is missing. Cannot save changes.",
+  const handleContactChange = (contactType: string, field: 'contact_name' | 'contact_phone', value: string) => {
+    setContacts(prev => {
+      const existingIndex = prev.findIndex(c => c.contact_type === contactType);
+      
+      if (existingIndex >= 0) {
+        // Update existing contact
+        const updated = [...prev];
+        updated[existingIndex] = { ...updated[existingIndex], [field]: value };
+        return updated;
+      } else {
+        // Create new contact
+        const newContact: Contact = {
+          contact_name: field === 'contact_name' ? value : '',
+          contact_phone: field === 'contact_phone' ? value : '',
+          contact_type: contactType
+        };
+        return [...prev, newContact];
+      }
     });
-    return;
-  }
+  };
 
-  setIsSaving(true);
+  const updateContacts = async () => {
+    try {
+      // Delete existing contacts for this pet
+      await supabase
+        .from('pet_contacts')
+        .delete()
+        .eq('pet_id', petData.id);
 
-  try {
-    // Basic validation
-    if (!formData.name.trim()) {
+      // Insert updated contacts
+      const contactsToInsert = contacts.filter(contact => 
+        contact.contact_name.trim() || contact.contact_phone.trim()
+      ).map(contact => ({
+        pet_id: petData.id,
+        contact_name: sanitizeText(contact.contact_name.trim()),
+        contact_phone: sanitizeText(contact.contact_phone.trim()),
+        contact_type: contact.contact_type
+      }));
+
+      if (contactsToInsert.length > 0) {
+        const { error } = await supabase
+          .from('pet_contacts')
+          .insert(contactsToInsert);
+        
+        if (error) throw error;
+      }
+      
+      return true;
+    } catch (error) {
+      console.error('Error updating contacts:', error);
+      return false;
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!validateTextLength(formData.name, 100) ||
+        !validateTextLength(formData.bio, 1000) ||
+        !validateTextLength(formData.notes, 500) ||
+        formData.name.trim().length === 0) {
       toast({
         variant: "destructive",
         title: "Validation Error",
-        description: "Pet name is required.",
+        description: "Please check your inputs for proper length.",
       });
       return;
     }
 
-    // Prepare update data with only changed fields - sanitize all inputs
-    const updateData = {
-      name: sanitizeText(formData.name.trim()),
-      breed: sanitizeText(formData.breed.trim()),
-      species: sanitizeText(formData.species.trim()),
-      age: sanitizeText(formData.age.trim()),
-      weight: sanitizeText(formData.weight.trim()),
-      height: sanitizeText(formData.height.trim()),
-      sex: sanitizeText(formData.sex.trim()),
-      microchip_id: sanitizeText(formData.microchipId.trim()),
-      registration_number: sanitizeText(formData.registrationNumber.trim()),
-      bio: sanitizeText(formData.bio.trim()),
-      notes: sanitizeText(formData.notes.trim()),
-      state: sanitizeText(formData.state.trim()),
-      county: sanitizeText(formData.county.trim()),
-      // Organization fields
-      organization_name: sanitizeText(formData.organizationName.trim()),
-      organization_email: sanitizeText(formData.organizationEmail.trim()),
-      organization_phone: sanitizeText(formData.organizationPhone.trim()),
-      organization_website: sanitizeText(formData.organizationWebsite.trim()),
-      adoption_status: formData.adoptionStatus,
-      adoption_instructions: sanitizeText(formData.adoptionInstructions.trim()),
-    };
-
-    // Call service layer to update pet basic info
-    const basicUpdateSuccess = await updatePetBasicInfo(petData.id, updateData);
-
-    // Prepare contact data - sanitize all inputs
-    const contactData = {
-      vet_contact: sanitizeText(formData.vetContact.trim()),
-      emergency_contact: sanitizeText(formData.emergencyContact.trim()),
-      second_emergency_contact: sanitizeText(formData.secondEmergencyContact.trim()),
-      pet_caretaker: sanitizeText(formData.petCaretaker.trim()),
-    };
-
-    // Call service layer to update pet contacts
-    const contactUpdateSuccess = await updatePetContacts(petData.id, contactData);
-
-    // Prepare medical data
-    const medicalData = {
-      medical_alert: formData.medicalAlert,
-      medical_conditions: sanitizeText(formData.medicalConditions.trim()),
-    };
-
-    // Call service layer to update pet medical info
-    const medicalUpdateSuccess = await updatePetMedical(petData.id, medicalData);
-
-    if (basicUpdateSuccess && contactUpdateSuccess && medicalUpdateSuccess) {
+    if (containsSuspiciousContent(formData.name) ||
+        containsSuspiciousContent(formData.bio) ||
+        containsSuspiciousContent(formData.notes)) {
       toast({
-        title: "Success",
-        description: "Pet profile updated successfully!",
+        variant: "destructive",
+        title: "Invalid Content",
+        description: "Please remove any inappropriate content.",
       });
-      onSave(); // Trigger parent to refresh data
-    } else {
-      throw new Error("Update failed");
+      return;
     }
-  } catch (error) {
-    console.error("Error updating pet:", error);
-    toast({
-      variant: "destructive",
-      title: "Error",
-      description: "Failed to update pet profile. Please try again.",
-    });
-  } finally {
-    setIsSaving(false);
-  }
-};
 
+    setIsSaving(true);
+    
+    try {
+      // Update basic pet information
+      const updateData = {
+        name: sanitizeText(formData.name.trim()),
+        breed: sanitizeText(formData.breed.trim()),
+        species: sanitizeText(formData.species.trim()),
+        age: sanitizeText(formData.age.trim()),
+        weight: sanitizeText(formData.weight.trim()),
+        height: sanitizeText(formData.height?.trim() || ''),
+        sex: sanitizeText(formData.sex.trim()),
+        microchip_id: sanitizeText(formData.microchipId.trim()),
+        registration_number: sanitizeText(formData.registrationNumber?.trim() || ''),
+        bio: sanitizeText(formData.bio.trim()),
+        notes: sanitizeText(formData.notes.trim()),
+        state: sanitizeText(formData.state.trim()),
+        county: sanitizeText(formData.county.trim()),
+        organization_name: sanitizeText(formData.organizationName?.trim() || ''),
+        organization_email: sanitizeText(formData.organizationEmail?.trim() || ''),
+        organization_phone: sanitizeText(formData.organizationPhone?.trim() || ''),
+        organization_website: sanitizeText(formData.organizationWebsite?.trim() || ''),
+        adoption_status: formData.adoptionStatus || 'not_available',
+        adoption_instructions: sanitizeText(formData.adoptionInstructions?.trim() || ''),
+      };
+
+      const basicUpdateSuccess = await updatePetBasicInfo(petData.id, updateData);
+
+      // Update medical information
+      const medicalData = {
+        medical_alert: formData.medicalAlert || false,
+        medical_conditions: sanitizeText(formData.medicalConditions?.trim() || ''),
+      };
+
+      const medicalUpdateSuccess = await updatePetMedical(petData.id, medicalData);
+
+      // Update contacts
+      const contactsUpdateSuccess = await updateContacts();
+
+      if (basicUpdateSuccess && medicalUpdateSuccess && contactsUpdateSuccess) {
+        toast({
+          title: "Success",
+          description: "Pet profile updated successfully!",
+        });
+        onSave();
+      } else {
+        throw new Error("Update failed");
+      }
+    } catch (error) {
+      console.error("Error updating pet:", error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to update pet profile. Please try again.",
+      });
+    } finally {
+      setIsSaving(false);
+    }
+  };
 
   return (
     <Card className="bg-[#f8f8f8] shadow-md">
@@ -271,294 +272,266 @@ const handleSubmit = async (e: React.FormEvent) => {
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Basic Information */}
           <div>
-            <Label htmlFor="name">Pet Name</Label>
-            <Input type="text" id="name" name="name" value={formData.name} onChange={handleChange} />
-          </div>
-          <div>
-            <Label htmlFor="breed">Breed</Label>
-            <Input type="text" id="breed" name="breed" value={formData.breed} onChange={handleChange} />
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div>
-            <Label htmlFor="age">Age</Label>
-            <Input type="text" id="age" name="age" value={formData.age} onChange={handleChange} />
-          </div>
-          <div>
-            <Label htmlFor="weight">{speciesConfig.weightLabel}</Label>
-            <Input 
-              type="text" 
-              id="weight" 
-              name="weight" 
-              value={formData.weight} 
-              onChange={handleChange}
-              placeholder={speciesConfig.weightPlaceholder}
-            />
-          </div>
-          <div>
-            <Label htmlFor="sex">Sex</Label>
-            <Select value={formData.sex} onValueChange={(value) => handleSelectChange('sex', value)}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select sex" />
-              </SelectTrigger>
-              <SelectContent>
-                {speciesConfig.sexOptions.map((option) => (
-                  <SelectItem key={option.value} value={option.value}>
-                    {option.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
-
-        {/* Height field - conditionally shown */}
-        {speciesConfig.showHeight && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <Label htmlFor="height">{speciesConfig.heightLabel}</Label>
-              <Input 
-                type="text" 
-                id="height" 
-                name="height" 
-                value={formData.height} 
-                onChange={handleChange}
-                placeholder={speciesConfig.heightPlaceholder}
-              />
-            </div>
-          </div>
-        )}
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <Label htmlFor="microchipId">Microchip ID</Label>
-            <Input type="text" id="microchipId" name="microchipId" value={formData.microchipId} onChange={handleChange} />
-          </div>
-          <div>
-            <Label htmlFor="species">Species</Label>
-            <Select value={formData.species} onValueChange={(value) => handleSelectChange('species', value)}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select species" />
-              </SelectTrigger>
-              <SelectContent>
-                {speciesOptions.map((option) => (
-                  <SelectItem key={option.value} value={option.value}>
-                    {option.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
-
-        {/* Registration Number - conditionally shown */}
-        {speciesConfig.showRegistration && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <Label htmlFor="registrationNumber">Registration</Label>
-              <Input 
-                type="text" 
-                id="registrationNumber" 
-                name="registrationNumber" 
-                value={formData.registrationNumber} 
-                onChange={handleChange}
-                placeholder={speciesConfig.registrationPlaceholder}
-              />
-            </div>
-          </div>
-        )}
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <Label htmlFor="state">State</Label>
-            <Input type="text" id="state" name="state" value={formData.state} onChange={handleChange} />
-          </div>
-          <div>
-            <Label htmlFor="county">County</Label>
-            <Input type="text" id="county" name="county" value={formData.county} onChange={handleChange} />
-          </div>
-        </div>
-
-        <div>
-          <Label htmlFor="notes">Description, Coloring & Unique Traits</Label>
-          <Textarea id="notes" name="notes" value={formData.notes} onChange={handleChange} placeholder="Physical description, coloring, markings, unique identifying features..." />
-        </div>
-
-        <div>
-          <Label htmlFor="bio">Bio</Label>
-          <Textarea id="bio" name="bio" value={formData.bio} onChange={handleChange} />
-        </div>
-
-        {/* Medical Information Section */}
-        <div className="border-t pt-6">
-          <h3 className="text-lg font-serif text-foreground mb-4">Medical Information</h3>
-          
-          <div className="space-y-4">
-            <div className="flex items-center space-x-3">
-              <Switch
-                id="medicalAlert"
-                checked={formData.medicalAlert}
-                onCheckedChange={(checked) => handleSwitchChange('medicalAlert', checked)}
-              />
-              <Label htmlFor="medicalAlert" className="text-sm font-medium">
-                Medical Alert - This pet has medical conditions requiring immediate attention
-              </Label>
-            </div>
-            
-            {formData.medicalAlert && (
+            <h3 className="text-lg font-serif text-foreground mb-4">Basic Information</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="medicalConditions">Medical Conditions & Instructions</Label>
-                <Textarea 
-                  id="medicalConditions" 
-                  name="medicalConditions" 
-                  value={formData.medicalConditions} 
-                  onChange={handleChange}
-                  placeholder="Describe medical conditions, medications, and emergency instructions..."
-                  className="mt-1"
-                />
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Contact Information Section */}
-        <div className="border-t pt-6">
-          <h3 className="text-lg font-serif text-foreground mb-4">Contact Information</h3>
-          <UnifiedContactsSection petId={petData.id} isOwner={true} />
-        </div>
-
-        {/* Organization Information Section - visible to organization members only */}
-        {(isOrgUser || featureFlags.testMode) && (
-          <div className="border-t pt-6">
-            <h3 className="text-lg font-serif text-foreground mb-4">Rescue, Shelter, or Foster Program (Optional)</h3>
-            {featureFlags.testMode && !isOrgUser && (
-              <p className="text-xs text-muted-foreground mb-2">Visible due to Test Mode; changes may be restricted by server policies.</p>
-            )}
-            <p className="text-sm text-gray-600 mb-1">
-              Complete this section if this pet is managed by a rescue organization, shelter, or foster program.
-            </p>
-            <p className="text-xs text-muted-foreground mb-4">
-              Foster caregivers: it’s okay to leave this blank — you can still transfer to adopters without an organization.
-            </p>
-            
-            <div className="space-y-4">
-              <div>
-                <Label htmlFor="organizationName">Rescue/Shelter/Foster Program Name</Label>
+                <Label htmlFor="name">Pet Name</Label>
                 <Input 
-                  type="text" 
-                  id="organizationName" 
-                  name="organizationName" 
-                  value={formData.organizationName} 
+                  id="name" 
+                  name="name" 
+                  value={formData.name} 
                   onChange={handleChange}
-                  placeholder="e.g., Happy Tails Rescue, City Animal Shelter" 
+                  required
                 />
               </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="organizationEmail">Rescue/Shelter/Foster Email</Label>
-                  <Input 
-                    type="email" 
-                    id="organizationEmail" 
-                    name="organizationEmail" 
-                    value={formData.organizationEmail} 
-                    onChange={handleChange}
-                    placeholder="contact@rescue.org" 
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="organizationPhone">Rescue/Shelter/Foster Phone</Label>
-                  <Input 
-                    type="tel" 
-                    id="organizationPhone" 
-                    name="organizationPhone" 
-                    value={formData.organizationPhone} 
-                    onChange={handleChange}
-                    placeholder="(555) 123-4567" 
-                  />
-                </div>
-              </div>
-
               <div>
-                <Label htmlFor="organizationWebsite">Rescue/Shelter/Foster Website</Label>
-                <Input 
-                  type="url" 
-                  id="organizationWebsite" 
-                  name="organizationWebsite" 
-                  value={formData.organizationWebsite} 
-                  onChange={handleChange}
-                  placeholder="https://www.rescue.org" 
-                />
-              </div>
-
-              <div>
-                <Label htmlFor="adoptionStatus">Adoption Status</Label>
-                <Select 
-                  value={formData.adoptionStatus} 
-                  onValueChange={(value) => handleSelectChange('adoptionStatus', value)}
-                >
+                <Label htmlFor="species">Species</Label>
+                <Select value={formData.species} onValueChange={(value) => handleSelectChange("species", value)}>
                   <SelectTrigger>
-                    <SelectValue placeholder="Select adoption status" />
+                    <SelectValue placeholder="Select species" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="not_available">Not Available for Adoption</SelectItem>
-                    <SelectItem value="available">Available for Adoption</SelectItem>
-                    <SelectItem value="pending">Adoption Pending</SelectItem>
-                    <SelectItem value="adopted">Adopted</SelectItem>
+                    {speciesOptions.map((option) => (
+                      <SelectItem key={option.value} value={option.value}>
+                        {option.label}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>
-
-              {formData.adoptionStatus === 'available' && (
+              <div>
+                <Label htmlFor="breed">Breed</Label>
+                <Input id="breed" name="breed" value={formData.breed} onChange={handleChange} />
+              </div>
+              <div>
+                <Label htmlFor="age">Age</Label>
+                <Input id="age" name="age" value={formData.age} onChange={handleChange} />
+              </div>
+              <div>
+                <Label htmlFor="weight">Weight</Label>
+                <Input id="weight" name="weight" value={formData.weight} onChange={handleChange} />
+              </div>
+              {speciesConfig.showHeight && (
                 <div>
-                  <Label htmlFor="adoptionInstructions">Adoption Instructions</Label>
-                  <Textarea 
-                    id="adoptionInstructions" 
-                    name="adoptionInstructions" 
-                    value={formData.adoptionInstructions} 
-                    onChange={handleChange}
-                    placeholder="Provide instructions for potential adopters on how to inquire about this pet..."
-                    className="mt-1"
-                  />
+                  <Label htmlFor="height">Height</Label>
+                  <Input id="height" name="height" value={formData.height || ''} onChange={handleChange} />
                 </div>
               )}
+              <div>
+                <Label htmlFor="sex">Sex</Label>
+                <Select value={formData.sex} onValueChange={(value) => handleSelectChange("sex", value)}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select sex" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {speciesConfig.sexOptions.map((option) => (
+                      <SelectItem key={option.value} value={option.value}>
+                        {option.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <Label htmlFor="microchipId">Microchip ID</Label>
+                <Input id="microchipId" name="microchipId" value={formData.microchipId} onChange={handleChange} />
+              </div>
+              {speciesConfig.showRegistration && (
+                <div>
+                  <Label htmlFor="registrationNumber">Registration Number</Label>
+                  <Input id="registrationNumber" name="registrationNumber" value={formData.registrationNumber || ''} onChange={handleChange} />
+                </div>
+              )}
+              <div>
+                <Label htmlFor="state">State</Label>
+                <Input id="state" name="state" value={formData.state} onChange={handleChange} />
+              </div>
+              <div>
+                <Label htmlFor="county">County</Label>
+                <Input id="county" name="county" value={formData.county} onChange={handleChange} />
+              </div>
+            </div>
+            
+            <div className="mt-4">
+              <Label htmlFor="bio">Bio</Label>
+              <Textarea id="bio" name="bio" value={formData.bio} onChange={handleChange} className="min-h-20" />
+            </div>
+            
+            <div className="mt-4">
+              <Label htmlFor="notes">Notes</Label>
+              <Textarea id="notes" name="notes" value={formData.notes} onChange={handleChange} className="min-h-20" />
             </div>
           </div>
-        )}
 
-        {/* Privacy Settings */}
-        {togglePetPublicVisibility && (
+          {/* Contact Information */}
+          <div className="border-t pt-6">
+            <h3 className="text-lg font-serif text-foreground mb-4">Contact Information</h3>
+            <div className="space-y-4">
+              {['emergency', 'emergency_secondary', 'veterinary', 'caretaker'].map((type) => {
+                const contact = contacts.find(c => c.contact_type === type);
+                const isEmergency = type.includes('emergency');
+                return (
+                  <div key={type} className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor={`${type}_name`} className={isEmergency ? "text-red-600" : "text-[#5691af]"}>
+                        {type === 'emergency' ? 'Emergency Contact Name' :
+                         type === 'emergency_secondary' ? 'Secondary Emergency Contact Name' :
+                         type === 'veterinary' ? 'Veterinary Contact Name' :
+                         'Pet Caretaker Name'}
+                      </Label>
+                      <Input
+                        id={`${type}_name`}
+                        value={contact?.contact_name || ''}
+                        onChange={(e) => handleContactChange(type, 'contact_name', e.target.value)}
+                        placeholder="Enter contact name"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor={`${type}_phone`} className={isEmergency ? "text-red-600" : "text-[#5691af]"}>
+                        {type === 'emergency' ? 'Emergency Contact Phone (tap to call)' :
+                         type === 'emergency_secondary' ? 'Secondary Emergency Contact Phone (tap to call)' :
+                         type === 'veterinary' ? 'Veterinary Contact Phone (tap to call)' :
+                         'Pet Caretaker Phone (tap to call)'}
+                      </Label>
+                      <Input
+                        id={`${type}_phone`}
+                        value={contact?.contact_phone || ''}
+                        onChange={(e) => handleContactChange(type, 'contact_phone', e.target.value)}
+                        placeholder="Enter phone number"
+                      />
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Medical Information */}
+          <div className="border-t pt-6">
+            <h3 className="text-lg font-serif text-foreground mb-4">Medical Information</h3>
+            <div className="space-y-4">
+              <div className="flex items-center space-x-2">
+                <Switch
+                  id="medicalAlert"
+                  checked={formData.medicalAlert || false}
+                  onCheckedChange={(checked) => handleSwitchChange("medicalAlert", checked)}
+                />
+                <Label htmlFor="medicalAlert">Medical Alert</Label>
+              </div>
+              <div>
+                <Label htmlFor="medicalConditions">Medical Conditions</Label>
+                <Textarea
+                  id="medicalConditions"
+                  name="medicalConditions"
+                  value={formData.medicalConditions || ''}
+                  onChange={handleChange}
+                  className="min-h-20"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Organization Information */}
+          {(isOrgUser || featureFlags.testMode) && (
+            <div className="border-t pt-6">
+              <h3 className="text-lg font-serif text-foreground mb-4">Organization Information</h3>
+              {featureFlags.testMode && !isOrgUser && (
+                <p className="text-xs text-muted-foreground mb-2">Visible due to Test Mode; changes may be restricted by server policies.</p>
+              )}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="organizationName">Organization Name</Label>
+                  <Input
+                    id="organizationName"
+                    name="organizationName"
+                    value={formData.organizationName || ''}
+                    onChange={handleChange}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="organizationEmail">Organization Email</Label>
+                  <Input
+                    id="organizationEmail"
+                    name="organizationEmail"
+                    type="email"
+                    value={formData.organizationEmail || ''}
+                    onChange={handleChange}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="organizationPhone">Organization Phone</Label>
+                  <Input
+                    id="organizationPhone"
+                    name="organizationPhone"
+                    value={formData.organizationPhone || ''}
+                    onChange={handleChange}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="organizationWebsite">Organization Website</Label>
+                  <Input
+                    id="organizationWebsite"
+                    name="organizationWebsite"
+                    value={formData.organizationWebsite || ''}
+                    onChange={handleChange}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="adoptionStatus">Adoption Status</Label>
+                  <Select value={formData.adoptionStatus || 'not_available'} onValueChange={(value) => handleSelectChange("adoptionStatus", value)}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select adoption status" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="available">Available</SelectItem>
+                      <SelectItem value="pending">Pending</SelectItem>
+                      <SelectItem value="adopted">Adopted</SelectItem>
+                      <SelectItem value="not_available">Not Available</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+              <div className="mt-4">
+                <Label htmlFor="adoptionInstructions">Adoption Instructions</Label>
+                <Textarea
+                  id="adoptionInstructions"
+                  name="adoptionInstructions"
+                  value={formData.adoptionInstructions || ''}
+                  onChange={handleChange}
+                  className="min-h-20"
+                />
+              </div>
+            </div>
+          )}
+
+          {/* Privacy Settings */}
           <div className="border-t pt-6">
             <h3 className="text-lg font-serif text-foreground mb-4">Privacy Settings</h3>
             <PrivacyToggle
-              isPublic={petData.is_public || false}
-              onToggle={(isPublic) => togglePetPublicVisibility(petData.id, isPublic)}
+              isPublic={petData.is_public}
+              onToggle={async (isPublic) => {
+                if (togglePetPublicVisibility) {
+                  togglePetPublicVisibility(petData.id, isPublic);
+                }
+                return true;
+              }}
             />
           </div>
-        )}
-        
-        <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4">
-          <Button 
-            onClick={handleSubmit}
-            disabled={isSaving}
-            className="flex-1 bg-brand-primary hover:bg-brand-primary-dark text-white border border-white/20 px-3 sm:px-4 py-2 text-sm sm:text-base"
-          >
-            {isSaving && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
-            <span className="hidden sm:inline">{isSaving ? "Saving..." : "Save Changes"}</span>
-            <span className="sm:hidden">{isSaving ? "Saving..." : "Save"}</span>
-          </Button>
-          <Button 
-            onClick={onCancel}
-            variant="outline"
-            disabled={isSaving}
-            className="flex-1 border-border text-foreground hover:bg-muted px-3 sm:px-4 py-2 text-sm sm:text-base"
-          >
-            Cancel
-          </Button>
-        </div>
+
+          {/* Action Buttons */}
+          <div className="flex gap-4 pt-6">
+            <Button type="submit" disabled={isSaving}>
+              {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              Save Changes
+            </Button>
+            <Button type="button" variant="outline" onClick={onCancel}>
+              Cancel
+            </Button>
+          </div>
+        </form>
       </CardContent>
     </Card>
   );

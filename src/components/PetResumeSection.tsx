@@ -554,18 +554,6 @@ export const PetResumeSection = ({ petData, onUpdate }: PetResumeSectionProps) =
                 <p className="text-lg text-gray-600 mb-4">{petData.breed} • {petData.age} • {petData.weight}</p>
               </div>
 
-              {/* Critical Information */}
-              <div className="p-4 rounded-lg border border-gray-200">
-                <ContactsDisplay petId={petData.id} />
-                
-                <div className="flex items-center space-x-2 mt-4 pt-4 border-t border-gray-200">
-                  <Shield className="w-4 h-4 text-blue-600" />
-                  <div>
-                    <p className="text-sm font-semibold text-blue-900">PetPort ID</p>
-                    <p className="text-sm text-blue-700 font-mono">{petData.petPassId}</p>
-                  </div>
-                </div>
-              </div>
 
               {/* Rating Summary */}
               {petData.reviews && petData.reviews.length > 0 && (
@@ -760,6 +748,29 @@ export const PetResumeSection = ({ petData, onUpdate }: PetResumeSectionProps) =
           </CardContent>
         </Card>
       )}
+
+      {/* Contact Information Section - Moved to Bottom */}
+      <Card className="border-0 shadow-xl bg-white/90 backdrop-blur-sm">
+        <CardHeader>
+          <CardTitle className="flex items-center space-x-2">
+            <Phone className="w-5 h-5 text-blue-600" />
+            <span>Contact Information</span>
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            <ContactsDisplay petId={petData.id} />
+            
+            <div className="flex items-center space-x-2 mt-4 pt-4 border-t border-gray-200">
+              <Shield className="w-4 h-4 text-blue-600" />
+              <div>
+                <p className="text-sm font-semibold text-blue-900">PetPort ID</p>
+                <p className="text-sm text-blue-700 font-mono">{petData.petPassId}</p>
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
     </div>
   );

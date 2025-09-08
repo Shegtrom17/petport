@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { MapPin, Phone, Calendar, Clock, Share2, AlertTriangle } from 'lucide-react';
+import { MapPin, Phone, Calendar, Clock, Share2, AlertTriangle, Stethoscope } from 'lucide-react';
 import { SocialShareButtons } from '@/components/SocialShareButtons';
 import { MetaTags } from '@/components/MetaTags';
 import { sanitizeText, truncateText } from '@/utils/inputSanitizer';
@@ -25,7 +25,11 @@ interface MissingPetData {
   distinctiveFeatures?: string;
   rewardAmount?: string;
   finderInstructions?: string;
-  emergencyContact?: string;
+  contacts: Array<{
+    contact_name: string;
+    contact_phone: string;
+    contact_type: string;
+  }>;
   updatedAt: string;
 }
 
@@ -77,12 +81,11 @@ export default function PublicMissingPet() {
         .eq('pet_id', id)
         .single();
 
-      // Fetch primary emergency contact only
-      const { data: contact } = await supabase
-        .from('contacts')
-        .select('emergency_contact')
-        .eq('pet_id', id)
-        .single();
+      // Fetch contacts using pet_contacts table
+      const { data: petContacts } = await supabase
+        .from('pet_contacts')
+        .select('contact_name, contact_phone, contact_type')
+        .eq('pet_id', id);
 
       // Sanitize and prepare data
       const sanitizedData: MissingPetData = {
@@ -99,7 +102,7 @@ export default function PublicMissingPet() {
         distinctiveFeatures: sanitizeText(lostData.distinctive_features || ''),
         rewardAmount: sanitizeText(lostData.reward_amount || ''),
         finderInstructions: sanitizeText(lostData.finder_instructions || ''),
-        emergencyContact: sanitizeText(contact?.emergency_contact || ''),
+        contacts: petContacts || [],
         updatedAt: lostData.updated_at
       };
 
@@ -179,7 +182,7 @@ export default function PublicMissingPet() {
 
       <div className="container mx-auto px-4 py-8 max-w-4xl">
         {/* Pet Info Card */}
-        <Card className="mb-6 bg-white/60 backdrop-blur-sm border-white/30">
+        <Card className="mb-6">
           <CardHeader className="bg-brand-primary text-white">
             <CardTitle className="flex flex-col md:flex-row items-start md:items-center gap-4">
               <div className="flex-shrink-0">
@@ -192,7 +195,7 @@ export default function PublicMissingPet() {
               <div className="flex-grow">
                 <h2 className="text-3xl font-bold">{petData.name}</h2>
                 <p className="text-white/80 text-lg">{petData.breed} • {petData.species} • {petData.age}</p>
-                <Badge variant="destructive" className="mt-2 bg-white/20 text-white border-white/30">
+                <Badge variant="destructive" className="mt-2">
                   LOST
                 </Badge>
               </div>
@@ -204,14 +207,14 @@ export default function PublicMissingPet() {
                 <img 
                   src={petData.fullBodyPhotoUrl} 
                   alt={`${petData.name} full body`}
-                  className="max-w-full h-auto max-h-96 mx-auto rounded-2xl border border-white/30"
+                  className="max-w-full h-auto max-h-96 mx-auto rounded-2xl border shadow-sm"
                 />
               </div>
             )}
 
             {/* Last Seen Information */}
             {(petData.lastSeenLocation || petData.lastSeenDate) && (
-              <div className="bg-white/60 p-4 rounded-2xl border border-white/30 mb-6">
+              <div className="p-4 rounded-lg border shadow-sm mb-6">
                 <div className="flex items-center space-x-2 mb-3">
                   <MapPin className="w-5 h-5 text-brand-primary" />
                   <h3 className="font-semibold text-brand-primary">Last Seen</h3>
@@ -238,7 +241,7 @@ export default function PublicMissingPet() {
 
             {/* Distinctive Features */}
             {petData.distinctiveFeatures && (
-              <div className="bg-white/60 p-4 rounded-2xl border border-white/30 mb-6">
+              <div className="p-4 rounded-lg border shadow-sm mb-6">
                 <h3 className="font-semibold text-brand-primary mb-2">Distinctive Features</h3>
                 <p className="text-foreground">{truncateText(petData.distinctiveFeatures, 300)}</p>
               </div>
@@ -246,39 +249,48 @@ export default function PublicMissingPet() {
 
             {/* Reward */}
             {petData.rewardAmount && (
-              <div className="bg-white/60 p-4 rounded-2xl border border-white/30 mb-6">
+              <div className="p-4 rounded-lg border shadow-sm mb-6">
                 <h3 className="font-semibold text-brand-primary mb-2">Reward Offered</h3>
                 <p className="text-foreground text-lg font-medium">{petData.rewardAmount}</p>
               </div>
             )}
 
             {/* Contact Information */}
-            {petData.emergencyContact && (
-              <div className="bg-white/60 p-4 rounded-2xl border border-white/30 mb-6">
-                <div className="flex items-center space-x-2 mb-2">
-                  <Phone className="w-5 h-5 text-red-600" />
-                  <h3 className="font-semibold text-red-700">Contact Information</h3>
-                </div>
-                {/\d{3}/.test(petData.emergencyContact) ? (
-                  <div>
-                    <a 
-                      href={`tel:${petData.emergencyContact.replace(/\D/g, '')}`}
-                      className="font-medium text-red-800 hover:text-red-700"
-                      aria-label="Call emergency contact"
-                    >
-                      {petData.emergencyContact}
-                    </a>
-                    <p className="text-xs text-red-600 mt-1">Tap to call</p>
+            {petData.contacts && petData.contacts.length > 0 && (
+              <div className="space-y-3 mb-6">
+                <h3 className="font-semibold text-lg" style={{ color: '#5691af' }}>Emergency Contacts</h3>
+                {petData.contacts.map((contact, index) => (
+                  <div key={index} className="p-3 rounded-lg border shadow-sm">
+                    <div className="flex items-center space-x-2">
+                      <Phone className={`w-4 h-4 ${contact.contact_type === 'emergency' ? 'text-red-600' : 'text-azure'}`} />
+                      <strong className={contact.contact_type === 'emergency' ? 'text-red-700' : 'text-azure'}>
+                        {contact.contact_name}:
+                      </strong>
+                    </div>
+                    {/\d{3}/.test(contact.contact_phone) ? (
+                      <div className="ml-6">
+                        <a 
+                          href={`tel:${contact.contact_phone.replace(/\D/g, '')}`}
+                          className={`font-medium hover:opacity-80 ${contact.contact_type === 'emergency' ? 'text-red-800' : 'text-azure'}`}
+                          aria-label={`Call ${contact.contact_name}`}
+                        >
+                          {contact.contact_phone}
+                        </a>
+                        <p className={`text-xs ${contact.contact_type === 'emergency' ? 'text-red-600' : 'text-azure'}`}>Tap to call</p>
+                      </div>
+                    ) : (
+                      <p className={`ml-6 font-medium ${contact.contact_type === 'emergency' ? 'text-red-800' : 'text-azure'}`}>
+                        {contact.contact_phone}
+                      </p>
+                    )}
                   </div>
-                ) : (
-                  <p className="font-medium text-red-800">{petData.emergencyContact}</p>
-                )}
+                ))}
               </div>
             )}
 
             {/* Finder Instructions */}
             {petData.finderInstructions && (
-              <div className="bg-white/60 p-4 rounded-2xl border border-white/30 mb-6">
+              <div className="p-4 rounded-lg border shadow-sm mb-6">
                 <h3 className="font-semibold text-brand-primary mb-2">If Found - Instructions</h3>
                 <p className="text-foreground">{truncateText(petData.finderInstructions, 200)}</p>
               </div>

@@ -233,7 +233,7 @@ const LostPet = () => {
         )}
 
         {/* Pet Information Card */}
-        <div className="bg-white/50 backdrop-blur-sm rounded-2xl p-6">
+        <div className="p-6 rounded-lg border shadow-sm">
           <div className="flex items-center space-x-4 mb-6">
             <img 
               src={currentPet.photoUrl || "/placeholder.svg"} 
@@ -257,7 +257,7 @@ const LostPet = () => {
                 <div><strong>Color:</strong> {currentPet.species}</div>
               </div>
               {currentPet.microchip_id && (
-                <div className="bg-white/60 p-3 rounded-lg border border-white/30">
+                <div className="p-3 rounded-lg border shadow-sm">
                   <strong>Microchip ID:</strong> {currentPet.microchip_id}
                 </div>
               )}
@@ -313,7 +313,7 @@ const LostPet = () => {
         </div>
 
         {/* Lost Pet Information */}
-        <div className="bg-white/50 backdrop-blur-sm rounded-2xl p-6">
+        <div className="p-6 rounded-lg border shadow-sm">
           <div className="flex items-center justify-between mb-6">
             <h3 className="text-xl font-semibold flex items-center space-x-2" style={{ color: '#5691af' }}>
               <AlertTriangle className="w-6 h-6" />
@@ -447,64 +447,65 @@ const LostPet = () => {
                  {/* Display Mode */}
                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                    <div className="space-y-4">
-                     {lostPetData.last_seen_location && (
-                       <div className="bg-white/60 p-4 rounded-lg border border-white/30">
-                         <div className="flex items-center space-x-2 mb-2">
-                           <MapPin className="w-5 h-5" style={{ color: '#5691af' }} />
-                           <strong>Last Seen Location:</strong>
-                         </div>
-                         <p className="ml-7">{lostPetData.last_seen_location}</p>
-                       </div>
-                     )}
+                      {lostPetData.last_seen_location && (
+                        <div className="p-4 rounded-lg border shadow-sm">
+                          <div className="flex items-center space-x-2 mb-2">
+                            <MapPin className="w-5 h-5" style={{ color: '#5691af' }} />
+                            <strong>Last Seen Location:</strong>
+                          </div>
+                          <p className="ml-7">{lostPetData.last_seen_location}</p>
+                        </div>
+                      )}
 
-                     {(lostPetData.last_seen_date || lostPetData.last_seen_time) && (
-                       <div className="bg-white/60 p-4 rounded-lg border border-white/30">
-                         <div className="flex items-center space-x-2 mb-2">
-                           <Clock className="w-5 h-5" style={{ color: '#5691af' }} />
-                           <strong>Last Seen:</strong>
-                         </div>
-                         <p className="ml-7">
-                           {lostPetData.last_seen_date && format(lostPetData.last_seen_date, 'PPP')}
-                           {lostPetData.last_seen_time && ` at ${lostPetData.last_seen_time}`}
-                         </p>
-                       </div>
-                     )}
+                      {(lostPetData.last_seen_date || lostPetData.last_seen_time) && (
+                        <div className="p-4 rounded-lg border shadow-sm">
+                          <div className="flex items-center space-x-2 mb-2">
+                            <Clock className="w-5 h-5" style={{ color: '#5691af' }} />
+                            <strong>Last Seen:</strong>
+                          </div>
+                          <p className="ml-7">
+                            {lostPetData.last_seen_date && format(lostPetData.last_seen_date, 'MMM dd, yyyy')}
+                            {lostPetData.last_seen_date && lostPetData.last_seen_time && ' at '}
+                            {lostPetData.last_seen_time}
+                          </p>
+                        </div>
+                      )}
 
-                     {lostPetData.reward_amount && (
-                       <div className="bg-white/60 p-4 rounded-lg border border-white/30">
-                         <div className="flex items-center space-x-2 mb-2">
-                           <DollarSign className="w-5 h-5" style={{ color: '#5691af' }} />
-                           <strong>Reward Offered:</strong>
-                         </div>
-                         <p className="ml-7 text-lg font-bold" style={{ color: '#5691af' }}>{lostPetData.reward_amount}</p>
-                       </div>
-                     )}
+                      {lostPetData.reward_amount && (
+                        <div className="p-4 rounded-lg border shadow-sm">
+                          <div className="flex items-center space-x-2 mb-2">
+                            <DollarSign className="w-5 h-5" style={{ color: '#5691af' }} />
+                            <strong>Reward Offered:</strong>
+                          </div>
+                          <p className="ml-7 text-lg font-bold" style={{ color: '#5691af' }}>{lostPetData.reward_amount}</p>
+                        </div>
+                      )}
                    </div>
 
                    <div className="space-y-4">
-                     {lostPetData.distinctive_features && (
-                       <div className="bg-white/60 p-4 rounded-lg border border-white/30">
-                         <div className="flex items-center space-x-2 mb-2">
-                           <Eye className="w-5 h-5" style={{ color: '#5691af' }} />
-                           <strong>Distinctive Features:</strong>
-                         </div>
-                         <p className="ml-7">{lostPetData.distinctive_features}</p>
-                       </div>
-                     )}
+                      {lostPetData.distinctive_features && (
+                        <div className="p-4 rounded-lg border shadow-sm">
+                          <div className="flex items-center space-x-2 mb-2">
+                            <Eye className="w-5 h-5" style={{ color: '#5691af' }} />
+                            <strong>Distinctive Features:</strong>
+                          </div>
+                          <p className="ml-7">{lostPetData.distinctive_features}</p>
+                        </div>
+                      )}
 
-                     {lostPetData.finder_instructions && (
-                       <div className="bg-white/60 p-4 rounded-lg border border-white/30">
-                         <strong>If Found:</strong>
-                         <p className="mt-2">{lostPetData.finder_instructions}</p>
-                       </div>
-                     )}
+                      {lostPetData.finder_instructions && (
+                        <div className="p-4 rounded-lg border shadow-sm">
+                          <strong>If Found:</strong>
+                          <p className="mt-2">{lostPetData.finder_instructions}</p>
+                        </div>
+                      )}
 
-                     {lostPetData.emergency_notes && (
-                       <div className="bg-white/60 p-4 rounded-lg border border-white/30">
-                         <strong>Important Notes:</strong>
-                         <p className="mt-2">{lostPetData.emergency_notes}</p>
-                       </div>
-                     )}
+                      {lostPetData.emergency_notes && (
+                        <div className="p-4 rounded-lg border shadow-sm">
+                          <strong>Important Notes:</strong>
+                          <p className="mt-2">{lostPetData.emergency_notes}</p>
+                        </div>
+                      )}
                    </div>
                  </div>
                </>
@@ -513,7 +514,7 @@ const LostPet = () => {
          </div>
 
         {/* Actions Section - Combined flyer generation and sharing */}
-        <div className="bg-white/50 backdrop-blur-sm rounded-2xl p-6">
+        <div className="p-6 rounded-lg border shadow-sm">
           <div className="mb-6">
             <h3 className="text-xl font-semibold flex items-center space-x-2" style={{ color: '#5691af' }}>
               <Share className="w-6 h-6" />
@@ -551,7 +552,7 @@ const LostPet = () => {
 
         {/* Gallery Photos */}
         {currentPet.gallery_photos && currentPet.gallery_photos.length > 0 && (
-          <div className="bg-white/50 backdrop-blur-sm rounded-2xl p-6">
+          <div className="p-6 rounded-lg border shadow-sm">
             <div className="mb-6">
               <h3 className="text-xl font-semibold" style={{ color: '#5691af' }}>Recent Photos</h3>
               <p className="text-sm text-muted-foreground">Recent photos for identification</p>

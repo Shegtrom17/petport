@@ -759,9 +759,9 @@ export const PetResumeSection = ({ petData, onUpdate }: PetResumeSectionProps) =
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            <ContactsDisplay petId={petData.id} />
+            <ContactsDisplay petId={petData.id} hideHeader={true} />
             
-            <div className="flex items-center space-x-2 mt-4 pt-4 border-t border-gray-200">
+            <div className="flex items-center space-x-2 mt-6 pt-4 border-t border-gray-200">
               <Shield className="w-4 h-4 text-blue-600" />
               <div>
                 <p className="text-sm font-semibold text-blue-900">PetPort ID</p>

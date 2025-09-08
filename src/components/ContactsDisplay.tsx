@@ -4,9 +4,10 @@ import { getOrderedContacts, handlePhoneCall, ContactInfo } from "@/utils/contac
 
 interface ContactsDisplayProps {
   petId: string;
+  hideHeader?: boolean;
 }
 
-export const ContactsDisplay = ({ petId }: ContactsDisplayProps) => {
+export const ContactsDisplay = ({ petId, hideHeader = false }: ContactsDisplayProps) => {
   const [contacts, setContacts] = useState<ContactInfo[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -43,11 +44,13 @@ export const ContactsDisplay = ({ petId }: ContactsDisplayProps) => {
 
   return (
     <div>
-      <SectionHeader
-        title="Contact Information"
-      />
+      {!hideHeader && (
+        <SectionHeader
+          title="Contact Information"
+        />
+      )}
       
-      <div className="space-y-4 mt-6">
+      <div className={`space-y-4 ${hideHeader ? '' : 'mt-6'}`}>
         {contacts.map((contact, index) => {
           const isEmergency = contact.type.includes('emergency');
           const labelColor = isEmergency ? 'text-red-600' : 'text-[#5691af]';

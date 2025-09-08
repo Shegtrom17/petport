@@ -634,7 +634,7 @@ export const CareInstructionsSection = ({ petData, onUpdate }: CareInstructionsS
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {petData.emergencyContact && (
-              <div className="p-3 bg-red-100 rounded-lg border border-red-300">
+              <div className="p-3 bg-card rounded-lg border shadow-sm">
                 <p className="text-red-800 text-sm font-semibold tracking-wide mb-1">PRIMARY EMERGENCY</p>
                  {(() => {
                    const phoneNumber = extractPhoneNumber(petData.emergencyContact);
@@ -658,7 +658,7 @@ export const CareInstructionsSection = ({ petData, onUpdate }: CareInstructionsS
             )}
             
             {petData.secondEmergencyContact && (
-              <div className="p-3 bg-red-100 rounded-lg border border-red-300">
+              <div className="p-3 bg-card rounded-lg border shadow-sm">
                 <p className="text-red-800 text-sm font-semibold tracking-wide mb-1">SECONDARY EMERGENCY</p>
                  {(() => {
                    const phoneNumber = extractPhoneNumber(petData.secondEmergencyContact);
@@ -682,7 +682,7 @@ export const CareInstructionsSection = ({ petData, onUpdate }: CareInstructionsS
             )}
             
             {petData.vetContact && (
-              <div className="p-3 bg-blue-100 rounded-lg border border-blue-300">
+              <div className="p-3 bg-card rounded-lg border shadow-sm">
                 <p className="text-blue-800 text-sm font-semibold tracking-wide mb-1">VETERINARIAN</p>
                  {(() => {
                    const phoneNumber = extractPhoneNumber(petData.vetContact);
@@ -706,7 +706,7 @@ export const CareInstructionsSection = ({ petData, onUpdate }: CareInstructionsS
             )}
             
             {petData.petCaretaker && (
-              <div className="p-3 bg-green-100 rounded-lg border border-green-300">
+              <div className="p-3 bg-card rounded-lg border shadow-sm">
                 <p className="text-green-800 text-sm font-semibold tracking-wide mb-1">PET CARETAKER</p>
                  {(() => {
                    const phoneNumber = extractPhoneNumber(petData.petCaretaker);

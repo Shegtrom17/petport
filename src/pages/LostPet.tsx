@@ -267,44 +267,44 @@ const LostPet = () => {
             <div className="space-y-4">
               <h4 className="font-semibold text-lg" style={{ color: '#5691af' }}>Contacts</h4>
               <div className="space-y-2">
-                <div className="bg-white/60 p-3 rounded-lg border border-white/30">
-                  <div className="flex items-center space-x-2">
-                    <Phone className="w-4 h-4" style={{ color: '#5691af' }} />
-                    <strong>Primary:</strong>
-                  </div>
-                   <p className="ml-6">{currentPet.emergency_contact || 'Not set'}</p>
-                   {currentPet.emergency_contact && currentPet.emergency_contact !== 'Not set' && (
-                     <p className="ml-6 text-xs opacity-70">Tap to call</p>
-                   )}
+                  <div className="bg-white/60 p-3 rounded-lg border border-white/30">
+                    <div className="flex items-center space-x-2">
+                      <Phone className="w-4 h-4 text-red-600" />
+                      <strong className="text-red-700">Primary:</strong>
+                    </div>
+                     <p className="ml-6 text-red-800">{currentPet.emergency_contact || 'Not set'}</p>
+                     {currentPet.emergency_contact && currentPet.emergency_contact !== 'Not set' && (
+                        <p className="ml-6 text-xs text-red-600">Tap to call</p>
+                      )}
                 </div>
                 {currentPet.second_emergency_contact && (
                   <div className="bg-white/60 p-3 rounded-lg border border-white/30">
                     <div className="flex items-center space-x-2">
-                      <Phone className="w-4 h-4" style={{ color: '#5691af' }} />
-                      <strong>Secondary:</strong>
+                      <Phone className="w-4 h-4 text-red-600" />
+                      <strong className="text-red-700">Secondary:</strong>
                     </div>
-                     <p className="ml-6">{currentPet.second_emergency_contact}</p>
-                     <p className="ml-6 text-xs opacity-70">Tap to call</p>
+                     <p className="ml-6 text-red-800">{currentPet.second_emergency_contact}</p>
+                     <p className="ml-6 text-xs text-red-600">Tap to call</p>
                   </div>
                 )}
                 {currentPet.vet_contact && (
                   <div className="bg-white/60 p-3 rounded-lg border border-white/30">
                     <div className="flex items-center space-x-2">
-                      <Stethoscope className="w-4 h-4" style={{ color: '#5691af' }} />
-                      <strong>Veterinarian:</strong>
+                      <Stethoscope className="w-4 h-4" style={{color: 'hsl(var(--azure))'}} />
+                      <strong style={{color: 'hsl(var(--azure))'}}>Veterinarian:</strong>
                     </div>
-                     <p className="ml-6">{currentPet.vet_contact}</p>
-                     <p className="ml-6 text-xs opacity-70">Tap to call</p>
+                     <p className="ml-6" style={{color: 'hsl(var(--azure))'}}>{currentPet.vet_contact}</p>
+                     <p className="ml-6 text-xs" style={{color: 'hsl(var(--azure))'}}>Tap to call</p>
                   </div>
                 )}
                 {currentPet.pet_caretaker && (
                   <div className="bg-white/60 p-3 rounded-lg border border-white/30">
                     <div className="flex items-center space-x-2">
-                      <Users className="w-4 h-4" style={{ color: '#5691af' }} />
-                      <strong>Pet Caretaker:</strong>
+                      <Users className="w-4 h-4" style={{color: 'hsl(var(--azure))'}} />
+                      <strong style={{color: 'hsl(var(--azure))'}}>Pet Caretaker:</strong>
                     </div>
-                     <p className="ml-6">{currentPet.pet_caretaker}</p>
-                     <p className="ml-6 text-xs opacity-70">Tap to call</p>
+                     <p className="ml-6" style={{color: 'hsl(var(--azure))'}}>{currentPet.pet_caretaker}</p>
+                     <p className="ml-6 text-xs" style={{color: 'hsl(var(--azure))'}}>Tap to call</p>
                   </div>
                 )}
               </div>

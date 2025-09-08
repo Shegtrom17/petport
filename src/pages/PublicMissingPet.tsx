@@ -256,22 +256,22 @@ export default function PublicMissingPet() {
             {petData.emergencyContact && (
               <div className="bg-white/60 p-4 rounded-2xl border border-white/30 mb-6">
                 <div className="flex items-center space-x-2 mb-2">
-                  <Phone className="w-5 h-5 text-brand-primary" />
-                  <h3 className="font-semibold text-brand-primary">Contact Information</h3>
+                  <Phone className="w-5 h-5 text-red-600" />
+                  <h3 className="font-semibold text-red-700">Contact Information</h3>
                 </div>
                 {/\d{3}/.test(petData.emergencyContact) ? (
                   <div>
                     <a 
                       href={`tel:${petData.emergencyContact.replace(/\D/g, '')}`}
-                      className="font-medium text-foreground hover:text-primary"
+                      className="font-medium text-red-800 hover:text-red-700"
                       aria-label="Call emergency contact"
                     >
                       {petData.emergencyContact}
                     </a>
-                    <p className="text-xs text-muted-foreground mt-1">Tap to call</p>
+                    <p className="text-xs text-red-600 mt-1">Tap to call</p>
                   </div>
                 ) : (
-                  <p className="font-medium">{petData.emergencyContact}</p>
+                  <p className="font-medium text-red-800">{petData.emergencyContact}</p>
                 )}
               </div>
             )}

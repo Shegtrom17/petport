@@ -8,6 +8,7 @@ import { SupportAnimalBanner } from "@/components/SupportAnimalBanner";
 import { PetResumeEditForm } from "@/components/PetResumeEditForm";
 import { generatePublicProfileUrl, shareProfileOptimized, generateQRCodeUrl } from "@/services/pdfService";
 import { generateClientPetPDF, downloadPDFBlob, viewPDFBlob, isIOS, isStandalonePWA } from "@/services/clientPdfService";
+import { ContactsDisplay } from "@/components/ContactsDisplay";
 import { PrivacyHint } from "@/components/PrivacyHint";
 import { toast } from "sonner";
 import { SocialShareButtons } from "@/components/SocialShareButtons";
@@ -554,99 +555,10 @@ export const PetResumeSection = ({ petData, onUpdate }: PetResumeSectionProps) =
               </div>
 
               {/* Critical Information */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-blue-50 rounded-lg border-2 border-blue-200">
-                <div className="flex items-center space-x-2">
-                  <Phone className="w-4 h-4 text-blue-600" />
-                  <div>
-                    <p className="text-sm font-semibold text-blue-900">Veterinarian</p>
-                    {(() => {
-                      const phoneNumber = extractPhoneNumber(petData.vetContact);
-                      return phoneNumber ? (
-                        <a 
-                          href={`tel:${formatPhoneForTel(phoneNumber)}`}
-                          className="text-sm text-blue-700 hover:text-blue-900 transition-colors duration-200 cursor-pointer flex items-center gap-1"
-                        >
-                          <Phone className="w-3 h-3" />
-                          {petData.vetContact}
-                        </a>
-                      ) : (
-                        <p className="text-sm text-blue-700">{petData.vetContact}</p>
-                      );
-                    })()}
-                  </div>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Mail className="w-4 h-4 text-blue-600" />
-                  <div>
-                    <p className="text-sm font-semibold text-blue-900">Primary Emergency</p>
-                    {(() => {
-                      const phoneNumber = extractPhoneNumber(petData.emergencyContact);
-                       return phoneNumber ? (
-                         <div>
-                           <a 
-                             href={`tel:${formatPhoneForTel(phoneNumber)}`}
-                             className="text-sm text-blue-700 hover:text-blue-900 transition-colors duration-200 cursor-pointer flex items-center gap-1"
-                           >
-                             <Phone className="w-3 h-3" />
-                             {petData.emergencyContact}
-                           </a>
-                           <p className="text-xs text-muted-foreground ml-4">Tap to call</p>
-                         </div>
-                       ) : (
-                         <p className="text-sm text-blue-700">{petData.emergencyContact}</p>
-                       );
-                    })()}
-                  </div>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Phone className="w-4 h-4 text-blue-600" />
-                  <div>
-                    <p className="text-sm font-semibold text-blue-900">Secondary Emergency</p>
-                    {(() => {
-                      const phoneNumber = extractPhoneNumber(petData.secondEmergencyContact);
-                       return phoneNumber ? (
-                         <div>
-                           <a 
-                             href={`tel:${formatPhoneForTel(phoneNumber)}`}
-                             className="text-sm text-blue-700 hover:text-blue-900 transition-colors duration-200 cursor-pointer flex items-center gap-1"
-                           >
-                             <Phone className="w-3 h-3" />
-                             {petData.secondEmergencyContact}
-                           </a>
-                           <p className="text-xs text-muted-foreground ml-4">Tap to call</p>
-                         </div>
-                       ) : (
-                         <p className="text-sm text-blue-700">{petData.secondEmergencyContact}</p>
-                       );
-                    })()}
-                  </div>
-                </div>
-                {petData.petCaretaker && (
-                  <div className="flex items-center space-x-2">
-                    <Users className="w-4 h-4 text-blue-600" />
-                    <div>
-                      <p className="text-sm font-semibold text-blue-900">Pet Caretaker</p>
-                      {(() => {
-                        const phoneNumber = extractPhoneNumber(petData.petCaretaker);
-                         return phoneNumber ? (
-                           <div>
-                             <a 
-                               href={`tel:${formatPhoneForTel(phoneNumber)}`}
-                               className="text-sm text-blue-700 hover:text-blue-900 transition-colors duration-200 cursor-pointer flex items-center gap-1"
-                             >
-                               <Phone className="w-3 h-3" />
-                               {petData.petCaretaker}
-                             </a>
-                             <p className="text-xs text-muted-foreground ml-4">Tap to call</p>
-                           </div>
-                         ) : (
-                           <p className="text-sm text-blue-700">{petData.petCaretaker}</p>
-                         );
-                      })()}
-                    </div>
-                  </div>
-                )}
-                <div className="flex items-center space-x-2">
+              <div className="p-4 bg-blue-50 rounded-lg border-2 border-blue-200">
+                <ContactsDisplay petId={petData.id} />
+                
+                <div className="flex items-center space-x-2 mt-4 pt-4 border-t border-blue-200">
                   <Shield className="w-4 h-4 text-blue-600" />
                   <div>
                     <p className="text-sm font-semibold text-blue-900">PetPort ID</p>

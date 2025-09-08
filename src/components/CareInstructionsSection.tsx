@@ -4,6 +4,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Heart, Clock, Pill, Coffee, Moon, AlertTriangle, Edit, Loader2, FileText, Download, QrCode, Share2, ExternalLink, Eye, Phone } from "lucide-react";
+import { ContactsDisplay } from "@/components/ContactsDisplay";
+import { extractPhoneNumber, formatPhoneForTel } from "@/utils/contactUtils";
 import { CareInstructionsEditForm } from "@/components/CareInstructionsEditForm";
 import { fetchCareInstructions } from "@/services/careInstructionsService";
 import { generateQRCodeUrl, shareProfile, shareProfileOptimized, sharePDFBlob } from "@/services/pdfService";
@@ -28,18 +30,6 @@ interface CareInstructionsSectionProps {
   onUpdate?: () => void;
 }
 
-// Helper function to extract phone number and create tel link
-const extractPhoneNumber = (contactString: string) => {
-  if (!contactString) return null;
-  
-  // Extract phone number using regex - handles various formats
-  const phoneMatch = contactString.match(/\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}/);
-  return phoneMatch ? phoneMatch[0].replace(/[^\d]/g, '') : null;
-};
-
-const formatPhoneForTel = (phone: string) => {
-  return `+1${phone}`; // Assuming US numbers, adjust as needed
-};
 
 export const CareInstructionsSection = ({ petData, onUpdate }: CareInstructionsSectionProps) => {
   const [isEditing, setIsEditing] = useState(false);

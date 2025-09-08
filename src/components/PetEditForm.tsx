@@ -13,6 +13,7 @@ import { updatePetBasicInfo, updatePetContacts, updatePetMedical } from "@/servi
 import { Loader2 } from "lucide-react";
 import { sanitizeText, validateTextLength, containsSuspiciousContent } from "@/utils/inputSanitizer";
 import { PrivacyToggle } from "@/components/PrivacyToggle";
+import { UnifiedContactsSection } from "@/components/UnifiedContactsSection";
 import { supabase } from "@/integrations/supabase/client";
 import { featureFlags } from "@/config/featureFlags";
 import { getSpeciesConfig, getSpeciesOptions } from "@/utils/speciesConfig";
@@ -426,56 +427,7 @@ const handleSubmit = async (e: React.FormEvent) => {
         {/* Contact Information Section */}
         <div className="border-t pt-6">
           <h3 className="text-lg font-serif text-foreground mb-4">Contact Information</h3>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-            <div>
-              <Label htmlFor="emergencyContact">Primary Emergency Contact</Label>
-              <Input 
-                type="text" 
-                id="emergencyContact" 
-                name="emergencyContact" 
-                value={formData.emergencyContact} 
-                onChange={handleChange}
-                placeholder="Name and phone number" 
-              />
-            </div>
-            <div>
-              <Label htmlFor="secondEmergencyContact">Secondary Emergency Contact</Label>
-              <Input 
-                type="text" 
-                id="secondEmergencyContact" 
-                name="secondEmergencyContact" 
-                value={formData.secondEmergencyContact} 
-                onChange={handleChange}
-                placeholder="Name and phone number" 
-              />
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <Label htmlFor="vetContact">Veterinarian Contact</Label>
-              <Input 
-                type="text" 
-                id="vetContact" 
-                name="vetContact" 
-                value={formData.vetContact} 
-                onChange={handleChange}
-                placeholder="Vet name and phone number" 
-              />
-            </div>
-            <div>
-              <Label htmlFor="petCaretaker">Pet Caretaker</Label>
-              <Input 
-                type="text" 
-                id="petCaretaker" 
-                name="petCaretaker" 
-                value={formData.petCaretaker} 
-                onChange={handleChange}
-                placeholder="Caretaker name and contact" 
-              />
-            </div>
-          </div>
+          <UnifiedContactsSection petId={petData.id} isOwner={true} />
         </div>
 
         {/* Organization Information Section - visible to organization members only */}

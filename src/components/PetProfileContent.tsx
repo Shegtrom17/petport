@@ -566,10 +566,10 @@ export const PetProfileContent = ({
         </div>
       </div>
 
-      {/* Unified Contacts Section */}
+      {/* Contacts Display Section */}
       <div className="mb-8">
         <div className="bg-white/50 backdrop-blur-sm rounded-2xl p-6">
-          <UnifiedContactsSection petId={enhancedPetData?.id} isOwner={isOwner} />
+          <UnifiedContactsSection petId={enhancedPetData?.id} isOwner={false} />
         </div>
       </div>
 

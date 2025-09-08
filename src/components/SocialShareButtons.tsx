@@ -336,7 +336,7 @@ title: "Link Copied! 📋",
                         <Button
                           onClick={handleSendEmail}
                           disabled={emailLoading}
-                          className="flex-1"
+                          className="flex-1 text-white"
                         >
                           <span className="text-responsive-sm">{emailLoading ? 'Sending...' : 'Send Email'}</span>
                         </Button>

@@ -332,7 +332,7 @@ export const DocumentShareDialog = ({
                 <Button
                   onClick={handleSendEmail}
                   disabled={emailLoading}
-                  className="flex-1 bg-green-600 hover:bg-green-700"
+                  className="flex-1 bg-green-600 hover:bg-green-700 text-white"
                 >
                   {emailLoading ? 'Sending...' : 'Send Email'}
                 </Button>

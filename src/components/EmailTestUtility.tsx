@@ -172,7 +172,7 @@ const EmailTestUtility = () => {
         <Button 
           onClick={handleSendTestEmail} 
           disabled={isLoading || !recipientEmail}
-          className="w-full"
+          className="w-full text-white"
         >
           {isLoading ? (
             <>Sending...</>

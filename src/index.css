@@ -35,6 +35,8 @@
     --brand-primary: 202 33% 54%; /* #5691af - Azure primary */
     --brand-primary-dark: 202 38% 28%; /* Darker azure for contrast */
     --brand-primary-light: 202 39% 60%; /* Lighter azure */
+    --azure: 202 33% 54%; /* #5691af - Azure for contacts */
+    --azure-hover: 202 33% 48%; /* Darker Azure for hover */
     --gold-500: 45 86% 62%;
     --gold-400: 45 84% 68%;
     

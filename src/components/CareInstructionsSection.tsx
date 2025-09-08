@@ -683,23 +683,26 @@ export const CareInstructionsSection = ({ petData, onUpdate }: CareInstructionsS
             
             {petData.vetContact && (
               <div className="p-3 bg-card rounded-lg border shadow-sm">
-                <p className="text-blue-800 text-sm font-semibold tracking-wide mb-1">VETERINARIAN</p>
+                <p className="text-sm font-semibold tracking-wide mb-1" style={{color: 'hsl(var(--azure))'}}>VETERINARIAN</p>
                  {(() => {
                    const phoneNumber = extractPhoneNumber(petData.vetContact);
                    return phoneNumber ? (
                      <div>
                        <a 
                          href={`tel:${formatPhoneForTel(phoneNumber)}`}
-                         className="font-medium flex items-center gap-2 text-blue-900 hover:text-blue-700 transition-colors duration-200 cursor-pointer"
+                         className="font-medium flex items-center gap-2 transition-colors duration-200 cursor-pointer"
+                         style={{color: 'hsl(var(--azure))'}}
+                         onMouseEnter={(e) => e.currentTarget.style.color = 'hsl(var(--azure-hover))'}
+                         onMouseLeave={(e) => e.currentTarget.style.color = 'hsl(var(--azure))'}
                          aria-label="Call veterinarian"
                        >
                          <Phone className="w-4 h-4" />
                          {petData.vetContact}
                        </a>
-                       <p className="text-xs text-blue-700 mt-1 ml-6">Tap to call</p>
+                       <p className="text-xs mt-1 ml-6" style={{color: 'hsl(var(--azure))'}}>Tap to call</p>
                      </div>
                    ) : (
-                     <p className="font-medium text-blue-900">{petData.vetContact}</p>
+                     <p className="font-medium" style={{color: 'hsl(var(--azure))'}}>{petData.vetContact}</p>
                    );
                  })()}
               </div>
@@ -707,23 +710,26 @@ export const CareInstructionsSection = ({ petData, onUpdate }: CareInstructionsS
             
             {petData.petCaretaker && (
               <div className="p-3 bg-card rounded-lg border shadow-sm">
-                <p className="text-green-800 text-sm font-semibold tracking-wide mb-1">PET CARETAKER</p>
+                <p className="text-sm font-semibold tracking-wide mb-1" style={{color: 'hsl(var(--azure))'}}>PET CARETAKER</p>
                  {(() => {
                    const phoneNumber = extractPhoneNumber(petData.petCaretaker);
                    return phoneNumber ? (
                      <div>
                        <a 
                          href={`tel:${formatPhoneForTel(phoneNumber)}`}
-                         className="font-medium flex items-center gap-2 text-green-900 hover:text-green-700 transition-colors duration-200 cursor-pointer"
+                         className="font-medium flex items-center gap-2 transition-colors duration-200 cursor-pointer"
+                         style={{color: 'hsl(var(--azure))'}}
+                         onMouseEnter={(e) => e.currentTarget.style.color = 'hsl(var(--azure-hover))'}
+                         onMouseLeave={(e) => e.currentTarget.style.color = 'hsl(var(--azure))'}
                          aria-label="Call pet caretaker"
                        >
                          <Phone className="w-4 h-4" />
                          {petData.petCaretaker}
                        </a>
-                       <p className="text-xs text-green-700 mt-1 ml-6">Tap to call</p>
+                       <p className="text-xs mt-1 ml-6" style={{color: 'hsl(var(--azure))'}}>Tap to call</p>
                      </div>
                    ) : (
-                     <p className="font-medium text-green-900">{petData.petCaretaker}</p>
+                     <p className="font-medium" style={{color: 'hsl(var(--azure))'}}>{petData.petCaretaker}</p>
                    );
                  })()}
               </div>

@@ -505,7 +505,7 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
               <Button
                 onClick={handleSendEmail}
                 disabled={emailLoading}
-                className="flex-1 bg-brand-secondary hover:bg-brand-secondary/90 text-white"
+                className="flex-1 bg-primary hover:bg-primary/90 text-primary-foreground"
               >
                 {emailLoading ? 'Sending...' : 'Send Email'}
               </Button>

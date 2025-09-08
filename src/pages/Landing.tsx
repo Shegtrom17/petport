@@ -93,67 +93,6 @@ export default function Landing() {
           </div>
         </section>
 
-        {/* Trust Indicators / Social Proof */}
-        <section className="bg-white py-12">
-          <div className="max-w-7xl mx-auto px-4 text-center">
-            <p className="text-brand-primary mb-8">Trusted by pet parents worldwide</p>
-            {/* PLACEHOLDER: Logo strip or user count */}
-            <div className="flex justify-center items-center gap-8 opacity-60">
-              <div className="bg-gray-200 h-12 w-32 rounded flex items-center justify-center text-xs">Logo 1</div>
-              <div className="bg-gray-200 h-12 w-32 rounded flex items-center justify-center text-xs">Logo 2</div>
-              <div className="bg-gray-200 h-12 w-32 rounded flex items-center justify-center text-xs">Logo 3</div>
-            </div>
-          </div>
-        </section>
-
-        {/* PWA Benefits Section */}
-        <section className="max-w-7xl mx-auto px-4 py-20">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-brand-primary mb-4">Works Like a Native App</h2>
-            <p className="text-xl text-brand-primary-dark max-w-3xl mx-auto">
-              Install PetPort on your phone for instant access, offline capabilities, and push notifications when your pet goes missing.
-            </p>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="text-center p-6">
-              {/* PLACEHOLDER: PWA Installation Demo */}
-              <div className="bg-gradient-to-br from-blue-100 to-purple-100 rounded-2xl p-8 mb-6 min-h-[200px] flex items-center justify-center border-2 border-dashed border-blue-300">
-                <div className="text-center text-blue-600">
-                  <div className="w-12 h-12 mx-auto mb-2 bg-blue-200 rounded-lg flex items-center justify-center">⚡</div>
-                  <p className="text-sm font-medium">PLACEHOLDER: Install Demo</p>
-                  <p className="text-xs mt-1">Animation showing "Add to Home Screen"</p>
-                </div>
-              </div>
-              <h3 className="text-xl font-semibold text-brand-primary mb-2">One-Tap Install</h3>
-              <p className="text-brand-primary-dark">Add to your home screen like any app store app. No app store required.</p>
-            </div>
-
-            <div className="text-center p-6">
-              <div className="bg-gradient-to-br from-green-100 to-blue-100 rounded-2xl p-8 mb-6 min-h-[200px] flex items-center justify-center border-2 border-dashed border-green-300">
-                <div className="text-center text-green-600">
-                  <div className="w-12 h-12 mx-auto mb-2 bg-green-200 rounded-lg flex items-center justify-center">📱</div>
-                  <p className="text-sm font-medium">PLACEHOLDER: Offline Demo</p>
-                  <p className="text-xs mt-1">Show app working without internet</p>
-                </div>
-              </div>
-              <h3 className="text-xl font-semibold text-brand-primary mb-2">Works Offline</h3>
-              <p className="text-brand-primary-dark">Access your pet's info even without internet. Perfect for emergencies.</p>
-            </div>
-
-            <div className="text-center p-6">
-              <div className="bg-gradient-to-br from-purple-100 to-pink-100 rounded-2xl p-8 mb-6 min-h-[200px] flex items-center justify-center border-2 border-dashed border-purple-300">
-                <div className="text-center text-purple-600">
-                  <div className="w-12 h-12 mx-auto mb-2 bg-purple-200 rounded-lg flex items-center justify-center">🔔</div>
-                  <p className="text-sm font-medium">PLACEHOLDER: Notification Demo</p>
-                  <p className="text-xs mt-1">Show push notification on phone</p>
-                </div>
-              </div>
-              <h3 className="text-xl font-semibold text-brand-primary mb-2">Instant Alerts</h3>
-              <p className="text-brand-primary-dark">Get notified immediately when someone finds your missing pet.</p>
-            </div>
-          </div>
-        </section>
 
         {/* Feature Showcase */}
         <section className="bg-white py-20">

@@ -1463,21 +1463,6 @@ const generateResumePDF = async (doc: jsPDF, pageManager: PDFPageManager, petDat
     });
   }
 
-  // Contact Information
-  addSection(doc, pageManager, 'Contact Information', () => {
-    if (petData.vetContact) {
-      addText(doc, pageManager, `Veterinarian: ${safeText(petData.vetContact)}`);
-    }
-    if (petData.emergencyContact) {
-      addText(doc, pageManager, `Emergency Contact: ${safeText(petData.emergencyContact)}`);
-    }
-    if (petData.secondEmergencyContact) {
-      addText(doc, pageManager, `Secondary Contact: ${safeText(petData.secondEmergencyContact)}`);
-    }
-    if (petData.petCaretaker) {
-      addText(doc, pageManager, `Caretaker: ${safeText(petData.petCaretaker)}`);
-    }
-  });
 
   // Reviews Section (moved to bottom)
   if (petData.reviews && petData.reviews.length > 0) {
@@ -1509,6 +1494,22 @@ const generateResumePDF = async (doc: jsPDF, pageManager: PDFPageManager, petDat
       });
     });
   }
+
+  // Contact Information (moved to after reviews)
+  addSection(doc, pageManager, 'Contact Information', () => {
+    if (petData.vetContact) {
+      addText(doc, pageManager, `Veterinarian: ${safeText(petData.vetContact)}`);
+    }
+    if (petData.emergencyContact) {
+      addText(doc, pageManager, `Emergency Contact: ${safeText(petData.emergencyContact)}`);
+    }
+    if (petData.secondEmergencyContact) {
+      addText(doc, pageManager, `Secondary Contact: ${safeText(petData.secondEmergencyContact)}`);
+    }
+    if (petData.petCaretaker) {
+      addText(doc, pageManager, `Caretaker: ${safeText(petData.petCaretaker)}`);
+    }
+  });
 
   // Footer
   addFooterBottom(doc, pageManager, [

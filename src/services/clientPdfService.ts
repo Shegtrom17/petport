@@ -1127,35 +1127,6 @@ const generateFullPDF = async (doc: jsPDF, pageManager: PDFPageManager, petData:
     });
   }
 
-  // Reviews & Reference Contacts
-  if (petData.reviews && petData.reviews.length > 0) {
-    addSection(doc, pageManager, 'REVIEWS & REFERENCE CONTACTS', () => {
-      const averageRating = petData.reviews.reduce((sum: number, review: any) => sum + review.rating, 0) / petData.reviews.length;
-      addText(doc, pageManager, `Overall Rating: ${averageRating.toFixed(1)}/5 stars (${petData.reviews.length} reviews)`);
-      pageManager.addY(3);
-
-      petData.reviews.forEach((review: any, index: number) => {
-        addText(doc, pageManager, `Review ${index + 1}: ${review.rating}/5 stars`);
-        addText(doc, pageManager, `Reviewer: ${safeText(review.reviewer_name || 'Anonymous')}`);
-        if (review.reviewer_contact) {
-          addText(doc, pageManager, `Contact: ${safeText(review.reviewer_contact)}`);
-        }
-        if (review.text) {
-          addText(doc, pageManager, `"${safeText(review.text)}"`);
-        }
-        if (review.date) {
-          addText(doc, pageManager, `Date: ${safeText(review.date)}`);
-        }
-        if (review.location) {
-          addText(doc, pageManager, `Location: ${safeText(review.location)}`);
-        }
-        if (review.type) {
-          addText(doc, pageManager, `Service Type: ${safeText(review.type)}`);
-        }
-        pageManager.addY(5);
-      });
-    });
-  }
 
   // Experience & Activities
   if (petData.experiences && petData.experiences.length > 0) {
@@ -1256,6 +1227,36 @@ const generateFullPDF = async (doc: jsPDF, pageManager: PDFPageManager, petData:
     }
   }
   
+  // Reviews & Reference Contacts (moved to bottom)
+  if (petData.reviews && petData.reviews.length > 0) {
+    addSection(doc, pageManager, 'REVIEWS & REFERENCE CONTACTS', () => {
+      const averageRating = petData.reviews.reduce((sum: number, review: any) => sum + review.rating, 0) / petData.reviews.length;
+      addText(doc, pageManager, `Overall Rating: ${averageRating.toFixed(1)}/5 stars (${petData.reviews.length} reviews)`);
+      pageManager.addY(3);
+
+      petData.reviews.forEach((review: any, index: number) => {
+        addText(doc, pageManager, `Review ${index + 1}: ${review.rating}/5 stars`);
+        addText(doc, pageManager, `Reviewer: ${safeText(review.reviewer_name || 'Anonymous')}`);
+        if (review.reviewer_contact) {
+          addText(doc, pageManager, `Contact: ${safeText(review.reviewer_contact)}`);
+        }
+        if (review.text) {
+          addText(doc, pageManager, `"${safeText(review.text)}"`);
+        }
+        if (review.date) {
+          addText(doc, pageManager, `Date: ${safeText(review.date)}`);
+        }
+        if (review.location) {
+          addText(doc, pageManager, `Location: ${safeText(review.location)}`);
+        }
+        if (review.type) {
+          addText(doc, pageManager, `Service Type: ${safeText(review.type)}`);
+        }
+        pageManager.addY(5);
+      });
+    });
+  }
+  
   // Footer
   addFooterBottom(doc, pageManager, [
     'Petport.app - The Ultimate Digital Pet Portfolio',
@@ -1348,36 +1349,6 @@ const generateResumePDF = async (doc: jsPDF, pageManager: PDFPageManager, petDat
     });
   }
 
-  // Reviews Section
-  if (petData.reviews && petData.reviews.length > 0) {
-    addSection(doc, pageManager, 'Reviews & Reference Contacts', () => {
-      const averageRating = petData.reviews.reduce((sum: number, review: any) => sum + review.rating, 0) / petData.reviews.length;
-      addText(doc, pageManager, `Overall Rating: ${averageRating.toFixed(1)}/5 stars (${petData.reviews.length} reviews)`);
-      pageManager.addY(5);
-
-      petData.reviews.forEach((review: any, index: number) => {
-        addText(doc, pageManager, `Review ${index + 1}:`);
-        addText(doc, pageManager, `Reviewer: ${safeText(review.reviewer_name || 'Anonymous')}`);
-        if (review.reviewer_contact) {
-          addText(doc, pageManager, `Contact: ${safeText(review.reviewer_contact)}`);
-        }
-        addText(doc, pageManager, `Rating: ${review.rating}/5 stars`);
-        if (review.text) {
-          addText(doc, pageManager, `"${safeText(review.text)}"`);
-        }
-        if (review.date) {
-          addText(doc, pageManager, `Date: ${safeText(review.date)}`);
-        }
-        if (review.location) {
-          addText(doc, pageManager, `Location: ${safeText(review.location)}`);
-        }
-        if (review.type) {
-          addText(doc, pageManager, `Type: ${safeText(review.type)}`);
-        }
-        pageManager.addY(8);
-      });
-    });
-  }
 
   // Experiences Section
   if (petData.experiences && petData.experiences.length > 0) {
@@ -1507,6 +1478,37 @@ const generateResumePDF = async (doc: jsPDF, pageManager: PDFPageManager, petDat
       addText(doc, pageManager, `Caretaker: ${safeText(petData.petCaretaker)}`);
     }
   });
+
+  // Reviews Section (moved to bottom)
+  if (petData.reviews && petData.reviews.length > 0) {
+    addSection(doc, pageManager, 'Reviews & Reference Contacts', () => {
+      const averageRating = petData.reviews.reduce((sum: number, review: any) => sum + review.rating, 0) / petData.reviews.length;
+      addText(doc, pageManager, `Overall Rating: ${averageRating.toFixed(1)}/5 stars (${petData.reviews.length} reviews)`);
+      pageManager.addY(5);
+
+      petData.reviews.forEach((review: any, index: number) => {
+        addText(doc, pageManager, `Review ${index + 1}:`);
+        addText(doc, pageManager, `Reviewer: ${safeText(review.reviewer_name || 'Anonymous')}`);
+        if (review.reviewer_contact) {
+          addText(doc, pageManager, `Contact: ${safeText(review.reviewer_contact)}`);
+        }
+        addText(doc, pageManager, `Rating: ${review.rating}/5 stars`);
+        if (review.text) {
+          addText(doc, pageManager, `"${safeText(review.text)}"`);
+        }
+        if (review.date) {
+          addText(doc, pageManager, `Date: ${safeText(review.date)}`);
+        }
+        if (review.location) {
+          addText(doc, pageManager, `Location: ${safeText(review.location)}`);
+        }
+        if (review.type) {
+          addText(doc, pageManager, `Type: ${safeText(review.type)}`);
+        }
+        pageManager.addY(8);
+      });
+    });
+  }
 
   // Footer
   addFooterBottom(doc, pageManager, [

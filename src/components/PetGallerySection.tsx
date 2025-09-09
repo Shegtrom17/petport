@@ -434,7 +434,7 @@ export const PetGallerySection = ({ petData, onUpdate }: PetGallerySectionProps)
                 <span className="sm:hidden">{uploading ? "..." : "Upload"}</span>
               </Button>
               <Button 
-                className="bg-blue-600 hover:bg-blue-700 text-white border-0 px-2 sm:px-4 py-1 sm:py-2 text-xs sm:text-sm"
+                className="bg-brand-primary hover:bg-brand-primary-dark text-white border-0 px-2 sm:px-4 py-1 sm:py-2 text-xs sm:text-sm"
                 onClick={(e) => {
                   e.stopPropagation();
                   handleCapturePhoto();

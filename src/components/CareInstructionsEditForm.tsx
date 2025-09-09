@@ -143,7 +143,14 @@ export const CareInstructionsEditForm = ({ petData, onSave, onCancel }: CareInst
                 rows={3}
                 disabled={isLoading}
               />
-              <p className="text-sm text-gray-500 mt-1">Separate medications with commas</p>
+              <div className="mt-2 p-2 bg-blue-50 border border-blue-200 rounded-md">
+                <p className="text-sm font-semibold text-blue-800">
+                  💡 Use commas to create separate medication entries
+                </p>
+                <p className="text-xs text-blue-600 mt-1">
+                  Example: "Heartgard, Nexgard, Gabapentin 100mg" will create individual medication cards
+                </p>
+              </div>
             </div>
             <div>
               <Label htmlFor="allergies">Allergies & Dietary Restrictions</Label>

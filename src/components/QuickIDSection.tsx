@@ -281,7 +281,7 @@ export const QuickIDSection = ({ petData, onUpdate }: QuickIDSectionProps) => {
             <div className="space-y-4">
               <h4 className="font-bold text-lg text-brand-primary">Contacts</h4>
               <div className="space-y-2">
-                <div className="bg-red-50 p-3 rounded-lg">
+                <div className="bg-white p-3 rounded-lg border shadow-sm">
                   <div className="flex items-center space-x-2">
                     <Phone className="w-4 h-4 text-red-600" />
                     <strong>Primary:</strong>
@@ -292,7 +292,7 @@ export const QuickIDSection = ({ petData, onUpdate }: QuickIDSectionProps) => {
                    )}
                 </div>
                 {petData.secondEmergencyContact && (
-                  <div className="bg-gray-50 p-3 rounded-lg">
+                  <div className="bg-white p-3 rounded-lg border shadow-sm">
                     <div className="flex items-center space-x-2">
                       <Phone className="w-4 h-4 text-brand-primary" />
                       <strong>Secondary:</strong>
@@ -302,7 +302,7 @@ export const QuickIDSection = ({ petData, onUpdate }: QuickIDSectionProps) => {
                   </div>
                 )}
                 {petData.vetContact && (
-                  <div className="bg-blue-50 p-3 rounded-lg">
+                   <div className="bg-white p-3 rounded-lg border shadow-sm">
                     <div className="flex items-center space-x-2">
                       <Stethoscope className="w-4 h-4 text-blue-600" />
                       <strong>Veterinarian:</strong>
@@ -312,7 +312,7 @@ export const QuickIDSection = ({ petData, onUpdate }: QuickIDSectionProps) => {
                   </div>
                 )}
                 {petData.petCaretaker && (
-                  <div className="bg-green-50 p-3 rounded-lg">
+                  <div className="bg-white p-3 rounded-lg border shadow-sm">
                     <div className="flex items-center space-x-2">
                       <Users className="w-4 h-4 text-green-600" />
                       <strong>Pet Caretaker:</strong>

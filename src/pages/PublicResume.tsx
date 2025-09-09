@@ -210,6 +210,47 @@ export default function PublicResume() {
         {/* Support Animal Status */}
         <SupportAnimalBanner status={data.supportAnimalStatus || null} />
 
+        {/* About Section */}
+        <Card className="mb-6">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-navy-900">
+              <Heart className="w-5 h-5 text-red-500" />
+              About {data.name}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-gray-700 leading-relaxed">
+              {data.bio || `${data.name} is a wonderful ${data.breed?.toLowerCase()} with a gentle temperament and friendly disposition. Known for being well-behaved and great with people of all ages. An ideal companion for any setting.`}
+            </p>
+          </CardContent>
+        </Card>
+
+        {/* Experience */}
+        {data.experiences && data.experiences.length > 0 && (
+          <Card className="mb-6">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-navy-900">
+                <Activity className="w-5 h-5 text-primary" />
+                Experience & Activities
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              {data.experiences.map((e, idx) => (
+                <div key={idx} className="p-3 rounded border">
+                  <div className="font-medium">{e.activity}</div>
+                  {e.description && <div className="text-sm text-muted-foreground mb-2">{e.description}</div>}
+                  {e.contact && (
+                    <div className="flex items-center space-x-2 text-sm text-primary">
+                      <Phone className="w-3 h-3" />
+                      <span>Contact: {e.contact}</span>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+        )}
+
         {/* Certification Banner */}
         <div className="my-4">
           <CertificationBanner certificationData={certification} />
@@ -290,46 +331,6 @@ export default function PublicResume() {
           </Card>
         )}
 
-        {/* About Section */}
-        <Card className="mb-6">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-navy-900">
-              <Heart className="w-5 h-5 text-red-500" />
-              About {data.name}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-gray-700 leading-relaxed">
-              {data.bio || `${data.name} is a wonderful ${data.breed?.toLowerCase()} with a gentle temperament and friendly disposition. Known for being well-behaved and great with people of all ages. An ideal companion for any setting.`}
-            </p>
-          </CardContent>
-        </Card>
-
-        {/* Experience */}
-        {data.experiences && data.experiences.length > 0 && (
-          <Card className="mb-6">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-navy-900">
-                <Activity className="w-5 h-5 text-primary" />
-                Experience & Activities
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              {data.experiences.map((e, idx) => (
-                <div key={idx} className="p-3 rounded border">
-                  <div className="font-medium">{e.activity}</div>
-                  {e.description && <div className="text-sm text-muted-foreground mb-2">{e.description}</div>}
-                  {e.contact && (
-                    <div className="flex items-center space-x-2 text-sm text-primary">
-                      <Phone className="w-3 h-3" />
-                      <span>Contact: {e.contact}</span>
-                    </div>
-                  )}
-                </div>
-              ))}
-            </CardContent>
-          </Card>
-        )}
 
         {/* References & Reviews */}
         {data.reviews && data.reviews.length > 0 && (

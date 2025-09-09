@@ -1362,17 +1362,17 @@ const generateResumePDF = async (doc: jsPDF, pageManager: PDFPageManager, petDat
           addText(doc, pageManager, `Contact: ${safeText(review.reviewer_contact)}`);
         }
         addText(doc, pageManager, `Rating: ${review.rating}/5 stars`);
-        if (review.review_text) {
-          addText(doc, pageManager, `Review: ${safeText(review.review_text)}`);
+        if (review.text) {
+          addText(doc, pageManager, `"${safeText(review.text)}"`);
         }
-        if (review.review_date) {
-          addText(doc, pageManager, `Date: ${new Date(review.review_date).toLocaleDateString()}`);
+        if (review.date) {
+          addText(doc, pageManager, `Date: ${safeText(review.date)}`);
         }
         if (review.location) {
           addText(doc, pageManager, `Location: ${safeText(review.location)}`);
         }
-        if (review.review_type) {
-          addText(doc, pageManager, `Type: ${safeText(review.review_type)}`);
+        if (review.type) {
+          addText(doc, pageManager, `Type: ${safeText(review.type)}`);
         }
         pageManager.addY(8);
       });

@@ -540,7 +540,7 @@ export const CareInstructionsSection = ({ petData, onUpdate }: CareInstructionsS
         <CardHeader>
           <CardTitle className="flex items-center space-x-2">
             <Pill className="w-5 h-5 text-red-600" />
-            <span>Medications & Health</span>
+            <span>Medication & Supplements</span>
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">

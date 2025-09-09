@@ -127,28 +127,28 @@ export const CareInstructionsEditForm = ({ petData, onSave, onCancel }: CareInst
           <CardHeader>
             <CardTitle className="flex items-center space-x-2">
               <Pill className="w-5 h-5" />
-              <span>Medications & Health</span>
+              <span>Medication & Supplements</span>
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
-              <Label htmlFor="medications">Current Medications</Label>
+              <Label htmlFor="medications">Current Medication & Supplements</Label>
               <div className="text-xs text-amber-600 bg-amber-50 p-2 rounded-md mb-2 border border-amber-200">
                 ⚠️ Providing accurate medical details is highly recommended for emergencies.
               </div>
               <Textarea
                 id="medications"
                 {...register("medications")}
-                placeholder="Medication 1, Medication 2, ..."
+                placeholder="Medication/Supplement 1, Medication/Supplement 2, ..."
                 rows={3}
                 disabled={isLoading}
               />
               <div className="mt-2 p-2 bg-blue-50 border border-blue-200 rounded-md">
                 <p className="text-sm font-semibold text-blue-800">
-                  💡 Use commas to create separate medication entries
+                  💡 Use commas to create separate medication & supplement entries
                 </p>
                 <p className="text-xs text-blue-600 mt-1">
-                  Example: "Heartgard, Nexgard, Gabapentin 100mg" will create individual medication cards
+                  Example: "Heartgard, Fish Oil, Gabapentin 100mg" will create individual cards
                 </p>
               </div>
             </div>

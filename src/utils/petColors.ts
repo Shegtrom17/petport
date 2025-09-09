@@ -1,15 +1,15 @@
 // Utility for generating consistent pet colors based on pet names
 export const getPetBackgroundColor = (petName: string): string => {
-  // Enhanced palette with muted azure/aqua and sophisticated earth tones
+  // Enhanced palette with vibrant muted azure/aqua and sophisticated colors
   const colorPalette = [
-    '#8da4b5', // muted azure (matches brand)
-    '#7ba3b8', // soft aqua
+    '#5691af', // brand azure (more vibrant)
+    '#4a8db8', // deeper aqua
+    '#6ba3c1', // lighter azure  
+    '#7bb3d1', // soft blue-azure
     '#a3b18a', // sage green
-    '#9ca3af', // gray-blue
-    '#b5c4d1', // light azure
+    '#8db4a8', // sage-aqua
     '#d4a373', // warm clay
-    '#a8b5c0', // steel blue-gray
-    '#e5e7eb', // light stone
+    '#b5a68a', // warm taupe
   ];
 
   // Simple hash function to get consistent color for each pet name

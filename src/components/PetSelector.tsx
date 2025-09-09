@@ -85,26 +85,23 @@ export const PetSelector = ({ pets, selectedPet, onSelectPet, onReorderPets }: P
                             />
                            ) : (
                             <div 
-                              className="w-full h-full flex items-center justify-center text-white font-semibold relative overflow-hidden shadow-inner"
+                              className="w-full h-full flex items-center justify-center text-white font-bold relative overflow-hidden rounded-full shadow-md"
                               style={{ 
                                 backgroundColor: getPetBackgroundColor(pet.name),
                                 background: `
-                                  radial-gradient(circle at 30% 30%, rgba(255,255,255,0.3) 0%, transparent 50%),
-                                  linear-gradient(135deg, ${getPetBackgroundColor(pet.name)} 0%, rgba(0,0,0,0.1) 100%)
+                                  radial-gradient(circle at 35% 25%, rgba(255,255,255,0.4) 0%, transparent 60%),
+                                  linear-gradient(135deg, ${getPetBackgroundColor(pet.name)} 0%, rgba(0,0,0,0.15) 100%)
                                 `,
-                                border: '2px solid rgba(255,255,255,0.2)'
+                                border: '1px solid rgba(255,255,255,0.3)',
+                                boxShadow: `
+                                  inset 0 1px 2px rgba(255,255,255,0.3),
+                                  0 2px 4px rgba(0,0,0,0.1)
+                                `
                               }}
                             >
-                              <span className="text-lg sm:text-xl z-10 relative font-bold drop-shadow-sm">
+                              <span className="text-lg sm:text-xl z-10 relative font-bold text-white drop-shadow-md">
                                 {pet.name?.charAt(0).toUpperCase()}
                               </span>
-                              {/* Optional subtle paw print watermark */}
-                              <div 
-                                className="absolute inset-0 flex items-center justify-center opacity-10 pointer-events-none"
-                                style={{ fontSize: '0.5rem' }}
-                              >
-                                🐾
-                              </div>
                             </div>
                           )}
                         </div>

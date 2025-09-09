@@ -1128,16 +1128,6 @@ const generateFullPDF = async (doc: jsPDF, pageManager: PDFPageManager, petData:
   }
 
 
-  // Experience & Activities
-  if (petData.experiences && petData.experiences.length > 0) {
-    addSection(doc, pageManager, 'EXPERIENCE & ACTIVITIES', () => {
-      petData.experiences.forEach((experience: any, index: number) => {
-        addText(doc, pageManager, `${index + 1}. ${safeText(experience.activity)}`);
-        if (experience.description) addText(doc, pageManager, `   Description: ${safeText(experience.description)}`);
-        if (experience.contact) addText(doc, pageManager, `   Contact: ${safeText(experience.contact)}`);
-      });
-    });
-  }
 
   // Achievements
   if (petData.achievements && petData.achievements.length > 0) {
@@ -1187,6 +1177,17 @@ const generateFullPDF = async (doc: jsPDF, pageManager: PDFPageManager, petData:
     });
   }
   
+  // Experience & Activities (moved to after bio/description)
+  if (petData.experiences && petData.experiences.length > 0) {
+    addSection(doc, pageManager, 'EXPERIENCE & ACTIVITIES', () => {
+      petData.experiences.forEach((experience: any, index: number) => {
+        addText(doc, pageManager, `${index + 1}. ${safeText(experience.activity)}`);
+        if (experience.description) addText(doc, pageManager, `   Description: ${safeText(experience.description)}`);
+        if (experience.contact) addText(doc, pageManager, `   Contact: ${safeText(experience.contact)}`);
+      });
+    });
+  }
+   
   // Photo Gallery
   const galleryPhotos = petData.gallery_photos || [];
   if (galleryPhotos.length > 0) {

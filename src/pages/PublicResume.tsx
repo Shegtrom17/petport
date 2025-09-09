@@ -355,9 +355,17 @@ export default function PublicResume() {
                   {review.text && (
                     <p className="text-sm text-muted-foreground mb-2">{review.text}</p>
                   )}
-                  <div className="text-xs text-muted-foreground">
-                    {review.location && <span>{review.location}</span>}
-                    {review.date && <span> • {review.date}</span>}
+                  <div className="text-xs text-muted-foreground space-y-1">
+                    <div>
+                      {review.location && <span>{review.location}</span>}
+                      {review.date && <span> • {review.date}</span>}
+                    </div>
+                    {review.reviewerContact && (
+                      <div className="flex items-center space-x-1 text-primary">
+                        <Phone className="w-3 h-3" />
+                        <span>Contact: {review.reviewerContact}</span>
+                      </div>
+                    )}
                   </div>
                 </div>
               ))}

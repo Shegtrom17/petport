@@ -193,6 +193,21 @@ serve(async (req) => {
         });
       }
 
+      // Check if adopter has an active subscription
+      const { data: subscriberData, error: subError } = await admin
+        .from("subscribers")
+        .select("status")
+        .eq("user_id", user.id)
+        .maybeSingle();
+      
+      if (subError) throw subError;
+      if (!subscriberData || (subscriberData.status !== "active" && subscriberData.status !== "grace")) {
+        return new Response(JSON.stringify({ error: "Adopter must have an active PetPort subscription to accept pet transfers" }), {
+          status: 403,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+
       // Perform transfer transactionally
       // 1) Update pet owner
       const { error: petUpdateErr } = await admin

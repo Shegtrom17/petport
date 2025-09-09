@@ -5,6 +5,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { AlertTriangle, Phone, Trash2, Upload, Loader2, Edit, Share2, Facebook, MessageCircle, Mail, Camera, UserX } from "lucide-react";
 import { PetTransferDialog } from "@/components/PetTransferDialog";
+import { PetDeleteDialog } from "@/components/PetDeleteDialog";
 import { PetPDFGenerator } from "@/components/PetPDFGenerator";
 import { SupportAnimalBanner } from "@/components/SupportAnimalBanner";
 import { SocialShareButtons } from "@/components/SocialShareButtons";
@@ -648,10 +649,17 @@ export const PetProfileContent = ({
               Transfer {enhancedPetData.name}'s account to another petport user. 
               This action is permanent and cannot be undone.
             </p>
-            <PetTransferDialog
-              petId={enhancedPetData.id}
-              petName={enhancedPetData.name}
-            />
+            <div className="flex gap-2">
+              <PetTransferDialog
+                petId={enhancedPetData.id}
+                petName={enhancedPetData.name}
+              />
+              <PetDeleteDialog
+                petId={enhancedPetData.id}
+                petName={enhancedPetData.name}
+                onPetDeleted={() => navigate('/app')}
+              />
+            </div>
           </div>
         </div>
       )}

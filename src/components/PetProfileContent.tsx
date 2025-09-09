@@ -640,7 +640,7 @@ export const PetProfileContent = ({
         <div className="mb-8">
           <SectionHeader
             overline="Transfer"
-            title="Transfer Pet to Another Owner"
+            title="Transfer this Petport account to a new user"
             icon={<UserX className="w-5 h-5" />}
           />
           <div className="bg-gray-50 rounded-lg p-4">

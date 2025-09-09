@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
-import { Clock, Heart, AlertTriangle, Phone, MapPin } from "lucide-react";
+import { Clock, Heart, AlertTriangle, Phone, MapPin, Pill } from "lucide-react";
 import { fetchPetDetails } from '@/services/petService';
 import { fetchCareInstructions } from '@/services/careInstructionsService';
 import { supabase } from "@/integrations/supabase/client";
@@ -495,27 +495,47 @@ const PublicCareInstructions = () => {
           </Card>
 
           {/* Medications & Health */}
-          {pet.medications && pet.medications.length > 0 && (
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-navy-900">
-                  <Heart className="w-5 h-5 text-primary" />
-                  Medication & Supplements
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                {pet.medications.map((med, idx) => (
-                   <div key={idx} className="p-3 bg-primary/10 border border-primary/20 rounded">
-                     <div className="flex items-center gap-2 mb-1">
-                       <Heart className="w-4 h-4 text-primary" />
-                       <span className="font-medium text-primary">{med}</span>
-                     </div>
-                     <p className="text-xs text-primary/70">Administer as prescribed. Contact vet if reactions occur.</p>
+          <Card className="border-0 shadow-lg border-l-4 border-l-red-500">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-navy-900">
+                <Pill className="w-5 h-5 text-red-600" />
+                Medication & Supplements
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {pet.medications && pet.medications.length > 0 ? (
+                pet.medications.map((med, idx) => (
+                  <div key={idx} className="p-4 rounded-lg border border-gray-200">
+                    <div className="flex items-center space-x-2 mb-2">
+                      <Pill className="w-4 h-4 text-red-600" />
+                      <Badge variant="destructive" className="text-center text-xs sm:text-sm">
+                        <span className="hidden sm:inline">MEDICATION & SUPPLEMENTS</span>
+                        <span className="sm:hidden">MED & SUPPLEMENTS</span>
+                      </Badge>
+                    </div>
+                    <p className="font-medium text-red-900">{med}</p>
+                    <p className="text-sm text-red-700 mt-1">
+                      Administer as prescribed. Contact vet if missed doses or reactions occur.
+                    </p>
                   </div>
-                ))}
-              </CardContent>
-            </Card>
-          )}
+                ))
+              ) : (
+                <div className="p-4 rounded-lg border border-gray-200">
+                  <div className="flex items-center space-x-2 mb-2">
+                    <Pill className="w-4 h-4 text-red-600" />
+                    <Badge variant="destructive" className="text-center text-xs sm:text-sm">
+                      <span className="hidden sm:inline">MEDICATION & SUPPLEMENTS</span>
+                      <span className="sm:hidden">MED & SUPPLEMENTS</span>
+                    </Badge>
+                  </div>
+                  <p className="font-medium text-red-900">No current medications</p>
+                  <p className="text-sm text-red-700 mt-1">
+                    Administer as prescribed. Contact vet if missed doses or reactions occur.
+                  </p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
 
           {/* Important Notes */}
           {(careData?.allergies || careData?.behavioral_notes || careData?.favorite_activities) && (

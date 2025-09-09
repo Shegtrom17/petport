@@ -483,11 +483,11 @@ export const PetGallerySection = ({ petData, onUpdate }: PetGallerySectionProps)
                         <SheetTrigger asChild>
                           <Button 
                             size="sm" 
-                            className="bg-blue-600 hover:bg-blue-700 text-white"
+                            className="bg-brand-primary hover:bg-brand-primary-dark text-white"
                             onClick={() => setSelectedPhotos([])}
                           >
                             <Share2 className="w-4 h-4 mr-2" />
-                            <span className="text-responsive-sm">Share all ({galleryPhotos.length})</span>
+                            <span className="text-responsive-sm">Share all (36)</span>
                           </Button>
                         </SheetTrigger>
                       </Sheet>

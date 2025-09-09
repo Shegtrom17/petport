@@ -75,8 +75,8 @@ export const PetTransferDialog = ({ petId, petName }: PetTransferDialogProps) =>
         <div className="space-y-4">
           <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
             <p className="text-sm text-amber-800">
-              <strong>Important:</strong> This will permanently transfer ownership of {petName} to another person. 
-              You will lose access to this pet's profile.
+              <strong>Important:</strong> This will permanently transfer ownership of {petName} to another registered PetPort user. 
+              The recipient must have a PetPort account to accept the transfer. You will lose access to this pet's profile.
             </p>
           </div>
           

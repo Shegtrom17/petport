@@ -148,7 +148,22 @@ export const PetPDFGenerator = ({ petId, petName, petData }: PetPDFGeneratorProp
 
     setIsGenerating(true);
     try {
+        console.log('🔧 PetPDFGenerator: Starting PDF generation', { 
+        selectedPdfType, 
+        petName: petData.name,
+        action 
+      });
+      
+      // CRITICAL: Use client-side generation directly to ensure proper type handling
+      // Emergency vs Full profiles have different content structures
       const result = await generateClientPetPDF(petData, selectedPdfType);
+      
+      console.log('📄 PDF Generation Result:', {
+        success: result.success,
+        type: result.type || selectedPdfType,
+        blobSize: result.blob?.size,
+        fileName: result.fileName
+      });
 
       if (result.success && result.blob) {
         setGeneratedPdfBlob(result.blob);
@@ -160,7 +175,7 @@ export const PetPDFGenerator = ({ petId, petName, petData }: PetPDFGeneratorProp
             await downloadPDFBlob(result.blob, fileName);
             toast({
               title: "Download Started",
-              description: `${selectedPdfType === 'emergency' ? 'Emergency' : 'Complete'} profile PDF is downloading.`,
+              description: `${selectedPdfType === 'emergency' ? 'Emergency' : selectedPdfType === 'full' ? 'Complete' : selectedPdfType} profile PDF is downloading.`,
             });
             setIsOptionsDialogOpen(false);
           } catch (downloadError) {

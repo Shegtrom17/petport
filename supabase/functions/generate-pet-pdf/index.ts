@@ -1,7 +1,7 @@
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 
-// Minimal stub to unblock deployments while PDF generation is being stabilized
+// Edge function disabled - force fallback to client-side generation
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
@@ -9,7 +9,7 @@ const corsHeaders = {
 };
 
 serve(async (req) => {
-  console.log("[generate-pet-pdf] start", { method: req.method });
+  console.log("[generate-pet-pdf] Edge function disabled, forcing client-side fallback", { method: req.method });
 
   // Handle CORS preflight requests
   if (req.method === "OPTIONS") {
@@ -17,11 +17,11 @@ serve(async (req) => {
   }
 
   try {
-    // Temporarily disabled to unblock other edge function deployments
+    // Always return error to force client-side generation
     return new Response(
       JSON.stringify({
         success: false,
-        error: "PDF generation is temporarily disabled while we stabilize deployments.",
+        error: "Edge function disabled - use client-side generation",
         pdfBytes: null,
         fileName: null,
       }),

@@ -549,7 +549,7 @@ export const CareInstructionsSection = ({ petData, onUpdate }: CareInstructionsS
               <div key={index} className="p-4 bg-red-50 rounded-lg border border-red-200">
                 <div className="flex items-center space-x-2 mb-2">
                   <Pill className="w-4 h-4 text-red-600" />
-                  <Badge variant="destructive">MEDICATION</Badge>
+                  <Badge variant="destructive">MEDICATION & SUPPLEMENTS</Badge>
                 </div>
                 <p className="font-medium text-red-900">{medication}</p>
                 <p className="text-sm text-red-700 mt-1">

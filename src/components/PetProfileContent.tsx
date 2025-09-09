@@ -312,8 +312,8 @@ export const PetProfileContent = ({
             !enhancedPetData?.weight
           ) && (
             <GuidanceHint
-              message="Start by adding your pet's basic information using the Edit button above. This is essential for creating a complete profile."
-              actionLabel="Edit Now"
+              message="Complete your pet's Basic Information below for professional PDFs, optimal sharing links, and comprehensive identification documents."
+              actionLabel="Edit Basic Info"
               onAction={handleProfileEdit}
               variant="gentle"
             />

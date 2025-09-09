@@ -52,8 +52,8 @@ function normalizePetData(raw: any): any {
       caption: p.caption || p.alt || '',
     })),
 
-    // Identifiers
-    microchipId: pet.microchipId || pet.microchip_id,
+    // Identifiers - ONLY from Basic Information (not signup data)
+    microchipId: pet.microchipId || pet.microchip_id || undefined,
     petport_id: pet.petport_id || pet.petportId || pet.petportID,
     height: pet.height,
     registrationNumber: (pet.registrationNumber ?? pet.registration_number ?? pet.registration ?? pet.registrationNo ?? pet.reg_no ?? pet.regNumber)?.toString?.().trim() || undefined,

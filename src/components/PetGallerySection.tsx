@@ -441,10 +441,19 @@ export const PetGallerySection = ({ petData, onUpdate }: PetGallerySectionProps)
                 }}
                 disabled={uploading || isLimitReached}
               >
-                <Camera className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
+               <Camera className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
                 <span className="hidden sm:inline">📸 Capture Moment</span>
                 <span className="sm:hidden">📸 Capture</span>
               </Button>
+              
+              {/* Profile Completion Hint */}
+              <div className="col-span-full mt-4">
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                  <p className="text-sm text-blue-800">
+                    💡 <strong>Tip:</strong> Complete your pet's Basic Information for professional PDFs and optimal sharing quality.
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
         </CardContent>

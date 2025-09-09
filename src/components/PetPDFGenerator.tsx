@@ -46,7 +46,7 @@ export const PetPDFGenerator = ({ petId, petName, petData }: PetPDFGeneratorProp
       key: 'emergency',
       title: 'Emergency Profile',
       description: 'Essential contact & medical info',
-      editLocation: 'Basic Information & Medical sections',
+      editLocation: 'Complete Basic Information for best results',
       editPath: '#basic-info',
       icon: AlertTriangle,
       available: true
@@ -95,7 +95,7 @@ export const PetPDFGenerator = ({ petId, petName, petData }: PetPDFGeneratorProp
       key: 'lost_pet',
       title: 'Lost Pet Flyer',
       description: 'Missing pet alert document',
-      editLocation: 'Basic Information section',
+      editLocation: 'Complete Basic Information for comprehensive flyers',
       editPath: '#basic-info',
       icon: Dog,
       available: true

@@ -257,7 +257,7 @@ export const DocumentsSection = ({ petId, petName, documents, onDocumentDeleted 
         <CardHeader>
           <CardTitle className="flex items-center space-x-2">
             <Upload className="w-5 h-5 text-brand-primary" />
-            <span>Upload Documents</span>
+            <span>Upload Documents or Capture Doc Photos</span>
           </CardTitle>
         </CardHeader>
         <CardContent>

@@ -546,7 +546,7 @@ export const CareInstructionsSection = ({ petData, onUpdate }: CareInstructionsS
         <CardContent className="space-y-4">
           {petData.medications.length > 0 ? (
             petData.medications.map((medication, index) => (
-              <div key={index} className="p-4 bg-red-50 rounded-lg border border-red-200">
+              <div key={index} className="p-4 rounded-lg border border-gray-200">
                 <div className="flex items-center space-x-2 mb-2">
                   <Pill className="w-4 h-4 text-red-600" />
                   <Badge variant="destructive" className="text-center text-xs sm:text-sm">

@@ -70,7 +70,7 @@ export const PetTransferDialog = ({ petId, petName }: PetTransferDialogProps) =>
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Transfer {petName}</DialogTitle>
+          <DialogTitle>Transfer {petName}'s account to another petport user</DialogTitle>
         </DialogHeader>
         <div className="space-y-4">
           <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">

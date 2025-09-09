@@ -626,7 +626,16 @@ export const PetProfileContent = ({
         </div>
       </div>
 
-      {/* Transfer Section - Only for owners */}
+      {/* PDF Generator Section */}
+      <div className="mb-8">
+        <PetPDFGenerator
+          petId={enhancedPetData.id}
+          petName={enhancedPetData.name}
+          petData={enhancedPetData}
+        />
+      </div>
+
+      {/* Transfer Section - Only for owners - Moved to bottom */}
       {isOwner && (
         <div className="mb-8">
           <SectionHeader
@@ -636,7 +645,7 @@ export const PetProfileContent = ({
           />
           <div className="bg-gray-50 rounded-lg p-4">
             <p className="text-sm text-gray-600 mb-4">
-              Transfer ownership of {enhancedPetData.name} to another PetPort user. 
+              Transfer {enhancedPetData.name}'s account to another petport user. 
               This action is permanent and cannot be undone.
             </p>
             <PetTransferDialog
@@ -646,15 +655,6 @@ export const PetProfileContent = ({
           </div>
         </div>
       )}
-
-      {/* PDF Generator Section */}
-      <div className="mb-8">
-        <PetPDFGenerator
-          petId={enhancedPetData.id}
-          petName={enhancedPetData.name}
-          petData={enhancedPetData}
-        />
-      </div>
 
     </div>
   );

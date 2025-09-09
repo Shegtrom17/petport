@@ -35,6 +35,7 @@ import { isTouchDevice } from "@/hooks/useIsTouchDevice";
 import { featureFlags } from "@/config/featureFlags";
 import { getPrevNext, type TabId } from "@/features/navigation/tabOrder";
 import { PullToRefresh } from "@/components/PullToRefresh";
+import { IOSRefreshPrompt } from "@/components/IOSRefreshPrompt";
 
 const Index = () => {
   console.log("Index component is rendering");
@@ -82,6 +83,12 @@ const Index = () => {
     // Refresh pet data when user pulls to refresh
     if (selectedPet?.id) {
       await handlePetUpdate();
+    }
+    
+    // Force page reload for iOS users to ensure fresh content
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream;
+    if (isIOS) {
+      window.location.reload();
     }
   };
 
@@ -328,6 +335,7 @@ const Index = () => {
           petName={petData.name}
         />
 
+        <IOSRefreshPrompt onRefresh={handleRefresh} />
         <PullToRefresh onRefresh={handleRefresh} disabled={!user || pets.length === 0}>
           <main className="max-w-6xl mx-auto px-3 sm:px-4 py-4 sm:py-6 lg:py-8 pb-20 sm:pb-24">
             <AuthenticationPrompt isSignedIn={!!user} hasPets={pets.length > 0} />

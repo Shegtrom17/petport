@@ -1,4 +1,4 @@
-const CACHE_NAME = 'petport-v4';
+const CACHE_NAME = 'petport-v5'; // Increment version to force update
 const urlsToCache = [];
 
 self.addEventListener('install', (event) => {
@@ -43,16 +43,35 @@ self.addEventListener('fetch', (event) => {
   }
 
   event.respondWith(
-    fetch(req)
-      .then((response) => {
-        const respClone = response.clone();
-        caches.open(CACHE_NAME).then((cache) => cache.put(req, respClone)).catch(() => {});
-        return response;
-      })
-      .catch(async () => {
-        const cached = await caches.match(req);
-        return cached || new Response('', { status: 504 });
-      })
+    caches.open(CACHE_NAME).then(async (cache) => {
+      try {
+        // Try network first for fresher content (especially for iOS)
+        const networkResponse = await fetch(req);
+        
+        // Cache successful responses
+        if (networkResponse.ok) {
+          cache.put(req, networkResponse.clone());
+        }
+        
+        return networkResponse;
+      } catch (error) {
+        // Fallback to cache if network fails
+        const cached = await cache.match(req);
+        if (cached) {
+          return cached;
+        }
+        
+        // Return offline page or generic error for HTML requests
+        if (req.headers.get('accept')?.includes('text/html')) {
+          return new Response('<!DOCTYPE html><html><body><h1>Offline</h1><p>Please check your connection and try again.</p></body></html>', {
+            status: 503,
+            headers: { 'Content-Type': 'text/html' }
+          });
+        }
+        
+        return new Response('', { status: 504 });
+      }
+    })
   );
 });
 

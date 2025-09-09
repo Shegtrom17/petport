@@ -17,6 +17,14 @@ export const usePullToRefresh = ({
 
   const handleTouchStart = useCallback((e: TouchEvent) => {
     if (disabled || window.scrollY > 0 || e.touches.length > 1) return;
+    
+    // iOS Safari specific handling
+    const isIOSSafari = /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream;
+    if (isIOSSafari && window.scrollY === 0) {
+      // Prevent iOS native pull-to-refresh
+      e.preventDefault();
+    }
+    
     setStartY(e.touches[0].clientY);
   }, [disabled]);
 
@@ -26,9 +34,17 @@ export const usePullToRefresh = ({
     const currentY = e.touches[0].clientY;
     const distance = Math.max(0, currentY - startY);
     
+    // iOS Safari specific handling
+    const isIOSSafari = /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream;
+    
     if (distance > 0) {
-      e.preventDefault();
-      setPullDistance(Math.min(distance, threshold * 1.5));
+      if (isIOSSafari) {
+        // Always prevent default on iOS to override native behavior
+        e.preventDefault();
+      } else {
+        e.preventDefault();
+      }
+      setPullDistance(Math.min(distance * 0.5, threshold * 1.5)); // Reduce sensitivity for iOS
     }
   }, [disabled, startY, threshold]);
 

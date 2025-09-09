@@ -262,8 +262,8 @@ export default function PublicMissingPet() {
                 {petData.contacts.map((contact, index) => (
                   <div key={index} className="p-3 rounded-lg border shadow-sm">
                     <div className="flex items-center space-x-2">
-                      <Phone className={`w-4 h-4 ${contact.contact_type === 'emergency' ? 'text-red-600' : 'text-primary'}`} />
-                      <strong className={contact.contact_type === 'emergency' ? 'text-red-700' : 'text-primary'}>
+                       <Phone className={`w-4 h-4 ${contact.contact_type === 'emergency' ? 'text-primary' : 'text-primary'}`} />
+                       <strong className={contact.contact_type === 'emergency' ? 'text-primary' : 'text-primary'}>
                         {contact.contact_name}:
                       </strong>
                     </div>
@@ -271,15 +271,15 @@ export default function PublicMissingPet() {
                       <div className="ml-6">
                         <a 
                           href={`tel:${contact.contact_phone.replace(/\D/g, '')}`}
-                          className={`font-medium hover:opacity-80 ${contact.contact_type === 'emergency' ? 'text-red-800' : 'text-primary'}`}
+                          className={`font-medium hover:opacity-80 ${contact.contact_type === 'emergency' ? 'text-primary' : 'text-primary'}`}
                           aria-label={`Call ${contact.contact_name}`}
                         >
                           {contact.contact_phone}
                         </a>
-                        <p className={`text-xs ${contact.contact_type === 'emergency' ? 'text-red-600' : 'text-primary/80'}`}>Tap to call</p>
+                        <p className={`text-xs ${contact.contact_type === 'emergency' ? 'text-primary/70' : 'text-primary/80'}`}>Tap to call</p>
                       </div>
                     ) : (
-                      <p className={`ml-6 font-medium ${contact.contact_type === 'emergency' ? 'text-red-800' : 'text-primary'}`}>
+                      <p className={`ml-6 font-medium ${contact.contact_type === 'emergency' ? 'text-primary' : 'text-primary'}`}>
                         {contact.contact_phone}
                       </p>
                     )}

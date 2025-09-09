@@ -402,13 +402,13 @@ const PublicProfile = () => {
 
         {/* Medical Alert */}
         {petData.medical?.medical_alert && petData.medical?.medical_conditions && (
-          <Card className="mb-6 border-red-200 bg-red-50">
-            <CardContent className="p-6">
-              <div className="flex items-center space-x-3">
-                <span className="text-2xl">⚠️</span>
-                <div>
-                  <h3 className="font-semibold text-red-800">Medical Alert</h3>
-                  <p className="text-red-700">{petData.medical.medical_conditions}</p>
+           <Card className="mb-6 border-primary/20 bg-primary/10">
+             <CardContent className="p-6">
+               <div className="flex items-center space-x-3">
+                 <span className="text-2xl">⚠️</span>
+                 <div>
+                   <h3 className="font-semibold text-primary">Medical Alert</h3>
+                   <p className="text-primary">{petData.medical.medical_conditions}</p>
                 </div>
               </div>
             </CardContent>

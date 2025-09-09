@@ -256,28 +256,28 @@ const PublicCareInstructions = () => {
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-navy-900">
-                  <Phone className="w-5 h-5 text-red-600" />
-                   Contacts
+                  <Phone className="w-5 h-5 text-primary" />
+                  Emergency Contacts
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 {pet.emergencyContact && (
-                  <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-                    <h4 className="font-medium text-red-800 mb-2">Primary Emergency Contact</h4>
-                    {extractPhoneNumber(pet.emergencyContact) ? (
-                      <div>
-                        <a 
-                          href={`tel:${formatPhoneForTel(extractPhoneNumber(pet.emergencyContact)!)}`}
-                          className="text-red-700 hover:text-red-900 font-medium"
-                          aria-label="Call primary emergency contact"
-                        >
-                          {pet.emergencyContact}
-                        </a>
-                        <p className="text-xs text-red-600 mt-1">Tap to call</p>
-                      </div>
-                    ) : (
-                      <p className="text-red-700">{pet.emergencyContact}</p>
-                    )}
+                   <div className="bg-primary/10 border border-primary/20 rounded-lg p-4">
+                     <h4 className="font-medium text-primary mb-2">Primary Emergency Contact</h4>
+                     {extractPhoneNumber(pet.emergencyContact) ? (
+                       <div>
+                         <a 
+                           href={`tel:${formatPhoneForTel(extractPhoneNumber(pet.emergencyContact)!)}`}
+                           className="text-primary hover:text-primary/80 font-medium"
+                           aria-label="Call primary emergency contact"
+                         >
+                           {pet.emergencyContact}
+                         </a>
+                         <p className="text-xs text-primary/70 mt-1">Tap to call</p>
+                       </div>
+                     ) : (
+                       <p className="text-primary">{pet.emergencyContact}</p>
+                     )}
                   </div>
                 )}
                 
@@ -409,8 +409,8 @@ const PublicCareInstructions = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-navy-900">
-                <Heart className="w-5 h-5 text-red-600" />
-                Health Monitoring
+                 <Heart className="w-5 h-5 text-primary" />
+                 Health Monitoring
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -441,12 +441,12 @@ const PublicCareInstructions = () => {
               {(medicalData?.medical_conditions || medicalData?.medical_alert || medicalData?.last_vaccination || medicalData?.medical_emergency_document) && (
                 <div className="space-y-4 pt-4 border-t border-sage-200">
                   {medicalData.medical_alert && (
-                    <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-                      <div className="flex items-center gap-2 mb-2">
-                        <AlertTriangle className="w-5 h-5 text-red-600" />
-                        <h4 className="font-medium text-red-800">Medical Alert</h4>
-                      </div>
-                      <p className="text-red-700 font-medium">This pet has active medical alerts requiring immediate attention.</p>
+                     <div className="bg-primary/10 border border-primary/20 rounded-lg p-4">
+                       <div className="flex items-center gap-2 mb-2">
+                         <AlertTriangle className="w-5 h-5 text-primary" />
+                         <h4 className="font-medium text-primary">Medical Alert</h4>
+                       </div>
+                       <p className="text-primary font-medium">This pet has active medical alerts requiring immediate attention.</p>
                     </div>
                   )}
 
@@ -499,18 +499,18 @@ const PublicCareInstructions = () => {
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-navy-900">
-                  <Heart className="w-5 h-5 text-red-600" />
-                  Medications & Health
+                  <Heart className="w-5 h-5 text-primary" />
+                  Medication & Supplements
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
                 {pet.medications.map((med, idx) => (
-                  <div key={idx} className="p-3 bg-red-50 border border-red-200 rounded">
-                    <div className="flex items-center gap-2 mb-1">
-                      <Heart className="w-4 h-4 text-red-600" />
-                      <span className="font-medium text-red-800">{med}</span>
-                    </div>
-                    <p className="text-xs text-red-700">Administer as prescribed. Contact vet if reactions occur.</p>
+                   <div key={idx} className="p-3 bg-primary/10 border border-primary/20 rounded">
+                     <div className="flex items-center gap-2 mb-1">
+                       <Heart className="w-4 h-4 text-primary" />
+                       <span className="font-medium text-primary">{med}</span>
+                     </div>
+                     <p className="text-xs text-primary/70">Administer as prescribed. Contact vet if reactions occur.</p>
                   </div>
                 ))}
               </CardContent>

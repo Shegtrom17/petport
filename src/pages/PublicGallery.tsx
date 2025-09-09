@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { MetaTags } from "@/components/MetaTags";
 import { supabase } from '@/integrations/supabase/client';
 import { Link } from 'react-router-dom';
+import { GALLERY_CONFIG } from "@/config/featureFlags";
 
 interface GalleryPhoto {
   id: string;
@@ -170,6 +171,8 @@ export const PublicGallery = () => {
                         src={photo.url} 
                         alt={`${petData.name} photo ${index + 1}`}
                         className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                        loading={GALLERY_CONFIG.ENABLE_LAZY_LOADING ? "lazy" : "eager"}
+                        decoding="async"
                       />
                     </div>
                     

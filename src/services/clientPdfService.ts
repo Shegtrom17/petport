@@ -1,6 +1,8 @@
 import jsPDF from 'jspdf';
 import { sanitizeText } from '@/utils/inputSanitizer';
 import { generatePublicMissingUrl, generateQRCodeUrl } from '@/services/pdfService';
+import { optimizeImageForPDF } from '@/utils/pdfImageOptimization';
+import { GALLERY_CONFIG } from '@/config/featureFlags';
 export interface ClientPDFGenerationResult {
   success: boolean;
   blob?: Blob;
@@ -426,7 +428,11 @@ const addImage = async (doc: jsPDF, pageManager: PDFPageManager, imageUrl: strin
   try {
     pageManager.checkPageSpace(maxHeight + 10);
     
-    const base64 = await loadOrientedImageAsBase64(imageUrl);
+    // Use optimized image loading for PDF generation when enabled
+    const base64 = GALLERY_CONFIG.PDF_IMAGE_OPTIMIZATION 
+      ? await optimizeImageForPDF(imageUrl)
+      : await loadOrientedImageAsBase64(imageUrl);
+    
     const dimensions = await getImageDimensions(base64);
     
     // Calculate scaled dimensions

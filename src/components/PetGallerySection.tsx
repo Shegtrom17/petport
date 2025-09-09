@@ -14,9 +14,9 @@ import { compressMultipleImages, formatFileSize } from "@/utils/imageCompression
 import { generateClientPetPDF } from "@/services/clientPdfService";
 import { SocialShareButtons } from "@/components/SocialShareButtons";
 import { useIsMobile } from "@/hooks/useIsMobile";
-import { featureFlags } from '@/config/featureFlags';
+import { featureFlags, GALLERY_CONFIG } from '@/config/featureFlags';
 
-const MAX_GALLERY_PHOTOS = 12;
+const MAX_GALLERY_PHOTOS = GALLERY_CONFIG.MAX_PHOTOS;
 
 interface GalleryPhoto {
   id: string;
@@ -603,6 +603,8 @@ export const PetGallerySection = ({ petData, onUpdate }: PetGallerySectionProps)
                       src={photo.url} 
                       alt={`${petData.name} gallery photo ${index + 1}`}
                       className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                      loading={GALLERY_CONFIG.ENABLE_LAZY_LOADING ? "lazy" : "eager"}
+                      decoding="async"
                     />
                     
                     {/* Selection checkbox */}

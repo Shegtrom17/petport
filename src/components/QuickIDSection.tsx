@@ -475,7 +475,7 @@ export const QuickIDSection = ({ petData, onUpdate }: QuickIDSectionProps) => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-4">
                   {lostPetData.last_seen_location && (
-                    <div className="bg-red-50 p-4 rounded-lg">
+                    <div className="bg-white p-4 rounded-lg border shadow-sm">
                       <div className="flex items-center space-x-2 mb-2">
                         <MapPin className="w-5 h-5 text-red-600" />
                         <strong>Last Seen Location:</strong>
@@ -485,7 +485,7 @@ export const QuickIDSection = ({ petData, onUpdate }: QuickIDSectionProps) => {
                   )}
 
                   {(lostPetData.last_seen_date || lostPetData.last_seen_time) && (
-                    <div className="bg-gray-50 p-4 rounded-lg">
+                    <div className="bg-white p-4 rounded-lg border shadow-sm">
                       <div className="flex items-center space-x-2 mb-2">
                         <Clock className="w-5 h-5 text-brand-primary" />
                         <strong>Last Seen:</strong>
@@ -498,7 +498,7 @@ export const QuickIDSection = ({ petData, onUpdate }: QuickIDSectionProps) => {
                   )}
 
                   {lostPetData.reward_amount && (
-                    <div className="bg-green-50 p-4 rounded-lg">
+                    <div className="bg-white p-4 rounded-lg border shadow-sm">
                       <div className="flex items-center space-x-2 mb-2">
                         <DollarSign className="w-5 h-5 text-green-600" />
                         <strong>Reward:</strong>
@@ -510,21 +510,21 @@ export const QuickIDSection = ({ petData, onUpdate }: QuickIDSectionProps) => {
 
                 <div className="space-y-4">
                   {lostPetData.distinctive_features && (
-                    <div className="bg-blue-50 p-4 rounded-lg">
+                    <div className="bg-white p-4 rounded-lg border shadow-sm">
                       <strong>Distinctive Features:</strong>
                       <p className="mt-2">{lostPetData.distinctive_features}</p>
                     </div>
                   )}
 
                   {lostPetData.finder_instructions && (
-                    <div className="bg-yellow-50 p-4 rounded-lg">
+                    <div className="bg-white p-4 rounded-lg border shadow-sm">
                       <strong>If Found:</strong>
                       <p className="mt-2">{lostPetData.finder_instructions}</p>
                     </div>
                   )}
 
                   {lostPetData.emergency_notes && (
-                    <div className="bg-red-50 p-4 rounded-lg">
+                    <div className="bg-white p-4 rounded-lg border shadow-sm">
                       <strong>Important Notes:</strong>
                       <p className="mt-2">{lostPetData.emergency_notes}</p>
                     </div>

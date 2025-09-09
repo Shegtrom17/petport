@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Shield, Award, GraduationCap, Trophy, Activity, Star, MapPin } from "lucide-react";
+import { Shield, Award, GraduationCap, Trophy, Activity, Star, MapPin, Heart, Phone } from "lucide-react";
 import { MetaTags } from "@/components/MetaTags";
 import { SupportAnimalBanner } from "@/components/SupportAnimalBanner";
 import { CertificationBanner } from "@/components/CertificationBanner";
@@ -24,6 +24,7 @@ interface PublicResumeData {
   is_public?: boolean;
   supportAnimalStatus?: string | null;
   photoUrl?: string;
+  bio?: string | null;
   certifications?: Array<{
     id: string;
     type: string;
@@ -289,6 +290,21 @@ export default function PublicResume() {
           </Card>
         )}
 
+        {/* About Section */}
+        <Card className="mb-6">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-navy-900">
+              <Heart className="w-5 h-5 text-red-500" />
+              About {data.name}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-gray-700 leading-relaxed">
+              {data.bio || `${data.name} is a wonderful ${data.breed?.toLowerCase()} with a gentle temperament and friendly disposition. Known for being well-behaved and great with people of all ages. An ideal companion for any setting.`}
+            </p>
+          </CardContent>
+        </Card>
+
         {/* Experience */}
         {data.experiences && data.experiences.length > 0 && (
           <Card className="mb-6">
@@ -302,7 +318,13 @@ export default function PublicResume() {
               {data.experiences.map((e, idx) => (
                 <div key={idx} className="p-3 rounded border">
                   <div className="font-medium">{e.activity}</div>
-                  {e.description && <div className="text-sm text-muted-foreground">{e.description}</div>}
+                  {e.description && <div className="text-sm text-muted-foreground mb-2">{e.description}</div>}
+                  {e.contact && (
+                    <div className="flex items-center space-x-2 text-sm text-primary">
+                      <Phone className="w-3 h-3" />
+                      <span>Contact: {e.contact}</span>
+                    </div>
+                  )}
                 </div>
               ))}
             </CardContent>

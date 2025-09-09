@@ -83,19 +83,19 @@ export const PetSelector = ({ pets, selectedPet, onSelectPet, onReorderPets }: P
                               className="w-full h-full object-cover filter brightness-105 border border-gold-200/30" 
                               style={{ borderColor: 'rgba(212,175,55,0.3)' }}
                             />
-                          ) : (
+                           ) : (
                             <div 
-                              className="w-full h-full flex items-center justify-center text-navy-800 font-semibold relative overflow-hidden"
+                              className="w-full h-full flex items-center justify-center text-white font-semibold relative overflow-hidden shadow-inner"
                               style={{ 
                                 backgroundColor: getPetBackgroundColor(pet.name),
                                 background: `
-                                  radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(0,0,0,0.05) 100%),
-                                  repeating-linear-gradient(45deg, transparent 0%, rgba(0,0,0,0.05) 50%),
-                                  ${getPetBackgroundColor(pet.name)}
-                                `
+                                  radial-gradient(circle at 30% 30%, rgba(255,255,255,0.3) 0%, transparent 50%),
+                                  linear-gradient(135deg, ${getPetBackgroundColor(pet.name)} 0%, rgba(0,0,0,0.1) 100%)
+                                `,
+                                border: '2px solid rgba(255,255,255,0.2)'
                               }}
                             >
-                              <span className="text-lg sm:text-xl z-10 relative">
+                              <span className="text-lg sm:text-xl z-10 relative font-bold drop-shadow-sm">
                                 {pet.name?.charAt(0).toUpperCase()}
                               </span>
                               {/* Optional subtle paw print watermark */}

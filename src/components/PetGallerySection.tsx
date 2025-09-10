@@ -476,14 +476,14 @@ export const PetGallerySection = ({ petData, onUpdate }: PetGallerySectionProps)
                 <span className="hidden sm:inline">📸 Capture Moment</span>
                 <span className="sm:hidden">📸 Capture</span>
               </Button>
-              
-              {/* Profile Completion Hint */}
-              <div className="col-span-full mt-4">
-                <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
-                  <p className="text-sm text-blue-800">
-                    💡 <strong>Tip:</strong> Complete your pet's Pet Profile for professional PDFs and optimal sharing quality.
-                  </p>
-                </div>
+            </div>
+            
+            {/* Profile Completion Hint - moved outside flex container */}
+            <div className="mt-4">
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                <p className="text-sm text-blue-800">
+                  💡 <strong>Tip:</strong> Complete your pet's Pet Profile section (via Edit button) for professional PDFs and optimal sharing quality.
+                </p>
               </div>
             </div>
           </div>

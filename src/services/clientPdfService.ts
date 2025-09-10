@@ -47,10 +47,13 @@ function normalizePetData(raw: any): any {
     // Photos
     photoUrl: pet.photoUrl || pet.photo_url || pet.photo || pet.photos?.[0]?.url,
     fullBodyPhotoUrl: pet.fullBodyPhotoUrl || pet.full_body_photo_url,
-    gallery_photos: (pet.gallery_photos || pet.galleryPhotos || []).map((p: any) => ({
-      url: p.url || p.photo_url || p.src,
-      caption: p.caption || p.alt || '',
-    })),
+    gallery_photos: (pet.gallery_photos || pet.galleryPhotos || [])
+      .sort((a: any, b: any) => (a.position || 0) - (b.position || 0))
+      .map((p: any) => ({
+        url: p.url || p.photo_url || p.src,
+        caption: p.caption || p.alt || '',
+        position: p.position || 0,
+      })),
 
     // Identifiers - ONLY from Basic Information (not signup data)
     microchipId: pet.microchipId || pet.microchip_id || undefined,

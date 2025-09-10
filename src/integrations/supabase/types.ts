@@ -258,6 +258,7 @@ export type Database = {
           created_at: string
           id: string
           pet_id: string
+          position: number | null
           url: string
         }
         Insert: {
@@ -265,6 +266,7 @@ export type Database = {
           created_at?: string
           id?: string
           pet_id: string
+          position?: number | null
           url: string
         }
         Update: {
@@ -272,6 +274,7 @@ export type Database = {
           created_at?: string
           id?: string
           pet_id?: string
+          position?: number | null
           url?: string
         }
         Relationships: [

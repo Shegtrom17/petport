@@ -6,15 +6,16 @@ import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
-import { Camera, Upload, Download, Plus, Eye, Trash2, Edit2, X, Loader2, Share2, CheckSquare, Square, Copy, ExternalLink } from "lucide-react";
+import { Camera, Upload, Download, Plus, Eye, Trash2, Edit2, X, Loader2, Share2, CheckSquare, Square, Copy, ExternalLink, GripVertical } from "lucide-react";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
-import { uploadGalleryPhoto, uploadMultipleGalleryPhotos, deleteGalleryPhoto, updateGalleryPhotoCaption } from "@/services/petService";
+import { uploadGalleryPhoto, uploadMultipleGalleryPhotos, deleteGalleryPhoto, updateGalleryPhotoCaption, reorderGalleryPhotos } from "@/services/petService";
 import { compressMultipleImages, formatFileSize } from "@/utils/imageCompression";
 import { generateClientPetPDF } from "@/services/clientPdfService";
 import { SocialShareButtons } from "@/components/SocialShareButtons";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import { featureFlags, GALLERY_CONFIG } from '@/config/featureFlags';
+import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 
 const MAX_GALLERY_PHOTOS = GALLERY_CONFIG.MAX_PHOTOS;
 
@@ -22,6 +23,7 @@ interface GalleryPhoto {
   id: string;
   url: string;
   caption: string | null;
+  position?: number;
 }
 
 interface PetGallerySectionProps {
@@ -46,7 +48,7 @@ export const PetGallerySection = ({ petData, onUpdate }: PetGallerySectionProps)
   const { toast } = useToast();
   const isMobile = useIsMobile();
 
-  const galleryPhotos = petData.gallery_photos || [];
+  const galleryPhotos = (petData.gallery_photos || []).sort((a, b) => (a.position || 0) - (b.position || 0));
   const remainingSlots = MAX_GALLERY_PHOTOS - galleryPhotos.length;
   const isLimitReached = galleryPhotos.length >= MAX_GALLERY_PHOTOS;
 
@@ -116,6 +118,35 @@ export const PetGallerySection = ({ petData, onUpdate }: PetGallerySectionProps)
 
   const handleShareAction = () => {
     setIsShareSheetOpen(true);
+  };
+
+  const handleDragEnd = async (result: any) => {
+    if (!result.destination) return;
+
+    const items = Array.from(galleryPhotos);
+    const [reorderedItem] = items.splice(result.source.index, 1);
+    items.splice(result.destination.index, 0, reorderedItem);
+
+    // Update positions
+    const updatedPhotos = items.map((photo, index) => ({
+      ...photo,
+      position: index + 1
+    }));
+
+    try {
+      await reorderGalleryPhotos(petData.id, updatedPhotos.map(p => ({ id: p.id, position: p.position! })));
+      toast({
+        title: "Photos reordered",
+        description: "Photo order saved successfully. First two photos will appear in lost pet flyers.",
+      });
+      onUpdate();
+    } catch (error) {
+      toast({
+        title: "Failed to reorder",
+        description: "Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   // Upload functions
@@ -476,479 +507,243 @@ export const PetGallerySection = ({ petData, onUpdate }: PetGallerySectionProps)
               </Badge>
             </div>
           </CardTitle>
-          
-          {/* Improved Share Controls */}
-          {galleryPhotos.length > 0 && (
-            <>
-              {!isSelectionMode ? (
-                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mt-4">
-                  <div className="flex flex-col sm:flex-row gap-3">
-                    <div className="flex-1">
-                      <h4 className="font-medium text-blue-900 mb-2">Share Gallery</h4>
-                      <p className="text-sm text-blue-700">Share all photos or select specific ones to create a custom gallery link.</p>
-                    </div>
-                    <div className="flex gap-2">
-                      <Sheet open={isShareSheetOpen} onOpenChange={setIsShareSheetOpen}>
-                        <SheetTrigger asChild>
-                          <Button 
-                            size="sm" 
-                            className="bg-brand-primary hover:bg-brand-primary-dark text-white"
-                            onClick={() => setSelectedPhotos([])}
-                          >
-                            <Share2 className="w-4 h-4 mr-2" />
-                            <span className="text-responsive-sm">Share all (36)</span>
-                          </Button>
-                        </SheetTrigger>
-                      </Sheet>
-                      {featureFlags.enableSelectPhotos && (
-                        <Button 
-                          variant="outline" 
-                          size="sm"
-                          onClick={handleStartSelection}
-                        >
-                          <CheckSquare className="w-4 h-4 mr-2" />
-                          <span className="text-responsive-sm">Select photos</span>
-                        </Button>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              ) : (
-                <div className="mt-4 space-y-4">
-                  {/* Selection Controls */}
-                  <div className="p-4 border border-blue-200 rounded-lg bg-blue-50/50">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <Button
-                          onClick={selectAllPhotos}
-                          variant="outline"
-                          size="default"
-                        >
-                          {selectedPhotos.length === galleryPhotos.length ? (
-                            <>
-                              <CheckSquare className="w-4 h-4 mr-2" />
-                              <span className="text-responsive-sm">Deselect All</span>
-                            </>
-                          ) : (
-                            <>
-                              <Square className="w-4 h-4 mr-2" />
-                              <span className="text-responsive-sm">Select All</span>
-                            </>
-                          )}
-                        </Button>
-                        
-                        {selectedPhotos.length > 0 && (
-                          <Badge variant="secondary" className="text-responsive-sm px-3 py-1">
-                            {selectedPhotos.length} selected
-                          </Badge>
-                        )}
-                      </div>
-                      
-                      <Button
-                        variant="ghost"
-                        size="default"
-                        onClick={handleCancelSelection}
-                      >
-                        <X className="w-4 h-4 mr-2" />
-                        <span className="text-responsive-sm">Cancel</span>
-                      </Button>
-                    </div>
-                  </div>
-                  
-                  {/* Action Buttons */}
-                  <div className="p-4 border border-blue-200 rounded-lg bg-blue-50/50">
-                    <div className="flex flex-col sm:flex-row gap-3">
-                      <Button 
-                        variant="outline" 
-                        size="default"
-                        onClick={handleCopyLink}
-                        disabled={selectedPhotos.length === 0}
-                        className="flex-1"
-                      >
-                        <Copy className="w-4 h-4 mr-2" />
-                        <span className="text-responsive-sm">Copy link</span>
-                      </Button>
-                      
-                      <Button 
-                        variant="outline" 
-                        size="default"
-                        onClick={handlePreview}
-                        disabled={selectedPhotos.length === 0}
-                        className="flex-1"
-                      >
-                        <ExternalLink className="w-4 h-4 mr-2" />
-                        <span className="text-responsive-sm">Preview</span>
-                      </Button>
-                    </div>
-                  </div>
-
-                  {/* Main Share Button */}
-                  <div className="p-4 border border-blue-200 rounded-lg bg-blue-50/50">
-                    <Sheet open={isShareSheetOpen} onOpenChange={setIsShareSheetOpen}>
-                      <SheetTrigger asChild>
-                        <Button 
-                          size="lg"
-                          className="w-full bg-blue-600 hover:bg-blue-700 text-white"
-                          disabled={selectedPhotos.length === 0}
-                        >
-                          <Share2 className="w-5 h-5 mr-3" />
-                          <span className="text-responsive-base font-medium">{getShareButtonText()}</span>
-                        </Button>
-                      </SheetTrigger>
-                    </Sheet>
-                  </div>
-                </div>
-              )}
-            </>
-          )}
         </CardHeader>
         <CardContent>
           {galleryPhotos.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {galleryPhotos.map((photo, index) => (
-                <div key={photo.id} className="space-y-3">
-                  <div className="relative aspect-square rounded-lg overflow-hidden border-2 border-gray-200 shadow-md hover:shadow-lg transition-shadow group">
-                    <img 
-                      src={photo.url} 
-                      alt={`${petData.name} gallery photo ${index + 1}`}
-                      className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-                      loading={GALLERY_CONFIG.ENABLE_LAZY_LOADING ? "lazy" : "eager"}
-                      decoding="async"
-                    />
-                    
-                    {/* Selection checkbox */}
-                    {isSelectionMode && (
-                      <div className="absolute top-2 left-2">
-                        <Button
-                          size="sm"
-                          variant={selectedPhotos.includes(photo.id) ? "default" : "secondary"}
-                          className="h-8 w-8 p-0 bg-white/90 hover:bg-white"
-                          onClick={() => togglePhotoSelection(photo.id)}
-                        >
-                          {selectedPhotos.includes(photo.id) ? (
-                            <CheckSquare className="h-4 w-4 text-blue-600" />
-                          ) : (
-                            <Square className="h-4 w-4" />
-                          )}
-                        </Button>
-                      </div>
-                    )}
-                    
-                    {/* Action buttons overlay */}
-                    <div className="absolute top-2 right-2 flex space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <Button
-                        size="sm"
-                        variant="secondary"
-                        className="h-8 w-8 p-0 bg-white/90 hover:bg-white"
-                        onClick={() => startEditingCaption(photo.id, photo.caption)}
-                      >
-                        <Edit2 className="h-3 w-3" />
-                      </Button>
-                      <AlertDialog>
-                        <AlertDialogTrigger asChild>
-                          <Button
-                            size="sm"
-                            variant="destructive"
-                            className="h-8 w-8 p-0 bg-red-500/90 hover:bg-red-600"
+            <DragDropContext onDragEnd={handleDragEnd}>
+              <Droppable droppableId="gallery-photos">
+                {(provided) => (
+                  <div 
+                    className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"
+                    {...provided.droppableProps}
+                    ref={provided.innerRef}
+                  >
+                    {galleryPhotos.map((photo, index) => (
+                      <Draggable key={photo.id} draggableId={photo.id} index={index} isDragDisabled={isSelectionMode}>
+                        {(provided, snapshot) => (
+                          <div
+                            ref={provided.innerRef}
+                            {...provided.draggableProps}
+                            className={`relative group rounded-lg overflow-hidden border-2 transition-all duration-200 ${
+                              snapshot.isDragging ? 'shadow-lg z-50' : ''
+                            } ${
+                              isSelectionMode 
+                                ? selectedPhotos.includes(photo.id)
+                                  ? 'border-brand-primary bg-brand-primary/10'
+                                  : 'border-gray-200 hover:border-gray-300'
+                                : 'border-gray-200 hover:border-brand-primary hover:shadow-md'
+                            }`}
                           >
-                            <Trash2 className="h-3 w-3" />
-                          </Button>
-                        </AlertDialogTrigger>
-                        <AlertDialogContent>
-                          <AlertDialogHeader>
-                            <AlertDialogTitle>Delete Photo</AlertDialogTitle>
-                            <AlertDialogDescription>
-                              Are you sure you want to delete this photo? This action cannot be undone.
-                            </AlertDialogDescription>
-                          </AlertDialogHeader>
-                          <AlertDialogFooter>
-                            <AlertDialogCancel>Cancel</AlertDialogCancel>
-                            <AlertDialogAction
-                              onClick={() => handleDeletePhoto(photo.id, photo.url)}
-                              className="bg-red-600 hover:bg-red-700"
-                            >
-                              Delete
-                            </AlertDialogAction>
-                          </AlertDialogFooter>
-                        </AlertDialogContent>
-                      </AlertDialog>
-                    </div>
-                  </div>
-                  
-                  {/* Caption area */}
-                  <div className="bg-gray-50 p-3 rounded-lg">
-                    <p className="text-sm text-gray-700 font-medium mb-2">Photo {index + 1}</p>
-                    {editingCaption === photo.id ? (
-                      <div className="space-y-2">
-                        <Label htmlFor={`caption-${photo.id}`} className="text-xs text-gray-600">
-                          Photo Description
-                        </Label>
-                        <Input
-                          id={`caption-${photo.id}`}
-                          value={editCaptionValue}
-                          onChange={(e) => setEditCaptionValue(e.target.value)}
-                          placeholder="Describe this photo..."
-                          className="text-sm"
-                        />
-                        <div className="flex space-x-2">
-                          <Button
-                            size="sm"
-                            onClick={() => handleSaveCaption(photo.id)}
-                            className="text-xs px-3 py-1"
-                          >
-                            Save
-                          </Button>
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={cancelEditingCaption}
-                            className="text-xs px-3 py-1"
-                          >
-                            <X className="w-3 h-3 mr-1" />
-                            Cancel
-                          </Button>
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="min-h-[20px]">
-                        {photo.caption ? (
-                          <p className="text-sm text-gray-600">{photo.caption}</p>
-                        ) : (
-                          <p className="text-xs text-gray-400 italic">No description</p>
+                            {/* Drag Handle */}
+                            {!isSelectionMode && (
+                              <div 
+                                {...provided.dragHandleProps}
+                                className="absolute top-2 left-2 opacity-0 group-hover:opacity-100 transition-opacity cursor-grab bg-white/90 rounded p-1"
+                              >
+                                <GripVertical className="w-4 h-4 text-gray-600" />
+                              </div>
+                            )}
+
+                            {/* Position Badge */}
+                            <div className="absolute top-2 left-2 bg-brand-primary text-white text-xs px-2 py-1 rounded-full font-bold">
+                              {index + 1}
+                            </div>
+
+                            {/* Lost Flyer Badge for first two photos */}
+                            {index < 2 && (
+                              <div className="absolute top-8 left-2 bg-yellow-500 text-black text-xs px-2 py-1 rounded-full font-bold">
+                                Lost Flyer
+                              </div>
+                            )}
+
+                            <img 
+                              src={photo.url} 
+                              alt={photo.caption || `${petData.name} photo ${index + 1}`}
+                              className="w-full h-48 object-cover"
+                            />
+                            
+                            {/* Selection Overlay */}
+                            {isSelectionMode && (
+                              <div 
+                                className="absolute inset-0 bg-black bg-opacity-20 flex items-center justify-center cursor-pointer"
+                                onClick={() => togglePhotoSelection(photo.id)}
+                              >
+                                {selectedPhotos.includes(photo.id) ? (
+                                  <CheckSquare className="w-8 h-8 text-brand-primary" />
+                                ) : (
+                                  <Square className="w-8 h-8 text-white" />
+                                )}
+                              </div>
+                            )}
+                            
+                            {/* Photo Controls */}
+                            {!isSelectionMode && (
+                              <div className="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <Button
+                                  size="sm"
+                                  variant="secondary"
+                                  className="h-8 w-8 p-0 bg-white/90 hover:bg-white"
+                                  onClick={() => startEditingCaption(photo.id, photo.caption)}
+                                >
+                                  <Edit2 className="w-3 h-3" />
+                                </Button>
+                                <AlertDialog>
+                                  <AlertDialogTrigger asChild>
+                                    <Button
+                                      size="sm"
+                                      variant="destructive"
+                                      className="h-8 w-8 p-0 bg-red-500/90 hover:bg-red-600"
+                                    >
+                                      <Trash2 className="w-3 h-3" />
+                                    </Button>
+                                  </AlertDialogTrigger>
+                                  <AlertDialogContent>
+                                    <AlertDialogHeader>
+                                      <AlertDialogTitle>Delete Photo</AlertDialogTitle>
+                                      <AlertDialogDescription>
+                                        Are you sure you want to delete this photo? This action cannot be undone.
+                                      </AlertDialogDescription>
+                                    </AlertDialogHeader>
+                                    <AlertDialogFooter>
+                                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                      <AlertDialogAction
+                                        onClick={() => handleDeletePhoto(photo.id, photo.url)}
+                                        className="bg-red-600 hover:bg-red-700"
+                                      >
+                                        Delete
+                                      </AlertDialogAction>
+                                    </AlertDialogFooter>
+                                  </AlertDialogContent>
+                                </AlertDialog>
+                              </div>
+                            )}
+                            
+                            {/* Caption Overlay */}
+                            {photo.caption && !editingCaption && (
+                              <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-75 text-white p-2">
+                                <p className="text-sm truncate">{photo.caption}</p>
+                              </div>
+                            )}
+                          </div>
                         )}
-                      </div>
-                    )}
+                      </Draggable>
+                    ))}
+                    {provided.placeholder}
                   </div>
-                </div>
-              ))}
-            </div>
+                )}
+              </Droppable>
+            </DragDropContext>
           ) : (
-            <div className="text-center py-12">
-              <Camera className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-              <p className="text-gray-500 mb-4">No photos uploaded yet</p>
-              <div className="flex justify-center space-x-2 sm:space-x-3">
-                <Button 
-                  onClick={handleUploadPhotos}
-                  className="bg-brand-primary hover:bg-brand-primary-dark text-white border border-white/20 px-2 sm:px-4 py-1 sm:py-2 text-xs sm:text-sm"
-                  disabled={uploading || isLimitReached}
-                >
-                  <Plus className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
-                  <span className="hidden sm:inline">{uploading ? "Uploading..." : "Upload First Photo"}</span>
-                  <span className="sm:hidden">{uploading ? "..." : "Upload"}</span>
-                </Button>
-                <Button 
-                  onClick={handleCapturePhoto}
-                  className="bg-blue-600 hover:bg-blue-700 text-white px-2 sm:px-4 py-1 sm:py-2 text-xs sm:text-sm"
-                  disabled={uploading || isLimitReached}
-                >
-                  <Camera className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
-                  <span className="hidden sm:inline">📸 Take Photo</span>
-                  <span className="sm:hidden">📸 Photo</span>
-                </Button>
-              </div>
+            <div className="text-center py-8">
+              <Camera className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+              <p className="text-gray-500 mb-4">No photos in gallery yet</p>
+              <Button 
+                onClick={handleUploadPhotos}
+                className="bg-brand-primary hover:bg-brand-primary-dark text-white"
+                disabled={uploading}
+              >
+                <Plus className="w-4 h-4 mr-2" />
+                Add First Photo
+              </Button>
+            </div>
+          )}
+
+          {/* Guidance for photo ordering */}
+          {galleryPhotos.length > 1 && (
+            <div className="mt-4 bg-blue-50 border border-blue-200 rounded-lg p-3">
+              <p className="text-sm text-blue-800">
+                💡 <strong>Drag and drop</strong> to reorder photos. The first two photos will be used in lost pet flyers.
+              </p>
             </div>
           )}
         </CardContent>
       </Card>
 
-      {/* Mobile sticky bottom bar when in selection mode */}
-      {isMobile && isSelectionMode && galleryPhotos.length > 0 && (
-        <div className="fixed bottom-4 left-4 right-4 z-50">
-          <div className="bg-white border border-blue-200 rounded-lg p-3 shadow-lg">
-            <div className="flex items-center justify-between gap-2">
-              <div className="flex items-center gap-2">
-                <Button
-                  size="sm"
-                  onClick={handleCancelSelection}
-                  variant="outline"
-                >
-                  <X className="w-4 h-4" />
-                </Button>
-                <span className="text-responsive-sm font-medium">
-                  {selectedPhotos.length} selected
-                </span>
-              </div>
-              
-              <div className="flex gap-2">
-                <Sheet open={isShareSheetOpen} onOpenChange={setIsShareSheetOpen}>
-                  <SheetTrigger asChild>
-                    <Button 
-                      size="sm"
-                      disabled={selectedPhotos.length === 0}
-                    >
-                      <Share2 className="w-4 h-4 mr-1" />
-                      <span className="text-responsive-sm">Share</span>
-                    </Button>
-                  </SheetTrigger>
-                </Sheet>
-                
-                <Button 
-                  variant="outline" 
-                  size="sm"
-                  onClick={handleCopyLink}
-                  disabled={selectedPhotos.length === 0}
-                >
-                  <Copy className="w-4 h-4" />
-                </Button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Share Sheet */}
-      <Sheet open={isShareSheetOpen} onOpenChange={setIsShareSheetOpen}>
-        <SheetContent>
-          <SheetHeader>
-            <SheetTitle>Share Gallery</SheetTitle>
-          </SheetHeader>
-          
-          <div className="space-y-4 mt-6">
-            <div className="bg-blue-50 rounded-lg p-4">
-              <h4 className="font-medium text-blue-900 mb-2">
-                {selectedPhotos.length === 0 
-                  ? `Sharing all ${galleryPhotos.length} photos`
-                  : `Sharing ${selectedPhotos.length} selected photos`
-                }
-              </h4>
-              <p className="text-sm text-blue-700">
-                Recipients will see {selectedPhotos.length === 0 ? 'the complete gallery' : 'only your selected photos'} when they visit the link.
-              </p>
-            </div>
-
-            <SocialShareButtons
-              petName={petData.name}
-              petId={petData.id}
-              context="profile"
-              shareUrlOverride={generateShareableUrl()}
-              compact={false}
-            />
-
-            <div className="mt-4 pt-4 border-t">
-              <p className="text-xs text-gray-500">
-                💡 <strong>Email sharing:</strong> If you don't have email configured, the system will open your device's default email app with a pre-filled message.
-              </p>
-            </div>
-          </div>
-        </SheetContent>
-      </Sheet>
-
-      {/* Photo Guidelines */}
-      <Card className="border-0 shadow-lg bg-passport-section-bg backdrop-blur-sm">
-        <CardHeader>
-          <CardTitle className="text-lg">Photo Guidelines</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <h4 className="font-semibold text-gray-800 mb-2">Recommended Photos:</h4>
-              <ul className="space-y-1 text-sm text-gray-600">
-                <li>• Unique markings or patterns</li>
-                <li>• Full body standing view</li>
-                <li>• Close-up of distinguishing features</li>
-                <li>• Different angles showing size/build</li>
-                <li>• Any scars or distinctive marks</li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-semibold text-gray-800 mb-2">Photo Tips:</h4>
-              <ul className="space-y-1 text-sm text-gray-600">
-                <li>• Use good lighting (natural light preferred)</li>
-                <li>• Keep photos clear and in focus</li>
-                <li>• Show true colors accurately</li>
-                <li>• Include size reference when helpful</li>
-                <li>• Add descriptive captions</li>
-              </ul>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Gallery PDF Options Dialog */}
+      {/* Gallery PDF Dialog */}
       <Dialog open={isGalleryPDFDialogOpen} onOpenChange={setIsGalleryPDFDialogOpen}>
-        <DialogContent className="max-w-md bg-[#f8f8f8]">
+        <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
-            <DialogTitle className="font-bold text-navy-900 border-b-2 border-gold-500 pb-2">
-              Photo Gallery PDF Options
-            </DialogTitle>
+            <DialogTitle>Photo Gallery PDF</DialogTitle>
           </DialogHeader>
-          
-          <div className="space-y-6">
-            {!generatedGalleryPdfBlob && !isGeneratingPDF && (
-              <div className="space-y-3">
-                <p className="text-sm text-navy-600 text-center">
-                  Choose how you'd like to use {petData.name}'s photo gallery PDF:
+          <div className="space-y-4">
+            {!generatedGalleryPdfBlob ? (
+              <>
+                <p className="text-sm text-gray-600">
+                  Generate a professional PDF document featuring all photos from {petData.name}'s gallery.
                 </p>
-                
-                <div className="grid grid-cols-2 gap-3">
+                <div className="flex gap-2 pt-4">
                   <Button
-                    onClick={() => handleGalleryPDFAction('view')}
                     variant="outline"
-                    className="border-gold-500 text-gold-600 hover:bg-gold-50"
+                    onClick={() => setIsGalleryPDFDialogOpen(false)}
+                    disabled={isGeneratingPDF}
+                    className="flex-1"
                   >
-                    <Eye className="w-4 h-4 mr-2" />
-                    View PDF
+                    Cancel
                   </Button>
                   <Button
                     onClick={() => handleGalleryPDFAction('download')}
-                    className="bg-gradient-to-r from-gold-500 to-gold-400 text-navy-900 hover:from-gold-400 hover:to-gold-300"
+                    disabled={isGeneratingPDF}
+                    className="flex-1"
                   >
-                    <Download className="w-4 h-4 mr-2" />
-                    Download PDF
+                    {isGeneratingPDF ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Download className="w-4 h-4 mr-2" />}
+                    {isGeneratingPDF ? "Generating..." : "Download PDF"}
                   </Button>
                 </div>
-              </div>
-            )}
-            
-            {isGeneratingPDF && (
-              <div className="text-center py-6">
-                <Loader2 className="w-8 h-8 animate-spin mx-auto mb-3 text-gold-500" />
-                <p className="text-navy-600">Generating photo gallery PDF...</p>
-              </div>
-            )}
-            
-            {generatedGalleryPdfBlob && !isGeneratingPDF && (
-              <div className="space-y-4">
-                <div className="bg-white p-4 rounded-lg border border-gold-500/30 shadow-sm">
-                  <h4 className="font-bold text-navy-900 mb-3">
-                    Photo Gallery PDF
-                  </h4>
-                  <div className="flex flex-col sm:flex-row gap-2 justify-center">
-                    <Button
-                      onClick={() => {
-                        const url = URL.createObjectURL(generatedGalleryPdfBlob);
-                        window.open(url, '_blank')?.focus();
-                        URL.revokeObjectURL(url);
-                      }}
-                      variant="outline"
-                      className="border-gold-500 text-gold-600 hover:bg-gold-50"
-                    >
-                      <Eye className="w-4 h-4 mr-2" />
-                      View PDF
-                    </Button>
-                    <Button
-                      onClick={() => {
-                        const fileName = `${petData.name}_Photo_Gallery.pdf`;
-                        const a = document.createElement('a');
-                        a.href = URL.createObjectURL(generatedGalleryPdfBlob);
-                        a.download = fileName;
-                        document.body.appendChild(a);
-                        a.click();
-                        document.body.removeChild(a);
-                        URL.revokeObjectURL(a.href);
-                      }}
-                      className="bg-gradient-to-r from-gold-500 to-gold-400 text-navy-900 hover:from-gold-400 hover:to-gold-300"
-                    >
-                      <Download className="w-4 h-4 mr-2" />
-                      Download PDF
-                    </Button>
-                  </div>
+              </>
+            ) : (
+              <div className="text-center py-4">
+                <p className="text-sm text-green-600 mb-4">PDF generated successfully!</p>
+                <div className="flex gap-2">
+                  <Button
+                    variant="outline"
+                    onClick={() => setIsGalleryPDFDialogOpen(false)}
+                    className="flex-1"
+                  >
+                    Close
+                  </Button>
                 </div>
               </div>
             )}
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Caption Editing Dialog */}
+      {editingCaption && (
+        <Dialog open={!!editingCaption} onOpenChange={(open) => !open && cancelEditingCaption()}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Edit Photo Caption</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4">
+              <div>
+                <Label htmlFor="caption">Caption</Label>
+                <Input
+                  id="caption"
+                  value={editCaptionValue}
+                  onChange={(e) => setEditCaptionValue(e.target.value)}
+                  placeholder="Enter a caption for this photo..."
+                />
+              </div>
+              <div className="flex gap-2 pt-4">
+                <Button
+                  variant="outline"
+                  onClick={cancelEditingCaption}
+                  className="flex-1"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  onClick={() => handleSaveCaption(editingCaption)}
+                  className="flex-1"
+                >
+                  Save Caption
+                </Button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
+      )}
     </div>
   );
 };

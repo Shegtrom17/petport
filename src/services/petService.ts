@@ -968,6 +968,33 @@ export async function updateGalleryPhotoCaption(photoId: string, caption: string
   }
 }
 
+export async function reorderGalleryPhotos(petId: string, photos: { id: string; position: number }[]): Promise<boolean> {
+  try {
+    // Update all photos with their new positions
+    const updates = photos.map(photo => 
+      supabase
+        .from('gallery_photos')
+        .update({ position: photo.position })
+        .eq('id', photo.id)
+        .eq('pet_id', petId)
+    );
+
+    const results = await Promise.all(updates);
+    
+    // Check if any updates failed
+    const hasError = results.some(result => result.error);
+    if (hasError) {
+      console.error("Error updating gallery photo positions:", results.find(r => r.error)?.error);
+      throw new Error("Failed to update photo positions");
+    }
+
+    return true;
+  } catch (error) {
+    console.error("Error in reorderGalleryPhotos:", error);
+    return false;
+  }
+}
+
 export async function deletePhotoFromStorage(photoUrl: string): Promise<boolean> {
   try {
     if (!photoUrl || photoUrl === "/placeholder.svg") {

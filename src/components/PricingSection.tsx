@@ -1,7 +1,9 @@
 import { PRICING } from "@/config/pricing";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { CreditCard, Crown, Plus, Minus, Heart } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
+import { CreditCard, Crown, Plus } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import React, { useState } from "react";
@@ -15,7 +17,8 @@ interface PricingSectionProps {
 export const PricingSection: React.FC<PricingSectionProps> = ({ context = "landing" }) => {
   const { toast } = useToast();
   const navigate = useNavigate();
-  const [individualQuantity, setIndividualQuantity] = useState(1);
+  const [selectedQuantity, setSelectedQuantity] = useState(1);
+  const [isLoading, setIsLoading] = useState(false);
 
   const startCheckout = async (plan: "monthly" | "yearly") => {
     try {
@@ -32,45 +35,33 @@ export const PricingSection: React.FC<PricingSectionProps> = ({ context = "landi
     }
   };
 
-  const buyIndividualAddon = async (quantity: number) => {
+  const buyAdditionalPets = async (quantity: number) => {
     if (context === "landing") {
-      navigate(`/auth?addon=individual&quantity=${quantity}`);
+      navigate("/auth");
       return;
     }
+    
     try {
+      setIsLoading(true);
       const fn = featureFlags.testMode ? "purchase-addons-sandbox" : "purchase-addons";
       const { data, error } = await supabase.functions.invoke(fn, {
-        body: { type: "individual", quantity },
+        body: { quantity }
       });
-      if (error) throw error;
-      if (data?.url) {
-        window.open(data.url, "_blank");
-      } else {
-        toast({ title: "Unable to open Stripe", description: "Please try again." });
-      }
-    } catch (e: any) {
-      toast({ title: "Purchase failed", description: e?.message ?? "Please try again." });
-    }
-  };
 
-  const buyBundleAddon = async () => {
-    if (context === "landing") {
-      navigate(`/auth?addon=bundle`);
-      return;
-    }
-    try {
-      const fn = featureFlags.testMode ? "purchase-addons-sandbox" : "purchase-addons";
-      const { data, error } = await supabase.functions.invoke(fn, {
-        body: { type: "bundle", quantity: 5 },
-      });
       if (error) throw error;
+      
       if (data?.url) {
-        window.open(data.url, "_blank");
-      } else {
-        toast({ title: "Unable to open Stripe", description: "Please try again." });
+        window.open(data.url, '_blank');
       }
-    } catch (e: any) {
-      toast({ title: "Purchase failed", description: e?.message ?? "Please try again." });
+    } catch (error) {
+      console.error('Error starting addon checkout:', error);
+      toast({
+        title: "Error",
+        description: "Failed to start checkout process",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -105,106 +96,67 @@ export const PricingSection: React.FC<PricingSectionProps> = ({ context = "landi
         ))}
       </div>
 
-      <article className="mt-4">
-        <h3 className="text-lg font-medium mb-3">Additional Pet Accounts (annual)</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {/* Individual Pet Addon with Quantity Selector */}
-          <Card className="h-full">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Plus className="w-5 h-5" />
-                <span>Individual Pet Accounts</span>
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <p className="text-xl font-semibold">$3.99/year each</p>
-                <p className="text-sm text-muted-foreground">Add as many as you need</p>
-              </div>
-              
-              <div className="flex items-center justify-between bg-muted/50 rounded-lg p-3">
-                <span className="text-sm font-medium">Quantity:</span>
-                <div className="flex items-center gap-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setIndividualQuantity(Math.max(1, individualQuantity - 1))}
-                    disabled={individualQuantity <= 1}
-                  >
-                    <Minus className="w-3 h-3" />
-                  </Button>
-                  <span className="w-8 text-center font-medium">{individualQuantity}</span>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setIndividualQuantity(Math.min(10, individualQuantity + 1))}
-                    disabled={individualQuantity >= 10}
-                  >
-                    <Plus className="w-3 h-3" />
-                  </Button>
+      <div className="space-y-6">
+        <h3 className="text-lg font-medium text-center">Additional Pet Accounts</h3>
+        
+        {/* Additional Pet Accounts */}
+        <Card className="border-2 hover:border-primary/50 transition-colors">
+          <CardHeader>
+            <CardTitle className="text-xl">{PRICING.addons[0].name}</CardTitle>
+            <CardDescription>
+              {PRICING.addons[0].description}
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="space-y-2">
+              <div className="text-center">
+                <div className="text-2xl font-bold text-primary">
+                  {PRICING.addons[0].getTierText(selectedQuantity)}
+                </div>
+                <div className="text-sm text-muted-foreground">
+                  {selectedQuantity >= PRICING.addons[0].tierBreakpoint ? "Volume pricing (5+ pets)" : "Standard pricing (1-4 pets)"}
                 </div>
               </div>
               
-              <div className="text-center">
-                <p className="text-sm text-muted-foreground mb-2">
-                  Total: ${(3.99 * individualQuantity).toFixed(2)}/year
-                </p>
-                <p className="text-xs text-muted-foreground mb-3">No free trial on add-ons.</p>
-                <Button 
-                  className="w-full border-brand-primary text-brand-primary bg-background hover:bg-brand-primary hover:text-white" 
-                  variant="outline" 
-                  onClick={() => buyIndividualAddon(individualQuantity)}
-                >
-                  <CreditCard className="w-4 h-4" />
-                  <span>Add {individualQuantity} Pet{individualQuantity > 1 ? "s" : ""}</span>
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Bundle Addon */}
-          <Card className="h-full border-2 border-brand-primary/20 relative">
-            <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-              <span className="bg-brand-primary text-white text-xs font-medium px-3 py-1 rounded-full">
-                BEST VALUE
-              </span>
+              {selectedQuantity >= PRICING.addons[0].tierBreakpoint && (
+                <div className="text-xs text-green-600 font-medium text-center">
+                  Save with volume pricing!
+                </div>
+              )}
             </div>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Heart className="w-5 h-5 text-brand-primary" />
-                <span>Foster & Multi-Pet Bundle</span>
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <p className="text-xl font-semibold">$12.99/year</p>
-                <p className="text-sm text-muted-foreground">5 additional pet accounts</p>
-                <p className="text-xs text-brand-primary font-medium">Save $7 vs individual pricing</p>
-              </div>
-              
-              <div className="bg-brand-primary/5 rounded-lg p-3">
-                <p className="text-sm font-medium text-brand-primary mb-1">Perfect for:</p>
-                <ul className="text-xs text-muted-foreground space-y-1">
-                  <li>• Foster families</li>
-                  <li>• Multi-pet households</li>
-                  <li>• Dogs, cats, horses & more</li>
-                </ul>
-              </div>
-              
-              <div className="text-center">
-                <p className="text-xs text-muted-foreground mb-3">No free trial on add-ons.</p>
-                <Button 
-                  className="w-full bg-brand-primary text-white hover:bg-brand-primary-dark"
-                  onClick={() => buyBundleAddon()}
-                >
-                  <Heart className="w-4 h-4" />
-                  <span>Add 5 Pet Bundle</span>
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      </article>
+            
+            <div className="flex items-center justify-center gap-3">
+              <Label htmlFor="quantity" className="text-sm">Quantity:</Label>
+              <Select value={selectedQuantity.toString()} onValueChange={(value) => setSelectedQuantity(parseInt(value))}>
+                <SelectTrigger className="w-20">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {Array.from({ length: PRICING.addons[0].maxQuantity }, (_, i) => i + 1).map((num) => (
+                    <SelectItem key={num} value={num.toString()}>{num}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            
+            <div className="text-center text-sm text-muted-foreground">
+              Total: ${((PRICING.addons[0].getTierPrice(selectedQuantity) * selectedQuantity) / 100).toFixed(2)}/year
+            </div>
+            
+            <Button 
+              onClick={() => buyAdditionalPets(selectedQuantity)} 
+              className="w-full"
+              disabled={isLoading}
+            >
+              {isLoading ? "Processing..." : "Add Pet Accounts"}
+            </Button>
+            
+            <div className="text-xs text-muted-foreground text-center">
+              Deleting a pet frees a slot immediately. To stop paying for extra slots, reduce quantity in "Manage Subscription".
+            </div>
+          </CardContent>
+        </Card>
+      </div>
       <p className="text-xs text-muted-foreground text-center">
         Cancel anytime. Manage from your account or the Customer Portal. See our
         <a href="/terms#cancellation" className="underline ml-1">cancellation policy</a>.

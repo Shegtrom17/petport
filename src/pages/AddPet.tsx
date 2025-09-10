@@ -224,11 +224,9 @@ export default function AddPet() {
                          {PRICING.addons.map((addon) => (
                            <div key={addon.id} className="flex justify-between">
                              <span>
-                               {addon.id === "addon-individual" 
-                                 ? "+1 pet ($3.99 each)" 
-                                 : `+${addon.count} pets`}
+                        {addon.name}
                              </span>
-                             <span className="font-medium">{addon.priceText}</span>
+                             <span className="font-medium">{addon.getTierText(1)}</span>
                            </div>
                          ))}
                       </div>

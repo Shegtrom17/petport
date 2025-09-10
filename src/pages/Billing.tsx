@@ -1,8 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
 import { PWALayout } from "@/components/PWALayout";
 import { AppHeader } from "@/components/AppHeader";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
 import { MetaTags } from "@/components/MetaTags";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -32,6 +34,8 @@ export default function Billing() {
   const { toast } = useToast();
   const [status, setStatus] = useState<SubStatus>({});
   const [loading, setLoading] = useState(false);
+  const [individualQuantity, setIndividualQuantity] = useState(1);
+  const [isLoading, setIsLoading] = useState(false);
 
   const origin = useMemo(() => window.location.origin, []);
   const canonicalUrl = `${origin}/billing`;
@@ -86,24 +90,34 @@ export default function Billing() {
     }
   };
 
-  const buyAddon = async (count: number) => {
+  const buyAddon = async (quantity: number = 1) => {
     try {
+      setIsLoading(true);
       const fn = featureFlags.testMode ? "purchase-addons-sandbox" : "purchase-addons";
-      // For now, treat all as individual pets - can be enhanced later for bundle detection
-      const { data, error } = await supabase.functions.invoke(fn, { 
-        body: { 
-          type: count === 5 ? "bundle" : "individual", 
-          quantity: count === 5 ? 1 : count 
-        } 
+      const { data, error } = await supabase.functions.invoke(fn, {
+        body: { quantity }
       });
+
       if (error) throw error;
+      
       if (data?.url) {
-        await openUrlWithFallback(data.url, (msg) => toast({ title: "Link copied", description: msg }));
-      } else {
-        toast({ title: "Unable to open Stripe", description: "Please try again." });
+        openUrlWithFallback(data.url, (msg) => {
+          navigator.clipboard.writeText(data.url);
+          toast({
+            title: "Checkout URL copied",
+            description: msg,
+          });
+        });
       }
-    } catch (e: any) {
-      toast({ title: "Purchase failed", description: e?.message ?? "Please try again." });
+    } catch (error) {
+      console.error('Error starting addon checkout:', error);
+      toast({
+        title: "Error",
+        description: "Failed to start checkout process",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -150,47 +164,61 @@ export default function Billing() {
 
         <section aria-labelledby="addons-heading" className="space-y-3">
           <h2 id="addons-heading" className="text-lg font-medium">Additional Pet Accounts (annual)</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {PRICING.addons.map((addon) => (
-              <Card key={addon.id}>
-                <CardHeader>
-                  <CardTitle>
-                    {addon.id === "addon-individual" 
-                      ? addon.name 
-                      : `${addon.count} Pet${addon.count > 1 ? "s" : ""}`}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-3">
-                  <p className="text-xl font-semibold">{addon.priceText}</p>
-                  {addon.id === "addon-individual" && (
-                    <p className="text-sm text-muted-foreground">Add as many as you need</p>
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg">Additional Pet Accounts</CardTitle>
+              <CardDescription>
+                Add capacity for more pets with tiered pricing
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <div className="text-center space-y-2">
+                  <div className="text-2xl font-bold text-primary">
+                    {individualQuantity >= 5 ? "$2.60/year" : "$3.99/year"}
+                  </div>
+                  <div className="text-sm text-muted-foreground">
+                    {individualQuantity >= 5 ? "Volume pricing (5+ pets)" : "Standard pricing (1-4 pets)"}
+                  </div>
+                  {individualQuantity >= 5 && (
+                    <div className="text-xs text-green-600 font-medium">
+                      Save with volume pricing!
+                    </div>
                   )}
-                  {addon.id === "addon-bundle" && (
-                    <p className="text-sm text-muted-foreground">Perfect for foster families</p>
-                  )}
-                  <Button 
-                    className="w-full" 
-                    variant="outline" 
-                    onClick={() => {
-                      if (addon.id === "addon-individual") {
-                        // For individual, default to 1 pet - user can adjust quantity in checkout
-                        buyAddon(1);
-                      } else {
-                        buyAddon(addon.count as 5);
-                      }
-                    }}
-                  >
-                    <CreditCard className="w-4 h-4" />
-                    <span>
-                      {addon.id === "addon-individual" 
-                        ? "Add Pet Account" 
-                        : `Add ${addon.count} Pet${addon.count > 1 ? "s" : ""}`}
-                    </span>
-                  </Button>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+                </div>
+                
+                <div className="flex items-center justify-center gap-3">
+                  <Label htmlFor="individual-quantity" className="text-sm">Quantity:</Label>
+                  <Select value={individualQuantity.toString()} onValueChange={(value) => setIndividualQuantity(parseInt(value))}>
+                    <SelectTrigger className="w-20">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {Array.from({ length: 20 }, (_, i) => i + 1).map((num) => (
+                        <SelectItem key={num} value={num.toString()}>{num}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                
+                <div className="text-center text-sm text-muted-foreground">
+                  Total: ${(((individualQuantity >= 5 ? 260 : 399) * individualQuantity) / 100).toFixed(2)}/year
+                </div>
+                
+                <Button 
+                  onClick={() => buyAddon(individualQuantity)} 
+                  className="w-full"
+                  disabled={isLoading}
+                >
+                  {isLoading ? "Processing..." : "Add Pet Accounts"}
+                </Button>
+                
+                <div className="text-xs text-muted-foreground text-center">
+                  Deleting a pet frees a slot immediately. To stop paying for extra slots, reduce quantity in "Manage Subscription".
+                </div>
+              </div>
+            </CardContent>
+          </Card>
           <p className="text-xs text-muted-foreground">
             Cancel anytime. Manage from your account or the Customer Portal. See our
             <a href="/terms#cancellation" className="underline ml-1">cancellation policy</a>.

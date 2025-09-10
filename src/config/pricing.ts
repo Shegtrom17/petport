@@ -5,21 +5,19 @@ export const PRICING = {
   ],
   addons: [
     { 
-      id: "addon-individual", 
-      name: "Additional Pet Account",
-      priceCents: 399, 
-      priceText: "$3.99/year", 
-      description: "Add as many as you need",
-      maxQuantity: 10
-    },
-    { 
-      id: "addon-bundle", 
-      name: "Foster & Multi-Pet Bundle",
-      count: 5, 
-      priceCents: 1299, 
-      priceText: "$12.99/year", 
-      description: "Perfect for foster families & multi-pet households",
-      savings: "Save $7"
+      id: "additional-pets", 
+      name: "Additional Pet Accounts",
+      getTierPrice: (quantity: number) => {
+        if (quantity >= 5) return 260; // $2.60/slot for 5+
+        return 399; // $3.99/slot for 1-4
+      },
+      getTierText: (quantity: number) => {
+        if (quantity >= 5) return "$2.60/year per pet";
+        return "$3.99/year per pet";
+      },
+      description: "Add capacity for more pets",
+      maxQuantity: 20,
+      tierBreakpoint: 5
     },
   ],
 } as const;

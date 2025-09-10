@@ -17,6 +17,11 @@ interface MissingPetData {
   breed: string;
   species: string;
   age: string;
+  sex?: string;
+  weight?: string;
+  height?: string;
+  microchip_id?: string;
+  registration_number?: string;
   photoUrl?: string;
   fullBodyPhotoUrl?: string;
   lastSeenLocation?: string;
@@ -54,7 +59,7 @@ export default function PublicMissingPet() {
       // Fetch pet basic info - no longer requires is_public, only missing status
       const { data: petInfo, error: petError } = await supabase
         .from('pets')
-        .select('id, name, breed, species, age, is_public')
+        .select('id, name, breed, species, age, sex, weight, height, microchip_id, registration_number, is_public')
         .eq('id', id)
         .single();
 
@@ -106,6 +111,11 @@ export default function PublicMissingPet() {
         breed: sanitizeText(petInfo.breed || ''),
         species: sanitizeText(petInfo.species || ''),
         age: sanitizeText(petInfo.age || ''),
+        sex: sanitizeText(petInfo.sex || ''),
+        weight: sanitizeText(petInfo.weight || ''),
+        height: sanitizeText(petInfo.height || ''),
+        microchip_id: sanitizeText(petInfo.microchip_id || ''),
+        registration_number: sanitizeText(petInfo.registration_number || ''),
         photoUrl: photos?.photo_url,
         fullBodyPhotoUrl: photos?.full_body_photo_url,
         lastSeenLocation: sanitizeText(lostData.last_seen_location || ''),
@@ -226,6 +236,32 @@ export default function PublicMissingPet() {
               </div>
             )}
 
+            {/* Profile Information */}
+            <div className="p-4 rounded-lg border shadow-sm mb-6">
+              <div className="flex items-center space-x-2 mb-3">
+                <Stethoscope className="w-5 h-5 text-brand-primary" />
+                <h3 className="font-semibold text-brand-primary">Profile Information</h3>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {petData.sex && (
+                  <div><strong>Sex/Gender:</strong> {petData.sex}</div>
+                )}
+                {petData.weight && (
+                  <div><strong>Weight:</strong> {petData.weight}</div>
+                )}
+                {petData.height && (
+                  <div><strong>Height:</strong> {petData.height}</div>
+                )}
+                {petData.microchip_id && (
+                  <div><strong>Microchip ID:</strong> <span className="text-red-600 font-medium">{petData.microchip_id}</span></div>
+                )}
+                {petData.registration_number && (
+                  <div><strong>Registration #:</strong> <span className="text-red-600 font-medium">{petData.registration_number}</span></div>
+                )}
+                <div><strong>Age:</strong> {petData.age}</div>
+              </div>
+            </div>
+
             {/* Last Seen Information */}
             {(petData.lastSeenLocation || petData.lastSeenDate) && (
               <div className="p-4 rounded-lg border shadow-sm mb-6">
@@ -315,7 +351,7 @@ export default function PublicMissingPet() {
               <div className="text-center mb-6">
                 <Button 
                   variant="outline"
-                  onClick={() => window.open(`/public/gallery/${petData.id}`, '_blank')}
+                  onClick={() => window.open(`/gallery/${petData.id}`, '_blank')}
                   className="border-brand-primary text-brand-primary hover:bg-brand-primary hover:text-white"
                 >
                   View More Photos ({petData.galleryPhotoCount} total)

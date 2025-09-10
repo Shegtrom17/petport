@@ -561,8 +561,8 @@ export const PetGallerySection = ({ petData, onUpdate }: PetGallerySectionProps)
                               {index + 1}
                             </div>
 
-                            {/* Lost Flyer Badge for first two photos */}
-                            {index < 2 && (
+                            {/* Lost Flyer Badge for first three photos */}
+                            {index < 3 && (
                               <div className="absolute top-8 left-2 bg-yellow-500 text-black text-xs px-2 py-1 rounded-full font-bold">
                                 Lost Flyer
                               </div>

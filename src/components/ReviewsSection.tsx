@@ -357,7 +357,7 @@ export const ReviewsSection = ({ petData, onUpdate }: ReviewsSectionProps) => {
           <p className="text-blue-700 mb-4">
             Ask a recent host, sitter, or service provider to share their experience with {petData.name}
           </p>
-          <Button onClick={handleRequestReview} className="bg-blue-600 hover:bg-blue-700 w-full sm:w-auto">
+          <Button onClick={handleRequestReview} className="bg-[#5691af] hover:bg-[#4a7a96] text-white w-full sm:w-auto">
             <Mail className="w-4 h-4 mr-2" />
             Send Review Request
           </Button>

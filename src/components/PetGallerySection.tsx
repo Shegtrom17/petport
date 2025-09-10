@@ -505,6 +505,9 @@ export const PetGallerySection = ({ petData, onUpdate }: PetGallerySectionProps)
               >
                 {galleryPhotos.length}/{MAX_GALLERY_PHOTOS} Photos
               </Badge>
+              {galleryPhotos.length > 1 && !isSelectionMode && (
+                <span className="text-xs text-gray-500">• Drag & drop to reorder</span>
+              )}
             </div>
           </CardTitle>
         </CardHeader>

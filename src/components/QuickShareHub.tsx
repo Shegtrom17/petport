@@ -264,7 +264,7 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
           Quick Share Hub
         </CardTitle>
         <p className="text-sm text-muted-foreground">
-          Share {petData.name}'s pages with optimized previews for social media
+          Share live links that update in real time for viewers
         </p>
       </CardHeader>
       <CardContent>

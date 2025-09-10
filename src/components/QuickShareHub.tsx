@@ -118,15 +118,6 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
       variant: 'default'
     },
     {
-      id: 'missing',
-      title: 'Lost Pet Flyer',
-      description: isLost ? 'Missing pet alert with contact info' : 'Mark pet as lost to activate',
-      icon: <Search className="w-5 h-5 text-red-600" />,
-      path: `/missing-pet/${petData.id}`,
-      available: isLost,
-      variant: 'missing'
-    },
-    {
       id: 'gallery',
       title: 'Portrait Gallery',
       description: 'Photo collection & memories',
@@ -143,6 +134,15 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
       path: `/reviews/${petData.id}`,
       available: true,
       variant: 'default'
+    },
+    {
+      id: 'missing',
+      title: 'Lost Pet Flyer',
+      description: isLost ? 'Missing pet alert with contact info' : 'Mark pet as lost to activate',
+      icon: <Search className="w-5 h-5 text-red-600" />,
+      path: `/missing-pet/${petData.id}`,
+      available: isLost,
+      variant: 'missing'
     }
   ];
 

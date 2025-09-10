@@ -220,13 +220,17 @@ export default function AddPet() {
                       <p>
                         Add more pet accounts to your subscription:
                       </p>
-                      <div className="space-y-2 text-sm">
-                        {PRICING.addons.map((addon) => (
-                          <div key={addon.id} className="flex justify-between">
-                            <span>+{addon.count} pet{addon.count > 1 ? 's' : ''}</span>
-                            <span className="font-medium">{addon.priceText}</span>
-                          </div>
-                        ))}
+                       <div className="space-y-2 text-sm">
+                         {PRICING.addons.map((addon) => (
+                           <div key={addon.id} className="flex justify-between">
+                             <span>
+                               {addon.id === "addon-individual" 
+                                 ? "+1 pet ($3.99 each)" 
+                                 : `+${addon.count} pets`}
+                             </span>
+                             <span className="font-medium">{addon.priceText}</span>
+                           </div>
+                         ))}
                       </div>
                       <div className="flex gap-3 pt-2">
                         <Button 

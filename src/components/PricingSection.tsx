@@ -1,10 +1,10 @@
 import { PRICING } from "@/config/pricing";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { CreditCard, Crown, Plus } from "lucide-react";
+import { CreditCard, Crown, Plus, Minus, Heart } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { featureFlags } from "@/config/featureFlags";
 
@@ -15,6 +15,7 @@ interface PricingSectionProps {
 export const PricingSection: React.FC<PricingSectionProps> = ({ context = "landing" }) => {
   const { toast } = useToast();
   const navigate = useNavigate();
+  const [individualQuantity, setIndividualQuantity] = useState(1);
 
   const startCheckout = async (plan: "monthly" | "yearly") => {
     try {
@@ -31,15 +32,36 @@ export const PricingSection: React.FC<PricingSectionProps> = ({ context = "landi
     }
   };
 
-  const buyAddon = async (count: 1 | 3 | 5) => {
+  const buyIndividualAddon = async (quantity: number) => {
     if (context === "landing") {
-      navigate(`/auth?addon=${count}`);
+      navigate(`/auth?addon=individual&quantity=${quantity}`);
       return;
     }
     try {
       const fn = featureFlags.testMode ? "purchase-addons-sandbox" : "purchase-addons";
       const { data, error } = await supabase.functions.invoke(fn, {
-        body: { bundle: count },
+        body: { type: "individual", quantity },
+      });
+      if (error) throw error;
+      if (data?.url) {
+        window.open(data.url, "_blank");
+      } else {
+        toast({ title: "Unable to open Stripe", description: "Please try again." });
+      }
+    } catch (e: any) {
+      toast({ title: "Purchase failed", description: e?.message ?? "Please try again." });
+    }
+  };
+
+  const buyBundleAddon = async () => {
+    if (context === "landing") {
+      navigate(`/auth?addon=bundle`);
+      return;
+    }
+    try {
+      const fn = featureFlags.testMode ? "purchase-addons-sandbox" : "purchase-addons";
+      const { data, error } = await supabase.functions.invoke(fn, {
+        body: { type: "bundle", quantity: 5 },
       });
       if (error) throw error;
       if (data?.url) {
@@ -85,25 +107,102 @@ export const PricingSection: React.FC<PricingSectionProps> = ({ context = "landi
 
       <article className="mt-4">
         <h3 className="text-lg font-medium mb-3">Additional Pet Accounts (annual)</h3>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {PRICING.addons.map((addon) => (
-            <Card key={addon.id}>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Plus className="w-5 h-5" />
-                  <span>{addon.count} Pet{addon.count > 1 ? "s" : ""}</span>
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <p className="text-xl font-semibold">{addon.priceText}</p>
-                <p className="text-xs text-muted-foreground">No free trial on add-ons.</p>
-                <Button className="w-full border-brand-primary text-brand-primary bg-background hover:bg-brand-primary hover:text-white" variant="outline" onClick={() => buyAddon(addon.count as 1 | 3 | 5)}>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* Individual Pet Addon with Quantity Selector */}
+          <Card className="h-full">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Plus className="w-5 h-5" />
+                <span>Individual Pet Accounts</span>
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div>
+                <p className="text-xl font-semibold">$3.99/year each</p>
+                <p className="text-sm text-muted-foreground">Add as many as you need</p>
+              </div>
+              
+              <div className="flex items-center justify-between bg-muted/50 rounded-lg p-3">
+                <span className="text-sm font-medium">Quantity:</span>
+                <div className="flex items-center gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setIndividualQuantity(Math.max(1, individualQuantity - 1))}
+                    disabled={individualQuantity <= 1}
+                  >
+                    <Minus className="w-3 h-3" />
+                  </Button>
+                  <span className="w-8 text-center font-medium">{individualQuantity}</span>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setIndividualQuantity(Math.min(10, individualQuantity + 1))}
+                    disabled={individualQuantity >= 10}
+                  >
+                    <Plus className="w-3 h-3" />
+                  </Button>
+                </div>
+              </div>
+              
+              <div className="text-center">
+                <p className="text-sm text-muted-foreground mb-2">
+                  Total: ${(3.99 * individualQuantity).toFixed(2)}/year
+                </p>
+                <p className="text-xs text-muted-foreground mb-3">No free trial on add-ons.</p>
+                <Button 
+                  className="w-full border-brand-primary text-brand-primary bg-background hover:bg-brand-primary hover:text-white" 
+                  variant="outline" 
+                  onClick={() => buyIndividualAddon(individualQuantity)}
+                >
                   <CreditCard className="w-4 h-4" />
-                  <span>Add {addon.count} Pet{addon.count > 1 ? "s" : ""}</span>
+                  <span>Add {individualQuantity} Pet{individualQuantity > 1 ? "s" : ""}</span>
                 </Button>
-              </CardContent>
-            </Card>
-          ))}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Bundle Addon */}
+          <Card className="h-full border-2 border-brand-primary/20 relative">
+            <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
+              <span className="bg-brand-primary text-white text-xs font-medium px-3 py-1 rounded-full">
+                BEST VALUE
+              </span>
+            </div>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Heart className="w-5 h-5 text-brand-primary" />
+                <span>Foster & Multi-Pet Bundle</span>
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div>
+                <p className="text-xl font-semibold">$12.99/year</p>
+                <p className="text-sm text-muted-foreground">5 additional pet accounts</p>
+                <p className="text-xs text-brand-primary font-medium">Save $7 vs individual pricing</p>
+              </div>
+              
+              <div className="bg-brand-primary/5 rounded-lg p-3">
+                <p className="text-sm font-medium text-brand-primary mb-1">Perfect for:</p>
+                <ul className="text-xs text-muted-foreground space-y-1">
+                  <li>• Foster families</li>
+                  <li>• Multi-pet households</li>
+                  <li>• Dogs, cats, horses & more</li>
+                </ul>
+              </div>
+              
+              <div className="text-center">
+                <p className="text-xs text-muted-foreground mb-3">No free trial on add-ons.</p>
+                <Button 
+                  className="w-full bg-brand-primary text-white hover:bg-brand-primary-dark"
+                  onClick={() => buyBundleAddon()}
+                >
+                  <Heart className="w-4 h-4" />
+                  <span>Add 5 Pet Bundle</span>
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
         </div>
       </article>
       <p className="text-xs text-muted-foreground text-center">

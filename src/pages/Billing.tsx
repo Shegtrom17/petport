@@ -86,10 +86,16 @@ export default function Billing() {
     }
   };
 
-  const buyAddon = async (count: 1 | 3 | 5) => {
+  const buyAddon = async (count: number) => {
     try {
       const fn = featureFlags.testMode ? "purchase-addons-sandbox" : "purchase-addons";
-      const { data, error } = await supabase.functions.invoke(fn, { body: { bundle: count } });
+      // For now, treat all as individual pets - can be enhanced later for bundle detection
+      const { data, error } = await supabase.functions.invoke(fn, { 
+        body: { 
+          type: count === 5 ? "bundle" : "individual", 
+          quantity: count === 5 ? 1 : count 
+        } 
+      });
       if (error) throw error;
       if (data?.url) {
         await openUrlWithFallback(data.url, (msg) => toast({ title: "Link copied", description: msg }));
@@ -148,13 +154,38 @@ export default function Billing() {
             {PRICING.addons.map((addon) => (
               <Card key={addon.id}>
                 <CardHeader>
-                  <CardTitle>{addon.count} Pet{addon.count > 1 ? "s" : ""}</CardTitle>
+                  <CardTitle>
+                    {addon.id === "addon-individual" 
+                      ? addon.name 
+                      : `${addon.count} Pet${addon.count > 1 ? "s" : ""}`}
+                  </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-3">
                   <p className="text-xl font-semibold">{addon.priceText}</p>
-                  <Button className="w-full" variant="outline" onClick={() => buyAddon(addon.count as 1 | 3 | 5)}>
+                  {addon.id === "addon-individual" && (
+                    <p className="text-sm text-muted-foreground">Add as many as you need</p>
+                  )}
+                  {addon.id === "addon-bundle" && (
+                    <p className="text-sm text-muted-foreground">Perfect for foster families</p>
+                  )}
+                  <Button 
+                    className="w-full" 
+                    variant="outline" 
+                    onClick={() => {
+                      if (addon.id === "addon-individual") {
+                        // For individual, default to 1 pet - user can adjust quantity in checkout
+                        buyAddon(1);
+                      } else {
+                        buyAddon(addon.count as 5);
+                      }
+                    }}
+                  >
                     <CreditCard className="w-4 h-4" />
-                    <span>Add {addon.count} Pet{addon.count > 1 ? "s" : ""}</span>
+                    <span>
+                      {addon.id === "addon-individual" 
+                        ? "Add Pet Account" 
+                        : `Add ${addon.count} Pet${addon.count > 1 ? "s" : ""}`}
+                    </span>
                   </Button>
                 </CardContent>
               </Card>

@@ -8,7 +8,7 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-type Bundle = 1 | 3 | 5;
+type AddonType = "individual" | "bundle";
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -32,13 +32,32 @@ serve(async (req) => {
     const user = userData.user;
     if (!user?.email) throw new Error("User email not available");
 
-    const { bundle }: { bundle?: Bundle } = await req.json().catch(() => ({}));
-    if (!bundle || ![1, 3, 5].includes(bundle)) {
-      throw new Error("Invalid bundle. Use 1, 3, or 5.");
+    // Parse request body to determine the addon type and quantity
+    const { type, quantity } = await req.json();
+    if (!type || !["individual", "bundle"].includes(type)) {
+      throw new Error("Invalid addon type. Must be 'individual' or 'bundle'.");
+    }
+    if (!quantity || quantity < 1) {
+      throw new Error("Invalid quantity. Must be at least 1.");
     }
 
-    const priceMap: Record<number, number> = { 1: 199, 3: 599, 5: 799 };
-    const price = priceMap[bundle];
+    console.log(`Creating checkout session for ${type} addon with quantity ${quantity}`);
+
+    // Determine pricing based on addon type
+    let amount: number;
+    let productName: string;
+    let checkoutQuantity = 1;
+
+    if (type === "individual") {
+      amount = 399; // $3.99 per pet
+      productName = "Additional Pet Account";
+      checkoutQuantity = quantity; // Use the requested quantity
+    } else {
+      // Bundle: 5 pets for $12.99
+      amount = 1299; // $12.99
+      productName = "Foster & Multi-Pet Bundle (5 pets)";
+      checkoutQuantity = quantity; // Usually 1 bundle, but allow multiple
+    }
 
     const stripe = new Stripe(stripeKey, { apiVersion: "2023-10-16" });
 
@@ -52,18 +71,18 @@ serve(async (req) => {
         {
           price_data: {
             currency: "usd",
-            product_data: { 
-              name: `PetPort Additional Pet Accounts (+${bundle}) - Annual (Sandbox)`,
+            product_data: {
+              name: `PetPort ${productName} - Annual (Sandbox)`,
               metadata: {
                 product_type: "pet_slot",
-                addon_count: String(bundle),
+                addon_type: type,
+                pet_slots: type === "individual" ? quantity.toString() : "5",
               },
             },
-            unit_amount: price,
+            unit_amount: amount,
             recurring: { interval: "year" },
           },
-          quantity: 1,
-          adjustable_quantity: { enabled: true, minimum: 1, maximum: 99 },
+          quantity: checkoutQuantity,
         },
       ],
       mode: "subscription",
@@ -71,9 +90,10 @@ serve(async (req) => {
       success_url: `${req.headers.get("origin")}/post-checkout?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${req.headers.get("origin")}/billing`,
       metadata: {
-        addon_count: String(bundle),
-        supabase_user_id: user.id,
-        product_type: "pet_slot",
+        addon_type: type,
+        pet_slots: type === "individual" ? quantity.toString() : "5",
+        user_id: user.id,
+        original_quantity: quantity.toString(),
       },
     });
 

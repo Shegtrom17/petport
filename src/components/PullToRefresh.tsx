@@ -18,7 +18,7 @@ export const PullToRefresh = ({ children, onRefresh, disabled = false }: PullToR
     <div className="relative">
       {/* Pull to refresh indicator */}
       <div 
-        className={`fixed top-0 left-0 right-0 z-50 flex items-center justify-center bg-primary/10 backdrop-blur-sm transition-all duration-300 ${
+        className={`fixed top-4 left-0 right-0 z-50 flex items-center justify-center bg-primary/10 backdrop-blur-sm transition-all duration-300 ${
           pullDistance > 0 ? 'translate-y-0' : '-translate-y-full'
         }`}
         style={{ height: Math.min(pullDistance, 80) }}

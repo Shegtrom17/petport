@@ -287,7 +287,7 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
                   </div>
                 </div>
                 {page.variant === 'missing' && (
-                  <Badge variant="destructive" className="text-xs">
+                  <Badge variant="destructive" className="text-xs flex items-center justify-center self-center">
                     ALERT
                   </Badge>
                 )}

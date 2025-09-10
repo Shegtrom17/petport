@@ -580,7 +580,7 @@ export const PetProfileContent = ({
         <div className="bg-white/50 backdrop-blur-sm rounded-2xl p-6">
           <SectionHeader
             overline="Centralized"
-            title="Share Pages that can be updated in real time"
+            title="Instant sharing for any situation"
             icon={<Share2 className="w-5 h-5" />}
             action={
               isOwner && togglePetPublicVisibility && (

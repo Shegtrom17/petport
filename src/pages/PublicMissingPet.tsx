@@ -31,6 +31,8 @@ interface MissingPetData {
     contact_type: string;
   }>;
   updatedAt: string;
+  isPublic?: boolean;
+  galleryPhotoCount?: number;
 }
 
 export default function PublicMissingPet() {
@@ -52,7 +54,7 @@ export default function PublicMissingPet() {
       // Fetch pet basic info - no longer requires is_public, only missing status
       const { data: petInfo, error: petError } = await supabase
         .from('pets')
-        .select('id, name, breed, species, age')
+        .select('id, name, breed, species, age, is_public')
         .eq('id', id)
         .single();
 
@@ -87,6 +89,16 @@ export default function PublicMissingPet() {
         .select('contact_name, contact_phone, contact_type')
         .eq('pet_id', id);
 
+      // Fetch gallery photo count if pet is public
+      let galleryPhotoCount = 0;
+      if (petInfo.is_public) {
+        const { count } = await supabase
+          .from('gallery_photos')
+          .select('*', { count: 'exact', head: true })
+          .eq('pet_id', id);
+        galleryPhotoCount = count || 0;
+      }
+
       // Sanitize and prepare data
       const sanitizedData: MissingPetData = {
         id: petInfo.id,
@@ -103,7 +115,9 @@ export default function PublicMissingPet() {
         rewardAmount: sanitizeText(lostData.reward_amount || ''),
         finderInstructions: sanitizeText(lostData.finder_instructions || ''),
         contacts: petContacts || [],
-        updatedAt: lostData.updated_at
+        updatedAt: lostData.updated_at,
+        isPublic: petInfo.is_public,
+        galleryPhotoCount
       };
 
       setPetData(sanitizedData);
@@ -293,6 +307,19 @@ export default function PublicMissingPet() {
               <div className="p-4 rounded-lg border shadow-sm mb-6">
                 <h3 className="font-semibold text-brand-primary mb-2">If Found - Instructions</h3>
                 <p className="text-foreground">{truncateText(petData.finderInstructions, 200)}</p>
+              </div>
+            )}
+
+            {/* View More Photos Link */}
+            {petData.isPublic && petData.galleryPhotoCount && petData.galleryPhotoCount > 0 && (
+              <div className="text-center mb-6">
+                <Button 
+                  variant="outline"
+                  onClick={() => window.open(`/public/gallery/${petData.id}`, '_blank')}
+                  className="border-brand-primary text-brand-primary hover:bg-brand-primary hover:text-white"
+                >
+                  View More Photos ({petData.galleryPhotoCount} total)
+                </Button>
               </div>
             )}
 

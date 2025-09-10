@@ -727,7 +727,7 @@ pageManager.addY(6);
   
   // Add gallery photos (up to 2 more)
   if (petData.gallery_photos && petData.gallery_photos.length > 0) {
-    const galleryCount = Math.min(2, petData.gallery_photos.length);
+    const galleryCount = Math.min(3, petData.gallery_photos.length);
     for (let i = 0; i < galleryCount; i++) {
       additionalPhotos.push({
         url: petData.gallery_photos[i].url,
@@ -742,12 +742,13 @@ pageManager.addY(6);
     pageManager.addY(3);
     
     const startY = pageManager.getCurrentY();
-    const photoSize = 35;
-    const spacing = 50; // Photo width + margin
-    const startX = 20;
+    const photoCount = Math.min(additionalPhotos.length, 3);
+    const photoSize = photoCount === 3 ? 30 : 35; // Smaller photos when 3 are displayed
+    const spacing = photoCount === 3 ? 45 : 50; // Photo width + margin
+    const startX = photoCount === 3 ? 15 : 20; // Adjust starting position for 3 photos
     
-    // Limit to 2 additional photos for compact design
-    for (let i = 0; i < additionalPhotos.length && i < 2; i++) {
+    // Limit to 3 additional photos for compact design
+    for (let i = 0; i < additionalPhotos.length && i < 3; i++) {
       const photoX = startX + (i * spacing);
       
       // Draw photo without advancing Y cursor

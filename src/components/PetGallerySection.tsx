@@ -524,23 +524,32 @@ export const PetGallerySection = ({ petData, onUpdate }: PetGallerySectionProps)
                           <div
                             ref={provided.innerRef}
                             {...provided.draggableProps}
-                            className={`relative group rounded-lg overflow-hidden border-2 transition-all duration-200 ${
-                              snapshot.isDragging ? 'shadow-lg z-50' : ''
+                            {...(!isSelectionMode ? provided.dragHandleProps : {})}
+                            className={`relative group rounded-lg overflow-hidden border-2 ${
+                              snapshot.isDragging ? 'shadow-lg z-50' : 'transition-all duration-200'
                             } ${
                               isSelectionMode 
                                 ? selectedPhotos.includes(photo.id)
                                   ? 'border-brand-primary bg-brand-primary/10'
                                   : 'border-gray-200 hover:border-gray-300'
-                                : 'border-gray-200 hover:border-brand-primary hover:shadow-md'
+                                : 'border-gray-200 hover:border-brand-primary hover:shadow-md cursor-grab active:cursor-grabbing'
                             }`}
+                            style={{
+                              touchAction: 'none',
+                              userSelect: 'none',
+                              WebkitUserSelect: 'none',
+                              ...provided.draggableProps.style
+                            }}
                           >
                             {/* Drag Handle */}
                             {!isSelectionMode && (
                               <div 
-                                {...provided.dragHandleProps}
-                                className="absolute top-2 left-2 opacity-0 group-hover:opacity-100 transition-opacity cursor-grab bg-white/90 rounded p-1"
+                                className={`absolute top-2 right-2 z-20 bg-black/70 rounded p-1 transition-opacity ${
+                                  isMobile ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
+                                }`}
+                                style={{ touchAction: 'none', userSelect: 'none', WebkitUserSelect: 'none' }}
                               >
-                                <GripVertical className="w-4 h-4 text-gray-600" />
+                                <GripVertical className="w-4 h-4 text-white" />
                               </div>
                             )}
 

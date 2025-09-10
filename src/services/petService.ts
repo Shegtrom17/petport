@@ -247,7 +247,7 @@ export async function fetchPetDetails(petId: string): Promise<any | null> {
       supabase.from("pet_photos").select("*").eq("pet_id", petId).order("updated_at", { ascending: false }).limit(1).maybeSingle(),
       supabase.from("professional_data").select("*").eq("pet_id", petId).order("updated_at", { ascending: false }).limit(1).maybeSingle(),
       supabase.from("care_instructions").select("*").eq("pet_id", petId).order("updated_at", { ascending: false }).limit(1).maybeSingle(),
-      supabase.from("gallery_photos").select("*").eq("pet_id", petId),
+      supabase.from("gallery_photos").select("*").eq("pet_id", petId).order("position", { ascending: true }),
       supabase.from("experiences").select("*").eq("pet_id", petId),
       supabase.from("achievements").select("*").eq("pet_id", petId),
       supabase.from("training").select("*").eq("pet_id", petId),

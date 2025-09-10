@@ -1,7 +1,7 @@
 import jsPDF from 'jspdf';
 import { sanitizeText } from '@/utils/inputSanitizer';
 import { generatePublicMissingUrl, generateQRCodeUrl } from '@/services/pdfService';
-import { optimizeImageForPDF } from '@/utils/pdfImageOptimization';
+import { optimizeImageForPDF, optimizeBase64ForPDF } from '@/utils/pdfImageOptimization';
 import { GALLERY_CONFIG } from '@/config/featureFlags';
 export interface ClientPDFGenerationResult {
   success: boolean;
@@ -431,10 +431,11 @@ const addImage = async (doc: jsPDF, pageManager: PDFPageManager, imageUrl: strin
   try {
     pageManager.checkPageSpace(maxHeight + 10);
     
-    // Use optimized image loading for PDF generation when enabled
+    // Use oriented image loading with optional optimization
+    const oriented = await loadOrientedImageAsBase64(imageUrl);
     const base64 = GALLERY_CONFIG.PDF_IMAGE_OPTIMIZATION 
-      ? await optimizeImageForPDF(imageUrl)
-      : await loadOrientedImageAsBase64(imageUrl);
+      ? await optimizeBase64ForPDF(oriented, GALLERY_CONFIG.PDF_MAX_IMAGE_WIDTH, GALLERY_CONFIG.PDF_MAX_IMAGE_HEIGHT, GALLERY_CONFIG.PDF_IMAGE_QUALITY)
+      : oriented;
     
     const dimensions = await getImageDimensions(base64);
     
@@ -751,7 +752,10 @@ pageManager.addY(6);
       
       // Draw photo without advancing Y cursor
       try {
-        const base64 = await loadImageAsBase64(additionalPhotos[i].url);
+        const oriented = await loadOrientedImageAsBase64(additionalPhotos[i].url);
+        const base64 = GALLERY_CONFIG.PDF_IMAGE_OPTIMIZATION 
+          ? await optimizeBase64ForPDF(oriented, GALLERY_CONFIG.PDF_MAX_IMAGE_WIDTH, GALLERY_CONFIG.PDF_MAX_IMAGE_HEIGHT, GALLERY_CONFIG.PDF_IMAGE_QUALITY)
+          : oriented;
         doc.addImage(base64, 'JPEG', photoX, startY, photoSize, photoSize);
       } catch (error) {
         console.error('Error adding image:', error);

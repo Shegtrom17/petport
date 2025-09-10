@@ -95,3 +95,70 @@ export const optimizeImagesForPDF = async (imageUrls: string[]): Promise<string[
   
   return optimizedImages;
 };
+
+/**
+ * Optimize a base64 image for PDF generation by downscaling and compressing it
+ */
+export const optimizeBase64ForPDF = async (base64: string, maxW: number, maxH: number, quality: number): Promise<string> => {
+  try {
+    console.log('Optimizing base64 image for PDF');
+    
+    // Create image element from base64
+    const img = new Image();
+    
+    return new Promise((resolve, reject) => {
+      img.onload = () => {
+        try {
+          // Calculate optimized dimensions
+          let { width, height } = img;
+          const aspectRatio = width / height;
+          
+          if (width > maxW) {
+            width = maxW;
+            height = width / aspectRatio;
+          }
+          
+          if (height > maxH) {
+            height = maxH;
+            width = height * aspectRatio;
+          }
+          
+          console.log(`Base64 optimization: ${img.width}x${img.height} -> ${Math.round(width)}x${Math.round(height)}`);
+          
+          // Create canvas with optimized dimensions
+          const canvas = document.createElement('canvas');
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d')!;
+          
+          // Set white background to avoid transparency issues
+          ctx.fillStyle = '#FFFFFF';
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+          
+          // Draw downscaled image
+          ctx.drawImage(img, 0, 0, width, height);
+          
+          // Convert to base64 with compression
+          const optimizedBase64 = canvas.toDataURL('image/jpeg', quality);
+          
+          console.log('Base64 optimization complete');
+          resolve(optimizedBase64);
+        } catch (error) {
+          console.error('Canvas operation failed:', error);
+          reject(error);
+        }
+      };
+      
+      img.onerror = (error) => {
+        console.error('Base64 image failed to load:', error);
+        reject(new Error('Failed to load base64 image for optimization'));
+      };
+      
+      img.src = base64;
+    });
+  } catch (error) {
+    console.error('Failed to optimize base64 image:', error);
+    // Return original base64 as fallback
+    return base64;
+  }
+};

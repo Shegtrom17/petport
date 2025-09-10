@@ -1,6 +1,6 @@
 /**
  * Pet Data Validation Utilities
- * Determines if a pet profile has complete "Basic Information" for optimal output
+ * Determines if a pet profile has complete "Pet Profile" information for optimal output
  */
 
 export interface PetData {
@@ -60,7 +60,7 @@ const getFieldValue = (pet: PetData, fieldKeys: string[]): string | null => {
 };
 
 /**
- * Analyzes pet profile completeness for Basic Information fields
+ * Analyzes pet profile completeness for Pet Profile fields
  */
 export const analyzeProfileCompleteness = (pet: PetData | null | undefined): ProfileCompletenessResult => {
   if (!pet) {
@@ -155,7 +155,7 @@ export const getCompletionMessage = (pet: PetData | null | undefined): string =>
   }
   
   const missingFields = [...analysis.missingCriticalFields, ...analysis.missingOptionalFields];
-  return `Complete your Basic Information (${missingFields.join(', ')}) for optimal PDFs and sharing links.`;
+  return `Complete your Pet Profile (${missingFields.join(', ')}) for optimal PDFs and sharing links.`;
 };
 
 /**

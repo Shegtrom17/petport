@@ -18,7 +18,7 @@ export const ProfileCompletionHint: React.FC<ProfileCompletionHintProps> = ({
   onEditClick,
   customMessage
 }) => {
-  const defaultMessage = "Complete your pet's Basic Information for optimal PDF quality and professional sharing links.";
+  const defaultMessage = "Complete your pet's Pet Profile for optimal PDF quality and professional sharing links.";
   
   return (
     <Alert className={`border-blue-200 bg-blue-50 ${className}`}>

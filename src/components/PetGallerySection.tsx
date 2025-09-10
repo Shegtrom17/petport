@@ -450,7 +450,7 @@ export const PetGallerySection = ({ petData, onUpdate }: PetGallerySectionProps)
               <div className="col-span-full mt-4">
                 <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
                   <p className="text-sm text-blue-800">
-                    💡 <strong>Tip:</strong> Complete your pet's Basic Information for professional PDFs and optimal sharing quality.
+                    💡 <strong>Tip:</strong> Complete your pet's Pet Profile for professional PDFs and optimal sharing quality.
                   </p>
                 </div>
               </div>

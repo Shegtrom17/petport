@@ -255,7 +255,7 @@ export const PetProfileContent = ({
       <div className="mb-8">
         <div className="bg-white/50 backdrop-blur-sm rounded-2xl p-6">
           <SectionHeader
-            title="Basic Information"
+            title="Pet Profile"
             action={isOwner && (
               <div className="flex items-center space-x-2">
                 <div
@@ -269,41 +269,11 @@ export const PetProfileContent = ({
                   <Edit className="w-5 h-5" />
                   <span className="text-sm hidden sm:inline">Edit</span>
                 </div>
-                <AlertDialog>
-                  <AlertDialogTrigger asChild>
-                    <div
-                      className="flex items-center space-x-2 p-3 text-primary hover:text-primary/80 hover:scale-110 transition-all cursor-pointer"
-                      role="button"
-                      tabIndex={0}
-                      aria-label="Delete pet"
-                      onKeyDown={(e) => e.key === 'Enter' && e.currentTarget.click()}
-                    >
-                      <Trash2 className="w-5 h-5" />
-                      <span className="text-sm hidden sm:inline">Delete</span>
-                    </div>
-                  </AlertDialogTrigger>
-                  <AlertDialogContent>
-                    <AlertDialogHeader>
-                      <AlertDialogTitle>Delete {enhancedPetData?.name || "this pet"}?</AlertDialogTitle>
-                      <AlertDialogDescription>
-                        This action cannot be undone. This will permanently delete {enhancedPetData?.name || "this pet"}'s profile and all associated data including photos, documents, and medical records.
-                      </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                      <AlertDialogCancel>Cancel</AlertDialogCancel>
-                      <AlertDialogAction
-                        onClick={handleDeletePet}
-                        disabled={isDeleting}
-                        className="bg-red-600 hover:bg-red-700"
-                      >
-                        {isDeleting ? "Deleting..." : "Delete Pet"}
-                      </AlertDialogAction>
-                    </AlertDialogFooter>
-                  </AlertDialogContent>
-                </AlertDialog>
               </div>
             )}
           />
+          
+          <p className="text-xs text-muted-foreground mb-4">This is the core of your pet's profile. Recommended for professional sharing.</p>
           
           {/* Show guidance hint for new users when basic info is incomplete */}
           {isOwner && (
@@ -313,8 +283,8 @@ export const PetProfileContent = ({
             !enhancedPetData?.weight
           ) && (
             <GuidanceHint
-              message="Complete your pet's Basic Information below for professional PDFs, optimal sharing links, and comprehensive identification documents."
-              actionLabel="Edit Basic Info"
+              message="Complete your pet's Pet Profile below for professional PDFs, optimal sharing links, and comprehensive identification documents."
+              actionLabel="Edit Pet Profile"
               onAction={handleProfileEdit}
               variant="gentle"
             />

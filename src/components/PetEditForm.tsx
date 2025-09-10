@@ -12,6 +12,8 @@ import { updatePetBasicInfo, updatePetMedical } from "@/services/petService";
 import { Loader2 } from "lucide-react";
 import { sanitizeText, validateTextLength, containsSuspiciousContent } from "@/utils/inputSanitizer";
 import { PrivacyToggle } from "@/components/PrivacyToggle";
+import { PetTransferDialog } from "@/components/PetTransferDialog";
+import { PetDeleteDialog } from "@/components/PetDeleteDialog";
 import { supabase } from "@/integrations/supabase/client";
 import { featureFlags } from "@/config/featureFlags";
 import { getSpeciesConfig, getSpeciesOptions } from "@/utils/speciesConfig";
@@ -273,9 +275,10 @@ export const PetEditForm = ({ petData, onSave, onCancel, togglePetPublicVisibili
       </CardHeader>
       <CardContent className="space-y-6">
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Basic Information */}
+          {/* Pet Profile */}
           <div>
-            <h3 className="text-lg font-serif text-foreground mb-4">Basic Information</h3>
+            <h3 className="text-lg font-serif text-foreground mb-4">Pet Profile (Recommended)</h3>
+            <p className="text-xs text-muted-foreground mb-4">This is the core of your pet's profile. Complete this section for professional PDFs and optimal sharing quality.</p>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <Label htmlFor="name">Pet Name</Label>
@@ -519,6 +522,26 @@ export const PetEditForm = ({ petData, onSave, onCancel, togglePetPublicVisibili
                 return true;
               }}
             />
+          </div>
+
+          {/* Ownership & Danger Zone */}
+          <div className="border-t pt-6" id="ownership-settings">
+            <h3 className="text-lg font-serif text-foreground mb-4">Ownership & Danger Zone</h3>
+            <p className="text-xs text-muted-foreground mb-4">These actions affect pet ownership and cannot be undone.</p>
+            <div className="flex flex-wrap gap-3">
+              <PetTransferDialog
+                petId={petData.id}
+                petName={petData.name}
+              />
+              <PetDeleteDialog
+                petId={petData.id}
+                petName={petData.name}
+                onPetDeleted={() => {
+                  // Handle pet deletion - navigate away or update parent
+                  window.location.href = '/';
+                }}
+              />
+            </div>
           </div>
 
           {/* Action Buttons */}

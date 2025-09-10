@@ -47,9 +47,9 @@ export const PetDeleteDialog = ({ petId, petName, onPetDeleted }: PetDeleteDialo
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" size="sm" className="text-red-600 border-red-200 hover:bg-red-50">
-          <Trash2 className="w-4 h-4 mr-2" />
-          Delete Pet
+        <Button variant="outline" size="sm" className="text-responsive-xs text-destructive border-destructive/20 hover:bg-destructive/5">
+          <Trash2 className="w-3 h-3 mr-1" />
+          <span className="text-responsive-xs whitespace-nowrap">Delete Pet</span>
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">

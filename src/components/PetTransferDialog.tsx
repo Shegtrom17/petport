@@ -63,9 +63,9 @@ export const PetTransferDialog = ({ petId, petName }: PetTransferDialogProps) =>
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" size="sm" className="text-orange-600 border-orange-200 hover:bg-orange-50">
-          <UserX className="w-4 h-4 mr-2" />
-          Transfer Pet
+        <Button variant="outline" size="sm" className="text-responsive-xs text-primary border-primary/20 hover:bg-primary/5">
+          <UserX className="w-3 h-3 mr-1" />
+          <span className="text-responsive-xs whitespace-nowrap">Transfer Pet</span>
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
@@ -113,7 +113,7 @@ export const PetTransferDialog = ({ petId, petName }: PetTransferDialogProps) =>
             <Button
               onClick={handleTransfer}
               disabled={loading}
-              className="flex-1 bg-orange-600 hover:bg-orange-700 text-white"
+              className="flex-1 bg-primary hover:bg-primary/90 text-primary-foreground"
             >
               {loading ? (
                 <>Sending...</>

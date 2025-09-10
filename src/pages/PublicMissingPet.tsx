@@ -361,17 +361,24 @@ export default function PublicMissingPet() {
 
             {/* Share Buttons */}
             <div className="flex flex-col sm:flex-row gap-4 items-center justify-center mt-8">
-              <Button onClick={handleShare} className="bg-brand-primary hover:bg-brand-primary/90 text-white">
-                <Share2 className="w-4 h-4 mr-2" />
+              <Button 
+                onClick={handleShare} 
+                size="lg"
+                className="bg-brand-primary hover:bg-brand-primary/90 text-white h-12 px-6 font-semibold text-base shadow-lg"
+              >
+                <Share2 className="w-5 h-5 mr-2" />
                 Share This Alert
               </Button>
-              <SocialShareButtons 
-                petName={petData.name}
-                petId={petData.id}
-                isMissingPet={true}
-                context="missing"
-                shareUrlOverride={window.location.href}
-              />
+              <div className="w-full sm:w-auto">
+                <SocialShareButtons 
+                  petName={petData.name}
+                  petId={petData.id}
+                  isMissingPet={true}
+                  context="missing"
+                  shareUrlOverride={window.location.href}
+                  compact={false}
+                />
+              </div>
             </div>
 
             {/* Last Updated */}

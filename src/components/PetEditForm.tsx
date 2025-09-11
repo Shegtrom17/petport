@@ -527,7 +527,7 @@ export const PetEditForm = ({ petData, onSave, onCancel, togglePetPublicVisibili
           {/* Ownership & Danger Zone */}
           <div className="border-t pt-6" id="ownership-settings">
             <h3 className="text-lg font-serif text-foreground mb-4">Ownership & Danger Zone</h3>
-            <p className="text-xs text-muted-foreground mb-4">These actions affect pet ownership and cannot be undone.</p>
+            <p className="text-xs text-muted-foreground mb-4">Transfer account to another petport user. This action is permanent and cannot be undone.</p>
             <div className="flex flex-wrap gap-3">
               <PetTransferDialog
                 petId={petData.id}

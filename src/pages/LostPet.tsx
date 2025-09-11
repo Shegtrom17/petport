@@ -251,14 +251,25 @@ const LostPet = () => {
             <div className="space-y-4">
               <h4 className="font-semibold text-lg" style={{ color: '#5691af' }}>Pet Details</h4>
               <div className="grid grid-cols-2 gap-2 text-sm">
-                <div><strong>Breed:</strong> {currentPet.breed}</div>
-                <div><strong>Age:</strong> {currentPet.age}</div>
-                <div><strong>Weight:</strong> {currentPet.weight}</div>
-                <div><strong>Color:</strong> {currentPet.species}</div>
+                {currentPet.species && <div><strong>Species:</strong> {currentPet.species}</div>}
+                <div><strong>Breed:</strong> {currentPet.breed || 'Not specified'}</div>
+                <div><strong>Age:</strong> {currentPet.age || 'Not specified'}</div>
+                {currentPet.sex && <div><strong>Sex:</strong> {currentPet.sex}</div>}
+                <div><strong>Weight:</strong> {currentPet.weight || 'Not specified'}</div>
+                {currentPet.height && <div><strong>Height:</strong> {currentPet.height}</div>}
+                <div><strong>Color:</strong> {currentPet.color || 'Not specified'}</div>
               </div>
+              
+              {/* Important ID Information - styled prominently like in PDF */}
               {currentPet.microchip_id && (
                 <div className="p-3 rounded-lg border shadow-sm">
-                  <strong>Microchip ID:</strong> {currentPet.microchip_id}
+                  <strong className="text-red-600">Microchip ID:</strong> <span className="text-red-600 font-semibold">{currentPet.microchip_id}</span>
+                </div>
+              )}
+              
+              {currentPet.registration_number && (
+                <div className="p-3 rounded-lg border shadow-sm">
+                  <strong className="text-red-600">Registration #:</strong> <span className="text-red-600 font-semibold">{currentPet.registration_number}</span>
                 </div>
               )}
             </div>

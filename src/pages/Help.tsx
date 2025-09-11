@@ -106,6 +106,21 @@ const Help = () => {
       id: "data-security",
       question: "Is my pet's information secure?",
       answer: "Yes, we take data security seriously. All information is encrypted and stored securely. You control what information is public, and we never share your data with third parties without your consent."
+    },
+    {
+      id: "pet-transfer",
+      question: "How do I transfer my pet's account to another user?",
+      answer: "You can transfer your pet's account to another PetPort user through the Profile Edit section. Go to your pet's profile, click 'Edit', scroll down to the 'Ownership & Danger Zone' section, and use the Transfer Pet button. Enter the recipient's email address and they will receive an email with instructions to accept the transfer. Important: This action is permanent and cannot be undone. The recipient must have an active PetPort subscription to accept the transfer."
+    },
+    {
+      id: "transfer-requirements",
+      question: "What are the requirements for transferring a pet account?",
+      answer: "To transfer a pet account: 1) You must be the current owner of the pet profile, 2) The recipient must have a valid email address, 3) The recipient must have an active PetPort subscription, 4) The transfer request expires after 7 days if not accepted. Once transferred, you will immediately lose access to the pet's profile and all associated data."
+    },
+    {
+      id: "transfer-process",
+      question: "What happens during the transfer process?",
+      answer: "When you initiate a transfer: 1) The recipient receives an email with a secure link, 2) They have 7 days to accept the transfer, 3) Upon acceptance, ownership immediately transfers to them, 4) You lose all access to the pet's profile, photos, documents, and data, 5) The transfer cannot be reversed. Make sure you've downloaded any important documents or photos before transferring."
     }
   ];
 

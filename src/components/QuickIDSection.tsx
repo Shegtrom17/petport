@@ -217,9 +217,9 @@ export const QuickIDSection = ({ petData, onUpdate }: QuickIDSectionProps) => {
             <h3 className="text-base sm:text-lg font-semibold text-blue-900">Missing Pet quick directions</h3>
             <ol className="list-decimal list-inside text-sm text-blue-800 space-y-1">
               <li>Tap “Report Missing” and fill last seen details and notes.</li>
-              <li>Add photos showing unique markings and a full-body shot.</li>
+              <li>Go to Photo Gallery, add photos with unique markings and full-body shots, then move the best 3 photos to the top positions for lost pet marketing.</li>
                <li><strong>Make profile public</strong> to enable sharing features.</li>
-               <li>Use Share/QR to spread the alert and print the flyer.</li>
+               <li>Use Share/QR to spread the alert and print the flyer. Shared links update in real time as you add information.</li>
             </ol>
           </div>
         </CardContent>

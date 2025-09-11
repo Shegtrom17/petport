@@ -309,42 +309,47 @@ export default function PublicMissingPet() {
             {petData.contacts && petData.contacts.length > 0 && (
               <div className="space-y-3 mb-6">
                 <h3 className="font-semibold text-lg" style={{ color: '#5691af' }}>Emergency Contacts</h3>
-                {petData.contacts.map((contact, index) => (
-                  <div key={index} className="p-3 rounded-lg border shadow-sm">
-                    {/\d{3}/.test(contact.contact_phone) ? (
-                      <a 
-                        href={`tel:${contact.contact_phone.replace(/\D/g, '')}`}
-                        className="block w-full"
-                        aria-label={`Call ${contact.contact_name}`}
-                      >
-                        <div className="flex items-center space-x-2">
-                           <Phone className={`w-4 h-4 ${contact.contact_type === 'emergency' ? 'text-primary' : 'text-primary'}`} />
-                           <strong className={`${contact.contact_type === 'emergency' ? 'text-primary' : 'text-primary'} hover:opacity-80`}>
-                            {contact.contact_name}:
-                          </strong>
+                {petData.contacts.map((contact, index) => {
+                  const hasPhone = contact.contact_phone && /\d{3}/.test(contact.contact_phone);
+                  const phoneNumber = hasPhone ? contact.contact_phone.replace(/\D/g, '') : '';
+                  
+                  return (
+                    <div key={index} className="p-3 rounded-lg border shadow-sm">
+                      {hasPhone ? (
+                        <a 
+                          href={`tel:${phoneNumber}`}
+                          className="block w-full"
+                          aria-label={`Call ${contact.contact_name}`}
+                        >
+                          <div className="flex items-center space-x-2">
+                             <Phone className={`w-4 h-4 ${contact.contact_type === 'emergency' ? 'text-primary' : 'text-primary'}`} />
+                             <strong className={`${contact.contact_type === 'emergency' ? 'text-primary' : 'text-primary'} hover:opacity-80`}>
+                              {contact.contact_name}:
+                            </strong>
+                          </div>
+                          <div className="ml-6">
+                            <span className={`font-medium hover:opacity-80 ${contact.contact_type === 'emergency' ? 'text-primary' : 'text-primary'}`}>
+                              {contact.contact_phone}
+                            </span>
+                            <p className={`text-xs ${contact.contact_type === 'emergency' ? 'text-primary/70' : 'text-primary/80'}`}>Tap to call</p>
+                          </div>
+                        </a>
+                      ) : (
+                        <div>
+                          <div className="flex items-center space-x-2">
+                             <Phone className={`w-4 h-4 ${contact.contact_type === 'emergency' ? 'text-primary' : 'text-primary'}`} />
+                             <strong className={contact.contact_type === 'emergency' ? 'text-primary' : 'text-primary'}>
+                              {contact.contact_name}:
+                            </strong>
+                          </div>
+                          <p className={`ml-6 font-medium ${contact.contact_type === 'emergency' ? 'text-primary' : 'text-primary'}`}>
+                            {contact.contact_phone || 'No phone number'}
+                          </p>
                         </div>
-                        <div className="ml-6">
-                          <span className={`font-medium hover:opacity-80 ${contact.contact_type === 'emergency' ? 'text-primary' : 'text-primary'}`}>
-                            {contact.contact_phone}
-                          </span>
-                          <p className={`text-xs ${contact.contact_type === 'emergency' ? 'text-primary/70' : 'text-primary/80'}`}>Tap to call</p>
-                        </div>
-                      </a>
-                    ) : (
-                      <div>
-                        <div className="flex items-center space-x-2">
-                           <Phone className={`w-4 h-4 ${contact.contact_type === 'emergency' ? 'text-primary' : 'text-primary'}`} />
-                           <strong className={contact.contact_type === 'emergency' ? 'text-primary' : 'text-primary'}>
-                            {contact.contact_name}:
-                          </strong>
-                        </div>
-                        <p className={`ml-6 font-medium ${contact.contact_type === 'emergency' ? 'text-primary' : 'text-primary'}`}>
-                          {contact.contact_phone}
-                        </p>
-                      </div>
-                    )}
-                  </div>
-                ))}
+                      )}
+                    </div>
+                  );
+                })}
               </div>
             )}
 

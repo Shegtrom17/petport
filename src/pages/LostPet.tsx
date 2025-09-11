@@ -268,43 +268,105 @@ const LostPet = () => {
               <h4 className="font-semibold text-lg" style={{ color: '#5691af' }}>Contacts</h4>
               <div className="space-y-2">
                 <div className="p-3 rounded-lg border shadow-sm">
-                  <div className="flex items-center space-x-2">
-                    <Phone className="w-4 h-4 text-red-600" />
-                    <strong className="text-red-700">Primary:</strong>
-                  </div>
-                   <p className="ml-6 text-red-800">{currentPet.emergency_contact || 'Not set'}</p>
-                   {currentPet.emergency_contact && currentPet.emergency_contact !== 'Not set' && (
+                  {currentPet.emergency_contact && currentPet.emergency_contact !== 'Not set' && /\d{3}/.test(currentPet.emergency_contact) ? (
+                    <a 
+                      href={`tel:${currentPet.emergency_contact.replace(/\D/g, '')}`}
+                      className="block w-full"
+                      aria-label={`Call primary emergency contact`}
+                    >
+                      <div className="flex items-center space-x-2">
+                        <Phone className="w-4 h-4 text-red-600" />
+                        <strong className="text-red-700 hover:opacity-80">Primary:</strong>
+                      </div>
+                      <p className="ml-6 text-red-800 hover:opacity-80">{currentPet.emergency_contact}</p>
                       <p className="ml-6 text-xs text-red-600">Tap to call</p>
-                    )}
+                    </a>
+                  ) : (
+                    <div>
+                      <div className="flex items-center space-x-2">
+                        <Phone className="w-4 h-4 text-red-600" />
+                        <strong className="text-red-700">Primary:</strong>
+                      </div>
+                      <p className="ml-6 text-red-800">{currentPet.emergency_contact || 'Not set'}</p>
+                    </div>
+                  )}
                 </div>
                 {currentPet.second_emergency_contact && (
                   <div className="p-3 rounded-lg border shadow-sm">
-                    <div className="flex items-center space-x-2">
-                      <Phone className="w-4 h-4 text-red-600" />
-                      <strong className="text-red-700">Secondary:</strong>
-                    </div>
-                     <p className="ml-6 text-red-800">{currentPet.second_emergency_contact}</p>
-                     <p className="ml-6 text-xs text-red-600">Tap to call</p>
+                    {/\d{3}/.test(currentPet.second_emergency_contact) ? (
+                      <a 
+                        href={`tel:${currentPet.second_emergency_contact.replace(/\D/g, '')}`}
+                        className="block w-full"
+                        aria-label={`Call secondary emergency contact`}
+                      >
+                        <div className="flex items-center space-x-2">
+                          <Phone className="w-4 h-4 text-red-600" />
+                          <strong className="text-red-700 hover:opacity-80">Secondary:</strong>
+                        </div>
+                        <p className="ml-6 text-red-800 hover:opacity-80">{currentPet.second_emergency_contact}</p>
+                        <p className="ml-6 text-xs text-red-600">Tap to call</p>
+                      </a>
+                    ) : (
+                      <div>
+                        <div className="flex items-center space-x-2">
+                          <Phone className="w-4 h-4 text-red-600" />
+                          <strong className="text-red-700">Secondary:</strong>
+                        </div>
+                        <p className="ml-6 text-red-800">{currentPet.second_emergency_contact}</p>
+                      </div>
+                    )}
                   </div>
                 )}
                 {currentPet.vet_contact && (
                   <div className="p-3 rounded-lg border shadow-sm">
-                    <div className="flex items-center space-x-2">
-                      <Stethoscope className="w-4 h-4" style={{color: 'hsl(var(--azure))'}} />
-                      <strong style={{color: 'hsl(var(--azure))'}}>Veterinarian:</strong>
-                    </div>
-                     <p className="ml-6" style={{color: 'hsl(var(--azure))'}}>{currentPet.vet_contact}</p>
-                     <p className="ml-6 text-xs" style={{color: 'hsl(var(--azure))'}}>Tap to call</p>
+                    {/\d{3}/.test(currentPet.vet_contact) ? (
+                      <a 
+                        href={`tel:${currentPet.vet_contact.replace(/\D/g, '')}`}
+                        className="block w-full"
+                        aria-label={`Call veterinarian`}
+                      >
+                        <div className="flex items-center space-x-2">
+                          <Stethoscope className="w-4 h-4" style={{color: 'hsl(var(--azure))'}} />
+                          <strong style={{color: 'hsl(var(--azure))'}} className="hover:opacity-80">Veterinarian:</strong>
+                        </div>
+                        <p className="ml-6 hover:opacity-80" style={{color: 'hsl(var(--azure))'}}>{currentPet.vet_contact}</p>
+                        <p className="ml-6 text-xs" style={{color: 'hsl(var(--azure))'}}>Tap to call</p>
+                      </a>
+                    ) : (
+                      <div>
+                        <div className="flex items-center space-x-2">
+                          <Stethoscope className="w-4 h-4" style={{color: 'hsl(var(--azure))'}} />
+                          <strong style={{color: 'hsl(var(--azure))'}}>Veterinarian:</strong>
+                        </div>
+                        <p className="ml-6" style={{color: 'hsl(var(--azure))'}}>{currentPet.vet_contact}</p>
+                      </div>
+                    )}
                   </div>
                 )}
                 {currentPet.pet_caretaker && (
                   <div className="p-3 rounded-lg border shadow-sm">
-                    <div className="flex items-center space-x-2">
-                      <Users className="w-4 h-4" style={{color: 'hsl(var(--azure))'}} />
-                      <strong style={{color: 'hsl(var(--azure))'}}>Pet Caretaker:</strong>
-                    </div>
-                     <p className="ml-6" style={{color: 'hsl(var(--azure))'}}>{currentPet.pet_caretaker}</p>
-                     <p className="ml-6 text-xs" style={{color: 'hsl(var(--azure))'}}>Tap to call</p>
+                    {/\d{3}/.test(currentPet.pet_caretaker) ? (
+                      <a 
+                        href={`tel:${currentPet.pet_caretaker.replace(/\D/g, '')}`}
+                        className="block w-full"
+                        aria-label={`Call pet caretaker`}
+                      >
+                        <div className="flex items-center space-x-2">
+                          <Users className="w-4 h-4" style={{color: 'hsl(var(--azure))'}} />
+                          <strong style={{color: 'hsl(var(--azure))'}} className="hover:opacity-80">Pet Caretaker:</strong>
+                        </div>
+                        <p className="ml-6 hover:opacity-80" style={{color: 'hsl(var(--azure))'}}>{currentPet.pet_caretaker}</p>
+                        <p className="ml-6 text-xs" style={{color: 'hsl(var(--azure))'}}>Tap to call</p>
+                      </a>
+                    ) : (
+                      <div>
+                        <div className="flex items-center space-x-2">
+                          <Users className="w-4 h-4" style={{color: 'hsl(var(--azure))'}} />
+                          <strong style={{color: 'hsl(var(--azure))'}}>Pet Caretaker:</strong>
+                        </div>
+                        <p className="ml-6" style={{color: 'hsl(var(--azure))'}}>{currentPet.pet_caretaker}</p>
+                      </div>
+                    )}
                   </div>
                 )}
               </div>

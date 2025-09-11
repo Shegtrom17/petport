@@ -40,10 +40,12 @@ interface PetData {
   gallery_photos?: Array<{ id: string; url: string; caption?: string }>;
   species?: string;
   microchip_id?: string;
+  microchipId?: string;
   sex?: string;
   height?: string;
   color?: string;
   registration_number?: string;
+  registrationNumber?: string;
 }
 
 interface LostPetData {
@@ -279,15 +281,15 @@ export const QuickIDSection = ({ petData, onUpdate }: QuickIDSectionProps) => {
               </div>
               
               {/* Important ID Information - styled prominently like in PDF */}
-              {petData.microchip_id && (
+              {(petData.microchip_id || petData.microchipId) && (
                 <div className="p-3 rounded-lg border shadow-sm">
-                  <strong className="text-red-600">Microchip ID:</strong> <span className="text-red-600 font-semibold">{petData.microchip_id}</span>
+                  <strong className="text-destructive">Microchip ID:</strong> <span className="text-destructive font-semibold">{petData.microchip_id || petData.microchipId}</span>
                 </div>
               )}
               
-              {petData.registration_number && (
+              {(petData.registration_number || petData.registrationNumber) && (
                 <div className="p-3 rounded-lg border shadow-sm">
-                  <strong className="text-red-600">Registration #:</strong> <span className="text-red-600 font-semibold">{petData.registration_number}</span>
+                  <strong className="text-destructive">Registration #:</strong> <span className="text-destructive font-semibold">{petData.registration_number || petData.registrationNumber}</span>
                 </div>
               )}
             </div>

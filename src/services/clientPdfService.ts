@@ -639,12 +639,6 @@ pageManager.addY(6);
     if (petData.color) addText(doc, pageManager, `Color: ${safeText(petData.color)}`, '#000000', 11);
     if (petData.microchipId) addText(doc, pageManager, `Microchip ID: ${safeText(petData.microchipId)}`, '#dc2626', 11);
     if (petData.registrationNumber) addText(doc, pageManager, `Registration #: ${safeText(petData.registrationNumber)}`, '#dc2626', 11);
-    addText(doc, pageManager, `Age: ${safeText(petData.age)}`, '#000000', 11);
-    addText(doc, pageManager, `Weight: ${safeText(petData.weight)}`, '#000000', 11);
-    if (petData.height) addText(doc, pageManager, `Height: ${safeText(petData.height)}`, '#000000', 11);
-    if (petData.species) addText(doc, pageManager, `Color: ${safeText(petData.species)}`, '#000000', 11);
-    if (petData.microchipId) addText(doc, pageManager, `Microchip: ${safeText(petData.microchipId)}`, '#000000', 11);
-    if (petData.registrationNumber) addText(doc, pageManager, `Registration: ${safeText(petData.registrationNumber)}`, '#000000', 11);
   });
   
   // Reset X position and move below both columns
@@ -818,7 +812,7 @@ try {
   const publicUrl = generatePublicMissingUrl(petData.id);
   const qrUrl = generateQRCodeUrl(publicUrl, 240);
   const base64 = await loadImageAsBase64(qrUrl); // QR codes don't need orientation correction
-  const qrSize = 36; // mm (reduced to fit within 2 pages)
+  const qrSize = 25; // mm (smaller QR code for better layout)
   const x = (210 - qrSize) / 2;
   const y = pageManager.getCurrentY();
   doc.addImage(base64, 'PNG', x, y, qrSize, qrSize);

@@ -40,6 +40,10 @@ interface PetData {
   gallery_photos?: Array<{ id: string; url: string; caption?: string }>;
   species?: string;
   microchip_id?: string;
+  sex?: string;
+  height?: string;
+  color?: string;
+  registration_number?: string;
 }
 
 interface LostPetData {
@@ -265,14 +269,25 @@ export const QuickIDSection = ({ petData, onUpdate }: QuickIDSectionProps) => {
             <div className="space-y-4">
               <h4 className="font-bold text-lg text-brand-primary">Pet Details</h4>
               <div className="grid grid-cols-2 gap-2 text-sm">
-                <div><strong>Breed:</strong> {petData.breed}</div>
-                <div><strong>Age:</strong> {petData.age}</div>
-                <div><strong>Weight:</strong> {petData.weight}</div>
-                <div><strong>Color:</strong> {petData.species}</div>
+                {petData.species && <div><strong>Species:</strong> {petData.species}</div>}
+                <div><strong>Breed:</strong> {petData.breed || 'Not specified'}</div>
+                <div><strong>Age:</strong> {petData.age || 'Not specified'}</div>
+                {petData.sex && <div><strong>Sex:</strong> {petData.sex}</div>}
+                <div><strong>Weight:</strong> {petData.weight || 'Not specified'}</div>
+                {petData.height && <div><strong>Height:</strong> {petData.height}</div>}
+                <div><strong>Color:</strong> {petData.color || 'Not specified'}</div>
               </div>
+              
+              {/* Important ID Information - styled prominently like in PDF */}
               {petData.microchip_id && (
-                <div className="bg-blue-50 p-3 rounded-lg">
-                  <strong>Microchip ID:</strong> {petData.microchip_id}
+                <div className="p-3 rounded-lg border shadow-sm">
+                  <strong className="text-red-600">Microchip ID:</strong> <span className="text-red-600 font-semibold">{petData.microchip_id}</span>
+                </div>
+              )}
+              
+              {petData.registration_number && (
+                <div className="p-3 rounded-lg border shadow-sm">
+                  <strong className="text-red-600">Registration #:</strong> <span className="text-red-600 font-semibold">{petData.registration_number}</span>
                 </div>
               )}
             </div>

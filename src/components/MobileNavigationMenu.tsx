@@ -32,9 +32,9 @@ export const MobileNavigationMenu = ({ activeTab, onTabChange }: MobileNavigatio
             <Menu className="h-4 w-4 sm:h-5 sm:w-5" />
           </Button>
         </SheetTrigger>
-        <SheetContent side="left" className="w-72 sm:w-80 p-4 sm:p-6 bg-gradient-to-b from-gold-500 to-gold-400 text-white">
+        <SheetContent side="left" className="w-72 sm:w-80 p-4 sm:p-6 bg-white text-[#5691af]">
           <div className="mb-4 sm:mb-6">
-            <h2 className="text-base sm:text-lg font-semibold text-white">Navigation</h2>
+            <h2 className="text-base sm:text-lg font-semibold text-[#5691af]">Navigation</h2>
           </div>
           <div className="space-y-2">
             <NavigationTabs 
@@ -44,11 +44,11 @@ export const MobileNavigationMenu = ({ activeTab, onTabChange }: MobileNavigatio
             />
           </div>
           
-          <div className="mt-6 pt-4 border-t border-white/20">
+          <div className="mt-6 pt-4 border-t border-[#5691af]/20">
             <ReportIssueModal>
               <Button 
                 variant="ghost"
-                className="w-full justify-start space-x-3 text-sm py-3 text-white hover:bg-white/10 transition-all"
+                className="w-full justify-start space-x-3 text-sm py-3 text-[#5691af] hover:bg-[#5691af]/10 transition-all"
               >
                 <AlertTriangle className="w-4 h-4" />
                 <span className="font-medium">Report Issue</span>

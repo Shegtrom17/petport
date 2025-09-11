@@ -57,24 +57,38 @@ export const ContactsDisplay = ({ petId, hideHeader = false }: ContactsDisplayPr
           
           return (
             <div key={`${contact.type}-${index}`} className="border rounded-lg p-4 bg-transparent">
-              <div className="flex items-center justify-between">
-                <div className="flex-1">
-                  <h4 className={`font-medium ${labelColor}`}>
-                    {contact.label}
-                  </h4>
-                  <p className="text-sm text-muted-foreground">{contact.name}</p>
-                </div>
-              </div>
-              
-              {!contact.isEmpty && contact.phone && (
-                <div className="flex items-center space-x-2 mt-2">
-                  <p 
-                    className={`text-sm ${labelColor} cursor-pointer hover:underline`}
-                    onClick={() => handlePhoneCall(contact.phone)}
-                  >
-                    {contact.phone}
-                  </p>
-                  <span className="text-xs text-muted-foreground">• Tap to call</span>
+              {!contact.isEmpty && contact.phone ? (
+                <a 
+                  href={`tel:${contact.phone.replace(/\D/g, '')}`}
+                  className="block w-full"
+                  aria-label={`Call ${contact.name}`}
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex-1">
+                      <h4 className={`font-medium ${labelColor} hover:opacity-80`}>
+                        {contact.label}
+                      </h4>
+                      <p className="text-sm text-muted-foreground">{contact.name}</p>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center space-x-2 mt-2">
+                    <p className={`text-sm ${labelColor} hover:underline`}>
+                      {contact.phone}
+                    </p>
+                    <span className="text-xs text-muted-foreground">• Tap to call</span>
+                  </div>
+                </a>
+              ) : (
+                <div>
+                  <div className="flex items-center justify-between">
+                    <div className="flex-1">
+                      <h4 className={`font-medium ${labelColor}`}>
+                        {contact.label}
+                      </h4>
+                      <p className="text-sm text-muted-foreground">{contact.name}</p>
+                    </div>
+                  </div>
                 </div>
               )}
             </div>

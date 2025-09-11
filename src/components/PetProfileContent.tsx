@@ -3,8 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
-import { AlertTriangle, Phone, Trash2, Upload, Loader2, Edit, Share2, Facebook, MessageCircle, Mail, Camera, UserX } from "lucide-react";
-import { PetTransferDialog } from "@/components/PetTransferDialog";
+import { AlertTriangle, Phone, Trash2, Upload, Loader2, Edit, Share2, Facebook, MessageCircle, Mail, Camera } from "lucide-react";
 import { PetDeleteDialog } from "@/components/PetDeleteDialog";
 import { PetPDFGenerator } from "@/components/PetPDFGenerator";
 import { SupportAnimalBanner } from "@/components/SupportAnimalBanner";
@@ -75,22 +74,6 @@ export const PetProfileContent = ({
   const { user } = useAuth();
   const navigate = useNavigate();
 
-  // Transfer dialog state
-  const [transferOpen, setTransferOpen] = useState(false);
-  const [transferEmail, setTransferEmail] = useState("");
-  const [orgs, setOrgs] = useState<Array<{ id: string; name: string }>>([]);
-  const [selectedOrg, setSelectedOrg] = useState<string>("");
-  const [transferLoading, setTransferLoading] = useState(false);
-  const [transferLink, setTransferLink] = useState<string>("");
-
-  useEffect(() => {
-    const fetchOrgs = async () => {
-      if (!transferOpen) return;
-      const { data, error } = await supabase.from("organizations").select("id, name");
-      if (!error && data) setOrgs(data as any);
-    };
-    fetchOrgs();
-  }, [transferOpen]);
   
   // Safety check for missing data
   if (!petData) {
@@ -606,33 +589,6 @@ export const PetProfileContent = ({
         />
       </div>
 
-      {/* Transfer Section - Only for owners - Moved to bottom */}
-      {isOwner && (
-        <div className="mb-8">
-          <SectionHeader
-            overline="Transfer"
-            title="Transfer this Petport account to a new user"
-            icon={<UserX className="w-5 h-5" />}
-          />
-          <div className="bg-gray-50 rounded-lg p-4">
-            <p className="text-sm text-gray-600 mb-4">
-              Transfer {enhancedPetData.name}'s account to another petport user. 
-              This action is permanent and cannot be undone.
-            </p>
-            <div className="flex gap-2">
-              <PetTransferDialog
-                petId={enhancedPetData.id}
-                petName={enhancedPetData.name}
-              />
-              <PetDeleteDialog
-                petId={enhancedPetData.id}
-                petName={enhancedPetData.name}
-                onPetDeleted={() => navigate('/app')}
-              />
-            </div>
-          </div>
-        </div>
-      )}
 
     </div>
   );

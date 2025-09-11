@@ -90,7 +90,7 @@ const Help = () => {
     {
       id: "sharing",
       question: "How do I share my pet's profile?",
-      answer: "You can share your pet's profile via QR code, direct link, or by using the share button in the app. Recipients can view the information you've made public without needing an account. Remember: You must toggle your pet's profile to public (using the switch at the top) before sharing for others to access the information."
+      answer: "You can share your pet's profile via QR code, direct link, PDF download, email sharing, or by using the share button in the app. The PDF option creates a professional document with all your pet's information that you can print or email. Recipients can view the information you've made public without needing an account. Remember: You must toggle your pet's profile to public (using the switch at the top) before sharing for others to access the information."
     },
     {
       id: "emergency-contact",

@@ -9,7 +9,7 @@ import PricingSection from "@/components/PricingSection";
 import { Testimonials } from "@/components/Testimonials";
 import createProfileScreenshot from "@/assets/create-profile-screenshot.png";
 import documentUploadScreenshot from "@/assets/document-upload-screenshot.png";
-import careInstructionsScreenshot from "@/assets/care-instructions-screenshot.png";
+import shareInstructionsScreenshot from "@/assets/share-instructions-screenshot.png";
 
 export default function Landing() {
   const { user } = useAuth();
@@ -313,8 +313,8 @@ export default function Landing() {
               <div className="mb-6 rounded-2xl overflow-hidden shadow-lg">
                 <AspectRatio ratio={4 / 3}>
                   <img 
-                    src={careInstructionsScreenshot} 
-                    alt="Sharing pet information - Generate PDFs, QR codes, and share instantly with vets, sitters, or hotels"
+                    src={shareInstructionsScreenshot} 
+                    alt="Sharing pet information - Quick Share Hub with emergency profile, care instructions, and QR codes"
                     className="w-full h-full object-cover"
                     loading="lazy"
                   />

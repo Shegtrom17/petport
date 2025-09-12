@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
-import { AlertTriangle, Phone, Trash2, Upload, Loader2, Edit, Share2, Facebook, MessageCircle, Mail, Camera } from "lucide-react";
+import { AlertTriangle, Phone, Trash2, Upload, Loader2, Edit, Share2, Facebook, MessageCircle, Mail, Camera, Info } from "lucide-react";
 import { PetDeleteDialog } from "@/components/PetDeleteDialog";
 import { PetPDFGenerator } from "@/components/PetPDFGenerator";
 import { SupportAnimalBanner } from "@/components/SupportAnimalBanner";
@@ -521,6 +521,58 @@ export const PetProfileContent = ({
         </div>
       </div>
 
+      {/* Contacts Display Section */}
+      <div className="mb-8">
+        <div className="bg-white/50 backdrop-blur-sm rounded-2xl p-6">
+          <ContactsDisplay petId={enhancedPetData?.id} />
+        </div>
+      </div>
+
+      {/* Quick Share Hub Section */}
+      <div className="mb-8">
+        <div className="bg-white/50 backdrop-blur-sm rounded-2xl p-6">
+          <SectionHeader
+            title="Quick Share Hub"
+            icon={<Share2 />}
+          />
+          <QuickShareHub
+            petData={{
+              id: enhancedPetData.id,
+              name: enhancedPetData.name
+            }}
+            isLost={false}
+          />
+          <div className="mt-6 p-4 bg-primary/5 rounded-lg border border-primary/10">
+            <div className="flex items-start space-x-3">
+              <Info className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
+              <div className="space-y-2">
+                <p className="text-sm font-medium text-foreground">
+                  Share different views of Finnegan's profile
+                </p>
+                <div className="text-xs text-muted-foreground space-y-1">
+                  <div className="flex items-center space-x-2">
+                    <div className="w-1.5 h-1.5 bg-primary rounded-full"></div>
+                    <span><strong>General Profile:</strong> Complete profile with all sections</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <div className="w-1.5 h-1.5 bg-primary rounded-full"></div>
+                    <span><strong>Emergency Profile:</strong> Critical info for urgent situations</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <div className="w-1.5 h-1.5 bg-primary rounded-full"></div>
+                    <span><strong>Missing Pet Alert:</strong> Specialized format for lost pet reports</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <div className="w-1.5 h-1.5 bg-primary rounded-full"></div>
+                    <span><strong>Photo Gallery:</strong> Just the photos for easy viewing</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* PDF Generator Section */}
       <div className="mb-8">
         <PetPDFGenerator
@@ -528,65 +580,6 @@ export const PetProfileContent = ({
           petName={enhancedPetData.name}
           petData={enhancedPetData}
         />
-      </div>
-
-      {/* Contacts Display Section - Moved to bottom */}
-      <div className="mb-8">
-        <div className="bg-white/50 backdrop-blur-sm rounded-2xl p-6">
-          <ContactsDisplay petId={enhancedPetData?.id} />
-        </div>
-      </div>
-
-      {/* Quick Share Hub Section - Moved to bottom */}
-      <div className="mb-8">
-        <div className="bg-white/50 backdrop-blur-sm rounded-2xl p-6">
-          <SectionHeader
-            overline="Centralized"
-            title="Instant sharing for any situation"
-            icon={<Share2 className="w-5 h-5" />}
-            action={
-              isOwner && togglePetPublicVisibility && (
-                <CompactPrivacyToggle
-                  isPublic={enhancedPetData?.is_public || false}
-                  onToggle={(isPublic) => togglePetPublicVisibility(enhancedPetData.id, isPublic)}
-                />
-              )
-            }
-          />
-          
-          {/* Show guidance hint when profile is private and user tries to share */}
-          {!enhancedPetData?.is_public && (
-            <GuidanceHint
-              message="Your pet's profile is currently private. Make it public to enable sharing with others."
-              actionLabel="Make Public"
-              onAction={() => isOwner && togglePetPublicVisibility && togglePetPublicVisibility(enhancedPetData.id, true)}
-              variant="info"
-              className="mb-4"
-            />
-          )}
-          
-          {/* Quick Share Hub Component */}
-          {enhancedPetData?.is_public ? (
-            <QuickShareHub 
-              petData={{
-                id: enhancedPetData.id,
-                name: enhancedPetData.name
-              }}
-              isLost={enhancedPetData?.is_lost || false}
-            />
-          ) : (
-            <div className="text-center p-8 bg-gray-50 rounded-lg">
-              <p className="text-gray-600 mb-4">Share hub will be available once your pet profile is public</p>
-              <Button
-                onClick={() => isOwner && togglePetPublicVisibility && togglePetPublicVisibility(enhancedPetData.id, true)}
-                className="bg-brand-primary hover:bg-brand-primary-dark text-white"
-              >
-                <Share2 className="w-4 h-4 mr-2" />
-                Make Public to Share
-              </Button>
-            </div>
-          )}
-        </div>
       </div>
 
 

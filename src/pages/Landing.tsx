@@ -44,9 +44,9 @@ export default function Landing() {
         <div className="flex items-center gap-3">
           <AppShareButton variant="icon" />
           {user ? (
-            <Button onClick={() => navigate('/app')}>Open App</Button>
+            <Button onClick={() => navigate('/app')} className="text-white">Open App</Button>
           ) : (
-            <Button onClick={() => navigate('/auth')}>Sign In</Button>
+            <Button onClick={() => navigate('/auth')} className="text-white">Sign In</Button>
           )}
         </div>
       </header>
@@ -64,7 +64,7 @@ export default function Landing() {
               </p>
               <div className="mt-8 flex flex-col sm:flex-row gap-4">
                 {user ? (
-                  <Button onClick={() => navigate('/app')} variant="outline" size="lg" className="text-lg px-8 py-3 text-brand-primary border-brand-primary/30 hover:bg-brand-primary/10">
+                  <Button onClick={() => navigate('/app')} size="lg" className="text-lg px-8 py-3 text-white">
                     Open App
                   </Button>
                 ) : (

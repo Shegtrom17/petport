@@ -54,7 +54,7 @@ export const PetPDFGenerator = ({ petId, petName, petData }: PetPDFGeneratorProp
     {
       key: 'full',
       title: 'General Profile',
-      description: 'Full pet portfolio with all sections',
+      description: 'Essential pet information and photos from key profile sections',
       editLocation: 'All profile sections',
       editPath: '#profile',
       icon: FileText,

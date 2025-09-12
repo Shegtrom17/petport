@@ -129,7 +129,7 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
     {
       id: 'profile',
       title: 'General Profile',
-      description: 'Full pet portfolio with all sections',
+      description: 'Essential pet information and photos from key profile sections',
       icon: <FileText className="w-5 h-5" />,
       path: `/profile/${petData.id}`,
       available: true,

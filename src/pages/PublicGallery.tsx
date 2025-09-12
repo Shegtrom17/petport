@@ -2,15 +2,11 @@ import { useState, useEffect } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Camera, ArrowLeft, Download, Share2, Loader2 } from "lucide-react";
+import { Camera, ArrowLeft } from "lucide-react";
 import { MetaTags } from "@/components/MetaTags";
-import { SocialShareButtons } from "@/components/SocialShareButtons";
 import { supabase } from '@/integrations/supabase/client';
 import { Link } from 'react-router-dom';
 import { GALLERY_CONFIG } from "@/config/featureFlags";
-import { generateClientPetPDF } from "@/services/clientPdfService";
-import { useToast } from "@/hooks/use-toast";
 
 interface GalleryPhoto {
   id: string;
@@ -31,11 +27,6 @@ export const PublicGallery = () => {
   const [petData, setPetData] = useState<PetData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [isPDFDialogOpen, setIsPDFDialogOpen] = useState(false);
-  const [generatedPdfBlob, setGeneratedPdfBlob] = useState<Blob | null>(null);
-  const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
-  const [showShareOptions, setShowShareOptions] = useState(false);
-  const { toast } = useToast();
 
   const selectedPhotoIds = searchParams.get('photos')?.split(',') || [];
 
@@ -123,58 +114,6 @@ export const PublicGallery = () => {
     ? `${petData.name}'s Selected Photos`
     : `${petData.name}'s Photo Gallery`;
 
-  const handleShowPDFOptions = () => {
-    if (!photosToShow || photosToShow.length === 0) {
-      toast({
-        title: "No Photos Available",
-        description: "This gallery doesn't have any photos to include in a PDF.",
-        variant: "destructive",
-      });
-      return;
-    }
-    setIsPDFDialogOpen(true);
-    setGeneratedPdfBlob(null);
-  };
-
-  const handlePDFAction = async (action: 'view' | 'download') => {
-    setIsGeneratingPDF(true);
-    try {
-      const result = await generateClientPetPDF(petData, 'gallery');
-      
-      if (result.success && result.blob) {
-        setGeneratedPdfBlob(result.blob);
-        
-        if (action === 'download') {
-          const fileName = `${petData.name}_Photo_Gallery.pdf`;
-          const a = document.createElement('a');
-          a.href = URL.createObjectURL(result.blob);
-          a.download = fileName;
-          document.body.appendChild(a);
-          a.click();
-          document.body.removeChild(a);
-          URL.revokeObjectURL(a.href);
-          
-          toast({
-            title: "Download Started",
-            description: `${petData.name}'s photo gallery PDF is downloading.`,
-          });
-          
-          setIsPDFDialogOpen(false);
-        }
-      } else {
-        throw new Error(result.error || 'Failed to generate gallery PDF');
-      }
-    } catch (error: any) {
-      console.error('Gallery PDF generation error:', error);
-      toast({
-        title: "PDF Generation Failed",
-        description: "Failed to generate gallery PDF. Please try again.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsGeneratingPDF(false);
-    }
-  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
@@ -212,29 +151,6 @@ export const PublicGallery = () => {
                 <Camera className="w-6 h-6 text-blue-600" />
                 <span>{petData.name}'s Photos</span>
               </CardTitle>
-              
-              {/* PDF and Share Actions */}
-              <div className="flex flex-col sm:flex-row gap-2">
-                <Button
-                  onClick={handleShowPDFOptions}
-                  variant="outline"
-                  size="sm"
-                  className="flex items-center gap-2 border-blue-600 text-blue-700 hover:bg-blue-50"
-                >
-                  <Download className="w-4 h-4" />
-                  Download PDF
-                </Button>
-                
-                <Button
-                  onClick={() => setShowShareOptions(!showShareOptions)}
-                  variant="outline"
-                  size="sm"
-                  className="flex items-center gap-2 border-blue-600 text-blue-700 hover:bg-blue-50"
-                >
-                  <Share2 className="w-4 h-4" />
-                  Share Gallery
-                </Button>
-              </div>
             </div>
           </CardHeader>
           <CardContent>
@@ -283,67 +199,6 @@ export const PublicGallery = () => {
            </CardContent>
         </Card>
 
-        {/* Share Section */}
-        {showShareOptions && (
-          <div className="mt-6">
-            <SocialShareButtons 
-              petName={petData.name}
-              petId={petId || ""}
-              isMissingPet={false}
-              context="profile"
-              shareUrlOverride={window.location.href}
-              compact={false}
-            />
-          </div>
-        )}
-
-        {/* PDF Generation Dialog */}
-        <Dialog open={isPDFDialogOpen} onOpenChange={setIsPDFDialogOpen}>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Photo Gallery PDF</DialogTitle>
-            </DialogHeader>
-            <div className="space-y-4">
-              {!generatedPdfBlob ? (
-                <div className="text-center py-4">
-                  <p className="text-sm text-gray-600 mb-4">
-                    Generate a professional PDF document featuring all photos from {petData.name}'s gallery.
-                  </p>
-                  <div className="flex gap-2">
-                    <Button
-                      variant="outline"
-                      onClick={() => setIsPDFDialogOpen(false)}
-                      className="flex-1"
-                    >
-                      Cancel
-                    </Button>
-                    <Button
-                      onClick={() => handlePDFAction('download')}
-                      disabled={isGeneratingPDF}
-                      className="flex-1"
-                    >
-                      {isGeneratingPDF ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Download className="w-4 h-4 mr-2" />}
-                      {isGeneratingPDF ? "Generating..." : "Download PDF"}
-                    </Button>
-                  </div>
-                </div>
-              ) : (
-                <div className="text-center py-4">
-                  <p className="text-sm text-green-600 mb-4">PDF generated successfully!</p>
-                  <div className="flex gap-2">
-                    <Button
-                      variant="outline"
-                      onClick={() => setIsPDFDialogOpen(false)}
-                      className="flex-1"
-                    >
-                      Close
-                    </Button>
-                  </div>
-                </div>
-              )}
-            </div>
-          </DialogContent>
-        </Dialog>
 
         {/* Footer */}
         <div className="mt-12 text-center text-gray-500 text-sm pb-8">

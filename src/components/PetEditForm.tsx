@@ -371,7 +371,7 @@ export const PetEditForm = ({ petData, onSave, onCancel, togglePetPublicVisibili
 
           {/* Contact Information */}
           <div className="border-t pt-6">
-            <h3 className="text-lg font-serif text-foreground mb-4">Contact Information</h3>
+            <h3 className="text-lg font-inter text-foreground mb-4">Contact Information</h3>
             <div className="space-y-4">
               {['emergency', 'emergency_secondary', 'veterinary', 'caretaker'].map((type) => {
                 const contact = contacts.find(c => c.contact_type === type);
@@ -414,7 +414,7 @@ export const PetEditForm = ({ petData, onSave, onCancel, togglePetPublicVisibili
 
           {/* Medical Information */}
           <div className="border-t pt-6">
-            <h3 className="text-lg font-serif text-foreground mb-4">Medical Information</h3>
+            <h3 className="text-lg font-inter text-foreground mb-4">Medical Information</h3>
             <div className="space-y-4">
               <div className="flex items-center space-x-2">
                 <Switch
@@ -440,7 +440,7 @@ export const PetEditForm = ({ petData, onSave, onCancel, togglePetPublicVisibili
           {/* Organization Information */}
           {(isOrgUser || featureFlags.testMode) && (
             <div className="border-t pt-6">
-              <h3 className="text-lg font-serif text-foreground mb-4">Organization Information</h3>
+              <h3 className="text-lg font-inter text-foreground mb-4">Organization Information</h3>
               {featureFlags.testMode && !isOrgUser && (
                 <p className="text-xs text-muted-foreground mb-2">Visible due to Test Mode; changes may be restricted by server policies.</p>
               )}
@@ -512,7 +512,7 @@ export const PetEditForm = ({ petData, onSave, onCancel, togglePetPublicVisibili
 
           {/* Privacy Settings */}
           <div className="border-t pt-6">
-            <h3 className="text-lg font-serif text-foreground mb-4">Privacy Settings</h3>
+            <h3 className="text-lg font-inter text-foreground mb-4">Privacy Settings</h3>
             <PrivacyToggle
               isPublic={petData.is_public}
               onToggle={async (isPublic) => {
@@ -526,7 +526,7 @@ export const PetEditForm = ({ petData, onSave, onCancel, togglePetPublicVisibili
 
           {/* Ownership & Danger Zone */}
           <div className="border-t pt-6" id="ownership-settings">
-            <h3 className="text-lg font-serif text-foreground mb-4">Ownership & Danger Zone</h3>
+            <h3 className="text-lg font-inter text-foreground mb-4">Ownership & Danger Zone</h3>
             <p className="text-xs text-muted-foreground mb-4">Transfer account to another petport user. This action is permanent and cannot be undone.</p>
             <div className="flex flex-wrap gap-3">
               <PetTransferDialog

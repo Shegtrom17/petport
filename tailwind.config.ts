@@ -130,9 +130,8 @@ export default {
 				'modern-xl': 'var(--modern-radius-xl)',
 			},
 			fontFamily: {
+				'sans': ['Inter', 'system-ui', 'sans-serif'],
 				'inter': ['Inter', 'system-ui', 'sans-serif'],
-				'serif': ['Playfair Display', 'Crimson Text', 'serif'],
-				'passport': ['Crimson Text', 'serif'],
 			},
 			keyframes: {
 				'accordion-down': {

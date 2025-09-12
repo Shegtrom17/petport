@@ -376,14 +376,6 @@ const PublicProfile = () => {
           </CardContent>
         </Card>
 
-        {/* Social Sharing */}
-        <div className="mb-6">
-          <SocialShareButtons 
-            petName={petData.name}
-            petId={petId || ""}
-            isMissingPet={false}
-          />
-        </div>
 
         {/* Support Animal Status */}
         {petData.professional_data?.support_animal_status && (
@@ -416,21 +408,6 @@ const PublicProfile = () => {
         )}
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Contact Information - Limited for privacy */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center space-x-2">
-                <Phone className="w-5 h-5" />
-                <span>Emergency Contact Available</span>
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-gray-600 text-sm">
-                Emergency contact information is available to authorized personnel and veterinarians.
-                Contact information is protected for privacy and safety.
-              </p>
-            </CardContent>
-          </Card>
 
           {/* Reviews */}
           {petData.reviews && petData.reviews.length > 0 && (
@@ -600,6 +577,31 @@ const PublicProfile = () => {
             </CardContent>
           </Card>
         )}
+
+        {/* Social Sharing */}
+        <div className="mt-6 mb-6">
+          <SocialShareButtons 
+            petName={petData.name}
+            petId={petId || ""}
+            isMissingPet={false}
+          />
+        </div>
+
+        {/* Emergency Contact Available */}
+        <Card className="mt-6 mb-6">
+          <CardHeader>
+            <CardTitle className="flex items-center space-x-2">
+              <Phone className="w-5 h-5" />
+              <span>Emergency Contact Available</span>
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-gray-600 text-sm">
+              Emergency contact information is available to authorized personnel and veterinarians.
+              Contact information is protected for privacy and safety.
+            </p>
+          </CardContent>
+        </Card>
 
         {/* Footer */}
         <div className="mt-12 text-center text-gray-500 text-sm">

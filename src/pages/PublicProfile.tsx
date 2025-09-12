@@ -265,7 +265,25 @@ const PublicProfile = () => {
       </div>
 
       <div className="max-w-4xl mx-auto px-4 py-8">
-        {/* Pet Header */}
+        {/* Header with centered photo - like other shareable pages */}
+        <div className="text-center mb-8">
+          {petData.pet_photos?.[0]?.photo_url && (
+            <div className="mb-6">
+              <img 
+                src={petData.pet_photos[0].photo_url} 
+                alt={petData.name}
+                className="w-32 h-32 rounded-full mx-auto object-cover border-4 border-blue-200"
+              />
+            </div>
+          )}
+          <h1 className="text-4xl font-bold text-gray-900 mb-2">{petData.name}</h1>
+          <p className="text-xl text-gray-600 mb-6">
+            {petData.species && petData.species.charAt(0).toUpperCase() + petData.species.slice(1)}
+            {petData.breed && ` • ${petData.breed}`}
+          </p>
+        </div>
+
+        {/* Pet Details Card */}
         <Card className="mb-8">
           <CardContent className="p-8">
             <div className="flex flex-col md:flex-row items-center md:items-start space-y-6 md:space-y-0 md:space-x-8">
@@ -300,11 +318,7 @@ const PublicProfile = () => {
                   </div>
                 )}
 
-                <h1 className="text-4xl font-bold text-gray-900 mb-2">{petData.name}</h1>
-                <p className="text-xl text-gray-600 mb-4">
-                  {petData.species && petData.species.charAt(0).toUpperCase() + petData.species.slice(1)}
-                  {petData.breed && ` • ${petData.breed}`}
-                </p>
+                <h2 className="text-2xl font-semibold text-gray-800 mb-4">About {petData.name}</h2>
 
                 {/* Organization Info */}
                 {petData.organization_name && (

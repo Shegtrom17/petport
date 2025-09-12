@@ -18,9 +18,9 @@ interface PublicResumeData {
   sex?: string | null;
   weight?: string | null;
   height?: string | null;
-  microchip_id?: string | null;
-  registration_number?: string | null;
-  petport_id?: string | null;
+  microchipId?: string | null;
+  registrationNumber?: string | null;
+  petPortId?: string | null;
   state?: string | null;
   county?: string | null;
   is_public?: boolean;
@@ -141,8 +141,8 @@ export default function PublicResume() {
             {data.sex && <Badge variant="secondary">Sex: {data.sex}</Badge>}
             {data.weight && <Badge variant="secondary">Weight: {data.weight}</Badge>}
             {data.height && <Badge variant="secondary">Height: {data.height}</Badge>}
-            {data.registration_number && <Badge variant="secondary">Registration: {data.registration_number}</Badge>}
-            {data.microchip_id && <Badge variant="secondary">Microchip: {data.microchip_id}</Badge>}
+            {data.registrationNumber && <Badge variant="secondary">Registration: {data.registrationNumber}</Badge>}
+            {data.microchipId && <Badge variant="secondary">Microchip: {data.microchipId}</Badge>}
           </div>
           {(data.state || data.county) && (
             <div className="flex items-center justify-center gap-1 text-sm text-navy-500">
@@ -202,22 +202,22 @@ export default function PublicResume() {
                   <p className="font-semibold">{data.height}</p>
                 </div>
               )}
-              {data.registration_number && (
+              {data.registrationNumber && (
                 <div>
                   <span className="text-sm font-medium text-muted-foreground">Registration ID:</span>
-                  <p className="font-semibold">{data.registration_number}</p>
+                  <p className="font-semibold">{data.registrationNumber}</p>
                 </div>
               )}
-              {data.microchip_id && (
+              {data.microchipId && (
                 <div>
                   <span className="text-sm font-medium text-muted-foreground">Microchip ID:</span>
-                  <p className="font-semibold">{data.microchip_id}</p>
+                  <p className="font-semibold">{data.microchipId}</p>
                 </div>
               )}
-              {data.petport_id && (
+              {data.petPortId && (
                 <div>
                   <span className="text-sm font-medium text-muted-foreground">PetPort ID:</span>
-                  <p className="font-semibold">{data.petport_id}</p>
+                  <p className="font-semibold">{data.petPortId}</p>
                 </div>
               )}
             </div>

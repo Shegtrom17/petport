@@ -1,4 +1,4 @@
-const CACHE_NAME = 'petport-v5'; // Increment version to force update
+const CACHE_NAME = 'petport-v6'; // Increment version to force update
 const urlsToCache = [];
 
 self.addEventListener('install', (event) => {

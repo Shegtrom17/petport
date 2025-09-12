@@ -460,7 +460,7 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
         
         <div className="mt-4 p-3 bg-blue-50 rounded-lg">
           <p className="text-xs text-blue-700">
-            💡 <strong>Centralized Tip:</strong> Each link includes optimized social media previews that help attract new users to PetPort!
+            💡 <strong>Centralized Tip:</strong> Visit each page to add and update content for richer, more complete profiles!
           </p>
         </div>
       </CardContent>

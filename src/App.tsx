@@ -37,6 +37,7 @@ import Billing from "./pages/Billing";
 import VaccinationGuide from "./pages/VaccinationGuide";
 import Help from "./pages/Help";
 import PublicGallery from "./pages/PublicGallery";
+import PublicEmergencyProfile from "./pages/PublicEmergencyProfile";
 import EmailTest from "./pages/EmailTest";
 
 // Redirect component for credentials -> resume consolidation
@@ -104,8 +105,9 @@ const App = () => {
                        <VaccinationGuide />
                      </ProtectedRoute>
                    } />
-                    <Route path="/profile/:petId" element={<PublicProfile />} />
-                    <Route path="/care/:petId" element={<PublicCareInstructions />} />
+                     <Route path="/profile/:petId" element={<PublicProfile />} />
+                     <Route path="/emergency/:petId" element={<PublicEmergencyProfile />} />
+                     <Route path="/care/:petId" element={<PublicCareInstructions />} />
                      <Route path="/credentials/:petId" element={<CredentialsRedirect />} />
                      <Route path="/resume/:petId" element={<PublicResume />} />
                     <Route path="/reviews/:petId" element={<PublicReviews />} />

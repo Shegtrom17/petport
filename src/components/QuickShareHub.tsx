@@ -91,11 +91,11 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
 
   const sharePages: SharePage[] = [
     {
-      id: 'profile',
+      id: 'emergency',
       title: 'Emergency Profile',
-      description: 'Complete pet information & contacts',
+      description: 'Essential emergency contact & medical info',
       icon: <Shield className="w-5 h-5" />,
-      path: `/profile/${petData.id}`,
+      path: `/emergency/${petData.id}`,
       available: true,
       variant: 'default'
     },
@@ -127,11 +127,11 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
       variant: 'default'
     },
     {
-      id: 'reviews',
-      title: 'Reviews & Stories',
-      description: 'Community feedback & experiences',
-      icon: <Star className="w-5 h-5" />,
-      path: `/reviews/${petData.id}`,
+      id: 'profile',
+      title: 'Complete Profile',
+      description: 'Full pet portfolio with all sections',
+      icon: <FileText className="w-5 h-5" />,
+      path: `/profile/${petData.id}`,
       available: true,
       variant: 'default'
     },
@@ -225,10 +225,10 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
     }
 
     const fullUrl = `${baseUrl}${currentPage.path}`;
-    const shareType = currentPage.id === 'profile' ? 'profile' : 
+    const shareType = currentPage.id === 'emergency' ? 'profile' :
+                      currentPage.id === 'profile' ? 'profile' : 
                       currentPage.id === 'care' ? 'care' : 
                       currentPage.id === 'resume' ? 'resume' : 
-                      currentPage.id === 'reviews' ? 'reviews' : 
                       currentPage.id === 'missing' ? 'missing_pet' : 'profile';
 
     const success = await sendEmail({

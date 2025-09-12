@@ -129,7 +129,7 @@ export default function PublicResume() {
               />
             </div>
           )}
-          <h1 className="text-3xl font-serif font-bold text-navy-900 mb-2">
+          <h1 className="text-3xl font-sans font-bold text-navy-900 mb-2">
             {data.name}'s Resume
           </h1>
           <div className="flex flex-wrap items-center justify-center gap-2 text-navy-600 mb-2">

@@ -277,14 +277,10 @@ export default function Landing() {
               <div className="mb-6 rounded-2xl overflow-hidden shadow-lg">
                 <AspectRatio ratio={4 / 3}>
                   <img 
-                    src="/lovable-uploads/how-it-works-1-create.webp" 
+                    src="/src/assets/create-profile-screenshot.png" 
                     alt="Creating a pet profile - Add your pet's basic info, photos, and personality details"
                     className="w-full h-full object-cover"
                     loading="lazy"
-                    onError={(e) => {
-                      // Fallback to placeholder if image doesn't exist yet
-                      e.currentTarget.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='300' viewBox='0 0 400 300'%3E%3Crect width='400' height='300' fill='%23f3f4f6'/%3E%3Ctext x='200' y='150' text-anchor='middle' dy='.3em' fill='%236b7280' font-family='sans-serif' font-size='14'%3EStep 1 Screenshot%3C/text%3E%3C/svg%3E";
-                    }}
                   />
                 </AspectRatio>
               </div>

@@ -21,6 +21,8 @@ interface PublicResumeData {
   microchip_id?: string | null;
   registration_number?: string | null;
   petport_id?: string | null;
+  state?: string | null;
+  county?: string | null;
   is_public?: boolean;
   supportAnimalStatus?: string | null;
   photoUrl?: string;
@@ -127,12 +129,27 @@ export default function PublicResume() {
               />
             </div>
           )}
-          <h1 className="text-3xl font-extrabold tracking-tight text-navy-900">
+          <h1 className="text-3xl font-serif font-bold text-navy-900 mb-2">
             {data.name} – Resume
           </h1>
-          <p className="mt-2 text-navy-600">
-            {data.species || ''} {data.breed ? `• ${data.breed}` : ''}
-          </p>
+          <div className="flex flex-wrap items-center justify-center gap-2 text-navy-600 mb-2">
+            {data.breed && <Badge variant="secondary">{data.breed}</Badge>}
+            {data.species && <Badge variant="secondary">{data.species}</Badge>}
+            {data.age && <Badge variant="secondary">Age: {data.age}</Badge>}
+          </div>
+          <div className="flex flex-wrap items-center justify-center gap-2 text-navy-600 mb-4">
+            {data.sex && <Badge variant="secondary">Sex: {data.sex}</Badge>}
+            {data.weight && <Badge variant="secondary">Weight: {data.weight}</Badge>}
+            {data.height && <Badge variant="secondary">Height: {data.height}</Badge>}
+            {data.registration_number && <Badge variant="secondary">Registration: {data.registration_number}</Badge>}
+            {data.microchip_id && <Badge variant="secondary">Microchip: {data.microchip_id}</Badge>}
+          </div>
+          {(data.state || data.county) && (
+            <div className="flex items-center justify-center gap-1 text-sm text-navy-500">
+              <MapPin className="w-4 h-4" />
+              <span>{[data.county, data.state].filter(Boolean).join(', ')}</span>
+            </div>
+          )}
         </header>
 
         {/* Pet Information Section */}

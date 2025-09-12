@@ -25,10 +25,11 @@ export default function Landing() {
       setShowSharePrompt(true);
     }
     
-    if (user && !isPreview) {
+    // Only auto-redirect from the root ("/") so logged-in users can view /landing
+    if (user && !isPreview && location.pathname === "/") {
       navigate('/app', { replace: true });
     }
-  }, [user, navigate, location.search]);
+  }, [user, navigate, location.search, location.pathname]);
 
   return (
     <div className="min-h-screen bg-white">

@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { supabase } from "@/integrations/supabase/client";
 import { Heart, MapPin, Phone, Calendar, Star, Award, GraduationCap, Plane, Trophy, Briefcase, Shield, Building, Mail, Globe } from "lucide-react";
-import { SocialShareButtons } from "@/components/SocialShareButtons";
+
 import { MetaTags } from "@/components/MetaTags";
 import { sanitizeText, sanitizeHtml } from "@/utils/inputSanitizer";
 
@@ -232,38 +232,6 @@ const PublicProfile = () => {
       />
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 passport-map-container">
       <div className="passport-map-bg" />
-      {/* Header */}
-      <div className="bg-white shadow-sm border-b relative passport-map-container">
-        <div 
-          className="absolute inset-0"
-          style={{
-            backgroundImage: `
-              linear-gradient(to bottom, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0.4) 70%, rgba(255,255,255,0.2) 100%),
-              url(${worldMapOutline}),
-              linear-gradient(45deg, transparent 48%, rgba(160, 82, 45, 0.12) 49%, rgba(160, 82, 45, 0.12) 51%, transparent 52%),
-              linear-gradient(45deg, rgba(205, 133, 63, 0.04) 25%, transparent 25%),
-              linear-gradient(-45deg, rgba(222, 184, 135, 0.04) 25%, transparent 25%)
-            `,
-            backgroundSize: '100% 100%, contain, 8px 8px, 6px 6px, 6px 6px',
-            backgroundPosition: 'center, center, 0 0, 0 0, 0 3px',
-            backgroundRepeat: 'no-repeat, no-repeat, repeat, repeat, repeat',
-            opacity: 0.15,
-            zIndex: 0,
-            pointerEvents: 'none'
-          }}
-        />
-        <div className="max-w-4xl mx-auto px-4 py-6 relative z-10">
-          <div className="flex items-center space-x-4">
-            <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center">
-              <span className="text-2xl">🐾</span>
-            </div>
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900">PetPort Public Profile</h1>
-              <p className="text-gray-600">Read-only pet information</p>
-            </div>
-          </div>
-        </div>
-      </div>
 
       <div className="max-w-4xl mx-auto px-4 py-8">
         {/* Header with centered photo - like other shareable pages */}
@@ -612,14 +580,6 @@ const PublicProfile = () => {
           </Card>
         )}
 
-        {/* Social Sharing */}
-        <div className="mt-6 mb-6">
-          <SocialShareButtons 
-            petName={petData.name}
-            petId={petId || ""}
-            isMissingPet={false}
-          />
-        </div>
 
         {/* Emergency Contact Available */}
         <Card className="mt-6 mb-6">

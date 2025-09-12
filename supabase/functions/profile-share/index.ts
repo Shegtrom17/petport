@@ -40,7 +40,7 @@ serve(async (req) => {
       auth: { persistSession: false, autoRefreshToken: false },
     });
 
-    // Fetch pet data to ensure it exists and is public
+    // Fetch minimal public-safe data including photo info
     const { data: pet, error: petErr } = await supabase
       .from("pets")
       .select("id, name, species, breed, is_public")
@@ -55,6 +55,16 @@ serve(async (req) => {
         headers: { ...corsHeaders, "Content-Type": "text/plain" },
       });
     }
+
+    // Try to get a photo from pet_photos
+    let photoUrl = "";
+    const { data: photos } = await supabase
+      .from("pet_photos")
+      .select("photo_url")
+      .eq("pet_id", petId)
+      .limit(1)
+      .maybeSingle();
+    photoUrl = (photos as any)?.photo_url || "";
 
     const name = pet.name || "Pet";
     const safe = (s: string | null | undefined) => (s || "").toString().replace(/</g, "&lt;").replace(/>/g, "&gt;").trim();
@@ -102,12 +112,14 @@ serve(async (req) => {
     .muted { color: #6b7280; margin-top: 0.5rem; }
     h1 { color: #1e293b; margin-bottom: 1rem; }
     p { color: #475569; }
+    img { max-width: 100%; height: auto; border-radius: 0.75rem; margin-top: 1rem; }
   </style>
 </head>
 <body>
   <div class="container">
     <h1>${safe(name)}'s PetPort Profile</h1>
     <p>${description}</p>
+    ${photoUrl ? `<img alt="Photo of ${safe(name)}" src="${photoUrl}" />` : ""}
     ${redirect ? `<p><a class="btn" href="${redirect}">View ${safe(name)}'s Profile</a></p>` : ""}
     ${redirect ? `<p class="muted">If you are not redirected automatically, use the button above.</p>` : ""}
   </div>

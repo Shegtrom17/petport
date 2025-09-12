@@ -149,7 +149,7 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
   const handleCopyLink = async (page: SharePage) => {
     setCopyingId(page.id);
     try {
-      const fullUrl = `${baseUrl}${page.path}`;
+      const fullUrl = page.path.startsWith('http') ? page.path : `${baseUrl}${page.path}`;
       await navigator.clipboard.writeText(fullUrl);
       toast({
         title: "Link Copied!",
@@ -169,7 +169,7 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
 
   const handleNativeShare = async (page: SharePage) => {
     setSharingId(page.id);
-    const fullUrl = `${baseUrl}${page.path}`;
+    const fullUrl = page.path.startsWith('http') ? page.path : `${baseUrl}${page.path}`;
     
     if (navigator.share) {
       try {
@@ -192,19 +192,19 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
   };
 
   const handleSMSShare = (page: SharePage) => {
-    const fullUrl = `${baseUrl}${page.path}`;
+    const fullUrl = page.path.startsWith('http') ? page.path : `${baseUrl}${page.path}`;
     const message = `Check out ${petData.name}'s ${page.title}: ${fullUrl}`;
     window.location.href = `sms:?body=${encodeURIComponent(message)}`;
   };
 
   const handleFacebookShare = (page: SharePage) => {
-    const fullUrl = `${baseUrl}${page.path}`;
+    const fullUrl = page.path.startsWith('http') ? page.path : `${baseUrl}${page.path}`;
     const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(fullUrl)}`;
     window.open(facebookUrl, '_blank');
   };
 
   const handleMessengerShare = (page: SharePage) => {
-    const fullUrl = `${baseUrl}${page.path}`;
+    const fullUrl = page.path.startsWith('http') ? page.path : `${baseUrl}${page.path}`;
     const messengerUrl = `https://www.facebook.com/dialog/send?link=${encodeURIComponent(fullUrl)}&app_id=YOUR_APP_ID&redirect_uri=${encodeURIComponent(fullUrl)}`;
     window.open(messengerUrl, '_blank');
   };
@@ -224,7 +224,7 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
       return;
     }
 
-    const fullUrl = `${baseUrl}${currentPage.path}`;
+    const fullUrl = currentPage.path.startsWith('http') ? currentPage.path : `${baseUrl}${currentPage.path}`;
     const shareType = currentPage.id === 'emergency' ? 'profile' :
                       currentPage.id === 'profile' ? 'profile' : 
                       currentPage.id === 'care' ? 'care' : 
@@ -249,7 +249,7 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
   };
 
   const handleOpenLink = (page: SharePage) => {
-    const fullUrl = `${baseUrl}${page.path}`;
+    const fullUrl = page.path.startsWith('http') ? page.path : `${baseUrl}${page.path}`;
     window.open(fullUrl, '_blank');
   };
 

@@ -217,7 +217,8 @@ const PublicProfile = () => {
   const profileDescription = petData.bio 
     ? `Meet ${petData.name}! ${petData.bio.slice(0, 150)}${petData.bio.length > 150 ? '...' : ''}`
     : `Meet ${petData.name}, a ${petData.species || 'pet'}${petData.breed ? ` (${petData.breed})` : ''} on PetPort.`;
-  const profileImage = petData.pet_photos?.[0]?.photo_url;
+  const heroImage = petData.pet_photos?.[0]?.photo_url || petData.gallery_photos?.[0]?.url;
+  const profileImage = heroImage;
   const profileUrl = `${window.location.origin}/profile/${petId}`;
 
   return (
@@ -267,11 +268,12 @@ const PublicProfile = () => {
       <div className="max-w-4xl mx-auto px-4 py-8">
         {/* Header with centered photo - like other shareable pages */}
         <div className="text-center mb-8">
-          {petData.pet_photos?.[0]?.photo_url && (
+          {heroImage && (
             <div className="mb-6">
               <img 
-                src={petData.pet_photos[0].photo_url} 
-                alt={petData.name}
+                src={heroImage} 
+                alt={`${petData.name} profile photo`}
+                loading="lazy"
                 className="w-32 h-32 rounded-full mx-auto object-cover border-4 border-blue-200"
               />
             </div>

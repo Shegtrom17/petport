@@ -352,6 +352,12 @@ const PublicProfile = () => {
                       <span>{petData.weight}</span>
                     </div>
                   )}
+                  {petData.sex && (
+                    <div className="flex items-center space-x-2">
+                      <span className="w-4 h-4 text-blue-600">♂♀</span>
+                      <span>{petData.sex}</span>
+                    </div>
+                  )}
                   {petData.state && (
                     <div className="flex items-center space-x-2">
                       <MapPin className="w-4 h-4 text-blue-600" />
@@ -362,6 +368,18 @@ const PublicProfile = () => {
                     <div className="flex items-center space-x-2">
                       <span className="w-4 h-4 text-blue-600">🆔</span>
                       <span>{petData.petport_id}</span>
+                    </div>
+                  )}
+                  {petData.microchip_id && (
+                    <div className="flex items-center space-x-2">
+                      <span className="w-4 h-4 text-blue-600">🔘</span>
+                      <span>{petData.microchip_id}</span>
+                    </div>
+                  )}
+                  {petData.registration_number && (
+                    <div className="flex items-center space-x-2">
+                      <span className="w-4 h-4 text-blue-600">📋</span>
+                      <span>{petData.registration_number}</span>
                     </div>
                   )}
                 </div>

@@ -521,14 +521,23 @@ export const PetProfileContent = ({
         </div>
       </div>
 
-      {/* Contacts Display Section */}
+      {/* PDF Generator Section */}
+      <div className="mb-8">
+        <PetPDFGenerator
+          petId={enhancedPetData.id}
+          petName={enhancedPetData.name}
+          petData={enhancedPetData}
+        />
+      </div>
+
+      {/* Contacts Display Section - Moved to bottom */}
       <div className="mb-8">
         <div className="bg-white/50 backdrop-blur-sm rounded-2xl p-6">
           <ContactsDisplay petId={enhancedPetData?.id} />
         </div>
       </div>
 
-      {/* Quick Share Hub Section */}
+      {/* Quick Share Hub Section - Moved to bottom */}
       <div className="mb-8">
         <div className="bg-white/50 backdrop-blur-sm rounded-2xl p-6">
           <SectionHeader
@@ -578,15 +587,6 @@ export const PetProfileContent = ({
             </div>
           )}
         </div>
-      </div>
-
-      {/* PDF Generator Section */}
-      <div className="mb-8">
-        <PetPDFGenerator
-          petId={enhancedPetData.id}
-          petName={enhancedPetData.name}
-          petData={enhancedPetData}
-        />
       </div>
 
 

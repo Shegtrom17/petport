@@ -303,12 +303,6 @@ export const PetPDFGenerator = ({ petId, petName, petData }: PetPDFGeneratorProp
         </Alert>
       )}
 
-      {/* Instructions */}
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
-        <p className="text-sm text-blue-800">
-          <strong>💡 How to use:</strong> PDF content comes from specific profile sections. Use the Edit buttons in each section to add/update information. PDFs can be generated from both the section edit pages and this quick access hub.
-        </p>
-      </div>
 
       {/* Document generation buttons in grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">

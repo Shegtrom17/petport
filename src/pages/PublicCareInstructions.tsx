@@ -16,6 +16,10 @@ interface Pet {
   species: string;
   age: string;
   weight: string;
+  height?: string;
+  sex?: string;
+  microchipId?: string;
+  registrationNumber?: string;
   state: string;
   county: string;
   is_public: boolean;
@@ -237,10 +241,17 @@ const PublicCareInstructions = () => {
           <h1 className="text-3xl font-serif font-bold text-navy-900 mb-2">
             {pet.name}'s Care Instructions
           </h1>
-          <div className="flex items-center justify-center gap-2 text-navy-600 mb-4">
+          <div className="flex flex-wrap items-center justify-center gap-2 text-navy-600 mb-2">
             {pet.breed && <Badge variant="secondary">{pet.breed}</Badge>}
             {pet.species && <Badge variant="secondary">{pet.species}</Badge>}
-            {pet.age && <Badge variant="secondary">{pet.age}</Badge>}
+            {pet.age && <Badge variant="secondary">Age: {pet.age}</Badge>}
+          </div>
+          <div className="flex flex-wrap items-center justify-center gap-2 text-navy-600 mb-4">
+            {pet.sex && <Badge variant="secondary">Sex: {pet.sex}</Badge>}
+            {pet.weight && <Badge variant="secondary">Weight: {pet.weight}</Badge>}
+            {pet.height && <Badge variant="secondary">Height: {pet.height}</Badge>}
+            {pet.registrationNumber && <Badge variant="secondary">Registration: {pet.registrationNumber}</Badge>}
+            {pet.microchipId && <Badge variant="secondary">Microchip: {pet.microchipId}</Badge>}
           </div>
           {(pet.state || pet.county) && (
             <div className="flex items-center justify-center gap-1 text-sm text-navy-500">

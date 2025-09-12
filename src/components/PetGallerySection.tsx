@@ -423,6 +423,14 @@ export const PetGallerySection = ({ petData, onUpdate }: PetGallerySectionProps)
                 <span className="hidden sm:inline">Download PDF</span>
                 <span className="sm:hidden">PDF</span>
               </div>
+              <div 
+                onClick={handleShareAction}
+                className={`cursor-pointer flex items-center justify-center text-white hover:text-yellow-300 hover:scale-110 transition-all duration-200 text-xs sm:text-base px-2 sm:px-4 py-2 ${galleryPhotos.length === 0 ? 'opacity-50 cursor-not-allowed' : ''}`}
+              >
+                <Share2 className="w-3 h-3 sm:w-5 sm:h-5 mr-1 sm:mr-2" />
+                <span className="hidden sm:inline">Share Gallery</span>
+                <span className="sm:hidden">Share</span>
+              </div>
             </div>
           </div>
         </CardContent>
@@ -756,6 +764,105 @@ export const PetGallerySection = ({ petData, onUpdate }: PetGallerySectionProps)
           </DialogContent>
         </Dialog>
       )}
+
+      {/* Share Sheet */}
+      <Sheet open={isShareSheetOpen} onOpenChange={setIsShareSheetOpen}>
+        <SheetContent className="w-full sm:max-w-md">
+          <SheetHeader>
+            <SheetTitle className="flex items-center space-x-2">
+              <Share2 className="w-5 h-5" />
+              <span>Share Photo Gallery</span>
+            </SheetTitle>
+          </SheetHeader>
+          
+          <div className="mt-6 space-y-4">
+            {/* Quick Actions */}
+            <div className="grid grid-cols-2 gap-2">
+              <Button
+                onClick={handleCopyLink}
+                variant="outline"
+                className="flex items-center justify-center space-x-2"
+              >
+                <Copy className="w-4 h-4" />
+                <span>Copy Link</span>
+              </Button>
+              <Button
+                onClick={handlePreview}
+                variant="outline"
+                className="flex items-center justify-center space-x-2"
+              >
+                <ExternalLink className="w-4 h-4" />
+                <span>Preview</span>
+              </Button>
+            </div>
+
+            {/* Photo Selection */}
+            {galleryPhotos.length > 1 && (
+              <div className="border-t pt-4">
+                <div className="flex items-center justify-between mb-3">
+                  <span className="text-sm font-medium">Photos to share</span>
+                  {!isSelectionMode ? (
+                    <Button
+                      onClick={handleStartSelection}
+                      variant="ghost"
+                      size="sm"
+                      className="text-xs"
+                    >
+                      Select Photos
+                    </Button>
+                  ) : (
+                    <div className="flex space-x-2">
+                      <Button
+                        onClick={selectAllPhotos}
+                        variant="ghost"
+                        size="sm"
+                        className="text-xs"
+                      >
+                        {selectedPhotos.length === galleryPhotos.length ? 'Clear All' : 'Select All'}
+                      </Button>
+                      <Button
+                        onClick={handleCancelSelection}
+                        variant="ghost"
+                        size="sm"
+                        className="text-xs"
+                      >
+                        Done
+                      </Button>
+                    </div>
+                  )}
+                </div>
+                <p className="text-sm text-muted-foreground">
+                  {isSelectionMode 
+                    ? `${selectedPhotos.length} of ${galleryPhotos.length} photos selected`
+                    : `Sharing all ${galleryPhotos.length} photos`
+                  }
+                </p>
+              </div>
+            )}
+
+            {/* Social Share Buttons */}
+            <div className="border-t pt-4">
+              <SocialShareButtons
+                petName={petData.name}
+                petId={petData.id}
+                context="profile"
+                compact={true}
+                shareUrlOverride={generateShareableUrl()}
+              />
+            </div>
+
+            {/* Share URL Display */}
+            <div className="border-t pt-4">
+              <Label className="text-sm font-medium">Share URL</Label>
+              <div className="mt-2 p-3 bg-muted rounded-md">
+                <p className="text-xs text-muted-foreground break-all">
+                  {generateShareableUrl()}
+                </p>
+              </div>
+            </div>
+          </div>
+        </SheetContent>
+      </Sheet>
     </div>
   );
 };

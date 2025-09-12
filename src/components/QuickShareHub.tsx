@@ -131,7 +131,7 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
       title: 'General Profile',
       description: 'Essential pet information and photos from key profile sections',
       icon: <FileText className="w-5 h-5" />,
-      path: `/profile/${petData.id}`,
+      path: `https://dxghbhujugsfmaecilrq.supabase.co/functions/v1/profile-share?petId=${petData.id}&redirect=${encodeURIComponent(`${baseUrl}/profile/${petData.id}`)}`,
       available: true,
       variant: 'default'
     },

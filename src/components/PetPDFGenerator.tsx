@@ -53,7 +53,7 @@ export const PetPDFGenerator = ({ petId, petName, petData }: PetPDFGeneratorProp
     },
     {
       key: 'full',
-      title: 'Complete Profile',
+      title: 'General Profile',
       description: 'Full pet portfolio with all sections',
       editLocation: 'All profile sections',
       editPath: '#profile',

@@ -34,7 +34,7 @@ export const ProfileCompletionHint: React.FC<ProfileCompletionHintProps> = ({
               className="ml-4 text-blue-600 border-blue-200 hover:bg-blue-100"
             >
               <Edit className="w-3 h-3 mr-1" />
-              Complete Profile
+              General Profile
             </Button>
           )}
         </div>

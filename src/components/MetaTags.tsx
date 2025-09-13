@@ -1,5 +1,4 @@
 import { useEffect } from 'react';
-import { getOGImageUrl, type OGContext } from '@/utils/ogImageSelector';
 
 interface MetaTagsProps {
   title: string;
@@ -7,13 +6,10 @@ interface MetaTagsProps {
   image?: string;
   url: string;
   type?: string;
-  context?: OGContext;
-  isLost?: boolean;
 }
 
-export const MetaTags = ({ title, description, image, url, type = "website", context = 'app', isLost = false }: MetaTagsProps) => {
-  const smartOGImage = context ? getOGImageUrl(context, isLost) : getOGImageUrl('app');
-  const ogImage = image || smartOGImage;
+export const MetaTags = ({ title, description, image, url, type = "website" }: MetaTagsProps) => {
+  const ogImage = image || "https://pub-a7c2c18b8d6143b9a256105ef44f2da0.r2.dev/OG%20General.png";
   useEffect(() => {
     // Update document title
     document.title = title;
@@ -51,7 +47,7 @@ export const MetaTags = ({ title, description, image, url, type = "website", con
     updateMetaTag('og:image:type', 'image/png');
     updateMetaTag('og:image:width', '1200');
     updateMetaTag('og:image:height', '630');
-    updateMetaTag('og:image:alt', `PetPort ${context} preview`);
+    updateMetaTag('og:image:alt', 'PetPort digital pet passport preview');
 
     // Twitter Card tags
     updateNameTag('twitter:card', 'summary_large_image');

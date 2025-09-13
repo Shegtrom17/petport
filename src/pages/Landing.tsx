@@ -184,7 +184,7 @@ export default function Landing() {
 
                   <div className="mt-4 p-4 bg-blue-100 rounded-lg">
                     <p className="text-blue-800 font-medium text-center">
-                      Easy uploads • Cloud‑secure • Everything in one place — no more lost papers.
+                      Cloud‑secure • no more lost papers or searching computer files and gallery photos.
                     </p>
                   </div>
                 </div>

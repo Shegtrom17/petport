@@ -196,7 +196,7 @@ export default function Landing() {
                   <div className="w-16 h-16 bg-green-200 rounded-full flex items-center justify-center border-2 border-dashed border-green-400">
                     <span className="text-green-600">🤝</span>
                   </div>
-                  <h3 className="text-2xl font-semibold text-brand-primary">For Foster Caregivers</h3>
+                  <h3 className="text-2xl font-semibold text-brand-primary">Perfect App for Foster Caregivers</h3>
                 </div>
                 
                 <div className="grid gap-4">

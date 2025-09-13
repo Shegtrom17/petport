@@ -341,7 +341,7 @@ export default function Landing() {
           <div className="space-y-6">
             <div className="bg-white rounded-xl shadow-sm p-6">
               <h3 className="text-lg font-semibold text-brand-primary mb-2">What is the primary focus of this app?</h3>
-              <p className="text-brand-primary-dark">We focus on preserving and sharing your pet's life story. Unlike a simple appointment tracker, Petport captures —all documents/records, care instructions, achievments, even refferals. This ensures a seamless relay of information, whether to a pet sitter, vet or a new family.</p>
+              <p className="text-brand-primary-dark">We focus on preserving and sharing your pet's life story. Unlike a simple appointment tracker, Petport captures —all documents/records, care instructions, achievements, even referrals. This ensures a seamless relay of information, whether to a pet sitter, vet or a new family.</p>
             </div>
             
             <div className="bg-white rounded-xl shadow-sm p-6">

@@ -8,7 +8,7 @@ const corsHeaders = {
 };
 
 interface EmailRequest {
-  type: 'profile' | 'care' | 'credentials' | 'resume' | 'reviews' | 'missing_pet';
+  type: 'profile' | 'care' | 'credentials' | 'resume' | 'reviews' | 'missing_pet' | 'app_share';
   recipientEmail: string;
   recipientName?: string;
   petName: string;

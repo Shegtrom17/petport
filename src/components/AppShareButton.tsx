@@ -79,13 +79,12 @@ export const AppShareButton = ({ variant = "icon", className = "" }: AppShareBut
       const { data, error } = await supabase.functions.invoke('send-email', {
         body: {
           type: 'app_share',
-          toEmail: emailForm.to,
+          recipientEmail: emailForm.to,
           petName: 'PetPort App',
+          petId: 'app-share',
           senderName: 'A PetPort user',
           shareUrl: appUrl,
-          customMessage: emailForm.message || `Check out PetPort - the digital passport for your pets! Create beautiful profiles, store emergency info, and share with caregivers. Finally... Everything Your Pet Needs.
-
-Visit: ${appUrl}`
+          customMessage: emailForm.message
         }
       });
 

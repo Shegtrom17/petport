@@ -131,7 +131,7 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
       title: 'General Profile',
       description: 'Essential pet information and photos from key profile sections',
       icon: <FileText className="w-5 h-5" />,
-      path: `https://dxghbhujugsfmaecilrq.supabase.co/functions/v1/profile-share?petId=${petData.id}&redirect=${encodeURIComponent(`${baseUrl}/profile/${petData.id}`)}`,
+      path: `/profile/${petData.id}`, // Direct URL for humans
       available: true,
       variant: 'default'
     },
@@ -146,11 +146,28 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
     }
   ];
 
+  // Generate edge function URLs for social media (OG tags)
+  const getEdgeFunctionUrl = (page: SharePage): string => {
+    const edgeShareBase = `https://dxghbhujugsfmaecilrq.supabase.co/functions/v1`;
+    const directUrl = `${baseUrl}${page.path}`;
+    const redirectParam = encodeURIComponent(directUrl);
+    const cacheBuster = `v=${Date.now()}`;
+    
+    if (page.id === 'missing') {
+      return `${edgeShareBase}/missing-pet-share?petId=${encodeURIComponent(petData.id!)}&redirect=${redirectParam}&${cacheBuster}`;
+    } else if (page.id === 'resume') {
+      return `${edgeShareBase}/resume-share?petId=${encodeURIComponent(petData.id!)}&redirect=${redirectParam}&${cacheBuster}`;
+    } else {
+      return `${edgeShareBase}/profile-share?petId=${encodeURIComponent(petData.id!)}&redirect=${redirectParam}&${cacheBuster}`;
+    }
+  };
+
   const handleCopyLink = async (page: SharePage) => {
     setCopyingId(page.id);
     try {
-      const fullUrl = page.path.startsWith('http') ? page.path : `${baseUrl}${page.path}`;
-      await navigator.clipboard.writeText(fullUrl);
+      // Use direct URL for copy (better UX for humans)
+      const directUrl = `${baseUrl}${page.path}`;
+      await navigator.clipboard.writeText(directUrl);
       toast({
         title: "Link Copied!",
         description: `${page.title} link copied to clipboard`,
@@ -169,14 +186,15 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
 
   const handleNativeShare = async (page: SharePage) => {
     setSharingId(page.id);
-    const fullUrl = page.path.startsWith('http') ? page.path : `${baseUrl}${page.path}`;
+    // Use direct URL for native share (better UX for humans)
+    const directUrl = `${baseUrl}${page.path}`;
     
     if (navigator.share) {
       try {
         await navigator.share({
           title: `${petData.name}'s ${page.title}`,
           text: page.description,
-          url: fullUrl,
+          url: directUrl,
         });
       } catch (error: any) {
         if (!error?.message?.toLowerCase?.().includes('cancel')) {
@@ -192,20 +210,22 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
   };
 
   const handleSMSShare = (page: SharePage) => {
-    const fullUrl = page.path.startsWith('http') ? page.path : `${baseUrl}${page.path}`;
-    const message = `Check out ${petData.name}'s ${page.title}: ${fullUrl}`;
+    const directUrl = `${baseUrl}${page.path}`;
+    const message = `Check out ${petData.name}'s ${page.title}: ${directUrl}`;
     window.location.href = `sms:?body=${encodeURIComponent(message)}`;
   };
 
   const handleFacebookShare = (page: SharePage) => {
-    const fullUrl = page.path.startsWith('http') ? page.path : `${baseUrl}${page.path}`;
-    const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(fullUrl)}`;
+    // Use edge function URL for Facebook to get OG tags
+    const edgeUrl = getEdgeFunctionUrl(page);
+    const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(edgeUrl)}`;
     window.open(facebookUrl, '_blank');
   };
 
   const handleMessengerShare = (page: SharePage) => {
-    const fullUrl = page.path.startsWith('http') ? page.path : `${baseUrl}${page.path}`;
-    const messengerUrl = `https://www.facebook.com/dialog/send?link=${encodeURIComponent(fullUrl)}&app_id=YOUR_APP_ID&redirect_uri=${encodeURIComponent(fullUrl)}`;
+    // Use edge function URL for Messenger to get OG tags
+    const edgeUrl = getEdgeFunctionUrl(page);
+    const messengerUrl = `https://www.facebook.com/dialog/send?link=${encodeURIComponent(edgeUrl)}&app_id=YOUR_APP_ID&redirect_uri=${encodeURIComponent(edgeUrl)}`;
     window.open(messengerUrl, '_blank');
   };
 
@@ -224,7 +244,7 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
       return;
     }
 
-    const fullUrl = currentPage.path.startsWith('http') ? currentPage.path : `${baseUrl}${currentPage.path}`;
+    const directUrl = `${baseUrl}${currentPage.path}`;
     const shareType = currentPage.id === 'emergency' ? 'profile' :
                       currentPage.id === 'profile' ? 'profile' : 
                       currentPage.id === 'care' ? 'care' : 
@@ -237,7 +257,7 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
       recipientName: emailData.recipientName,
       petName: petData.name,
       petId: petData.id!,
-      shareUrl: fullUrl,
+      shareUrl: directUrl,
       customMessage: emailData.customMessage,
     });
 
@@ -249,8 +269,8 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
   };
 
   const handleOpenLink = (page: SharePage) => {
-    const fullUrl = page.path.startsWith('http') ? page.path : `${baseUrl}${page.path}`;
-    window.open(fullUrl, '_blank');
+    const directUrl = `${baseUrl}${page.path}`;
+    window.open(directUrl, '_blank');
   };
 
   // Show all pages, but Lost Pet will be disabled if not available

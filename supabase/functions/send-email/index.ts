@@ -88,6 +88,30 @@ const generateEmailTemplate = (data: EmailRequest) => {
         ${customMessage ? `<blockquote style="border-left: 4px solid #dc2626; padding-left: 16px; margin: 16px 0; font-style: italic;">"${customMessage}"</blockquote>` : ''}
         <p style="color: #dc2626; font-weight: bold;">Time is critical - please share this alert with others!</p>
       `
+    },
+    app_share: {
+      subject: `Check out PetPort - Digital Pet Passport App`,
+      content: `
+        <h2>🐾 You've been invited to try PetPort!</h2>
+        <p>${sender} thought you'd love PetPort - the digital passport for your pets!</p>
+        
+        <div style="background: #f8fafc; padding: 20px; border-radius: 8px; margin: 20px 0;">
+          <h3 style="margin-top: 0; color: #374151;">✨ Finally... Everything Your Pet Needs</h3>
+          <p style="margin: 10px 0; color: #6b7280;">Your pet doesn't have a voice. Give them a permanent record.</p>
+          
+          <ul style="color: #4b5563; margin: 15px 0; padding-left: 20px;">
+            <li>Create beautiful digital profiles for your pets</li>
+            <li>Store emergency information and medical records</li>
+            <li>Share profiles with caregivers, vets, and boarders</li>
+            <li>Generate missing pet flyers with QR codes</li>
+            <li>Keep vaccination records and important documents safe</li>
+          </ul>
+        </div>
+        
+        ${customMessage ? `<blockquote style="border-left: 4px solid #3b82f6; padding-left: 16px; margin: 16px 0; font-style: italic; background-color: #f8fafc;">"${customMessage}"</blockquote>` : ''}
+        
+        <p>Join thousands of pet owners who trust PetPort to keep their pets safe and organized.</p>
+      `
     }
   };
 
@@ -185,6 +209,9 @@ const handler = async (req: Request): Promise<Response> => {
       },
       missing_pet: {
         subject: `🚨 MISSING PET ALERT - ${emailData.petName} needs your help!`
+      },
+      app_share: {
+        subject: `Check out PetPort - Digital Pet Passport App`
       }
     };
 

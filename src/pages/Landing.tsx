@@ -127,7 +127,7 @@ export default function Landing() {
                     </div>
                     <div>
                       <strong className="text-brand-primary">One‑Tap Missing Pet Flyer</strong>
-                      <p className="text-brand-primary-dark text-sm">with photos, last-seen details, and a shareable QR code.</p>
+                      <p className="text-brand-primary-dark text-sm">with photos, last-seen details, and a shareable QR code (no designing needed).</p>
                     </div>
                   </div>
                   

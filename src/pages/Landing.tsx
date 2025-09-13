@@ -105,8 +105,8 @@ export default function Landing() {
         <section className="bg-white py-20">
           <div className="max-w-7xl mx-auto px-4">
             <div className="text-center mb-16">
-              <h2 className="text-4xl font-bold text-brand-primary mb-4">Everything Your Pet Needs</h2>
-              <p className="text-xl text-brand-primary-dark">Two powerful modes for different needs</p>
+              <h2 className="text-4xl font-bold text-brand-primary mb-4">Finally... Everything Your Pet Needs.</h2>
+              <p className="text-xl text-brand-primary-dark">Your pet doesn't have a voice. Give them a permanent record.</p>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">

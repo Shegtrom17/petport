@@ -89,6 +89,7 @@ export default function Landing() {
                   muted
                   loop
                   playsInline
+                  preload="metadata"
                   className="w-full h-auto rounded-2xl"
                   poster=""
                 >

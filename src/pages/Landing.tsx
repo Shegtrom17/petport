@@ -205,8 +205,8 @@ export default function Landing() {
                       <span className="text-white text-xs">📦</span>
                     </div>
                     <div>
-                      <strong className="text-brand-primary">Handoff Kit</strong>
-                      <p className="text-brand-primary-dark text-sm">everything an adopter needs in one link and PDF.</p>
+                      <strong className="text-brand-primary">Foster-to-Adopter Transfer</strong>
+                      <p className="text-brand-primary-dark text-sm">Streamline the transition. Give adopters a complete, digital version of the pet's profile with all your recorded notes, photos, and health logs.</p>
                     </div>
                   </div>
                   

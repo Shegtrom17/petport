@@ -82,16 +82,19 @@ export default function Landing() {
               </div>
             </div>
             <div className="relative">
-              {/* PLACEHOLDER: Hero Video/Animation */}
-              <div className="bg-white rounded-2xl shadow-xl p-8 min-h-[400px] flex items-center justify-center border-2 border-dashed border-gray-300">
-                <div className="text-center text-gray-500">
-                  <div className="w-16 h-16 mx-auto mb-4 bg-gray-200 rounded-lg flex items-center justify-center">
-                    📱
-                  </div>
-                  <p className="font-medium">PLACEHOLDER: Hero Video</p>
-                  <p className="text-sm mt-2">Demo of app interface or<br />animated pet passport creation</p>
-                  <p className="text-xs mt-2 text-gray-400">Recommended: 600x400px MP4/GIF</p>
-                </div>
+              {/* Hero Video */}
+              <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
+                <video
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
+                  className="w-full h-auto rounded-2xl"
+                  poster=""
+                >
+                  <source src="/hero-video.mp4" type="video/mp4" />
+                  Your browser does not support the video tag.
+                </video>
               </div>
             </div>
           </div>

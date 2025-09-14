@@ -606,11 +606,13 @@ const PublicProfile = () => {
               <CardContent className="space-y-3">
                 {petData.map_pins.map((pin: any, idx: number) => (
                   <div key={idx} className="p-3 rounded border">
-                    <div className="font-medium">{pin.title}</div>
+                    <div className="font-medium">{pin.title || pin.category}</div>
                     {pin.description && <div className="text-sm text-muted-foreground">{pin.description}</div>}
-                    <div className="text-xs text-muted-foreground">
-                      {pin.category && <Badge variant="outline" className="mr-2">{pin.category}</Badge>}
-                    </div>
+                    {pin.category && pin.title && (
+                      <div className="text-xs text-muted-foreground mt-1">
+                        <Badge variant="outline" className="text-xs">{pin.category}</Badge>
+                      </div>
+                    )}
                   </div>
                 ))}
               </CardContent>

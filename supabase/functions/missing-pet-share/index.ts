@@ -28,6 +28,21 @@ serve(async (req) => {
     const url = new URL(req.url);
     const petId = url.searchParams.get("petId");
     const redirect = url.searchParams.get("redirect");
+    
+    // Check if this is a bot/crawler request
+    const userAgent = req.headers.get("user-agent") || "";
+    const isCrawler = /facebookexternalhit|twitterbot|linkedinbot|whatsapp|telegram|discord|messenger|skype|slack/i.test(userAgent);
+    
+    // If not a crawler and we have a redirect URL, redirect immediately
+    if (!isCrawler && redirect) {
+      return new Response(null, {
+        status: 302,
+        headers: {
+          ...corsHeaders,
+          "Location": redirect
+        }
+      });
+    }
 
     if (!petId) {
       return new Response("petId is required", {
@@ -128,7 +143,7 @@ serve(async (req) => {
     ${redirect ? `<p><a class="btn" href="${redirect}">View live alert</a></p>` : ""}
     ${redirect ? `<p class="muted">If you are not redirected automatically, use the button above.</p>` : ""}
   </div>
-  ${redirect ? `<script>location.replace(${JSON.stringify(redirect)});</script>` : ""}
+  ${redirect ? `<script>setTimeout(() => location.replace(${JSON.stringify(redirect)}), 1000);</script>` : ""}
 </body>
 </html>`;
 

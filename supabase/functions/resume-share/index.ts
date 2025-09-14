@@ -29,11 +29,20 @@ serve(async (req) => {
     const petId = url.searchParams.get("petId");
     const redirect = url.searchParams.get("redirect");
     
-    // Check if this is a crawler/bot request
+    // Check if this is a bot/crawler request
     const userAgent = req.headers.get("user-agent") || "";
-    const isCrawler = /facebookexternalhit|twitterbot|linkedinbot|slackbot|whatsapp|telegrambot|discordbot|googlebot|bingbot/i.test(userAgent);
+    const isCrawler = /facebookexternalhit|twitterbot|linkedinbot|whatsapp|telegram|discord|messenger|skype|slack/i.test(userAgent);
     
-    console.log("Request from:", userAgent, "- Detected as crawler:", isCrawler);
+    // If not a crawler and we have a redirect URL, redirect immediately
+    if (!isCrawler && redirect) {
+      return new Response(null, {
+        status: 302,
+        headers: {
+          ...corsHeaders,
+          "Location": redirect
+        }
+      });
+    }
 
     if (!petId) {
       return new Response("petId is required", {
@@ -62,17 +71,6 @@ serve(async (req) => {
       });
     }
 
-    // If this is a human request (not a crawler) and we have a redirect URL, redirect immediately
-    if (!isCrawler && redirect) {
-      console.log("Redirecting human request to:", redirect);
-      return new Response(null, {
-        status: 302,
-        headers: {
-          ...corsHeaders,
-          "Location": redirect
-        }
-      });
-    }
 
     const name = pet.name || "Pet";
     const safe = (s: string | null | undefined) => (s || "").toString().replace(/</g, "&lt;").replace(/>/g, "&gt;").trim();
@@ -129,16 +127,7 @@ serve(async (req) => {
     ${redirect ? `<p><a class="btn" href="${redirect}">View ${safe(name)}'s Resume</a></p>` : ""}
     ${redirect ? `<p class="muted">If you are not redirected automatically, use the button above.</p>` : ""}
   </div>
-  ${redirect ? `<script>
-    // Immediate redirect for better user experience
-    if (window.location !== window.parent.location) {
-      // In iframe, open in new tab
-      window.open(${JSON.stringify(redirect)}, '_blank');
-    } else {
-      // Direct redirect
-      window.location.href = ${JSON.stringify(redirect)};
-    }
-  </script>` : ""}
+  ${redirect ? `<script>setTimeout(() => location.replace(${JSON.stringify(redirect)}), 1000);</script>` : ""}
 </body>
 </html>`;
 

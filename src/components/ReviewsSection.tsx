@@ -176,11 +176,6 @@ export const ReviewsSection = ({ petData, onUpdate }: ReviewsSectionProps) => {
             <div>
               <h2 className="text-xl md:text-2xl font-bold mb-2">Reviews & References</h2>
               <p className="text-blue-100 text-sm md:text-base">Trusted feedback from hosts, vets, and caregivers</p>
-              <div className="mt-3 p-3 bg-amber-500/20 border border-amber-400/30 rounded-lg">
-                <p className="text-amber-200 text-xs md:text-sm">
-                  <strong>Note:</strong> Written reviews require separate sharing. Only star ratings appear in Resume PDFs.
-                </p>
-              </div>
             </div>
             <div className="flex flex-wrap gap-4">
               <div

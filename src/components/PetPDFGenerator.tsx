@@ -164,9 +164,9 @@ export const PetPDFGenerator = ({ petId, petName, petData, handlePetUpdate }: Pe
       
       // CRITICAL: Use client-side generation directly to ensure proper type handling
       // Emergency vs Full profiles have different content structures
-      const normalizedType: PDFType = resolvePdfType(selectedPdfType as string);
-      console.log('🔧 PetPDFGenerator: Resolved type', { input: selectedPdfType, normalizedType });
-      const result = await generateClientPetPDF(petData, normalizedType);
+      const requestedType = selectedPdfType as PDFType;
+      console.log('🔧 PetPDFGenerator: Requested type', { requestedType });
+      const result = await generateClientPetPDF(petData, requestedType);
       
       console.log('📄 PDF Generation Result:', {
         success: result.success,
@@ -177,11 +177,11 @@ export const PetPDFGenerator = ({ petId, petName, petData, handlePetUpdate }: Pe
 
       if (result.success && result.blob) {
         setGeneratedPdfBlob(result.blob);
-        setResolvedType((result.type as PDFType) || normalizedType);
+        setResolvedType((result.type as PDFType) || requestedType);
         
         if (action === 'download') {
           // Use environment-aware download
-          const resolved = (result.type as PDFType) || normalizedType;
+          const resolved = (result.type as PDFType) || requestedType;
           const fileName = `${petName}_${resolved}_profile.pdf`;
           try {
             await downloadPDFBlob(result.blob, fileName);
@@ -432,7 +432,7 @@ export const PetPDFGenerator = ({ petId, petName, petData, handlePetUpdate }: Pe
                     {selectedPdfType && pdfTypes.find(p => p.key === selectedPdfType)?.title} PDF
                   </h4>
                   {resolvedType && (
-                    <p className="text-xs text-muted-foreground mb-2">Resolved type: {resolvedType}</p>
+                    <p className="text-xs text-muted-foreground mb-2">Requested: {selectedPdfType} • Resolved: {resolvedType}</p>
                   )}
                    <div className="grid grid-cols-3 gap-2 justify-center mb-3">
                      <Button

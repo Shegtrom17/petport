@@ -3,7 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
 interface EmailShareData {
-  type: 'profile' | 'care' | 'credentials' | 'resume' | 'reviews' | 'missing_pet';
+  type: 'profile' | 'care' | 'credentials' | 'resume' | 'reviews' | 'review_request' | 'missing_pet';
   recipientEmail: string;
   recipientName?: string;
   petName: string;

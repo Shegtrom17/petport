@@ -100,12 +100,12 @@ export const ReviewsSection = ({ petData, onUpdate }: ReviewsSectionProps) => {
       return;
     }
 
-    const shareUrl = `${window.location.origin}/reviews/${petData.id}`;
+    const shareUrl = `${window.location.origin}/profile/${petData.id}?add_review=true`;
     
     if (requestForm.email.trim()) {
       // Send email
       const emailData = {
-        type: 'reviews' as const,
+        type: 'review_request' as const,
         recipientEmail: requestForm.email,
         recipientName: requestForm.name,
         petName: petData.name,

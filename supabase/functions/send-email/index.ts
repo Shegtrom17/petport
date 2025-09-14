@@ -8,7 +8,7 @@ const corsHeaders = {
 };
 
 interface EmailRequest {
-  type: 'profile' | 'care' | 'credentials' | 'resume' | 'reviews' | 'missing_pet' | 'app_share';
+  type: 'profile' | 'care' | 'credentials' | 'resume' | 'reviews' | 'review_request' | 'missing_pet' | 'app_share';
   recipientEmail: string;
   recipientName?: string;
   petName: string;
@@ -75,6 +75,22 @@ const generateEmailTemplate = (data: EmailRequest) => {
         <p>${sender} has shared reviews and testimonials about ${petName} with you.</p>
         <p>See what others have said about their experiences with ${petName}.</p>
         ${customMessage ? `<blockquote style="border-left: 4px solid #e2e8f0; padding-left: 16px; margin: 16px 0; font-style: italic;">"${customMessage}"</blockquote>` : ''}
+      `
+    },
+    review_request: {
+      subject: `${sender} is requesting a review for ${petName}`,
+      content: `
+        <h2>📝 Review Request for ${petName}</h2>
+        <p>${sender} would love to get your feedback about your experience with ${petName}!</p>
+        <p>Your review helps other pet parents and pet care professionals. Please take a moment to share your experience.</p>
+        ${customMessage ? `<blockquote style="border-left: 4px solid #3b82f6; padding-left: 16px; margin: 16px 0; font-style: italic; background-color: #f8fafc;">"${customMessage}"</blockquote>` : ''}
+        <p style="color: #4b5563;">Click the button below to leave your review. You can rate your experience and write about:</p>
+        <ul style="color: #4b5563; margin: 15px 0; padding-left: 20px;">
+          <li>Your overall experience with ${petName}</li>
+          <li>${petName}'s behavior and temperament</li>
+          <li>Any special memories or moments</li>
+          <li>Recommendations for other pet care providers</li>
+        </ul>
       `
     },
     missing_pet: {
@@ -154,7 +170,9 @@ const generateEmailTemplate = (data: EmailRequest) => {
               }
             })()} " 
                style="display: inline-block; background: linear-gradient(135deg, #5691af 0%, #4a7c95 100%); color: white; text-decoration: none; padding: 15px 30px; border-radius: 8px; font-weight: bold; font-size: 16px;">
-              ${isDocumentShare ? '📄 View Document' : `View ${petName}'s ${type === 'profile' ? 'Profile' : type === 'missing_pet' ? 'Missing Pet Alert' : type === 'resume' ? 'Resume' : type.charAt(0).toUpperCase() + type.slice(1)}`}
+               ${isDocumentShare ? '📄 View Document' : 
+                 type === 'review_request' ? `📝 Leave a Review for ${petName}` :
+                 `View ${petName}'s ${type === 'profile' ? 'Profile' : type === 'missing_pet' ? 'Missing Pet Alert' : type === 'resume' ? 'Resume' : type.charAt(0).toUpperCase() + type.slice(1)}`}
             </a>
           </div>
           
@@ -206,6 +224,9 @@ const handler = async (req: Request): Promise<Response> => {
       },
       reviews: {
         subject: `${emailData.senderName || 'A PetPort user'} shared ${emailData.petName}'s reviews with you`
+      },
+      review_request: {
+        subject: `${emailData.senderName || 'A PetPort user'} is requesting a review for ${emailData.petName}`
       },
       missing_pet: {
         subject: `🚨 MISSING PET ALERT - ${emailData.petName} needs your help!`

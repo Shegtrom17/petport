@@ -1,6 +1,7 @@
 
 import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
+import { Button } from "@/components/ui/button";
 import worldMapOutline from "@/assets/world-map-outline.png";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -9,15 +10,18 @@ import { supabase } from "@/integrations/supabase/client";
 import { Heart, MapPin, Phone, Calendar, Star, Award, GraduationCap, Plane, Trophy, Briefcase, Shield, Building, Mail, Globe } from "lucide-react";
 
 import { MetaTags } from "@/components/MetaTags";
+import { AddReviewForm } from "@/components/AddReviewForm";
 import { sanitizeText, sanitizeHtml } from "@/utils/inputSanitizer";
 
 const PublicProfile = () => {
   const { petId } = useParams<{ petId: string }>();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [petData, setPetData] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [retryCount, setRetryCount] = useState(0);
   const [debugInfo, setDebugInfo] = useState<string[]>([]);
+  const [showAddReview, setShowAddReview] = useState(false);
 
   useEffect(() => {
     const loadPetData = async () => {
@@ -161,6 +165,14 @@ const PublicProfile = () => {
 
     loadPetData();
   }, [petId, retryCount]);
+
+  // Check for add_review parameter
+  useEffect(() => {
+    const addReviewParam = searchParams.get('add_review');
+    if (addReviewParam === 'true') {
+      setShowAddReview(true);
+    }
+  }, [searchParams]);
 
   if (isLoading) {
     return (
@@ -407,6 +419,30 @@ const PublicProfile = () => {
               </div>
             </CardContent>
           </Card>
+         )}
+
+        {/* Add Review Form */}
+        {showAddReview && (
+          <div className="mb-8">
+            <AddReviewForm
+              petId={petId!}
+              petName={petData.name}
+              onClose={() => {
+                setShowAddReview(false);
+                // Remove the add_review parameter from URL
+                searchParams.delete('add_review');
+                setSearchParams(searchParams, { replace: true });
+              }}
+              onSuccess={() => {
+                setShowAddReview(false);
+                // Remove the add_review parameter from URL
+                searchParams.delete('add_review');
+                setSearchParams(searchParams, { replace: true });
+                // Refresh pet data to show new review
+                setRetryCount(prev => prev + 1);
+              }}
+            />
+          </div>
         )}
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -414,12 +450,24 @@ const PublicProfile = () => {
           {/* Reviews */}
           {petData.reviews && petData.reviews.length > 0 && (
             <Card className="lg:col-span-2">
-              <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
-                  <Star className="w-5 h-5" />
-                  <span>Reviews & References</span>
-                </CardTitle>
-              </CardHeader>
+               <CardHeader>
+                 <div className="flex items-center justify-between">
+                   <CardTitle className="flex items-center space-x-2">
+                     <Star className="w-5 h-5" />
+                     <span>Reviews & References</span>
+                   </CardTitle>
+                   {!showAddReview && (
+                     <Button
+                       onClick={() => setShowAddReview(true)}
+                       className="text-white hover:opacity-90"
+                       style={{ backgroundColor: '#5691af' }}
+                     >
+                       <Star className="w-4 h-4 mr-2" />
+                       Leave a Review
+                     </Button>
+                   )}
+                 </div>
+               </CardHeader>
               <CardContent>
                 <div className="grid gap-4">
                   {petData.reviews.slice(0, 6).map((review: any, index: number) => (

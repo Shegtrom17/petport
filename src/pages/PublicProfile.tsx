@@ -1,13 +1,10 @@
-
 import { useState, useEffect } from "react";
 import { useParams, useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import worldMapOutline from "@/assets/world-map-outline.png";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
 import { supabase } from "@/integrations/supabase/client";
-import { Heart, MapPin, Phone, Calendar, Star, Award, GraduationCap, Plane, Trophy, Briefcase, Shield, Building, Mail, Globe } from "lucide-react";
+import { Heart, MapPin, Phone, Star, Award, GraduationCap, Plane, Trophy, Briefcase, Shield, Building, Mail, Globe, Camera } from "lucide-react";
 
 import { MetaTags } from "@/components/MetaTags";
 import { AddReviewForm } from "@/components/AddReviewForm";
@@ -176,9 +173,9 @@ const PublicProfile = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-sage-50 to-cream-50 flex items-center justify-center">
         <div className="text-center space-y-4">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-sage-600 mx-auto mb-4"></div>
           <p className="text-lg">Loading pet profile...</p>
           {retryCount > 0 && (
             <p className="text-sm text-gray-600">Retrying... ({retryCount}/2)</p>
@@ -197,7 +194,7 @@ const PublicProfile = () => {
 
   if (error || !petData) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-sage-50 to-cream-50 flex items-center justify-center">
         <div className="text-center space-y-4">
           <h1 className="text-2xl font-bold text-gray-800 mb-2">Profile Not Found</h1>
           <p className="text-gray-600">{error || "The requested pet profile could not be found or is not public."}</p>
@@ -207,7 +204,7 @@ const PublicProfile = () => {
               setIsLoading(true);
               setError(null);
             }}
-            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+            className="px-4 py-2 bg-sage-600 text-white rounded hover:bg-sage-700"
           >
             🔄 Try Again
           </button>
@@ -242,428 +239,403 @@ const PublicProfile = () => {
         url={profileUrl}
         type="profile"
       />
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 passport-map-container">
-      <div className="passport-map-bg" />
-
-      <div className="max-w-4xl mx-auto px-4 py-8">
-        {/* Header with centered photo - like other shareable pages */}
-        <div className="text-center mb-8">
-          {heroImage && (
-            <div className="mb-6">
-              <img 
-                src={heroImage} 
-                alt={`${petData.name} profile photo`}
-                loading="lazy"
-                className="w-32 h-32 rounded-full mx-auto object-cover border-4 border-blue-200"
-              />
+      <div className="min-h-screen bg-gradient-to-br from-sage-50 to-cream-50">
+        <main className="container mx-auto px-4 py-8 max-w-4xl">
+          {/* Header */}
+          <header className="text-center mb-8">
+            {heroImage && (
+              <div className="mb-6">
+                <img 
+                  src={heroImage} 
+                  alt={`${petData.name} profile photo`}
+                  loading="lazy"
+                  className="w-32 h-32 rounded-full mx-auto object-cover border-4 border-sage-200"
+                />
+              </div>
+            )}
+            <h1 className="text-3xl font-sans font-bold text-navy-900 mb-2">
+              {petData.name}'s Profile
+            </h1>
+            <div className="flex flex-wrap items-center justify-center gap-2 text-navy-600 mb-2">
+              {petData.breed && <Badge variant="secondary">{petData.breed}</Badge>}
+              {petData.species && <Badge variant="secondary">{petData.species}</Badge>}
+              {petData.age && <Badge variant="secondary">Age: {petData.age}</Badge>}
             </div>
-          )}
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">{petData.name}</h1>
-          <p className="text-xl text-gray-600 mb-6">
-            {petData.species && petData.species.charAt(0).toUpperCase() + petData.species.slice(1)}
-            {petData.breed && ` • ${petData.breed}`}
-          </p>
-        </div>
-
-        {/* Pet Details Card */}
-        <Card className="mb-8">
-          <CardContent className="p-8">
-            <div className="flex flex-col md:flex-row items-center md:items-start space-y-6 md:space-y-0 md:space-x-8">
-              <div className="flex space-x-4">
-                {petData.pet_photos?.[0]?.photo_url && (
-                  <div className="flex-shrink-0">
-                    <img 
-                      src={petData.pet_photos[0].photo_url} 
-                      alt={`${petData.name} profile`}
-                      className="w-48 h-48 object-cover rounded-full border-4 border-blue-200"
-                    />
-                  </div>
-                )}
-                {petData.pet_photos?.[0]?.full_body_photo_url && (
-                  <div className="flex-shrink-0">
-                    <img 
-                      src={petData.pet_photos[0].full_body_photo_url} 
-                      alt={`${petData.name} full body`}
-                      className="w-36 h-48 object-cover rounded-lg border-4 border-blue-200"
-                    />
-                  </div>
-                )}
-              </div>
-              <div className="flex-1 text-center md:text-left">
-                {/* Show adoption banner if available for adoption */}
-                {petData.adoption_status === 'available' && (
-                  <div className="bg-green-100 border border-green-300 text-green-800 text-center py-3 px-4 rounded-lg mb-4 shadow-sm">
-                    <p className="text-lg font-bold">🏠 Available for Adoption!</p>
-                    {petData.adoption_instructions && (
-                      <p className="text-sm mt-1">{petData.adoption_instructions}</p>
-                    )}
-                  </div>
-                )}
-
-                <h2 className="text-2xl font-semibold text-gray-800 mb-4">About {petData.name}</h2>
-
-                {/* Organization Info */}
-                {petData.organization_name && (
-                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
-                    <h3 className="text-lg font-semibold text-blue-800 mb-2 flex items-center">
-                      <Building className="w-5 h-5 mr-2" />
-                      {petData.organization_name}
-                    </h3>
-                    <div className="flex flex-wrap gap-3 text-sm">
-                      {petData.organization_email && (
-                        <a href={`mailto:${petData.organization_email}`} className="text-blue-600 hover:text-blue-800 underline flex items-center">
-                          <Mail className="w-4 h-4 mr-1" />
-                          {petData.organization_email}
-                        </a>
-                      )}
-                      {petData.organization_phone && (
-                        <div className="flex flex-col">
-                          <a href={`tel:${petData.organization_phone}`} className="text-blue-600 hover:text-blue-800 underline flex items-center">
-                            <Phone className="w-4 h-4 mr-1" />
-                            {petData.organization_phone}
-                          </a>
-                          <span className="text-xs text-blue-500 ml-5">Tap to call</span>
-                        </div>
-                      )}
-                      {petData.organization_website && (
-                        <a href={petData.organization_website} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 underline flex items-center">
-                          <Globe className="w-4 h-4 mr-1" />
-                          Website
-                        </a>
-                      )}
-                    </div>
-                  </div>
-                )}
-                
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-                  {petData.age && (
-                    <div className="flex items-center space-x-2">
-                      <Calendar className="w-4 h-4 text-blue-600" />
-                      <span>{petData.age}</span>
-                    </div>
-                  )}
-                  {petData.weight && (
-                    <div className="flex items-center space-x-2">
-                      <span className="w-4 h-4 text-blue-600">⚖️</span>
-                      <span>{petData.weight}</span>
-                    </div>
-                  )}
-                  {petData.sex && (
-                    <div className="flex items-center space-x-2">
-                      <span className="w-4 h-4 text-blue-600">♂♀</span>
-                      <span>{petData.sex}</span>
-                    </div>
-                  )}
-                  {petData.state && (
-                    <div className="flex items-center space-x-2">
-                      <MapPin className="w-4 h-4 text-blue-600" />
-                      <span>{petData.state}</span>
-                    </div>
-                  )}
-                  {petData.petport_id && (
-                    <div className="flex items-center space-x-2">
-                      <span className="w-4 h-4 text-blue-600">🆔</span>
-                      <span>{petData.petport_id}</span>
-                    </div>
-                  )}
-                  {petData.microchip_id && (
-                    <div className="flex items-center space-x-2">
-                      <span className="w-4 h-4 text-blue-600">🔘</span>
-                      <span>{petData.microchip_id}</span>
-                    </div>
-                  )}
-                  {petData.registration_number && (
-                    <div className="flex items-center space-x-2">
-                      <span className="w-4 h-4 text-blue-600">📋</span>
-                      <span>{petData.registration_number}</span>
-                    </div>
-                  )}
-                </div>
-
-                {petData.bio && (
-                  <div className="mt-6 p-4 bg-blue-50 rounded-lg">
-                    <p className="text-gray-700 italic">"{petData.bio}"</p>
-                  </div>
-                )}
-              </div>
+            <div className="flex flex-wrap items-center justify-center gap-2 text-navy-600 mb-4">
+              {petData.sex && <Badge variant="secondary">Sex: {petData.sex}</Badge>}
+              {petData.weight && <Badge variant="secondary">Weight: {petData.weight}</Badge>}
+              {petData.height && <Badge variant="secondary">Height: {petData.height}</Badge>}
+              {petData.registration_number && <Badge variant="secondary">Registration: {petData.registration_number}</Badge>}
+              {petData.microchip_id && <Badge variant="secondary">Microchip: {petData.microchip_id}</Badge>}
+              {petData.petport_id && <Badge variant="secondary">ID: {petData.petport_id}</Badge>}
             </div>
-          </CardContent>
-        </Card>
-
-
-        {/* Support Animal Status */}
-        {petData.professional_data?.support_animal_status && (
-          <Card className="mb-6 border-amber-200 bg-amber-50">
-            <CardContent className="p-6">
-              <div className="flex items-center space-x-3">
-                <span className="text-2xl">🦮</span>
-                <div>
-                  <h3 className="font-semibold text-amber-800">Support Animal</h3>
-                  <p className="text-amber-700">{petData.professional_data.support_animal_status}</p>
-                </div>
+            {petData.state && (
+              <div className="flex items-center justify-center gap-1 text-sm text-navy-500">
+                <MapPin className="w-4 h-4" />
+                <span>{petData.state}</span>
               </div>
-            </CardContent>
-          </Card>
-        )}
+            )}
+          </header>
 
-        {/* Medical Alert */}
-        {petData.medical?.medical_alert && petData.medical?.medical_conditions && (
-           <Card className="mb-6 border-primary/20 bg-primary/10">
-             <CardContent className="p-6">
-               <div className="flex items-center space-x-3">
-                 <span className="text-2xl">⚠️</span>
-                 <div>
-                   <h3 className="font-semibold text-primary">Medical Alert</h3>
-                   <p className="text-primary">{petData.medical.medical_conditions}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-         )}
-
-        {/* Add Review Form */}
-        {showAddReview && (
-          <div className="mb-8">
-            <AddReviewForm
-              petId={petId!}
-              petName={petData.name}
-              onClose={() => {
-                setShowAddReview(false);
-                // Remove the add_review parameter from URL
-                searchParams.delete('add_review');
-                setSearchParams(searchParams, { replace: true });
-              }}
-              onSuccess={() => {
-                setShowAddReview(false);
-                // Remove the add_review parameter from URL
-                searchParams.delete('add_review');
-                setSearchParams(searchParams, { replace: true });
-                // Refresh pet data to show new review
-                setRetryCount(prev => prev + 1);
-              }}
-            />
-          </div>
-        )}
-
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-
-          {/* Reviews */}
-          {petData.reviews && petData.reviews.length > 0 && (
-            <Card className="lg:col-span-2">
-               <CardHeader>
-                 <div className="flex items-center justify-between">
-                   <CardTitle className="flex items-center space-x-2">
-                     <Star className="w-5 h-5" />
-                     <span>Reviews & References</span>
-                   </CardTitle>
-                   {!showAddReview && (
-                     <Button
-                       onClick={() => setShowAddReview(true)}
-                       className="text-white hover:opacity-90"
-                       style={{ backgroundColor: '#5691af' }}
-                     >
-                       <Star className="w-4 h-4 mr-2" />
-                       Leave a Review
-                     </Button>
-                   )}
-                 </div>
-               </CardHeader>
-              <CardContent>
-                <div className="grid gap-4">
-                  {petData.reviews.slice(0, 6).map((review: any, index: number) => (
-                    <div key={index} className="p-4 bg-gray-50 rounded-lg">
-                      <div className="flex items-center justify-between mb-2">
-                        <h4 className="font-medium">{review.reviewer_name}</h4>
-                        <div className="flex items-center space-x-1">
-                          {[...Array(5)].map((_, i) => (
-                            <Star
-                              key={i}
-                              className={`w-4 h-4 ${
-                                i < review.rating ? 'text-yellow-400 fill-current' : 'text-gray-300'
-                              }`}
-                            />
-                          ))}
-                        </div>
-                      </div>
-                      {review.text && <p className="text-gray-600 mb-2">"{review.text}"</p>}
-                      <div className="text-sm text-gray-500 space-x-4">
-                        {review.date && <span>📅 {review.date}</span>}
-                        {review.location && <span>📍 {review.location}</span>}
-                        {review.type && <span>🏷️ {review.type}</span>}
-                      </div>
-                    </div>
-                  ))}
+          {/* Show adoption banner if available for adoption */}
+          {petData.adoption_status === 'available' && (
+            <Card className="mb-6 border-green-200 bg-green-50">
+              <CardContent className="p-6">
+                <div className="text-center">
+                  <h3 className="text-lg font-bold text-green-800 mb-2">🏠 Available for Adoption!</h3>
+                  {petData.adoption_instructions && (
+                    <p className="text-green-700">{petData.adoption_instructions}</p>
+                  )}
                 </div>
               </CardContent>
             </Card>
           )}
 
+          {/* Organization Info */}
+          {petData.organization_name && (
+            <Card className="mb-6">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-navy-900">
+                  <Building className="w-5 h-5 text-primary" />
+                  {petData.organization_name}
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="flex flex-wrap gap-3 text-sm">
+                  {petData.organization_email && (
+                    <a href={`mailto:${petData.organization_email}`} className="text-primary hover:underline flex items-center">
+                      <Mail className="w-4 h-4 mr-1" />
+                      {petData.organization_email}
+                    </a>
+                  )}
+                  {petData.organization_phone && (
+                    <a href={`tel:${petData.organization_phone}`} className="text-primary hover:underline flex items-center">
+                      <Phone className="w-4 h-4 mr-1" />
+                      {petData.organization_phone}
+                    </a>
+                  )}
+                  {petData.organization_website && (
+                    <a href={petData.organization_website} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline flex items-center">
+                      <Globe className="w-4 h-4 mr-1" />
+                      Website
+                    </a>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Support Animal Status */}
+          {petData.professional_data?.support_animal_status && (
+            <Card className="mb-6 border-amber-200 bg-amber-50">
+              <CardContent className="p-6">
+                <div className="flex items-center space-x-3">
+                  <span className="text-2xl">🦮</span>
+                  <div>
+                    <h3 className="font-semibold text-amber-800">Support Animal</h3>
+                    <p className="text-amber-700">{petData.professional_data.support_animal_status}</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Medical Alert */}
+          {petData.medical?.medical_alert && petData.medical?.medical_conditions && (
+             <Card className="mb-6 border-primary/20 bg-primary/10">
+               <CardContent className="p-6">
+                 <div className="flex items-center space-x-3">
+                   <span className="text-2xl">⚠️</span>
+                   <div>
+                     <h3 className="font-semibold text-primary">Medical Alert</h3>
+                     <p className="text-primary">{petData.medical.medical_conditions}</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+           )}
+
+          {/* About Section */}
+          {petData.bio && (
+            <Card className="mb-6">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-navy-900">
+                  <Heart className="w-5 h-5 text-red-500" />
+                  About {petData.name}
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-gray-700 leading-relaxed">{petData.bio}</p>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Add Review Form */}
+          {showAddReview && (
+            <Card className="mb-6 border-gold-500/30 bg-gold-500/10">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-navy-900">
+                  <Star className="w-5 h-5 text-gold-500" />
+                  Leave a Review for {petData.name}
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <AddReviewForm petId={petId!} petName={petData.name} onClose={() => setShowAddReview(false)} />
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Button to Leave Review */}
+          {!showAddReview && (
+            <div className="text-center mb-6">
+              <Button 
+                onClick={() => setShowAddReview(true)}
+                className="bg-gold-500 hover:bg-gold-600 text-white"
+              >
+                <Star className="w-4 h-4 mr-2" />
+                Leave a Review
+              </Button>
+            </div>
+          )}
+
+          {/* Experience */}
+          {petData.experiences && petData.experiences.length > 0 && (
+            <Card className="mb-6">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-navy-900">
+                  <Briefcase className="w-5 h-5 text-primary" />
+                  Experience & Activities
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                {petData.experiences.map((e: any, idx: number) => (
+                  <div key={idx} className="p-3 rounded border">
+                    <div className="font-medium">{e.activity}</div>
+                    {e.description && <div className="text-sm text-muted-foreground">{e.description}</div>}
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Professional Certifications */}
+          {petData.certifications && petData.certifications.length > 0 && (
+            <Card className="mb-6">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-navy-900">
+                  <Shield className="w-5 h-5 text-primary" />
+                  Professional Certifications
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {petData.certifications.map((cert: any, idx: number) => (
+                  <div key={idx} className="p-4 rounded border">
+                    <div className="flex flex-wrap items-center gap-2 mb-1">
+                      <Badge variant="secondary">{cert.type}</Badge>
+                      <Badge>{cert.status}</Badge>
+                      {cert.certification_number && (
+                        <span className="text-sm text-muted-foreground">#{cert.certification_number}</span>
+                      )}
+                    </div>
+                    <p className="text-sm text-muted-foreground">
+                      {cert.issuer ? `${cert.issuer}` : ''}
+                      {cert.issue_date ? ` • Issued: ${new Date(cert.issue_date).toLocaleDateString()}` : ''}
+                      {cert.expiry_date ? ` • Expires: ${new Date(cert.expiry_date).toLocaleDateString()}` : ''}
+                    </p>
+                    {cert.notes && <p className="mt-2 text-sm">{cert.notes}</p>}
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Training */}
           {petData.training && petData.training.length > 0 && (
-            <Card>
+            <Card className="mb-6">
               <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
-                  <GraduationCap className="w-5 h-5" />
-                  <span>Training & Education</span>
+                <CardTitle className="flex items-center gap-2 text-navy-900">
+                  <GraduationCap className="w-5 h-5 text-primary" />
+                  Training
                 </CardTitle>
               </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  {petData.training.slice(0, 5).map((course: any, index: number) => (
-                    <div key={index} className="p-3 bg-gray-50 rounded">
-                      <h4 className="font-medium">{course.course}</h4>
-                      {course.facility && <p className="text-sm text-gray-600">🏢 {course.facility}</p>}
-                      {course.completed && <p className="text-sm text-gray-600">✅ Completed: {course.completed}</p>}
+              <CardContent className="space-y-3">
+                {petData.training.map((t: any, idx: number) => (
+                  <div key={idx} className="p-3 rounded border">
+                    <div className="font-medium">{t.course}</div>
+                    <div className="text-sm text-muted-foreground">
+                      {t.facility ? `${t.facility}` : ''}
+                      {t.phone ? ` • ${t.phone}` : ''}
+                      {t.completed ? ` • Completed: ${t.completed}` : ''}
                     </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          )}
-
-          {petData.travel_locations && petData.travel_locations.length > 0 && (
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
-                  <Plane className="w-5 h-5" />
-                  <span>Travel History</span>
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  {petData.travel_locations.slice(0, 5).map((location: any, index: number) => (
-                    <div key={index} className="p-3 bg-gray-50 rounded">
-                      <h4 className="font-medium">{location.name}</h4>
-                      <p className="text-sm text-gray-600">🏷️ {location.type}</p>
-                      {location.date_visited && <p className="text-sm text-gray-600">📅 {location.date_visited}</p>}
-                    </div>
-                  ))}
-                </div>
+                  </div>
+                ))}
               </CardContent>
             </Card>
           )}
 
           {/* Achievements */}
           {petData.achievements && petData.achievements.length > 0 && (
-            <Card>
+            <Card className="mb-6">
               <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
-                  <Trophy className="w-5 h-5" />
-                  <span>Achievements</span>
+                <CardTitle className="flex items-center gap-2 text-navy-900">
+                  <Trophy className="w-5 h-5 text-primary" />
+                  Achievements
                 </CardTitle>
               </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  {petData.achievements.slice(0, 5).map((achievement: any, index: number) => (
-                    <div key={index} className="p-3 bg-gray-50 rounded">
-                      <h4 className="font-medium">{achievement.title}</h4>
-                      {achievement.description && <p className="text-sm text-gray-600">{achievement.description}</p>}
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          )}
-
-          {/* Experiences */}
-          {petData.experiences && petData.experiences.length > 0 && (
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
-                  <Briefcase className="w-5 h-5" />
-                  <span>Professional Experience</span>
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  {petData.experiences.slice(0, 5).map((experience: any, index: number) => (
-                    <div key={index} className="p-3 bg-gray-50 rounded">
-                      <h4 className="font-medium">{experience.activity}</h4>
-                      {experience.description && <p className="text-sm text-gray-600">{experience.description}</p>}
-                      {experience.contact && <p className="text-sm text-gray-500">📞 {experience.contact}</p>}
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          )}
-
-        </div>
-
-        {petData.gallery_photos && petData.gallery_photos.length > 0 && (
-          <Card className="mt-6">
-            <CardHeader>
-              <CardTitle className="flex items-center justify-between">
-                <div className="flex items-center space-x-2">
-                  <span className="text-xl">📷</span>
-                  <span>Photo Gallery</span>
-                </div>
-                <Badge variant="outline">
-                  {petData.gallery_photos.length} photo{petData.gallery_photos.length > 1 ? 's' : ''}
-                </Badge>
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                {petData.gallery_photos.slice(0, 16).map((photo: any, index: number) => (
-                  <div key={index} className="aspect-square group cursor-pointer">
-                    <img 
-                      src={photo.url} 
-                      alt={photo.caption ? `Gallery photo: ${photo.caption}` : `Gallery photo ${index + 1}`}
-                      className="w-full h-full object-cover rounded-lg border border-gray-200 group-hover:shadow-lg transition-shadow"
-                    />
-                    {photo.caption && (
-                      <p className="text-xs text-gray-600 mt-1 text-center">{photo.caption}</p>
-                    )}
+              <CardContent className="space-y-3">
+                {petData.achievements.map((a: any, idx: number) => (
+                  <div key={idx} className="p-3 rounded border">
+                    <div className="font-medium">{a.title}</div>
+                    {a.description && <div className="text-sm text-muted-foreground">{a.description}</div>}
                   </div>
                 ))}
-              </div>
-              {petData.gallery_photos.length > 16 && (
-                <div className="mt-4 text-center">
-                  <Badge variant="secondary">
-                    +{petData.gallery_photos.length - 16} more photos
-                  </Badge>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Reviews */}
+          {petData.reviews && petData.reviews.length > 0 && (
+            <Card className="mb-6">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-navy-900">
+                  <Star className="w-5 h-5 text-primary" />
+                  Reviews & References
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {petData.reviews.map((review: any, idx: number) => (
+                  <div key={idx} className="p-4 rounded border">
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="font-medium">{review.reviewer_name}</div>
+                      <div className="flex items-center gap-1">
+                        {[1,2,3,4,5].map(i => (
+                          <Star key={i} className={`w-4 h-4 ${i <= review.rating ? 'text-yellow-500 fill-current' : 'text-yellow-300'}`} />
+                        ))}
+                      </div>
+                    </div>
+                    {review.text && (
+                      <p className="text-sm text-muted-foreground mb-2">{review.text}</p>
+                    )}
+                    <div className="text-xs text-muted-foreground">
+                      {review.location && <span>{review.location}</span>}
+                      {review.date && <span> • {review.date}</span>}
+                    </div>
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Travel History */}
+          {petData.travel_locations && petData.travel_locations.length > 0 && (
+            <Card className="mb-6">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-navy-900">
+                  <Plane className="w-5 h-5 text-primary" />
+                  Travel History
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                {petData.travel_locations.map((location: any, idx: number) => (
+                  <div key={idx} className="p-3 rounded border">
+                    <div className="flex items-start justify-between">
+                      <div className="flex-grow">
+                        <div className="font-medium">{location.name}</div>
+                        <div className="text-sm text-muted-foreground">
+                          <Badge variant="outline" className="mr-2">{location.type}</Badge>
+                          {location.code && <span className="mr-2">Code: {location.code}</span>}
+                          {location.date_visited && <span>Visited: {location.date_visited}</span>}
+                        </div>
+                        {location.notes && (
+                          <p className="text-sm text-muted-foreground mt-1">{location.notes}</p>
+                        )}
+                      </div>
+                      {location.photo_url && (
+                        <img 
+                          src={location.photo_url} 
+                          alt={location.name}
+                          className="w-16 h-16 rounded object-cover ml-3"
+                        />
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Photo Gallery */}
+          {petData.gallery_photos && petData.gallery_photos.length > 0 && (
+            <Card className="mb-6">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-navy-900">
+                  <Camera className="w-5 h-5 text-primary" />
+                  Photo Gallery
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                  {petData.gallery_photos.map((photo: any, idx: number) => (
+                    <div key={idx} className="relative group">
+                      <img 
+                        src={photo.url} 
+                        alt={photo.caption || `${petData.name} photo ${idx + 1}`}
+                        className="w-full h-32 object-cover rounded-lg border border-sage-200"
+                      />
+                      {photo.caption && (
+                        <div className="absolute bottom-0 left-0 right-0 bg-black/50 text-white text-xs p-2 rounded-b-lg opacity-0 group-hover:opacity-100 transition-opacity">
+                          {photo.caption}
+                        </div>
+                      )}
+                    </div>
+                  ))}
                 </div>
-              )}
-            </CardContent>
-          </Card>
-        )}
+              </CardContent>
+            </Card>
+          )}
 
+          {/* Map Pins */}
+          {petData.map_pins && petData.map_pins.length > 0 && (
+            <Card className="mb-6">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-navy-900">
+                  <MapPin className="w-5 h-5 text-primary" />
+                  Important Locations
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                {petData.map_pins.map((pin: any, idx: number) => (
+                  <div key={idx} className="p-3 rounded border">
+                    <div className="font-medium">{pin.title}</div>
+                    {pin.description && <div className="text-sm text-muted-foreground">{pin.description}</div>}
+                    <div className="text-xs text-muted-foreground">
+                      {pin.category && <Badge variant="outline" className="mr-2">{pin.category}</Badge>}
+                    </div>
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+          )}
 
-        {/* Emergency Contact Available */}
-        <Card className="mt-6 mb-6">
-          <CardHeader>
-            <CardTitle className="flex items-center space-x-2">
-              <Phone className="w-5 h-5" />
-              <span>Emergency Contact Available</span>
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-gray-600 text-sm">
-              Emergency contact information is available to authorized personnel and veterinarians.
-              Contact information is protected for privacy and safety.
+          {/* Footer */}
+          <div className="mt-12 text-center text-gray-500 text-sm pb-8">
+            <div className="border-t border-sage-200 mb-6 max-w-md mx-auto" />
+            <p>This is a public profile for {petData.name}.</p>
+            <p className="mt-2">
+              Generated by{" "}
+              <a 
+                href={window.location.origin}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-primary hover:underline font-medium"
+              >
+                PetPort.app
+              </a>
+              {" "}— Be ready for travel, sitters, lost pet, and emergencies. Try it free.
             </p>
-          </CardContent>
-        </Card>
-
-        {/* Footer */}
-        <div className="mt-12 text-center text-gray-500 text-sm">
-          <Separator className="mb-4" />
-          <p>This is a public read-only profile for {petData.name}.</p>
-          <p>
-            Generated by{" "}
-            <a 
-              href={window.location.origin}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-primary hover:underline font-medium"
-            >
-              PetPort.app
-            </a>
-            {" "}— Be ready for travel, sitters, lost pet, and emergencies. Try it free.
-          </p>
-        </div>
+          </div>
+        </main>
       </div>
-    </div>
     </>
   );
 };

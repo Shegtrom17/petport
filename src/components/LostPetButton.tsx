@@ -16,9 +16,10 @@ interface LostPetButtonProps {
   className?: string;
   petData?: any;
   lostPetData?: any;
+  handlePetUpdate?: () => Promise<void>;
 }
 
-export const LostPetButton = ({ petId, petName = "Pet", isMissing = false, className = "", petData, lostPetData }: LostPetButtonProps) => {
+export const LostPetButton = ({ petId, petName = "Pet", isMissing = false, className = "", petData, lostPetData, handlePetUpdate }: LostPetButtonProps) => {
   const { toast } = useToast();
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -146,6 +147,11 @@ export const LostPetButton = ({ petId, petName = "Pet", isMissing = false, class
     try {
       if (!petData) {
         throw new Error('Pet data not available for PDF generation');
+      }
+
+      // Refresh pet data before generating PDF
+      if (handlePetUpdate) {
+        await handlePetUpdate();
       }
 
       console.log('LostPetButton - Generating PDF for pet:', petData.name, petData.id);

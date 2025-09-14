@@ -35,6 +35,7 @@ interface PetProfileContentProps {
   onPhotoUpdate?: () => void;
   onEditClick?: () => void;
   togglePetPublicVisibility?: (petId: string, isPublic: boolean) => Promise<boolean>;
+  handlePetUpdate?: () => Promise<void>;
 }
 
 // Helper function to extract phone number and create tel link
@@ -60,7 +61,8 @@ export const PetProfileContent = ({
   setIsInAppSharingOpen,
   onPhotoUpdate,
   onEditClick,
-  togglePetPublicVisibility 
+  togglePetPublicVisibility,
+  handlePetUpdate 
 }: PetProfileContentProps) => {
   console.log("PetProfileContent - Received petData:", petData);
   console.log("PetProfileContent - Received selectedPet:", selectedPet);
@@ -579,6 +581,7 @@ export const PetProfileContent = ({
           petId={enhancedPetData.id}
           petName={enhancedPetData.name}
           petData={enhancedPetData}
+          handlePetUpdate={handlePetUpdate}
         />
       </div>
 

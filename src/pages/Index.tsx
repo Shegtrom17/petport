@@ -219,6 +219,7 @@ const Index = () => {
               setIsInAppSharingOpen={setIsInAppSharingOpen}
               onPhotoUpdate={handlePetUpdate}
               togglePetPublicVisibility={togglePetPublicVisibility}
+              handlePetUpdate={handlePetUpdate}
               onEditClick={() => {
                 // Trigger the PetProfileCard to enter edit mode
                 window.dispatchEvent(new CustomEvent('trigger-pet-edit'));
@@ -233,7 +234,7 @@ const Index = () => {
         );
       case "care":
         console.log("Rendering CareInstructionsSection");
-        return <CareInstructionsSection petData={petData} onUpdate={handlePetUpdate} />;
+        return <CareInstructionsSection petData={petData} onUpdate={handlePetUpdate} handlePetUpdate={handlePetUpdate} />;
       case "resume":
         console.log("Rendering PetResumeSection with integrated certifications and reviews");
         return (
@@ -288,7 +289,7 @@ const Index = () => {
         />;
       case "gallery":
         console.log("Rendering PetGallerySection");
-        return <PetGallerySection petData={petData} onUpdate={handlePetUpdate} />;
+        return <PetGallerySection petData={petData} onUpdate={handlePetUpdate} handlePetUpdate={handlePetUpdate} />;
       case "quickid":
         console.log("Rendering QuickIDSection");
         return <QuickIDSection petData={petData} onUpdate={handlePetUpdate} />;

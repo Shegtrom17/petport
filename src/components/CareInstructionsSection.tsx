@@ -14,24 +14,14 @@ import { useToast } from "@/hooks/use-toast";
 import { SocialShareButtons } from "@/components/SocialShareButtons";
 import { supabase } from "@/integrations/supabase/client";
 
-
 interface CareInstructionsSectionProps {
-  petData: {
-    id: string;
-    name: string;
-    species?: string;
-    medications: string[];
-    emergencyContact?: string;
-    secondEmergencyContact?: string;
-    vetContact?: string;
-    petCaretaker?: string;
-    is_public?: boolean;
-  };
+  petData: any;
   onUpdate?: () => void;
+  handlePetUpdate?: () => Promise<void>;
 }
 
 
-export const CareInstructionsSection = ({ petData, onUpdate }: CareInstructionsSectionProps) => {
+export const CareInstructionsSection = ({ petData, onUpdate, handlePetUpdate }: CareInstructionsSectionProps) => {
   const [isEditing, setIsEditing] = useState(false);
   const [careData, setCareData] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);

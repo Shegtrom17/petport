@@ -33,9 +33,10 @@ interface PetGallerySectionProps {
     gallery_photos?: GalleryPhoto[];
   };
   onUpdate: () => void;
+  handlePetUpdate?: () => Promise<void>;
 }
 
-export const PetGallerySection = ({ petData, onUpdate }: PetGallerySectionProps) => {
+export const PetGallerySection = ({ petData, onUpdate, handlePetUpdate }: PetGallerySectionProps) => {
   const [uploading, setUploading] = useState(false);
   const [editingCaption, setEditingCaption] = useState<string | null>(null);
   const [editCaptionValue, setEditCaptionValue] = useState("");
@@ -353,6 +354,10 @@ export const PetGallerySection = ({ petData, onUpdate }: PetGallerySectionProps)
   const handleGalleryPDFAction = async (action: 'view' | 'download') => {
     setIsGeneratingPDF(true);
     try {
+      // Refresh pet data before generating PDF
+      if (handlePetUpdate) {
+        await handlePetUpdate();
+      }
       const result = await generateClientPetPDF(petData, 'gallery');
       
       if (result.success && result.blob) {

@@ -14,6 +14,7 @@ interface PetPDFGeneratorProps {
   petId: string;
   petName: string;
   petData?: any; // Add pet data prop for client-side generation
+  handlePetUpdate?: () => Promise<void>;
 }
 
 interface PDFTypeConfig {
@@ -26,7 +27,7 @@ interface PDFTypeConfig {
   available: boolean;
 }
 
-export const PetPDFGenerator = ({ petId, petName, petData }: PetPDFGeneratorProps) => {
+export const PetPDFGenerator = ({ petId, petName, petData, handlePetUpdate }: PetPDFGeneratorProps) => {
   // Auth state
   const { user, isLoading: authLoading } = useAuth();
   const navigate = useNavigate();
@@ -153,6 +154,11 @@ export const PetPDFGenerator = ({ petId, petName, petData }: PetPDFGeneratorProp
         petName: petData.name,
         action 
       });
+      
+      // Refresh pet data before generating PDF
+      if (handlePetUpdate) {
+        await handlePetUpdate();
+      }
       
       // CRITICAL: Use client-side generation directly to ensure proper type handling
       // Emergency vs Full profiles have different content structures

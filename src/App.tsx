@@ -33,6 +33,7 @@ import PostCheckout from "./pages/PostCheckout";
 import Subscribe from "./pages/Subscribe";
 import Reactivate from "./pages/Reactivate";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
+import DataDeletion from "./pages/DataDeletion";
 import Billing from "./pages/Billing";
 import VaccinationGuide from "./pages/VaccinationGuide";
 import Help from "./pages/Help";
@@ -115,8 +116,9 @@ const App = () => {
                    <Route path="/gallery/:petId" element={<PublicGallery />} />
                   <Route path="/transfer/:token" element={<TransferAccept />} />
                   <Route path="/privacy" element={<Navigate to="/privacy-policy" replace />} />
-                  <Route path="/terms" element={<Terms />} />
-                  <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+            <Route path="/terms" element={<Terms />} />
+            <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+            <Route path="/data-deletion" element={<DataDeletion />} />
                   <Route path="/payment-success" element={<PaymentSuccess />} />
                   <Route path="/payment-canceled" element={<PaymentCanceled />} />
                   <Route path="/post-checkout" element={<PostCheckout />} />

@@ -41,6 +41,14 @@ export const PetPDFGenerator = ({ petId, petName, petData, handlePetUpdate }: Pe
   const [authError, setAuthError] = useState<string | null>(null);
   const [generatedPdfBlob, setGeneratedPdfBlob] = useState<Blob | null>(null);
   const [resolvedType, setResolvedType] = useState<PDFType | null>(null);
+  const [pdfCache, setPdfCache] = useState<Record<PDFType, Blob | null>>({
+    emergency: null,
+    full: null,
+    care: null,
+    resume: null,
+    lost_pet: null,
+    gallery: null,
+  });
   const { toast } = useToast();
 
   // Define all PDF types

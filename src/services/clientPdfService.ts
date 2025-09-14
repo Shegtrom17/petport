@@ -1212,7 +1212,7 @@ const generateFullPDF = async (doc: jsPDF, pageManager: PDFPageManager, petData:
         
         // Draw photo without advancing Y cursor
         try {
-          const base64 = await loadImageAsBase64(rowPhotos[j].url);
+          const base64 = await loadOrientedImageAsBase64(rowPhotos[j].url);
           doc.addImage(base64, 'JPEG', photoX, startY, photoSize, photoSize);
         } catch (error) {
           console.error('Error adding image:', error);
@@ -1313,22 +1313,22 @@ const generateResumePDF = async (doc: jsPDF, pageManager: PDFPageManager, petDat
       const photoX = 120; // Right side positioning
       const photoY = infoStartY + 20; // Align with the pet info section
       
-      // Add the image using the existing addImage function but with manual positioning
-      const img = new Image();
-      img.crossOrigin = 'anonymous';
+      // Use orientation-corrected image loading
+      const base64 = await loadOrientedImageAsBase64(petData.photoUrl);
+      const dimensions = await getImageDimensions(base64);
       
-      await new Promise((resolve, reject) => {
-        img.onload = () => {
-          try {
-            doc.addImage(img, 'JPEG', photoX, photoY, 60, 60);
-            resolve(true);
-          } catch (error) {
-            reject(error);
-          }
-        };
-        img.onerror = reject;
-        img.src = petData.photoUrl;
-      });
+      // Calculate scaled dimensions maintaining aspect ratio
+      const maxSize = 60;
+      const aspectRatio = dimensions.width / dimensions.height;
+      let width = Math.min(maxSize, dimensions.width);
+      let height = width / aspectRatio;
+      
+      if (height > maxSize) {
+        height = maxSize;
+        width = height * aspectRatio;
+      }
+      
+      doc.addImage(base64, 'JPEG', photoX, photoY, width, height);
       
     } catch (error) {
       console.error('Error loading pet photo:', error);

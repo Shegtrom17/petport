@@ -238,7 +238,7 @@ const Index = () => {
         console.log("Rendering PetResumeSection with integrated certifications and reviews");
         return (
           <div className="space-y-6">
-            <PetResumeSection petData={petData} onUpdate={handlePetUpdate} />
+            <PetResumeSection petData={petData} onUpdate={handlePetUpdate} handlePetUpdate={handlePetUpdate} />
             <CertificationSection petData={petData} onUpdate={handlePetUpdate} />
             <ReviewsSection petData={petData} onUpdate={handlePetUpdate} />
             

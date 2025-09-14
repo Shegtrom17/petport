@@ -76,9 +76,10 @@ interface PetResumeSectionProps {
     }>;
   };
   onUpdate?: () => void;
+  handlePetUpdate?: () => Promise<void>;
 }
 
-export const PetResumeSection = ({ petData, onUpdate }: PetResumeSectionProps) => {
+export const PetResumeSection = ({ petData, onUpdate, handlePetUpdate }: PetResumeSectionProps) => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isPdfDialogOpen, setIsPdfDialogOpen] = useState(false);
   const [generatedPdfBlob, setGeneratedPdfBlob] = useState<Blob | null>(null);
@@ -100,6 +101,10 @@ export const PetResumeSection = ({ petData, onUpdate }: PetResumeSectionProps) =
     setIsGeneratingPDF(true);
     
     try {
+      // Refresh pet data to get latest reviews before generating PDF
+      if (handlePetUpdate) {
+        await handlePetUpdate();
+      }
       const result = await generateClientPetPDF(petData, 'resume');
       
       if (result.success && result.blob) {

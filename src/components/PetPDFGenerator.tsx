@@ -136,6 +136,9 @@ export const PetPDFGenerator = ({ petId, petName, petData, handlePetUpdate }: Pe
     }
 
     setSelectedPdfType(type);
+    // Reset any previously generated blob when switching types
+    setGeneratedPdfBlob(null);
+    setResolvedType(null);
     setIsOptionsDialogOpen(true);
   };
 
@@ -364,7 +367,13 @@ export const PetPDFGenerator = ({ petId, petName, petData, handlePetUpdate }: Pe
       </div>
 
       {/* PDF Options Dialog */}
-      <Dialog open={isOptionsDialogOpen} onOpenChange={setIsOptionsDialogOpen}>
+      <Dialog open={isOptionsDialogOpen} onOpenChange={(open) => {
+          setIsOptionsDialogOpen(open);
+          if (!open) {
+            setGeneratedPdfBlob(null);
+            setResolvedType(null);
+          }
+        }}>
         <DialogContent className="max-w-md bg-[#f8f8f8]">
           <DialogHeader>
             <DialogTitle className="font-bold text-navy-900 border-b-2 border-gold-500 pb-2">

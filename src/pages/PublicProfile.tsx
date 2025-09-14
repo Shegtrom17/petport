@@ -131,6 +131,21 @@ const PublicProfile = () => {
             title: sanitizeText(achievement.title || ''),
             description: sanitizeText(achievement.description || '')
           })) || [],
+          // Clean up Map Pins: prefer real titles, hide empty "custom" pins, and dedupe
+          map_pins: (data.map_pins || [])
+            .map((pin: any) => {
+              const loc = (data.travel_locations || []).find((l: any) => l.id === pin.travel_location_id);
+              const title = sanitizeText(pin.title || loc?.name || '');
+              const description = sanitizeText(pin.description || loc?.notes || '');
+              const category = sanitizeText(pin.category || '');
+              return { ...pin, title, description, category };
+            })
+            .filter((pin: any) => (pin.title && pin.title.toLowerCase() !== 'custom') || pin.description)
+            .reduce((acc: any[], pin: any) => {
+              const key = `${pin.title}|${pin.description}|${pin.latitude}|${pin.longitude}`;
+              if (!acc.some((p) => `${p.title}|${p.description}|${p.latitude}|${p.longitude}` === key)) acc.push(pin);
+              return acc;
+            }, []),
           experiences: data.experiences?.map((experience: any) => ({
             ...experience,
             activity: sanitizeText(experience.activity || ''),

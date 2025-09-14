@@ -430,7 +430,8 @@ export const ReviewsSection = ({ petData, onUpdate }: ReviewsSectionProps) => {
               <Button 
                 onClick={handleSendReviewRequest}
                 disabled={isSendingEmail}
-                className="flex-1 bg-blue-600 hover:bg-blue-700"
+                className="flex-1 text-white hover:opacity-90"
+                style={{ backgroundColor: '#5691af' }}
               >
                 {isSendingEmail ? (
                   <>

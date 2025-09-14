@@ -162,6 +162,7 @@ export const PetPDFGenerator = ({ petId, petName, petData, handlePetUpdate }: Pe
       
       // CRITICAL: Use client-side generation directly to ensure proper type handling
       // Emergency vs Full profiles have different content structures
+      console.log('🔧 PetPDFGenerator: Calling generateClientPetPDF with type:', selectedPdfType);
       const result = await generateClientPetPDF(petData, selectedPdfType);
       
       console.log('📄 PDF Generation Result:', {

@@ -15,31 +15,9 @@ export async function generatePetPDF(petId: string, type: 'emergency' | 'full' |
   try {
     console.log('🔧 CLIENT: Starting PDF generation for pet:', petId, 'type:', type)
 
-    // Normalize common synonyms to prevent unintended fallbacks
-    const t = (type || 'emergency').toString().toLowerCase();
-    let normalizedType: 'emergency' | 'full' | 'lost_pet' | 'care' | 'gallery';
-    switch (t) {
-      case 'complete':
-      case 'full_profile':
-      case 'profile':
-      case 'complete_profile':
-        normalizedType = 'full';
-        break;
-      case 'lost':
-      case 'lost-pet':
-      case 'missing':
-        normalizedType = 'lost_pet';
-        break;
-      case 'emergency':
-      case 'full':
-      case 'lost_pet':
-      case 'care':
-      case 'gallery':
-        normalizedType = t as typeof normalizedType;
-        break;
-      default:
-        normalizedType = 'emergency';
-    }
+    // Use centralized type resolver to prevent drift
+    const normalizedType: PDFType = resolvePdfType(type as string);
+    console.log('🔧 CLIENT: Resolved type', { input: type, normalizedType });
 
     console.log('🔧 CLIENT: Request body will be:', { petId, type: normalizedType })
     const response = await supabase.functions.invoke('generate-pet-pdf', {

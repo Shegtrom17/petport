@@ -1677,6 +1677,7 @@ export async function generateClientPetPDF(
 ): Promise<ClientPDFGenerationResult> {
   try {
     console.log('📋 Starting client PDF generation with jsPDF...', { type, petId: petData?.id });
+    console.log('🔍 Input type before resolver:', type, typeof type);
     
     if (!petData) {
       throw new Error('Pet data is required for PDF generation');
@@ -1722,6 +1723,7 @@ export async function generateClientPetPDF(
     
     console.log('✅ Client PDF generated successfully with jsPDF', { 
       type, 
+      normalizedType,
       fileSize: `${(pdfBlob.size / 1024).toFixed(1)}KB`,
       pages: doc.getNumberOfPages()
     });
@@ -1730,7 +1732,7 @@ export async function generateClientPetPDF(
       success: true,
       blob: pdfBlob,
       fileName: `${(normalizedPet.name || 'pet')}_${normalizedType}_profile.pdf`,
-      type
+      type: normalizedType // Use resolved type, not input
     };
 
   } catch (error) {

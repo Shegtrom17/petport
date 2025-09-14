@@ -144,9 +144,20 @@ export const PetPDFGenerator = ({ petId, petName, petData, handlePetUpdate }: Pe
     }
 
     setSelectedPdfType(type);
-    // Reset any previously generated blob when switching types
-    setGeneratedPdfBlob(null);
-    setResolvedType(null);
+    
+    // Check cache for this type and prefill if available
+    const requestedType = resolvePdfType(type);
+    const cachedBlob = pdfCache[requestedType];
+    console.log('🔧 PetPDFGenerator: Type selected', { type, requestedType, hasCachedBlob: !!cachedBlob });
+    
+    if (cachedBlob) {
+      setGeneratedPdfBlob(cachedBlob);
+      setResolvedType(requestedType);
+    } else {
+      setGeneratedPdfBlob(null);
+      setResolvedType(null);
+    }
+    
     setIsOptionsDialogOpen(true);
   };
 
@@ -187,8 +198,13 @@ export const PetPDFGenerator = ({ petId, petName, petData, handlePetUpdate }: Pe
       });
 
       if (result.success && result.blob) {
+        const resolvedPdfType = (result.type as PDFType) || requestedType;
+        console.log('🔧 PetPDFGenerator: PDF generated successfully', { requestedType, resolvedPdfType, blobSize: result.blob.size });
+        
+        // Store in cache and set active blob
+        setPdfCache(prev => ({ ...prev, [resolvedPdfType]: result.blob }));
         setGeneratedPdfBlob(result.blob);
-        setResolvedType((result.type as PDFType) || requestedType);
+        setResolvedType(resolvedPdfType);
         
         if (action === 'download') {
           // Use environment-aware download
@@ -377,7 +393,11 @@ export const PetPDFGenerator = ({ petId, petName, petData, handlePetUpdate }: Pe
       {/* PDF Options Dialog */}
       <Dialog open={isOptionsDialogOpen} onOpenChange={(open) => {
           setIsOptionsDialogOpen(open);
-          if (!open) {
+          if (!open && selectedPdfType) {
+            // Clear only this type's cache to prevent cross-wiring
+            const requestedType = resolvePdfType(selectedPdfType);
+            console.log('🔧 PetPDFGenerator: Clearing cache for type', { selectedPdfType, requestedType });
+            setPdfCache(prev => ({ ...prev, [requestedType]: null }));
             setGeneratedPdfBlob(null);
             setResolvedType(null);
           }

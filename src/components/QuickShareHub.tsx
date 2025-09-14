@@ -216,17 +216,81 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
   };
 
   const handleFacebookShare = (page: SharePage) => {
-    // Use edge function URL for Facebook to get OG tags
-    const edgeUrl = getEdgeFunctionUrl(page);
-    const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(edgeUrl)}`;
-    window.open(facebookUrl, '_blank');
+    // Check if mobile device
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    
+    if (isMobile) {
+      // For mobile, use direct URL to avoid API errors with Facebook dialog
+      const directUrl = `${baseUrl}${page.path}`;
+      
+      if (navigator.share) {
+        // Use native sharing first
+        navigator.share({
+          title: `${petData.name}'s ${page.title}`,
+          text: page.description,
+          url: directUrl,
+        }).catch(() => {
+          // Fallback to copying link with instructions
+          handleCopyLink(page);
+          toast({
+            title: "Facebook Mobile Limitation",
+            description: "Link copied! Open Facebook app and paste the link in a post or story.",
+            duration: 5000,
+          });
+        });
+      } else {
+        // Fallback: copy link and show instructions
+        handleCopyLink(page);
+        toast({
+          title: "Facebook Mobile Limitation", 
+          description: "Link copied! Open Facebook app and paste the link in a post or story.",
+          duration: 5000,
+        });
+      }
+    } else {
+      // Desktop - use edge function URL for better OG tags
+      const edgeUrl = getEdgeFunctionUrl(page);
+      const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(edgeUrl)}`;
+      window.open(facebookUrl, '_blank');
+    }
   };
 
   const handleMessengerShare = (page: SharePage) => {
-    // Use edge function URL for Messenger to get OG tags
-    const edgeUrl = getEdgeFunctionUrl(page);
-    const messengerUrl = `https://www.facebook.com/dialog/send?link=${encodeURIComponent(edgeUrl)}&app_id=1811375643081306&redirect_uri=${encodeURIComponent(edgeUrl)}`;
-    window.open(messengerUrl, '_blank');
+    // Check if mobile device
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    const directUrl = `${baseUrl}${page.path}`;
+    
+    if (isMobile) {
+      // For mobile, use simple link sharing to avoid dialog errors
+      if (navigator.share) {
+        navigator.share({
+          title: `${petData.name}'s ${page.title}`,
+          text: page.description,
+          url: directUrl,
+        }).catch(() => {
+          // Fallback to copying link with instructions
+          handleCopyLink(page);
+          toast({
+            title: "Messenger Mobile Limitation",
+            description: "Link copied! Open Messenger app and paste the link in a conversation.",
+            duration: 5000,
+          });
+        });
+      } else {
+        // Fallback: copy link and show instructions
+        handleCopyLink(page);
+        toast({
+          title: "Messenger Mobile Limitation",
+          description: "Link copied! Open Messenger app and paste the link in a conversation.",
+          duration: 5000,
+        });
+      }
+    } else {
+      // Desktop - use direct messaging URL
+      const message = `Check out ${petData.name}'s ${page.title}: ${directUrl}`;
+      const messengerUrl = `https://www.messenger.com/new?text=${encodeURIComponent(message)}`;
+      window.open(messengerUrl, '_blank');
+    }
   };
 
   const handleEmailShare = (page: SharePage) => {

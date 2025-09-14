@@ -225,8 +225,7 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
   const handleMessengerShare = (page: SharePage) => {
     // Use edge function URL for Messenger to get OG tags
     const edgeUrl = getEdgeFunctionUrl(page);
-    // Since no specific app_id is configured, use basic messenger share
-    const messengerUrl = `https://www.facebook.com/dialog/send?link=${encodeURIComponent(edgeUrl)}&redirect_uri=${encodeURIComponent(edgeUrl)}`;
+    const messengerUrl = `https://www.facebook.com/dialog/send?link=${encodeURIComponent(edgeUrl)}&app_id=1811375643081306&redirect_uri=${encodeURIComponent(edgeUrl)}`;
     window.open(messengerUrl, '_blank');
   };
 

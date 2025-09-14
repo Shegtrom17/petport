@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
-import { Heart, MapPin, Phone, Star, Award, GraduationCap, Plane, Trophy, Briefcase, Shield, Building, Mail, Globe, Camera } from "lucide-react";
+import { Heart, MapPin, Phone, Star, Award, GraduationCap, Plane, Trophy, Briefcase, Shield, Building, Mail, Globe, Camera, AlertTriangle, FileText, Eye } from "lucide-react";
 
 import { MetaTags } from "@/components/MetaTags";
 import { AddReviewForm } from "@/components/AddReviewForm";
@@ -354,6 +354,165 @@ const PublicProfile = () => {
               </CardContent>
             </Card>
            )}
+
+          {/* Emergency Summary Section */}
+          {(petData.contacts?.[0]?.emergency_contact || petData.contacts?.[0]?.vet_contact || petData.medical?.medical_alert) && (
+            <Card className="mb-6 border-red-200 bg-red-50">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-navy-900">
+                  <AlertTriangle className="w-5 h-5 text-red-600" />
+                  Emergency Summary
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-2">
+                {petData.contacts?.[0]?.emergency_contact && (
+                  <p className="text-red-800"><strong>Emergency Contact:</strong> {petData.contacts[0].emergency_contact}</p>
+                )}
+                {petData.contacts?.[0]?.vet_contact && (
+                  <p className="text-red-800"><strong>Veterinarian:</strong> {petData.contacts[0].vet_contact}</p>
+                )}
+                {petData.medical?.medical_alert && (
+                  <p className="text-red-800"><strong>MEDICAL ALERT:</strong> See medical section for details</p>
+                )}
+                {petData.medical?.medications && petData.medical.medications.length > 0 && (
+                  <p className="text-red-800"><strong>Current Medications:</strong> {petData.medical.medications.join(', ')}</p>
+                )}
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Care Instructions */}
+          {petData.care_instructions && (petData.care_instructions.feeding_schedule || petData.care_instructions.morning_routine || petData.care_instructions.evening_routine || petData.care_instructions.behavioral_notes || petData.care_instructions.favorite_activities || petData.care_instructions.allergies) && (
+            <Card className="mb-6">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-navy-900">
+                  <Heart className="w-5 h-5 text-primary" />
+                  Care Instructions
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                {petData.care_instructions.feeding_schedule && (
+                  <div>
+                    <h4 className="font-medium text-navy-800">Feeding Schedule</h4>
+                    <p className="text-gray-700">{petData.care_instructions.feeding_schedule}</p>
+                  </div>
+                )}
+                {petData.care_instructions.morning_routine && (
+                  <div>
+                    <h4 className="font-medium text-navy-800">Morning Routine</h4>
+                    <p className="text-gray-700">{petData.care_instructions.morning_routine}</p>
+                  </div>
+                )}
+                {petData.care_instructions.evening_routine && (
+                  <div>
+                    <h4 className="font-medium text-navy-800">Evening Routine</h4>
+                    <p className="text-gray-700">{petData.care_instructions.evening_routine}</p>
+                  </div>
+                )}
+                {petData.care_instructions.behavioral_notes && (
+                  <div>
+                    <h4 className="font-medium text-navy-800">Behavioral Notes</h4>
+                    <p className="text-gray-700">{petData.care_instructions.behavioral_notes}</p>
+                  </div>
+                )}
+                {petData.care_instructions.favorite_activities && (
+                  <div>
+                    <h4 className="font-medium text-navy-800">Favorite Activities</h4>
+                    <p className="text-gray-700">{petData.care_instructions.favorite_activities}</p>
+                  </div>
+                )}
+                {petData.care_instructions.allergies && (
+                  <div>
+                    <h4 className="font-medium text-navy-800">Allergies</h4>
+                    <p className="text-gray-700">{petData.care_instructions.allergies}</p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Contact Information */}
+          {petData.contacts?.[0] && (petData.contacts[0].emergency_contact || petData.contacts[0].second_emergency_contact || petData.contacts[0].vet_contact || petData.contacts[0].pet_caretaker) && (
+            <Card className="mb-6">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-navy-900">
+                  <Phone className="w-5 h-5 text-primary" />
+                  Contact Information
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-2">
+                {petData.contacts[0].emergency_contact && (
+                  <p><strong>Primary Emergency Contact:</strong> {petData.contacts[0].emergency_contact}</p>
+                )}
+                {petData.contacts[0].second_emergency_contact && (
+                  <p><strong>Secondary Emergency Contact:</strong> {petData.contacts[0].second_emergency_contact}</p>
+                )}
+                {petData.contacts[0].vet_contact && (
+                  <p><strong>Veterinarian:</strong> {petData.contacts[0].vet_contact}</p>
+                )}
+                {petData.contacts[0].pet_caretaker && (
+                  <p><strong>Pet Caretaker:</strong> {petData.contacts[0].pet_caretaker}</p>
+                )}
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Documents on File */}
+          {petData.documents && petData.documents.length > 0 && (
+            <Card className="mb-6">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-navy-900">
+                  <FileText className="w-5 h-5 text-primary" />
+                  Documents on File
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="mb-3 text-gray-700">Total Documents: {petData.documents.length}</p>
+                <div className="space-y-2">
+                  {petData.documents.map((document: any, idx: number) => (
+                    <div key={idx} className="p-3 rounded border">
+                      <div className="font-medium">{document.name}</div>
+                      <div className="text-sm text-muted-foreground">
+                        <Badge variant="outline" className="mr-2">{document.type}</Badge>
+                        {document.upload_date && <span className="mr-2">Uploaded: {document.upload_date}</span>}
+                        {document.size && <span>Size: {document.size}</span>}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Distinctive Features */}
+          {petData.lost_pet_data?.[0]?.distinctive_features && (
+            <Card className="mb-6">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-navy-900">
+                  <Eye className="w-5 h-5 text-primary" />
+                  Distinctive Features
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-gray-700">{petData.lost_pet_data[0].distinctive_features}</p>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Description & Unique Traits */}
+          {petData.notes && (
+            <Card className="mb-6">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-navy-900">
+                  <FileText className="w-5 h-5 text-primary" />
+                  Description & Unique Traits
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-gray-700">{petData.notes}</p>
+              </CardContent>
+            </Card>
+          )}
 
           {/* About Section */}
           {petData.bio && (

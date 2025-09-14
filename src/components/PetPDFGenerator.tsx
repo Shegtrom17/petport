@@ -245,7 +245,7 @@ export const PetPDFGenerator = ({ petId, petName, petData }: PetPDFGeneratorProp
     // Use profile-share edge function for better social previews
     const baseUrl = window.location.origin;
     const profileUrl = `${baseUrl}/profile/${petId}`;
-    const shareUrl = `${baseUrl}/functions/v1/profile-share?petId=${petId}&redirect=${encodeURIComponent(profileUrl)}`;
+    const shareUrl = `https://dxghbhujugsfmaecilrq.supabase.co/functions/v1/profile-share?petId=${petId}&redirect=${encodeURIComponent(profileUrl)}`;
     await handleShare(shareUrl, "public");
   };
 

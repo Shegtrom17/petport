@@ -212,7 +212,7 @@ export const PetProfileContent = ({
   const handleShare = async () => {
     try {
       // Use the edge function URL for better social media previews
-      const profileUrl = `${window.location.origin}/functions/v1/profile-share?petId=${enhancedPetData.id}&redirect=${encodeURIComponent(`${window.location.origin}/profile/${enhancedPetData.id}`)}`;
+      const profileUrl = `https://dxghbhujugsfmaecilrq.supabase.co/functions/v1/profile-share?petId=${enhancedPetData.id}&redirect=${encodeURIComponent(`${window.location.origin}/profile/${enhancedPetData.id}`)}`;
       const result = await shareProfileOptimized(profileUrl, enhancedPetData.name, 'profile');
       
       if (result.success) {

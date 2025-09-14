@@ -540,7 +540,7 @@ export const PetProfileContent = ({
               id: enhancedPetData.id,
               name: enhancedPetData.name
             }}
-            isLost={false}
+            isLost={enhancedPetData.is_lost || enhancedPetData.lost_pet_data?.is_missing || false}
           />
           <div className="mt-6 p-4 bg-primary/5 rounded-lg border border-primary/10">
             <div className="flex items-start space-x-3">

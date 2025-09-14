@@ -9,6 +9,7 @@ import { generateClientPetPDF, viewPDFBlob, downloadPDFBlob, isIOS, isStandalone
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/context/AuthContext";
 import { useNavigate } from "react-router-dom";
+import { resolvePdfType, PDFType } from "@/utils/pdfType";
 
 interface PetPDFGeneratorProps {
   petId: string;
@@ -39,6 +40,7 @@ export const PetPDFGenerator = ({ petId, petName, petData, handlePetUpdate }: Pe
   const [isSharing, setIsSharing] = useState(false);
   const [authError, setAuthError] = useState<string | null>(null);
   const [generatedPdfBlob, setGeneratedPdfBlob] = useState<Blob | null>(null);
+  const [resolvedType, setResolvedType] = useState<PDFType | null>(null);
   const { toast } = useToast();
 
   // Define all PDF types
@@ -162,8 +164,9 @@ export const PetPDFGenerator = ({ petId, petName, petData, handlePetUpdate }: Pe
       
       // CRITICAL: Use client-side generation directly to ensure proper type handling
       // Emergency vs Full profiles have different content structures
-      console.log('🔧 PetPDFGenerator: Calling generateClientPetPDF with type:', selectedPdfType);
-      const result = await generateClientPetPDF(petData, selectedPdfType);
+      const normalizedType: PDFType = resolvePdfType(selectedPdfType as string);
+      console.log('🔧 PetPDFGenerator: Resolved type', { input: selectedPdfType, normalizedType });
+      const result = await generateClientPetPDF(petData, normalizedType);
       
       console.log('📄 PDF Generation Result:', {
         success: result.success,
@@ -174,15 +177,17 @@ export const PetPDFGenerator = ({ petId, petName, petData, handlePetUpdate }: Pe
 
       if (result.success && result.blob) {
         setGeneratedPdfBlob(result.blob);
+        setResolvedType((result.type as PDFType) || normalizedType);
         
         if (action === 'download') {
           // Use environment-aware download
-          const fileName = `${petName}_${selectedPdfType}_profile.pdf`;
+          const resolved = (result.type as PDFType) || normalizedType;
+          const fileName = `${petName}_${resolved}_profile.pdf`;
           try {
             await downloadPDFBlob(result.blob, fileName);
             toast({
               title: "Download Started",
-              description: `${selectedPdfType === 'emergency' ? 'Emergency' : selectedPdfType === 'full' ? 'Complete' : selectedPdfType} profile PDF is downloading.`,
+              description: `${resolved === 'emergency' ? 'Emergency' : resolved === 'full' ? 'Complete' : resolved} profile PDF is downloading.`,
             });
             setIsOptionsDialogOpen(false);
           } catch (downloadError) {
@@ -423,9 +428,12 @@ export const PetPDFGenerator = ({ petId, petName, petData, handlePetUpdate }: Pe
             {generatedPdfBlob && !isGenerating && (
               <div className="space-y-4">
                 <div className="bg-white p-4 rounded-lg border border-gold-500/30 shadow-sm">
-                  <h4 className="font-bold text-navy-900 mb-3">
+                  <h4 className="font-bold text-navy-900 mb-1">
                     {selectedPdfType && pdfTypes.find(p => p.key === selectedPdfType)?.title} PDF
                   </h4>
+                  {resolvedType && (
+                    <p className="text-xs text-muted-foreground mb-2">Resolved type: {resolvedType}</p>
+                  )}
                    <div className="grid grid-cols-3 gap-2 justify-center mb-3">
                      <Button
                        onClick={async () => {

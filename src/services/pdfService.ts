@@ -1,5 +1,6 @@
 
 import { supabase } from "@/integrations/supabase/client";
+import { resolvePdfType, PDFType } from "@/utils/pdfType";
 
 export interface PDFGenerationResult {
   success: boolean;

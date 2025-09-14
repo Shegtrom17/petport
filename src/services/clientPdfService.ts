@@ -3,6 +3,7 @@ import { sanitizeText } from '@/utils/inputSanitizer';
 import { generatePublicMissingUrl, generateQRCodeUrl } from '@/services/pdfService';
 import { optimizeImageForPDF, optimizeBase64ForPDF } from '@/utils/pdfImageOptimization';
 import { GALLERY_CONFIG } from '@/config/featureFlags';
+import { resolvePdfType, PDFType } from '@/utils/pdfType';
 export interface ClientPDFGenerationResult {
   success: boolean;
   blob?: Blob;
@@ -1689,32 +1690,9 @@ export async function generateClientPetPDF(
     const normalizedPet = normalizePetData(petData);
     console.log('📎 PDF identifiers', { microchipId: normalizedPet.microchipId, registrationNumber: normalizedPet.registrationNumber });
 
-    // Generate content based on type (normalize common synonyms)
-    const t = (type || 'emergency').toString().toLowerCase();
-    let normalizedType: 'emergency' | 'full' | 'lost_pet' | 'care' | 'gallery' | 'resume';
-    switch (t) {
-      case 'complete':
-      case 'full_profile':
-      case 'profile':
-      case 'complete_profile':
-        normalizedType = 'full';
-        break;
-      case 'lost':
-      case 'lost-pet':
-      case 'missing':
-        normalizedType = 'lost_pet';
-        break;
-      case 'emergency':
-      case 'full':
-      case 'lost_pet':
-      case 'care':
-      case 'gallery':
-      case 'resume':
-        normalizedType = t as typeof normalizedType;
-        break;
-      default:
-        normalizedType = 'emergency';
-    }
+    // Generate content based on type (centralized resolver)
+    const normalizedType: PDFType = resolvePdfType(type as string);
+    console.log('📎 Resolved PDF type', { input: type, normalizedType });
 
     switch (normalizedType) {
       case 'emergency':

@@ -531,30 +531,31 @@ const LostPet = () => {
          </div>
 
         {/* Gallery Photos */}
-        {currentPet.gallery_photos && currentPet.gallery_photos.length > 0 && (
-          <div className="p-6 rounded-lg border shadow-sm">
-            <div className="mb-6">
-              <h3 className="text-xl font-semibold" style={{ color: '#5691af' }}>Recent Photos</h3>
-              <p className="text-sm text-muted-foreground">Recent photos for identification</p>
-              <p className="text-sm text-muted-foreground mt-1">
-                Note: All photos are showcased on the public share link. PDF flyers display the first 4 photos only to fit a two-page, print-friendly layout.
-              </p>
+        <div className="p-6 rounded-lg border shadow-sm">
+          <div className="mb-6">
+            <h3 className="text-xl font-semibold" style={{ color: '#5691af' }}>Recent Photos</h3>
+            <p className="text-sm text-muted-foreground">Recent photos for identification</p>
+            <p className="text-sm text-muted-foreground mt-1">
+              Note: All photos are showcased on the public share link. PDF flyers display the first 4 photos only to fit a two-page, print-friendly layout.
+            </p>
+          </div>
+
+          {currentPet.gallery_photos && currentPet.gallery_photos.length > 0 ? (
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {currentPet.gallery_photos.map((photo: any, index: number) => (
+                <div key={index} className="aspect-square rounded-lg overflow-hidden border-2 border-gray-200">
+                  <img
+                    src={photo.url}
+                    alt={photo.caption || `${currentPet.name} photo ${index + 1}`}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              ))}
             </div>
-            <div>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                {currentPet.gallery_photos.map((photo: any, index: number) => (
-                  <div key={index} className="aspect-square rounded-lg overflow-hidden border-2 border-gray-200">
-                    <img 
-                      src={photo.url} 
-                      alt={photo.caption || `${currentPet.name} photo ${index + 1}`}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                ))}
-               </div>
-             </div>
-           </div>
-         )}
+          ) : (
+            <p className="text-sm text-muted-foreground">No photos yet. Add photos to help identification.</p>
+          )}
+        </div>
       </main>
       </div>
     </PWALayout>

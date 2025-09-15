@@ -278,7 +278,16 @@ const LostPet = () => {
             {/* Emergency Contacts */}
             <div className="space-y-4">
               <h4 className="font-semibold text-lg" style={{ color: '#5691af' }}>Contacts</h4>
-              <ContactsDisplay petId={currentPet.id} hideHeader={true} />
+              <ContactsDisplay 
+                petId={currentPet.id} 
+                hideHeader={true}
+                fallbackPetData={{
+                  emergencyContact: currentPet.emergency_contact,
+                  secondEmergencyContact: currentPet.second_emergency_contact,
+                  vetContact: currentPet.vet_contact,
+                  petCaretaker: currentPet.pet_caretaker,
+                }}
+              />
             </div>
           </div>
         </div>

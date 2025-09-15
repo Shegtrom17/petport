@@ -5,9 +5,10 @@ import { getOrderedContacts, handlePhoneCall, ContactInfo } from "@/utils/contac
 interface ContactsDisplayProps {
   petId: string;
   hideHeader?: boolean;
+  fallbackPetData?: any;
 }
 
-export const ContactsDisplay = ({ petId, hideHeader = false }: ContactsDisplayProps) => {
+export const ContactsDisplay = ({ petId, hideHeader = false, fallbackPetData }: ContactsDisplayProps) => {
   const [contacts, setContacts] = useState<ContactInfo[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -16,7 +17,7 @@ export const ContactsDisplay = ({ petId, hideHeader = false }: ContactsDisplayPr
       if (!petId) return;
       
       try {
-        const contactsData = await getOrderedContacts(petId);
+        const contactsData = await getOrderedContacts(petId, fallbackPetData);
         setContacts(contactsData);
       } catch (error) {
         console.error('Error fetching contacts:', error);
@@ -26,7 +27,7 @@ export const ContactsDisplay = ({ petId, hideHeader = false }: ContactsDisplayPr
     };
 
     fetchContacts();
-  }, [petId]);
+  }, [petId, fallbackPetData]);
 
   if (loading) {
     return (

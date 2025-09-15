@@ -67,7 +67,7 @@ export default function Landing() {
               <p className="mt-6 text-xl text-brand-primary-dark leading-relaxed">
                 One place for everything about your pet. Beautiful profiles, emergency info, instant lost pet flyers, shareable links, PDFs, documents, and travel maps.
               </p>
-              <div className="mt-8 flex flex-col sm:flex-row gap-4">
+              <div className="mt-8">
                 {user ? (
                   <Button onClick={() => navigate('/app')} size="lg" className="text-lg px-8 py-3 text-white">
                     Open App
@@ -77,9 +77,6 @@ export default function Landing() {
                     Start Free Trial
                   </Button>
                 )}
-                <Button variant="outline" size="lg" className="text-lg px-8 py-3 text-brand-primary border-brand-primary/30 hover:bg-brand-primary/10">
-                  Watch Demo
-                </Button>
               </div>
             </div>
             <div className="relative">

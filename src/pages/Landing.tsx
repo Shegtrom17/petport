@@ -326,7 +326,7 @@ export default function Landing() {
                 </AspectRatio>
               </div>
               <h3 className="text-xl font-semibold text-brand-primary mb-2">3. Add Resume Details (optional)</h3>
-              <p className="text-brand-primary-dark">Showcase achievements, certifications, and professional credentials to highlight your pet's accomplishments.</p>
+              <p className="text-brand-primary-dark">Showcase achievements, certifications, and professional credentials to highlight your pet's accomplishments, even request reviews.</p>
             </div>
 
             <div className="text-center">

@@ -9,6 +9,7 @@ import PricingSection from "@/components/PricingSection";
 import { Testimonials } from "@/components/Testimonials";
 import createProfileScreenshot from "@/assets/create-profile-screenshot.png";
 import documentUploadScreenshot from "@/assets/document-upload-screenshot.png";
+import resumeDetailsScreenshot from "@/assets/resume-details-screenshot.png";
 import shareInstructionsScreenshot from "@/assets/share-instructions-screenshot.png";
 
 export default function Landing() {
@@ -279,7 +280,7 @@ export default function Landing() {
             <p className="text-xl text-brand-primary-dark">Get started in minutes</p>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div className="text-center">
               {/* Step 1 Screenshot */}
               <div className="mb-6 rounded-2xl overflow-hidden shadow-lg">
@@ -317,6 +318,22 @@ export default function Landing() {
               <div className="mb-6 rounded-2xl overflow-hidden shadow-lg">
                 <AspectRatio ratio={4 / 3}>
                   <img 
+                    src={resumeDetailsScreenshot} 
+                    alt="Adding resume details - Showcase achievements, certifications, and professional pet credentials"
+                    className="w-full h-full object-cover"
+                    loading="lazy"
+                  />
+                </AspectRatio>
+              </div>
+              <h3 className="text-xl font-semibold text-brand-primary mb-2">3. Add Resume Details (optional)</h3>
+              <p className="text-brand-primary-dark">Showcase achievements, certifications, and professional credentials to highlight your pet's accomplishments.</p>
+            </div>
+
+            <div className="text-center">
+              {/* Step 4 Screenshot */}
+              <div className="mb-6 rounded-2xl overflow-hidden shadow-lg">
+                <AspectRatio ratio={4 / 3}>
+                  <img 
                     src={shareInstructionsScreenshot} 
                     alt="Sharing pet information - Quick Share Hub with emergency profile, care instructions, and QR codes"
                     className="w-full h-full object-cover"
@@ -324,7 +341,7 @@ export default function Landing() {
                   />
                 </AspectRatio>
               </div>
-              <h3 className="text-xl font-semibold text-brand-primary mb-2">3. Share & Go</h3>
+              <h3 className="text-xl font-semibold text-brand-primary mb-2">4. Share & Go</h3>
               <p className="text-brand-primary-dark">Share with vets, sitters, or hotels instantly. Generate PDFs and QR codes on demand.</p>
             </div>
           </div>

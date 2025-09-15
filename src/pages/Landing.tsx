@@ -407,12 +407,11 @@ export default function Landing() {
         <section className="bg-gradient-to-br from-blue-50 to-indigo-50 py-20">
           {/* Free Trial Banner */}
           <div className="max-w-4xl mx-auto px-4 mb-12">
-            <div className="bg-gradient-to-r from-green-500 to-emerald-500 rounded-2xl text-white text-center py-6 px-8 shadow-lg">
+            <div className="bg-gradient-to-r from-[#5691af] to-[#4a7c9d] rounded-2xl text-white text-center py-6 px-8 shadow-lg">
               <div className="flex items-center justify-center gap-3 mb-2">
-                <span className="text-2xl">🎉</span>
                 <h3 className="text-2xl font-bold">Start Your 7-Day Free Trial</h3>
               </div>
-              <p className="text-green-50 text-lg">Full access to all features • No charges for 7 days • Cancel anytime</p>
+              <p className="text-white/90 text-lg">Full access to all features • No charges for 7 days • Cancel anytime</p>
             </div>
           </div>
           

@@ -531,13 +531,14 @@ const LostPet = () => {
          </div>
 
         {/* Gallery Photos */}
+        <p className="text-xs mb-4" style={{ color: '#5691af' }}>
+          All photos are showcased on the public share link. PDF flyers display the first 4 photos only due to two-page format optimized for posting on bulletin boards and walls.
+        </p>
+        
         <div className="p-6 rounded-lg border shadow-sm">
           <div className="mb-6">
             <h3 className="text-xl font-semibold" style={{ color: '#5691af' }}>Recent Photos</h3>
             <p className="text-sm text-muted-foreground">Recent photos for identification</p>
-            <p className="text-sm text-muted-foreground mt-1">
-              Note: All photos are showcased on the public share link. PDF flyers display the first 4 photos only to fit a two-page, print-friendly layout.
-            </p>
           </div>
 
           {currentPet.gallery_photos && currentPet.gallery_photos.length > 0 ? (

@@ -536,6 +536,9 @@ const LostPet = () => {
             <div className="mb-6">
               <h3 className="text-xl font-semibold" style={{ color: '#5691af' }}>Recent Photos</h3>
               <p className="text-sm text-muted-foreground">Recent photos for identification</p>
+              <p className="text-sm text-blue-600 mt-1">
+                📝 All photos are showcased on the public share link. PDF flyers display the first 4 photos only due to two-page format optimized for posting on bulletin boards and walls.
+              </p>
             </div>
             <div>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">

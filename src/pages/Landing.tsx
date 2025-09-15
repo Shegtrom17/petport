@@ -67,6 +67,12 @@ export default function Landing() {
               <p className="mt-6 text-xl text-brand-primary-dark leading-relaxed">
                 One place for everything about your pet. Beautiful profiles, emergency info, instant lost pet flyers, shareable links, PDFs, documents, and travel maps.
               </p>
+              
+              {/* Free Trial Badge */}
+              <div className="mt-4 inline-flex items-center gap-2 bg-green-50 border border-green-200 rounded-full px-4 py-2">
+                <span className="w-2 h-2 bg-green-500 rounded-full"></span>
+                <span className="text-green-700 font-medium text-sm">7-Day Free Trial • No charges for 7 days • Cancel anytime</span>
+              </div>
               <div className="mt-8">
                 {user ? (
                   <Button onClick={() => navigate('/app')} size="lg" className="text-lg px-8 py-3 text-white">
@@ -374,6 +380,16 @@ export default function Landing() {
             </div>
             
             <div className="bg-white rounded-xl shadow-sm p-6">
+              <h3 className="text-lg font-semibold text-brand-primary mb-2">How does the 7-day free trial work?</h3>
+              <p className="text-brand-primary-dark">Sign up with your card for instant access to all features. You won't be charged for 7 days, and you can cancel anytime during or after the trial period.</p>
+            </div>
+            
+            <div className="bg-white rounded-xl shadow-sm p-6">
+              <h3 className="text-lg font-semibold text-brand-primary mb-2">Do I need a credit card for the free trial?</h3>
+              <p className="text-brand-primary-dark">Yes, a card is required to start your trial, but you won't be charged until after the 7-day period. This ensures uninterrupted access if you choose to continue.</p>
+            </div>
+            
+            <div className="bg-white rounded-xl shadow-sm p-6">
               <h3 className="text-lg font-semibold text-brand-primary mb-2">Can I cancel anytime?</h3>
               <p className="text-brand-primary-dark">Absolutely. Cancel anytime from your account settings. No long-term commitments.</p>
             </div>
@@ -389,6 +405,17 @@ export default function Landing() {
 
         {/* Pricing Section */}
         <section className="bg-gradient-to-br from-blue-50 to-indigo-50 py-20">
+          {/* Free Trial Banner */}
+          <div className="max-w-4xl mx-auto px-4 mb-12">
+            <div className="bg-gradient-to-r from-green-500 to-emerald-500 rounded-2xl text-white text-center py-6 px-8 shadow-lg">
+              <div className="flex items-center justify-center gap-3 mb-2">
+                <span className="text-2xl">🎉</span>
+                <h3 className="text-2xl font-bold">Start Your 7-Day Free Trial</h3>
+              </div>
+              <p className="text-green-50 text-lg">Full access to all features • No charges for 7 days • Cancel anytime</p>
+            </div>
+          </div>
+          
           <div className="max-w-7xl mx-auto px-4">
             <PricingSection context="landing" />
           </div>

@@ -69,9 +69,9 @@ export default function Landing() {
               </p>
               
               {/* Free Trial Badge */}
-              <div className="mt-4 inline-flex items-center gap-2 bg-green-50 border border-green-200 rounded-full px-4 py-2">
-                <span className="w-2 h-2 bg-green-500 rounded-full"></span>
-                <span className="text-green-700 font-medium text-sm">7-Day Free Trial • No charges for 7 days • Cancel anytime</span>
+              <div className="mt-4 inline-flex items-center gap-2 bg-transparent border border-[#5691af]/30 rounded-full px-4 py-2">
+                <span className="w-2 h-2 bg-[#5691af] rounded-full"></span>
+                <span className="text-[#5691af] font-medium text-sm">7-Day Free Trial • No charges for 7 days • Cancel anytime</span>
               </div>
               <div className="mt-8">
                 {user ? (

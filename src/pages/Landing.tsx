@@ -73,7 +73,7 @@ export default function Landing() {
                 <span className="w-2 h-2 bg-[#5691af] rounded-full"></span>
                 <span className="text-[#5691af] font-medium text-sm">7-Day Free Trial • No charges for 7 days • Cancel anytime</span>
               </div>
-              <div className="mt-8">
+              <div className="mt-8 flex justify-center md:justify-start">
                 {user ? (
                   <Button onClick={() => navigate('/app')} size="lg" className="text-lg px-8 py-3 text-white">
                     Open App

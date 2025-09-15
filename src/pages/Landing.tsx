@@ -83,11 +83,20 @@ export default function Landing() {
               </div>
             </div>
             <div className="relative">
-              {/* Blank Hero Section */}
+              {/* Hero Video */}
               <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
-                <AspectRatio ratio={3 / 2}>
-                  <div className="w-full h-full bg-gray-50"></div>
-                </AspectRatio>
+                <video
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
+                  preload="metadata"
+                  className="w-full h-auto rounded-2xl"
+                  poster=""
+                >
+                  <source src="/hero-video.mp4" type="video/mp4" />
+                  Your browser does not support the video tag.
+                </video>
               </div>
             </div>
           </div>

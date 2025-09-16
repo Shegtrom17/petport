@@ -199,6 +199,7 @@ export const AppShareButton = ({ variant = "icon", className = "" }: AppShareBut
                 <Button
                   onClick={sendAppEmail}
                   disabled={isSending}
+                  className="bg-brand-primary text-white hover:bg-brand-primary-dark hover:text-white"
                 >
                   {isSending ? "Sending..." : "Send Email"}
                 </Button>
@@ -220,7 +221,7 @@ export const AppShareButton = ({ variant = "icon", className = "" }: AppShareBut
         <div className="flex gap-2">
           <Button
             onClick={handleNativeShare}
-            className="flex-1 gap-2"
+            className="flex-1 gap-2 bg-brand-primary text-white hover:bg-brand-primary-dark hover:text-white"
             size="sm"
           >
             <Share2 className="w-4 h-4" />
@@ -230,7 +231,7 @@ export const AppShareButton = ({ variant = "icon", className = "" }: AppShareBut
             variant="outline"
             onClick={handleCopyLink}
             size="sm"
-            className="gap-2"
+            className="gap-2 border-brand-primary text-brand-primary hover:bg-brand-primary hover:text-white"
           >
             <Copy className="w-4 h-4" />
             Copy

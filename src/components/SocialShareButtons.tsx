@@ -270,7 +270,7 @@ title: "Link Copied! 📋",
                   onClick={handleCopyLink}
                   variant="outline"
                   size="sm"
-                  className={`w-full ${isMissingPet ? 'border-red-600 text-red-700 hover:bg-red-50' : 'border-primary text-primary hover:bg-primary/5'}`}
+                  className={`w-full ${isMissingPet ? 'border-red-600 text-red-700 hover:bg-red-600 hover:text-white' : 'border-brand-primary text-brand-primary hover:bg-brand-primary hover:text-white'}`}
                 >
                   {copied ? <Check className="w-4 h-4 mr-1 flex-shrink-0" /> : <Copy className="w-4 h-4 mr-1 flex-shrink-0" />}
                   <span className="text-responsive-xs">{copied ? 'Copied!' : 'Copy Link'}</span>
@@ -280,7 +280,7 @@ title: "Link Copied! 📋",
                   onClick={handleSMSShare}
                   variant="outline"
                   size="sm"
-                  className={`w-full ${isMissingPet ? 'border-red-600 text-red-700 hover:bg-red-50' : 'border-primary text-primary hover:bg-primary/5'}`}
+                  className={`w-full ${isMissingPet ? 'border-red-600 text-red-700 hover:bg-red-600 hover:text-white' : 'border-brand-primary text-brand-primary hover:bg-brand-primary hover:text-white'}`}
                 >
                   <MessageCircle className="w-4 h-4 mr-1 flex-shrink-0" />
                   <span className="text-responsive-xs">Text/SMS</span>
@@ -292,7 +292,7 @@ title: "Link Copied! 📋",
                       onClick={handleEmailShare}
                       variant="outline"
                       size="sm"
-                      className={`w-full ${isMissingPet ? 'border-red-600 text-red-700 hover:bg-red-50' : 'border-primary text-primary hover:bg-primary/5'}`}
+                      className={`w-full ${isMissingPet ? 'border-red-600 text-red-700 hover:bg-red-600 hover:text-white' : 'border-brand-primary text-brand-primary hover:bg-brand-primary hover:text-white'}`}
                     >
                       <Mail className="w-4 h-4 mr-1 flex-shrink-0" />
                       <span className="text-responsive-xs">Email</span>
@@ -336,7 +336,7 @@ title: "Link Copied! 📋",
                         <Button
                           onClick={handleSendEmail}
                           disabled={emailLoading}
-                          className="flex-1 text-white"
+                          className="flex-1 bg-brand-primary text-white hover:bg-brand-primary-dark hover:text-white"
                         >
                           <span className="text-responsive-sm">{emailLoading ? 'Sending...' : 'Send Email'}</span>
                         </Button>
@@ -344,6 +344,7 @@ title: "Link Copied! 📋",
                           variant="outline"
                           onClick={() => setShowEmailForm(false)}
                           disabled={emailLoading}
+                          className="border-brand-primary text-brand-primary hover:bg-brand-primary hover:text-white"
                         >
                           <span className="text-responsive-sm">Cancel</span>
                         </Button>
@@ -366,7 +367,7 @@ title: "Link Copied! 📋",
                   onClick={handleMessengerShare}
                   variant="outline"
                   size="sm"
-                  className={`w-full ${isMissingPet ? 'border-red-600 text-red-700 hover:bg-red-50' : 'border-primary text-primary hover:bg-primary/5'}`}
+                  className={`w-full ${isMissingPet ? 'border-red-600 text-red-700 hover:bg-red-600 hover:text-white' : 'border-brand-primary text-brand-primary hover:bg-brand-primary hover:text-white'}`}
                 >
                   <MessageCircle className="w-4 h-4 mr-1 flex-shrink-0" />
                   <span className="text-responsive-xs">Messenger</span>

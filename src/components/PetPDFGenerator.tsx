@@ -295,7 +295,7 @@ export const PetPDFGenerator = ({ petId, petName, petData, handlePetUpdate }: Pe
       <div className="mb-6">
         <h3 className="text-xl font-semibold flex items-center gap-2" style={{ color: '#5691af' }}>
           <FileText className="w-6 h-6" style={{ color: '#5691af' }} />
-          Quick PDF Generation
+          Quick PDF Hub
         </h3>
         <p className="text-sm mt-1" style={{ color: '#5691af' }}>
           Centralized PDF hub • Edit content in specific sections

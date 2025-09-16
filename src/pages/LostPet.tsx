@@ -29,6 +29,9 @@ const LostPet = () => {
   const { pets, selectedPet, handleSelectPet, isLoading } = usePetData(petId);
   const { toast } = useToast();
   
+  // Validate petId format early
+  const isValidPetId = petId && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(petId);
+  
   const [isEditing, setIsEditing] = useState(false);
   const [lostPetData, setLostPetData] = useState({
     is_missing: false,
@@ -87,6 +90,12 @@ const LostPet = () => {
       setPetDataLoaded(true);
     }
   }, [isLoading, selectedPet?.id, petId]);
+
+  // Early validation and redirect for invalid petId
+  if (petId && !isValidPetId) {
+    console.warn('Invalid petId format:', petId);
+    return <Navigate to="/" replace />;
+  }
 
   // Show loading state while data is being loaded
   if (isLoading || !petDataLoaded) {

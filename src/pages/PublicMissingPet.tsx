@@ -45,16 +45,28 @@ export default function PublicMissingPet() {
   const [petData, setPetData] = useState<MissingPetData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  
+  // Validate petId format
+  const isValidPetId = petId && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(petId);
 
   useEffect(() => {
-    if (petId) {
+    if (petId && isValidPetId) {
       fetchMissingPetData(petId);
+    } else if (petId && !isValidPetId) {
+      setError('Invalid pet ID format');
+      setIsLoading(false);
     }
-  }, [petId]);
+  }, [petId, isValidPetId]);
 
   const fetchMissingPetData = async (id: string) => {
     try {
       setIsLoading(true);
+      
+      // Validate ID format before making DB calls
+      if (!id || !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id)) {
+        setError('Invalid pet ID format');
+        return;
+      }
       
       // Fetch pet basic info - no longer requires is_public, only missing status
       const { data: petInfo, error: petError } = await supabase

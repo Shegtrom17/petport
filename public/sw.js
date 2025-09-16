@@ -1,4 +1,4 @@
-const CACHE_NAME = 'petport-v7'; // Increment version to force update
+const CACHE_NAME = 'petport-v8'; // Fixed cache management issues
 const urlsToCache = [];
 
 self.addEventListener('install', (event) => {
@@ -35,9 +35,10 @@ self.addEventListener('fetch', (event) => {
   const isSupabaseFunction = url.includes('supabase.co/functions');
   const isOptions = req.method === 'OPTIONS';
   const isNonGet = req.method !== 'GET';
+  const isCrossOrigin = !url.startsWith(self.location.origin);
 
-  // Bypass SW for preflight/edge functions/non-GET to avoid CORS/preflight issues
-  if (isOptions || isSupabaseFunction || isNonGet) {
+  // Bypass SW for preflight/edge functions/non-GET/cross-origin to avoid CORS issues
+  if (isOptions || isSupabaseFunction || isNonGet || isCrossOrigin) {
     event.respondWith(fetch(req));
     return;
   }

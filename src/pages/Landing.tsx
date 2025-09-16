@@ -7,6 +7,7 @@ import { MetaTags } from "@/components/MetaTags";
 import { AppShareButton } from "@/components/AppShareButton";
 import PricingSection from "@/components/PricingSection";
 import { Testimonials } from "@/components/Testimonials";
+import { supabase } from "@/integrations/supabase/client";
 import createProfileScreenshot from "@/assets/create-profile-screenshot.png";
 import documentUploadScreenshot from "@/assets/document-upload-screenshot.png";
 import resumeDetailsScreenshot from "@/assets/resume-details-screenshot.png";
@@ -17,9 +18,14 @@ export default function Landing() {
   const navigate = useNavigate();
   const location = useLocation();
   const [showSharePrompt, setShowSharePrompt] = useState(false);
+  const [publicPets, setPublicPets] = useState<any[]>([]);
+  
+  // Detect if we're in preview environment
+  const isPreview = window.location.hostname.includes('lovableproject.com') || 
+                   window.location.hostname.includes('lovable.app');
 
   useEffect(() => {
-    const isPreview = new URLSearchParams(location.search).get("preview") === "1";
+    const isPreviewParam = new URLSearchParams(location.search).get("preview") === "1";
     const isShare = new URLSearchParams(location.search).get("share") === "true";
     
     if (isShare) {
@@ -27,10 +33,34 @@ export default function Landing() {
     }
     
     // Only auto-redirect from the root ("/") so logged-in users can view /landing
-    if (user && !isPreview && location.pathname === "/") {
+    if (user && !isPreviewParam && location.pathname === "/") {
       navigate('/app', { replace: true });
     }
   }, [user, navigate, location.search, location.pathname]);
+
+  // Load public pets for development navigation
+  useEffect(() => {
+    if (isPreview && user) {
+      const loadPublicPets = async () => {
+        try {
+          const { data: pets } = await supabase
+            .from('pets')
+            .select('id, name, species, breed')
+            .eq('is_public', true)
+            .eq('user_id', user.id)
+            .limit(5);
+          
+          if (pets) {
+            setPublicPets(pets);
+          }
+        } catch (error) {
+          console.error('Error loading public pets:', error);
+        }
+      };
+      
+      loadPublicPets();
+    }
+  }, [isPreview, user]);
 
   return (
     <div className="min-h-screen bg-white">
@@ -55,6 +85,33 @@ export default function Landing() {
           )}
         </div>
       </header>
+
+      {/* Development Navigation Helper - Preview Only */}
+      {isPreview && user && publicPets.length > 0 && (
+        <div className="bg-blue-50 border-b border-blue-200">
+          <div className="max-w-7xl mx-auto px-4 py-3">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <span className="text-blue-700 font-medium">🧪 Preview Mode:</span>
+                <span className="text-blue-600 text-sm">Quick links to your public pet profiles</span>
+              </div>
+              <div className="flex items-center gap-2 flex-wrap">
+                {publicPets.map((pet) => (
+                  <Button
+                    key={pet.id}
+                    variant="outline"
+                    size="sm"
+                    onClick={() => window.open(`/profile/${pet.id}`, '_blank')}
+                    className="text-xs border-blue-300 text-blue-700 hover:bg-blue-100"
+                  >
+                    {pet.name} ({pet.species})
+                  </Button>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       <main>
         {/* Hero Section with Video/Animation Placeholder */}

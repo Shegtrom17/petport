@@ -28,6 +28,34 @@ const PublicProfile = () => {
         return;
       }
 
+      // Handle case where user accesses route pattern /:petId instead of actual pet ID
+      if (petId === ':petId') {
+        const isPreview = window.location.hostname.includes('lovableproject.com') || 
+                         window.location.hostname.includes('lovable.app');
+        
+        if (isPreview) {
+          try {
+            // Get first available public pet for development
+            const { data: publicPets } = await supabase
+              .from('pets')
+              .select('id, name')
+              .eq('is_public', true)
+              .limit(1);
+            
+            if (publicPets && publicPets.length > 0) {
+              window.location.href = `/profile/${publicPets[0].id}`;
+              return;
+            }
+          } catch (err) {
+            console.error('Error finding public pet:', err);
+          }
+        }
+        
+        setError("Invalid pet ID format. Please use a valid pet profile URL.");
+        setIsLoading(false);
+        return;
+      }
+
       try {
         const debug = [`Loading pet ID: ${petId}`, `Attempt: ${retryCount + 1}`, `Timestamp: ${new Date().toISOString()}`];
         setDebugInfo(debug);

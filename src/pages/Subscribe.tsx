@@ -19,15 +19,7 @@ export default function Subscribe() {
       if (error) throw error;
       const url = data?.url as string | undefined;
       if (url) {
-        const win = window.open(url, "_blank", "noopener,noreferrer");
-        if (!win) {
-          try {
-            await navigator.clipboard.writeText(url);
-            toast({ title: "Pop-up blocked", description: "Link copied. Paste it into a new tab." });
-          } catch {
-            toast({ title: "Pop-up blocked", description: "Copy failed. Please allow pop-ups or try again." });
-          }
-        }
+        window.location.href = url;
       } else {
         toast({ title: "Unable to open portal", description: "Please try again." });
       }

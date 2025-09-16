@@ -26,7 +26,7 @@ export const PricingSection: React.FC<PricingSectionProps> = ({ context = "landi
       const { data, error } = await supabase.functions.invoke(fn, { body: { plan } });
       if (error) throw error;
       if (data?.url) {
-        window.open(data.url, "_blank");
+        window.location.href = data.url;
       } else {
         toast({ title: "Unable to start checkout", description: "Please try again." });
       }
@@ -51,7 +51,7 @@ export const PricingSection: React.FC<PricingSectionProps> = ({ context = "landi
       if (error) throw error;
       
       if (data?.url) {
-        window.open(data.url, '_blank');
+        window.location.href = data.url;
       }
     } catch (error) {
       console.error('Error starting addon checkout:', error);

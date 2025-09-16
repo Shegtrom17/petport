@@ -19,15 +19,8 @@ interface SubStatus {
 }
 
 const openUrlWithFallback = async (url: string, onCopied: (msg: string) => void) => {
-  const win = window.open(url, "_blank", "noopener,noreferrer");
-  if (!win) {
-    try {
-      await navigator.clipboard.writeText(url);
-      onCopied("Pop-ups blocked. Portal link copied to clipboard.");
-    } catch {
-      onCopied("Pop-ups blocked. Please allow pop-ups or copy this URL: " + url);
-    }
-  }
+  // Use same-tab navigation to avoid popup blocking issues
+  window.location.href = url;
 };
 
 export default function Billing() {
@@ -101,13 +94,7 @@ export default function Billing() {
       if (error) throw error;
       
       if (data?.url) {
-        openUrlWithFallback(data.url, (msg) => {
-          navigator.clipboard.writeText(data.url);
-          toast({
-            title: "Checkout URL copied",
-            description: msg,
-          });
-        });
+        window.location.href = data.url;
       }
     } catch (error) {
       console.error('Error starting addon checkout:', error);

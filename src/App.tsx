@@ -21,7 +21,7 @@ import PublicProfile from "./pages/PublicProfile";
 import PublicCareInstructions from "./pages/PublicCareInstructions";
 import PublicMissingPet from "./pages/PublicMissingPet";
 import NotFound from "./pages/NotFound";
-import { TestModeRibbon } from "@/components/TestModeRibbon";
+
 import TransferAccept from "./pages/TransferAccept";
 import PublicResume from "./pages/PublicResume";
 import PublicReviews from "./pages/PublicReviews";
@@ -70,7 +70,7 @@ const App = () => {
               <ErrorBoundary>
                 <Toaster />
                 <Sonner />
-                <TestModeRibbon />
+                
                 <BrowserRouter>
                 <Routes>
                   <Route path="/auth" element={<Auth />} />

@@ -347,27 +347,6 @@ const Index = () => {
         <IOSRefreshPrompt onRefresh={handleRefresh} />
         <PullToRefresh onRefresh={handleRefresh} disabled={!user || pets.length === 0}>
           <main className="max-w-6xl mx-auto px-3 sm:px-4 py-4 sm:py-6 lg:py-8 pb-20 sm:pb-24">
-            {/* TestMode Helper - Quick Access to Lost Pet Page */}
-            {featureFlags.testMode && user && pets.length > 0 && selectedPet && (
-              <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-2">
-                    <ExternalLink className="w-4 h-4 text-blue-600" />
-                    <span className="text-sm font-medium text-blue-800">TestMode Helper:</span>
-                    <span className="text-sm text-blue-700">Quick access to Lost Pet page</span>
-                  </div>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => window.open(`/lost-pet/${selectedPet.id}`, '_blank')}
-                    className="text-blue-700 border-blue-300 hover:bg-blue-100"
-                  >
-                    <ExternalLink className="w-3 h-3 mr-1" />
-                    Open Lost Pet
-                  </Button>
-                </div>
-              </div>
-            )}
             
             <AuthenticationPrompt isSignedIn={!!user} hasPets={pets.length > 0} />
             

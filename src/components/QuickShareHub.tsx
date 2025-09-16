@@ -345,7 +345,6 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
       <CardHeader>
         <CardTitle className="text-xl flex items-center gap-2">
           <Share2 className="w-6 h-6 text-blue-600" />
-          Quick Share Hub
         </CardTitle>
         <p className="text-sm text-muted-foreground">
           Share live links that update in real time for viewers

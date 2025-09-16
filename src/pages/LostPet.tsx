@@ -178,7 +178,7 @@ const LostPet = () => {
 
   return (
     <PWALayout>
-      <div className="min-h-screen bg-white">
+      <div className="min-h-screen bg-gradient-to-br from-sage-50 to-cream-50">
         {/* Debug Receipt Strip - TestMode Only */}
         {featureFlags.testMode && (
           <div className="max-w-4xl mx-auto mb-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg text-xs">
@@ -205,7 +205,7 @@ const LostPet = () => {
         
       {/* Emergency Header */}
       <div className={`bg-gradient-to-r ${lostPetData.is_missing ? 'from-red-600 to-red-700' : 'from-brand-primary to-brand-primary-dark'} text-white py-6 px-4 shadow-sm`}>
-        <div className="max-w-6xl mx-auto">
+        <div className="max-w-4xl mx-auto">
           <div className="flex flex-col space-y-4 md:flex-row md:items-center md:justify-between md:space-y-0">
             <div className="flex items-center space-x-4">
               <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center">
@@ -238,11 +238,11 @@ const LostPet = () => {
         </div>
       </div>
 
-      <main className="max-w-6xl mx-auto px-4 py-6 space-y-6">
+      <main className="container mx-auto px-4 py-8 max-w-4xl space-y-6">
 
         {/* Missing Status Banner */}
         {lostPetData.is_missing && (
-          <Card className="border border-red-300 bg-red-50">
+          <Card className="border-0 shadow-xl border-l-4 border-l-red-500 bg-red-50/80 backdrop-blur-sm">
             <CardContent className="p-6">
               <div className="flex items-center justify-center space-x-4 text-red-800">
                 <AlertTriangle className="w-8 h-8 animate-pulse" />
@@ -260,24 +260,25 @@ const LostPet = () => {
         )}
 
         {/* Pet Information Card */}
-        <div className="p-6 rounded-lg border shadow-sm">
-          <div className="flex items-center space-x-4 mb-6">
-            <img 
-              src={currentPet.photoUrl || "/placeholder.svg"} 
-              alt={currentPet.name}
-              className="w-16 h-16 rounded-full border-2 border-white/20 object-cover"
-            />
-            <div>
-              <h3 className="text-2xl font-bold" style={{ color: '#5691af' }}>{currentPet.name}</h3>
-              <p className="text-muted-foreground">{currentPet.breed} • {currentPet.age}</p>
+        <Card className="border-0 shadow-xl bg-passport-section-bg backdrop-blur-sm">
+          <CardContent className="p-6">
+            <div className="flex items-center space-x-4 mb-6">
+              <img 
+                src={currentPet.photoUrl || "/placeholder.svg"} 
+                alt={currentPet.name}
+                className="w-16 h-16 rounded-full border-4 border-sage-200 object-cover"
+              />
+              <div>
+                <h3 className="text-2xl font-bold text-navy-900">{currentPet.name}</h3>
+                <p className="text-navy-600">{currentPet.breed} • {currentPet.age}</p>
+              </div>
             </div>
-          </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Pet Details */}
             <div className="space-y-4">
-              <h4 className="font-semibold text-lg" style={{ color: '#5691af' }}>Pet Details</h4>
-              <div className="grid grid-cols-2 gap-2 text-sm">
+              <h4 className="font-semibold text-lg text-navy-900">Pet Details</h4>
+              <div className="grid grid-cols-2 gap-2 text-sm text-navy-600">
                 {currentPet.species && <div><strong>Species:</strong> {currentPet.species}</div>}
                 <div><strong>Breed:</strong> {currentPet.breed || 'Not specified'}</div>
                 <div><strong>Age:</strong> {currentPet.age || 'Not specified'}</div>
@@ -289,13 +290,13 @@ const LostPet = () => {
               
               {/* Important ID Information - styled prominently like in PDF */}
               {currentPet.microchip_id && (
-                <div className="p-3 rounded-lg border shadow-sm">
+                <div className="p-3 rounded-lg border-0 shadow-lg bg-red-50/80 border-l-4 border-l-red-500">
                   <strong className="text-red-600">Microchip ID:</strong> <span className="text-red-600 font-semibold">{currentPet.microchip_id}</span>
                 </div>
               )}
               
               {currentPet.registration_number && (
-                <div className="p-3 rounded-lg border shadow-sm">
+                <div className="p-3 rounded-lg border-0 shadow-lg bg-red-50/80 border-l-4 border-l-red-500">
                   <strong className="text-red-600">Registration #:</strong> <span className="text-red-600 font-semibold">{currentPet.registration_number}</span>
                 </div>
               )}
@@ -303,7 +304,7 @@ const LostPet = () => {
 
             {/* Emergency Contacts */}
             <div className="space-y-4">
-              <h4 className="font-semibold text-lg" style={{ color: '#5691af' }}>Contacts</h4>
+              <h4 className="font-semibold text-lg text-navy-900">Contacts</h4>
               <ContactsDisplay 
                 petId={currentPet.id} 
                 hideHeader={true}
@@ -316,20 +317,21 @@ const LostPet = () => {
               />
             </div>
           </div>
-        </div>
+          </CardContent>
+        </Card>
 
         {/* Lost Pet Information */}
-        <div className="p-6 rounded-lg border shadow-sm">
+        <Card className="border-0 shadow-xl bg-passport-section-bg backdrop-blur-sm">
+          <CardContent className="p-6">
           <div className="flex items-center justify-between mb-6">
-            <h3 className="text-xl font-semibold flex items-center space-x-2" style={{ color: '#5691af' }}>
-              <AlertTriangle className="w-6 h-6" />
+            <h3 className="text-xl font-semibold flex items-center space-x-2 text-navy-900">
+              <AlertTriangle className="w-6 h-6 text-primary" />
               <span>Missing Pet Information</span>
             </h3>
             <Button
               onClick={() => setIsEditing(!isEditing)}
               variant="outline"
-              className="text-white hover:bg-white/20"
-              style={{ borderColor: '#5691af', color: '#5691af' }}
+              className="border-primary text-primary hover:bg-primary/10"
             >
               {isEditing ? 'Cancel' : 'Edit'}
             </Button>
@@ -516,17 +518,19 @@ const LostPet = () => {
                  </div>
                </>
              )}
-           </div>
-         </div>
+            </div>
+          </CardContent>
+        </Card>
 
         {/* Actions Section - Combined flyer generation and sharing */}
-        <div className="p-6 rounded-lg border shadow-sm">
+        <Card className="border-0 shadow-xl bg-passport-section-bg backdrop-blur-sm">
+          <CardContent className="p-6">
           <div className="mb-6">
-            <h3 className="text-xl font-semibold flex items-center space-x-2" style={{ color: '#5691af' }}>
-              <Share className="w-6 h-6" />
+            <h3 className="text-xl font-semibold flex items-center space-x-2 text-navy-900">
+              <Share className="w-6 h-6 text-primary" />
               <span>Share & Generate Flyer</span>
             </h3>
-            <p className="text-sm text-muted-foreground">Generate missing pet flyer and share alert</p>
+            <p className="text-sm text-navy-600">Generate missing pet flyer and share alert</p>
           </div>
           <div className="space-y-6">
             <LostPetPDFGenerator 
@@ -554,30 +558,34 @@ const LostPet = () => {
               </div>
             )}
            </div>
-         </div>
+          </CardContent>
+        </Card>
 
         {/* Gallery Photos */}
-        <div className="mb-6 p-4 rounded-lg border-l-4 bg-blue-50/50" style={{ borderLeftColor: '#5691af' }}>
-          <div className="flex items-start space-x-3">
-            <div className="w-5 h-5 rounded-full flex items-center justify-center mt-0.5" style={{ backgroundColor: '#5691af' }}>
-              <span className="text-white text-xs font-bold">i</span>
+        <Card className="border-0 shadow-lg bg-primary/5 border-l-4 border-l-primary">
+          <CardContent className="p-4">
+            <div className="flex items-start space-x-3">
+              <div className="w-5 h-5 rounded-full bg-primary flex items-center justify-center mt-0.5">
+                <span className="text-white text-xs font-bold">i</span>
+              </div>
+              <div>
+                <p className="text-base font-medium text-primary">
+                  Photo Display Information
+                </p>
+                <p className="text-sm mt-1 text-navy-700">
+                  All photos are showcased on the public share link. PDF flyers display the first 4 photos only due to two-page format optimized for posting on bulletin boards and walls.
+                </p>
+              </div>
             </div>
-            <div>
-              <p className="text-base font-medium" style={{ color: '#5691af' }}>
-                Photo Display Information
-              </p>
-              <p className="text-sm mt-1 text-gray-700">
-                All photos are showcased on the public share link. PDF flyers display the first 4 photos only due to two-page format optimized for posting on bulletin boards and walls.
-              </p>
-            </div>
-          </div>
-        </div>
+          </CardContent>
+        </Card>
         
-        <div className="p-6 rounded-lg border shadow-sm">
-          <div className="mb-6">
-            <h3 className="text-xl font-semibold" style={{ color: '#5691af' }}>Recent Photos</h3>
-            <p className="text-sm text-muted-foreground">Recent photos for identification</p>
-          </div>
+        <Card className="border-0 shadow-xl bg-passport-section-bg backdrop-blur-sm">
+          <CardContent className="p-6">
+            <div className="mb-6">
+              <h3 className="text-xl font-semibold text-navy-900">Recent Photos</h3>
+              <p className="text-sm text-navy-600">Recent photos for identification</p>
+            </div>
 
           {currentPet.gallery_photos && currentPet.gallery_photos.length > 0 ? (
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -592,9 +600,10 @@ const LostPet = () => {
               ))}
             </div>
           ) : (
-            <p className="text-sm text-muted-foreground">No photos yet. Add photos to help identification.</p>
+            <p className="text-sm text-navy-600">No photos yet. Add photos to help identification.</p>
           )}
-        </div>
+          </CardContent>
+        </Card>
       </main>
       </div>
     </PWALayout>

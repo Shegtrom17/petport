@@ -339,26 +339,3 @@
   }
   }
   
-  /* Global Button Fix - Azure with White Text */
-  .btn-azure-fix {
-    background-color: hsl(var(--brand-primary)) !important;
-    color: white !important;
-    border-color: hsl(var(--brand-primary)) !important;
-  }
-  
-  .btn-azure-fix:hover {
-    background-color: hsl(var(--brand-primary-dark)) !important;
-    color: white !important;
-    border-color: hsl(var(--brand-primary-dark)) !important;
-  }
-  
-  /* Force all buttons to have proper contrast */
-  button[class*="bg-brand-primary"],
-  .bg-brand-primary {
-    color: white !important;
-  }
-  
-  button[class*="text-brand-primary"]:not([class*="bg-"]) {
-    background-color: hsl(var(--brand-primary)) !important;
-    color: white !important;
-  }

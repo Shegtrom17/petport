@@ -1188,9 +1188,29 @@ export type Database = {
         Args: { user_uuid: string }
         Returns: boolean
       }
+      process_webhook_event: {
+        Args: { _event_type: string; _stripe_event_id: string }
+        Returns: boolean
+      }
+      update_subscriber_status: {
+        Args: {
+          _canceled_at?: string
+          _grace_period_end?: string
+          _payment_failed_at?: string
+          _reactivated_at?: string
+          _status: Database["public"]["Enums"]["subscription_status"]
+          _user_id: string
+        }
+        Returns: undefined
+      }
     }
     Enums: {
-      subscription_status: "active" | "grace" | "suspended" | "canceled"
+      subscription_status:
+        | "active"
+        | "grace"
+        | "suspended"
+        | "canceled"
+        | "inactive"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1318,7 +1338,13 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      subscription_status: ["active", "grace", "suspended", "canceled"],
+      subscription_status: [
+        "active",
+        "grace",
+        "suspended",
+        "canceled",
+        "inactive",
+      ],
     },
   },
 } as const

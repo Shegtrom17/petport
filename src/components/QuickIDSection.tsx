@@ -615,7 +615,7 @@ export const QuickIDSection = ({ petData, onUpdate }: QuickIDSectionProps) => {
             />
             <Dialog>
               <DialogTrigger asChild>
-                <Button className="w-full sm:w-auto">
+                <Button className="w-full sm:w-auto bg-brand-primary text-white hover:bg-brand-primary/90">
                   <QrCode className="w-4 h-4 mr-2" />
                   Show QR Code
                 </Button>

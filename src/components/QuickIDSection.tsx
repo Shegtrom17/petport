@@ -15,6 +15,7 @@ import { useToast } from "@/hooks/use-toast";
 import { SocialShareButtons } from "@/components/SocialShareButtons";
 import { PrivacyHint } from "@/components/PrivacyHint";
 import { LostPetButton } from "@/components/LostPetButton";
+import { GuidanceHint } from "@/components/ui/guidance-hint";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { generatePublicProfileUrl, generatePublicMissingUrl, generateQRCodeUrl } from "@/services/pdfService";
 import { Link } from "react-router-dom";
@@ -552,6 +553,13 @@ export const QuickIDSection = ({ petData, onUpdate }: QuickIDSectionProps) => {
           )}
         </CardContent>
       </Card>
+
+      {/* Photo Display Information */}
+      <GuidanceHint 
+        message="Photo Display Information: All photos are showcased on the public share link. PDF flyers display the first 4 photos only due to two-page format optimized for posting on bulletin boards and walls."
+        variant="gentle"
+        className="mb-4"
+      />
 
       {/* Recent Photos */}
       {petData.gallery_photos && petData.gallery_photos.length > 0 && (

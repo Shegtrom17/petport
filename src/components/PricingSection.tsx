@@ -145,7 +145,7 @@ export const PricingSection: React.FC<PricingSectionProps> = ({ context = "landi
             
             <Button 
               onClick={() => buyAdditionalPets(selectedQuantity)} 
-              className="w-full"
+              className="w-full bg-brand-primary text-white hover:bg-brand-primary-dark"
               disabled={isLoading}
             >
               {isLoading ? "Processing..." : "Add Pet Accounts"}

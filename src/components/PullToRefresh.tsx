@@ -27,11 +27,11 @@ export const PullToRefresh = ({ children, onRefresh, disabled = false }: PullToR
           isThresholdReached ? 'text-primary scale-110' : 'text-muted-foreground'
         }`}>
           <RefreshCw 
-            className={`w-5 h-5 transition-transform duration-300 ${
+            className={`w-4 h-4 transition-transform duration-300 ${
               isRefreshing ? 'animate-spin' : isThresholdReached ? 'rotate-180' : ''
             }`} 
           />
-          <span className="text-sm font-medium">
+          <span className="text-xs font-medium">
             {isRefreshing 
               ? 'Refreshing...' 
               : isThresholdReached 

@@ -609,7 +609,7 @@ export const PetGallerySection = ({ petData, onUpdate, handlePetUpdate }: PetGal
                                 : 'border-gray-200 hover:border-brand-primary hover:shadow-md cursor-grab active:cursor-grabbing'
                             }`}
                             style={{
-                              touchAction: 'none',
+                              touchAction: 'auto',
                               userSelect: 'none',
                               WebkitUserSelect: 'none',
                               ...provided.draggableProps.style
@@ -643,6 +643,7 @@ export const PetGallerySection = ({ petData, onUpdate, handlePetUpdate }: PetGal
                               src={photo.url} 
                               alt={photo.caption || `${petData.name} photo ${index + 1}`}
                               className="w-full h-48 object-cover"
+                              style={{ touchAction: 'pan-x pan-y pinch-zoom' }}
                             />
                             
                             {/* Selection Overlay */}

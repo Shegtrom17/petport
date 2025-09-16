@@ -14,9 +14,23 @@ export const useLongPress = ({
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const isLongPressRef = useRef(false);
 
+  const clear = useCallback((event?: React.TouchEvent | React.MouseEvent) => {
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+      timerRef.current = null;
+    }
+  }, []);
+
+  const cancel = useCallback((event?: React.TouchEvent | React.MouseEvent) => {
+    clear();
+    isLongPressRef.current = false;
+  }, [clear]);
+
   const start = useCallback((event: React.TouchEvent | React.MouseEvent) => {
     // Only start long press for single touch
     if ('touches' in event && event.touches.length > 1) {
+      clear();
+      isLongPressRef.current = false;
       return;
     }
 
@@ -30,19 +44,8 @@ export const useLongPress = ({
       isLongPressRef.current = true;
       onLongPress();
     }, delay);
-  }, [onLongPress, delay, shouldPreventDefault]);
+  }, [onLongPress, delay, shouldPreventDefault, clear]);
 
-  const clear = useCallback((event?: React.TouchEvent | React.MouseEvent) => {
-    if (timerRef.current) {
-      clearTimeout(timerRef.current);
-      timerRef.current = null;
-    }
-  }, []);
-
-  const cancel = useCallback((event?: React.TouchEvent | React.MouseEvent) => {
-    clear();
-    isLongPressRef.current = false;
-  }, [clear]);
 
   return {
     onTouchStart: start,

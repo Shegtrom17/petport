@@ -26,12 +26,12 @@ export const NavigationTabs = ({ activeTab, onTabChange, isMobile = false }: Nav
         {tabs.map((tab) => (
           <Button
             key={tab.id}
-            variant={activeTab === tab.id ? "default" : "ghost"}
+            variant={activeTab === tab.id ? "default" : "outline"}
             onClick={() => onTabChange(tab.id)}
             className={`w-full justify-start space-x-3 transition-all text-sm sm:text-base py-2 sm:py-3 ${
               activeTab === tab.id 
-                ? "bg-gradient-to-r from-theme-primary-dark to-theme-primary-medium text-theme-accent shadow-lg border border-theme-accent/30" 
-                : "text-theme-primary-medium hover:text-theme-accent hover:bg-theme-primary-dark hover:shadow-md border border-transparent hover:border-theme-accent/20"
+                ? "bg-brand-primary text-white shadow-lg" 
+                : "bg-white text-brand-primary border-brand-primary hover:shadow-md"
             }`}
           >
             <tab.icon className="w-4 h-4 sm:w-5 sm:h-5" />
@@ -47,12 +47,12 @@ export const NavigationTabs = ({ activeTab, onTabChange, isMobile = false }: Nav
       {tabs.map((tab) => (
         <Button
           key={tab.id}
-          variant={activeTab === tab.id ? "default" : "ghost"}
+          variant={activeTab === tab.id ? "default" : "outline"}
           onClick={() => onTabChange(tab.id)}
           className={`flex items-center space-x-2 transition-all text-xs sm:text-sm py-1.5 sm:py-2 px-2 sm:px-3 ${
             activeTab === tab.id 
-              ? "bg-gradient-to-r from-theme-primary-dark to-theme-primary-medium text-theme-accent shadow-lg border border-theme-accent/30 hover:from-theme-primary-medium hover:to-theme-primary-dark" 
-              : "text-theme-primary-dark hover:text-theme-primary-medium hover:bg-theme-primary-dark/20 hover:shadow-md border border-transparent hover:border-theme-primary-dark/30"
+              ? "bg-brand-primary text-white shadow-lg" 
+              : "bg-white text-brand-primary border-brand-primary hover:shadow-md"
           }`}
           
         >

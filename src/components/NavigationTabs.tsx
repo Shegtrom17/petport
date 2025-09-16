@@ -24,18 +24,19 @@ export const NavigationTabs = ({ activeTab, onTabChange, isMobile = false }: Nav
     return (
       <div className="space-y-2">
         {tabs.map((tab) => (
-          <button
+          <Button
             key={tab.id}
+            variant={activeTab === tab.id ? "default" : "outline"}
             onClick={() => onTabChange(tab.id)}
-            className={`w-full text-left space-x-3 transition-all text-sm sm:text-base py-2 sm:py-3 px-2 flex items-center ${
+            className={`w-full justify-start space-x-3 transition-all text-sm sm:text-base py-2 sm:py-3 ${
               activeTab === tab.id 
-                ? "text-brand-primary font-bold" 
-                : "text-gray-600 hover:text-brand-primary"
+                ? "bg-brand-primary text-white shadow-lg" 
+                : "bg-white text-brand-primary border-brand-primary hover:shadow-md"
             }`}
           >
             <tab.icon className="w-4 h-4 sm:w-5 sm:h-5" />
-            <span>{tab.label}</span>
-          </button>
+            <span className="font-medium">{tab.label}</span>
+          </Button>
         ))}
       </div>
     );
@@ -44,18 +45,20 @@ export const NavigationTabs = ({ activeTab, onTabChange, isMobile = false }: Nav
   return (
     <div className="hidden md:flex flex-wrap gap-2 p-4 bg-passport-section-bg rounded-xl border border-theme-primary-dark/10 shadow-lg">
       {tabs.map((tab) => (
-        <button
+        <Button
           key={tab.id}
+          variant={activeTab === tab.id ? "default" : "outline"}
           onClick={() => onTabChange(tab.id)}
           className={`flex items-center space-x-2 transition-all text-xs sm:text-sm py-1.5 sm:py-2 px-2 sm:px-3 ${
             activeTab === tab.id 
-              ? "text-brand-primary font-bold" 
-              : "text-gray-600 hover:text-brand-primary"
+              ? "bg-brand-primary text-white shadow-lg" 
+              : "bg-white text-brand-primary border-brand-primary hover:shadow-md"
           }`}
+          
         >
           <tab.icon className="w-3 h-3 sm:w-4 sm:h-4" />
-          <span className="hidden sm:inline">{tab.label}</span>
-        </button>
+          <span className="hidden sm:inline font-medium">{tab.label}</span>
+        </Button>
       ))}
     </div>
   );

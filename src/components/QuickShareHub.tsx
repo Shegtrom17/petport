@@ -435,7 +435,7 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
                             ? page.available
                               ? 'border-red-600 text-red-700 hover:bg-red-50' 
                               : 'border-gray-300 text-gray-400 cursor-not-allowed'
-                            : 'border-primary text-primary hover:bg-primary hover:text-primary-foreground'
+                            : 'bg-white border-primary text-primary hover:bg-primary/10 hover:text-primary'
                         }`}
                       >
                         {copyingId === page.id ? (
@@ -458,7 +458,7 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
                             ? page.available
                               ? 'border-red-600 text-red-700 hover:bg-red-50' 
                               : 'border-gray-300 text-gray-400 cursor-not-allowed'
-                            : 'border-primary text-primary hover:bg-primary hover:text-primary-foreground'
+                            : 'bg-white border-primary text-primary hover:bg-primary/10 hover:text-primary'
                         }`}
                       >
                         <MessageCircle className="w-4 h-4 mb-1" />
@@ -475,7 +475,7 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
                             ? page.available
                               ? 'border-red-600 text-red-700 hover:bg-red-50' 
                               : 'border-gray-300 text-gray-400 cursor-not-allowed'
-                            : 'border-primary text-primary hover:bg-primary hover:text-primary-foreground'
+                            : 'bg-white border-primary text-primary hover:bg-primary/10 hover:text-primary'
                         }`}
                       >
                         <Mail className="w-4 h-4 mb-1" />
@@ -494,7 +494,7 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
                             ? page.available
                               ? 'border-red-600 text-red-700 hover:bg-red-50' 
                               : 'border-gray-300 text-gray-400 cursor-not-allowed'
-                            : 'border-primary text-primary hover:bg-primary hover:text-primary-foreground'
+                            : 'bg-white border-primary text-primary hover:bg-primary/10 hover:text-primary'
                         }`}
                       >
                         <Facebook className="w-4 h-4 mb-1" />
@@ -511,7 +511,7 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
                             ? page.available
                               ? 'border-red-600 text-red-700 hover:bg-red-50' 
                               : 'border-gray-300 text-gray-400 cursor-not-allowed'
-                            : 'border-primary text-primary hover:bg-primary hover:text-primary-foreground'
+                            : 'bg-white border-primary text-primary hover:bg-primary/10 hover:text-primary'
                         }`}
                       >
                         <MessageSquare className="w-4 h-4 mb-1" />

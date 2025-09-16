@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/button';
 export const StorageWarningBanner = () => {
   const [showWarning, setShowWarning] = useState(false);
   const [isChecking, setIsChecking] = useState(true);
+  const [storageUsage, setStorageUsage] = useState<{ used: number; quota: number } | null>(null);
 
   useEffect(() => {
     const checkStoragePersistence = async () => {
@@ -46,13 +47,21 @@ export const StorageWarningBanner = () => {
           setShowWarning(true);
         }
 
-        // Check storage quota (another indicator of limited storage)
+        // Proactive storage quota management
         if ('storage' in navigator && 'estimate' in navigator.storage) {
           try {
             const estimate = await navigator.storage.estimate();
-            // If quota is very small, might be limited storage
-            if (estimate.quota && estimate.quota < 50 * 1024 * 1024) { // Less than 50MB
-              setShowWarning(true);
+            if (estimate.quota && estimate.usage) {
+              const usagePercent = (estimate.usage / estimate.quota) * 100;
+              setStorageUsage({
+                used: estimate.usage,
+                quota: estimate.quota
+              });
+              
+              // Show warning at 80% usage or if quota is very small
+              if (usagePercent > 80 || estimate.quota < 50 * 1024 * 1024) {
+                setShowWarning(true);
+              }
             }
           } catch (e) {
             // Ignore errors
@@ -79,10 +88,17 @@ export const StorageWarningBanner = () => {
       <AlertTriangle className="h-4 w-4 text-amber-600 dark:text-amber-400" />
       <AlertDescription className="flex items-center justify-between">
         <div className="flex-1 pr-4">
-          <span className="font-medium text-amber-800 dark:text-amber-200">Limited Storage Detected</span>
+          <span className="font-medium text-amber-800 dark:text-amber-200">
+            {storageUsage ? 'Storage Space Low' : 'Limited Storage Detected'}
+          </span>
           <p className="text-sm text-amber-700 dark:text-amber-300 mt-1">
-            Your browser is in Private Browsing mode or has storage restrictions. 
-            You may need to sign in each time you visit the app.
+            {storageUsage ? (
+              <>Storage is {Math.round((storageUsage.used / storageUsage.quota) * 100)}% full. 
+              Consider clearing browser cache or freeing up space to prevent app issues.</>
+            ) : (
+              <>Your browser is in Private Browsing mode or has storage restrictions. 
+              You may need to sign in each time you visit the app.</>
+            )}
           </p>
         </div>
         <Button

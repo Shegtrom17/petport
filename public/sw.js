@@ -1,5 +1,11 @@
-const CACHE_NAME = 'petport-v8'; // Fixed cache management issues
+const CACHE_NAME = 'petport-v9'; // iOS optimized cache management
 const urlsToCache = [];
+
+// iOS detection
+const isIOS = () => {
+  return /iPad|iPhone|iPod/.test(navigator.userAgent) || 
+         (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+};
 
 self.addEventListener('install', (event) => {
   self.skipWaiting();
@@ -46,15 +52,44 @@ self.addEventListener('fetch', (event) => {
   event.respondWith(
     caches.open(CACHE_NAME).then(async (cache) => {
       try {
-        // Try network first for fresher content (especially for iOS)
-        const networkResponse = await fetch(req);
-        
-        // Cache successful responses
-        if (networkResponse.ok) {
-          cache.put(req, networkResponse.clone());
+        // iOS-optimized caching strategy
+        if (isIOS()) {
+          // For iOS, be more conservative with caching to prevent memory issues
+          const cached = await cache.match(req);
+          
+          // Try network first but with shorter timeout on iOS
+          const networkPromise = fetch(req, {
+            signal: AbortSignal.timeout(5000) // 5s timeout for iOS
+          });
+          
+          try {
+            const networkResponse = await networkPromise;
+            
+            // Only cache smaller responses on iOS to prevent memory pressure
+            if (networkResponse.ok && 
+                networkResponse.headers.get('content-length') && 
+                parseInt(networkResponse.headers.get('content-length') || '0') < 1024 * 1024) { // 1MB limit
+              cache.put(req, networkResponse.clone());
+            }
+            
+            return networkResponse;
+          } catch (networkError) {
+            // Fallback to cache on iOS if available
+            if (cached) {
+              return cached;
+            }
+            throw networkError;
+          }
+        } else {
+          // Standard caching for non-iOS devices
+          const networkResponse = await fetch(req);
+          
+          if (networkResponse.ok) {
+            cache.put(req, networkResponse.clone());
+          }
+          
+          return networkResponse;
         }
-        
-        return networkResponse;
       } catch (error) {
         // Fallback to cache if network fails
         const cached = await cache.match(req);

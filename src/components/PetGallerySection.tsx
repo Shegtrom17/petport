@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
-import { Camera, Upload, Download, Plus, Eye, Trash2, Edit2, X, Loader2, Share2, CheckSquare, Square, Copy, ExternalLink, GripVertical } from "lucide-react";
+import { Camera, Upload, Download, Plus, Eye, Trash2, Edit2, X, Loader2, Share2, CheckSquare, Square, Copy, ExternalLink, GripVertical, Star } from "lucide-react";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { uploadGalleryPhoto, uploadMultipleGalleryPhotos, deleteGalleryPhoto, updateGalleryPhotoCaption, reorderGalleryPhotos } from "@/services/petService";
@@ -16,6 +16,8 @@ import { SocialShareButtons } from "@/components/SocialShareButtons";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import { featureFlags, GALLERY_CONFIG } from '@/config/featureFlags';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
+import { GalleryLightbox } from "@/components/GalleryLightbox";
+import { useLongPress } from "@/hooks/useLongPress";
 
 const MAX_GALLERY_PHOTOS = GALLERY_CONFIG.MAX_PHOTOS;
 
@@ -46,6 +48,10 @@ export const PetGallerySection = ({ petData, onUpdate, handlePetUpdate }: PetGal
   const [selectedPhotos, setSelectedPhotos] = useState<string[]>([]);
   const [isSelectionMode, setIsSelectionMode] = useState(false);
   const [isShareSheetOpen, setIsShareSheetOpen] = useState(false);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [lightboxIndex, setLightboxIndex] = useState(0);
+  const [isDragMode, setIsDragMode] = useState(false);
+  const [reorderingHint, setReorderingHint] = useState(false);
   const { toast } = useToast();
   const isMobile = useIsMobile();
 
@@ -136,10 +142,10 @@ export const PetGallerySection = ({ petData, onUpdate, handlePetUpdate }: PetGal
 
     try {
       await reorderGalleryPhotos(petData.id, updatedPhotos.map(p => ({ id: p.id, position: p.position! })));
-      toast({
-        title: "Photos reordered",
-        description: "Photo order saved successfully. First two photos will appear in lost pet flyers.",
-      });
+        toast({
+          title: "Photos reordered",
+          description: "Photo order saved successfully. First four photos will appear in lost pet flyers.",
+        });
       onUpdate();
     } catch (error) {
       toast({
@@ -395,6 +401,58 @@ export const PetGallerySection = ({ petData, onUpdate, handlePetUpdate }: PetGal
     }
   };
 
+  // Lightbox functions
+  const openLightbox = (index: number) => {
+    setLightboxIndex(index);
+    setLightboxOpen(true);
+  };
+
+  const closeLightbox = () => {
+    setLightboxOpen(false);
+    setIsDragMode(false);
+  };
+
+  // Set as cover (move to position 1)
+  const setAsCover = async (photoId: string) => {
+    const photoIndex = galleryPhotos.findIndex(p => p.id === photoId);
+    if (photoIndex === -1) return;
+
+    const items = Array.from(galleryPhotos);
+    const [movedPhoto] = items.splice(photoIndex, 1);
+    items.unshift(movedPhoto);
+
+    // Update positions
+    const updatedPhotos = items.map((photo, index) => ({
+      ...photo,
+      position: index + 1
+    }));
+
+    try {
+      await reorderGalleryPhotos(petData.id, updatedPhotos.map(p => ({ id: p.id, position: p.position! })));
+      toast({
+        title: "Cover photo updated",
+        description: "Photo moved to the first position for lost pet flyers.",
+      });
+      onUpdate();
+    } catch (error) {
+      toast({
+        title: "Failed to set cover",
+        description: "Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  // Long press handlers
+  const longPressHandlers = useLongPress({
+    onLongPress: () => {
+      setIsDragMode(true);
+      setReorderingHint(true);
+      setTimeout(() => setReorderingHint(false), 2000);
+    },
+    delay: 400,
+  });
+
   return (
     <div className="space-y-6">
       {/* Header with guidance */}
@@ -408,7 +466,7 @@ export const PetGallerySection = ({ petData, onUpdate, handlePetUpdate }: PetGal
               </div>
               <p className="text-blue-100 text-sm leading-relaxed mt-2">
                 Upload clear photos that show your pet's unique markings, size, or special features. 
-                These help hosts, vets, and rescuers identify your pet quickly and accurately.
+                The first four photos will be used for lost pet flyers. Drag to reorder.
               </p>
             </div>
             <div className="flex flex-wrap gap-2 sm:gap-4 sm:justify-end">
@@ -504,7 +562,7 @@ export const PetGallerySection = ({ petData, onUpdate, handlePetUpdate }: PetGal
       </Card>
 
       {/* Photo Gallery Grid */}
-      <Card className="border-0 shadow-lg bg-passport-section-bg backdrop-blur-sm">
+      <Card className="border-0 shadow-lg bg-passport-section-bg backdrop-blur-sm" data-gallery-area>
         <CardHeader>
           <CardTitle className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div className="flex items-center space-x-2">
@@ -677,7 +735,7 @@ export const PetGallerySection = ({ petData, onUpdate, handlePetUpdate }: PetGal
           {galleryPhotos.length > 1 && (
             <div className="mt-4 bg-blue-50 border border-blue-200 rounded-lg p-3">
               <p className="text-sm text-blue-800">
-                💡 <strong>Drag and drop</strong> to reorder photos. The first two photos will be used in lost pet flyers.
+                💡 <strong>Long-press and drag</strong> to reorder photos. The first four photos (#1-#4) will be used in lost pet flyers. Tap photos to zoom.
               </p>
             </div>
           )}
@@ -868,6 +926,14 @@ export const PetGallerySection = ({ petData, onUpdate, handlePetUpdate }: PetGal
           </div>
         </SheetContent>
       </Sheet>
+
+      {/* Gallery Lightbox */}
+      <GalleryLightbox
+        photos={galleryPhotos}
+        initialIndex={lightboxIndex}
+        isOpen={lightboxOpen}
+        onClose={closeLightbox}
+      />
     </div>
   );
 };

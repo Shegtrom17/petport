@@ -18,6 +18,12 @@ export const usePullToRefresh = ({
   const handleTouchStart = useCallback((e: TouchEvent) => {
     if (disabled || window.scrollY > 0 || e.touches.length > 1) return;
     
+    // Don't trigger PTR when interacting with gallery or lightbox
+    const target = e.target as HTMLElement;
+    if (target.closest('[data-gallery-area]') || target.closest('[role="dialog"]')) {
+      return;
+    }
+    
     // iOS Safari specific handling
     const isIOSSafari = /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream;
     if (isIOSSafari && window.scrollY === 0) {
@@ -30,6 +36,12 @@ export const usePullToRefresh = ({
 
   const handleTouchMove = useCallback((e: TouchEvent) => {
     if (disabled || window.scrollY > 0 || startY === 0 || e.touches.length > 1) return;
+    
+    // Don't trigger PTR when interacting with gallery or lightbox
+    const target = e.target as HTMLElement;
+    if (target.closest('[data-gallery-area]') || target.closest('[role="dialog"]')) {
+      return;
+    }
     
     const currentY = e.touches[0].clientY;
     const distance = Math.max(0, currentY - startY);

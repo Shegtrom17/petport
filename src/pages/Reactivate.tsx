@@ -69,7 +69,17 @@ export default function Reactivate() {
       if (error) throw error;
 
       if (data?.url) {
-        window.location.href = data.url;
+        try {
+          // If running inside an iframe (Lovable preview), open in a new tab to avoid X-Frame-Options issues
+          if (window.top !== window.self) {
+            window.open(data.url, '_blank', 'noopener,noreferrer');
+          } else {
+            window.location.href = data.url;
+          }
+        } catch {
+          // Fallback to opening in a new tab
+          window.open(data.url, '_blank', 'noopener,noreferrer');
+        }
       } else {
         throw new Error('No portal URL received');
       }

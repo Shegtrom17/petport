@@ -10,6 +10,10 @@ export function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const [checkingSub, setCheckingSub] = useState<boolean>(true);
   const [subscribed, setSubscribed] = useState<boolean | null>(null);
 
+  // Detect if we're in Lovable preview environment
+  const isPreview = window.location.hostname.includes('lovableproject.com') || 
+                   window.location.hostname.includes('lovable.app');
+
   useEffect(() => {
     console.log("Protected Route - Current location:", location.pathname);
     console.log("Protected Route - Auth Status:", { user: !!user, isLoading, pathname: location.pathname });
@@ -60,9 +64,9 @@ export function ProtectedRoute({ children }: { children: React.ReactNode }) {
     return <Navigate to="/auth" state={{ from: location }} replace />;
   }
 
-  // In test mode, bypass subscription gate
-  if (featureFlags.testMode) {
-    console.log("Protected Route - Test mode active; bypassing subscription gate");
+  // In test mode or preview, bypass subscription gate
+  if (featureFlags.testMode || isPreview) {
+    console.log("Protected Route - Test mode or preview active; bypassing subscription gate");
     return <>{children}</>;
   }
 

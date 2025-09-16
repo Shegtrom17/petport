@@ -9,6 +9,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
+import { featureFlags } from "@/config/featureFlags";
 import { AlertCircle, CreditCard, RefreshCw } from "lucide-react";
 
 interface SubscriptionStatus {
@@ -62,6 +63,20 @@ export default function Reactivate() {
     
     setPortalLoading(true);
     try {
+      // In test mode, simulate subscription reactivation for preview testing
+      if (featureFlags.testMode) {
+        await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate loading
+        toast({
+          title: "Test Mode - Subscription Reactivated",
+          description: "This is a test simulation. Your subscription has been marked as active.",
+        });
+        // Redirect to app after successful "reactivation"
+        setTimeout(() => {
+          navigate('/app');
+        }, 1500);
+        return;
+      }
+
       const { data, error } = await supabase.functions.invoke('customer-portal', {
         body: { testMode: false }
       });

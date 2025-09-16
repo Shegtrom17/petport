@@ -10,7 +10,7 @@ export const BottomTabNavigation = () => {
   const homePath = '/app';
   const tabs = [
     { path: homePath, icon: Home, label: 'Home' },
-    { path: '/lost-pet', icon: AlertTriangle, label: 'Lost Pet' },
+    { path: '/app', icon: AlertTriangle, label: 'Lost Pet', event: 'navigate-to-quickid' },
     { path: '/add-pet', icon: PlusCircle, label: 'Add Pet' },
     { path: '/profile', icon: Settings, label: 'Settings' },
     { path: '/help', icon: HelpCircle, label: 'Help' },
@@ -30,6 +30,8 @@ export const BottomTabNavigation = () => {
                 onClick={() => {
                   if (tab.path === homePath) {
                     window.dispatchEvent(new Event('navigate-to-home'));
+                  } else if (tab.event) {
+                    window.dispatchEvent(new Event(tab.event));
                   }
                 }}
                 className={`flex flex-col items-center justify-center min-w-0 flex-1 py-1 px-2 transition-colors duration-200 ${

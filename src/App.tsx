@@ -16,7 +16,7 @@ import Onboarding from "./pages/Onboarding";
 import Auth from "./pages/Auth";
 import AddPet from "./pages/AddPet";
 import Profile from "./pages/Profile";
-import LostPet from "./pages/LostPet";
+
 import PublicProfile from "./pages/PublicProfile";
 import PublicCareInstructions from "./pages/PublicCareInstructions";
 import PublicMissingPet from "./pages/PublicMissingPet";
@@ -89,11 +89,6 @@ const App = () => {
                   <Route path="/profile" element={
                     <ProtectedRoute>
                       <Profile />
-                    </ProtectedRoute>
-                  } />
-                  <Route path="/lost-pet/:petId?" element={
-                    <ProtectedRoute>
-                      <LostPet />
                     </ProtectedRoute>
                   } />
                    <Route path="/onboarding" element={

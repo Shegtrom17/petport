@@ -139,7 +139,8 @@ export const LostPetButton = ({ petId, petName = "Pet", isMissing = false, class
 
   const navigateToLostPetPage = () => {
     setIsOptionsDialogOpen(false);
-    navigate(`/lost-pet/${petId}`);
+    navigate('/app');
+    window.dispatchEvent(new Event('navigate-to-quickid'));
   };
 
   const handlePdfAction = async (action: 'view' | 'download') => {

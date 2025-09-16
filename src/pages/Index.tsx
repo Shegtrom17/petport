@@ -11,7 +11,7 @@ import { DocumentsSection } from "@/components/DocumentsSection";
 import { PetGallerySection } from "@/components/PetGallerySection";
 import { InAppSharingModal } from "@/components/InAppSharingModal";
 import { PWALayout } from "@/components/PWALayout";
-import LostPet from "./LostPet";
+
 import { useAuth } from "@/context/AuthContext";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ContactsDisplay } from "@/components/ContactsDisplay";
@@ -109,15 +109,21 @@ const Index = () => {
       handleTabChange("profile");
     };
 
+    const handleNavigateToQuickid = () => {
+      handleTabChange("quickid");
+    };
+
     handleHashChange();
     window.addEventListener('hashchange', handleHashChange);
     window.addEventListener('navigate-to-care', handleNavigateToCare);
     window.addEventListener('navigate-to-home', handleNavigateToHome);
+    window.addEventListener('navigate-to-quickid', handleNavigateToQuickid);
     
     return () => {
       window.removeEventListener('hashchange', handleHashChange);
       window.removeEventListener('navigate-to-care', handleNavigateToCare);
       window.removeEventListener('navigate-to-home', handleNavigateToHome);
+      window.removeEventListener('navigate-to-quickid', handleNavigateToQuickid);
     };
   }, []);
 
@@ -295,8 +301,9 @@ const Index = () => {
         console.log("Rendering QuickIDSection");
         return <QuickIDSection petData={petData} onUpdate={handlePetUpdate} />;
       case "lostpet":
-        console.log("Rendering LostPet");
-        return <LostPet />;
+        console.log("Redirecting to QuickID for lost pet management");
+        handleTabChange("quickid");
+        return null;
       case "vaccination":
         console.log("Navigating to VaccinationGuide page");
         navigate("/vaccination-guide");

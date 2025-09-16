@@ -23,8 +23,9 @@ const Help = () => {
       title: "Mark Pet as Missing",
       description: "Report your pet as lost and create a missing pet poster",
       icon: AlertTriangle,
-      link: "/lost-pet",
-      color: "text-destructive"
+      link: "/app",
+      color: "text-destructive",
+      event: "navigate-to-quickid"
     },
     {
       title: "Add New Pet",
@@ -183,7 +184,15 @@ const Help = () => {
             <h2 className="text-xl font-semibold mb-4">Quick Actions</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {quickLinks.map((link) => (
-                <Link key={link.title} to={link.link}>
+                <Link 
+                  key={link.title} 
+                  to={link.link}
+                  onClick={() => {
+                    if (link.event) {
+                      window.dispatchEvent(new Event(link.event));
+                    }
+                  }}
+                >
                   <Card className="hover:shadow-md transition-shadow cursor-pointer">
                     <CardContent className="p-4">
                       <div className="flex items-start space-x-3">

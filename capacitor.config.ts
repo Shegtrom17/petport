@@ -5,7 +5,7 @@ const config: CapacitorConfig = {
   appName: 'petport',
   webDir: 'dist',
   server: {
-    url: 'https://c2db7d2d-7448-4eaf-945e-d804d3aeaccc.lovableproject.com?forceHideBadge=true',
+    url: 'https://petport.app',
     cleartext: true
   },
   plugins: {

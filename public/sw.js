@@ -42,9 +42,13 @@ self.addEventListener('fetch', (event) => {
   const isOptions = req.method === 'OPTIONS';
   const isNonGet = req.method !== 'GET';
   const isCrossOrigin = !url.startsWith(self.location.origin);
+  
+  // Never cache PDFs or dynamic share routes for fresh content
+  const isPdfRequest = req.headers.get('accept')?.includes('application/pdf') || url.includes('.pdf');
+  const isShareRoute = url.includes('/public/') || url.includes('/share/');
 
-  // Bypass SW for preflight/edge functions/non-GET/cross-origin to avoid CORS issues
-  if (isOptions || isSupabaseFunction || isNonGet || isCrossOrigin) {
+  // Bypass SW for preflight/edge functions/non-GET/cross-origin/PDFs/shares to avoid CORS issues and ensure fresh content
+  if (isOptions || isSupabaseFunction || isNonGet || isCrossOrigin || isPdfRequest || isShareRoute) {
     event.respondWith(fetch(req));
     return;
   }

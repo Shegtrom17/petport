@@ -59,14 +59,19 @@ serve(async (req) => {
     for (const s of subs.data) {
       if (s.status !== "active" && s.status !== "trialing") continue;
       for (const item of s.items.data) {
-        // item.price.product may be expanded
+        const price = item.price;
         const product: any = (item.price.product as any) || null;
-        const productType = product?.metadata?.product_type;
-        if (productType === "pet_slot") {
-          const addonCountStr = product?.metadata?.addon_count;
-          const addonCount = addonCountStr ? parseInt(addonCountStr, 10) : 1;
-          const qty = item.quantity ?? 1;
-          totalSlots += addonCount * qty;
+        
+        // Check price metadata first (preferred), then product metadata
+        const priceMetadata = price.metadata || {};
+        const productMetadata = product?.metadata || {};
+        
+        if (priceMetadata.plan === 'addon' && priceMetadata.type === 'additional_pets') {
+          const addsPerUnit = parseInt(priceMetadata.adds_per_unit || '1', 10);
+          totalSlots += (item.quantity || 1) * addsPerUnit;
+        } else if (productMetadata.product_type === 'pet_slot') {
+          const addonCount = parseInt(productMetadata.addon_count || '1', 10);
+          totalSlots += (item.quantity || 1) * addonCount;
         }
       }
     }
@@ -87,7 +92,10 @@ serve(async (req) => {
 
     const userId = (session.metadata as any)?.supabase_user_id || existing?.user_id || null;
 
-    // Upsert subscriber additional_pets to the computed total
+    // Calculate total pet limit: base (1) + additional pets
+    const petLimit = 1 + totalSlots;
+
+    // Upsert subscriber with updated capacity
     const { error: upsertErr } = await supabaseAdmin
       .from("subscribers")
       .upsert(
@@ -96,6 +104,11 @@ serve(async (req) => {
           user_id: userId,
           stripe_customer_id: customerId,
           additional_pets: totalSlots,
+          pet_limit: petLimit,
+          // Clear grace period on successful add-on purchase
+          status: 'active',
+          grace_period_end: null,
+          payment_failed_at: null,
           updated_at: new Date().toISOString(),
         },
         { onConflict: "email" }

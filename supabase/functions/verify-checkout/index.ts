@@ -82,15 +82,45 @@ serve(async (req) => {
       userId = inviteData?.user?.id ?? null;
     }
 
-    // Upsert subscriber row
-    log("Upserting subscriber");
+    // Calculate additional pets from subscription items if available
+    let additionalPets = 0;
+    if (subscription?.items?.data) {
+      for (const item of subscription.items.data) {
+        const price = item.price;
+        const product: any = price.product;
+        
+        // Check price metadata first, then product metadata
+        const priceMetadata = price.metadata || {};
+        const productMetadata = product?.metadata || {};
+        
+        if (priceMetadata.plan === 'addon' && priceMetadata.type === 'additional_pets') {
+          const addsPerUnit = parseInt(priceMetadata.adds_per_unit || '1', 10);
+          additionalPets += (item.quantity || 1) * addsPerUnit;
+        } else if (productMetadata.product_type === 'pet_slot') {
+          const addonCount = parseInt(productMetadata.addon_count || '1', 10);
+          additionalPets += (item.quantity || 1) * addonCount;
+        }
+      }
+    }
+
+    // Calculate total pet limit: base (1) + additional pets
+    const petLimit = 1 + additionalPets;
+
+    // Upsert subscriber row with immediate activation
+    log("Upserting subscriber", { additionalPets, petLimit });
     const { error: upsertErr } = await supabase.from("subscribers").upsert({
       email,
       user_id: userId,
       stripe_customer_id: customerId ?? null,
       subscribed: true,
+      status: 'active',
       subscription_tier: tier,
       subscription_end: currentPeriodEnd,
+      pet_limit: petLimit,
+      additional_pets: additionalPets,
+      // Clear any grace period fields on successful checkout
+      grace_period_end: null,
+      payment_failed_at: null,
       updated_at: new Date().toISOString(),
     }, { onConflict: "email" });
     if (upsertErr) throw new Error(`Upsert subscriber failed: ${upsertErr.message}`);

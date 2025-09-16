@@ -90,16 +90,75 @@ serve(async (req) => {
     let additionalPets = 0;
     for (const s of activeOrTrialing) {
       for (const item of s.items.data) {
-        const priceId = item.price.id;
+        const price = item.price;
+        const priceId = price.id;
+        
         // Retrieve the price with product expanded separately
         const priceWithProduct = await stripe.prices.retrieve(priceId, { expand: ['product'] });
         const product: any = priceWithProduct.product || null;
-        const productType = product?.metadata?.product_type;
-        if (productType === "pet_slot") {
-          const addonCountStr = product?.metadata?.addon_count;
-          const addonCount = addonCountStr ? parseInt(addonCountStr, 10) : 1;
-          const qty = item.quantity ?? 1;
-          additionalPets += addonCount * qty;
+        
+        // Check price metadata first (preferred), then product metadata
+        const priceMetadata = price.metadata || {};
+        const productMetadata = product?.metadata || {};
+        
+        if (priceMetadata.plan === 'addon' && priceMetadata.type === 'additional_pets') {
+          const addsPerUnit = parseInt(priceMetadata.adds_per_unit || '1', 10);
+          additionalPets += (item.quantity || 1) * addsPerUnit;
+        } else if (productMetadata.product_type === 'pet_slot') {
+          const addonCount = parseInt(productMetadata.addon_count || '1', 10);
+          additionalPets += (item.quantity || 1) * addonCount;
+        }
+      }
+    }
+
+    // Calculate total pet limit: base (1) + additional pets
+    const petLimit = 1 + additionalPets;
+
+    // Determine subscription status with 14-day grace logic
+    let status = 'inactive';
+    let gracePeriodEnd: string | null = null;
+    let paymentFailedAt: string | null = null;
+
+    if (hasActiveSub) {
+      // Active subscription - clear grace period
+      status = 'active';
+      gracePeriodEnd = null;
+      paymentFailedAt = null;
+    } else {
+      // Check for past_due, unpaid, or incomplete subscriptions
+      const allSubs = subscriptions.data;
+      const problemSubs = allSubs.filter(s => 
+        s.status === 'past_due' || 
+        s.status === 'unpaid' || 
+        s.status === 'incomplete'
+      );
+
+      if (problemSubs.length > 0) {
+        // Get existing subscriber data to check current grace status
+        const { data: existingSub } = await supabaseService
+          .from("subscribers")
+          .select("grace_period_end, payment_failed_at, status")
+          .eq("email", user.email)
+          .maybeSingle();
+
+        const now = new Date();
+        const existingGraceEnd = existingSub?.grace_period_end ? new Date(existingSub.grace_period_end) : null;
+
+        if (!existingGraceEnd) {
+          // No grace period set yet - start 14-day grace
+          status = 'grace';
+          gracePeriodEnd = new Date(now.getTime() + 14 * 24 * 60 * 60 * 1000).toISOString(); // 14 days from now
+          paymentFailedAt = now.toISOString();
+        } else if (now <= existingGraceEnd) {
+          // Still within grace period - keep full access
+          status = 'grace';
+          gracePeriodEnd = existingGraceEnd.toISOString();
+          paymentFailedAt = existingSub?.payment_failed_at || now.toISOString();
+        } else {
+          // Grace period expired - suspend access
+          status = 'suspended';
+          gracePeriodEnd = existingGraceEnd.toISOString();
+          paymentFailedAt = existingSub?.payment_failed_at || now.toISOString();
         }
       }
     }
@@ -109,10 +168,13 @@ serve(async (req) => {
       user_id: user.id,
       stripe_customer_id: customerId,
       subscribed: hasActiveSub,
-      status: hasActiveSub ? 'active' : 'inactive',
+      status: status as any,
       subscription_tier: subscriptionTier,
       subscription_end: subscriptionEnd,
       additional_pets: additionalPets,
+      pet_limit: petLimit,
+      grace_period_end: gracePeriodEnd,
+      payment_failed_at: paymentFailedAt,
       updated_at: new Date().toISOString(),
     }, { onConflict: 'email' });
 
@@ -121,6 +183,9 @@ serve(async (req) => {
       subscription_tier: subscriptionTier,
       subscription_end: subscriptionEnd,
       additional_pets: additionalPets,
+      pet_limit: petLimit,
+      status: status,
+      grace_period_end: gracePeriodEnd,
     }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 200,

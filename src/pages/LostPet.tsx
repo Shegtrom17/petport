@@ -20,6 +20,8 @@ import { LostPetPDFGenerator } from "@/components/LostPetPDFGenerator";
 import { generatePublicMissingUrl } from "@/services/pdfService";
 import { PWALayout } from "@/components/PWALayout";
 import { ContactsDisplay } from "@/components/ContactsDisplay";
+import { featureFlags } from "@/config/featureFlags";
+import { ExternalLink, Bug, Hash } from "lucide-react";
 
 const LostPet = () => {
   const { petId } = useParams();
@@ -177,6 +179,30 @@ const LostPet = () => {
   return (
     <PWALayout>
       <div className="min-h-screen bg-white">
+        {/* Debug Receipt Strip - TestMode Only */}
+        {featureFlags.testMode && (
+          <div className="max-w-4xl mx-auto mb-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg text-xs">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-4">
+                <div className="flex items-center space-x-1">
+                  <Bug className="w-3 h-3 text-yellow-600" />
+                  <span className="font-medium text-yellow-800">Debug Receipt:</span>
+                </div>
+                <span className="text-yellow-700">Route: /lost-pet/{petId}</span>
+                <span className="text-yellow-700">Pet ID: {petId}</span>
+                <span className="text-yellow-700">Cache: petport-v7</span>
+              </div>
+              <button
+                onClick={() => window.open(window.location.href, '_blank')}
+                className="flex items-center space-x-1 px-2 py-1 bg-yellow-100 hover:bg-yellow-200 rounded text-yellow-800"
+              >
+                <ExternalLink className="w-3 h-3" />
+                <span>Open in Browser</span>
+              </button>
+            </div>
+          </div>
+        )}
+        
       {/* Emergency Header */}
       <div className={`bg-gradient-to-r ${lostPetData.is_missing ? 'from-red-600 to-red-700' : 'from-brand-primary to-brand-primary-dark'} text-white py-6 px-4 shadow-sm`}>
         <div className="max-w-6xl mx-auto">

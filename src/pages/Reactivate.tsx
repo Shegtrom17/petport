@@ -2,6 +2,7 @@ import { PWALayout } from "@/components/PWALayout";
 import { AppHeader } from "@/components/AppHeader";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { AzureButton } from "@/components/ui/azure-button";
 import { MetaTags } from "@/components/MetaTags";
 import { useAuth } from "@/context/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -128,7 +129,7 @@ export default function Reactivate() {
             </p>
 
             <div className="flex flex-col gap-3">
-              <Button 
+              <AzureButton 
                 onClick={handleManageSubscription}
                 disabled={portalLoading}
                 className="w-full"
@@ -140,7 +141,7 @@ export default function Reactivate() {
                   <CreditCard className="h-4 w-4 mr-2" />
                 )}
                 Reactivate Subscription
-              </Button>
+              </AzureButton>
               
               <Button 
                 variant="outline" 

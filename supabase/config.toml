@@ -114,3 +114,9 @@ verify_jwt = false
 
 [functions.profile-share]
 verify_jwt = false
+
+[functions.stripe-webhook]
+verify_jwt = false
+
+[functions.setup-stripe-webhook]
+verify_jwt = false

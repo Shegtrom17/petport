@@ -533,10 +533,6 @@ export const PetProfileContent = ({
       {/* Quick Share Hub Section */}
       <div className="mb-8">
         <div className="bg-white/50 backdrop-blur-sm rounded-2xl p-6">
-          <SectionHeader
-            title="Quick Share Hub"
-            icon={<Share2 />}
-          />
           <QuickShareHub
             petData={{
               id: enhancedPetData.id,

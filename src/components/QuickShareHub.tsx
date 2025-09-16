@@ -344,7 +344,7 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
     <Card className="bg-white shadow-xl">
       <CardHeader>
         <CardTitle className="text-xl flex items-center gap-2">
-          <Share2 className="w-6 h-6 text-blue-600" />
+          <Share2 className="w-6 h-6 text-brand-primary" />
           Quick Share Hub
         </CardTitle>
         <p className="text-sm text-muted-foreground">

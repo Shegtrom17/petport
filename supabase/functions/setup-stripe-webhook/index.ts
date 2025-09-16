@@ -16,6 +16,25 @@ serve(async (req) => {
   }
 
   try {
+    // Security: Require setup token to prevent unauthorized access
+    const url = new URL(req.url);
+    const providedToken = url.searchParams.get("token");
+    const expectedToken = Deno.env.get("SETUP_TOKEN");
+    
+    if (!expectedToken) {
+      throw new Error("SETUP_TOKEN is not configured");
+    }
+    
+    if (providedToken !== expectedToken) {
+      log("Unauthorized access attempt", { providedToken: providedToken ? "***" : null });
+      return new Response(
+        JSON.stringify({ ok: false, error: "Unauthorized: Invalid or missing token" }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 401 }
+      );
+    }
+
+    log("Authorized setup request");
+
     const stripeKey = Deno.env.get("STRIPE_SECRET_KEY");
     if (!stripeKey) throw new Error("STRIPE_SECRET_KEY is not set");
 
@@ -29,7 +48,8 @@ serve(async (req) => {
       "customer.subscription.created",
       "customer.subscription.updated",
       "customer.subscription.deleted",
-      "invoice.payment_succeeded",
+      "checkout.session.completed",
+      "invoice.paid",
       "invoice.payment_failed",
     ];
 

@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { fetchUserPets, fetchPetDetails } from "@/services/petService";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/context/AuthContext";
 
 const SELECTED_PET_KEY = 'selectedPetId';
 
@@ -12,6 +13,7 @@ export const usePetData = (initialPetId?: string) => {
   const [isLoading, setIsLoading] = useState(true);
   const [documents, setDocuments] = useState<any[]>([]);
   const { toast } = useToast();
+  const { user } = useAuth();
 
   const fetchDocuments = async (petId: string) => {
     try {
@@ -39,20 +41,20 @@ export const usePetData = (initialPetId?: string) => {
       const userPets = await fetchUserPets();
       console.log("usePetData - Fetched pets:", userPets);
       
-      // Sort pets by creation date to ensure first pet stays first
-      const sortedPets = userPets.sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
-      setPets(sortedPets);
+      // Keep DB order (already ordered in fetchUserPets)
+      const orderedPets = userPets;
+      setPets(orderedPets);
       
-      if (sortedPets.length > 0) {
+      if (orderedPets.length > 0) {
         // Determine which pet to select: initialPetId > localStorage > first pet
         let targetPetId = initialPetId;
         
         if (!targetPetId) {
           const savedPetId = localStorage.getItem(SELECTED_PET_KEY);
-          if (savedPetId && sortedPets.find(p => p.id === savedPetId)) {
+          if (savedPetId && orderedPets.find(p => p.id === savedPetId)) {
             targetPetId = savedPetId;
           } else {
-            targetPetId = sortedPets[0].id;
+            targetPetId = orderedPets[0].id;
           }
         }
         
@@ -68,7 +70,7 @@ export const usePetData = (initialPetId?: string) => {
       } else {
         console.log("usePetData - No pets found");
         setSelectedPet(null);
-        localStorage.removeItem(SELECTED_PET_KEY);
+        // Do not clear saved selection here to avoid losing context during auth initialization
       }
     } catch (error) {
       console.error("Error loading pets:", error);
@@ -120,8 +122,7 @@ export const usePetData = (initialPetId?: string) => {
         setSelectedPet(updatedPetDetails);
         
         const userPets = await fetchUserPets();
-        const sortedPets = userPets.sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
-        setPets(sortedPets);
+        setPets(userPets);
         
         toast({
           title: "Success",
@@ -193,7 +194,7 @@ export const usePetData = (initialPetId?: string) => {
 
   useEffect(() => {
     loadPets();
-  }, []);
+  }, [user?.id]);
 
   return {
     pets,

@@ -12,6 +12,17 @@ const logStep = (step: string, details?: any) => {
   console.log(`[STRIPE-WEBHOOK] ${step}${detailsStr}`);
 };
 
+const logChanges = (eventType: string, previousAttributes?: any) => {
+  if (previousAttributes && Object.keys(previousAttributes).length > 0) {
+    logStep(`Changes detected in ${eventType}`, { 
+      changedFields: Object.keys(previousAttributes),
+      previousValues: previousAttributes 
+    });
+  } else {
+    logStep(`No previous attributes found - likely a creation event`, { eventType });
+  }
+};
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -58,6 +69,9 @@ serve(async (req) => {
       });
     }
 
+    // Log changes for update events
+    logChanges(event.type, event.data.previous_attributes);
+
     // Handle different event types
     switch (event.type) {
       case "customer.subscription.created":
@@ -101,7 +115,31 @@ async function handleSubscriptionEvent(
   status: 'active' | 'canceled'
 ) {
   const subscription = event.data.object;
+  const previousAttributes = event.data.previous_attributes;
   const customerId = subscription.customer;
+  
+  // For subscription updates, check if status actually changed
+  if (event.type === "customer.subscription.updated" && previousAttributes) {
+    const statusChanged = previousAttributes.hasOwnProperty('status');
+    const relevantFieldsChanged = statusChanged || 
+      previousAttributes.hasOwnProperty('current_period_end') ||
+      previousAttributes.hasOwnProperty('cancel_at_period_end');
+    
+    if (!relevantFieldsChanged) {
+      logStep("Subscription updated but no relevant fields changed, skipping", {
+        customerId,
+        changedFields: Object.keys(previousAttributes)
+      });
+      return;
+    }
+    
+    logStep("Processing subscription update with relevant changes", {
+      customerId,
+      statusChanged,
+      previousStatus: previousAttributes.status,
+      currentStatus: subscription.status
+    });
+  }
   
   logStep("Handling subscription event", { 
     customerId, 
@@ -147,7 +185,17 @@ async function handleSubscriptionEvent(
 
 async function handlePaymentFailed(event: any, supabaseClient: any) {
   const invoice = event.data.object;
+  const previousAttributes = event.data.previous_attributes;
   const customerId = invoice.customer;
+  
+  // Log what changed in the invoice if it's an update
+  if (previousAttributes) {
+    logStep("Invoice payment failed with previous changes", {
+      customerId,
+      changedFields: Object.keys(previousAttributes),
+      attemptCount: invoice.attempt_count
+    });
+  }
   
   logStep("Handling payment failed", { customerId });
 
@@ -187,7 +235,17 @@ async function handlePaymentFailed(event: any, supabaseClient: any) {
 
 async function handlePaymentSucceeded(event: any, supabaseClient: any) {
   const invoice = event.data.object;
+  const previousAttributes = event.data.previous_attributes;
   const customerId = invoice.customer;
+  
+  // Log what changed in the invoice payment
+  if (previousAttributes) {
+    logStep("Invoice payment succeeded with changes", {
+      customerId,
+      changedFields: Object.keys(previousAttributes),
+      amountPaid: invoice.amount_paid
+    });
+  }
   
   logStep("Handling payment succeeded", { customerId });
 

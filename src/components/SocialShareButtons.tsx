@@ -57,7 +57,7 @@ const path = isMissing
 const directUrl = `${window.location.origin}/${path}`;
 
 // Social media share URL (for OG tags) vs Direct URL (for humans)
-const edgeFunctionName = isMissing ? 'missing-pet-share' : isResume ? 'resume-share' : 'profile-share';
+const edgeFunctionName = isMissing ? 'missing-pet-share' : isResume ? 'resume-share' : isCare ? 'care-instructions-share' : 'profile-share';
 const socialShareUrl = generateShareURL(edgeFunctionName, petId, directUrl);
 
 // Use direct URL for human sharing (copy, email, SMS), social URL for Facebook/Twitter

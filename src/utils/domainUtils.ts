@@ -19,8 +19,8 @@ export const getBaseURL = (): string => {
  * @returns The appropriate edge function base URL
  */
 export const getEdgeFunctionBaseURL = (): string => {
-  const baseURL = getBaseURL();
-  return `${baseURL}/functions/v1`;
+  // Edge functions always run on Supabase domain regardless of test mode
+  return 'https://dxghbhujugsfmaecilrq.supabase.co/functions/v1';
 };
 
 /**

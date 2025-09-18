@@ -90,8 +90,8 @@ serve(async (req) => {
     // Use the Cloudflare R2 profile image
     const ogImageUrl = "https://pub-a7c2c18b8d6143b9a256105ef44f2da0.r2.dev/og-profile.png";
     
-    const title = `PetPort: Your Pet's Digital Portfolio`;
-    const description = `Easily store and access your pet's documents, records, training, certifications, and memories with a tap.`;
+    const title = `${safe(name)}'s PetPort Profile`;
+    const description = `View ${safe(name)}'s digital profile with documents, photos, and information on PetPort.`;
 
     // Build minimal HTML with OG/Twitter meta and optional redirect for humans
     const html = `<!doctype html>

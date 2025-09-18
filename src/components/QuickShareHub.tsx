@@ -25,6 +25,7 @@ import {
   Facebook,
   MessageSquare
 } from "lucide-react";
+import { generateShareURL } from "@/utils/domainUtils";
 
 interface QuickShareHubProps {
   petData: {
@@ -148,17 +149,14 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
 
   // Generate edge function URLs for social media (OG tags)
   const getEdgeFunctionUrl = (page: SharePage): string => {
-    const edgeShareBase = `https://dxghbhujugsfmaecilrq.supabase.co/functions/v1`;
     const directUrl = `${baseUrl}${page.path}`;
-    const redirectParam = encodeURIComponent(directUrl);
-    const cacheBuster = `v=${Date.now()}`;
     
     if (page.id === 'missing') {
-      return `${edgeShareBase}/missing-pet-share?petId=${encodeURIComponent(petData.id!)}&redirect=${redirectParam}&${cacheBuster}`;
+      return generateShareURL('missing-pet-share', petData.id!, directUrl);
     } else if (page.id === 'resume') {
-      return `${edgeShareBase}/resume-share?petId=${encodeURIComponent(petData.id!)}&redirect=${redirectParam}&${cacheBuster}`;
+      return generateShareURL('resume-share', petData.id!, directUrl);
     } else {
-      return `${edgeShareBase}/profile-share?petId=${encodeURIComponent(petData.id!)}&redirect=${redirectParam}&${cacheBuster}`;
+      return generateShareURL('profile-share', petData.id!, directUrl);
     }
   };
 

@@ -11,6 +11,7 @@ import { useToast } from "@/hooks/use-toast";
 import { shareProfileOptimized } from "@/services/pdfService";
 import { useEmailSharing } from "@/hooks/useEmailSharing";
 import { useAuth } from "@/context/AuthContext";
+import { generateShareURL } from "@/utils/domainUtils";
 
   interface SocialShareButtonsProps {
   petName: string;
@@ -55,16 +56,9 @@ const path = isMissing
 // Generate direct SPA URLs for human-friendly sharing
 const directUrl = `${window.location.origin}/${path}`;
 
-// Use edge function URLs ONLY for social media OG tags, direct URLs for human sharing
-const edgeShareBase = `https://dxghbhujugsfmaecilrq.supabase.co/functions/v1`;
-const redirectParam = encodeURIComponent(directUrl);
-
 // Social media share URL (for OG tags) vs Direct URL (for humans)
-const socialShareUrl = isMissing
-  ? `${edgeShareBase}/missing-pet-share?petId=${encodeURIComponent(petId)}&redirect=${redirectParam}&${cacheBuster}`
-  : isResume
-    ? `${edgeShareBase}/resume-share?petId=${encodeURIComponent(petId)}&redirect=${redirectParam}&${cacheBuster}`
-    : `${edgeShareBase}/profile-share?petId=${encodeURIComponent(petId)}&redirect=${redirectParam}&${cacheBuster}`;
+const edgeFunctionName = isMissing ? 'missing-pet-share' : isResume ? 'resume-share' : 'profile-share';
+const socialShareUrl = generateShareURL(edgeFunctionName, petId, directUrl);
 
 // Use direct URL for human sharing (copy, email, SMS), social URL for Facebook/Twitter
 const shareUrl = shareUrlOverride ?? directUrl;

@@ -18,6 +18,7 @@ import { useAuth } from "@/context/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { shareProfileOptimized } from "@/services/pdfService";
+import { generateShareURL } from "@/utils/domainUtils";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { CompactPrivacyToggle } from "@/components/CompactPrivacyToggle";
@@ -214,7 +215,8 @@ export const PetProfileContent = ({
   const handleShare = async () => {
     try {
       // Use the edge function URL for better social media previews
-      const profileUrl = `https://dxghbhujugsfmaecilrq.supabase.co/functions/v1/profile-share?petId=${enhancedPetData.id}&redirect=${encodeURIComponent(`${window.location.origin}/profile/${enhancedPetData.id}`)}`;
+      const redirectUrl = `${window.location.origin}/profile/${enhancedPetData.id}`;
+      const profileUrl = generateShareURL('profile-share', enhancedPetData.id, redirectUrl);
       const result = await shareProfileOptimized(profileUrl, enhancedPetData.name, 'profile');
       
       if (result.success) {

@@ -10,6 +10,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { resolvePdfType, PDFType } from "@/utils/pdfType";
+import { generateShareURL } from "@/utils/domainUtils";
 
 interface PetPDFGeneratorProps {
   petId: string;
@@ -284,7 +285,7 @@ export const PetPDFGenerator = ({ petId, petName, petData, handlePetUpdate }: Pe
     // Use profile-share edge function for better social previews
     const baseUrl = window.location.origin;
     const profileUrl = `${baseUrl}/profile/${petId}`;
-    const shareUrl = `https://dxghbhujugsfmaecilrq.supabase.co/functions/v1/profile-share?petId=${petId}&redirect=${encodeURIComponent(profileUrl)}`;
+    const shareUrl = generateShareURL('profile-share', petId, profileUrl);
     await handleShare(shareUrl, "public");
   };
 

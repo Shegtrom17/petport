@@ -67,7 +67,7 @@ serve(async (req) => {
       },
       allow_promotion_codes: true,
       success_url: `${req.headers.get("origin")}/post-checkout?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${req.headers.get("origin")}/subscribe`,
+      cancel_url: `${req.headers.get("origin")}/`,
     });
 
     return new Response(JSON.stringify({ url: session.url }), {

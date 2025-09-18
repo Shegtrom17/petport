@@ -122,8 +122,9 @@ export default function Reactivate() {
     setRetryAttempts(prev => prev + 1);
     
     try {
-      const { data, error } = await supabase.functions.invoke('customer-portal', {
-        body: { testMode: false }
+      // For unsubscribed users, create a new checkout session with trial
+      const { data, error } = await supabase.functions.invoke('create-checkout', {
+        body: { plan: 'monthly' }
       });
 
       if (error) throw error;
@@ -138,11 +139,11 @@ export default function Reactivate() {
           }
           
           toast({
-            title: "Portal Opened",
-            description: "Opening subscription management portal...",
+            title: "Checkout Opened",
+            description: "Opening subscription checkout with 7-day free trial...",
           });
           
-          // Start checking for reactivation after user goes to portal
+          // Start checking for reactivation after user goes to checkout
           setTimeout(() => {
             checkStatus(true);
           }, 5000);
@@ -151,11 +152,11 @@ export default function Reactivate() {
           window.open(data.url, '_blank', 'noopener,noreferrer');
         }
       } else {
-        throw new Error('No portal URL received');
+        throw new Error('No checkout URL received');
       }
     } catch (error) {
-      console.error('Error accessing customer portal:', error);
-      const errorMsg = error instanceof Error ? error.message : "Unable to access subscription management";
+      console.error('Error accessing checkout:', error);
+      const errorMsg = error instanceof Error ? error.message : "Unable to access subscription checkout";
       setLastError(errorMsg);
       toast({
         title: "Error",

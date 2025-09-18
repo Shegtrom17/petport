@@ -75,6 +75,9 @@ serve(async (req) => {
     const name = pet.name || "Pet";
     const safe = (s: string | null | undefined) => (s || "").toString().replace(/</g, "&lt;").replace(/>/g, "&gt;").trim();
 
+    // Generate branded URL for OG tags
+    const brandedUrl = `https://petport.app/resume/${petId}`;
+
     // Use the high-quality Cloudflare R2 image (1200x630 for optimal Facebook display)
     const ogImageUrl = "https://pub-a7c2c18b8d6143b9a256105ef44f2da0.r2.dev/og-resume.png";
     
@@ -90,7 +93,7 @@ serve(async (req) => {
   <title>${title}</title>
   <meta name="description" content="${description}" />
   <meta name="robots" content="index, follow" />
-  ${redirect ? `<link rel="canonical" href="${redirect}" />` : ""}
+  <link rel="canonical" href="${brandedUrl}" />
 
   <!-- Open Graph -->
   <meta property="og:type" content="website" />
@@ -102,7 +105,7 @@ serve(async (req) => {
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
   <meta property="og:image:alt" content="PetPort digital pet resume preview" />
-  ${redirect ? `<meta property="og:url" content="${redirect}" />` : ""}
+  <meta property="og:url" content="${brandedUrl}" />
   <meta property="og:site_name" content="PetPort" />
 
   <!-- Twitter -->

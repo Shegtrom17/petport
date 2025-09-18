@@ -86,6 +86,9 @@ serve(async (req) => {
     const name = pet?.name || "Missing Pet";
     const safe = (s: string | null | undefined) => (s || "").toString().replace(/</g, "&lt;").replace(/>/g, "&gt;").trim();
 
+    // Generate branded URL for OG tags
+    const brandedUrl = `https://petport.app/missing/${petId}`;
+
     const lastSeenDate = lost?.last_seen_date ? new Date(lost.last_seen_date).toLocaleDateString() : "";
     const lastSeenStr = [safe(lost?.last_seen_location), lastSeenDate].filter(Boolean).join(" • ");
     const reward = lost?.reward_amount ? `Reward: ${safe(lost.reward_amount)}` : "";
@@ -106,7 +109,7 @@ serve(async (req) => {
   <title>${title}</title>
   <meta name="description" content="${description}" />
   <meta name="robots" content="index, follow" />
-  ${redirect ? `<link rel="canonical" href="${redirect}" />` : ""}
+  <link rel="canonical" href="${brandedUrl}" />
 
   <!-- Open Graph -->
   <meta property="og:type" content="website" />
@@ -118,7 +121,7 @@ serve(async (req) => {
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
   <meta property="og:image:alt" content="Missing pet alert from PetPort" />
-  ${redirect ? `<meta property="og:url" content="${redirect}" />` : ""}
+  <meta property="og:url" content="${brandedUrl}" />
   <meta property="og:site_name" content="PetPort" />
 
   <!-- Twitter -->

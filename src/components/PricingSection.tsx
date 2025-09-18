@@ -20,24 +20,13 @@ export const PricingSection: React.FC<PricingSectionProps> = ({ context = "landi
   const [selectedQuantity, setSelectedQuantity] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
 
-  const startCheckout = async (plan: "monthly" | "yearly") => {
-    try {
-      const fn = featureFlags.testMode ? "public-create-checkout-sandbox" : "public-create-checkout";
-      const { data, error } = await supabase.functions.invoke(fn, { body: { plan } });
-      if (error) throw error;
-      if (data?.url) {
-        window.location.href = data.url;
-      } else {
-        toast({ title: "Unable to start checkout", description: "Please try again." });
-      }
-    } catch (e: any) {
-      toast({ title: "Checkout failed", description: e?.message ?? "Please try again." });
-    }
+  const startCheckout = (plan: "monthly" | "yearly") => {
+    navigate(`/signup?plan=${plan}`);
   };
 
   const buyAdditionalPets = async (quantity: number) => {
     if (context === "landing") {
-      navigate("/auth");
+      navigate("/signup?plan=monthly");
       return;
     }
     

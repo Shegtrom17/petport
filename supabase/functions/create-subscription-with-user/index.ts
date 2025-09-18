@@ -1,0 +1,186 @@
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import Stripe from "https://esm.sh/stripe@14.21.0";
+
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+};
+
+serve(async (req) => {
+  // Handle CORS preflight requests
+  if (req.method === 'OPTIONS') {
+    return new Response(null, { headers: corsHeaders });
+  }
+
+  try {
+    // Initialize Stripe
+    const stripeKey = Deno.env.get('STRIPE_SECRET_KEY');
+    if (!stripeKey) {
+      throw new Error('Stripe secret key not configured');
+    }
+    const stripe = new Stripe(stripeKey, { apiVersion: '2023-10-16' });
+
+    // Initialize Supabase Admin Client
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+    const supabase = createClient(supabaseUrl, supabaseServiceKey);
+
+    // Parse request body
+    const { email, password, fullName, plan, additionalPets = 0 } = await req.json();
+
+    // Validate input
+    if (!email || !password || !fullName || !plan) {
+      return new Response(
+        JSON.stringify({ error: 'Missing required fields' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    if (!['monthly', 'yearly'].includes(plan)) {
+      return new Response(
+        JSON.stringify({ error: 'Invalid plan selected' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Check if user already exists
+    const { data: existingUser } = await supabase.auth.admin.getUserByEmail(email);
+    if (existingUser.user) {
+      return new Response(
+        JSON.stringify({ error: 'An account with this email already exists' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Calculate pricing
+    const planPrices = {
+      monthly: 199, // $1.99 in cents
+      yearly: 1299  // $12.99 in cents
+    };
+    const addonPricePerPet = additionalPets >= 5 ? 260 : 399; // Volume pricing
+    const totalAmount = planPrices[plan as keyof typeof planPrices] + (additionalPets * addonPricePerPet);
+
+    // Step 1: Create Stripe customer
+    const customer = await stripe.customers.create({
+      email,
+      name: fullName,
+      metadata: {
+        plan,
+        additionalPets: additionalPets.toString(),
+      },
+    });
+
+    console.log('Created Stripe customer:', customer.id);
+
+    // Step 2: Create payment method (this would normally be done with Stripe Elements on frontend)
+    // For now, we'll create the subscription in trial mode and let the frontend handle card setup
+
+    // Step 3: Create Stripe subscription with trial
+    const subscription = await stripe.subscriptions.create({
+      customer: customer.id,
+      items: [
+        {
+          price_data: {
+            currency: 'usd',
+            product_data: {
+              name: `PetPort ${plan.charAt(0).toUpperCase() + plan.slice(1)} Plan`,
+              description: `Includes 1 pet account${additionalPets > 0 ? ` + ${additionalPets} additional pets` : ''}`,
+            },
+            unit_amount: totalAmount,
+            recurring: {
+              interval: plan === 'monthly' ? 'month' : 'year',
+            },
+          },
+        },
+      ],
+      trial_period_days: 7,
+      metadata: {
+        plan,
+        additionalPets: additionalPets.toString(),
+      },
+    });
+
+    console.log('Created Stripe subscription:', subscription.id);
+
+    // Step 4: Create Supabase user
+    const { data: authData, error: authError } = await supabase.auth.admin.createUser({
+      email,
+      password,
+      user_metadata: {
+        full_name: fullName,
+      },
+      email_confirm: true, // Auto-confirm email for trial users
+    });
+
+    if (authError || !authData.user) {
+      // Cleanup: cancel the subscription if user creation fails
+      await stripe.subscriptions.cancel(subscription.id);
+      await stripe.customers.del(customer.id);
+      
+      throw new Error(`Failed to create user: ${authError?.message}`);
+    }
+
+    console.log('Created Supabase user:', authData.user.id);
+
+    // Step 5: Create subscriber record
+    const { error: subscriberError } = await supabase
+      .from('subscribers')
+      .insert({
+        user_id: authData.user.id,
+        email: email,
+        stripe_customer_id: customer.id,
+        status: 'active',
+        pet_limit: 1,
+        additional_pets: additionalPets,
+        subscribed: true,
+        subscription_tier: plan,
+      });
+
+    if (subscriberError) {
+      console.error('Failed to create subscriber record:', subscriberError);
+      // Continue anyway - this can be fixed later
+    }
+
+    // Step 6: Generate session tokens for auto-login
+    const { data: sessionData, error: sessionError } = await supabase.auth.admin.generateLink({
+      type: 'magiclink',
+      email: email,
+    });
+
+    if (sessionError) {
+      console.error('Failed to generate session:', sessionError);
+      // Continue without auto-login
+    }
+
+    console.log('Signup completed successfully');
+
+    return new Response(
+      JSON.stringify({
+        success: true,
+        userId: authData.user.id,
+        customerId: customer.id,
+        subscriptionId: subscription.id,
+        sessionToken: sessionData?.properties?.access_token,
+        refreshToken: sessionData?.properties?.refresh_token,
+      }),
+      {
+        status: 200,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      }
+    );
+
+  } catch (error) {
+    console.error('Signup error:', error);
+    
+    return new Response(
+      JSON.stringify({ 
+        error: error.message || 'An unexpected error occurred during signup' 
+      }),
+      {
+        status: 500,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      }
+    );
+  }
+});

@@ -9,11 +9,11 @@ export const BottomTabNavigation = () => {
 
   const homePath = '/app';
   const tabs = [
-    { path: homePath, icon: Home, label: 'Home' },
-    { path: '/app', icon: AlertTriangle, label: 'Lost Pet', event: 'navigate-to-quickid' },
-    { path: '/add-pet', icon: PlusCircle, label: 'Add Pet' },
-    { path: '/profile', icon: Settings, label: 'Settings' },
-    { path: '/help', icon: HelpCircle, label: 'Help' },
+    { id: 'home', path: homePath, icon: Home, label: 'Home' },
+    { id: 'lost-pet', path: '/app', icon: AlertTriangle, label: 'Lost Pet', event: 'navigate-to-quickid' },
+    { id: 'add-pet', path: '/add-pet', icon: PlusCircle, label: 'Add Pet' },
+    { id: 'settings', path: '/profile', icon: Settings, label: 'Settings' },
+    { id: 'help', path: '/help', icon: HelpCircle, label: 'Help' },
   ];
 
   return (
@@ -25,7 +25,7 @@ export const BottomTabNavigation = () => {
             
             return (
               <NavLink
-                key={tab.path}
+                key={tab.id}
                 to={tab.path}
                 onClick={() => {
                   if (tab.path === homePath) {

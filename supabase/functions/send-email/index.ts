@@ -8,7 +8,7 @@ const corsHeaders = {
 };
 
 interface EmailRequest {
-  type: 'profile' | 'care' | 'credentials' | 'resume' | 'reviews' | 'review_request' | 'missing_pet' | 'app_share';
+  type: 'profile' | 'care' | 'credentials' | 'resume' | 'reviews' | 'review_request' | 'missing_pet' | 'app_share' | 'welcome_trial';
   recipientEmail: string;
   recipientName?: string;
   petName: string;
@@ -17,6 +17,8 @@ interface EmailRequest {
   petPhoto?: string;
   customMessage?: string;
   senderName?: string;
+  trialEndDate?: string;
+  billingAmount?: string;
 }
 
 const generateEmailTemplate = (data: EmailRequest) => {
@@ -128,6 +130,37 @@ const generateEmailTemplate = (data: EmailRequest) => {
         
         <p>Join thousands of pet owners who trust PetPort to keep their pets safe and organized.</p>
       `
+    },
+    welcome_trial: {
+      subject: `🎉 Welcome to PetPort - Your Free Trial Has Started!`,
+      content: `
+        <h2>🎉 Welcome to PetPort!</h2>
+        <p>Hi ${data.recipientName || 'there'},</p>
+        <p>Thank you for signing up! Your 7-day free trial has started and you can now create digital profiles for your pets.</p>
+        
+        <div style="background: #fef3c7; border: 2px solid #f59e0b; border-radius: 8px; padding: 20px; margin: 20px 0;">
+          <h3 style="margin-top: 0; color: #92400e;">⚠️ Important Trial Information</h3>
+          <p style="margin: 10px 0; color: #92400e;"><strong>Your free trial ends on ${data.trialEndDate}</strong></p>
+          <p style="margin: 10px 0; color: #92400e;">Cancel anytime before that date to avoid being charged. After that, your card will be billed <strong>${data.billingAmount}</strong> unless canceled.</p>
+          <p style="margin: 10px 0; color: #92400e;">You can cancel anytime in your Account Settings or by contacting support.</p>
+        </div>
+        
+        <div style="background: #f0f9ff; padding: 20px; border-radius: 8px; margin: 20px 0;">
+          <h3 style="margin-top: 0; color: #0c4a6e;">🚀 Get Started</h3>
+          <ul style="color: #0c4a6e; margin: 15px 0; padding-left: 20px;">
+            <li><strong>Add your first pet</strong> - Create a beautiful digital profile</li>
+            <li><strong>Upload photos</strong> - Showcase your pet's best moments</li>
+            <li><strong>Add emergency contacts</strong> - Keep important information safe</li>
+            <li><strong>Upload medical records</strong> - Store vaccination and health documents</li>
+            <li><strong>Share with caregivers</strong> - Send profiles to vets, boarders, and sitters</li>
+          </ul>
+        </div>
+        
+        ${customMessage ? `<blockquote style="border-left: 4px solid #3b82f6; padding-left: 16px; margin: 16px 0; font-style: italic; background-color: #f8fafc;">"${customMessage}"</blockquote>` : ''}
+        
+        <p>Questions? Reply to this email or visit our Help Center. We're here to help!</p>
+        <p>Welcome to the PetPort family! 🐾</p>
+      `
     }
   };
 
@@ -233,6 +266,9 @@ const handler = async (req: Request): Promise<Response> => {
       },
       app_share: {
         subject: `Check out PetPort - Digital Pet Passport App`
+      },
+      welcome_trial: {
+        subject: `🎉 Welcome to PetPort - Your Free Trial Has Started!`
       }
     };
 

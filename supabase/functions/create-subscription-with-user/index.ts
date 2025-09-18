@@ -61,6 +61,16 @@ serve(async (req) => {
     const addonPricePerPet = additionalPets >= 5 ? 260 : 399; // Volume pricing
     const totalAmount = planPrices[plan as keyof typeof planPrices] + (additionalPets * addonPricePerPet);
 
+    // Calculate trial end date (7 days from now)
+    const trialEndDate = new Date();
+    trialEndDate.setDate(trialEndDate.getDate() + 7);
+    const trialEndFormatted = trialEndDate.toLocaleDateString('en-US', { 
+      weekday: 'long', 
+      year: 'numeric', 
+      month: 'long', 
+      day: 'numeric' 
+    });
+
     // Step 1: Create Stripe customer
     const customer = await stripe.customers.create({
       email,
@@ -68,6 +78,9 @@ serve(async (req) => {
       metadata: {
         plan,
         additionalPets: additionalPets.toString(),
+        trial_end_date: trialEndFormatted,
+        cancellation_terms: 'Cancel anytime before trial ends to avoid being charged',
+        billing_amount: `$${(totalAmount / 100).toFixed(2)}/${plan}`,
       },
     });
 
@@ -85,7 +98,7 @@ serve(async (req) => {
             currency: 'usd',
             product_data: {
               name: `PetPort ${plan.charAt(0).toUpperCase() + plan.slice(1)} Plan`,
-              description: `Includes 1 pet account${additionalPets > 0 ? ` + ${additionalPets} additional pets` : ''}`,
+              description: `7-day free trial ends ${trialEndFormatted}. Includes 1 pet account${additionalPets > 0 ? ` + ${additionalPets} additional pets` : ''}. Cancel before trial ends to avoid $${(totalAmount / 100).toFixed(2)}/${plan} charge.`,
             },
             unit_amount: totalAmount,
             recurring: {
@@ -98,6 +111,8 @@ serve(async (req) => {
       metadata: {
         plan,
         additionalPets: additionalPets.toString(),
+        trial_end_date: trialEndFormatted,
+        transparency_confirmed: 'User informed of trial terms and billing amount',
       },
     });
 
@@ -140,6 +155,27 @@ serve(async (req) => {
     if (subscriberError) {
       console.error('Failed to create subscriber record:', subscriberError);
       // Continue anyway - this can be fixed later
+    }
+
+    // Step 5.5: Send welcome email with trial details
+    try {
+      await supabase.functions.invoke('send-email', {
+        body: {
+          type: 'welcome_trial',
+          recipientEmail: email,
+          recipientName: fullName,
+          petName: 'your pets', // Generic since no specific pet yet
+          petId: 'welcome',
+          shareUrl: 'https://petport.app/app',
+          trialEndDate: trialEndFormatted,
+          billingAmount: `$${(totalAmount / 100).toFixed(2)}/${plan}`,
+          customMessage: `Welcome to PetPort! Your 7-day free trial is now active.`
+        }
+      });
+      console.log('Welcome email sent successfully');
+    } catch (emailError) {
+      console.error('Failed to send welcome email:', emailError);
+      // Continue - email failure shouldn't break signup
     }
 
     // Step 6: Generate session tokens for auto-login

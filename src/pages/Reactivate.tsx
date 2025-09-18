@@ -23,47 +23,105 @@ export default function Reactivate() {
   const [status, setStatus] = useState<SubscriptionStatus | null>(null);
   const [loading, setLoading] = useState(true);
   const [portalLoading, setPortalLoading] = useState(false);
+  const [retryAttempts, setRetryAttempts] = useState(0);
+  const [lastError, setLastError] = useState<string | null>(null);
 
   const url = typeof window !== 'undefined' ? window.location.href : 'https://petport.app/reactivate';
 
-  useEffect(() => {
+  const checkStatus = async (showToast = false) => {
     if (!user) return;
     
-    const checkStatus = async () => {
-      try {
-        // Use old schema until migration is properly applied
-        const { data, error } = await supabase
-          .from("subscribers")
-          .select("subscribed")
-          .eq("user_id", user.id)
-          .maybeSingle();
-        
-        if (error) throw error;
-        
-        if (data?.subscribed) {
-          // If user is subscribed, redirect to app
-          navigate('/app');
-          return;
+    try {
+      setLoading(true);
+      setLastError(null);
+      const { data, error } = await supabase
+        .from("subscribers")
+        .select("subscribed, status, grace_period_end")
+        .eq("user_id", user.id)
+        .maybeSingle();
+      
+      if (error) throw error;
+      
+      // Check if subscription is active using same logic as ProtectedRoute
+      const now = new Date();
+      const isActive = data?.subscribed || 
+                       data?.status === 'active' ||
+                       (data?.status === 'grace' && 
+                        (!data.grace_period_end || new Date(data.grace_period_end) > now));
+      
+      console.log("Reactivate - Subscription check:", { 
+        subscribed: data?.subscribed,
+        status: data?.status,
+        gracePeriodEnd: data?.grace_period_end,
+        isActive 
+      });
+      
+      if (isActive) {
+        if (showToast) {
+          toast({
+            title: "Success",
+            description: "Subscription reactivated! Redirecting...",
+          });
         }
-        
-        setStatus({ subscribed: false });
-      } catch (error) {
-        console.error("Error checking subscription status:", error);
-        setStatus({ subscribed: false });
-      } finally {
-        setLoading(false);
+        navigate('/app');
+        return;
+      } else if (showToast) {
+        toast({
+          title: "Still Inactive",
+          description: "Subscription still inactive. Please try again or contact support.",
+          variant: "destructive"
+        });
       }
-    };
+      
+      setStatus({ subscribed: false });
+    } catch (error) {
+      console.error("Error checking subscription status:", error);
+      const errorMsg = error instanceof Error ? error.message : "Failed to check subscription status";
+      setLastError(errorMsg);
+      if (showToast) {
+        toast({
+          title: "Error",
+          description: errorMsg,
+          variant: "destructive"
+        });
+      }
+      setStatus({ subscribed: false });
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     checkStatus();
   }, [user, navigate]);
+
+  // Listen for window focus to recheck subscription when user returns from Stripe
+  useEffect(() => {
+    const handleFocus = () => {
+      console.log("Window focused - rechecking subscription status");
+      checkStatus(true);
+    };
+
+    window.addEventListener('focus', handleFocus);
+    
+    // Also check periodically while on this page
+    const interval = setInterval(() => {
+      checkStatus();
+    }, 30000); // Check every 30 seconds
+
+    return () => {
+      window.removeEventListener('focus', handleFocus);
+      clearInterval(interval);
+    };
+  }, [user]);
 
   const handleManageSubscription = async () => {
     if (!user) return;
     
     setPortalLoading(true);
+    setRetryAttempts(prev => prev + 1);
+    
     try {
-
       const { data, error } = await supabase.functions.invoke('customer-portal', {
         body: { testMode: false }
       });
@@ -78,6 +136,16 @@ export default function Reactivate() {
           } else {
             window.location.href = data.url;
           }
+          
+          toast({
+            title: "Portal Opened",
+            description: "Opening subscription management portal...",
+          });
+          
+          // Start checking for reactivation after user goes to portal
+          setTimeout(() => {
+            checkStatus(true);
+          }, 5000);
         } catch {
           // Fallback to opening in a new tab
           window.open(data.url, '_blank', 'noopener,noreferrer');
@@ -87,14 +155,21 @@ export default function Reactivate() {
       }
     } catch (error) {
       console.error('Error accessing customer portal:', error);
+      const errorMsg = error instanceof Error ? error.message : "Unable to access subscription management";
+      setLastError(errorMsg);
       toast({
         title: "Error",
-        description: "Unable to access subscription management. Please contact support.",
+        description: `${errorMsg}. Please contact support.`,
         variant: "destructive"
       });
     } finally {
       setPortalLoading(false);
     }
+  };
+
+  const handleRetryCheck = () => {
+    setRetryAttempts(prev => prev + 1);
+    checkStatus(true);
   };
 
   const handleSignOut = async () => {
@@ -156,12 +231,37 @@ export default function Reactivate() {
               </AzureButton>
               
               <Button 
+                variant="secondary" 
+                onClick={handleRetryCheck}
+                disabled={loading}
+                className="w-full"
+              >
+                {loading ? (
+                  <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
+                ) : (
+                  <RefreshCw className="h-4 w-4 mr-2" />
+                )}
+                Check Status
+              </Button>
+              
+              <Button 
                 variant="outline" 
                 onClick={handleSignOut}
                 className="w-full"
               >
                 Sign Out
               </Button>
+              
+              {lastError && (
+                <div className="text-sm text-red-600 mt-2 p-3 bg-red-50 rounded-lg border border-red-200">
+                  <strong>Error:</strong> {lastError}
+                  {retryAttempts > 0 && (
+                    <span className="block mt-1 text-xs opacity-75">
+                      Retry attempts: {retryAttempts}
+                    </span>
+                  )}
+                </div>
+              )}
             </div>
             
             <div className="text-center text-sm text-muted-foreground">

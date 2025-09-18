@@ -169,12 +169,19 @@ async function handleSubscriptionEvent(
   const reactivatedAt = status === 'active' ? new Date().toISOString() : null;
   const canceledAt = status === 'canceled' ? new Date().toISOString() : null;
 
+  // Also update the legacy subscribed field for backwards compatibility
   await supabaseClient.rpc("update_subscriber_status", {
     _user_id: user.id,
     _status: status,
     _reactivated_at: reactivatedAt,
     _canceled_at: canceledAt
   });
+
+  // Update legacy subscribed field
+  await supabaseClient
+    .from("subscribers")
+    .update({ subscribed: status === 'active' })
+    .eq("user_id", user.id);
 
   logStep("Updated subscriber status", { 
     userId: user.id, 
@@ -281,6 +288,12 @@ async function handlePaymentSucceeded(event: any, supabaseClient: any) {
       _status: 'active',
       _reactivated_at: new Date().toISOString()
     });
+
+    // Update legacy subscribed field
+    await supabaseClient
+      .from("subscribers")
+      .update({ subscribed: true })
+      .eq("user_id", user.id);
 
     logStep("Reactivated user subscription", { 
       userId: user.id,

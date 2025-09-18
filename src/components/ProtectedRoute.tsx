@@ -23,18 +23,31 @@ export function ProtectedRoute({ children }: { children: React.ReactNode }) {
     const checkSubscription = async () => {
       if (!user) return;
       try {
-        // Use old schema until migration is properly applied
         const { data, error } = await supabase
           .from("subscribers")
-          .select("subscribed")
+          .select("subscribed, status, grace_period_end")
           .eq("user_id", user.id)
           .maybeSingle();
         
         if (error) throw error;
         
-        const isActive = data?.subscribed || false;
+        // Consider subscription active if:
+        // 1. subscribed = true (legacy check), OR
+        // 2. status = 'active', OR  
+        // 3. status = 'grace' and grace period hasn't ended
+        const now = new Date();
+        const isActive = data?.subscribed || 
+                         data?.status === 'active' ||
+                         (data?.status === 'grace' && 
+                          (!data.grace_period_end || new Date(data.grace_period_end) > now));
+        
         setSubscribed(isActive);
-        console.log("Protected Route - Subscription status:", isActive);
+        console.log("Protected Route - Subscription status:", { 
+          subscribed: data?.subscribed,
+          status: data?.status,
+          gracePeriodEnd: data?.grace_period_end,
+          isActive 
+        });
       } catch (e) {
         console.warn("Protected Route - Subscription check failed, treating as unsubscribed", e);
         setSubscribed(false);
@@ -42,15 +55,26 @@ export function ProtectedRoute({ children }: { children: React.ReactNode }) {
         setCheckingSub(false);
       }
     };
+    
     if (user) {
       setCheckingSub(true);
       checkSubscription();
     }
   }, [user]);
 
-  // Show loading state (skip subscription check wait in test mode)
+  // Show loading state with timeout (skip subscription check wait in test mode)
   if (isLoading || (user && checkingSub && !featureFlags.testMode)) {
     console.log("Protected Route - Showing loading state");
+    
+    // Add timeout fallback after 10 seconds
+    setTimeout(() => {
+      if (checkingSub) {
+        console.warn("Protected Route - Subscription check timeout, allowing access");
+        setCheckingSub(false);
+        setSubscribed(true); // Default to allowing access on timeout
+      }
+    }, 10000);
+    
     return (
       <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-blue-50 via-indigo-50 to-navy-100">
         <div className="animate-pulse text-navy-800">Loading...</div>

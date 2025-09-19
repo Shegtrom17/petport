@@ -3,6 +3,7 @@ import { PWALayout } from "@/components/PWALayout";
 import { AppHeader } from "@/components/AppHeader";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { AzureButton } from "@/components/ui/azure-button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { MetaTags } from "@/components/MetaTags";
@@ -140,7 +141,7 @@ export default function Billing() {
               )}
             </div>
             <div className="flex gap-2">
-              <Button onClick={handleManageSubscription}>Manage Subscription</Button>
+              <AzureButton onClick={handleManageSubscription}>Manage Subscription</AzureButton>
               <Button variant="outline" onClick={fetchStatus} disabled={loading}>
                 <RefreshCcw className="w-4 h-4" />
                 <span>Refresh</span>
@@ -192,13 +193,13 @@ export default function Billing() {
                   Total: ${(((individualQuantity >= 5 ? 260 : 399) * individualQuantity) / 100).toFixed(2)}/year
                 </div>
                 
-                <Button 
+                <AzureButton 
                   onClick={() => buyAddon(individualQuantity)} 
                   className="w-full"
                   disabled={isLoading}
                 >
                   {isLoading ? "Processing..." : "Add Pet Accounts"}
-                </Button>
+                </AzureButton>
                 
                 <div className="text-xs text-muted-foreground text-center">
                   Deleting a pet frees a slot immediately. To stop paying for extra slots, reduce quantity in "Manage Subscription".

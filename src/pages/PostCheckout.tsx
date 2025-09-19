@@ -84,7 +84,9 @@ export default function PostCheckout() {
                   </Button>
                 )}
                 <Button onClick={() => navigate("/auth")}>Go to Sign In</Button>
-                <Button variant="outline" onClick={() => navigate("/")}>Return Home</Button>
+                <Button variant="outline" onClick={() => navigate(isAddonPurchase ? "/app" : "/")}>
+                  {isAddonPurchase ? "Go to App" : "Return Home"}
+                </Button>
               </div>
             </div>
           )}

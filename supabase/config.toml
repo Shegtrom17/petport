@@ -123,3 +123,6 @@ verify_jwt = false
 
 [functions.care-instructions-share]
 verify_jwt = false
+
+[functions.travel-share]
+verify_jwt = false

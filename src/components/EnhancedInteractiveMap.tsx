@@ -416,14 +416,17 @@ export const EnhancedInteractiveMap = ({ petId, petName, pins, locations, onPins
     try {
       const text = generateShareText();
       const currentUrl = window.location.href;
-      const shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(currentUrl)}&quote=${encodeURIComponent(text)}`;
       
-      console.log('🔗 Sharing to Facebook:', { text, currentUrl });
+      // Generate travel-specific share URL using the new edge function
+      const travelShareUrl = `https://dxghbhujugsfmaecilrq.supabase.co/functions/v1/travel-share?petId=${encodeURIComponent(petId)}&redirect=${encodeURIComponent(currentUrl)}&v=${Date.now()}`;
+      const shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(travelShareUrl)}&quote=${encodeURIComponent(text)}`;
+      
+      console.log('🔗 Sharing travel map to Facebook:', { text, travelShareUrl });
       window.open(shareUrl, '_blank', 'width=600,height=400,scrollbars=yes,resizable=yes');
       
       toast({
         title: "Shared to Facebook! 📘",
-        description: "Opening Facebook to share your pet's travel map.",
+        description: "Opening Facebook to share your pet's travel map with travel-specific preview.",
       });
     } catch (error) {
       console.error('Error sharing to Facebook:', error);
@@ -439,14 +442,17 @@ export const EnhancedInteractiveMap = ({ petId, petName, pins, locations, onPins
     try {
       const text = generateShareText();
       const currentUrl = window.location.href;
-      const shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(currentUrl)}`;
       
-      console.log('🔗 Sharing to X/Twitter:', { text, currentUrl });
+      // Generate travel-specific share URL using the new edge function
+      const travelShareUrl = `https://dxghbhujugsfmaecilrq.supabase.co/functions/v1/travel-share?petId=${encodeURIComponent(petId)}&redirect=${encodeURIComponent(currentUrl)}&v=${Date.now()}`;
+      const shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(travelShareUrl)}`;
+      
+      console.log('🔗 Sharing travel map to X/Twitter:', { text, travelShareUrl });
       window.open(shareUrl, '_blank', 'width=600,height=400,scrollbars=yes,resizable=yes');
       
       toast({
         title: "Shared to X! 🐦",
-        description: "Opening X (Twitter) to share your pet's travel map.",
+        description: "Opening X (Twitter) to share your pet's travel map with travel-specific preview.",
       });
     } catch (error) {
       console.error('Error sharing to X:', error);

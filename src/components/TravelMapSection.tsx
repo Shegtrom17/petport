@@ -4,12 +4,14 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { MapPin, Camera, Trophy, Edit, Plus } from "lucide-react";
+import { MapPin, Camera, Trophy, Edit, Plus, Share2 } from "lucide-react";
 import { TravelEditForm } from "@/components/TravelEditForm";
 import { EnhancedInteractiveMap } from "@/components/EnhancedInteractiveMap";
 import { fetchPetDetails } from "@/services/petService";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { SocialShareButtons } from "@/components/SocialShareButtons";
+import { generateShareURL } from "@/utils/domainUtils";
 
 interface TravelLocation {
   id: string;
@@ -45,6 +47,7 @@ interface TravelMapSectionProps {
 export const TravelMapSection = ({ petData, onUpdate }: TravelMapSectionProps) => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const [editMode, setEditMode] = useState<'edit' | 'add'>('edit');
   const [locations, setLocations] = useState<TravelLocation[]>(petData.travel_locations || []);
   const [mapPins, setMapPins] = useState<MapPin[]>([]);
@@ -172,6 +175,10 @@ export const TravelMapSection = ({ petData, onUpdate }: TravelMapSectionProps) =
     setIsEditModalOpen(true);
   };
 
+  const handleShare = () => {
+    setIsShareModalOpen(true);
+  };
+
   return (
     <div className="space-y-4 sm:space-y-6">
       {/* Header with Stats */}
@@ -188,6 +195,17 @@ export const TravelMapSection = ({ petData, onUpdate }: TravelMapSectionProps) =
               </div>
             </div>
             <div className="flex space-x-4">
+              <div
+                onClick={handleShare}
+                className="flex items-center space-x-2 p-2 text-white hover:text-blue-200 hover:scale-110 transition-all cursor-pointer"
+                role="button"
+                tabIndex={0}
+                aria-label="Share travel map"
+                onKeyDown={(e) => e.key === 'Enter' && handleShare()}
+              >
+                <Share2 className="w-4 h-4" />
+                <span className="text-sm">Share</span>
+              </div>
               <div
                 onClick={handleEditLocations}
                 className="flex items-center space-x-2 p-2 text-white hover:text-blue-200 hover:scale-110 transition-all cursor-pointer"
@@ -262,6 +280,21 @@ export const TravelMapSection = ({ petData, onUpdate }: TravelMapSectionProps) =
             onSave={handleEditSave}
             onCancel={() => setIsAddModalOpen(false)}
             mode="add"
+          />
+        </DialogContent>
+      </Dialog>
+
+      {/* Share Modal */}
+      <Dialog open={isShareModalOpen} onOpenChange={setIsShareModalOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Share {petData.name}'s Travel Map</DialogTitle>
+          </DialogHeader>
+          <SocialShareButtons
+            petName={petData.name}
+            petId={petData.id}
+            context="profile"
+            shareUrlOverride={generateShareURL('travel-share', petData.id, `${window.location.origin}/travel/${petData.id}`)}
           />
         </DialogContent>
       </Dialog>

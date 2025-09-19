@@ -21,6 +21,7 @@ import Profile from "./pages/Profile";
 import PublicProfile from "./pages/PublicProfile";
 import PublicCareInstructions from "./pages/PublicCareInstructions";
 import PublicMissingPet from "./pages/PublicMissingPet";
+import PublicTravelMap from "./pages/PublicTravelMap";
 import NotFound from "./pages/NotFound";
 
 import TransferAccept from "./pages/TransferAccept";
@@ -103,14 +104,15 @@ const App = () => {
                        <VaccinationGuide />
                      </ProtectedRoute>
                    } />
-                     <Route path="/profile/:petId" element={<PublicProfile />} />
-                     <Route path="/emergency/:petId" element={<PublicEmergencyProfile />} />
-                     <Route path="/care/:petId" element={<PublicCareInstructions />} />
-                     <Route path="/credentials/:petId" element={<CredentialsRedirect />} />
-                     <Route path="/resume/:petId" element={<PublicResume />} />
-                    <Route path="/reviews/:petId" element={<PublicReviews />} />
-                   <Route path="/missing-pet/:petId" element={<PublicMissingPet />} />
-                   <Route path="/gallery/:petId" element={<PublicGallery />} />
+                      <Route path="/profile/:petId" element={<PublicProfile />} />
+                      <Route path="/emergency/:petId" element={<PublicEmergencyProfile />} />
+                      <Route path="/care/:petId" element={<PublicCareInstructions />} />
+                      <Route path="/credentials/:petId" element={<CredentialsRedirect />} />
+                      <Route path="/resume/:petId" element={<PublicResume />} />
+                     <Route path="/reviews/:petId" element={<PublicReviews />} />
+                    <Route path="/missing-pet/:petId" element={<PublicMissingPet />} />
+                    <Route path="/gallery/:petId" element={<PublicGallery />} />
+                    <Route path="/travel/:petId" element={<PublicTravelMap />} />
                   <Route path="/transfer/:token" element={<TransferAccept />} />
                   <Route path="/privacy" element={<Navigate to="/privacy-policy" replace />} />
             <Route path="/terms" element={<Terms />} />

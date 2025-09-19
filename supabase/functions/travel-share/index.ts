@@ -86,7 +86,7 @@ serve(async (req) => {
     
     // Generate URLs
     const baseUrl = 'https://petport.app'
-    const canonicalUrl = `${baseUrl}/profile/${petId}`
+    const canonicalUrl = `${baseUrl}/travel/${petId}`
     const ogImageUrl = 'https://pub-a7c2c18b8d6143b9a256105ef44f2da0.r2.dev/travel-og.png'
     
     // Generate the HTML with proper meta tags

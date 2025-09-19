@@ -70,9 +70,7 @@ export const PetHeader = ({ activeTab, onTabChange, selectedPetId, selectedPetNa
                     onToggle={onPrivacyToggle}
                   />
                 </div>
-                <div className="scale-75 origin-center">
-                  <AppShareButton variant="icon" />
-                </div>
+                <AppShareButton variant="icon" />
               </div>
             )}
             {!user && (
@@ -128,9 +126,7 @@ export const PetHeader = ({ activeTab, onTabChange, selectedPetId, selectedPetNa
                     onToggle={onPrivacyToggle}
                   />
                 </div>
-                <div className="scale-90 origin-center">
-                  <AppShareButton variant="icon" />
-                </div>
+                <AppShareButton variant="icon" />
               </div>
             )}
             {!user && (

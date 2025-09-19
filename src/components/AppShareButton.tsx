@@ -4,7 +4,7 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -21,6 +21,28 @@ export const AppShareButton = ({ variant = "icon", className = "" }: AppShareBut
     message: ''
   });
   const [isSending, setIsSending] = useState(false);
+  const [isStandalone, setIsStandalone] = useState(false);
+
+  // Detect if app is running in standalone mode (PWA)
+  useEffect(() => {
+    const checkStandalone = () => {
+      const standalone = window.matchMedia('(display-mode: standalone)').matches || 
+                        (window.navigator as any).standalone === true;
+      setIsStandalone(standalone);
+    };
+    
+    checkStandalone();
+    window.matchMedia('(display-mode: standalone)').addEventListener('change', checkStandalone);
+    
+    return () => {
+      window.matchMedia('(display-mode: standalone)').removeEventListener('change', checkStandalone);
+    };
+  }, []);
+
+  // Hide share button when not in standalone mode (browser handles sharing)
+  if (!isStandalone) {
+    return null;
+  }
 
   const appUrl = window.location.origin; // Landing page URL
   const shareData = {
@@ -108,14 +130,14 @@ export const AppShareButton = ({ variant = "icon", className = "" }: AppShareBut
           variant="ghost"
           size="sm"
           onClick={() => setIsExpanded(!isExpanded)}
-          className="p-2 touch-feedback"
+          className="p-1.5 touch-feedback opacity-60 hover:opacity-100 transition-opacity"
           aria-label="Share PetPort app"
         >
-          <Share2 className="w-5 h-5" />
+          <Share2 className="w-4 h-4" />
         </Button>
 
         {isExpanded && (
-          <Card className="absolute top-12 right-0 z-50 p-2 min-w-[200px] shadow-lg">
+          <Card className="absolute top-10 right-0 z-50 p-2 min-w-[180px] shadow-lg border-border/50">
             <div className="space-y-1">
               <Button
                 variant="ghost"

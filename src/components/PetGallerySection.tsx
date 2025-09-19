@@ -909,7 +909,7 @@ export const PetGallerySection = ({ petData, onUpdate, handlePetUpdate }: PetGal
               <SocialShareButtons
                 petName={petData.name}
                 petId={petData.id}
-                context="profile"
+                context="gallery"
                 compact={true}
                 shareUrlOverride={generateShareableUrl()}
               />

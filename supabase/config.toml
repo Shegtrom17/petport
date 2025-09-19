@@ -126,3 +126,6 @@ verify_jwt = false
 
 [functions.travel-share]
 verify_jwt = false
+
+[functions.gallery-share]
+verify_jwt = false

@@ -18,7 +18,7 @@ import { generateShareURL } from "@/utils/domainUtils";
   petName: string;
   petId: string;
   isMissingPet?: boolean;
-  context?: 'profile' | 'care' | 'credentials' | 'resume' | 'reviews' | 'missing';
+  context?: 'profile' | 'care' | 'credentials' | 'resume' | 'reviews' | 'missing' | 'gallery';
   shareUrlOverride?: string;
   defaultOpenOptions?: boolean;
   compact?: boolean;
@@ -42,6 +42,7 @@ export const SocialShareButtons = ({ petName, petId, isMissingPet = false, conte
 const isCare = context === 'care';
 const isResume = context === 'resume' || context === 'credentials'; // Consolidate credentials to resume
 const isReviews = context === 'reviews';
+const isGallery = context === 'gallery';
 const isMissing = isMissingPet || context === 'missing';
 const cacheBuster = `v=${Date.now()}`;
 const path = isMissing
@@ -52,13 +53,15 @@ const path = isMissing
       ? `resume/${petId}`
       : isReviews 
         ? `reviews/${petId}`
-        : `profile/${petId}`;
+        : isGallery
+          ? `gallery/${petId}`
+          : `profile/${petId}`;
 
 // Generate direct SPA URLs for human-friendly sharing
 const directUrl = `${window.location.origin}/${path}`;
 
 // Social media share URL (for OG tags) vs Direct URL (for humans)
-const edgeFunctionName = isMissing ? 'missing-pet-share' : isResume ? 'resume-share' : isCare ? 'care-instructions-share' : 'profile-share';
+const edgeFunctionName = isMissing ? 'missing-pet-share' : isResume ? 'resume-share' : isCare ? 'care-instructions-share' : isGallery ? 'gallery-share' : 'profile-share';
 const socialShareUrl = generateShareURL(edgeFunctionName, petId, directUrl);
 
 // Use direct URL for human sharing (copy, email, SMS), social URL for Facebook/Twitter

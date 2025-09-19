@@ -22,9 +22,10 @@ import { generateShareURL } from "@/utils/domainUtils";
   shareUrlOverride?: string;
   defaultOpenOptions?: boolean;
   compact?: boolean;
+  horizontalScroll?: boolean;
 }
 
-export const SocialShareButtons = ({ petName, petId, isMissingPet = false, context = 'profile', shareUrlOverride, defaultOpenOptions = false, compact = false }: SocialShareButtonsProps) => {
+export const SocialShareButtons = ({ petName, petId, isMissingPet = false, context = 'profile', shareUrlOverride, defaultOpenOptions = false, compact = false, horizontalScroll = false }: SocialShareButtonsProps) => {
   const [isSharing, setIsSharing] = useState(false);
   const [copied, setCopied] = useState(false);
   const [showOptions, setShowOptions] = useState(defaultOpenOptions);
@@ -232,6 +233,9 @@ title: "Link Copied! 📋",
     }, 800);
   };
 
+  const optionBtnBase = horizontalScroll ? 'shrink-0 min-w-[160px]' : 'w-full';
+  const optionsOuterClass = horizontalScroll ? '-mx-4 px-4 overflow-x-auto' : '';
+  const optionsInnerClass = horizontalScroll ? 'flex gap-2 min-w-max pb-1' : 'grid grid-cols-1 sm:grid-cols-3 gap-2';
   return (
     <Card className={`${isMissingPet ? 'border-2 border-red-500 bg-red-50' : 'border-2 border-gold-500/30 bg-[#f8f8f8]'} shadow-lg`}>
       <CardHeader className={compact ? "pb-2" : "pb-3"}>
@@ -300,144 +304,146 @@ title: "Link Copied! 📋",
               </Button>
               
               {/* Secondary Options */}
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
-                <Button
-                  onClick={handleCopyLink}
-                  variant="outline"
-                  size="sm"
-                  className={`w-full ${isMissingPet ? 'border-red-600 text-red-700 hover:bg-red-600 hover:text-white' : 'border-brand-primary text-brand-primary hover:bg-brand-primary hover:text-white'}`}
-                >
-                  {copied ? <Check className="w-4 h-4 mr-1 flex-shrink-0" /> : <Copy className="w-4 h-4 mr-1 flex-shrink-0" />}
-                  <span className="text-responsive-xs">{copied ? 'Copied!' : 'Copy Link'}</span>
-                </Button>
-                
-                <Button
-                  onClick={handleSMSShare}
-                  variant="outline"
-                  size="sm"
-                  className={`w-full ${isMissingPet ? 'border-red-600 text-red-700 hover:bg-red-600 hover:text-white' : 'border-brand-primary text-brand-primary hover:bg-brand-primary hover:text-white'}`}
-                >
-                  <MessageCircle className="w-4 h-4 mr-1 flex-shrink-0" />
-                  <span className="text-responsive-xs">Text/SMS</span>
-                </Button>
-                
-                <Dialog open={showEmailForm} onOpenChange={setShowEmailForm}>
-                  <DialogTrigger asChild>
-                    <Button
-                      onClick={handleEmailShare}
-                      variant="outline"
-                      size="sm"
-                      className={`w-full ${isMissingPet ? 'border-red-600 text-red-700 hover:bg-red-600 hover:text-white' : 'border-brand-primary text-brand-primary hover:bg-brand-primary hover:text-white'}`}
-                    >
-                      <Mail className="w-4 h-4 mr-1 flex-shrink-0" />
-                      <span className="text-responsive-xs">Email</span>
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent className="sm:max-w-md">
-                    <DialogHeader>
-                      <DialogTitle>Share via Email</DialogTitle>
-                    </DialogHeader>
-                    <div className="space-y-4">
-                      <div>
-                        <Label htmlFor="recipientEmail">Recipient Email *</Label>
-                        <Input
-                          id="recipientEmail"
-                          type="email"
-                          placeholder="Enter email address"
-                          value={emailData.recipientEmail}
-                          onChange={(e) => setEmailData(prev => ({ ...prev, recipientEmail: e.target.value }))}
-                        />
+              <div className={optionsOuterClass}>
+                <div className={optionsInnerClass}>
+                  <Button
+                    onClick={handleCopyLink}
+                    variant="outline"
+                    size="sm"
+                    className={`${optionBtnBase} ${isMissingPet ? 'border-red-600 text-red-700 hover:bg-red-600 hover:text-white' : 'border-brand-primary text-brand-primary hover:bg-brand-primary hover:text-white'}`}
+                  >
+                    {copied ? <Check className="w-4 h-4 mr-1 flex-shrink-0" /> : <Copy className="w-4 h-4 mr-1 flex-shrink-0" />}
+                    <span className="text-responsive-xs">{copied ? 'Copied!' : 'Copy Link'}</span>
+                  </Button>
+                  
+                  <Button
+                    onClick={handleSMSShare}
+                    variant="outline"
+                    size="sm"
+                    className={`${optionBtnBase} ${isMissingPet ? 'border-red-600 text-red-700 hover:bg-red-600 hover:text-white' : 'border-brand-primary text-brand-primary hover:bg-brand-primary hover:text-white'}`}
+                  >
+                    <MessageCircle className="w-4 h-4 mr-1 flex-shrink-0" />
+                    <span className="text-responsive-xs">Text/SMS</span>
+                  </Button>
+                  
+                  <Dialog open={showEmailForm} onOpenChange={setShowEmailForm}>
+                    <DialogTrigger asChild>
+                      <Button
+                        onClick={handleEmailShare}
+                        variant="outline"
+                        size="sm"
+                        className={`${optionBtnBase} ${isMissingPet ? 'border-red-600 text-red-700 hover:bg-red-600 hover:text-white' : 'border-brand-primary text-brand-primary hover:bg-brand-primary hover:text-white'}`}
+                      >
+                        <Mail className="w-4 h-4 mr-1 flex-shrink-0" />
+                        <span className="text-responsive-xs">Email</span>
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-md">
+                      <DialogHeader>
+                        <DialogTitle>Share via Email</DialogTitle>
+                      </DialogHeader>
+                      <div className="space-y-4">
+                        <div>
+                          <Label htmlFor="recipientEmail">Recipient Email *</Label>
+                          <Input
+                            id="recipientEmail"
+                            type="email"
+                            placeholder="Enter email address"
+                            value={emailData.recipientEmail}
+                            onChange={(e) => setEmailData(prev => ({ ...prev, recipientEmail: e.target.value }))}
+                          />
+                        </div>
+                        <div>
+                          <Label htmlFor="recipientName">Recipient Name (optional)</Label>
+                          <Input
+                            id="recipientName"
+                            placeholder="Enter recipient's name"
+                            value={emailData.recipientName}
+                            onChange={(e) => setEmailData(prev => ({ ...prev, recipientName: e.target.value }))}
+                          />
+                        </div>
+                        <div>
+                          <Label htmlFor="customMessage">Personal Message (optional)</Label>
+                          <Textarea
+                            id="customMessage"
+                            placeholder="Add a personal message..."
+                            value={emailData.customMessage}
+                            onChange={(e) => setEmailData(prev => ({ ...prev, customMessage: e.target.value }))}
+                            rows={3}
+                          />
+                        </div>
+                        <div className="flex gap-2">
+                          <Button
+                            onClick={handleSendEmail}
+                            disabled={emailLoading}
+                            className="flex-1 bg-brand-primary text-white hover:bg-brand-primary-dark hover:text-white"
+                          >
+                            <span className="text-responsive-sm">{emailLoading ? 'Sending...' : 'Send Email'}</span>
+                          </Button>
+                          <Button
+                            variant="outline"
+                            onClick={() => setShowEmailForm(false)}
+                            disabled={emailLoading}
+                            className="border-brand-primary text-brand-primary hover:bg-brand-primary hover:text-white"
+                          >
+                            <span className="text-responsive-sm">Cancel</span>
+                          </Button>
+                        </div>
                       </div>
-                      <div>
-                        <Label htmlFor="recipientName">Recipient Name (optional)</Label>
-                        <Input
-                          id="recipientName"
-                          placeholder="Enter recipient's name"
-                          value={emailData.recipientName}
-                          onChange={(e) => setEmailData(prev => ({ ...prev, recipientName: e.target.value }))}
-                        />
-                      </div>
-                      <div>
-                        <Label htmlFor="customMessage">Personal Message (optional)</Label>
-                        <Textarea
-                          id="customMessage"
-                          placeholder="Add a personal message..."
-                          value={emailData.customMessage}
-                          onChange={(e) => setEmailData(prev => ({ ...prev, customMessage: e.target.value }))}
-                          rows={3}
-                        />
-                      </div>
-                      <div className="flex gap-2">
-                        <Button
-                          onClick={handleSendEmail}
-                          disabled={emailLoading}
-                          className="flex-1 bg-brand-primary text-white hover:bg-brand-primary-dark hover:text-white"
-                        >
-                          <span className="text-responsive-sm">{emailLoading ? 'Sending...' : 'Send Email'}</span>
-                        </Button>
-                        <Button
-                          variant="outline"
-                          onClick={() => setShowEmailForm(false)}
-                          disabled={emailLoading}
-                          className="border-brand-primary text-brand-primary hover:bg-brand-primary hover:text-white"
-                        >
-                          <span className="text-responsive-sm">Cancel</span>
-                        </Button>
-                      </div>
-                    </div>
-                  </DialogContent>
-                </Dialog>
-                
-                <Button
-                  onClick={handleFacebookShare}
-                  variant="outline"
-                  size="sm"
-                  className="w-full bg-[#1877F2] hover:bg-[#166FE5] text-white border-[#1877F2]"
-                >
-                  <Facebook className="w-4 h-4 mr-1 flex-shrink-0" />
-                  <span className="text-responsive-xs">Facebook</span>
-                </Button>
-                
-                <Button
-                  onClick={handleMessengerShare}
-                  variant="outline"
-                  size="sm"
-                  className={`w-full ${isMissingPet ? 'border-red-600 text-red-700 hover:bg-red-600 hover:text-white' : 'border-brand-primary text-brand-primary hover:bg-brand-primary hover:text-white'}`}
-                >
-                  <MessageCircle className="w-4 h-4 mr-1 flex-shrink-0" />
-                  <span className="text-responsive-xs">Messenger</span>
-                </Button>
-                
-                <Button
-                  onClick={handleXShare}
-                  variant="outline"
-                  size="sm"
-                  className="w-full bg-black hover:bg-gray-800 text-white border-black"
-                >
-                  <svg className="w-4 h-4 mr-1 flex-shrink-0" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
-                  </svg>
-                  <span className="text-responsive-xs">X/Twitter</span>
-                </Button>
-                
-                <Button
-                  onClick={() => {
-                    handleCopyLink();
-                    toast({
-                      title: "Instagram Limitation",
-                      description: "Instagram doesn't support direct sharing. Link copied - paste it in Instagram Stories or posts.",
-                      duration: 4000,
-                    });
-                  }}
-                  variant="outline"
-                  size="sm"
-                  className="w-full bg-gradient-to-r from-purple-500 via-pink-500 to-orange-400 hover:from-purple-600 hover:via-pink-600 hover:to-orange-500 text-white border-transparent"
-                >
-                  <svg className="w-4 h-4 mr-1 flex-shrink-0" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
-                  </svg>
-                  <span className="text-responsive-xs">Instagram</span>
-                </Button>
+                    </DialogContent>
+                  </Dialog>
+                  
+                  <Button
+                    onClick={handleFacebookShare}
+                    variant="outline"
+                    size="sm"
+                    className={`${optionBtnBase} bg-[#1877F2] hover:bg-[#166FE5] text-white border-[#1877F2]`}
+                  >
+                    <Facebook className="w-4 h-4 mr-1 flex-shrink-0" />
+                    <span className="text-responsive-xs">Facebook</span>
+                  </Button>
+                  
+                  <Button
+                    onClick={handleMessengerShare}
+                    variant="outline"
+                    size="sm"
+                    className={`${optionBtnBase} ${isMissingPet ? 'border-red-600 text-red-700 hover:bg-red-600 hover:text-white' : 'border-brand-primary text-brand-primary hover:bg-brand-primary hover:text-white'}`}
+                  >
+                    <MessageCircle className="w-4 h-4 mr-1 flex-shrink-0" />
+                    <span className="text-responsive-xs">Messenger</span>
+                  </Button>
+                  
+                  <Button
+                    onClick={handleXShare}
+                    variant="outline"
+                    size="sm"
+                    className={`${optionBtnBase} bg-black hover:bg-gray-800 text-white border-black`}
+                  >
+                    <svg className="w-4 h-4 mr-1 flex-shrink-0" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                    </svg>
+                    <span className="text-responsive-xs">X/Twitter</span>
+                  </Button>
+                  
+                  <Button
+                    onClick={() => {
+                      handleCopyLink();
+                      toast({
+                        title: 'Instagram Limitation',
+                        description: "Instagram doesn't support direct sharing. Link copied - paste it in Instagram Stories or posts.",
+                        duration: 4000,
+                      });
+                    }}
+                    variant="outline"
+                    size="sm"
+                    className={`${optionBtnBase} bg-gradient-to-r from-purple-500 via-pink-500 to-orange-400 hover:from-purple-600 hover:via-pink-600 hover:to-orange-500 text-white border-transparent`}
+                  >
+                    <svg className="w-4 h-4 mr-1 flex-shrink-0" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                    </svg>
+                    <span className="text-responsive-xs">Instagram</span>
+                  </Button>
+                </div>
               </div>
               
               <Button

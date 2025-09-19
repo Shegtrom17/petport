@@ -239,7 +239,7 @@ export default function AddPet() {
                           Upgrade Now
                         </Button>
                         <Button 
-                          variant="outline"
+                          className="bg-brand-primary hover:bg-brand-primary-dark text-white"
                           size="sm"
                           onClick={() => navigate('/')}
                         >

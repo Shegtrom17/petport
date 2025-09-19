@@ -27,8 +27,11 @@ export const BottomTabNavigation = () => {
               <NavLink
                 key={tab.id}
                 to={tab.path}
-                onClick={() => {
-                  if (tab.path === homePath) {
+                onClick={(e) => {
+                  if (tab.id === 'lost-pet') {
+                    e.preventDefault(); // Prevent navigation to /app
+                    window.dispatchEvent(new Event('navigate-to-quickid'));
+                  } else if (tab.path === homePath) {
                     window.dispatchEvent(new Event('navigate-to-home'));
                   } else if (tab.event) {
                     window.dispatchEvent(new Event(tab.event));

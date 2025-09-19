@@ -350,16 +350,17 @@ export const CareInstructionsSection = ({ petData, onUpdate, handlePetUpdate }: 
                     </div>
 
                      {/* Social sharing options */}
-                       {petData.is_public ? (
-                         <SocialShareButtons 
-                           petName={petData.name} 
-                           petId={petData.id} 
-                           context="care" 
-                           shareUrlOverride={generateCarePublicUrl()} 
-                           defaultOpenOptions={true}
-                           horizontalScroll={true}
-                         />
-                       ) : null}
+                      {petData.is_public ? (
+                        <div className="w-full min-w-0">
+                          <SocialShareButtons 
+                            petName={petData.name} 
+                            petId={petData.id} 
+                            context="care" 
+                            shareUrlOverride={generateCarePublicUrl()} 
+                            defaultOpenOptions={true}
+                          />
+                        </div>
+                      ) : null}
 
                     {/* Direct Links */}
                     <div className="text-xs text-muted-foreground space-y-1 bg-muted p-3 rounded-lg">

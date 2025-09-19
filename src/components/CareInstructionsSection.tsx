@@ -25,9 +25,10 @@ export const CareInstructionsSection = ({ petData, onUpdate, handlePetUpdate }: 
   const [isEditing, setIsEditing] = useState(false);
   const [careData, setCareData] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isPdfDialogOpen, setIsPdfDialogOpen] = useState(false);
+  const [generatedPdfBlob, setGeneratedPdfBlob] = useState<Blob | null>(null);
   const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
   const [careShareDialogOpen, setCareShareDialogOpen] = useState(false);
-  const [carePdfBlob, setCarePdfBlob] = useState<Blob | null>(null);
   
   const [isSharing, setIsSharing] = useState(false);
   const { toast } = useToast();
@@ -77,9 +78,19 @@ export const CareInstructionsSection = ({ petData, onUpdate, handlePetUpdate }: 
     }
   };
 
-  const handleGenerateCarePDF = async () => {
+  const showPdfOptions = () => {
+    setIsPdfDialogOpen(true);
+  };
+
+  const handlePdfAction = async (action: 'view' | 'download') => {
     setIsGeneratingPDF(true);
+    
     try {
+      // Refresh pet data to get latest care data before generating PDF
+      if (handlePetUpdate) {
+        await handlePetUpdate();
+      }
+      
       console.log('Starting care instructions PDF generation for pet:', petData.id);
       
       // Fetch medical data to include in PDF
@@ -101,25 +112,67 @@ export const CareInstructionsSection = ({ petData, onUpdate, handlePetUpdate }: 
       const result = await generateClientPetPDF(enhancedPetData, 'care');
       
       if (result.success && result.blob) {
-        setCarePdfBlob(result.blob);
-        setCareShareDialogOpen(true);
+        setGeneratedPdfBlob(result.blob);
         
-        toast({
-          title: "Care Instructions PDF Generated",
-          description: `${petData.name}'s care instructions PDF is ready to download and share.`,
-        });
+        if (action === 'download') {
+          const filename = `${petData.name}_Care_Instructions.pdf`;
+          try {
+            await downloadPDFBlob(result.blob, filename);
+            toast({
+              title: "PDF downloaded successfully!",
+              description: `${petData.name}'s care instructions PDF has been downloaded.`,
+            });
+            setIsPdfDialogOpen(false);
+          } catch (downloadError) {
+            console.error('Download failed:', downloadError);
+            toast({
+              title: "Download failed",
+              description: "Please try using Preview and save from there.",
+              variant: "destructive",
+            });
+          }
+        } else if (action === 'view') {
+          const filename = `${petData.name}_Care_Instructions.pdf`;
+          const { viewPDFBlob } = await import('@/services/clientPdfService');
+          await viewPDFBlob(result.blob, filename);
+        }
       } else {
-        throw new Error(result.error || 'Failed to generate care instructions PDF');
+        toast({
+          title: "PDF Generation Failed",
+          description: result.error || "Failed to generate PDF",
+          variant: "destructive",
+        });
       }
     } catch (error) {
-      console.error('❌ Care PDF generation error:', error);
+      console.error("Error generating PDF:", error);
       toast({
         title: "PDF Generation Failed",
-        description: `Failed to generate care instructions PDF: ${error instanceof Error ? error.message : 'Unknown error'}. Please try again.`,
+        description: "Failed to generate PDF",
         variant: "destructive",
       });
     } finally {
       setIsGeneratingPDF(false);
+    }
+  };
+
+  const handleViewPDF = async () => {
+    if (generatedPdfBlob) {
+      const filename = `${petData.name}_Care_Instructions.pdf`;
+      const { viewPDFBlob } = await import('@/services/clientPdfService');
+      await viewPDFBlob(generatedPdfBlob, filename);
+    }
+  };
+
+  const handleDownloadGeneratedPDF = async () => {
+    if (generatedPdfBlob) {
+      const filename = `${petData.name}_Care_Instructions.pdf`;
+      // Create a fresh blob for download to avoid security issues
+      const freshBlob = new Blob([await generatedPdfBlob.arrayBuffer()], { type: 'application/pdf' });
+      await downloadPDFBlob(freshBlob, filename);
+      toast({
+        title: "PDF downloaded successfully!",
+        description: `${petData.name}'s care instructions PDF has been downloaded.`,
+      });
     }
   };
 
@@ -164,32 +217,6 @@ export const CareInstructionsSection = ({ petData, onUpdate, handlePetUpdate }: 
     }
   };
 
-  const handleDownloadCarePDF = async () => {
-    if (!carePdfBlob) return;
-    
-    try {
-      const fileName = `PetPort_Care_Instructions_${petData.name}.pdf`;
-      await downloadPDFBlob(carePdfBlob, fileName);
-      toast({
-        title: "Download Started",
-        description: `${petData.name}'s care instructions are being downloaded.`,
-      });
-    } catch (error) {
-      toast({
-        title: "Download Failed",
-        description: "Could not download the PDF. Please try again.",
-        variant: "destructive",
-      });
-    }
-  };
-
-  const handleShareCarePDF = async () => {
-    if (!carePdfBlob) return;
-    const tempUrl = URL.createObjectURL(carePdfBlob);
-    const title = `${petData.name}'s Care Instructions PDF`;
-    const description = `Care instructions PDF for ${petData.name}`;
-    await shareProfile(tempUrl, title, description);
-  };
   
   if (isEditing) {
     return (
@@ -282,18 +309,14 @@ export const CareInstructionsSection = ({ petData, onUpdate, handlePetUpdate }: 
                 <span className="text-sm">Edit</span>
               </div>
               <div
-                onClick={handleGenerateCarePDF}
-                className={`flex items-center space-x-2 p-2 text-white hover:text-blue-200 hover:scale-110 transition-all cursor-pointer ${isGeneratingPDF ? 'opacity-50 cursor-not-allowed' : ''}`}
+                onClick={showPdfOptions}
+                className="flex items-center space-x-2 p-2 text-white hover:text-blue-200 hover:scale-110 transition-all cursor-pointer"
                 role="button"
                 tabIndex={0}
                 aria-label="Generate PDF"
-                onKeyDown={(e) => e.key === 'Enter' && !isGeneratingPDF && handleGenerateCarePDF()}
+                onKeyDown={(e) => e.key === 'Enter' && showPdfOptions()}
               >
-                {isGeneratingPDF ? (
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                ) : (
-                  <FileText className="w-4 h-4" />
-                )}
+                <Download className="w-4 h-4" />
                 <span className="text-sm">PDF</span>
               </div>
               <Dialog open={careShareDialogOpen} onOpenChange={setCareShareDialogOpen}>
@@ -366,13 +389,97 @@ export const CareInstructionsSection = ({ petData, onUpdate, handlePetUpdate }: 
                     <div className="text-xs text-muted-foreground space-y-1 bg-muted p-3 rounded-lg">
                       <p className="font-medium">Direct Links:</p>
                       <p className="break-all">Care: {generateCarePublicUrl()}</p>
-                      {carePdfBlob && <p className="break-all">PDF: Available after generation</p>}
+                      {generatedPdfBlob && <p className="break-all">PDF: Available after generation</p>}
                     </div>
                   </div>
                 </DialogContent>
               </Dialog>
             </div>
           </div>
+
+          {/* PDF Options Dialog */}
+          <Dialog open={isPdfDialogOpen} onOpenChange={setIsPdfDialogOpen}>
+            <DialogContent className="max-w-md bg-[#f8f8f8]">
+              <DialogHeader>
+                <DialogTitle className="font-bold text-navy-900 border-b-2 border-green-500 pb-2">
+                  🌿 Care Instructions PDF Options
+                </DialogTitle>
+              </DialogHeader>
+              
+              <div className="space-y-6">
+                {/* PDF Actions */}
+                {!generatedPdfBlob && !isGeneratingPDF && (
+                  <div className="space-y-3">
+                    <p className="text-sm text-navy-600 text-center">
+                      Choose how you'd like to use {petData.name}'s care instructions:
+                    </p>
+                    
+                    <div className="grid grid-cols-2 gap-3">
+                      <Button
+                        onClick={() => handlePdfAction('view')}
+                        variant="outline"
+                        className="border-green-500 text-green-600 hover:bg-green-50"
+                      >
+                        <Eye className="w-4 h-4 mr-2" />
+                        View PDF
+                      </Button>
+                      <Button
+                        onClick={() => handlePdfAction('download')}
+                        className="bg-gradient-to-r from-green-500 to-green-400 text-white hover:from-green-400 hover:to-green-300"
+                      >
+                        <Download className="w-4 h-4 mr-2" />
+                        Download PDF
+                      </Button>
+                    </div>
+                  </div>
+                )}
+
+                {/* Loading State */}
+                {isGeneratingPDF && (
+                  <div className="text-center space-y-3">
+                    <div className="inline-flex items-center justify-center w-16 h-16 bg-green-100 rounded-full">
+                      <Loader2 className="w-8 h-8 text-green-600 animate-spin" />
+                    </div>
+                    <p className="text-sm text-navy-600">
+                      Generating {petData.name}'s care instructions PDF...
+                    </p>
+                  </div>
+                )}
+
+                {/* Success State - PDF Generated */}
+                {generatedPdfBlob && !isGeneratingPDF && (
+                  <div className="space-y-4">
+                    <div className="text-center">
+                      <div className="inline-flex items-center justify-center w-16 h-16 bg-green-100 rounded-full mb-3">
+                        <FileText className="w-8 h-8 text-green-600" />
+                      </div>
+                      <p className="text-sm text-navy-600 mb-4">
+                        PDF ready! Choose an action:
+                      </p>
+                    </div>
+                    
+                    <div className="grid grid-cols-2 gap-3">
+                      <Button
+                        onClick={handleViewPDF}
+                        variant="outline"
+                        className="border-green-500 text-green-600 hover:bg-green-50"
+                      >
+                        <Eye className="w-4 h-4 mr-2" />
+                        View PDF
+                      </Button>
+                      <Button
+                        onClick={handleDownloadGeneratedPDF}
+                        className="bg-gradient-to-r from-green-500 to-green-400 text-white hover:from-green-400 hover:to-green-300"
+                      >
+                        <Download className="w-4 h-4 mr-2" />
+                        Download
+                      </Button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </DialogContent>
+          </Dialog>
           {!petData.is_public && (
             <div className="mt-4 pt-4 border-t border-blue-400/30">
               <p className="text-sm text-blue-200 text-center">

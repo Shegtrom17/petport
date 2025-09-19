@@ -126,12 +126,6 @@ export const PublicGallery = () => {
       
       <div className="container mx-auto px-4 py-8">
         <div className="mb-6">
-          <Link to="/">
-            <Button variant="outline" className="mb-4">
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Back to Home
-            </Button>
-          </Link>
           
           <div className="text-center">
             <h1 className="text-3xl font-bold text-gray-800 mb-2">{pageTitle}</h1>

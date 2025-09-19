@@ -422,11 +422,11 @@ export const PetPDFGenerator = ({ petId, petName, petData, handlePetUpdate }: Pe
                 </p>
                 
                  <div className="grid grid-cols-2 gap-3">
-                   <Button
-                     onClick={() => handlePdfAction('view')}
-                     variant="outline"
-                     className="border-gold-500 text-gold-600 hover:bg-gold-50 text-xs sm:text-sm px-2 sm:px-4 h-auto py-2 flex-col sm:flex-row"
-                   >
+                    <Button
+                      onClick={() => handlePdfAction('view')}
+                      variant="outline"
+                      className="border-gold-500 text-gold-600 hover:bg-gold-50 hover:text-gold-700 text-xs sm:text-sm px-2 sm:px-4 h-auto py-2 flex-col sm:flex-row"
+                    >
                      <Eye className="w-4 h-4 mb-1 sm:mb-0 sm:mr-2" />
                      <span className="text-center">Generate & View</span>
                    </Button>
@@ -439,11 +439,11 @@ export const PetPDFGenerator = ({ petId, petName, petData, handlePetUpdate }: Pe
                    </Button>
                  </div>
                  
-                 <Button
-                   onClick={() => handlePdfAction('view')}
-                   variant="outline"
-                   className="w-full border-navy-900 text-navy-900 hover:bg-navy-50 text-xs sm:text-sm px-2 sm:px-4 h-auto py-2 flex-col sm:flex-row"
-                 >
+                  <Button
+                    onClick={() => handlePdfAction('view')}
+                    variant="outline"
+                    className="w-full border-navy-900 text-navy-900 hover:bg-navy-50 hover:text-navy-900 text-xs sm:text-sm px-2 sm:px-4 h-auto py-2 flex-col sm:flex-row"
+                  >
                    <Share2 className="w-4 h-4 mb-1 sm:mb-0 sm:mr-2" />
                    <span className="text-center">Generate & Share PDF</span>
                  </Button>
@@ -473,26 +473,26 @@ export const PetPDFGenerator = ({ petId, petName, petData, handlePetUpdate }: Pe
                     <p className="text-xs text-muted-foreground mb-2">Requested: {selectedPdfType} • Resolved: {resolvedType}</p>
                   )}
                    <div className="grid grid-cols-3 gap-2 justify-center mb-3">
-                     <Button
-                       onClick={async () => {
-                          if (generatedPdfBlob) {
-                            const fileName = `PetPort_${selectedPdfType && pdfTypes.find(p => p.key === selectedPdfType)?.title.replace(/\s+/g, '_')}_${petName}.pdf`;
-                           try {
-                             await viewPDFBlob(generatedPdfBlob, fileName);
-                           } catch (error) {
-                             console.error('PDF view error:', error);
-                             toast({
-                               title: "View Failed",
-                               description: "Could not open PDF. Please try downloading instead.",
-                               variant: "destructive",
-                             });
-                           }
-                         }
-                       }}
-                       variant="outline"
-                       size="sm"
-                       className="border-gold-500 text-gold-600 hover:bg-gold-50 text-xs sm:text-sm px-1 sm:px-3 h-auto py-2 flex-col sm:flex-row"
-                     >
+                      <Button
+                        onClick={async () => {
+                           if (generatedPdfBlob) {
+                             const fileName = `PetPort_${selectedPdfType && pdfTypes.find(p => p.key === selectedPdfType)?.title.replace(/\s+/g, '_')}_${petName}.pdf`;
+                            try {
+                              await viewPDFBlob(generatedPdfBlob, fileName);
+                            } catch (error) {
+                              console.error('PDF view error:', error);
+                              toast({
+                                title: "View Failed",
+                                description: "Could not open PDF. Please try downloading instead.",
+                                variant: "destructive",
+                              });
+                            }
+                          }
+                        }}
+                        variant="outline"
+                        size="sm"
+                        className="border-gold-500 text-gold-600 hover:bg-gold-50 hover:text-gold-700 text-xs sm:text-sm px-1 sm:px-3 h-auto py-2 flex-col sm:flex-row"
+                      >
                        <Eye className="w-3 h-3 sm:w-4 sm:h-4 mb-1 sm:mb-0 sm:mr-1" />
                        <span className="text-center">View</span>
                      </Button>
@@ -558,10 +558,10 @@ export const PetPDFGenerator = ({ petId, petName, petData, handlePetUpdate }: Pe
                            });
                          }
                        }}
-                       variant="outline"
-                       size="sm"
-                       disabled={isSharing}
-                       className="border-navy-900 text-navy-900 hover:bg-navy-50 text-xs sm:text-sm px-1 sm:px-3 h-auto py-2 flex-col sm:flex-row"
+                        variant="outline"
+                        size="sm"
+                        disabled={isSharing}
+                        className="border-navy-900 text-navy-900 hover:bg-navy-50 hover:text-navy-900 text-xs sm:text-sm px-1 sm:px-3 h-auto py-2 flex-col sm:flex-row"
                      >
                        <Share2 className="w-3 h-3 sm:w-4 sm:h-4 mb-1 sm:mb-0 sm:mr-1" />
                        <span className="text-center">Share</span>
@@ -576,12 +576,12 @@ export const PetPDFGenerator = ({ petId, petName, petData, handlePetUpdate }: Pe
                       <strong>Note:</strong> Your profile must be public to share with others. PDF generation works for all profiles.
                     </p>
                   </div>
-                  <Button
-                    onClick={handleSharePublicProfile}
-                    disabled={isSharing}
-                    variant="outline"
-                    className="w-full border-navy-900 text-navy-900 hover:bg-navy-50"
-                  >
+                   <Button
+                     onClick={handleSharePublicProfile}
+                     disabled={isSharing}
+                     variant="outline"
+                     className="w-full border-navy-900 text-navy-900 hover:bg-navy-50 hover:text-navy-900"
+                   >
                     {isSharing ? (
                       <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                     ) : (

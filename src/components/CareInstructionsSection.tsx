@@ -338,7 +338,7 @@ export const CareInstructionsSection = ({ petData, onUpdate, handlePetUpdate }: 
                 </DialogTrigger>
                 <DialogContent className="max-w-[100vw] sm:max-w-md w-full min-w-0 max-h-[90vh] overflow-y-auto overflow-x-hidden bg-[#f8f8f8] px-4">
                   <DialogHeader>
-                    <DialogTitle className="text-foreground border-b-2 border-green-500 pb-2 font-bold">
+                    <DialogTitle className="text-foreground border-b-2 border-gold-500 pb-2 font-bold">
                       🌿 Share {petData.name}'s Care Instructions
                     </DialogTitle>
                   </DialogHeader>
@@ -401,7 +401,7 @@ export const CareInstructionsSection = ({ petData, onUpdate, handlePetUpdate }: 
           <Dialog open={isPdfDialogOpen} onOpenChange={setIsPdfDialogOpen}>
             <DialogContent className="max-w-md bg-[#f8f8f8]">
               <DialogHeader>
-                <DialogTitle className="font-bold text-navy-900 border-b-2 border-green-500 pb-2">
+                <DialogTitle className="font-bold text-navy-900 border-b-2 border-gold-500 pb-2">
                   🌿 Care Instructions PDF Options
                 </DialogTitle>
               </DialogHeader>
@@ -418,14 +418,14 @@ export const CareInstructionsSection = ({ petData, onUpdate, handlePetUpdate }: 
                       <Button
                         onClick={() => handlePdfAction('view')}
                         variant="outline"
-                        className="border-green-500 text-green-600 hover:bg-green-50"
+                        className="border-gold-500 text-gold-600 hover:bg-gold-50"
                       >
                         <Eye className="w-4 h-4 mr-2" />
                         View PDF
                       </Button>
                       <Button
                         onClick={() => handlePdfAction('download')}
-                        className="bg-gradient-to-r from-green-500 to-green-400 text-white hover:from-green-400 hover:to-green-300"
+                        className="bg-gradient-to-r from-gold-500 to-gold-400 text-navy-900 hover:from-gold-600 hover:to-gold-500"
                       >
                         <Download className="w-4 h-4 mr-2" />
                         Download PDF
@@ -437,8 +437,8 @@ export const CareInstructionsSection = ({ petData, onUpdate, handlePetUpdate }: 
                 {/* Loading State */}
                 {isGeneratingPDF && (
                   <div className="text-center space-y-3">
-                    <div className="inline-flex items-center justify-center w-16 h-16 bg-green-100 rounded-full">
-                      <Loader2 className="w-8 h-8 text-green-600 animate-spin" />
+                    <div className="inline-flex items-center justify-center w-16 h-16 bg-gold-100 rounded-full">
+                      <Loader2 className="w-8 h-8 text-gold-600 animate-spin" />
                     </div>
                     <p className="text-sm text-navy-600">
                       Generating {petData.name}'s care instructions PDF...
@@ -450,8 +450,8 @@ export const CareInstructionsSection = ({ petData, onUpdate, handlePetUpdate }: 
                 {generatedPdfBlob && !isGeneratingPDF && (
                   <div className="space-y-4">
                     <div className="text-center">
-                      <div className="inline-flex items-center justify-center w-16 h-16 bg-green-100 rounded-full mb-3">
-                        <FileText className="w-8 h-8 text-green-600" />
+                      <div className="inline-flex items-center justify-center w-16 h-16 bg-gold-100 rounded-full mb-3">
+                        <FileText className="w-8 h-8 text-gold-600" />
                       </div>
                       <p className="text-sm text-navy-600 mb-4">
                         PDF ready! Choose an action:
@@ -462,14 +462,14 @@ export const CareInstructionsSection = ({ petData, onUpdate, handlePetUpdate }: 
                       <Button
                         onClick={handleViewPDF}
                         variant="outline"
-                        className="border-green-500 text-green-600 hover:bg-green-50"
+                        className="border-gold-500 text-gold-600 hover:bg-gold-50"
                       >
                         <Eye className="w-4 h-4 mr-2" />
                         View PDF
                       </Button>
                       <Button
                         onClick={handleDownloadGeneratedPDF}
-                        className="bg-gradient-to-r from-green-500 to-green-400 text-white hover:from-green-400 hover:to-green-300"
+                        className="bg-gradient-to-r from-gold-500 to-gold-400 text-navy-900 hover:from-gold-600 hover:to-gold-500"
                       >
                         <Download className="w-4 h-4 mr-2" />
                         Download

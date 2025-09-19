@@ -120,3 +120,6 @@ verify_jwt = false
 
 [functions.setup-stripe-webhook]
 verify_jwt = false
+
+[functions.care-instructions-share]
+verify_jwt = false

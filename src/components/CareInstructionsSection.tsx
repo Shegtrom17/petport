@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Heart, Clock, Pill, Coffee, Moon, AlertTriangle, Edit, Loader2, FileText, Download, QrCode, Share2, ExternalLink, Eye, Phone } from "lucide-react";
+import { Heart, Clock, Pill, Coffee, Moon, AlertTriangle, Edit, Loader2, FileText, Download, Share2, ExternalLink, Eye, Phone } from "lucide-react";
 import { ContactsDisplay } from "@/components/ContactsDisplay";
 import { extractPhoneNumber, formatPhoneForTel } from "@/utils/contactUtils";
 import { CareInstructionsEditForm } from "@/components/CareInstructionsEditForm";
@@ -28,16 +28,11 @@ export const CareInstructionsSection = ({ petData, onUpdate, handlePetUpdate }: 
   const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
   const [careShareDialogOpen, setCareShareDialogOpen] = useState(false);
   const [carePdfBlob, setCarePdfBlob] = useState<Blob | null>(null);
-  const [careQrCodeUrl, setCareQrCodeUrl] = useState<string | null>(null);
+  
   const [isSharing, setIsSharing] = useState(false);
   const { toast } = useToast();
   const isHorse = petData.species?.toLowerCase() === 'horse';
 
-  // Generate QR code for public care URL
-  useEffect(() => {
-    const careUrl = generateCarePublicUrl();
-    setCareQrCodeUrl(generateQRCodeUrl(careUrl));
-  }, [petData.id]);
 
   // Load care instructions from database
   useEffect(() => {
@@ -332,21 +327,9 @@ export const CareInstructionsSection = ({ petData, onUpdate, handlePetUpdate }: 
                          <div className="w-6 h-6 bg-sage-500/20 rounded-full flex items-center justify-center">
                            <ExternalLink className="w-3 h-3 text-sage-600" />
                          </div>
-                         Public Care Instructions
-                       </h4>
-                       <p className="text-sm text-muted-foreground mb-3">Share detailed daily care info with pet sitters and caregivers. <strong>Profile must be public to share.</strong></p>
-                       
-                       {careQrCodeUrl && petData.is_public && (
-                         <div className="text-center mb-3">
-                           <img 
-                             src={careQrCodeUrl} 
-                             alt="Care Instructions QR Code" 
-                             className="border-2 border-sage-500/30 rounded-lg mx-auto"
-                             style={{width: '120px', height: '120px'}}
-                           />
-                           <p className="text-xs text-sage-600 mt-2">Scan to access care instructions</p>
-                         </div>
-                       )}
+                          Public Care Instructions
+                        </h4>
+                        <p className="text-sm text-muted-foreground mb-3">Share detailed daily care info with pet sitters and caregivers. <strong>Profile must be public to share.</strong></p>
 
                       <Button
                         onClick={handleShareCareLink}
@@ -373,7 +356,7 @@ export const CareInstructionsSection = ({ petData, onUpdate, handlePetUpdate }: 
                         petId={petData.id} 
                         context="care" 
                         shareUrlOverride={generateCarePublicUrl()} 
-                        defaultOpenOptions 
+                        defaultOpenOptions={true}
                       />
                     ) : null}
 

@@ -2,7 +2,7 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.50.3';
 import { corsHeaders } from '../_shared/cors.ts';
 
-console.log("Gallery share function started");
+console.log("Emergency share function started");
 
 serve(async (req) => {
   // Handle CORS preflight requests
@@ -19,7 +19,7 @@ serve(async (req) => {
     // Detect social media crawlers
     const isCrawler = /facebookexternalhit|twitterbot|linkedinbot|slackbot|whatsapp|telegram/i.test(userAgent);
     
-    console.log('Gallery share request:', {
+    console.log('Emergency share request:', {
       petId,
       redirect,
       userAgent,
@@ -76,10 +76,27 @@ serve(async (req) => {
     }
 
     // Generate meta tags for social sharing
-    const title = `${pet.name}'s Photo Gallery - PetPort`;
-    const description = `Check out ${pet.name}'s photo gallery on PetPort.`;
-    const ogImage = 'https://pub-a7c2c18b8d6143b9a256105ef44f2da0.r2.dev/Photo-og%20(1).png';
-    const canonicalUrl = `https://petport.app/gallery/${petId}`;
+    const title = `🚨 ${pet.name}'s Emergency Information - PetPort`;
+    const description = `Quick access to ${pet.name}'s emergency contact details and important information.`;
+    const ogImage = 'https://pub-a7c2c18b8d6143b9a256105ef44f2da0.r2.dev/carehandling-og.png';
+    const canonicalUrl = `https://petport.app/profile/${petId}`;
+    
+    // Sanitize strings to prevent XSS
+    const sanitizeString = (str: string) => {
+      return str.replace(/[<>"'&]/g, (match) => {
+        const entities: { [key: string]: string } = {
+          '<': '&lt;',
+          '>': '&gt;',
+          '"': '&quot;',
+          "'": '&#39;',
+          '&': '&amp;'
+        };
+        return entities[match];
+      });
+    };
+
+    const safeTitle = sanitizeString(title);
+    const safeDescription = sanitizeString(description);
     
     const html = `
 <!DOCTYPE html>
@@ -87,14 +104,14 @@ serve(async (req) => {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>${title}</title>
-    <meta name="description" content="${description}">
+    <title>${safeTitle}</title>
+    <meta name="description" content="${safeDescription}">
     
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="${canonicalUrl}">
-    <meta property="og:title" content="${title}">
-    <meta property="og:description" content="${description}">
+    <meta property="og:title" content="${safeTitle}">
+    <meta property="og:description" content="${safeDescription}">
     <meta property="og:image" content="${ogImage}">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
@@ -103,8 +120,8 @@ serve(async (req) => {
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="${canonicalUrl}">
-    <meta property="twitter:title" content="${title}">
-    <meta property="twitter:description" content="${description}">
+    <meta property="twitter:title" content="${safeTitle}">
+    <meta property="twitter:description" content="${safeDescription}">
     <meta property="twitter:image" content="${ogImage}">
     
     <!-- Canonical URL -->
@@ -112,17 +129,19 @@ serve(async (req) => {
     
     ${redirect ? `
     <script>
-      window.location.href = "${decodeURIComponent(redirect)}";
+      setTimeout(function() {
+        window.location.href = "${decodeURIComponent(redirect)}";
+      }, 100);
     </script>
     ` : ''}
 </head>
 <body>
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 50px auto; padding: 20px; text-align: center;">
-        <h1>${title}</h1>
-        <p>${description}</p>
+        <h1>🚨 ${sanitizeString(pet.name)}'s Emergency Information</h1>
+        <p>${safeDescription}</p>
         <p>
-            <a href="${canonicalUrl}" style="background: #007bff; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; display: inline-block; margin-top: 20px;">
-                View ${pet.name}'s Profile
+            <a href="${canonicalUrl}" style="background: #dc2626; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; display: inline-block; margin-top: 20px;">
+                View Emergency Details
             </a>
         </p>
     </div>
@@ -138,7 +157,7 @@ serve(async (req) => {
     });
 
   } catch (error) {
-    console.error('Error in gallery-share function:', error);
+    console.error('Error in emergency-share function:', error);
     return new Response('Internal Server Error', { 
       status: 500,
       headers: corsHeaders 

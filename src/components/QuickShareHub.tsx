@@ -156,6 +156,12 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
       return generateShareURL('missing-pet-share', petData.id!, directUrl);
     } else if (page.id === 'resume') {
       return generateShareURL('resume-share', petData.id!, directUrl);
+    } else if (page.id === 'care') {
+      return generateShareURL('care-instructions-share', petData.id!, directUrl);
+    } else if (page.id === 'gallery') {
+      return generateShareURL('gallery-share', petData.id!, directUrl);
+    } else if (page.id === 'emergency') {
+      return generateShareURL('emergency-share', petData.id!, directUrl);
     } else {
       return generateShareURL('profile-share', petData.id!, directUrl);
     }

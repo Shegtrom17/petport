@@ -150,7 +150,7 @@ export async function fetchUserPets(): Promise<any[]> {
       .from("pets")
       .select("id, name, breed, species, age, weight, height, sex, microchip_id, registration_number, petport_id, bio, notes, state, county, created_at, updated_at, user_id, is_public, organization_name, organization_email, organization_phone, organization_website, custom_logo_url, adoption_status, adoption_instructions")
       .eq('user_id', user.id) // Explicitly filter by user_id
-      .order("created_at", { ascending: false });
+      .order("created_at", { ascending: true });
 
     console.log("fetchUserPets: Database response:", { pets, error, userIdFilter: user.id });
 

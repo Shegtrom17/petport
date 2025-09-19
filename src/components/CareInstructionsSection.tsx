@@ -313,7 +313,7 @@ export const CareInstructionsSection = ({ petData, onUpdate, handlePetUpdate }: 
                     <span className="text-sm">Share</span>
                   </div>
                 </DialogTrigger>
-                <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto bg-[#f8f8f8]">
+                <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto overflow-x-hidden bg-[#f8f8f8]">
                   <DialogHeader>
                     <DialogTitle className="text-foreground border-b-2 border-green-500 pb-2 font-bold">
                       🌿 Share {petData.name}'s Care Instructions

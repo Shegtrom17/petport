@@ -452,9 +452,9 @@ title: "Link Copied! 📋",
           )}
         </div>
         
-        <div className={`text-xs ${isMissingPet ? 'text-red-600' : 'text-navy-500'} text-center p-2 rounded ${isMissingPet ? 'bg-red-100' : 'bg-gold-100'} border ${isMissingPet ? 'border-red-200' : 'border-gold-200'}`}>
-          📱 Share link: {shareUrl}
-        </div>
+          <div className={`text-xs ${isMissingPet ? 'text-red-600' : 'text-navy-500'} p-2 rounded ${isMissingPet ? 'bg-red-100' : 'bg-gold-100'} border ${isMissingPet ? 'border-red-200' : 'border-gold-200'} break-all`}>
+            📱 Share link: {shareUrl}
+          </div>
       </CardContent>
     </Card>
   );

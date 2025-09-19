@@ -383,7 +383,7 @@ export const PetResumeSection = ({ petData, onUpdate, handlePetUpdate }: PetResu
 
       {/* Share Dialog - All sharing options consolidated */}
       <Dialog open={isShareDialogOpen} onOpenChange={setIsShareDialogOpen}>
-        <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto bg-[#f8f8f8]">
+        <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto overflow-x-hidden bg-[#f8f8f8]">
           <DialogHeader>
             <DialogTitle className="font-bold text-navy-900 border-b-2 border-gold-500 pb-2">
               🔗 Share {petData.name}'s Resume

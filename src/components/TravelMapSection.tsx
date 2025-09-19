@@ -193,6 +193,17 @@ export const TravelMapSection = ({ petData, onUpdate }: TravelMapSectionProps) =
               </div>
             </div>
             <div className="flex space-x-2">
+              {/* Development View Landing Button */}
+              <div
+                onClick={() => window.open('/landing', '_blank')}
+                className="flex items-center space-x-2 p-2 text-white hover:text-blue-200 hover:scale-110 transition-all cursor-pointer opacity-60 hover:opacity-100"
+                role="button"
+                tabIndex={0}
+                aria-label="View landing page"
+                onKeyDown={(e) => e.key === 'Enter' && window.open('/landing', '_blank')}
+              >
+                <span className="text-xs">Landing</span>
+              </div>
               <div
                 onClick={handleShare}
                 className="flex items-center space-x-2 p-2 text-white hover:text-blue-200 hover:scale-110 transition-all cursor-pointer"

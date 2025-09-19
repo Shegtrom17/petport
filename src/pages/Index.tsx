@@ -365,18 +365,6 @@ const Index = () => {
 
         <main className="max-w-6xl mx-auto px-3 sm:px-4 py-4 sm:py-6 lg:py-8 pb-20 sm:pb-24">
             
-            {/* Development View Landing Button */}
-            <div className="mb-4 flex justify-end">
-              <Button
-                variant="outline"
-                size="sm"
-                className="text-xs h-7 px-2 opacity-60 hover:opacity-100"
-                onClick={() => navigate('/landing')}
-              >
-                View Landing
-              </Button>
-            </div>
-            
             <AuthenticationPrompt isSignedIn={!!user} hasPets={pets.length > 0} />
             
             {user && pets.length > 0 && (

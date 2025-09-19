@@ -9,6 +9,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Share2, Facebook, Copy, Check, Smartphone, MessageCircle, Mail } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { shareProfileOptimized } from "@/services/pdfService";
+import { shareViaMessenger, copyToClipboard } from "@/utils/messengerShare";
 import { useEmailSharing } from "@/hooks/useEmailSharing";
 import { useAuth } from "@/context/AuthContext";
 import { generateShareURL } from "@/utils/domainUtils";
@@ -179,10 +180,47 @@ title: "Link Copied! 📋",
   const handleEmailShare = () => {
     setShowEmailForm(true);
   };
-  const handleMessengerShare = () => {
-    const messengerUrl = `fb-messenger://share?link=${encodeURIComponent(shareUrl)}`;
-    // Attempt to open Messenger app; if it doesn't open, suggest Facebook share as fallback
-    window.location.href = messengerUrl;
+  const handleMessengerShare = async () => {
+    const needsFallback = await shareViaMessenger({
+      url: shareUrl,
+      title: isMissingPet 
+        ? `Help bring ${petName} home!` 
+        : (isCare 
+            ? `${petName}'s Care Instructions` 
+            : (isResume 
+                ? `${petName}'s Resume` 
+                : `${petName}'s Profile`)),
+      text: isMissingPet 
+        ? `${petName} is missing! Please help share their alert.`
+        : `Check out ${petName}'s profile on PetPort!`
+    });
+
+    if (needsFallback) {
+      const copyToClipboardAction = async () => {
+        const success = await copyToClipboard(shareUrl);
+        if (success) {
+          toast({
+            description: "🐾 Link copied! Now paste it in Messenger.",
+            duration: 3000,
+          });
+        }
+      };
+
+      toast({
+        title: "🐶 Ruff day? Messenger is being stubborn.",
+        description: "Tap 'Copy Link' and paste it into the chat — your pet's profile will still shine like a fresh-bathed pup!",
+        duration: 6000,
+        action: (
+          <Button
+            onClick={copyToClipboardAction}
+            size="sm"
+            className="bg-primary hover:bg-primary/90 text-primary-foreground"
+          >
+            📋 Copy Link
+          </Button>
+        ),
+      });
+    }
     setTimeout(() => {
       toast({
         title: "Messenger share",

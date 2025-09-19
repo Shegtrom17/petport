@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { useEmailSharing } from "@/hooks/useEmailSharing";
+import { shareViaMessenger, copyToClipboard } from "@/utils/messengerShare";
 import { 
   Heart, 
   Shield, 
@@ -253,41 +254,40 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
     }
   };
 
-  const handleMessengerShare = (page: SharePage) => {
-    // Check if mobile device
-    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+  const handleMessengerShare = async (page: SharePage) => {
     const directUrl = `${baseUrl}${page.path}`;
     
-    if (isMobile) {
-      // For mobile, use simple link sharing to avoid dialog errors
-      if (navigator.share) {
-        navigator.share({
-          title: `${petData.name}'s ${page.title}`,
-          text: page.description,
-          url: directUrl,
-        }).catch(() => {
-          // Fallback to copying link with instructions
-          handleCopyLink(page);
+    const needsFallback = await shareViaMessenger({
+      url: directUrl,
+      title: `${petData.name}'s ${page.title}`,
+      text: page.description
+    });
+
+    if (needsFallback) {
+      const copyToClipboardAction = async () => {
+        const success = await copyToClipboard(directUrl);
+        if (success) {
           toast({
-            title: "Messenger Mobile Limitation",
-            description: "Link copied! Open Messenger app and paste the link in a conversation.",
-            duration: 5000,
+            description: "🐾 Link copied! Now paste it in Messenger.",
+            duration: 3000,
           });
-        });
-      } else {
-        // Fallback: copy link and show instructions
-        handleCopyLink(page);
-        toast({
-          title: "Messenger Mobile Limitation",
-          description: "Link copied! Open Messenger app and paste the link in a conversation.",
-          duration: 5000,
-        });
-      }
-    } else {
-      // Desktop - use direct messaging URL
-      const message = `Check out ${petData.name}'s ${page.title}: ${directUrl}`;
-      const messengerUrl = `https://www.messenger.com/new?text=${encodeURIComponent(message)}`;
-      window.open(messengerUrl, '_blank');
+        }
+      };
+
+      toast({
+        title: "🐶 Ruff day? Messenger is being stubborn.",
+        description: "Tap 'Copy Link' and paste it into the chat — your pet's profile will still shine like a fresh-bathed pup!",
+        duration: 6000,
+        action: (
+          <Button
+            onClick={copyToClipboardAction}
+            size="sm"
+            className="bg-primary hover:bg-primary/90 text-primary-foreground"
+          >
+            📋 Copy Link
+          </Button>
+        ),
+      });
     }
   };
 

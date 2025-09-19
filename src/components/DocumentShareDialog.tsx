@@ -19,6 +19,7 @@ import { useToast } from "@/hooks/use-toast";
 import { shareProfile } from "@/services/pdfService";
 import { useEmailSharing } from "@/hooks/useEmailSharing";
 import { useAuth } from "@/context/AuthContext";
+import { shareViaMessenger, copyToClipboard } from "@/utils/messengerShare";
 
 interface Document {
   id: string;
@@ -145,15 +146,39 @@ export const DocumentShareDialog = ({
     window.open(xUrl, '_blank', 'width=600,height=400');
   };
 
-  const handleMessengerShare = () => {
-    const messengerUrl = `fb-messenger://share?link=${encodeURIComponent(shareUrl)}`;
-    window.location.href = messengerUrl;
-    setTimeout(() => {
+  const handleMessengerShare = async () => {
+    const needsFallback = await shareViaMessenger({
+      url: shareUrl,
+      title: `${petName}'s ${categoryLabel}`,
+      text: `Check out ${petName}'s ${categoryLabel.toLowerCase()} document: ${document.name}`
+    });
+
+    if (needsFallback) {
+      const copyToClipboardAction = async () => {
+        const success = await copyToClipboard(shareUrl);
+        if (success) {
+          toast({
+            description: "🐾 Link copied! Now paste it in Messenger.",
+            duration: 3000,
+          });
+        }
+      };
+
       toast({
-        title: "Messenger share",
-        description: "If Messenger didn't open, use Facebook share instead.",
+        title: "🐶 Ruff day? Messenger is being stubborn.",
+        description: "Tap 'Copy Link' and paste it into the chat — your pet's profile will still shine like a fresh-bathed pup!",
+        duration: 6000,
+        action: (
+          <Button
+            onClick={copyToClipboardAction}
+            size="sm"
+            className="bg-primary hover:bg-primary/90 text-primary-foreground"
+          >
+            📋 Copy Link
+          </Button>
+        ),
       });
-    }, 800);
+    }
   };
 
   const handleSendEmail = async () => {

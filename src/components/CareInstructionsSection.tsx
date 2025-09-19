@@ -349,75 +349,16 @@ export const CareInstructionsSection = ({ petData, onUpdate, handlePetUpdate }: 
                       )}
                     </div>
 
-                    {/* Social sharing options */}
-                    {petData.is_public ? (
-                      <SocialShareButtons 
-                        petName={petData.name} 
-                        petId={petData.id} 
-                        context="care" 
-                        shareUrlOverride={generateCarePublicUrl()} 
-                        defaultOpenOptions={true}
-                      />
-                    ) : null}
-
-                     {/* Care PDF */}
-                     {carePdfBlob && (
-                       <div className="bg-white p-4 rounded-lg border border-sage-500/30 shadow-sm">
-                         <h4 className="font-bold text-foreground mb-3">🌿 Care Instructions PDF</h4>
-                         <div className="grid grid-cols-3 gap-2">
-                           <Button
-                             onClick={() => {
-                               if (carePdfBlob) {
-                                 const url = URL.createObjectURL(carePdfBlob);
-                                 window.open(url, '_blank');
-                               }
-                             }}
-                             variant="outline"
-                             size="sm"
-                             className="border-sage-500 text-sage-600 hover:bg-sage-50 font-semibold"
-                           >
-                             <Eye className="w-4 h-4 mr-1" />
-                             View
-                           </Button>
-                           <Button
-                             onClick={handleDownloadCarePDF}
-                             variant="outline"
-                             size="sm"
-                              className="border-border text-foreground hover:bg-muted"
-                           >
-                             <Download className="w-4 h-4 mr-1" />
-                             Download
-                           </Button>
-                            <Button
-                              onClick={async () => {
-                                if (!carePdfBlob) return;
-                                const fileName = `PetPort_Care_Instructions_${petData.name}.pdf`;
-                                const result = await sharePDFBlob(carePdfBlob, fileName, petData.name, 'care');
-                                
-                                if (result.success) {
-                                  toast({
-                                    title: result.shared ? "Care PDF Shared!" : "Link Copied!",
-                                    description: result.message,
-                                  });
-                                } else if (result.error !== 'Share cancelled') {
-                                  toast({
-                                    title: "Unable to Share PDF",
-                                    description: result.error || "Please download and share manually.",
-                                    variant: "destructive",
-                                  });
-                                }
-                              }}
-                              variant="outline"
-                              size="sm"
-                              disabled={isSharing}
-                              className="border-border text-foreground hover:bg-muted"
-                            >
-                              <Share2 className="w-4 h-4 mr-1" />
-                              Share
-                            </Button>
-                         </div>
-                       </div>
-                     )}
+                     {/* Social sharing options */}
+                     {petData.is_public ? (
+                       <SocialShareButtons 
+                         petName={petData.name} 
+                         petId={petData.id} 
+                         context="care" 
+                         shareUrlOverride={generateCarePublicUrl()} 
+                         defaultOpenOptions={true}
+                       />
+                     ) : null}
 
                     {/* Direct Links */}
                     <div className="text-xs text-muted-foreground space-y-1 bg-muted p-3 rounded-lg">

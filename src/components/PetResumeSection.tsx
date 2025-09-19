@@ -84,9 +84,7 @@ export const PetResumeSection = ({ petData, onUpdate, handlePetUpdate }: PetResu
   const [isPdfDialogOpen, setIsPdfDialogOpen] = useState(false);
   const [generatedPdfBlob, setGeneratedPdfBlob] = useState<Blob | null>(null);
   const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
-  const [isQRDialogOpen, setIsQRDialogOpen] = useState(false);
   const [isShareDialogOpen, setIsShareDialogOpen] = useState(false);
-  const [isReviewsShareDialogOpen, setIsReviewsShareDialogOpen] = useState(false);
   const [isSharing, setIsSharing] = useState(false);
 
   const averageRating = petData.reviews?.length 
@@ -176,13 +174,6 @@ export const PetResumeSection = ({ petData, onUpdate, handlePetUpdate }: PetResu
     }
   };
 
-  const handleQRCode = () => {
-    if (!petData.is_public) {
-      toast.error("Pet profile must be public to generate QR code. Please enable public visibility in quick actions on the profile page.");
-      return;
-    }
-    setIsQRDialogOpen(true);
-  };
 
   const handleEditSave = () => {
     setIsEditModalOpen(false);
@@ -256,37 +247,16 @@ export const PetResumeSection = ({ petData, onUpdate, handlePetUpdate }: PetResu
                 <Download className="w-4 h-4" />
                 <span className="text-sm">PDF</span>
               </div>
-              <div className="flex flex-col gap-1">
-                <div
-                  onClick={() => setIsShareDialogOpen(true)}
-                  className="flex items-center space-x-2 p-2 text-white hover:text-blue-200 hover:scale-110 transition-all cursor-pointer"
-                  role="button"
-                  tabIndex={0}
-                  aria-label="Share credentials"
-                  onKeyDown={(e) => e.key === 'Enter' && setIsShareDialogOpen(true)}
-                >
-                  <Share2 className="w-4 h-4" />
-                </div>
-                <div
-                  onClick={() => setIsReviewsShareDialogOpen(true)}
-                  className="flex items-center space-x-2 p-2 text-white hover:text-blue-200 hover:scale-110 transition-all cursor-pointer"
-                  role="button"
-                  tabIndex={0}
-                  aria-label="Share reviews"
-                  onKeyDown={(e) => e.key === 'Enter' && setIsReviewsShareDialogOpen(true)}
-                >
-                  <Star className="w-4 h-4" />
-                </div>
-                <div
-                  onClick={handleQRCode}
-                  className="flex items-center space-x-2 p-2 text-white hover:text-blue-200 hover:scale-110 transition-all cursor-pointer"
-                  role="button"
-                  tabIndex={0}
-                  aria-label="Generate QR code"
-                  onKeyDown={(e) => e.key === 'Enter' && handleQRCode()}
-                >
-                  <QrCode className="w-4 h-4" />
-                </div>
+              <div
+                onClick={() => setIsShareDialogOpen(true)}
+                className="flex items-center space-x-2 p-2 text-white hover:text-blue-200 hover:scale-110 transition-all cursor-pointer"
+                role="button"
+                tabIndex={0}
+                aria-label="Share resume"
+                onKeyDown={(e) => e.key === 'Enter' && setIsShareDialogOpen(true)}
+              >
+                <Share2 className="w-4 h-4" />
+                <span className="text-sm">Share</span>
               </div>
             </div>
           </div>
@@ -410,120 +380,108 @@ export const PetResumeSection = ({ petData, onUpdate, handlePetUpdate }: PetResu
       </Dialog>
       
 
-      {/* QR Code Dialog */}
-      <Dialog open={isQRDialogOpen} onOpenChange={setIsQRDialogOpen}>
-        <DialogContent className="max-w-md bg-[#f8f8f8]">
-          <DialogHeader>
-            <DialogTitle className="font-bold text-navy-900 border-b-2 border-gold-500 pb-2">
-              📱 QR Code for {petData.name}
-            </DialogTitle>
-          </DialogHeader>
-          
-          <div className="space-y-4 text-center">
-            <p className="text-sm text-navy-600">
-              Scan this QR code to view {petData.name}'s public profile
-            </p>
-            
-            <div className="flex justify-center p-4 bg-white rounded-lg border-2 border-gold-500/30">
-              <img 
-                src={generateQRCodeUrl(generatePublicProfileUrl(petData.id), 200)}
-                alt={`QR Code for ${petData.name}'s profile`}
-                className="w-48 h-48"
-              />
-            </div>
-            
-            <div className="bg-white p-3 rounded border border-gray-200">
-              <p className="text-xs text-gray-600 break-all">
-                {generatePublicProfileUrl(petData.id)}
-              </p>
-            </div>
-            
-            <Button
-              onClick={async () => {
-                const profileUrl = generatePublicProfileUrl(petData.id);
-                try {
-                  await navigator.clipboard.writeText(profileUrl);
-                  toast.success("Profile URL copied to clipboard!");
-                } catch (error) {
-                  toast.error("Failed to copy URL to clipboard");
-                }
-              }}
-              variant="outline"
-              className="border-gold-500 text-gold-600 hover:bg-gold-50"
-            >
-              Copy Profile URL
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
 
-      {/* Share Credentials Dialog */}
+      {/* Share Dialog - All sharing options consolidated */}
       <Dialog open={isShareDialogOpen} onOpenChange={setIsShareDialogOpen}>
         <DialogContent className="max-w-md bg-[#f8f8f8]">
           <DialogHeader>
             <DialogTitle className="font-bold text-navy-900 border-b-2 border-gold-500 pb-2">
-              🔗 Share {petData.name}'s Credentials
+              🔗 Share {petData.name}'s Resume
             </DialogTitle>
           </DialogHeader>
 
-          <div className="space-y-4">
-            <SocialShareButtons 
-              petName={petData.name}
-              petId={petData.id}
-              context="resume"
-              defaultOpenOptions={false}
-            />
+          <div className="space-y-6">
+            {/* Resume Share Section */}
+            <div className="space-y-4">
+              <h4 className="font-semibold text-navy-900">Share Credentials</h4>
+              <SocialShareButtons 
+                petName={petData.name}
+                petId={petData.id}
+                context="resume"
+                defaultOpenOptions={false}
+              />
 
-            <div className="space-y-3 text-center">
-              <p className="text-sm text-navy-600">Or scan to open credentials</p>
-              <div className="flex justify-center p-4 bg-white rounded-lg border-2 border-gold-500/30">
-                <img 
-                  src={generateQRCodeUrl(`${window.location.origin}/resume/${petData.id}`, 200)}
-                  alt={`QR Code for ${petData.name}'s resume`}
-                  className="w-48 h-48"
-                />
-              </div>
-              <div className="bg-white p-3 rounded border border-gray-200">
-                <p className="text-xs text-gray-600 break-all">
-                  {`${window.location.origin}/resume/${petData.id}`}
-                </p>
+              <div className="space-y-3 text-center">
+                <p className="text-sm text-navy-600">Or scan to open credentials</p>
+                <div className="flex justify-center p-4 bg-white rounded-lg border-2 border-gold-500/30">
+                  <img 
+                    src={generateQRCodeUrl(`${window.location.origin}/resume/${petData.id}`, 200)}
+                    alt={`QR Code for ${petData.name}'s resume`}
+                    className="w-48 h-48"
+                  />
+                </div>
+                <div className="bg-white p-3 rounded border border-gray-200">
+                  <p className="text-xs text-gray-600 break-all">
+                    {`${window.location.origin}/resume/${petData.id}`}
+                  </p>
+                </div>
               </div>
             </div>
-          </div>
-        </DialogContent>
-      </Dialog>
 
-      {/* Share Reviews Dialog */}
-      <Dialog open={isReviewsShareDialogOpen} onOpenChange={setIsReviewsShareDialogOpen}>
-        <DialogContent className="max-w-md bg-[#f8f8f8]">
-          <DialogHeader>
-            <DialogTitle className="font-bold text-navy-900 border-b-2 border-gold-500 pb-2">
-              🔗 Share {petData.name}'s Reviews
-            </DialogTitle>
-          </DialogHeader>
-
-          <div className="space-y-4">
-            <SocialShareButtons 
-              petName={petData.name}
-              petId={petData.id}
-              context="reviews"
-              defaultOpenOptions={false}
-              shareUrlOverride={`${window.location.origin}/reviews/${petData.id}`}
-            />
-
-            <div className="space-y-3 text-center">
-              <p className="text-sm text-navy-600">Or scan to open reviews</p>
-              <div className="flex justify-center p-4 bg-white rounded-lg border-2 border-gold-500/30">
-                <img 
-                  src={generateQRCodeUrl(`${window.location.origin}/reviews/${petData.id}`, 200)}
-                  alt={`QR Code for ${petData.name}'s reviews`}
-                  className="w-48 h-48"
+            {/* Reviews Share Section */}
+            {petData.reviews && petData.reviews.length > 0 && (
+              <div className="space-y-4 border-t pt-4">
+                <h4 className="font-semibold text-navy-900">Share Reviews</h4>
+                <SocialShareButtons 
+                  petName={petData.name}
+                  petId={petData.id}
+                  context="reviews"
+                  defaultOpenOptions={false}
+                  shareUrlOverride={`${window.location.origin}/reviews/${petData.id}`}
                 />
+
+                <div className="space-y-3 text-center">
+                  <p className="text-sm text-navy-600">Or scan to open reviews</p>
+                  <div className="flex justify-center p-4 bg-white rounded-lg border-2 border-gold-500/30">
+                    <img 
+                      src={generateQRCodeUrl(`${window.location.origin}/reviews/${petData.id}`, 200)}
+                      alt={`QR Code for ${petData.name}'s reviews`}
+                      className="w-48 h-48"
+                    />
+                  </div>
+                  <div className="bg-white p-3 rounded border border-gray-200">
+                    <p className="text-xs text-gray-600 break-all">
+                      {`${window.location.origin}/reviews/${petData.id}`}
+                    </p>
+                  </div>
+                </div>
               </div>
-              <div className="bg-white p-3 rounded border border-gray-200">
-                <p className="text-xs text-gray-600 break-all">
-                  {`${window.location.origin}/reviews/${petData.id}`}
-                </p>
+            )}
+
+            {/* General Profile QR Section */}
+            <div className="space-y-4 border-t pt-4">
+              <h4 className="font-semibold text-navy-900">General Profile</h4>
+              <div className="space-y-3 text-center">
+                <p className="text-sm text-navy-600">Scan to view main profile</p>
+                <div className="flex justify-center p-4 bg-white rounded-lg border-2 border-gold-500/30">
+                  <img 
+                    src={generateQRCodeUrl(generatePublicProfileUrl(petData.id), 200)}
+                    alt={`QR Code for ${petData.name}'s profile`}
+                    className="w-48 h-48"
+                  />
+                </div>
+                
+                <div className="bg-white p-3 rounded border border-gray-200">
+                  <p className="text-xs text-gray-600 break-all">
+                    {generatePublicProfileUrl(petData.id)}
+                  </p>
+                </div>
+                
+                <Button
+                  onClick={async () => {
+                    const profileUrl = generatePublicProfileUrl(petData.id);
+                    try {
+                      await navigator.clipboard.writeText(profileUrl);
+                      toast.success("Profile URL copied to clipboard!");
+                    } catch (error) {
+                      toast.error("Failed to copy URL to clipboard");
+                    }
+                  }}
+                  variant="outline"
+                  className="border-gold-500 text-gold-600 hover:bg-gold-50"
+                >
+                  Copy Profile URL
+                </Button>
               </div>
             </div>
           </div>

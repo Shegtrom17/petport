@@ -82,13 +82,6 @@ const Index = () => {
     return await togglePetPublicVisibility(selectedPet.id, isPublic);
   };
 
-    // Force page reload for iOS users to ensure fresh content
-    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream;
-    if (isIOS) {
-      window.location.reload();
-    }
-  };
-
   // Fetch pet limit when user changes
   useEffect(() => {
     const fetchPetLimit = async () => {
@@ -371,6 +364,18 @@ const Index = () => {
         />
 
         <main className="max-w-6xl mx-auto px-3 sm:px-4 py-4 sm:py-6 lg:py-8 pb-20 sm:pb-24">
+            
+            {/* Development View Landing Button */}
+            <div className="mb-4 flex justify-end">
+              <Button
+                variant="outline"
+                size="sm"
+                className="text-xs h-7 px-2 opacity-60 hover:opacity-100"
+                onClick={() => navigate('/landing')}
+              >
+                View Landing
+              </Button>
+            </div>
             
             <AuthenticationPrompt isSignedIn={!!user} hasPets={pets.length > 0} />
             

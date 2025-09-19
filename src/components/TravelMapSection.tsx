@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { MapPin, Camera, Trophy, Edit, Plus, Share2 } from "lucide-react";
+import { MapPin, Camera, Trophy, Edit, Share2 } from "lucide-react";
 import { TravelEditForm } from "@/components/TravelEditForm";
 import { EnhancedInteractiveMap } from "@/components/EnhancedInteractiveMap";
 import { fetchPetDetails } from "@/services/petService";
@@ -46,9 +46,8 @@ interface TravelMapSectionProps {
 
 export const TravelMapSection = ({ petData, onUpdate }: TravelMapSectionProps) => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
-  const [editMode, setEditMode] = useState<'edit' | 'add'>('edit');
+  const [editMode, setEditMode] = useState<'edit' | 'add'>('add');
   const [locations, setLocations] = useState<TravelLocation[]>(petData.travel_locations || []);
   const [mapPins, setMapPins] = useState<MapPin[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -143,7 +142,6 @@ export const TravelMapSection = ({ petData, onUpdate }: TravelMapSectionProps) =
       }
       
       setIsEditModalOpen(false);
-      setIsAddModalOpen(false);
       
       if (onUpdate) {
         onUpdate();
@@ -167,7 +165,7 @@ export const TravelMapSection = ({ petData, onUpdate }: TravelMapSectionProps) =
 
   const handleAddNewLocation = () => {
     setEditMode('add');
-    setIsAddModalOpen(true);
+    setIsEditModalOpen(true);
   };
 
   const handleEditLocations = () => {
@@ -194,7 +192,7 @@ export const TravelMapSection = ({ petData, onUpdate }: TravelMapSectionProps) =
                 </p>
               </div>
             </div>
-            <div className="flex space-x-4">
+            <div className="flex space-x-2">
               <div
                 onClick={handleShare}
                 className="flex items-center space-x-2 p-2 text-white hover:text-blue-200 hover:scale-110 transition-all cursor-pointer"
@@ -216,17 +214,6 @@ export const TravelMapSection = ({ petData, onUpdate }: TravelMapSectionProps) =
               >
                 <Edit className="w-4 h-4" />
                 <span className="text-sm">Edit</span>
-              </div>
-              <div
-                onClick={handleAddNewLocation}
-                className="flex items-center space-x-2 p-2 text-white hover:text-blue-200 hover:scale-110 transition-all cursor-pointer"
-                role="button"
-                tabIndex={0}
-                aria-label="Add travel location"
-                onKeyDown={(e) => e.key === 'Enter' && handleAddNewLocation()}
-              >
-                <Plus className="w-4 h-4" />
-                <span className="text-sm">Add</span>
               </div>
             </div>
           </div>
@@ -265,21 +252,6 @@ export const TravelMapSection = ({ petData, onUpdate }: TravelMapSectionProps) =
             onSave={handleEditSave}
             onCancel={() => setIsEditModalOpen(false)}
             mode="edit"
-          />
-        </DialogContent>
-      </Dialog>
-
-      {/* Add Modal */}
-      <Dialog open={isAddModalOpen} onOpenChange={setIsAddModalOpen}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto mx-4">
-          <DialogHeader>
-            <DialogTitle className="text-base sm:text-lg">Add Travel Locations</DialogTitle>
-          </DialogHeader>
-          <TravelEditForm
-            petData={petData}
-            onSave={handleEditSave}
-            onCancel={() => setIsAddModalOpen(false)}
-            mode="add"
           />
         </DialogContent>
       </Dialog>

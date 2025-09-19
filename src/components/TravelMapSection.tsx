@@ -276,8 +276,7 @@ export const TravelMapSection = ({ petData, onUpdate }: TravelMapSectionProps) =
           <SocialShareButtons
             petName={petData.name}
             petId={petData.id}
-            context="profile"
-            shareUrlOverride={generateShareURL('travel-share', petData.id, `${window.location.origin}/travel/${petData.id}`)}
+            context="travel"
           />
         </DialogContent>
       </Dialog>

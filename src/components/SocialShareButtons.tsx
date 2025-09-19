@@ -18,7 +18,7 @@ import { generateShareURL } from "@/utils/domainUtils";
   petName: string;
   petId: string;
   isMissingPet?: boolean;
-  context?: 'profile' | 'care' | 'credentials' | 'resume' | 'reviews' | 'missing' | 'gallery';
+  context?: 'profile' | 'care' | 'credentials' | 'resume' | 'reviews' | 'missing' | 'gallery' | 'travel';
   shareUrlOverride?: string;
   defaultOpenOptions?: boolean;
   compact?: boolean;
@@ -44,6 +44,7 @@ const isCare = context === 'care';
 const isResume = context === 'resume' || context === 'credentials'; // Consolidate credentials to resume
 const isReviews = context === 'reviews';
 const isGallery = context === 'gallery';
+const isTravel = context === 'travel';
 const isMissing = isMissingPet || context === 'missing';
 const cacheBuster = `v=${Date.now()}`;
 const path = isMissing
@@ -56,13 +57,15 @@ const path = isMissing
         ? `reviews/${petId}`
         : isGallery
           ? `gallery/${petId}`
-          : `profile/${petId}`;
+          : isTravel
+            ? `travel/${petId}`
+            : `profile/${petId}`;
 
 // Generate direct SPA URLs for human-friendly sharing
 const directUrl = `${window.location.origin}/${path}`;
 
 // Social media share URL (for OG tags) vs Direct URL (for humans)
-const edgeFunctionName = isMissing ? 'missing-pet-share' : isResume ? 'resume-share' : isCare ? 'care-instructions-share' : isGallery ? 'gallery-share' : 'profile-share';
+const edgeFunctionName = isMissing ? 'missing-pet-share' : isResume ? 'resume-share' : isCare ? 'care-instructions-share' : isGallery ? 'gallery-share' : isTravel ? 'travel-share' : 'profile-share';
 const socialShareUrl = generateShareURL(edgeFunctionName, petId, directUrl);
 
 // Use direct URL for human sharing (copy, email, SMS), social URL for Facebook/Twitter
@@ -75,7 +78,9 @@ const shareText = isMissing
           ? `View ${petName}'s professional resume on PetPort.`
           : (isReviews
               ? `Read ${petName}'s reviews & references on PetPort.`
-              : `Meet ${petName}! Check out their PetPort profile.`)));
+              : (isTravel
+                  ? `🌍 Check out ${petName}'s travel adventures and interactive map on PetPort!`
+                  : `Meet ${petName}! Check out their PetPort profile.`))));
 
   // Prioritize native mobile sharing
   const handleNativeShare = async () => {

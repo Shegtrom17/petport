@@ -49,7 +49,7 @@ export default function PostCheckout() {
           setEmail(d.email || null);
           setState("success");
           setIsAddonPurchase(true);
-          setMsg("Add-on purchase complete! Your account has been updated.");
+          setMsg("Add-on purchase complete! Your additional pet slots are now available. Look for the dashed boxes in your pet selector to add new pets.");
           return;
         }
 
@@ -78,7 +78,7 @@ export default function PostCheckout() {
               <div className="flex gap-2">
                 {/* Show Add Pet button for addon purchases */}
                 {isAddonPurchase && (
-                  <Button onClick={() => navigate("/add-pet")} className="flex items-center gap-2">
+                  <Button onClick={() => navigate("/add-pet")} className="flex items-center gap-2 bg-brand-primary hover:bg-brand-primary-dark">
                     <Plus className="h-4 w-4" />
                     Add Pet Now
                   </Button>

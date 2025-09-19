@@ -3,6 +3,8 @@ import { Card } from "@/components/ui/card";
 import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea/dnd';
 import { getPetBackgroundColor } from "@/utils/petColors";
 import worldMapOutline from "@/assets/world-map-outline.png";
+import { Plus } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 interface Pet {
   id: string;
@@ -16,10 +18,24 @@ interface PetSelectorProps {
   selectedPet: any;
   onSelectPet: (petId: string) => void;
   onReorderPets?: (reorderedPets: Pet[]) => void;
+  petLimit?: number;
+  showEmptySlots?: boolean;
 }
 
-export const PetSelector = ({ pets, selectedPet, onSelectPet, onReorderPets }: PetSelectorProps) => {
-  if (pets.length <= 1) return null;
+export const PetSelector = ({ pets, selectedPet, onSelectPet, onReorderPets, petLimit = 0, showEmptySlots = false }: PetSelectorProps) => {
+  const navigate = useNavigate();
+  
+  // Show if multiple pets OR if we want to show empty slots
+  if (pets.length <= 1 && !showEmptySlots) return null;
+  
+  // Calculate empty slots to show
+  const emptySlotCount = showEmptySlots && petLimit > pets.length ? petLimit - pets.length : 0;
+  const emptySlots = Array.from({ length: emptySlotCount }, (_, i) => ({
+    id: `empty-${i}`,
+    name: '',
+    breed: '',
+    isEmpty: true
+  }));
 
   const handleDragEnd = (result: DropResult) => {
     if (!result.destination || !onReorderPets) return;
@@ -114,6 +130,26 @@ export const PetSelector = ({ pets, selectedPet, onSelectPet, onReorderPets }: P
                   )}
                 </Draggable>
               ))}
+              
+              {/* Empty Slots for Additional Pet Capacity */}
+              {emptySlots.map((slot, index) => (
+                <Card 
+                  key={slot.id}
+                  className="border-2 border-dashed border-gold-300 cursor-pointer flex-shrink-0 w-56 sm:w-64 transition-all hover:border-gold-500 hover:bg-gold-50/50"
+                  onClick={() => navigate('/add-pet')}
+                >
+                  <div className="p-3 sm:p-4 flex items-center space-x-2 sm:space-x-3">
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full flex-shrink-0 relative border-2 border-dashed border-gold-300 flex items-center justify-center bg-gold-50/30">
+                      <Plus className="w-5 h-5 sm:w-6 sm:h-6 text-gold-600" />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <h3 className="font-medium text-sm sm:text-base text-gold-700">Add New Pet</h3>
+                      <p className="text-xs sm:text-sm text-gold-600">Empty slot available</p>
+                    </div>
+                  </div>
+                </Card>
+              ))}
+              
               {provided.placeholder}
             </div>
           )}

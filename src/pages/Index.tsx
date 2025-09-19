@@ -37,13 +37,17 @@ import { getPrevNext, type TabId } from "@/features/navigation/tabOrder";
 import { PullToRefresh } from "@/components/PullToRefresh";
 import { IOSRefreshPrompt } from "@/components/IOSRefreshPrompt";
 import { ExternalLink } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 const Index = () => {
   console.log("Index component is rendering");
   
   const [activeTab, setActiveTab] = useState("profile");
   const [isInAppSharingOpen, setIsInAppSharingOpen] = useState(false);
+  const [petLimit, setPetLimit] = useState<number>(0);
   const navigate = useNavigate();
+  const { toast } = useToast();
   
   const { user } = useAuth();
   const { settings } = useUserSettings(user?.id);
@@ -92,6 +96,36 @@ const Index = () => {
       window.location.reload();
     }
   };
+
+  // Fetch pet limit when user changes
+  useEffect(() => {
+    const fetchPetLimit = async () => {
+      if (!user?.id) return;
+      
+      try {
+        const { data } = await supabase.rpc('get_user_pet_limit', {
+          user_uuid: user.id
+        });
+        const newLimit = data || 0;
+        
+        // Show success message if user has more slots than pets (likely just purchased)
+        if (newLimit > pets.length && pets.length > 0 && petLimit > 0 && newLimit > petLimit) {
+          const addedSlots = newLimit - petLimit;
+          toast({
+            title: "🎉 Additional Pet Slots Added!",
+            description: `You now have ${addedSlots} empty slot${addedSlots > 1 ? 's' : ''} available. Look for the dashed boxes to add new pets.`,
+            duration: 8000,
+          });
+        }
+        
+        setPetLimit(newLimit);
+      } catch (error) {
+        console.error('Error fetching pet limit:', error);
+      }
+    };
+
+    fetchPetLimit();
+  }, [user?.id, pets.length, petLimit, toast]);
 
   useEffect(() => {
     const handleHashChange = () => {
@@ -357,6 +391,8 @@ const Index = () => {
                   selectedPet={selectedPet}
                   onSelectPet={handleSelectPet}
                   onReorderPets={handleReorderPets}
+                  petLimit={petLimit}
+                  showEmptySlots={true}
                 />
 
 

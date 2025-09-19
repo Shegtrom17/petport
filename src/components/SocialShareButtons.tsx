@@ -452,7 +452,7 @@ title: "Link Copied! 📋",
           )}
         </div>
         
-          <div className={`text-xs ${isMissingPet ? 'text-red-600' : 'text-navy-500'} p-2 rounded ${isMissingPet ? 'bg-red-100' : 'bg-gold-100'} border ${isMissingPet ? 'border-red-200' : 'border-gold-200'} break-all`}>
+          <div className={`text-xs ${isMissingPet ? 'text-red-600' : 'text-navy-500'} p-2 rounded ${isMissingPet ? 'bg-red-100' : 'bg-gold-100'} border ${isMissingPet ? 'border-red-200' : 'border-gold-200'} w-full max-w-full overflow-wrap-anywhere break-words`}>
             📱 Share link: {shareUrl}
           </div>
       </CardContent>

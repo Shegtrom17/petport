@@ -383,7 +383,7 @@ export const PetResumeSection = ({ petData, onUpdate, handlePetUpdate }: PetResu
 
       {/* Share Dialog - All sharing options consolidated */}
       <Dialog open={isShareDialogOpen} onOpenChange={setIsShareDialogOpen}>
-        <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto overflow-x-hidden bg-[#f8f8f8]">
+        <DialogContent className="max-w-[100vw] sm:max-w-md w-full min-w-0 max-h-[90vh] overflow-y-auto overflow-x-hidden bg-[#f8f8f8] px-4">
           <DialogHeader>
             <DialogTitle className="font-bold text-navy-900 border-b-2 border-gold-500 pb-2">
               🔗 Share {petData.name}'s Resume
@@ -394,12 +394,14 @@ export const PetResumeSection = ({ petData, onUpdate, handlePetUpdate }: PetResu
             {/* Resume Share Section */}
             <div className="space-y-4">
               <h4 className="font-semibold text-navy-900">Share Credentials</h4>
-              <SocialShareButtons 
-                petName={petData.name}
-                petId={petData.id}
-                context="resume"
-                defaultOpenOptions={true}
-              />
+              <div className="w-full min-w-0">
+                <SocialShareButtons 
+                  petName={petData.name}
+                  petId={petData.id}
+                  context="resume"
+                  defaultOpenOptions={true}
+                />
+              </div>
             </div>
 
             {/* Reviews Share Section */}

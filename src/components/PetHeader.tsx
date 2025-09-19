@@ -54,14 +54,6 @@ export const PetHeader = ({ activeTab, onTabChange, selectedPetId, selectedPetNa
           
           {/* Right: Action Buttons */}
           <div className="flex items-center space-x-2 flex-shrink-0">
-            <Button
-              variant="outline"
-              size="sm"
-              className="text-xs h-8 px-2 whitespace-nowrap"
-              onClick={() => navigate('/landing')}
-            >
-              View Landing
-            </Button>
             {user && selectedPet && onPrivacyToggle && (
               <div className="flex flex-col items-center space-y-1">
                 <div className="scale-75 origin-center">
@@ -111,13 +103,6 @@ export const PetHeader = ({ activeTab, onTabChange, selectedPetId, selectedPetNa
           </div>
           
           <div className="flex items-center space-x-2 flex-shrink-0">
-            <Button 
-              variant="outline" 
-              className="text-sm px-3 h-10 whitespace-nowrap"
-              onClick={() => navigate('/landing')}
-            >
-              View Landing
-            </Button>
             {user && selectedPet && onPrivacyToggle && (
               <div className="flex flex-col items-center space-y-2">
                 <div className="scale-90 origin-center">

@@ -171,7 +171,7 @@ const Help = () => {
                 <p className="text-muted-foreground mb-4">
                   Can't find what you're looking for? Report an issue and we'll help you out.
                 </p>
-                <Button onClick={() => setShowReportModal(true)}>
+                <Button onClick={() => setShowReportModal(true)} className="text-white">
                   <MessageSquare className="w-4 h-4 mr-2" />
                   Report an Issue
                 </Button>

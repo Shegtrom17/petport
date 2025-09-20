@@ -340,17 +340,17 @@ export const CareInstructionsSection = ({ petData, onUpdate, handlePetUpdate }: 
                 >
                   <ScrollControls targetRef={dialogContentRef} />
                   <DialogHeader>
-                    <DialogTitle className="text-foreground border-b-2 border-gold-500 pb-2 font-bold">
+                    <DialogTitle className="text-navy-900 border-b-2 border-gold-500 pb-2">
                       🌿 Share {petData.name}'s Care Instructions
                     </DialogTitle>
                   </DialogHeader>
                   
                   <div className="space-y-6">
                      {/* Public Care Instructions Link */}
-                     <div className="bg-white p-4 rounded-lg border border-sage-500/30 shadow-sm">
+                     <div className="bg-white p-4 rounded-lg border border-gold-500/30 shadow-sm">
                        <h4 className="font-bold text-foreground mb-2 flex items-center gap-2">
-                         <div className="w-6 h-6 bg-sage-500/20 rounded-full flex items-center justify-center">
-                           <ExternalLink className="w-3 h-3 text-sage-600" />
+                         <div className="w-6 h-6 bg-gold-500/20 rounded-full flex items-center justify-center">
+                           <ExternalLink className="w-3 h-3 text-gold-600" />
                          </div>
                           Public Care Instructions
                         </h4>
@@ -465,7 +465,7 @@ export const CareInstructionsSection = ({ petData, onUpdate, handlePetUpdate }: 
                       </Button>
                       <Button
                         onClick={() => handlePdfAction('download')}
-                        className="bg-gradient-to-r from-gold-500 to-gold-400 text-navy-900 hover:from-gold-600 hover:to-gold-500"
+                        className="bg-gradient-to-r from-gold-500 to-gold-400 text-navy-900 hover:from-gold-400 hover:to-gold-300"
                       >
                         <Download className="w-4 h-4 mr-2" />
                         Download PDF
@@ -509,7 +509,7 @@ export const CareInstructionsSection = ({ petData, onUpdate, handlePetUpdate }: 
                       </Button>
                       <Button
                         onClick={handleDownloadGeneratedPDF}
-                        className="bg-gradient-to-r from-gold-500 to-gold-400 text-navy-900 hover:from-gold-600 hover:to-gold-500"
+                        className="bg-gradient-to-r from-gold-500 to-gold-400 text-navy-900 hover:from-gold-400 hover:to-gold-300"
                       >
                         <Download className="w-4 h-4 mr-2" />
                         Download

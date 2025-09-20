@@ -337,7 +337,7 @@ export const CareInstructionsSection = ({ petData, onUpdate, handlePetUpdate }: 
                 </DialogTrigger>
                 <DialogContent 
                   ref={dialogContentRef}
-                  className="max-w-[100vw] sm:max-w-md w-full min-w-0 max-h-[90vh] overflow-y-auto bg-[#f8f8f8] px-4 relative z-[60]"
+                  className="max-w-[100vw] sm:max-w-md w-full min-w-0 max-h-[90vh] overflow-y-auto bg-[#f8f8f8] px-4"
                 >
                   <ScrollControls targetRef={dialogContentRef} />
                   <DialogHeader>

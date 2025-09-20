@@ -196,6 +196,12 @@ export function generatePublicMissingUrl(petId: string): string {
   const baseUrl = window.location.origin;
   return `${baseUrl}/missing-pet/${petId}`;
 }
+
+// Generate a shareable public care instructions URL
+export function generatePublicCareUrl(petId: string): string {
+  const baseUrl = window.location.origin;
+  return `${baseUrl}/care/${petId}`;
+}
 // Enhanced mobile PWA sharing functionality
 export interface ShareResult {
   success: boolean;

@@ -3,12 +3,13 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Heart, Clock, Pill, Coffee, Moon, AlertTriangle, Edit, Loader2, FileText, Download, Share2, ExternalLink, Eye, Phone } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Heart, Clock, Pill, Coffee, Moon, AlertTriangle, Edit, Loader2, FileText, Download, Share2, ExternalLink, Eye, Phone, Copy } from "lucide-react";
 import { ContactsDisplay } from "@/components/ContactsDisplay";
 import { extractPhoneNumber, formatPhoneForTel } from "@/utils/contactUtils";
 import { CareInstructionsEditForm } from "@/components/CareInstructionsEditForm";
 import { fetchCareInstructions } from "@/services/careInstructionsService";
-import { generateQRCodeUrl, shareProfile, shareProfileOptimized, sharePDFBlob } from "@/services/pdfService";
+import { generateQRCodeUrl, shareProfile, shareProfileOptimized, sharePDFBlob, generatePublicCareUrl } from "@/services/pdfService";
 import { generateClientPetPDF, downloadPDFBlob } from "@/services/clientPdfService";
 import { useToast } from "@/hooks/use-toast";
 import { SocialShareButtons } from "@/components/SocialShareButtons";
@@ -176,13 +177,8 @@ export const CareInstructionsSection = ({ petData, onUpdate, handlePetUpdate }: 
     }
   };
 
-  const generateCarePublicUrl = (): string => {
-    const baseUrl = window.location.origin;
-    return `${baseUrl}/care/${petData.id}`;
-  };
-
   const handleShareCareLink = async () => {
-    const careUrl = generateCarePublicUrl();
+    const careUrl = generatePublicCareUrl(petData.id);
     setIsSharing(true);
     try {
       const result = await shareProfileOptimized(careUrl, petData.name, 'care');
@@ -379,16 +375,54 @@ export const CareInstructionsSection = ({ petData, onUpdate, handlePetUpdate }: 
                             petName={petData.name} 
                             petId={petData.id} 
                             context="care" 
-                            shareUrlOverride={generateCarePublicUrl()} 
+                            shareUrlOverride={generatePublicCareUrl(petData.id)} 
                             defaultOpenOptions={true}
                           />
                         </div>
+                       ) : null}
+
+                      {/* QR Code Section */}
+                      {petData.is_public ? (
+                        <div className="border-t pt-6">
+                          <h4 className="font-semibold mb-3 text-center">Care Instructions QR Code</h4>
+                          <p className="text-sm text-muted-foreground mb-4 text-center">
+                            Scan to view care instructions
+                          </p>
+                          <div className="flex flex-col items-center space-y-4">
+                            <img 
+                              src={generateQRCodeUrl(generatePublicCareUrl(petData.id), 200)} 
+                              alt="QR Code for Care Instructions"
+                              className="border rounded-lg"
+                            />
+                            <div className="w-full">
+                              <div className="flex items-center space-x-2">
+                                <Input
+                                  value={generatePublicCareUrl(petData.id)}
+                                  readOnly
+                                  className="text-xs"
+                                />
+                                <Button
+                                  size="sm"
+                                  onClick={() => {
+                                    navigator.clipboard.writeText(generatePublicCareUrl(petData.id));
+                                    toast({
+                                      title: "URL copied!",
+                                      description: "Care instructions URL copied to clipboard",
+                                    });
+                                  }}
+                                >
+                                  <Copy className="w-4 h-4" />
+                                </Button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
                       ) : null}
 
-                    {/* Direct Links */}
+                     {/* Direct Links */}
                     <div className="text-xs text-muted-foreground space-y-1 bg-muted p-3 rounded-lg">
                       <p className="font-medium">Direct Links:</p>
-                      <p className="break-all">Care: {generateCarePublicUrl()}</p>
+                      <p className="break-all">Care: {generatePublicCareUrl(petData.id)}</p>
                       {generatedPdfBlob && <p className="break-all">PDF: Available after generation</p>}
                     </div>
                   </div>

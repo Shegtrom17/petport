@@ -12,6 +12,8 @@ interface EmailShareData {
   petPhoto?: string;
   customMessage?: string;
   senderName?: string;
+  pdfAttachment?: string;
+  pdfFileName?: string;
 }
 
 export const useEmailSharing = () => {

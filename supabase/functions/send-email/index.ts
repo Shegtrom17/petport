@@ -19,6 +19,8 @@ interface EmailRequest {
   senderName?: string;
   trialEndDate?: string;
   billingAmount?: string;
+  pdfAttachment?: string; // Base64 encoded PDF
+  pdfFileName?: string;
 }
 
 const generateEmailTemplate = (data: EmailRequest) => {
@@ -288,7 +290,14 @@ const handler = async (req: Request): Promise<Response> => {
         To: emailData.recipientEmail,
         Subject: subject,
         HtmlBody: emailTemplate,
-        MessageStream: "outbound"
+        MessageStream: "outbound",
+        ...(emailData.pdfAttachment && emailData.pdfFileName ? {
+          Attachments: [{
+            Name: emailData.pdfFileName,
+            Content: emailData.pdfAttachment,
+            ContentType: "application/pdf"
+          }]
+        } : {})
       }),
     });
 

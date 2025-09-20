@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Share2, Facebook, Copy, Check, Smartphone, MessageCircle, Mail } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { shareProfileOptimized } from "@/services/pdfService";
@@ -33,7 +34,8 @@ export const SocialShareButtons = ({ petName, petId, isMissingPet = false, conte
   const [emailData, setEmailData] = useState({
     recipientEmail: '',
     recipientName: '',
-    customMessage: ''
+    customMessage: '',
+    attachPdf: false
   });
   const { toast } = useToast();
   const { sendEmail, isLoading: emailLoading } = useEmailSharing();
@@ -182,7 +184,7 @@ title: "Link Copied! 📋",
 
     if (success) {
       setShowEmailForm(false);
-      setEmailData({ recipientEmail: '', recipientName: '', customMessage: '' });
+      setEmailData({ recipientEmail: '', recipientName: '', customMessage: '', attachPdf: false });
     }
   };
 
@@ -377,6 +379,18 @@ title: "Link Copied! 📋",
                             rows={3}
                           />
                         </div>
+                        {(isCare || isResume) && (
+                          <div className="flex items-center space-x-2">
+                            <Checkbox 
+                              id="attachPdf"
+                              checked={emailData.attachPdf}
+                              onCheckedChange={(checked) => setEmailData(prev => ({ ...prev, attachPdf: !!checked }))}
+                            />
+                            <Label htmlFor="attachPdf" className="text-sm text-muted-foreground">
+                              Attach as PDF file
+                            </Label>
+                          </div>
+                        )}
                         <div className="flex gap-2">
                           <Button
                             onClick={handleSendEmail}

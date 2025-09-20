@@ -758,11 +758,12 @@ export const PetGallerySection = ({ petData, onUpdate, handlePetUpdate }: PetGal
                 <div className="flex gap-2 pt-4">
                   <Button
                     variant="outline"
-                    onClick={() => setIsGalleryPDFDialogOpen(false)}
+                    onClick={() => handleGalleryPDFAction('view')}
                     disabled={isGeneratingPDF}
-                    className="flex-1"
+                    className="flex-1 border-gold-500 text-gold-600 hover:bg-gold-50"
                   >
-                    Cancel
+                    <Eye className="w-4 h-4 mr-2" />
+                    View PDF
                   </Button>
                   <Button
                     onClick={() => handleGalleryPDFAction('download')}

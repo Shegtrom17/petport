@@ -3,7 +3,10 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { FileText, Download, Share2, Loader2, Users, ExternalLink, LogIn, AlertTriangle, Eye, Heart, Dog, Camera, User } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { FileText, Download, Share2, Loader2, Users, ExternalLink, LogIn, AlertTriangle, Eye, Heart, Dog, Camera, User, Mail, X } from "lucide-react";
 import { generateQRCodeUrl, generatePublicProfileUrl, shareProfileOptimized, sharePDFBlob } from "@/services/pdfService";
 import { generateClientPetPDF, viewPDFBlob, downloadPDFBlob, isIOS, isStandalonePWA } from "@/services/clientPdfService";
 import { useToast } from "@/hooks/use-toast";
@@ -11,6 +14,7 @@ import { useAuth } from "@/context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { resolvePdfType, PDFType } from "@/utils/pdfType";
 import { generateShareURL } from "@/utils/domainUtils";
+import { useEmailSharing } from "@/hooks/useEmailSharing";
 
 interface PetPDFGeneratorProps {
   petId: string;
@@ -50,7 +54,13 @@ export const PetPDFGenerator = ({ petId, petName, petData, handlePetUpdate }: Pe
     lost_pet: null,
     gallery: null,
   });
+  const [showEmailForm, setShowEmailForm] = useState(false);
+  const [emailData, setEmailData] = useState({
+    recipientEmail: '',
+    customMessage: '',
+  });
   const { toast } = useToast();
+  const { sendEmail, isLoading: isEmailLoading } = useEmailSharing();
 
   // Define all PDF types
   const pdfTypes: PDFTypeConfig[] = [
@@ -289,6 +299,75 @@ export const PetPDFGenerator = ({ petId, petName, petData, handlePetUpdate }: Pe
     await handleShare(shareUrl, "public");
   };
 
+  const handleEmailPDF = async () => {
+    if (!generatedPdfBlob || !emailData.recipientEmail.trim()) {
+      toast({
+        title: "Missing Information",
+        description: "Please enter a recipient email address.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      // Convert blob to base64
+      const reader = new FileReader();
+      const base64Promise = new Promise<string>((resolve, reject) => {
+        reader.onloadend = () => {
+          const base64 = reader.result as string;
+          resolve(base64.split(',')[1]); // Remove data URL prefix
+        };
+        reader.onerror = reject;
+      });
+      reader.readAsDataURL(generatedPdfBlob);
+      
+      const pdfAttachment = await base64Promise;
+      const fileName = `PetPort_${selectedPdfType && pdfTypes.find(p => p.key === selectedPdfType)?.title.replace(/\s+/g, '_')}_${petName}.pdf`;
+      
+      // Map PDF types to email types
+      const emailTypeMap: Record<string, 'profile' | 'care' | 'credentials' | 'reviews' | 'missing_pet'> = {
+        'emergency': 'profile',
+        'full': 'profile',
+        'care': 'care',
+        'resume': 'credentials',
+        'lost_pet': 'missing_pet',
+        'gallery': 'profile'
+      };
+      
+      const emailType = emailTypeMap[selectedPdfType || 'full'] || 'profile';
+      const baseUrl = window.location.origin;
+      const profileUrl = `${baseUrl}/profile/${petId}`;
+      
+      const success = await sendEmail({
+        type: emailType,
+        recipientEmail: emailData.recipientEmail.trim(),
+        petName,
+        petId,
+        shareUrl: profileUrl,
+        customMessage: emailData.customMessage.trim() || undefined,
+        senderName: user?.user_metadata?.full_name || 'PetPort User',
+        pdfAttachment,
+        pdfFileName: fileName
+      });
+
+      if (success) {
+        toast({
+          title: "Email Sent!",
+          description: `${petName}'s ${selectedPdfType} PDF has been emailed successfully.`,
+        });
+        setShowEmailForm(false);
+        setEmailData({ recipientEmail: '', customMessage: '' });
+      }
+    } catch (error) {
+      console.error('Email sending failed:', error);
+      toast({
+        title: "Email Failed",
+        description: "Unable to send email. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
   return (
     <div className="space-y-4">
       {/* Passport-style header with circular pet photo */}
@@ -470,9 +549,9 @@ export const PetPDFGenerator = ({ petId, petName, petData, handlePetUpdate }: Pe
                     {selectedPdfType && pdfTypes.find(p => p.key === selectedPdfType)?.title} PDF
                   </h4>
                   {resolvedType && (
-                    <p className="text-xs text-muted-foreground mb-2">Requested: {selectedPdfType} • Resolved: {resolvedType}</p>
-                  )}
-                   <div className="grid grid-cols-3 gap-2 justify-center mb-3">
+                   <p className="text-xs text-muted-foreground mb-2">Requested: {selectedPdfType} • Resolved: {resolvedType}</p>
+                   )}
+                    <div className="grid grid-cols-4 gap-2 justify-center mb-3">
                       <Button
                         onClick={async () => {
                            if (generatedPdfBlob) {
@@ -562,14 +641,88 @@ export const PetPDFGenerator = ({ petId, petName, petData, handlePetUpdate }: Pe
                         size="sm"
                         disabled={isSharing}
                         className="border-navy-900 text-navy-900 hover:bg-navy-50 hover:text-navy-900 text-xs sm:text-sm px-1 sm:px-3 h-auto py-2 flex-col sm:flex-row"
-                     >
-                       <Share2 className="w-3 h-3 sm:w-4 sm:h-4 mb-1 sm:mb-0 sm:mr-1" />
-                       <span className="text-center">Share</span>
-                     </Button>
-                   </div>
-                </div>
+                      >
+                        <Share2 className="w-3 h-3 sm:w-4 sm:h-4 mb-1 sm:mb-0 sm:mr-1" />
+                        <span className="text-center">Share</span>
+                      </Button>
+                      <Button
+                        onClick={() => setShowEmailForm(!showEmailForm)}
+                        variant="outline"
+                        size="sm"
+                        className="border-blue-500 text-blue-600 hover:bg-blue-50 hover:text-blue-700 text-xs sm:text-sm px-1 sm:px-3 h-auto py-2 flex-col sm:flex-row"
+                      >
+                        <Mail className="w-3 h-3 sm:w-4 sm:h-4 mb-1 sm:mb-0 sm:mr-1" />
+                        <span className="text-center">Email</span>
+                      </Button>
+                    </div>
+                 </div>
 
-                {/* Sharing Options */}
+                 {/* Email Form */}
+                 {showEmailForm && (
+                   <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 space-y-3">
+                     <div className="flex items-center justify-between">
+                       <h4 className="font-semibold text-blue-800">Email PDF</h4>
+                       <Button
+                         onClick={() => setShowEmailForm(false)}
+                         variant="ghost"
+                         size="sm"
+                         className="h-auto p-1 text-blue-600 hover:text-blue-800"
+                       >
+                         <X className="w-4 h-4" />
+                       </Button>
+                     </div>
+                     
+                     <div className="space-y-3">
+                       <div>
+                         <Label htmlFor="recipient-email" className="text-sm font-medium text-blue-800">
+                           Recipient Email *
+                         </Label>
+                         <Input
+                           id="recipient-email"
+                           type="email"
+                           placeholder="recipient@email.com"
+                           value={emailData.recipientEmail}
+                           onChange={(e) => setEmailData(prev => ({ ...prev, recipientEmail: e.target.value }))}
+                           className="mt-1"
+                         />
+                       </div>
+                       
+                       <div>
+                         <Label htmlFor="custom-message" className="text-sm font-medium text-blue-800">
+                           Custom Message (optional)
+                         </Label>
+                         <Textarea
+                           id="custom-message"
+                           placeholder="Add a personal message..."
+                           value={emailData.customMessage}
+                           onChange={(e) => setEmailData(prev => ({ ...prev, customMessage: e.target.value }))}
+                           className="mt-1"
+                           rows={3}
+                         />
+                       </div>
+                       
+                       <Button
+                         onClick={handleEmailPDF}
+                         disabled={isEmailLoading || !emailData.recipientEmail.trim()}
+                         className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+                       >
+                         {isEmailLoading ? (
+                           <>
+                             <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                             Sending Email...
+                           </>
+                         ) : (
+                           <>
+                             <Mail className="w-4 h-4 mr-2" />
+                             Send PDF via Email
+                           </>
+                         )}
+                       </Button>
+                     </div>
+                   </div>
+                 )}
+
+                 {/* Sharing Options */}
                 <div className="border-t border-gold-500/30 pt-4 space-y-3">
                   <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-3">
                     <p className="text-sm text-blue-800">

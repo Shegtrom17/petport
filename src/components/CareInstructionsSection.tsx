@@ -2,7 +2,8 @@ import { useState, useEffect, useRef } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from "@/components/ui/dialog";
+import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { Input } from "@/components/ui/input";
 import { Heart, Clock, Pill, Coffee, Moon, AlertTriangle, Edit, Loader2, FileText, Download, Share2, ExternalLink, Eye, Phone, Copy } from "lucide-react";
 import { ScrollControls } from "@/components/ui/scroll-controls";
@@ -336,13 +337,16 @@ export const CareInstructionsSection = ({ petData, onUpdate, handlePetUpdate }: 
                 </DialogTrigger>
                 <DialogContent 
                   ref={dialogContentRef}
-                  className="max-w-[100vw] sm:max-w-md w-full min-w-0 max-h-[90vh] overflow-y-auto overflow-x-auto bg-[#f8f8f8] px-4 relative"
+                  className="max-w-[100vw] sm:max-w-md w-full min-w-0 max-h-[90vh] overflow-y-auto bg-[#f8f8f8] px-4 relative z-[60]"
                 >
                   <ScrollControls targetRef={dialogContentRef} />
                   <DialogHeader>
                     <DialogTitle className="text-navy-900 border-b-2 border-gold-500 pb-2">
                       🌿 Share {petData.name}'s Care Instructions
                     </DialogTitle>
+                    <DialogDescription className="text-navy-600 text-sm">
+                      Share your pet's care instructions with pet sitters and caregivers
+                    </DialogDescription>
                   </DialogHeader>
                   
                   <div className="space-y-6">
@@ -377,13 +381,15 @@ export const CareInstructionsSection = ({ petData, onUpdate, handlePetUpdate }: 
                      {/* Social sharing options */}
                       {petData.is_public ? (
                         <div className="w-full min-w-0">
-                          <SocialShareButtons 
-                            petName={petData.name} 
-                            petId={petData.id} 
-                            context="care" 
-                            shareUrlOverride={generatePublicCareUrl(petData.id)} 
-                            defaultOpenOptions={true}
-                          />
+                          <ErrorBoundary>
+                            <SocialShareButtons 
+                              petName={petData.name} 
+                              petId={petData.id} 
+                              context="care" 
+                              shareUrlOverride={generatePublicCareUrl(petData.id)} 
+                              defaultOpenOptions={true}
+                            />
+                          </ErrorBoundary>
                         </div>
                        ) : null}
 
@@ -395,11 +401,17 @@ export const CareInstructionsSection = ({ petData, onUpdate, handlePetUpdate }: 
                             Scan to view care instructions
                           </p>
                           <div className="flex flex-col items-center space-y-4">
-                            <img 
-                              src={generateQRCodeUrl(generatePublicCareUrl(petData.id), 200)} 
-                              alt="QR Code for Care Instructions"
-                              className="border rounded-lg"
-                            />
+                            <ErrorBoundary>
+                              <img 
+                                src={generateQRCodeUrl(generatePublicCareUrl(petData.id), 200)} 
+                                alt="QR Code for Care Instructions"
+                                className="border rounded-lg"
+                                onError={(e) => {
+                                  console.error('QR Code failed to load');
+                                  e.currentTarget.style.display = 'none';
+                                }}
+                              />
+                            </ErrorBoundary>
                             <div className="w-full">
                               <div className="flex items-center space-x-2">
                                 <Input

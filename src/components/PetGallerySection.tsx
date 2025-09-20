@@ -385,6 +385,10 @@ export const PetGallerySection = ({ petData, onUpdate, handlePetUpdate }: PetGal
           });
           
           setIsGalleryPDFDialogOpen(false);
+        } else if (action === 'view') {
+          const filename = `${petData.name}_Photo_Gallery.pdf`;
+          const { viewPDFBlob } = await import('@/services/clientPdfService');
+          await viewPDFBlob(result.blob, filename);
         }
       } else {
         throw new Error(result.error || 'Failed to generate gallery PDF');

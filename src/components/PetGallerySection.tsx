@@ -359,6 +359,16 @@ export const PetGallerySection = ({ petData, onUpdate, handlePetUpdate }: PetGal
 
   const handleGalleryPDFAction = async (action: 'view' | 'download') => {
     setIsGeneratingPDF(true);
+    
+    // For view action, open window immediately to avoid popup blockers
+    let viewWindow: Window | null = null;
+    if (action === 'view') {
+      viewWindow = window.open('', '_blank');
+      if (viewWindow) {
+        viewWindow.document.write('<html><head><title>Loading PDF...</title></head><body><div style="display:flex;align-items:center;justify-content:center;height:100vh;font-family:Arial,sans-serif;"><div>Loading PDF...</div></div></body></html>');
+      }
+    }
+    
     try {
       // Refresh pet data before generating PDF
       if (handlePetUpdate) {
@@ -386,15 +396,32 @@ export const PetGallerySection = ({ petData, onUpdate, handlePetUpdate }: PetGal
           
           setIsGalleryPDFDialogOpen(false);
         } else if (action === 'view') {
-          const filename = `${petData.name}_Photo_Gallery.pdf`;
-          const { viewPDFBlob } = await import('@/services/clientPdfService');
-          await viewPDFBlob(result.blob, filename);
+          const pdfUrl = URL.createObjectURL(result.blob);
+          if (viewWindow && !viewWindow.closed) {
+            viewWindow.location.href = pdfUrl;
+          } else {
+            // Fallback if popup was blocked
+            window.open(pdfUrl, '_blank');
+          }
+          
+          toast({
+            title: "PDF Opened",
+            description: `${petData.name}'s photo gallery PDF opened in new tab.`,
+          });
+          
+          setIsGalleryPDFDialogOpen(false);
         }
       } else {
         throw new Error(result.error || 'Failed to generate gallery PDF');
       }
     } catch (error) {
       console.error('Gallery PDF generation error:', error);
+      
+      // Close the loading window if view failed
+      if (action === 'view' && viewWindow && !viewWindow.closed) {
+        viewWindow.close();
+      }
+      
       toast({
         title: "Error",
         description: "Failed to generate gallery PDF. Please try again.",
@@ -751,7 +778,10 @@ export const PetGallerySection = ({ petData, onUpdate, handlePetUpdate }: PetGal
       <Dialog open={isGalleryPDFDialogOpen} onOpenChange={setIsGalleryPDFDialogOpen}>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
-            <DialogTitle>Photo Gallery PDF</DialogTitle>
+            <DialogTitle className="flex items-center space-x-2">
+              <div className="w-2 h-2 bg-gradient-to-r from-amber-400 to-yellow-500 rounded-full"></div>
+              <span>Photo Gallery PDF</span>
+            </DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             {!generatedGalleryPdfBlob ? (
@@ -764,7 +794,7 @@ export const PetGallerySection = ({ petData, onUpdate, handlePetUpdate }: PetGal
                     variant="outline"
                     onClick={() => handleGalleryPDFAction('view')}
                     disabled={isGeneratingPDF}
-                    className="flex-1 border-gold-500 text-gold-600 hover:bg-gold-50"
+                    className="flex-1 border-amber-400 text-amber-600 hover:bg-amber-50 hover:border-amber-500"
                   >
                     <Eye className="w-4 h-4 mr-2" />
                     View PDF

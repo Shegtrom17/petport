@@ -1,10 +1,11 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Heart, Clock, Pill, Coffee, Moon, AlertTriangle, Edit, Loader2, FileText, Download, Share2, ExternalLink, Eye, Phone, Copy } from "lucide-react";
+import { ScrollControls } from "@/components/ui/scroll-controls";
 import { ContactsDisplay } from "@/components/ContactsDisplay";
 import { extractPhoneNumber, formatPhoneForTel } from "@/utils/contactUtils";
 import { CareInstructionsEditForm } from "@/components/CareInstructionsEditForm";
@@ -28,6 +29,7 @@ export const CareInstructionsSection = ({ petData, onUpdate, handlePetUpdate }: 
   const [isLoading, setIsLoading] = useState(true);
   const [isPdfDialogOpen, setIsPdfDialogOpen] = useState(false);
   const [generatedPdfBlob, setGeneratedPdfBlob] = useState<Blob | null>(null);
+  const dialogContentRef = useRef<HTMLDivElement>(null);
   const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
   const [careShareDialogOpen, setCareShareDialogOpen] = useState(false);
   
@@ -332,7 +334,11 @@ export const CareInstructionsSection = ({ petData, onUpdate, handlePetUpdate }: 
                     <span className="text-sm">Share</span>
                   </div>
                 </DialogTrigger>
-                <DialogContent className="max-w-[100vw] sm:max-w-md w-full min-w-0 max-h-[90vh] overflow-y-auto overflow-x-hidden bg-[#f8f8f8] px-4">
+                <DialogContent 
+                  ref={dialogContentRef}
+                  className="max-w-[100vw] sm:max-w-md w-full min-w-0 max-h-[90vh] overflow-y-auto overflow-x-auto bg-[#f8f8f8] px-4 relative"
+                >
+                  <ScrollControls targetRef={dialogContentRef} />
                   <DialogHeader>
                     <DialogTitle className="text-foreground border-b-2 border-gold-500 pb-2 font-bold">
                       🌿 Share {petData.name}'s Care Instructions

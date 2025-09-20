@@ -14,6 +14,7 @@ import { shareViaMessenger, copyToClipboard } from "@/utils/messengerShare";
 import { useEmailSharing } from "@/hooks/useEmailSharing";
 import { useAuth } from "@/context/AuthContext";
 import { generateShareURL } from "@/utils/domainUtils";
+import { generatePetPDF } from "@/services/clientPdfService";
 
   interface SocialShareButtonsProps {
   petName: string;
@@ -171,6 +172,45 @@ title: "Link Copied! 📋",
 
     const emailType = context === 'credentials' ? 'resume' : context as 'profile' | 'care' | 'resume' | 'reviews' | 'missing_pet';
     
+    let pdfAttachment: string | undefined;
+    let pdfFileName: string | undefined;
+
+    // Generate PDF if requested
+    if (emailData.attachPdf && (isCare || isResume)) {
+      try {
+        toast({
+          title: "Generating PDF...",
+          description: "Please wait while we prepare your PDF attachment",
+        });
+
+        const pdfType = isCare ? 'care' : 'resume';
+        const result = await generatePetPDF(petId, pdfType);
+        
+        if (result.success && result.blob) {
+          // Convert blob to base64
+          const reader = new FileReader();
+          const base64Promise = new Promise<string>((resolve, reject) => {
+            reader.onloadend = () => {
+              const base64 = reader.result as string;
+              resolve(base64.split(',')[1]); // Remove data URL prefix
+            };
+            reader.onerror = reject;
+          });
+          reader.readAsDataURL(result.blob);
+          
+          pdfAttachment = await base64Promise;
+          pdfFileName = result.fileName || `${petName}-${pdfType}.pdf`;
+        }
+      } catch (error) {
+        console.error('PDF generation failed:', error);
+        toast({
+          title: "PDF generation failed",
+          description: "The email will be sent without the PDF attachment",
+          variant: "destructive",
+        });
+      }
+    }
+    
     const success = await sendEmail({
       type: isMissingPet ? 'missing_pet' : emailType,
       recipientEmail: emailData.recipientEmail.trim(),
@@ -179,7 +219,9 @@ title: "Link Copied! 📋",
       petId,
       shareUrl,
       customMessage: emailData.customMessage.trim() || undefined,
-      senderName: user?.user_metadata?.full_name || 'PetPort User'
+      senderName: user?.user_metadata?.full_name || 'PetPort User',
+      pdfAttachment,
+      pdfFileName
     });
 
     if (success) {

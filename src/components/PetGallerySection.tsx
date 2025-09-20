@@ -778,9 +778,8 @@ export const PetGallerySection = ({ petData, onUpdate, handlePetUpdate }: PetGal
       <Dialog open={isGalleryPDFDialogOpen} onOpenChange={setIsGalleryPDFDialogOpen}>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
-            <DialogTitle className="flex items-center space-x-2">
-              <div className="w-2 h-2 bg-gradient-to-r from-amber-400 to-yellow-500 rounded-full"></div>
-              <span>Photo Gallery PDF</span>
+            <DialogTitle className="text-navy-900 border-b-2 border-gold-500 pb-2">
+              Photo Gallery PDF
             </DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
@@ -794,7 +793,7 @@ export const PetGallerySection = ({ petData, onUpdate, handlePetUpdate }: PetGal
                     variant="outline"
                     onClick={() => handleGalleryPDFAction('view')}
                     disabled={isGeneratingPDF}
-                    className="flex-1 border-amber-400 text-amber-600 hover:bg-amber-50 hover:border-amber-500"
+                    className="flex-1 border-gold-500 text-gold-600 hover:bg-gold-50"
                   >
                     <Eye className="w-4 h-4 mr-2" />
                     View PDF
@@ -802,7 +801,7 @@ export const PetGallerySection = ({ petData, onUpdate, handlePetUpdate }: PetGal
                   <Button
                     onClick={() => handleGalleryPDFAction('download')}
                     disabled={isGeneratingPDF}
-                    className="flex-1"
+                    className="flex-1 bg-gradient-to-r from-gold-500 to-gold-400 text-navy-900 hover:from-gold-400 hover:to-gold-300"
                   >
                     {isGeneratingPDF ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Download className="w-4 h-4 mr-2" />}
                     {isGeneratingPDF ? "Generating..." : "Download PDF"}

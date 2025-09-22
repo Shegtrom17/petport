@@ -14,12 +14,15 @@ serve(async (req) => {
   }
 
   try {
+    console.log('🚀 Starting signup process...');
+    
     // Initialize Stripe
     const stripeKey = Deno.env.get('STRIPE_SECRET_KEY');
     if (!stripeKey) {
       throw new Error('Stripe secret key not configured');
     }
     const stripe = new Stripe(stripeKey, { apiVersion: '2023-10-16' });
+    console.log('✅ Stripe initialized');
 
     // Initialize Supabase Admin Client
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
@@ -28,6 +31,7 @@ serve(async (req) => {
 
     // Parse request body
     const { email, password, fullName, plan, additionalPets = 0 } = await req.json();
+    console.log('📝 Parsed request:', { email, fullName, plan, additionalPets });
 
     // Validate input
     if (!email || !password || !fullName || !plan) {
@@ -45,8 +49,10 @@ serve(async (req) => {
     }
 
     // Check if user already exists
+    console.log('🔍 Checking for existing user...');
     const { data: existingUsers } = await supabase.auth.admin.listUsers();
     const existingUser = existingUsers.users.find(u => u.email === email);
+    console.log('👤 User exists check:', !!existingUser);
     if (existingUser) {
       return new Response(
         JSON.stringify({ error: 'An account with this email already exists' }),
@@ -73,6 +79,7 @@ serve(async (req) => {
     });
 
     // Step 1: Create Stripe customer
+    console.log('💳 Creating Stripe customer...');
     const customer = await stripe.customers.create({
       email,
       name: fullName,
@@ -91,6 +98,7 @@ serve(async (req) => {
     // For now, we'll create the subscription in trial mode and let the frontend handle card setup
 
     // Step 3: Create Stripe subscription with trial
+    console.log('📅 Creating Stripe subscription...');
     const subscription = await stripe.subscriptions.create({
       customer: customer.id,
       items: [
@@ -120,6 +128,7 @@ serve(async (req) => {
     console.log('Created Stripe subscription:', subscription.id);
 
     // Step 4: Create Supabase user
+    console.log('👤 Creating Supabase user...');
     const { data: authData, error: authError } = await supabase.auth.admin.createUser({
       email,
       password,
@@ -140,6 +149,7 @@ serve(async (req) => {
     console.log('Created Supabase user:', authData.user.id);
 
     // Step 5: Create subscriber record
+    console.log('📝 Creating subscriber record...');
     const { error: subscriberError } = await supabase
       .from('subscribers')
       .insert({
@@ -154,8 +164,10 @@ serve(async (req) => {
       });
 
     if (subscriberError) {
-      console.error('Failed to create subscriber record:', subscriberError);
+      console.error('❌ Failed to create subscriber record:', subscriberError);
       // Continue anyway - this can be fixed later
+    } else {
+      console.log('✅ Subscriber record created');
     }
 
     // Step 5.5: Send welcome email with trial details
@@ -180,27 +192,42 @@ serve(async (req) => {
     }
 
     // Step 6: Generate session tokens for auto-login
+    console.log('🔑 Generating session tokens...');
     const { data: sessionData, error: sessionError } = await supabase.auth.admin.generateLink({
       type: 'magiclink',
       email: email,
     });
 
     if (sessionError) {
-      console.error('Failed to generate session:', sessionError);
+      console.error('❌ Failed to generate session:', sessionError);
       // Continue without auto-login
+    } else {
+      console.log('✅ Session tokens generated successfully');
+      console.log('🔑 Session data present:', {
+        hasAccessToken: !!sessionData?.properties?.access_token,
+        hasRefreshToken: !!sessionData?.properties?.refresh_token
+      });
     }
 
-    console.log('Signup completed successfully');
+    console.log('🎉 Signup completed successfully - preparing response...');
+
+    const responseData = {
+      success: true,
+      userId: authData.user.id,
+      customerId: customer.id,
+      subscriptionId: subscription.id,
+      sessionToken: sessionData?.properties?.access_token,
+      refreshToken: sessionData?.properties?.refresh_token,
+    };
+    
+    console.log('📤 Sending response:', {
+      ...responseData,
+      sessionToken: responseData.sessionToken ? '[PRESENT]' : '[MISSING]',
+      refreshToken: responseData.refreshToken ? '[PRESENT]' : '[MISSING]'
+    });
 
     return new Response(
-      JSON.stringify({
-        success: true,
-        userId: authData.user.id,
-        customerId: customer.id,
-        subscriptionId: subscription.id,
-        sessionToken: sessionData?.properties?.access_token,
-        refreshToken: sessionData?.properties?.refresh_token,
-      }),
+      JSON.stringify(responseData),
       {
         status: 200,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },

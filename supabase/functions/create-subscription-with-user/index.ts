@@ -45,8 +45,9 @@ serve(async (req) => {
     }
 
     // Check if user already exists
-    const { data: existingUser } = await supabase.auth.admin.getUserByEmail(email);
-    if (existingUser.user) {
+    const { data: existingUsers } = await supabase.auth.admin.listUsers();
+    const existingUser = existingUsers.users.find(u => u.email === email);
+    if (existingUser) {
       return new Response(
         JSON.stringify({ error: 'An account with this email already exists' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }

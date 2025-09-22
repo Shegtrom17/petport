@@ -13,6 +13,8 @@ import { useToast } from "@/hooks/use-toast";
 import { loadStripe } from "@stripe/stripe-js";
 import { Elements, CardElement, useStripe, useElements } from "@stripe/react-stripe-js";
 import { PRICING } from "@/config/pricing";
+import { useIOSResilience } from "@/hooks/useIOSResilience";
+import { isIOSDevice } from "@/utils/iosDetection";
 
 const stripePromise = loadStripe("pk_test_51QIDNRGWjWGZWj9YcGNqAOqrIiROFGHbIvPLMXqGqKw8IFoYEYjFp0L39a3Mop1j8VGLwqJcGJHgE6FGMT4wuFHC00fM6BsB95");
 
@@ -22,6 +24,14 @@ const SignupForm = () => {
   const { toast } = useToast();
   const stripe = useStripe();
   const elements = useElements();
+  
+  // iOS resilience for signup flow
+  const { safeAsync, withTimeout } = useIOSResilience({
+    enableMemoryMonitoring: true,
+    enableVisibilityRecovery: true,
+    enableTimeoutProtection: true,
+    timeoutMs: 30000 // 30 second timeout for iOS
+  });
 
   const [formData, setFormData] = useState({
     email: "",
@@ -30,6 +40,8 @@ const SignupForm = () => {
   });
   const [additionalPets, setAdditionalPets] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
+  const [signupSuccess, setSignupSuccess] = useState(false);
+  const [showFallbackNavigation, setShowFallbackNavigation] = useState(false);
 
   const plan = searchParams.get("plan") || "monthly";
   const planData = PRICING.plans.find(p => p.id === plan) || PRICING.plans[0];
@@ -66,7 +78,10 @@ const SignupForm = () => {
     if (!stripe || !elements) return;
 
     setIsLoading(true);
-    try {
+    setSignupSuccess(false);
+    setShowFallbackNavigation(false);
+
+    const performSignup = async () => {
       const cardElement = elements.getElement(CardElement);
       if (!cardElement) throw new Error("Card element not found");
 
@@ -94,21 +109,68 @@ const SignupForm = () => {
         throw new Error(data.error);
       }
 
-      if (data?.sessionToken) {
-        // Auto-login with the session token
-        await supabase.auth.setSession({
+      if (!data?.sessionToken) {
+        throw new Error('No session token received from signup');
+      }
+
+      return data;
+    };
+
+    try {
+      // Use iOS-safe async operation with timeout protection
+      const data = await safeAsync(
+        () => withTimeout(performSignup(), 'signup-process'),
+        null,
+        'signup-flow'
+      );
+
+      if (!data) {
+        throw new Error('Signup operation failed or timed out');
+      }
+
+      // Mark signup as successful
+      setSignupSuccess(true);
+      
+      // Store success state for recovery
+      if (isIOSDevice()) {
+        localStorage.setItem('petport_signup_success', 'true');
+        localStorage.setItem('petport_signup_tokens', JSON.stringify({
           access_token: data.sessionToken,
           refresh_token: data.refreshToken
-        });
+        }));
+      }
+
+      // Auto-login with the session token
+      await supabase.auth.setSession({
+        access_token: data.sessionToken,
+        refresh_token: data.refreshToken
+      });
+      
+      toast({
+        title: "Welcome to PetPort! 🎉",
+        description: "Your free trial has started. Add your first pet to get started!"
+      });
+
+      // iOS-safe navigation with fallback
+      if (isIOSDevice()) {
+        // Delayed navigation for iOS Safari
+        setTimeout(() => {
+          try {
+            navigate("/app");
+          } catch (navError) {
+            console.error('iOS navigation failed:', navError);
+            setShowFallbackNavigation(true);
+          }
+        }, 100);
         
-        toast({
-          title: "Welcome to PetPort! 🎉",
-          description: "Your free trial has started. Add your first pet to get started!"
-        });
-        
-        navigate("/app");
+        // Show fallback after 3 seconds if navigation doesn't work
+        setTimeout(() => {
+          if (window.location.pathname !== '/app') {
+            setShowFallbackNavigation(true);
+          }
+        }, 3000);
       } else {
-        throw new Error('No session token received from signup');
+        navigate("/app");
       }
     } catch (error: any) {
       console.error('Signup error details:', error);
@@ -120,6 +182,41 @@ const SignupForm = () => {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  // iOS recovery on component mount
+  useEffect(() => {
+    if (isIOSDevice()) {
+      const signupSuccess = localStorage.getItem('petport_signup_success');
+      const storedTokens = localStorage.getItem('petport_signup_tokens');
+      
+      if (signupSuccess === 'true' && storedTokens) {
+        try {
+          const tokens = JSON.parse(storedTokens);
+          supabase.auth.setSession({
+            access_token: tokens.access_token,
+            refresh_token: tokens.refresh_token
+          }).then(() => {
+            // Clear recovery data
+            localStorage.removeItem('petport_signup_success');
+            localStorage.removeItem('petport_signup_tokens');
+            
+            toast({
+              title: "Welcome back!",
+              description: "Your signup was successful. Redirecting to your account..."
+            });
+            
+            setTimeout(() => navigate("/app"), 500);
+          });
+        } catch (error) {
+          console.error('iOS recovery failed:', error);
+        }
+      }
+    }
+  }, [navigate, toast]);
+
+  const handleFallbackNavigation = () => {
+    window.location.href = '/app';
   };
 
   return (
@@ -271,8 +368,34 @@ const SignupForm = () => {
               disabled={isLoading || !stripe}
             >
               <CreditCard className="w-4 h-4 mr-2" />
-              {isLoading ? "Setting up your account..." : "Start My Free Trial"}
+              {isLoading ? (
+                isIOSDevice() ? "Setting up your account (iOS)..." : "Setting up your account..."
+              ) : "Start My Free Trial"}
             </Button>
+
+            {/* iOS Fallback Navigation */}
+            {signupSuccess && showFallbackNavigation && (
+              <div className="bg-green-50 border border-green-200 rounded-lg p-4 space-y-3">
+                <div className="flex items-start gap-3">
+                  <Check className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
+                  <div className="space-y-2">
+                    <p className="text-sm font-medium text-green-800">
+                      ✅ Signup successful!
+                    </p>
+                    <p className="text-sm text-green-700">
+                      Your account has been created. If you're not automatically redirected, click below:
+                    </p>
+                    <Button 
+                      onClick={handleFallbackNavigation}
+                      className="w-full bg-green-600 hover:bg-green-700 text-white"
+                      size="sm"
+                    >
+                      Continue to My Account
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            )}
 
             {/* Trial Transparency Warning */}
             <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 space-y-2">

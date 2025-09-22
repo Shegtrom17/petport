@@ -76,8 +76,7 @@ const SignupForm = () => {
           password: formData.password,
           fullName: formData.fullName,
           plan: plan,
-          additionalPets: additionalPets,
-          cardElement: cardElement
+          additionalPets: additionalPets
         }
       });
 

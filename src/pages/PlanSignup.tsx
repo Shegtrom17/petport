@@ -81,10 +81,12 @@ const SignupForm = () => {
     setSignupSuccess(false);
     setShowFallbackNavigation(false);
 
-    const performSignup = async () => {
+    // Phase 1: Backend provisioning (Stripe + Supabase user creation)
+    const performBackendSignup = async () => {
       const cardElement = elements.getElement(CardElement);
       if (!cardElement) throw new Error("Card element not found");
 
+      console.log('🚀 Starting backend provisioning...');
       const { data, error } = await supabase.functions.invoke("create-subscription-with-user", {
         body: {
           email: formData.email,
@@ -96,87 +98,146 @@ const SignupForm = () => {
       });
 
       if (error) {
-        console.error('Signup function error:', error);
-        throw new Error(error.message || 'Signup function failed');
+        console.error('❌ Backend provisioning error:', error);
+        throw new Error(error.message || 'Backend provisioning failed');
       }
 
-      if (!data) {
-        throw new Error('No response data from signup function');
+      if (!data || data.error) {
+        throw new Error(data?.error || 'No response from backend provisioning');
       }
 
-      // Check for error in the response data
-      if (data.error) {
-        throw new Error(data.error);
-      }
-
-      if (!data?.sessionToken) {
-        throw new Error('No session token received from signup');
-      }
+      console.log('✅ Backend provisioning complete:', {
+        success: data.success,
+        userId: data.userId,
+        sessionTokenPresent: data.sessionTokenPresent,
+        refreshTokenPresent: data.refreshTokenPresent
+      });
 
       return data;
     };
 
+    // Phase 2: Frontend authentication with retry logic
+    const performFrontendAuth = async (email: string, password: string, retryCount = 0): Promise<any> => {
+      const maxRetries = 3;
+      const baseDelay = 1000; // Start with 1 second
+
+      try {
+        console.log(`🔑 Attempting sign-in (attempt ${retryCount + 1}/${maxRetries})...`);
+        
+        const signInPromise = supabase.auth.signInWithPassword({ email, password });
+        
+        // iOS-specific timeout (shorter than default)
+        const timeoutMs = isIOSDevice() ? 15000 : 10000;
+        const { data, error } = await withTimeout(signInPromise, 'signInWithPassword', timeoutMs);
+
+        if (error) {
+          console.error(`❌ Sign-in error (attempt ${retryCount + 1}):`, error);
+          throw error;
+        }
+
+        if (!data.session) {
+          throw new Error('No session returned from sign-in');
+        }
+
+        console.log('✅ Sign-in successful');
+        
+        // Immediately verify session
+        const { data: sessionData } = await supabase.auth.getSession();
+        if (!sessionData.session) {
+          throw new Error('Session verification failed');
+        }
+
+        console.log('✅ Session verified');
+        return data;
+
+      } catch (error: any) {
+        if (retryCount < maxRetries - 1) {
+          const delay = baseDelay * Math.pow(2, retryCount); // Exponential backoff
+          console.log(`⏱️ Retrying sign-in in ${delay}ms...`);
+          
+          await new Promise(resolve => setTimeout(resolve, delay));
+          return performFrontendAuth(email, password, retryCount + 1);
+        }
+        throw error;
+      }
+    };
+
     try {
-      // Use iOS-safe async operation with timeout protection
-      const data = await safeAsync(
-        () => withTimeout(performSignup(), 'signup-process'),
+      // Step 1: Backend provisioning with timeout protection
+      const backendData = await safeAsync(
+        () => withTimeout(performBackendSignup(), 'backend-provisioning', 25000),
         null,
-        'signup-flow'
+        'backend-signup'
       );
 
-      if (!data) {
-        throw new Error('Signup operation failed or timed out');
+      if (!backendData) {
+        throw new Error('Backend provisioning failed or timed out');
       }
 
-      // Mark signup as successful
+      console.log('✅ Backend provisioning successful, starting authentication...');
+
+      // Step 2: Frontend authentication with retry
+      const authData = await safeAsync(
+        () => performFrontendAuth(formData.email, formData.password),
+        null,
+        'frontend-auth'
+      );
+
+      if (!authData) {
+        // Mark as partially successful but show recovery options
+        setSignupSuccess(true);
+        setShowFallbackNavigation(true);
+        
+        toast({
+          title: "Account created successfully! 🎉",
+          description: "Your account is ready. Please use the login button below to access it.",
+          variant: "default"
+        });
+        return;
+      }
+
+      // Step 3: Full success - mark and navigate
       setSignupSuccess(true);
-      
-      // Store success state for recovery
-      if (isIOSDevice()) {
-        localStorage.setItem('petport_signup_success', 'true');
-        localStorage.setItem('petport_signup_tokens', JSON.stringify({
-          access_token: data.sessionToken,
-          refresh_token: data.refreshToken
-        }));
-      }
-
-      // Auto-login with the session token
-      await supabase.auth.setSession({
-        access_token: data.sessionToken,
-        refresh_token: data.refreshToken
-      });
       
       toast({
         title: "Welcome to PetPort! 🎉",
         description: "Your free trial has started. Add your first pet to get started!"
       });
 
-      // iOS-safe navigation with fallback
+      // iOS-safe navigation with verification
       if (isIOSDevice()) {
-        // Delayed navigation for iOS Safari
         setTimeout(() => {
           try {
             navigate("/app");
+            
+            // Verify navigation worked
+            setTimeout(() => {
+              if (window.location.pathname !== '/app') {
+                console.log('⚠️ iOS navigation verification failed, showing fallback');
+                setShowFallbackNavigation(true);
+              }
+            }, 2000);
           } catch (navError) {
-            console.error('iOS navigation failed:', navError);
+            console.error('❌ iOS navigation failed:', navError);
             setShowFallbackNavigation(true);
           }
         }, 100);
-        
-        // Show fallback after 3 seconds if navigation doesn't work
-        setTimeout(() => {
-          if (window.location.pathname !== '/app') {
-            setShowFallbackNavigation(true);
-          }
-        }, 3000);
       } else {
         navigate("/app");
       }
+
     } catch (error: any) {
-      console.error('Signup error details:', error);
+      console.error('❌ Signup process failed:', error);
+      
+      // Enhanced error messaging for iOS
+      let errorMessage = error.message || "An unexpected error occurred";
+      if (isIOSDevice() && error.message?.includes('timeout')) {
+        errorMessage = "The signup process took longer than expected on Safari. Please try again or use the manual login option.";
+      }
+      
       toast({
         title: "Signup failed",
-        description: error.message || "An unexpected error occurred. Please try again or contact support.",
+        description: errorMessage,
         variant: "destructive"
       });
     } finally {
@@ -184,36 +245,7 @@ const SignupForm = () => {
     }
   };
 
-  // iOS recovery on component mount
-  useEffect(() => {
-    if (isIOSDevice()) {
-      const signupSuccess = localStorage.getItem('petport_signup_success');
-      const storedTokens = localStorage.getItem('petport_signup_tokens');
-      
-      if (signupSuccess === 'true' && storedTokens) {
-        try {
-          const tokens = JSON.parse(storedTokens);
-          supabase.auth.setSession({
-            access_token: tokens.access_token,
-            refresh_token: tokens.refresh_token
-          }).then(() => {
-            // Clear recovery data
-            localStorage.removeItem('petport_signup_success');
-            localStorage.removeItem('petport_signup_tokens');
-            
-            toast({
-              title: "Welcome back!",
-              description: "Your signup was successful. Redirecting to your account..."
-            });
-            
-            setTimeout(() => navigate("/app"), 500);
-          });
-        } catch (error) {
-          console.error('iOS recovery failed:', error);
-        }
-      }
-    }
-  }, [navigate, toast]);
+  // Remove localStorage recovery logic - no longer needed
 
   const handleFallbackNavigation = () => {
     window.location.href = '/app';
@@ -373,25 +405,37 @@ const SignupForm = () => {
               ) : "Start My Free Trial"}
             </Button>
 
-            {/* iOS Fallback Navigation */}
+            {/* Enhanced iOS Fallback Navigation */}
             {signupSuccess && showFallbackNavigation && (
               <div className="bg-green-50 border border-green-200 rounded-lg p-4 space-y-3">
                 <div className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
-                  <div className="space-y-2">
-                    <p className="text-sm font-medium text-green-800">
-                      ✅ Signup successful!
-                    </p>
-                    <p className="text-sm text-green-700">
-                      Your account has been created. If you're not automatically redirected, click below:
-                    </p>
-                    <Button 
-                      onClick={handleFallbackNavigation}
-                      className="w-full bg-green-600 hover:bg-green-700 text-white"
-                      size="sm"
-                    >
-                      Continue to My Account
-                    </Button>
+                  <div className="space-y-3">
+                    <div>
+                      <p className="text-sm font-medium text-green-800">
+                        ✅ Account created successfully!
+                      </p>
+                      <p className="text-sm text-green-700 mt-1">
+                        Your PetPort account is ready to use. Choose an option below:
+                      </p>
+                    </div>
+                    <div className="space-y-2">
+                      <Button 
+                        onClick={handleFallbackNavigation}
+                        className="w-full bg-green-600 hover:bg-green-700 text-white"
+                        size="sm"
+                      >
+                        Continue to My Account
+                      </Button>
+                      <Button 
+                        onClick={() => navigate("/auth")}
+                        variant="outline"
+                        className="w-full border-green-300 text-green-700 hover:bg-green-50"
+                        size="sm"
+                      >
+                        Try Login Again
+                      </Button>
+                    </div>
                   </div>
                 </div>
               </div>

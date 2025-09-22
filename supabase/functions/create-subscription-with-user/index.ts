@@ -191,39 +191,28 @@ serve(async (req) => {
       // Continue - email failure shouldn't break signup
     }
 
-    // Step 6: Generate session tokens for auto-login
-    console.log('🔑 Generating session tokens...');
-    const { data: sessionData, error: sessionError } = await supabase.auth.admin.generateLink({
-      type: 'magiclink',
-      email: email,
-    });
-
-    if (sessionError) {
-      console.error('❌ Failed to generate session:', sessionError);
-      // Continue without auto-login
-    } else {
-      console.log('✅ Session tokens generated successfully');
-      console.log('🔑 Session data present:', {
-        hasAccessToken: !!sessionData?.properties?.access_token,
-        hasRefreshToken: !!sessionData?.properties?.refresh_token
-      });
-    }
-
     console.log('🎉 Signup completed successfully - preparing response...');
 
+    // Step 6: Edge function is purely backend provisioning
+    // Frontend will handle authentication separately via signInWithPassword
     const responseData = {
       success: true,
       userId: authData.user.id,
       customerId: customer.id,
       subscriptionId: subscription.id,
-      sessionToken: sessionData?.properties?.access_token,
-      refreshToken: sessionData?.properties?.refresh_token,
+      email: email, // Include email for frontend sign-in
+      sessionTokenPresent: false, // Explicit flag - no tokens generated
+      refreshTokenPresent: false, // Explicit flag - no tokens generated
     };
     
-    console.log('📤 Sending response:', {
-      ...responseData,
-      sessionToken: responseData.sessionToken ? '[PRESENT]' : '[MISSING]',
-      refreshToken: responseData.refreshToken ? '[PRESENT]' : '[MISSING]'
+    console.log('📤 Sending response (backend provisioning complete):', {
+      success: responseData.success,
+      userId: responseData.userId,
+      customerId: responseData.customerId,
+      subscriptionId: responseData.subscriptionId,
+      email: '[HIDDEN]',
+      sessionTokenPresent: responseData.sessionTokenPresent,
+      refreshTokenPresent: responseData.refreshTokenPresent
     });
 
     return new Response(

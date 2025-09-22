@@ -209,12 +209,17 @@ serve(async (req) => {
   } catch (error) {
     console.error('Signup error:', error);
     
+    // Ensure we return proper error status codes
+    const statusCode = error.name === 'ValidationError' ? 400 : 500;
+    const errorMessage = error.message || 'An unexpected error occurred during signup';
+    
     return new Response(
       JSON.stringify({ 
-        error: error.message || 'An unexpected error occurred during signup' 
+        success: false,
+        error: errorMessage 
       }),
       {
-        status: 500,
+        status: statusCode,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       }
     );

@@ -80,7 +80,19 @@ const SignupForm = () => {
         }
       });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Signup function error:', error);
+        throw new Error(error.message || 'Signup function failed');
+      }
+
+      if (!data) {
+        throw new Error('No response data from signup function');
+      }
+
+      // Check for error in the response data
+      if (data.error) {
+        throw new Error(data.error);
+      }
 
       if (data?.sessionToken) {
         // Auto-login with the session token
@@ -95,11 +107,14 @@ const SignupForm = () => {
         });
         
         navigate("/app");
+      } else {
+        throw new Error('No session token received from signup');
       }
     } catch (error: any) {
+      console.error('Signup error details:', error);
       toast({
         title: "Signup failed",
-        description: error.message || "Please try again or contact support.",
+        description: error.message || "An unexpected error occurred. Please try again or contact support.",
         variant: "destructive"
       });
     } finally {

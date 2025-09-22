@@ -24,11 +24,15 @@ export const usePullToRefresh = ({
       return;
     }
     
-    // iOS Safari specific handling
+    // Enhanced iOS Safari specific handling
     const isIOSSafari = /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream;
-    if (isIOSSafari && window.scrollY === 0) {
-      // Prevent iOS native pull-to-refresh
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+    
+    if ((isIOSSafari || isIOS) && window.scrollY === 0) {
+      // More aggressive prevention of iOS native pull-to-refresh
       e.preventDefault();
+      document.body.style.overscrollBehavior = 'none';
+      document.documentElement.style.overscrollBehavior = 'none';
     }
     
     setStartY(e.touches[0].clientY);
@@ -46,21 +50,32 @@ export const usePullToRefresh = ({
     const currentY = e.touches[0].clientY;
     const distance = Math.max(0, currentY - startY);
     
-    // iOS Safari specific handling
+    // Enhanced iOS Safari specific handling
     const isIOSSafari = /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream;
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
     
     if (distance > 0) {
-      if (isIOSSafari) {
-        // Always prevent default on iOS to override native behavior
+      // More aggressive prevention on iOS
+      if (isIOSSafari || isIOS) {
         e.preventDefault();
+        e.stopPropagation();
+        // Reduce sensitivity for iOS to make it feel more responsive
+        setPullDistance(Math.min(distance * 0.7, threshold * 1.5));
       } else {
         e.preventDefault();
+        setPullDistance(Math.min(distance * 0.5, threshold * 1.5));
       }
-      setPullDistance(Math.min(distance * 0.5, threshold * 1.5)); // Reduce sensitivity for iOS
     }
   }, [disabled, startY, threshold]);
 
   const handleTouchEnd = useCallback(async () => {
+    // Reset iOS overscroll behavior
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+    if (isIOS) {
+      document.body.style.overscrollBehavior = '';
+      document.documentElement.style.overscrollBehavior = '';
+    }
+    
     if (disabled || pullDistance < threshold) {
       setPullDistance(0);
       setStartY(0);

@@ -10,6 +10,7 @@ import { ThemeProvider } from "@/context/ThemeContext";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { SafeErrorBoundary } from "@/components/SafeErrorBoundary";
+import { IOSRefreshPrompt } from "@/components/IOSRefreshPrompt";
 import { AuthKeepAliveWrapper } from "@/components/AuthKeepAliveWrapper";
 import Index from "./pages/Index";
 import Landing from "./pages/Landing";
@@ -140,9 +141,10 @@ const App = () => {
                       </ProtectedRoute>
                     } />
                    <Route path="*" element={<NotFound />} />
-                 </Routes>
-                 </BrowserRouter>
-                </ErrorBoundary>
+                  </Routes>
+                  <IOSRefreshPrompt />
+                  </BrowserRouter>
+                 </ErrorBoundary>
               </SafeErrorBoundary>
              </AuthKeepAliveWrapper>
           </AuthProvider>

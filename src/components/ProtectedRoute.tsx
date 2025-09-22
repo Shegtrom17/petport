@@ -3,12 +3,15 @@ import { Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { featureFlags } from "@/config/featureFlags";
+import { useIOSResilience } from "@/hooks/useIOSResilience";
+import { SafeErrorBoundary } from "@/components/SafeErrorBoundary";
 
 export function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, isLoading } = useAuth();
   const location = useLocation();
   const [checkingSub, setCheckingSub] = useState<boolean>(true);
   const [subscribed, setSubscribed] = useState<boolean | null>(null);
+  const { safeAsync, isIOSDevice } = useIOSResilience();
 
   // Detect if we're in Lovable preview environment
   const isPreview = window.location.hostname.includes('lovableproject.com') || 
@@ -22,63 +25,78 @@ export function ProtectedRoute({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const checkSubscription = async () => {
       if (!user) return;
-      try {
-        const { data, error } = await supabase
-          .from("subscribers")
-          .select("subscribed, status, grace_period_end")
-          .eq("user_id", user.id)
-          .maybeSingle();
-        
-        if (error) throw error;
-        
-        // Consider subscription active if:
-        // 1. subscribed = true (legacy check), OR
-        // 2. status = 'active', OR  
-        // 3. status = 'grace' and grace period hasn't ended
-        const now = new Date();
-        const isActive = data?.subscribed || 
-                         data?.status === 'active' ||
-                         (data?.status === 'grace' && 
-                          (!data.grace_period_end || new Date(data.grace_period_end) > now));
-        
-        setSubscribed(isActive);
-        console.log("Protected Route - Subscription status:", { 
-          subscribed: data?.subscribed,
-          status: data?.status,
-          gracePeriodEnd: data?.grace_period_end,
-          isActive 
-        });
-      } catch (e) {
-        console.warn("Protected Route - Subscription check failed, treating as unsubscribed", e);
-        setSubscribed(false);
-      } finally {
-        setCheckingSub(false);
-      }
+      
+      const result = await safeAsync(
+        async () => {
+          const { data, error } = await supabase
+            .from("subscribers")
+            .select("subscribed, status, grace_period_end")
+            .eq("user_id", user.id)
+            .maybeSingle();
+          
+          if (error) throw error;
+          
+          // Consider subscription active if:
+          // 1. subscribed = true (legacy check), OR
+          // 2. status = 'active', OR  
+          // 3. status = 'grace' and grace period hasn't ended
+          const now = new Date();
+          const isActive = data?.subscribed || 
+                           data?.status === 'active' ||
+                           (data?.status === 'grace' && 
+                            (!data.grace_period_end || new Date(data.grace_period_end) > now));
+          
+          console.log("Protected Route - Subscription status:", { 
+            subscribed: data?.subscribed,
+            status: data?.status,
+            gracePeriodEnd: data?.grace_period_end,
+            isActive 
+          });
+          
+          return isActive;
+        },
+        true, // Fallback to allowing access on error
+        'subscription-check'
+      );
+      
+      setSubscribed(result);
+      setCheckingSub(false);
     };
     
     if (user) {
       setCheckingSub(true);
       checkSubscription();
     }
-  }, [user]);
+  }, [user, safeAsync]);
 
   // Show loading state with timeout (skip subscription check wait in test mode)
   if (isLoading || (user && checkingSub && !featureFlags.testMode)) {
     console.log("Protected Route - Showing loading state");
     
-    // Add timeout fallback after 10 seconds
+    // Shorter timeout for iOS devices
+    const timeoutMs = isIOSDevice ? 5000 : 8000;
+    
     setTimeout(() => {
       if (checkingSub) {
         console.warn("Protected Route - Subscription check timeout, allowing access");
         setCheckingSub(false);
         setSubscribed(true); // Default to allowing access on timeout
       }
-    }, 10000);
+    }, timeoutMs);
     
     return (
-      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-blue-50 via-indigo-50 to-navy-100">
-        <div className="animate-pulse text-navy-800">Loading...</div>
-      </div>
+      <SafeErrorBoundary level="page" name="Loading Protection">
+        <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-blue-50 via-indigo-50 to-navy-100">
+          <div className="flex flex-col items-center gap-3">
+            <div className="animate-pulse text-navy-800">Loading PetPort...</div>
+            {isIOSDevice && (
+              <div className="text-xs text-navy-600">
+                iOS detected - optimizing experience
+              </div>
+            )}
+          </div>
+        </div>
+      </SafeErrorBoundary>
     );
   }
 
@@ -102,5 +120,9 @@ export function ProtectedRoute({ children }: { children: React.ReactNode }) {
   }
 
   console.log("Protected Route - User authenticated (and subscribed if required), rendering children");
-  return <>{children}</>;
+  return (
+    <SafeErrorBoundary level="page" name="Protected Route">
+      {children}
+    </SafeErrorBoundary>
+  );
 }

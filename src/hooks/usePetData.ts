@@ -4,6 +4,7 @@ import { fetchUserPets, fetchPetDetails } from "@/services/petService";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/context/AuthContext";
+import { useIOSResilience } from "@/hooks/useIOSResilience";
 
 const SELECTED_PET_KEY = 'selectedPetId';
 
@@ -14,6 +15,7 @@ export const usePetData = (initialPetId?: string) => {
   const [documents, setDocuments] = useState<any[]>([]);
   const { toast } = useToast();
   const { user } = useAuth();
+  const { safeAsync } = useIOSResilience();
 
   const fetchDocuments = async (petId: string) => {
     try {
@@ -35,83 +37,108 @@ export const usePetData = (initialPetId?: string) => {
   };
 
   const loadPets = async () => {
-    try {
-      console.log("usePetData - Loading pets...");
-      setIsLoading(true);
-      const userPets = await fetchUserPets();
-      console.log("usePetData - Fetched pets:", userPets);
-      
-      // Keep DB order (already ordered in fetchUserPets)
-      const orderedPets = userPets;
-      setPets(orderedPets);
-      
-      if (orderedPets.length > 0) {
-        // Determine which pet to select: initialPetId > localStorage > first pet
-        let targetPetId = initialPetId;
+    console.log("usePetData - Loading pets...");
+    setIsLoading(true);
+    
+    const result = await safeAsync(
+      async () => {
+        const userPets = await fetchUserPets();
+        console.log("usePetData - Fetched pets:", userPets);
         
-        if (!targetPetId) {
-          const savedPetId = localStorage.getItem(SELECTED_PET_KEY);
-          if (savedPetId && orderedPets.find(p => p.id === savedPetId)) {
-            targetPetId = savedPetId;
-          } else {
-            targetPetId = orderedPets[0].id;
+        // Keep DB order (already ordered in fetchUserPets)
+        const orderedPets = userPets;
+        setPets(orderedPets);
+        
+        if (orderedPets.length > 0) {
+          // Determine which pet to select: initialPetId > localStorage > first pet
+          let targetPetId = initialPetId;
+          
+          if (!targetPetId) {
+            const savedPetId = localStorage.getItem(SELECTED_PET_KEY);
+            if (savedPetId && orderedPets.find(p => p.id === savedPetId)) {
+              targetPetId = savedPetId;
+            } else {
+              targetPetId = orderedPets[0].id;
+            }
           }
+          
+          console.log("usePetData - Target pet ID:", targetPetId, "initial:", initialPetId, "saved:", localStorage.getItem(SELECTED_PET_KEY));
+          
+          const petDetails = await fetchPetDetails(targetPetId);
+          console.log("usePetData - Selected pet details:", petDetails?.name, petDetails?.id);
+          setSelectedPet(petDetails);
+          
+          // Load documents with resilience
+          await safeAsync(
+            () => fetchDocuments(targetPetId),
+            undefined,
+            'fetch-documents'
+          );
+          
+          // Save selection to localStorage
+          localStorage.setItem(SELECTED_PET_KEY, targetPetId);
+        } else {
+          console.log("usePetData - No pets found");
+          setSelectedPet(null);
         }
         
-        console.log("usePetData - Target pet ID:", targetPetId, "initial:", initialPetId, "saved:", localStorage.getItem(SELECTED_PET_KEY));
-        
-        const petDetails = await fetchPetDetails(targetPetId);
-        console.log("usePetData - Selected pet details:", petDetails?.name, petDetails?.id);
-        setSelectedPet(petDetails);
-        await fetchDocuments(targetPetId);
-        
-        // Save selection to localStorage
-        localStorage.setItem(SELECTED_PET_KEY, targetPetId);
-      } else {
-        console.log("usePetData - No pets found");
-        setSelectedPet(null);
-        // Do not clear saved selection here to avoid losing context during auth initialization
-      }
-    } catch (error) {
-      console.error("Error loading pets:", error);
+        return true;
+      },
+      false, // Fallback value
+      'load-pets'
+    );
+    
+    if (!result) {
       toast({
         variant: "destructive",
-        title: "Error loading pets",
-        description: "Could not load your pets. Please try again."
+        title: "Loading issue",
+        description: "Could not load your pets. Check your connection and try again."
       });
-    } finally {
-      setIsLoading(false);
     }
+    
+    setIsLoading(false);
   };
 
   const handleSelectPet = async (petId: string) => {
-    try {
-      console.log("usePetData - Selecting pet:", petId, "current selected:", selectedPet?.id);
-      
-      // Don't reload if already selected
-      if (selectedPet?.id === petId) {
-        console.log("usePetData - Pet already selected, skipping reload");
-        return;
-      }
-      
-      setIsLoading(true);
-      const petDetails = await fetchPetDetails(petId);
-      console.log("usePetData - Selected pet details:", petDetails?.name, petDetails?.id);
-      setSelectedPet(petDetails);
-      await fetchDocuments(petId);
-      
-      // Save selection to localStorage
-      localStorage.setItem(SELECTED_PET_KEY, petId);
-    } catch (error) {
-      console.error("Error fetching pet details:", error);
+    console.log("usePetData - Selecting pet:", petId, "current selected:", selectedPet?.id);
+    
+    // Don't reload if already selected
+    if (selectedPet?.id === petId) {
+      console.log("usePetData - Pet already selected, skipping reload");
+      return;
+    }
+    
+    setIsLoading(true);
+    
+    const result = await safeAsync(
+      async () => {
+        const petDetails = await fetchPetDetails(petId);
+        console.log("usePetData - Selected pet details:", petDetails?.name, petDetails?.id);
+        setSelectedPet(petDetails);
+        
+        await safeAsync(
+          () => fetchDocuments(petId),
+          undefined,
+          'fetch-documents-select'
+        );
+        
+        // Save selection to localStorage
+        localStorage.setItem(SELECTED_PET_KEY, petId);
+        return true;
+      },
+      false,
+      'select-pet'
+    );
+    
+    if (!result) {
       toast({
         variant: "destructive",
-        title: "Error",
-        description: "Could not load pet details. Please try again."
+        title: "Loading issue",
+        description: "Could not load pet details. Check your connection and try again."
       });
-    } finally {
-      setIsLoading(false);
     }
+    
+    setIsLoading(false);
   };
 
   const handlePetUpdate = async () => {

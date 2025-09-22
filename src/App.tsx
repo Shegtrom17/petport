@@ -9,6 +9,7 @@ import { AuthProvider } from "@/context/AuthContext";
 import { ThemeProvider } from "@/context/ThemeContext";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
+import { SafeErrorBoundary } from "@/components/SafeErrorBoundary";
 import { AuthKeepAliveWrapper } from "@/components/AuthKeepAliveWrapper";
 import Index from "./pages/Index";
 import Landing from "./pages/Landing";
@@ -60,9 +61,10 @@ const App = () => {
         <ThemeProvider>
           <AuthProvider>
             <AuthKeepAliveWrapper>
-              <ErrorBoundary>
-                <Toaster />
-                <Sonner />
+              <SafeErrorBoundary level="page" name="Application Root">
+                <ErrorBoundary>
+                  <Toaster />
+                  <Sonner />
                 
                 <BrowserRouter>
                 <Routes>
@@ -138,10 +140,11 @@ const App = () => {
                       </ProtectedRoute>
                     } />
                    <Route path="*" element={<NotFound />} />
-                </Routes>
-                </BrowserRouter>
-              </ErrorBoundary>
-            </AuthKeepAliveWrapper>
+                 </Routes>
+                 </BrowserRouter>
+                </ErrorBoundary>
+              </SafeErrorBoundary>
+             </AuthKeepAliveWrapper>
           </AuthProvider>
         </ThemeProvider>
       </TooltipProvider>

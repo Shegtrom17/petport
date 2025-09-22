@@ -33,6 +33,8 @@ import { SwipeContainer } from "@/components/layout/SwipeContainer";
 import { useOverlayOpen } from "@/stores/overlayStore";
 import { isTouchDevice } from "@/hooks/useIsTouchDevice";
 import { featureFlags } from "@/config/featureFlags";
+import { IOSMonitor } from "@/components/IOSMonitor";
+import { IOSOptimizedIndex } from "@/components/IOSOptimizedIndex";
 import { getPrevNext, type TabId } from "@/features/navigation/tabOrder";
 import { ExternalLink } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -345,23 +347,25 @@ const Index = () => {
   }
 
   return (
-    <PWALayout>
-      <div className="min-h-screen bg-white">
-        <PetHeader 
-          activeTab={activeTab} 
-          onTabChange={handleTabChange} 
-          selectedPetId={selectedPet?.id || petData.id}
-          selectedPetName={selectedPet?.name || petData.name}
-          selectedPet={selectedPet || petData}
-          onPrivacyToggle={handlePrivacyToggle}
-        />
+    <IOSOptimizedIndex activeTab={activeTab}>
+      <PWALayout>
+        <IOSMonitor />
+        <div className="min-h-screen bg-white">
+          <PetHeader 
+            activeTab={activeTab} 
+            onTabChange={handleTabChange} 
+            selectedPetId={selectedPet?.id || petData.id}
+            selectedPetName={selectedPet?.name || petData.name}
+            selectedPet={selectedPet || petData}
+            onPrivacyToggle={handlePrivacyToggle}
+          />
 
-        <InAppSharingModal
-          isOpen={isInAppSharingOpen}
-          onClose={() => setIsInAppSharingOpen(false)}
-          petId={selectedPet?.id || petData.id || ""}
-          petName={petData.name}
-        />
+          <InAppSharingModal
+            isOpen={isInAppSharingOpen}
+            onClose={() => setIsInAppSharingOpen(false)}
+            petId={selectedPet?.id || petData.id || ""}
+            petName={petData.name}
+          />
 
         <main className="max-w-6xl mx-auto px-3 sm:px-4 py-4 sm:py-6 lg:py-8 pb-20 sm:pb-24">
             
@@ -404,9 +408,10 @@ const Index = () => {
             )}
           </main>
 
-        {/* Floating Report Issue Button */}
-      </div>
-    </PWALayout>
+          {/* Floating Report Issue Button */}
+        </div>
+      </PWALayout>
+    </IOSOptimizedIndex>
   );
 };
 

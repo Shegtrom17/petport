@@ -138,3 +138,6 @@ verify_jwt = false
 
 [functions.gallery-share]
 verify_jwt = false
+
+[functions.create-setup-intent]
+verify_jwt = false

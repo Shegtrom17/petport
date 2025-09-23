@@ -174,10 +174,9 @@ const SignupForm = () => {
           email: formData.email,
           password: formData.password,
           fullName: formData.fullName,
-          planId: plan,
-          additionalPets,
-          paymentMethodId: typeof paymentMethodId === 'string' ? paymentMethodId : paymentMethodId?.id,
-          correlationId: corrId.current
+          plan: plan,
+          additionalPets: additionalPets,
+          corrId: corrId.current,
         }
       });
       
@@ -490,13 +489,47 @@ const SignupForm = () => {
 };
 
 export default function PlanSignup() {
+  const [clientSecret, setClientSecret] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchClientSecret = async () => {
+      try {
+        const { data, error } = await supabase.functions.invoke("create-setup-intent", {
+          body: { testMode: featureFlags.testMode }
+        });
+        if (error) throw error;
+        setClientSecret(data?.clientSecret || null);
+      } catch (err) {
+        console.error("Failed to initialize payment form", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchClientSecret();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-sm text-muted-foreground">Preparing secure payment form...</div>
+      </div>
+    );
+  }
+
+  if (!clientSecret) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-sm text-destructive">Unable to load payment form. Please refresh and try again.</div>
+      </div>
+    );
+  }
+
   return (
     <Elements 
       stripe={stripePromise}
       options={{
-        mode: 'setup',
-        currency: 'usd',
-        setupFutureUsage: 'off_session',
+        clientSecret,
         appearance: {
           theme: 'stripe',
           variables: {

@@ -15,7 +15,9 @@ export default function Subscribe() {
   const openPortal = async () => {
     setLoadingPortal(true);
     try {
-      const { data, error } = await supabase.functions.invoke("customer-portal");
+      const { data, error } = await supabase.functions.invoke("customer-portal", {
+        body: { testMode: featureFlags.testMode }
+      });
       if (error) throw error;
       const url = data?.url as string | undefined;
       if (url) {

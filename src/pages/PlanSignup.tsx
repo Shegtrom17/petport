@@ -15,8 +15,15 @@ import { Elements, CardElement, useStripe, useElements } from "@stripe/react-str
 import { PRICING } from "@/config/pricing";
 import { useIOSResilience } from "@/hooks/useIOSResilience";
 import { isIOSDevice } from "@/utils/iosDetection";
+import { featureFlags } from "@/config/featureFlags";
 
-const stripePromise = loadStripe("pk_test_51QIDNRGWjWGZWj9YcGNqAOqrIiROFGHbIvPLMXqGqKw8IFoYEYjFp0L39a3Mop1j8VGLwqJcGJHgE6FGMT4wuFHC00fM6BsB95");
+const getStripePublishableKey = () => {
+  return featureFlags.testMode 
+    ? "pk_test_51QIDNRGWjWGZWj9YcGNqAOqrIiROFGHbIvPLMXqGqKw8IFoYEYjFp0L39a3Mop1j8VGLwqJcGJHgE6FGMT4wuFHC00fM6BsB95"
+    : "pk_live_51RuDeJ2IUHOgcyL2jWjYekloMNNBLlynpLA4TvybzbSwxoN5cgg80cPkpLMMa6NYLQu9l9XedvcI2kQrxAw7nGKC002hr6491M";
+};
+
+const stripePromise = loadStripe(getStripePublishableKey());
 
 const SignupForm = () => {
   const [searchParams] = useSearchParams();

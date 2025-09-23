@@ -137,6 +137,12 @@ const SignupForm = () => {
       const { error: paymentError, setupIntent } = await stripe.confirmSetup({
         elements,
         confirmParams: {
+          payment_method_data: {
+            billing_details: {
+              name: formData.fullName,
+              email: formData.email,
+            }
+          },
           return_url: `${window.location.origin}/post-checkout?plan=${plan}&pets=${additionalPets}`,
         },
         redirect: "if_required"
@@ -176,6 +182,7 @@ const SignupForm = () => {
           fullName: formData.fullName,
           plan: plan,
           additionalPets: additionalPets,
+          paymentMethodId: paymentMethodId,
           corrId: corrId.current,
         }
       });

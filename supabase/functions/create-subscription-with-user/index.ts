@@ -13,6 +13,7 @@ interface ProvisionRequest {
   fullName: string;
   plan: "monthly" | "yearly";
   additionalPets: number;
+  paymentMethodId?: string;
   corrId?: string; // Correlation ID for debugging
 }
 
@@ -31,7 +32,7 @@ const handler = async (req: Request): Promise<Response> => {
 
   try {
     const startTime = Date.now();
-    const { email, password, fullName, plan, additionalPets, corrId }: ProvisionRequest = JSON.parse(body);
+    const { email, password, fullName, plan, additionalPets, paymentMethodId, corrId }: ProvisionRequest = JSON.parse(body);
     
     console.log(`🚀 [${corrId || 'no-id'}] Starting provisioning for ${email}, plan: ${plan}, additional pets: ${additionalPets}`);
 
@@ -129,11 +130,32 @@ const handler = async (req: Request): Promise<Response> => {
 
     console.log(`✅ [${corrId || 'no-id'}] Stripe customer created: ${customer.id} (${Date.now() - customerStartTime}ms)`);
 
+    // Attach payment method to customer if provided
+    if (paymentMethodId) {
+      console.log(`💳 [${corrId || 'no-id'}] Attaching payment method ${paymentMethodId} to customer ${customer.id}...`);
+      try {
+        await stripe.paymentMethods.attach(paymentMethodId, {
+          customer: customer.id,
+        });
+        
+        // Set as default payment method
+        await stripe.customers.update(customer.id, {
+          invoice_settings: {
+            default_payment_method: paymentMethodId,
+          },
+        });
+        console.log(`✅ [${corrId || 'no-id'}] Payment method attached and set as default`);
+      } catch (pmError) {
+        console.error(`❌ [${corrId || 'no-id'}] Failed to attach payment method:`, pmError);
+        // Continue without failing - trial doesn't require payment method
+      }
+    }
+
     // Create Stripe subscription with trial
     console.log(`💳 [${corrId || 'no-id'}] Creating Stripe subscription for customer ${customer.id}...`);
     const subscriptionStartTime = Date.now();
     
-    const subscription = await stripe.subscriptions.create({
+    const subscriptionParams: any = {
       customer: customer.id,
       items: lineItems,
       trial_end: Math.floor(trialEndDate.getTime() / 1000),
@@ -144,7 +166,14 @@ const handler = async (req: Request): Promise<Response> => {
         created_via: 'petport_signup',
         correlation_id: corrId || 'no-id',
       },
-    });
+    };
+
+    // Set default payment method if attached
+    if (paymentMethodId) {
+      subscriptionParams.default_payment_method = paymentMethodId;
+    }
+
+    const subscription = await stripe.subscriptions.create(subscriptionParams);
 
     console.log(`✅ [${corrId || 'no-id'}] Stripe subscription created: ${subscription.id} (${Date.now() - subscriptionStartTime}ms)`);
 

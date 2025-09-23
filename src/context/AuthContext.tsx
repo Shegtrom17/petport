@@ -9,7 +9,6 @@ interface AuthContextType {
   session: Session | null;
   isLoading: boolean;
   signIn: (email: string, password: string) => Promise<void>;
-  signUp: (email: string, password: string, fullName: string) => Promise<void>;
   signOut: () => Promise<void>;
 }
 
@@ -160,69 +159,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  const signUp = async (email: string, password: string, fullName: string) => {
-    try {
-      console.log("Auth: Starting sign up process");
-      
-      // Clean up any existing auth state
-      cleanupAuthState();
-      
-      // Attempt global sign out first
-      try {
-        await supabase.auth.signOut({ scope: 'global' });
-      } catch (err) {
-        console.log("Auth: Global signout failed (this is okay):", err);
-      }
-      
-      const redirectUrl = `${window.location.origin}/`;
-      
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          emailRedirectTo: redirectUrl,
-          data: {
-            full_name: fullName,
-          },
-        },
-      });
-
-      if (error) {
-        console.error("Auth: Sign up error:", error);
-        toast({
-          variant: "destructive",
-          title: "Sign up failed",
-          description: error.message,
-        });
-        throw error;
-      }
-
-      console.log("Auth: Sign up successful", { data });
-      
-      if (data.user && !data.session) {
-        // Email confirmation required
-        toast({
-          title: "Check your email",
-          description: "Please check your email for a confirmation link to complete your registration.",
-        });
-      } else if (data.session) {
-        // User is immediately signed in
-        toast({
-          title: "Welcome!",
-          description: "Your account has been created successfully.",
-        });
-        
-        // Force page refresh for clean state
-        setTimeout(() => {
-          window.location.href = '/onboarding';
-        }, 500);
-      }
-      
-    } catch (error) {
-      console.error("Auth: Sign up error:", error);
-      throw error;
-    }
-  };
 
   const signOut = async () => {
     try {
@@ -255,7 +191,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     session,
     isLoading,
     signIn,
-    signUp,
+    
     signOut,
   };
 

@@ -11,7 +11,7 @@ import { CreditCard, Check, Shield, Clock, AlertTriangle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { loadStripe } from "@stripe/stripe-js";
-import { Elements, CardElement, useStripe, useElements } from "@stripe/react-stripe-js";
+import { Elements, PaymentElement, useStripe, useElements } from "@stripe/react-stripe-js";
 import { PRICING } from "@/config/pricing";
 import { useIOSResilience } from "@/hooks/useIOSResilience";
 import { isIOSDevice } from "@/utils/iosDetection";
@@ -105,30 +105,65 @@ const SignupForm = () => {
     console.time(`PlanSignup-${corrId.current}`);
     console.log(`🚀 [${corrId.current}] Starting signup process for plan: ${plan}, additional pets: ${additionalPets}`);
     
-    if (!stripe || !elements) return;
+    if (!stripe || !elements) {
+      console.error(`❌ [${corrId.current}] Stripe not loaded`);
+      toast({
+        title: "Payment Error",
+        description: `Payment system not ready. Please refresh and try again. (ID: ${corrId.current})`,
+        variant: "destructive",
+      });
+      return;
+    }
 
     try {
       setIsLoading(true);
       setSignupSuccess(false);
       setShowFallbackNavigation(false);
 
-      // Get the Stripe token first
-      const cardElement = elements.getElement(CardElement);
-      if (!cardElement) throw new Error("Card element not found");
-
-      const { error: stripeError, token } = await stripe.createToken(cardElement);
+      // Confirm payment setup with PaymentElement
+      console.log(`💳 [${corrId.current}] Confirming payment setup...`);
+      const { error: submitError } = await elements.submit();
       
-      if (stripeError) {
-        console.error(`❌ [${corrId.current}] Stripe token creation failed:`, stripeError);
+      if (submitError) {
+        console.error(`❌ [${corrId.current}] Payment element submit failed:`, submitError);
         toast({
           title: "Payment Error",
-          description: stripeError.message || "Failed to process payment information",
+          description: `${submitError.message || "Payment setup failed."} (ID: ${corrId.current})`,
           variant: "destructive",
         });
         return;
       }
 
-      console.log(`✅ [${corrId.current}] Stripe token created successfully:`, token?.id);
+      const { error: paymentError, setupIntent } = await stripe.confirmSetup({
+        elements,
+        confirmParams: {
+          return_url: `${window.location.origin}/post-checkout?plan=${plan}&pets=${additionalPets}`,
+        },
+        redirect: "if_required"
+      });
+
+      if (paymentError) {
+        console.error(`❌ [${corrId.current}] Payment setup confirmation failed:`, paymentError);
+        toast({
+          title: "Payment Error",
+          description: `${paymentError.message || "Payment setup failed."} (ID: ${corrId.current})`,
+          variant: "destructive",
+        });
+        return;
+      }
+
+      const paymentMethodId = setupIntent?.payment_method;
+      if (!paymentMethodId) {
+        console.error(`❌ [${corrId.current}] No payment method returned`);
+        toast({
+          title: "Payment Error",
+          description: `Payment setup failed. Please try again. (ID: ${corrId.current})`,
+          variant: "destructive",
+        });
+        return;
+      }
+
+      console.log(`✅ [${corrId.current}] Payment method confirmed:`, paymentMethodId);
 
       // Call the provisioning function with correlation ID
       console.log(`📞 [${corrId.current}] Calling create-subscription-with-user function...`);
@@ -139,9 +174,10 @@ const SignupForm = () => {
           email: formData.email,
           password: formData.password,
           fullName: formData.fullName,
-          plan: plan,
-          additionalPets: additionalPets,
-          corrId: corrId.current,
+          planId: plan,
+          additionalPets,
+          paymentMethodId: typeof paymentMethodId === 'string' ? paymentMethodId : paymentMethodId?.id,
+          correlationId: corrId.current
         }
       });
       
@@ -226,8 +262,6 @@ const SignupForm = () => {
       console.timeEnd(`PlanSignup-${corrId.current}`);
     }
   };
-
-  // Remove localStorage recovery logic - no longer needed
 
   const handleFallbackNavigation = () => {
     window.location.href = '/app';
@@ -335,18 +369,19 @@ const SignupForm = () => {
             {/* Payment Method */}
             <div className="space-y-3">
               <Label>Payment Method</Label>
-              <div className="p-3 border rounded-lg bg-background">
-                <CardElement 
+              <div className="min-h-[60px] p-4 border rounded-lg bg-background">
+                <PaymentElement 
                   options={{
-                    style: {
-                      base: {
-                        fontSize: '16px',
-                        color: '#424770',
-                        '::placeholder': {
-                          color: '#aab7c4',
-                        },
-                      },
-                    },
+                    layout: "tabs",
+                    paymentMethodOrder: ['card'],
+                    fields: {
+                      billingDetails: {
+                        address: {
+                          country: 'never',
+                          postalCode: 'auto'
+                        }
+                      }
+                    }
                   }}
                 />
               </div>
@@ -398,81 +433,56 @@ const SignupForm = () => {
                         ✅ Account created successfully!
                       </p>
                       <p className="text-sm text-green-700 mt-1">
-                        Your PetPort account is ready to use. Choose an option below:
+                        Your {plan} plan is active with a 7-day free trial ending on {getTrialEndDate()}.
                       </p>
                     </div>
-                    <div className="space-y-2">
-                      <Button 
-                        onClick={handleFallbackNavigation}
-                        className="w-full bg-green-600 hover:bg-green-700 text-white"
-                        size="sm"
-                      >
-                        Continue to My Account
-                      </Button>
-                      <Button 
-                        onClick={() => navigate("/auth")}
-                        variant="outline"
-                        className="w-full border-green-300 text-green-700 hover:bg-green-50"
-                        size="sm"
-                      >
-                        Try Login Again
-                      </Button>
+                    
+                    <div className="bg-amber-50 border border-amber-200 rounded p-3">
+                      <div className="flex gap-2">
+                        <AlertTriangle className="w-4 h-4 text-amber-600 mt-0.5 flex-shrink-0" />
+                        <div className="text-sm text-amber-800">
+                          <p className="font-medium">iOS Navigation Issue Detected</p>
+                          <p className="mt-1">If you're not automatically redirected, please use the button below:</p>
+                        </div>
+                      </div>
                     </div>
+
+                    <Button 
+                      onClick={handleFallbackNavigation}
+                      className="w-full bg-green-600 hover:bg-green-700 text-white"
+                    >
+                      Continue to Your Dashboard
+                    </Button>
                   </div>
                 </div>
               </div>
             )}
 
-            {/* Trial Transparency Warning */}
-            <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 space-y-2">
-              <div className="flex items-start gap-3">
-                <AlertTriangle className="w-5 h-5 text-amber-600 mt-0.5 flex-shrink-0" />
-                <div className="space-y-1">
-                  <p className="text-sm font-medium text-amber-800">
-                    ⚠️ You won't be charged today.
-                  </p>
-                  <p className="text-sm text-amber-700">
-                    Your 7-day free trial ends on <strong>{getTrialEndDate()}</strong>.
-                  </p>
-                  <p className="text-sm text-amber-700">
-                    Cancel anytime before that date to avoid being charged. After that, your card will be billed <strong>${(pricing.total / 100).toFixed(2)}/{planData.interval}</strong> unless canceled.
-                  </p>
+            {/* Trust Signals */}
+            <div className="flex flex-col items-center gap-3 pt-4 text-xs text-muted-foreground">
+              <div className="flex items-center gap-4">
+                <div className="flex items-center gap-1">
+                  <Shield className="w-3 h-3" />
+                  <span>SSL Secured</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <CreditCard className="w-3 h-3" />
+                  <span>Stripe Protected</span>
                 </div>
               </div>
-            </div>
-
-            {/* Trust Signals */}
-            <div className="flex items-center justify-center gap-4 text-xs text-muted-foreground pt-2">
-              <div className="flex items-center gap-1">
-                <Check className="w-3 h-3 text-green-500" />
-                <span>7-day free trial</span>
-              </div>
-              <div className="flex items-center gap-1">
-                <Check className="w-3 h-3 text-green-500" />
-                <span>Cancel anytime</span>
-              </div>
-              <div className="flex items-center gap-1">
-                <Check className="w-3 h-3 text-green-500" />
-                <span>Secure checkout</span>
-              </div>
+              
+              <p className="text-center">
+                By continuing, you agree to our{" "}
+                <Link to="/terms" className="text-brand-primary hover:underline">
+                  Terms of Service
+                </Link>{" "}
+                and{" "}
+                <Link to="/privacy-policy" className="text-brand-primary hover:underline">
+                  Privacy Policy
+                </Link>
+              </p>
             </div>
           </form>
-
-          <div className="mt-6 text-center">
-            <p className="text-sm text-muted-foreground">
-              Already have an account?{" "}
-              <Link to="/auth" className="text-brand-primary hover:underline font-medium">
-                Sign in
-              </Link>
-            </p>
-          </div>
-
-          <div className="mt-4 text-center text-xs text-muted-foreground">
-            By signing up, you agree to our{" "}
-            <Link to="/terms" className="underline hover:text-foreground">Terms of Service</Link>
-            {" "}and{" "}
-            <Link to="/privacy-policy" className="underline hover:text-foreground">Privacy Policy</Link>
-          </div>
         </CardContent>
       </Card>
     </div>
@@ -481,7 +491,26 @@ const SignupForm = () => {
 
 export default function PlanSignup() {
   return (
-    <Elements stripe={stripePromise}>
+    <Elements 
+      stripe={stripePromise}
+      options={{
+        mode: 'setup',
+        currency: 'usd',
+        setupFutureUsage: 'off_session',
+        appearance: {
+          theme: 'stripe',
+          variables: {
+            colorPrimary: '#2563eb',
+            colorBackground: '#ffffff',
+            colorText: '#30313d',
+            colorDanger: '#df1b41',
+            fontFamily: 'system-ui, sans-serif',
+            spacingUnit: '4px',
+            borderRadius: '8px'
+          }
+        }
+      }}
+    >
       <SignupForm />
     </Elements>
   );

@@ -75,6 +75,9 @@ verify_jwt = false
 [functions.create-payment]
 verify_jwt = true
 
+[functions.create-subscription-with-user]
+verify_jwt = false
+
 [functions.create-checkout]
 verify_jwt = true
 
@@ -122,6 +125,9 @@ verify_jwt = false
 verify_jwt = false
 
 [functions.setup-stripe-webhook]
+verify_jwt = false
+
+[functions.setup-stripe-products]
 verify_jwt = false
 
 [functions.care-instructions-share]

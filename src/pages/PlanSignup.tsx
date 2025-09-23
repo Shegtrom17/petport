@@ -15,7 +15,6 @@ import { Elements, CardElement, useStripe, useElements } from "@stripe/react-str
 import { PRICING } from "@/config/pricing";
 import { useIOSResilience } from "@/hooks/useIOSResilience";
 import { isIOSDevice } from "@/utils/iosDetection";
-import { useAuth } from "@/context/AuthContext";
 
 const stripePromise = loadStripe("pk_test_51QIDNRGWjWGZWj9YcGNqAOqrIiROFGHbIvPLMXqGqKw8IFoYEYjFp0L39a3Mop1j8VGLwqJcGJHgE6FGMT4wuFHC00fM6BsB95");
 
@@ -43,7 +42,6 @@ const SignupForm = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [signupSuccess, setSignupSuccess] = useState(false);
   const [showFallbackNavigation, setShowFallbackNavigation] = useState(false);
-  const { signInWithPassword } = useAuth();
 
   const plan = searchParams.get("plan") || "monthly";
   const planData = PRICING.plans.find(p => p.id === plan) || PRICING.plans[0];

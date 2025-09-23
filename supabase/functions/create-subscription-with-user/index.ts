@@ -14,7 +14,17 @@ serve(async (req) => {
   }
 
   try {
+    // Handle warm-up requests for pre-loading
+    const body = await req.text();
+    if (body === '{"__warm":true}') {
+      console.log('⚡ Warm-up request received');
+      return new Response(null, { status: 204 });
+    }
+    
     console.log('🚀 Starting signup process...');
+    
+    // Parse the actual request body
+    const requestData = JSON.parse(body);
     
     // Initialize Stripe
     const stripeKey = Deno.env.get('STRIPE_SECRET_KEY');
@@ -29,8 +39,8 @@ serve(async (req) => {
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-    // Parse request body
-    const { email, password, fullName, plan, additionalPets = 0 } = await req.json();
+    // Use already parsed request data
+    const { email, password, fullName, plan, additionalPets = 0 } = requestData;
     console.log('📝 Parsed request:', { email, fullName, plan, additionalPets });
 
     // Validate input
@@ -48,17 +58,8 @@ serve(async (req) => {
       );
     }
 
-    // Check if user already exists
-    console.log('🔍 Checking for existing user...');
-    const { data: existingUsers } = await supabase.auth.admin.listUsers();
-    const existingUser = existingUsers.users.find(u => u.email === email);
-    console.log('👤 User exists check:', !!existingUser);
-    if (existingUser) {
-      return new Response(
-        JSON.stringify({ error: 'An account with this email already exists' }),
-        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
-    }
+    // Skip expensive user check - let createUser handle duplicates directly
+    console.log('🔍 Skipping user existence check for performance');
 
     // Calculate pricing
     const planPrices = {
@@ -127,7 +128,7 @@ serve(async (req) => {
 
     console.log('Created Stripe subscription:', subscription.id);
 
-    // Step 4: Create Supabase user
+    // Step 4: Create Supabase user (handle duplicates gracefully)
     console.log('👤 Creating Supabase user...');
     const { data: authData, error: authError } = await supabase.auth.admin.createUser({
       email,
@@ -139,7 +140,19 @@ serve(async (req) => {
     });
 
     if (authError || !authData.user) {
-      // Cleanup: cancel the subscription if user creation fails
+      // Check if error is due to user already existing
+      if (authError?.message?.includes('already registered') || authError?.message?.includes('already exists')) {
+        // Cleanup Stripe resources and return specific error
+        await stripe.subscriptions.cancel(subscription.id);
+        await stripe.customers.del(customer.id);
+        
+        return new Response(
+          JSON.stringify({ error: 'An account with this email already exists' }),
+          { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+      
+      // Cleanup: cancel the subscription for other errors
       await stripe.subscriptions.cancel(subscription.id);
       await stripe.customers.del(customer.id);
       
@@ -170,9 +183,10 @@ serve(async (req) => {
       console.log('✅ Subscriber record created');
     }
 
-    // Step 5.5: Send welcome email with trial details
+    // Step 5.5: Send welcome email with trial details (with timeout)
     try {
-      await supabase.functions.invoke('send-email', {
+      console.log('📧 Sending welcome email...');
+      const emailPromise = supabase.functions.invoke('send-email', {
         body: {
           type: 'welcome_trial',
           recipientEmail: email,
@@ -185,9 +199,16 @@ serve(async (req) => {
           customMessage: `Welcome to PetPort! Your 7-day free trial is now active.`
         }
       });
-      console.log('Welcome email sent successfully');
+      
+      // Race against timeout - don't let email delay signup
+      const timeoutPromise = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('Email timeout')), 2000)
+      );
+      
+      await Promise.race([emailPromise, timeoutPromise]);
+      console.log('✅ Welcome email sent successfully');
     } catch (emailError) {
-      console.error('Failed to send welcome email:', emailError);
+      console.warn('⚠️ Welcome email failed or timed out:', emailError.message);
       // Continue - email failure shouldn't break signup
     }
 

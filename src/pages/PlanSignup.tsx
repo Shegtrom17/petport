@@ -71,6 +71,22 @@ const SignupForm = () => {
     if (!["monthly", "yearly"].includes(plan)) {
       navigate("/?error=invalid-plan");
     }
+    
+    // Pre-warm the edge function for faster response
+    const warmupFunction = async () => {
+      try {
+        console.log('⚡ Pre-warming edge function...');
+        await supabase.functions.invoke("create-subscription-with-user", {
+          body: { __warm: true }
+        });
+        console.log('✅ Edge function pre-warmed');
+      } catch (error) {
+        console.log('⚠️ Edge function warmup failed (this is okay):', error);
+      }
+    };
+    
+    // Warm up after a short delay to not interfere with page load
+    setTimeout(warmupFunction, 1000);
   }, [plan, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -163,15 +179,38 @@ const SignupForm = () => {
     };
 
     try {
-      // Step 1: Backend provisioning with timeout protection
+      // Step 1: Backend provisioning with extended timeout for Android
+      const timeoutMs = isIOSDevice() ? 45000 : 60000; // 45s iOS, 60s Android
       const backendData = await safeAsync(
-        () => withTimeout(performBackendSignup(), 'backend-provisioning', 25000),
+        () => withTimeout(performBackendSignup(), 'backend-provisioning', timeoutMs),
         null,
         'backend-signup'
       );
 
       if (!backendData) {
-        throw new Error('Backend provisioning failed or timed out');
+        // Attempt to recover by trying sign-in
+        console.log('🔄 Backend timed out, attempting recovery sign-in...');
+        try {
+          const { data: recoveryData, error: recoveryError } = await supabase.auth.signInWithPassword({
+            email: formData.email,
+            password: formData.password
+          });
+          
+          if (recoveryData.session && !recoveryError) {
+            console.log('✅ Recovery sign-in successful');
+            setSignupSuccess(true);
+            toast({
+              title: "Welcome to PetPort! 🎉",
+              description: "Your account was created successfully. Your free trial has started!"
+            });
+            navigate("/app");
+            return;
+          }
+        } catch (recoveryError) {
+          console.log('❌ Recovery sign-in also failed:', recoveryError);
+        }
+        
+        throw new Error('Backend provisioning failed or timed out. Please try signing in manually.');
       }
 
       console.log('✅ Backend provisioning successful, starting authentication...');
@@ -229,14 +268,23 @@ const SignupForm = () => {
     } catch (error: any) {
       console.error('❌ Signup process failed:', error);
       
-      // Enhanced error messaging for iOS
+      // Enhanced error messaging with more details
       let errorMessage = error.message || "An unexpected error occurred";
-      if (isIOSDevice() && error.message?.includes('timeout')) {
-        errorMessage = "The signup process took longer than expected on Safari. Please try again or use the manual login option.";
+      let errorTitle = "Signup failed";
+      
+      if (error.message?.includes('timeout')) {
+        errorTitle = "Signup timed out";
+        errorMessage = "The signup process is taking longer than expected. This can happen on mobile devices. Please try signing in manually or contact support.";
+      } else if (error.message?.includes('already exists')) {
+        errorTitle = "Account already exists";
+        errorMessage = "An account with this email already exists. Please try signing in instead.";
+      } else if (error.message?.includes('Backend provision')) {
+        errorTitle = "Setup in progress";
+        errorMessage = "Your account might still be setting up. Please wait a moment and try signing in.";
       }
       
       toast({
-        title: "Signup failed",
+        title: errorTitle,
         description: errorMessage,
         variant: "destructive"
       });

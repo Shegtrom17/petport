@@ -44,6 +44,7 @@ import Help from "./pages/Help";
 import PublicGallery from "./pages/PublicGallery";
 import PublicEmergencyProfile from "./pages/PublicEmergencyProfile";
 import EmailTest from "./pages/EmailTest";
+import SetupStripe from "./pages/SetupStripe";
 
 // Redirect component for credentials -> resume consolidation
 const CredentialsRedirect = () => {
@@ -135,11 +136,16 @@ const App = () => {
                         <Help />
                       </ProtectedRoute>
                     } />
-                    <Route path="/email-test" element={
-                      <ProtectedRoute>
-                        <EmailTest />
-                      </ProtectedRoute>
-                    } />
+                     <Route path="/email-test" element={
+                       <ProtectedRoute>
+                         <EmailTest />
+                       </ProtectedRoute>
+                     } />
+                     <Route path="/setup-stripe" element={
+                       <ProtectedRoute>
+                         <SetupStripe />
+                       </ProtectedRoute>
+                     } />
                    <Route path="*" element={<NotFound />} />
                   </Routes>
                   <IOSRefreshPrompt />

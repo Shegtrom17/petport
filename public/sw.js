@@ -1,4 +1,4 @@
-const CACHE_NAME = 'petport-v9'; // iOS optimized cache management
+const CACHE_NAME = 'petport-v10'; // iOS optimized cache management
 const urlsToCache = [];
 
 // iOS detection
@@ -62,9 +62,21 @@ self.addEventListener('fetch', (event) => {
           const cached = await cache.match(req);
           
           // Try network first but with shorter timeout on iOS
-          const networkPromise = fetch(req, {
-            signal: AbortSignal.timeout(5000) // 5s timeout for iOS
-          });
+          let networkPromise;
+          try {
+            const hasTimeout = typeof AbortSignal !== 'undefined' && typeof AbortSignal.timeout === 'function';
+            if (hasTimeout) {
+              networkPromise = fetch(req, { signal: AbortSignal.timeout(5000) });
+            } else {
+              const controller = new AbortController();
+              const id = setTimeout(() => controller.abort(), 5000);
+              networkPromise = fetch(req, { signal: controller.signal }).finally(() => clearTimeout(id));
+            }
+          } catch (e) {
+            const controller = new AbortController();
+            const id = setTimeout(() => controller.abort(), 5000);
+            networkPromise = fetch(req, { signal: controller.signal }).finally(() => clearTimeout(id));
+          }
           
           try {
             const networkResponse = await networkPromise;

@@ -1,265 +1,309 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import Stripe from "https://esm.sh/stripe@14.21.0";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.50.3";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-serve(async (req) => {
+interface ProvisionRequest {
+  email: string;
+  password: string;
+  fullName: string;
+  plan: "monthly" | "yearly";
+  additionalPets: number;
+  corrId?: string; // Correlation ID for debugging
+}
+
+const handler = async (req: Request): Promise<Response> => {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
 
+  // Handle warm-up requests
+  const body = await req.text();
+  if (body === '{"__warm":true}' || body.includes('"warmUp":true')) {
+    console.log('⚡ Warm-up request received');
+    return new Response(null, { status: 204, headers: corsHeaders });
+  }
+
   try {
-    // Handle warm-up requests for pre-loading
-    const body = await req.text();
-    if (body === '{"__warm":true}') {
-      console.log('⚡ Warm-up request received');
-      return new Response(null, { status: 204 });
-    }
+    const startTime = Date.now();
+    const { email, password, fullName, plan, additionalPets, corrId }: ProvisionRequest = JSON.parse(body);
     
-    console.log('🚀 Starting signup process...');
-    
-    // Parse the actual request body
-    const requestData = JSON.parse(body);
-    
-    // Initialize Stripe
-    const stripeKey = Deno.env.get('STRIPE_SECRET_KEY');
-    if (!stripeKey) {
-      throw new Error('Stripe secret key not configured');
-    }
-    const stripe = new Stripe(stripeKey, { apiVersion: '2023-10-16' });
-    console.log('✅ Stripe initialized');
-
-    // Initialize Supabase Admin Client
-    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-    const supabase = createClient(supabaseUrl, supabaseServiceKey);
-
-    // Use already parsed request data
-    const { email, password, fullName, plan, additionalPets = 0 } = requestData;
-    console.log('📝 Parsed request:', { email, fullName, plan, additionalPets });
+    console.log(`🚀 [${corrId || 'no-id'}] Starting provisioning for ${email}, plan: ${plan}, additional pets: ${additionalPets}`);
 
     // Validate input
     if (!email || !password || !fullName || !plan) {
       return new Response(
         JSON.stringify({ error: 'Missing required fields' }),
-        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        { 
+          status: 400, 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        }
       );
     }
 
     if (!['monthly', 'yearly'].includes(plan)) {
       return new Response(
         JSON.stringify({ error: 'Invalid plan selected' }),
-        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        { 
+          status: 400, 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        }
       );
     }
-
-    // Skip expensive user check - let createUser handle duplicates directly
-    console.log('🔍 Skipping user existence check for performance');
-
-    // Calculate pricing
-    const planPrices = {
-      monthly: 199, // $1.99 in cents
-      yearly: 1299  // $12.99 in cents
-    };
-    const addonPricePerPet = additionalPets >= 5 ? 260 : 399; // Volume pricing
-    const totalAmount = planPrices[plan as keyof typeof planPrices] + (additionalPets * addonPricePerPet);
 
     // Calculate trial end date (7 days from now)
     const trialEndDate = new Date();
     trialEndDate.setDate(trialEndDate.getDate() + 7);
-    const trialEndFormatted = trialEndDate.toLocaleDateString('en-US', { 
-      weekday: 'long', 
-      year: 'numeric', 
-      month: 'long', 
-      day: 'numeric' 
+
+    // Initialize Stripe
+    const stripeSecretKey = Deno.env.get('STRIPE_SECRET_KEY');
+    if (!stripeSecretKey) {
+      throw new Error('Missing STRIPE_SECRET_KEY environment variable');
+    }
+
+    const stripe = new Stripe(stripeSecretKey, {
+      apiVersion: '2023-10-16',
     });
 
-    // Step 1: Create Stripe customer
-    console.log('💳 Creating Stripe customer...');
+    // Initialize Supabase admin client
+    const supabaseUrl = Deno.env.get('SUPABASE_URL');
+    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
+    
+    if (!supabaseUrl || !supabaseServiceKey) {
+      throw new Error('Missing Supabase environment variables');
+    }
+
+    const supabase = createClient(supabaseUrl, supabaseServiceKey);
+
+    // Get Price IDs from Supabase secrets
+    console.log(`⏱️ [${corrId || 'no-id'}] Retrieving Stripe price IDs...`);
+    const monthlyPriceId = Deno.env.get('STRIPE_PRICE_MONTHLY');
+    const yearlyPriceId = Deno.env.get('STRIPE_PRICE_YEARLY');
+    const additionalPetsPriceId = Deno.env.get('STRIPE_PRICE_ADDITIONAL_PETS');
+
+    if (!monthlyPriceId || !yearlyPriceId || !additionalPetsPriceId) {
+      throw new Error('Missing Stripe price IDs. Please run setup-stripe-products function first.');
+    }
+
+    console.log(`📋 [${corrId || 'no-id'}] Using price IDs - Monthly: ${monthlyPriceId}, Yearly: ${yearlyPriceId}, Additional Pets: ${additionalPetsPriceId}`);
+
+    // Calculate pricing and determine line items
+    const basePriceId = plan === "monthly" ? monthlyPriceId : yearlyPriceId;
+    const lineItems: any[] = [
+      {
+        price: basePriceId,
+        quantity: 1,
+      }
+    ];
+
+    // Add additional pets if any
+    if (additionalPets > 0) {
+      lineItems.push({
+        price: additionalPetsPriceId,
+        quantity: additionalPets,
+      });
+    }
+
+    console.log(`💰 [${corrId || 'no-id'}] Line items configured:`, lineItems);
+
+    // Create Stripe customer
+    console.log(`👤 [${corrId || 'no-id'}] Creating Stripe customer for ${email}...`);
+    const customerStartTime = Date.now();
+    
     const customer = await stripe.customers.create({
-      email,
+      email: email,
       name: fullName,
       metadata: {
-        plan,
-        additionalPets: additionalPets.toString(),
-        trial_end_date: trialEndFormatted,
-        cancellation_terms: 'Cancel anytime before trial ends to avoid being charged',
-        billing_amount: `$${(totalAmount / 100).toFixed(2)}/${plan}`,
+        plan: plan,
+        additional_pets: additionalPets.toString(),
+        trial_end: trialEndDate.toISOString(),
+        created_via: 'petport_signup',
+        correlation_id: corrId || 'no-id',
       },
     });
 
-    console.log('Created Stripe customer:', customer.id);
+    console.log(`✅ [${corrId || 'no-id'}] Stripe customer created: ${customer.id} (${Date.now() - customerStartTime}ms)`);
 
-    // Step 2: Create payment method (this would normally be done with Stripe Elements on frontend)
-    // For now, we'll create the subscription in trial mode and let the frontend handle card setup
-
-    // Step 3: Create Stripe subscription with trial
-    console.log('📅 Creating Stripe subscription...');
+    // Create Stripe subscription with trial
+    console.log(`💳 [${corrId || 'no-id'}] Creating Stripe subscription for customer ${customer.id}...`);
+    const subscriptionStartTime = Date.now();
+    
     const subscription = await stripe.subscriptions.create({
       customer: customer.id,
-      items: [
-        {
-          price_data: {
-            currency: 'usd',
-            product_data: {
-              name: `PetPort ${plan.charAt(0).toUpperCase() + plan.slice(1)} Plan`,
-              description: `7-day free trial ends ${trialEndFormatted}. Includes 1 pet account${additionalPets > 0 ? ` + ${additionalPets} additional pets` : ''}. Cancel before trial ends to avoid $${(totalAmount / 100).toFixed(2)}/${plan} charge.`,
-            },
-            unit_amount: totalAmount,
-            recurring: {
-              interval: plan === 'monthly' ? 'month' : 'year',
-            },
-          },
-        },
-      ],
-      trial_period_days: 7,
+      items: lineItems,
+      trial_end: Math.floor(trialEndDate.getTime() / 1000),
       metadata: {
-        plan,
-        additionalPets: additionalPets.toString(),
-        trial_end_date: trialEndFormatted,
-        transparency_confirmed: 'User informed of trial terms and billing amount',
+        plan: plan,
+        additional_pets: additionalPets.toString(),
+        pets_included: (1 + additionalPets).toString(),
+        created_via: 'petport_signup',
+        correlation_id: corrId || 'no-id',
       },
     });
 
-    console.log('Created Stripe subscription:', subscription.id);
+    console.log(`✅ [${corrId || 'no-id'}] Stripe subscription created: ${subscription.id} (${Date.now() - subscriptionStartTime}ms)`);
 
-    // Step 4: Create Supabase user (handle duplicates gracefully)
-    console.log('👤 Creating Supabase user...');
+    // Create Supabase user
+    console.log(`👤 [${corrId || 'no-id'}] Creating Supabase user for ${email}...`);
+    const userStartTime = Date.now();
+    
     const { data: authData, error: authError } = await supabase.auth.admin.createUser({
-      email,
-      password,
+      email: email,
+      password: password,
+      email_confirm: true,
       user_metadata: {
         full_name: fullName,
       },
-      email_confirm: true, // Auto-confirm email for trial users
     });
 
-    if (authError || !authData.user) {
-      // Check if error is due to user already existing
-      if (authError?.message?.includes('already registered') || authError?.message?.includes('already exists')) {
-        // Cleanup Stripe resources and return specific error
+    if (authError) {
+      console.error(`❌ [${corrId || 'no-id'}] Failed to create Supabase user:`, authError);
+      
+      // Clean up Stripe resources
+      try {
+        console.log(`🧹 [${corrId || 'no-id'}] Cleaning up Stripe resources...`);
         await stripe.subscriptions.cancel(subscription.id);
         await stripe.customers.del(customer.id);
-        
+        console.log(`✅ [${corrId || 'no-id'}] Cleaned up Stripe resources due to user creation failure`);
+      } catch (cleanupError) {
+        console.error(`❌ [${corrId || 'no-id'}] Failed to cleanup Stripe resources:`, cleanupError);
+      }
+      
+      if (authError.message.includes('already been registered')) {
         return new Response(
-          JSON.stringify({ error: 'An account with this email already exists' }),
-          { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          JSON.stringify({ 
+            error: 'Email already registered',
+            code: 'EMAIL_EXISTS'
+          }),
+          { 
+            status: 409,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+          }
         );
       }
       
-      // Cleanup: cancel the subscription for other errors
-      await stripe.subscriptions.cancel(subscription.id);
-      await stripe.customers.del(customer.id);
-      
-      throw new Error(`Failed to create user: ${authError?.message}`);
+      throw authError;
     }
 
-    console.log('Created Supabase user:', authData.user.id);
+    const user = authData.user;
+    console.log(`✅ [${corrId || 'no-id'}] Supabase user created: ${user.id} (${Date.now() - userStartTime}ms)`);
 
-    // Step 5: Create subscriber record
-    console.log('📝 Creating subscriber record...');
-    const { error: subscriberError } = await supabase
+    // Create subscriber record
+    console.log(`📊 [${corrId || 'no-id'}] Creating subscriber record for user ${user.id}...`);
+    const subscriberStartTime = Date.now();
+    
+    const { data: subscriberData, error: subscriberError } = await supabase
       .from('subscribers')
       .insert({
-        user_id: authData.user.id,
+        user_id: user.id,
         email: email,
         stripe_customer_id: customer.id,
-        status: 'active',
+        stripe_subscription_id: subscription.id,
+        plan: plan,
+        status: 'trialing' as any,
+        subscribed: true,
         pet_limit: 1,
         additional_pets: additionalPets,
-        subscribed: true,
-        subscription_tier: plan,
-      });
+        trial_end: trialEndDate.toISOString(),
+      })
+      .select()
+      .single();
 
     if (subscriberError) {
-      console.error('❌ Failed to create subscriber record:', subscriberError);
-      // Continue anyway - this can be fixed later
-    } else {
-      console.log('✅ Subscriber record created');
+      console.error(`❌ [${corrId || 'no-id'}] Failed to create subscriber record:`, subscriberError);
+      throw subscriberError;
     }
 
-    // Step 5.5: Send welcome email with trial details (with timeout)
-    try {
-      console.log('📧 Sending welcome email...');
-      const emailPromise = supabase.functions.invoke('send-email', {
-        body: {
-          type: 'welcome_trial',
-          recipientEmail: email,
-          recipientName: fullName,
-          petName: 'your pets', // Generic since no specific pet yet
-          petId: 'welcome',
-          shareUrl: 'https://petport.app/app',
-          trialEndDate: trialEndFormatted,
-          billingAmount: `$${(totalAmount / 100).toFixed(2)}/${plan}`,
-          customMessage: `Welcome to PetPort! Your 7-day free trial is now active.`
-        }
-      });
-      
-      // Race against timeout - don't let email delay signup
-      const timeoutPromise = new Promise((_, reject) => 
-        setTimeout(() => reject(new Error('Email timeout')), 2000)
-      );
-      
-      await Promise.race([emailPromise, timeoutPromise]);
-      console.log('✅ Welcome email sent successfully');
-    } catch (emailError) {
-      console.warn('⚠️ Welcome email failed or timed out:', emailError.message);
-      // Continue - email failure shouldn't break signup
-    }
+    console.log(`✅ [${corrId || 'no-id'}] Subscriber record created (${Date.now() - subscriberStartTime}ms):`, subscriberData);
 
-    console.log('🎉 Signup completed successfully - preparing response...');
-
-    // Step 6: Edge function is purely backend provisioning
-    // Frontend will handle authentication separately via signInWithPassword
-    const responseData = {
-      success: true,
-      userId: authData.user.id,
-      customerId: customer.id,
-      subscriptionId: subscription.id,
-      email: email, // Include email for frontend sign-in
-      sessionTokenPresent: false, // Explicit flag - no tokens generated
-      refreshTokenPresent: false, // Explicit flag - no tokens generated
-    };
-    
-    console.log('📤 Sending response (backend provisioning complete):', {
-      success: responseData.success,
-      userId: responseData.userId,
-      customerId: responseData.customerId,
-      subscriptionId: responseData.subscriptionId,
-      email: '[HIDDEN]',
-      sessionTokenPresent: responseData.sessionTokenPresent,
-      refreshTokenPresent: responseData.refreshTokenPresent
+    // Send welcome email asynchronously
+    console.log(`📧 [${corrId || 'no-id'}] Sending welcome email to ${email}...`);
+    supabase.functions.invoke('send-email', {
+      body: {
+        to: email,
+        subject: 'Welcome to PetPort! Your 7-day trial has started',
+        html: `
+          <h1>Welcome to PetPort, ${fullName}!</h1>
+          <p>Your ${plan} plan with ${1 + additionalPets} pet account${1 + additionalPets > 1 ? 's' : ''} is now active.</p>
+          <p><strong>Trial Period:</strong> Your 7-day free trial runs until ${trialEndDate.toLocaleDateString()}.</p>
+          <p>During your trial, you have full access to all PetPort features.</p>
+          <p>Questions? Reply to this email - we're here to help!</p>
+          <p>Best regards,<br>The PetPort Team</p>
+        `,
+      }
+    }).then(result => {
+      if (result.error) {
+        console.error(`❌ [${corrId || 'no-id'}] Welcome email failed:`, result.error);
+      } else {
+        console.log(`✅ [${corrId || 'no-id'}] Welcome email sent successfully`);
+      }
+    }).catch(error => {
+      console.error(`❌ [${corrId || 'no-id'}] Welcome email error:`, error);
     });
 
+    // Return success response
+    const totalTime = Date.now() - startTime;
+    console.log(`🎉 [${corrId || 'no-id'}] Provisioning completed successfully in ${totalTime}ms`);
+    
     return new Response(
-      JSON.stringify(responseData),
+      JSON.stringify({
+        success: true,
+        userId: user.id,
+        customerId: customer.id,
+        subscriptionId: subscription.id,
+        trialEnd: trialEndDate.toISOString(),
+        processingTime: totalTime,
+        correlationId: corrId,
+      }),
       {
         status: 200,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          ...corsHeaders,
+        },
       }
     );
 
-  } catch (error) {
-    console.error('Signup error:', error);
+  } catch (error: any) {
+    console.error(`❌ [${corrId || 'no-id'}] Error in create-subscription-with-user function:`, error);
     
-    // Ensure we return proper error status codes
-    const statusCode = error.name === 'ValidationError' ? 400 : 500;
-    const errorMessage = error.message || 'An unexpected error occurred during signup';
-    
+    // Parse Stripe errors for better user feedback
+    let statusCode = 500;
+    let errorMessage = error.message;
+    let errorCode = 'PROVISIONING_FAILED';
+
+    if (error.type === 'StripeCardError') {
+      statusCode = 402;
+      errorCode = 'PAYMENT_FAILED';
+    } else if (error.type === 'StripeRateLimitError') {
+      statusCode = 429;
+      errorCode = 'RATE_LIMITED';
+    } else if (error.type === 'StripeInvalidRequestError') {
+      statusCode = 400;
+      errorCode = 'INVALID_REQUEST';
+    }
+
     return new Response(
       JSON.stringify({ 
-        success: false,
-        error: errorMessage 
+        error: errorMessage,
+        code: errorCode,
+        correlationId: corrId,
+        statusCode
       }),
       {
         status: statusCode,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          ...corsHeaders 
+        },
       }
     );
   }
-});
+};
+
+serve(handler);

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useSearchParams, useNavigate, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -15,6 +15,7 @@ import { Elements, CardElement, useStripe, useElements } from "@stripe/react-str
 import { PRICING } from "@/config/pricing";
 import { useIOSResilience } from "@/hooks/useIOSResilience";
 import { isIOSDevice } from "@/utils/iosDetection";
+import { useAuth } from "@/context/AuthContext";
 
 const stripePromise = loadStripe("pk_test_51QIDNRGWjWGZWj9YcGNqAOqrIiROFGHbIvPLMXqGqKw8IFoYEYjFp0L39a3Mop1j8VGLwqJcGJHgE6FGMT4wuFHC00fM6BsB95");
 
@@ -42,10 +43,14 @@ const SignupForm = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [signupSuccess, setSignupSuccess] = useState(false);
   const [showFallbackNavigation, setShowFallbackNavigation] = useState(false);
+  const { signInWithPassword } = useAuth();
 
   const plan = searchParams.get("plan") || "monthly";
   const planData = PRICING.plans.find(p => p.id === plan) || PRICING.plans[0];
   const addonData = PRICING.addons[0];
+  
+  // Generate correlation ID for debugging
+  const corrId = useRef(`signup-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`);
 
   const calculateTotal = () => {
     const planPrice = planData.priceCents;
@@ -75,13 +80,13 @@ const SignupForm = () => {
     // Pre-warm the edge function for faster response
     const warmupFunction = async () => {
       try {
-        console.log('⚡ Pre-warming edge function...');
+        console.log(`⚡ [${corrId.current}] Pre-warming edge function...`);
         await supabase.functions.invoke("create-subscription-with-user", {
-          body: { __warm: true }
+          body: { warmUp: true }
         });
-        console.log('✅ Edge function pre-warmed');
+        console.log(`✅ [${corrId.current}] Edge function pre-warmed`);
       } catch (error) {
-        console.log('⚠️ Edge function warmup failed (this is okay):', error);
+        console.log(`⚠️ [${corrId.current}] Edge function warmup failed (this is okay):`, error);
       }
     };
     
@@ -91,205 +96,129 @@ const SignupForm = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    console.time(`PlanSignup-${corrId.current}`);
+    console.log(`🚀 [${corrId.current}] Starting signup process for plan: ${plan}, additional pets: ${additionalPets}`);
+    
     if (!stripe || !elements) return;
 
-    setIsLoading(true);
-    setSignupSuccess(false);
-    setShowFallbackNavigation(false);
+    try {
+      setIsLoading(true);
+      setSignupSuccess(false);
+      setShowFallbackNavigation(false);
 
-    // Phase 1: Backend provisioning (Stripe + Supabase user creation)
-    const performBackendSignup = async () => {
+      // Get the Stripe token first
       const cardElement = elements.getElement(CardElement);
       if (!cardElement) throw new Error("Card element not found");
 
-      console.log('🚀 Starting backend provisioning...');
+      const { error: stripeError, token } = await stripe.createToken(cardElement);
+      
+      if (stripeError) {
+        console.error(`❌ [${corrId.current}] Stripe token creation failed:`, stripeError);
+        toast({
+          title: "Payment Error",
+          description: stripeError.message || "Failed to process payment information",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      console.log(`✅ [${corrId.current}] Stripe token created successfully:`, token?.id);
+
+      // Call the provisioning function with correlation ID
+      console.log(`📞 [${corrId.current}] Calling create-subscription-with-user function...`);
+      const provisioningStartTime = Date.now();
+      
       const { data, error } = await supabase.functions.invoke("create-subscription-with-user", {
         body: {
           email: formData.email,
           password: formData.password,
           fullName: formData.fullName,
           plan: plan,
-          additionalPets: additionalPets
+          additionalPets: additionalPets,
+          corrId: corrId.current,
         }
       });
+      
+      const provisioningTime = Date.now() - provisioningStartTime;
+      console.log(`⏱️ [${corrId.current}] Provisioning function completed in ${provisioningTime}ms`);
 
       if (error) {
-        console.error('❌ Backend provisioning error:', error);
-        throw new Error(error.message || 'Backend provisioning failed');
-      }
-
-      if (!data || data.error) {
-        throw new Error(data?.error || 'No response from backend provisioning');
-      }
-
-      console.log('✅ Backend provisioning complete:', {
-        success: data.success,
-        userId: data.userId,
-        sessionTokenPresent: data.sessionTokenPresent,
-        refreshTokenPresent: data.refreshTokenPresent
-      });
-
-      return data;
-    };
-
-    // Phase 2: Frontend authentication with retry logic
-    const performFrontendAuth = async (email: string, password: string, retryCount = 0): Promise<any> => {
-      const maxRetries = 3;
-      const baseDelay = 1000; // Start with 1 second
-
-      try {
-        console.log(`🔑 Attempting sign-in (attempt ${retryCount + 1}/${maxRetries})...`);
+        console.error(`❌ [${corrId.current}] Provisioning failed:`, error);
+        let errorMessage = "Failed to create account. Please try again.";
         
-        const signInPromise = supabase.auth.signInWithPassword({ email, password });
-        
-        // iOS-specific timeout (shorter than default)
-        const timeoutMs = isIOSDevice() ? 15000 : 10000;
-        const { data, error } = await withTimeout(signInPromise, 'signInWithPassword', timeoutMs);
-
-        if (error) {
-          console.error(`❌ Sign-in error (attempt ${retryCount + 1}):`, error);
-          throw error;
+        if (error.message?.includes('EMAIL_EXISTS')) {
+          errorMessage = "This email is already registered. Please sign in instead.";
+        } else if (error.message?.includes('PAYMENT_FAILED')) {
+          errorMessage = "Payment failed. Please check your card details and try again.";
+        } else if (error.message?.includes('RATE_LIMITED')) {
+          errorMessage = "Too many requests. Please wait a moment and try again.";
         }
-
-        if (!data.session) {
-          throw new Error('No session returned from sign-in');
-        }
-
-        console.log('✅ Sign-in successful');
-        
-        // Immediately verify session
-        const { data: sessionData } = await supabase.auth.getSession();
-        if (!sessionData.session) {
-          throw new Error('Session verification failed');
-        }
-
-        console.log('✅ Session verified');
-        return data;
-
-      } catch (error: any) {
-        if (retryCount < maxRetries - 1) {
-          const delay = baseDelay * Math.pow(2, retryCount); // Exponential backoff
-          console.log(`⏱️ Retrying sign-in in ${delay}ms...`);
-          
-          await new Promise(resolve => setTimeout(resolve, delay));
-          return performFrontendAuth(email, password, retryCount + 1);
-        }
-        throw error;
-      }
-    };
-
-    try {
-      // Step 1: Backend provisioning with extended timeout for Android
-      const timeoutMs = isIOSDevice() ? 45000 : 60000; // 45s iOS, 60s Android
-      const backendData = await safeAsync(
-        () => withTimeout(performBackendSignup(), 'backend-provisioning', timeoutMs),
-        null,
-        'backend-signup'
-      );
-
-      if (!backendData) {
-        // Attempt to recover by trying sign-in
-        console.log('🔄 Backend timed out, attempting recovery sign-in...');
-        try {
-          const { data: recoveryData, error: recoveryError } = await supabase.auth.signInWithPassword({
-            email: formData.email,
-            password: formData.password
-          });
-          
-          if (recoveryData.session && !recoveryError) {
-            console.log('✅ Recovery sign-in successful');
-            setSignupSuccess(true);
-            toast({
-              title: "Welcome to PetPort! 🎉",
-              description: "Your account was created successfully. Your free trial has started!"
-            });
-            navigate("/app");
-            return;
-          }
-        } catch (recoveryError) {
-          console.log('❌ Recovery sign-in also failed:', recoveryError);
-        }
-        
-        throw new Error('Backend provisioning failed or timed out. Please try signing in manually.');
-      }
-
-      console.log('✅ Backend provisioning successful, starting authentication...');
-
-      // Step 2: Frontend authentication with retry
-      const authData = await safeAsync(
-        () => performFrontendAuth(formData.email, formData.password),
-        null,
-        'frontend-auth'
-      );
-
-      if (!authData) {
-        // Mark as partially successful but show recovery options
-        setSignupSuccess(true);
-        setShowFallbackNavigation(true);
         
         toast({
-          title: "Account created successfully! 🎉",
-          description: "Your account is ready. Please use the login button below to access it.",
-          variant: "default"
+          title: "Signup Failed",
+          description: `${errorMessage} (Error ID: ${corrId.current})`,
+          variant: "destructive",
         });
         return;
       }
 
-      // Step 3: Full success - mark and navigate
-      setSignupSuccess(true);
-      
-      toast({
-        title: "Welcome to PetPort! 🎉",
-        description: "Your free trial has started. Add your first pet to get started!"
+      console.log(`✅ [${corrId.current}] Provisioning successful:`, data);
+
+      // Auto-login the user
+      console.log(`🔐 [${corrId.current}] Attempting auto-login...`);
+      const loginStartTime = Date.now();
+      const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
+        email: formData.email,
+        password: formData.password
       });
+      
+      const loginTime = Date.now() - loginStartTime;
+      console.log(`⏱️ [${corrId.current}] Login attempt completed in ${loginTime}ms`);
+      
+      if (signInData.session && !signInError) {
+        console.log(`✅ [${corrId.current}] Auto-login successful`);
+        setSignupSuccess(true);
+        
+        toast({
+          title: "Welcome to PetPort!",
+          description: `Your ${plan} plan is active with a 7-day free trial.`,
+        });
 
-      // iOS-safe navigation with verification
-      if (isIOSDevice()) {
+        // Navigate to dashboard after a brief delay
         setTimeout(() => {
-          try {
-            navigate("/app");
-            
-            // Verify navigation worked
-            setTimeout(() => {
-              if (window.location.pathname !== '/app') {
-                console.log('⚠️ iOS navigation verification failed, showing fallback');
-                setShowFallbackNavigation(true);
-              }
-            }, 2000);
-          } catch (navError) {
-            console.error('❌ iOS navigation failed:', navError);
-            setShowFallbackNavigation(true);
-          }
-        }, 100);
+          navigate('/profile');
+        }, 2000);
       } else {
-        navigate("/app");
+        console.error(`❌ [${corrId.current}] Auto-login failed:`, signInError);
+        
+        // Show fallback message with sign-in option
+        toast({
+          title: "Account Created Successfully!",
+          description: `Please sign in to continue. (ID: ${corrId.current})`,
+        });
+        
+        // Navigate to sign-in page after delay
+        setTimeout(() => {
+          navigate('/auth', { 
+            state: { 
+              email: formData.email, 
+              message: "Your account was created successfully. Please sign in to continue." 
+            } 
+          });
+        }, 3000);
       }
 
-    } catch (error: any) {
-      console.error('❌ Signup process failed:', error);
-      
-      // Enhanced error messaging with more details
-      let errorMessage = error.message || "An unexpected error occurred";
-      let errorTitle = "Signup failed";
-      
-      if (error.message?.includes('timeout')) {
-        errorTitle = "Signup timed out";
-        errorMessage = "The signup process is taking longer than expected. This can happen on mobile devices. Please try signing in manually or contact support.";
-      } else if (error.message?.includes('already exists')) {
-        errorTitle = "Account already exists";
-        errorMessage = "An account with this email already exists. Please try signing in instead.";
-      } else if (error.message?.includes('Backend provision')) {
-        errorTitle = "Setup in progress";
-        errorMessage = "Your account might still be setting up. Please wait a moment and try signing in.";
-      }
-      
+    } catch (err: any) {
+      console.error(`❌ [${corrId.current}] Signup error:`, err);
       toast({
-        title: errorTitle,
-        description: errorMessage,
-        variant: "destructive"
+        title: "Signup Error",
+        description: `${err.message || "An unexpected error occurred. Please try again."} (ID: ${corrId.current})`,
+        variant: "destructive",
       });
     } finally {
       setIsLoading(false);
+      console.timeEnd(`PlanSignup-${corrId.current}`);
     }
   };
 

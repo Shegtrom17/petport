@@ -8,16 +8,13 @@ export const PRICING = {
       id: "additional-pets", 
       name: "Additional Pet Accounts",
       getTierPrice: (quantity: number) => {
-        if (quantity >= 5) return 260; // $2.60/slot for 5+
-        return 399; // $3.99/slot for 1-4
+        return 399; // $3.99/year per pet - simplified flat rate
       },
       getTierText: (quantity: number) => {
-        if (quantity >= 5) return "$2.60/year per pet";
         return "$3.99/year per pet";
       },
       description: "Add capacity for more pets",
       maxQuantity: 20,
-      tierBreakpoint: 5
     },
   ],
 } as const;

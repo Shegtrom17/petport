@@ -103,15 +103,9 @@ export const PricingSection: React.FC<PricingSectionProps> = ({ context = "landi
                   {PRICING.addons[0].getTierText(selectedQuantity)}
                 </div>
                 <div className="text-sm text-muted-foreground">
-                  {selectedQuantity >= PRICING.addons[0].tierBreakpoint ? "Volume pricing (5+ pets)" : "Standard pricing (1-4 pets)"}
+                  Flat pricing - $3.99/year per pet
                 </div>
               </div>
-              
-              {selectedQuantity >= PRICING.addons[0].tierBreakpoint && (
-                <div className="text-xs text-green-600 font-medium text-center">
-                  Save with volume pricing!
-                </div>
-              )}
             </div>
             
             <div className="flex items-center justify-center gap-3">

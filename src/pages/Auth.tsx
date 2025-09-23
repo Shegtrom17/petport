@@ -59,26 +59,12 @@ export default function Auth() {
         // Continue to app after sign in
         navigate("/app");
       } else {
-        console.log("Auth: Attempting sign up");
-        await signUp(email, password, fullName);
-        console.log("Auth: Sign up completed");
-        
-        // Reset form after successful signup
-        setEmail("");
-        setPassword("");
-        setFullName("");
-        
-        // Show success message for signup
+        // Redirect signup attempts to plan selection
         toast({
-          title: "Account created successfully!",
-          description: "Please check your email to confirm your account.",
+          title: "Choose your plan",
+          description: "Please select a subscription plan to create your account.",
         });
-        
-        // Small delay to let the auth state settle, then navigate if user is logged in
-        setTimeout(async () => {
-          // Navigate to onboarding
-          navigate("/onboarding");
-        }, 1000);
+        navigate("/signup");
       }
     } catch (error) {
       console.error("Auth: Authentication error:", error);
@@ -191,14 +177,25 @@ export default function Auth() {
           </CardContent>
           <CardFooter className="flex-col space-y-2">
             <div className="text-center">
-              <Button
-                type="button"
-                variant="link"
-                onClick={() => setIsSignIn(!isSignIn)}
-                className="text-sm text-muted-foreground hover:text-primary"
-              >
-                {isSignIn ? "Don't have an account? Create one" : "Already have an account? Sign in"}
-              </Button>
+              {isSignIn ? (
+                <Button
+                  type="button"
+                  variant="link"
+                  onClick={() => navigate("/signup")}
+                  className="text-sm text-muted-foreground hover:text-primary"
+                >
+                  Don't have an account? Choose a plan
+                </Button>
+              ) : (
+                <Button
+                  type="button"
+                  variant="link"
+                  onClick={() => setIsSignIn(true)}
+                  className="text-sm text-muted-foreground hover:text-primary"
+                >
+                  Already have an account? Sign in
+                </Button>
+              )}
             </div>
             <p className="text-xs text-muted-foreground text-center">
               Read our <Link to="/privacy-policy" className="underline">Privacy Policy</Link>.

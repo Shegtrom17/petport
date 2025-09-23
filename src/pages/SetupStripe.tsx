@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -7,6 +7,15 @@ import { toast } from "sonner";
 export default function SetupStripe() {
   const [isRunning, setIsRunning] = useState(false);
   const [result, setResult] = useState<any>(null);
+  const [autoRunComplete, setAutoRunComplete] = useState(false);
+
+  // Auto-run the setup when component mounts
+  useEffect(() => {
+    if (!autoRunComplete) {
+      runSetup();
+      setAutoRunComplete(true);
+    }
+  }, [autoRunComplete]);
 
   const runSetup = async () => {
     setIsRunning(true);
@@ -42,6 +51,9 @@ export default function SetupStripe() {
       <Card className="max-w-2xl mx-auto">
         <CardHeader>
           <CardTitle>Setup Stripe Products</CardTitle>
+          <p className="text-sm text-muted-foreground">
+            {autoRunComplete ? "Setup completed automatically." : "Setting up automatically..."}
+          </p>
         </CardHeader>
         <CardContent className="space-y-4">
           <Button 
@@ -49,7 +61,7 @@ export default function SetupStripe() {
             disabled={isRunning}
             className="w-full"
           >
-            {isRunning ? "Setting up..." : "Run Setup Stripe Products"}
+            {isRunning ? "Setting up..." : "Run Setup Again"}
           </Button>
           
           {result && (

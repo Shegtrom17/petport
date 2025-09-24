@@ -413,6 +413,8 @@ const SignupForm = () => {
                     paymentMethodOrder: ['card'],
                     fields: {
                       billingDetails: {
+                        name: 'auto',
+                        email: 'auto',
                         address: {
                           country: 'never',
                           postalCode: 'auto'

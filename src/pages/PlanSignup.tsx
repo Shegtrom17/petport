@@ -105,6 +105,34 @@ const SignupForm = () => {
     console.time(`PlanSignup-${corrId.current}`);
     console.log(`🚀 [${corrId.current}] Starting signup process for plan: ${plan}, additional pets: ${additionalPets}`);
     
+    // Validate form fields before proceeding
+    if (!formData.fullName?.trim()) {
+      toast({
+        title: "Form Error",
+        description: "Please enter your full name.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    if (!formData.email?.trim() || !formData.email.includes('@')) {
+      toast({
+        title: "Form Error", 
+        description: "Please enter a valid email address.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    if (!formData.password || formData.password.length < 6) {
+      toast({
+        title: "Form Error",
+        description: "Password must be at least 6 characters long.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
     if (!stripe || !elements) {
       console.error(`❌ [${corrId.current}] Stripe not loaded`);
       toast({
@@ -134,6 +162,9 @@ const SignupForm = () => {
         return;
       }
 
+      // Log confirmation details for debugging (no PII)
+      console.log(`💳 Confirming setup - has name: ${!!formData.fullName}, has email: ${!!formData.email}, corrId: ${corrId.current}`);
+      
       const { error: paymentError, setupIntent } = await stripe.confirmSetup({
         elements,
         confirmParams: {

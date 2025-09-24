@@ -1,4 +1,4 @@
-const CACHE_NAME = 'petport-v10'; // iOS optimized cache management
+const CACHE_NAME = 'petport-v11'; // iOS optimized cache management
 const urlsToCache = [];
 
 // iOS detection

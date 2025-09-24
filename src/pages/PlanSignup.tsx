@@ -133,6 +133,31 @@ const SignupForm = () => {
       return;
     }
     
+    // Hosted Stripe Checkout flow (bypass PaymentElement)
+    if (featureFlags.useHostedCheckout) {
+      try {
+        setIsLoading(true);
+        console.log(`🔁 [${corrId.current}] Redirecting to hosted Stripe Checkout...`);
+        const fnName = featureFlags.testMode ? "public-create-checkout-sandbox" : "public-create-checkout";
+        const { data, error } = await supabase.functions.invoke(fnName, {
+          body: { plan }
+        });
+        if (error || !data?.url) {
+          console.error(`❌ [${corrId.current}] Failed to create Stripe Checkout session:`, error || data);
+          toast({
+            title: "Payment Error",
+            description: `Could not start checkout. Please try again. (ID: ${corrId.current})`,
+            variant: "destructive",
+          });
+          return;
+        }
+        window.location.href = data.url;
+      } finally {
+        setIsLoading(false);
+      }
+      return;
+    }
+
     if (!stripe || !elements) {
       console.error(`❌ [${corrId.current}] Stripe not loaded`);
       toast({
@@ -404,31 +429,44 @@ const SignupForm = () => {
             </div>
 
             {/* Payment Method */}
-            <div className="space-y-3">
-              <Label>Payment Method</Label>
-              <div className="min-h-[60px] p-4 border rounded-lg bg-background">
-                <PaymentElement 
-                  options={{
-                    layout: "tabs",
-                    paymentMethodOrder: ['card'],
-                    fields: {
-                      billingDetails: {
-                        name: 'auto',
-                        email: 'auto',
-                        address: {
-                          country: 'never',
-                          postalCode: 'auto'
+            {!featureFlags.useHostedCheckout ? (
+              <div className="space-y-3">
+                <Label>Payment Method</Label>
+                <div className="min-h-[60px] p-4 border rounded-lg bg-background">
+                  <PaymentElement 
+                    options={{
+                      layout: "tabs",
+                      paymentMethodOrder: ['card'],
+                      fields: {
+                        billingDetails: {
+                          name: 'auto',
+                          email: 'auto',
+                          address: {
+                            country: 'never',
+                            postalCode: 'auto'
+                          }
                         }
                       }
-                    }
-                  }}
-                />
+                    }}
+                  />
+                </div>
+                <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                  <Shield className="w-3 h-3" />
+                  <span>You will not be charged today. Trial starts immediately.</span>
+                </div>
               </div>
-              <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                <Shield className="w-3 h-3" />
-                <span>You will not be charged today. Trial starts immediately.</span>
+            ) : (
+              <div className="space-y-3">
+                <Label>Payment Method</Label>
+                <div className="p-4 border rounded-lg bg-background text-sm text-muted-foreground">
+                  You’ll complete payment securely on Stripe after creating your account.
+                </div>
+                <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                  <Shield className="w-3 h-3" />
+                  <span>Stripe Checkout handles your payment securely.</span>
+                </div>
               </div>
-            </div>
+            )}
 
             {/* Total Pricing */}
             <div className="bg-muted p-4 rounded-lg space-y-2">
@@ -453,7 +491,7 @@ const SignupForm = () => {
             <Button 
               type="submit" 
               className="w-full bg-brand-primary hover:bg-brand-primary-dark text-white"
-              disabled={isLoading || !stripe}
+              disabled={isLoading || (!featureFlags.useHostedCheckout && !stripe)}
             >
               <CreditCard className="w-4 h-4 mr-2" />
               {isLoading ? (
@@ -529,6 +567,11 @@ const SignupForm = () => {
 };
 
 export default function PlanSignup() {
+  // Hosted Checkout mode skips Elements entirely
+  if (featureFlags.useHostedCheckout) {
+    return <SignupForm />;
+  }
+
   const [clientSecret, setClientSecret] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 

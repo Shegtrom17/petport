@@ -81,7 +81,16 @@ export default function Landing() {
           {user ? (
             <Button onClick={() => navigate('/app')} className="text-white">Open App</Button>
           ) : (
-            <Button onClick={() => navigate('/auth')} className="text-white">Sign In</Button>
+            <div className="flex items-center gap-2">
+              <Button 
+                onClick={() => navigate('/claim-subscription')} 
+                variant="outline" 
+                className="border-[#5691af] text-[#5691af]"
+              >
+                Claim Subscription
+              </Button>
+              <Button onClick={() => navigate('/auth')} className="text-white">Sign In</Button>
+            </div>
           )}
         </div>
       </header>

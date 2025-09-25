@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { getSafeBaseURL } from '@/utils/domainGuard';
 
 interface MetaTagsProps {
   title: string;
@@ -10,6 +11,8 @@ interface MetaTagsProps {
 
 export const MetaTags = ({ title, description, image, url, type = "website" }: MetaTagsProps) => {
   const ogImage = image || "https://pub-a7c2c18b8d6143b9a256105ef44f2da0.r2.dev/OG%20General.png";
+  const canonicalUrl = url.includes('petport.app') ? url : getSafeBaseURL() + new URL(url).pathname;
+  
   useEffect(() => {
     // Update document title
     document.title = title;
@@ -35,10 +38,19 @@ export const MetaTags = ({ title, description, image, url, type = "website" }: M
       meta.setAttribute('content', content);
     };
 
+    // Add canonical link
+    let canonical = document.querySelector('link[rel="canonical"]') as HTMLLinkElement;
+    if (!canonical) {
+      canonical = document.createElement('link');
+      canonical.rel = 'canonical';
+      document.head.appendChild(canonical);
+    }
+    canonical.href = canonicalUrl;
+
     // Open Graph tags for Facebook
     updateMetaTag('og:title', title);
     updateMetaTag('og:description', description);
-    updateMetaTag('og:url', url);
+    updateMetaTag('og:url', canonicalUrl);
     updateMetaTag('og:type', type);
     updateMetaTag('og:site_name', 'PetPort');
     

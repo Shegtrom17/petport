@@ -12,6 +12,7 @@ import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { SafeErrorBoundary } from "@/components/SafeErrorBoundary";
 import { IOSRefreshPrompt } from "@/components/IOSRefreshPrompt";
 import { AuthKeepAliveWrapper } from "@/components/AuthKeepAliveWrapper";
+import { initializeDomainGuard } from "@/utils/domainGuard";
 import Index from "./pages/Index";
 import Landing from "./pages/Landing";
 import Onboarding from "./pages/Onboarding";
@@ -57,6 +58,11 @@ const queryClient = new QueryClient();
 
 const App = () => {
   console.log("App: Starting application render");
+  
+  // Initialize domain guard on app start
+  React.useEffect(() => {
+    initializeDomainGuard();
+  }, []);
   
   return (
     <QueryClientProvider client={queryClient}>

@@ -5,12 +5,8 @@ import { featureFlags } from '@/config/featureFlags';
  * @returns The appropriate base URL for the current environment
  */
 export const getBaseURL = (): string => {
-  // In test mode, use Supabase domain for development/testing
-  if (featureFlags.testMode) {
-    return 'https://dxghbhujugsfmaecilrq.supabase.co';
-  }
-  
-  // In production, use the branded domain
+  // Always use production domain to prevent cross-domain issues
+  // Test mode is handled internally via feature flags, not domain switching
   return 'https://petport.app';
 };
 

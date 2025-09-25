@@ -34,6 +34,7 @@ import Terms from "./pages/Terms";
 import PaymentSuccess from "./pages/PaymentSuccess";
 import PaymentCanceled from "./pages/PaymentCanceled";
 import PostCheckout from "./pages/PostCheckout";
+import ClaimSubscription from "./pages/ClaimSubscription";
 import Subscribe from "./pages/Subscribe";
 import Reactivate from "./pages/Reactivate";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
@@ -116,6 +117,7 @@ const App = () => {
                   <Route path="/payment-success" element={<PaymentSuccess />} />
                   <Route path="/payment-canceled" element={<PaymentCanceled />} />
                   <Route path="/post-checkout" element={<PostCheckout />} />
+                  <Route path="/claim-subscription" element={<ClaimSubscription />} />
                   <Route path="/billing" element={
                     <ProtectedRoute>
                       <Billing />

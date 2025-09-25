@@ -73,13 +73,9 @@ serve(async (req) => {
       userId = users.users[0].id;
       log("Existing user found", { userId });
     } else {
-      // Invite user to complete account setup
-      log("Inviting new user", { email });
-      const { data: inviteData, error: inviteErr } = await supabase.auth.admin.inviteUserByEmail(email, {
-        redirectTo: `${origin || ""}/auth`,
-      });
-      if (inviteErr) throw new Error(`Invite failed: ${inviteErr.message}`);
-      userId = inviteData?.user?.id ?? null;
+      // For new users, we'll store payment info without creating account yet
+      log("New user - will need account setup", { email });
+      userId = null; // Account will be created by client after payment verification
     }
 
     // Calculate additional pets from subscription items if available
@@ -125,7 +121,7 @@ serve(async (req) => {
     }, { onConflict: "email" });
     if (upsertErr) throw new Error(`Upsert subscriber failed: ${upsertErr.message}`);
 
-    return new Response(JSON.stringify({ success: true, invited: !existingUser, existingUser, email }), {
+    return new Response(JSON.stringify({ success: true, needsAccountSetup: !existingUser, existingUser, email }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 200,
     });

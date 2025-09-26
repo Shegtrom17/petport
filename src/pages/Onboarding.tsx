@@ -8,7 +8,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
-import { featureFlags } from "@/config/featureFlags";
+
 import { MetaTags } from "@/components/MetaTags";
 export default function Onboarding() {
   const { user } = useAuth();
@@ -62,9 +62,6 @@ export default function Onboarding() {
           <p className="text-sm text-muted-foreground">
             Individual = pet owners and independent fosters. Organization = rescue/shelter teams. You can transfer to adopters either way.
           </p>
-          {featureFlags.testMode && (
-            <p className="text-sm text-muted-foreground">Test Mode active — you can skip this step anytime.</p>
-          )}
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-6">

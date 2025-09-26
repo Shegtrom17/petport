@@ -1,5 +1,4 @@
 export type FeatureFlags = {
-  testMode: boolean;
   showBillingTroubleshooting: boolean;
   enableSwipeNavigation: boolean;
   enableSelectPhotos: boolean;
@@ -7,8 +6,6 @@ export type FeatureFlags = {
 };
 
 export const featureFlags: FeatureFlags = {
-  // Enable during trusted-friends testing. Set to false for production.
-  testMode: false,
   showBillingTroubleshooting: false,
   enableSwipeNavigation: true,
   enableSelectPhotos: true,

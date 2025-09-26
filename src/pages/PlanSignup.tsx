@@ -122,7 +122,7 @@ const SignupForm = () => {
     try {
       setIsLoading(true);
       console.log(`🔁 [${corrId.current}] Redirecting to hosted Stripe Checkout...`);
-      const fnName = featureFlags.testMode ? "public-create-checkout-sandbox" : "public-create-checkout";
+      const fnName = "public-create-checkout";
       
       // IMPORTANT: always await the JSON body
       const { data, error } = await supabase.functions.invoke(fnName, {

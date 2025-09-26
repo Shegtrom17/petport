@@ -13,10 +13,8 @@ serve(async (req) => {
       return new Response(null, { headers: corsHeaders });
     }
 
-    const { testMode }: { testMode?: boolean } = await req.json().catch(() => ({ testMode: false }));
-
-    const key = testMode ? Deno.env.get("STRIPE_SECRET_KEY_TEST") : Deno.env.get("STRIPE_SECRET_KEY");
-    if (!key) throw new Error("Missing Stripe secret key");
+    const key = Deno.env.get("STRIPE_SECRET_KEY");
+    if (!key) throw new Error("Missing STRIPE_SECRET_KEY");
 
     const stripe = new Stripe(key, { apiVersion: "2023-10-16" });
 

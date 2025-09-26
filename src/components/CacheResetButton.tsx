@@ -19,8 +19,8 @@ export const CacheResetButton = ({
   const [isResetting, setIsResetting] = useState(false);
   const { toast } = useToast();
 
-  // Only show in test mode or development
-  if (!featureFlags.testMode && process.env.NODE_ENV === 'production') {
+  // Only show in development
+  if (process.env.NODE_ENV === 'production') {
     return null;
   }
 

@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { MetaTags } from "@/components/MetaTags";
-import { featureFlags } from "@/config/featureFlags";
+
 import { CreditCard, Plus, User, Mail, Lock, Eye, EyeOff } from "lucide-react";
 
 export default function PostCheckout() {
@@ -46,7 +46,7 @@ export default function PostCheckout() {
           console.warn("⚠️ Session refresh issue on PostCheckout:", e);
         }
 
-        const verifyFn = featureFlags.testMode ? "verify-checkout-sandbox" : "verify-checkout";
+        const verifyFn = "verify-checkout";
         const { data, error } = await supabase.functions.invoke(verifyFn, { body: { session_id } });
         if (!error && (data as any)?.success) {
           const d: any = data;
@@ -63,7 +63,7 @@ export default function PostCheckout() {
           return;
         }
 
-        const verifyAddonFn = featureFlags.testMode ? "verify-addons-sandbox" : "verify-addons";
+        const verifyAddonFn = "verify-addons";
         const { data: addonData, error: addonError } = await supabase.functions.invoke(verifyAddonFn, { body: { session_id } });
         if (!addonError && (addonData as any)?.success) {
           const d: any = addonData;

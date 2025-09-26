@@ -15,7 +15,7 @@ import { PrivacyToggle } from "@/components/PrivacyToggle";
 import { PetTransferDialog } from "@/components/PetTransferDialog";
 import { PetDeleteDialog } from "@/components/PetDeleteDialog";
 import { supabase } from "@/integrations/supabase/client";
-import { featureFlags } from "@/config/featureFlags";
+
 import { getSpeciesConfig, getSpeciesOptions } from "@/utils/speciesConfig";
 
 interface Contact {
@@ -438,12 +438,9 @@ export const PetEditForm = ({ petData, onSave, onCancel, togglePetPublicVisibili
           </div>
 
           {/* Organization Information */}
-          {(isOrgUser || featureFlags.testMode) && (
+          {isOrgUser && (
             <div className="border-t pt-6">
               <h3 className="text-lg font-inter text-foreground mb-4">Organization Information</h3>
-              {featureFlags.testMode && !isOrgUser && (
-                <p className="text-xs text-muted-foreground mb-2">Visible due to Test Mode; changes may be restricted by server policies.</p>
-              )}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <Label htmlFor="organizationName">Organization Name</Label>

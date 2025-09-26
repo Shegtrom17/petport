@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
-import { featureFlags } from "@/config/featureFlags";
+
 import { useIOSResilience } from "@/hooks/useIOSResilience";
 import { SafeErrorBoundary } from "@/components/SafeErrorBoundary";
 
@@ -122,11 +122,6 @@ export function ProtectedRoute({ children }: { children: React.ReactNode }) {
     return <Navigate to="/auth" state={{ from: location }} replace />;
   }
 
-  // In test mode, bypass subscription gate
-  if (featureFlags.testMode) {
-    console.log("Protected Route - Test mode active; bypassing subscription gate");
-    return <>{children}</>;
-  }
 
   // Enforce subscription gate except on allowed pages
   const allowedPaths = ["/subscribe", "/post-checkout", "/reactivate"];

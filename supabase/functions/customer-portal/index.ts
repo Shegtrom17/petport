@@ -19,19 +19,9 @@ serve(async (req) => {
   try {
     logStep("Start");
 
-    // Get test mode from request body
-    const body = await req.json().catch(() => ({}));
-    const isTestMode = body.testMode === true;
-    logStep("Test mode detected", { isTestMode });
-
-    // Use appropriate Stripe key based on test mode
-    const stripeKey = isTestMode 
-      ? Deno.env.get("STRIPE_SECRET_KEY_TEST")
-      : Deno.env.get("STRIPE_SECRET_KEY");
-    
+    const stripeKey = Deno.env.get("STRIPE_SECRET_KEY");
     if (!stripeKey) {
-      const keyType = isTestMode ? "STRIPE_SECRET_KEY_TEST" : "STRIPE_SECRET_KEY";
-      throw new Error(`${keyType} is not set`);
+      throw new Error("STRIPE_SECRET_KEY is not set");
     }
 
     const supabase = createClient(

@@ -32,7 +32,7 @@ export const PricingSection: React.FC<PricingSectionProps> = ({ context = "landi
     
     try {
       setIsLoading(true);
-      const fn = featureFlags.testMode ? "purchase-addons-sandbox" : "purchase-addons";
+      const fn = "purchase-addons";
       const { data, error } = await supabase.functions.invoke(fn, {
         body: { quantity }
       });

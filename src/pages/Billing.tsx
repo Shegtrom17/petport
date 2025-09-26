@@ -67,7 +67,7 @@ export default function Billing() {
   const handleManageSubscription = async () => {
     try {
       const { data, error } = await supabase.functions.invoke("customer-portal", {
-        body: { testMode: featureFlags.testMode }
+        body: {}
       });
       if (error) throw error;
       if (data?.url) {
@@ -87,7 +87,7 @@ export default function Billing() {
   const buyAddon = async (quantity: number = 1) => {
     try {
       setIsLoading(true);
-      const fn = featureFlags.testMode ? "purchase-addons-sandbox" : "purchase-addons";
+      const fn = "purchase-addons";
       const { data, error } = await supabase.functions.invoke(fn, {
         body: { quantity }
       });

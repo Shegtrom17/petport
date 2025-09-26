@@ -32,7 +32,7 @@ import { useNavigate, Navigate } from "react-router-dom";
 import { SwipeContainer } from "@/components/layout/SwipeContainer";
 import { useOverlayOpen } from "@/stores/overlayStore";
 import { isTouchDevice } from "@/hooks/useIsTouchDevice";
-import { featureFlags } from "@/config/featureFlags";
+
 import { IOSMonitor } from "@/components/IOSMonitor";
 import { IOSOptimizedIndex } from "@/components/IOSOptimizedIndex";
 import { getPrevNext, type TabId } from "@/features/navigation/tabOrder";

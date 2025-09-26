@@ -47,7 +47,7 @@ try {
 if ('serviceWorker' in navigator && window.location.hostname !== 'localhost') {
   window.addEventListener('load', async () => {
     try {
-      const RESET_KEY = 'sw-reset-petport-v12';
+      const RESET_KEY = 'sw-reset-petport-v13';
       if (!localStorage.getItem(RESET_KEY)) {
         const regs = await navigator.serviceWorker.getRegistrations();
         await Promise.all(regs.map((r) => r.unregister()));

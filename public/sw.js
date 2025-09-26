@@ -1,7 +1,6 @@
-const CACHE_NAME = 'petport-v12'; // iOS optimized cache management
+const CACHE_NAME = 'petport-v13'; // iOS optimized cache management
 const urlsToCache = [
   '/',
-  '/landing-hero.mp4',
   '/lovable-uploads/213ccabc-3918-406d-b844-9c2730b7637d.png', // PetPort logo
 ];
 
@@ -41,18 +40,26 @@ self.addEventListener('activate', (event) => {
 
 self.addEventListener('fetch', (event) => {
   const req = event.request;
-  const url = req.url;
-  const isSupabaseFunction = url.includes('supabase.co/functions');
+  const urlObj = new URL(req.url);
+  const isSupabaseFunction = urlObj.hostname.includes('supabase.co') && urlObj.pathname.includes('/functions');
   const isOptions = req.method === 'OPTIONS';
   const isNonGet = req.method !== 'GET';
-  const isCrossOrigin = !url.startsWith(self.location.origin);
-  
-  // Never cache PDFs or dynamic share routes for fresh content
-  const isPdfRequest = req.headers.get('accept')?.includes('application/pdf') || url.includes('.pdf');
-  const isShareRoute = url.includes('/public/') || url.includes('/share/');
+  const isCrossOrigin = urlObj.origin !== self.location.origin;
+  const isNavigation = req.mode === 'navigate' || req.destination === 'document' || req.headers.get('accept')?.includes('text/html');
 
-  // Bypass SW for preflight/edge functions/non-GET/cross-origin/PDFs/shares to avoid CORS issues and ensure fresh content
+  // Avoid caching PDFs or dynamic share routes
+  const isPdfRequest = req.headers.get('accept')?.includes('application/pdf') || urlObj.pathname.endsWith('.pdf');
+  const isShareRoute = urlObj.pathname.includes('/public/') || urlObj.pathname.includes('/share/');
+
+  // Bypass SW for preflight/edge functions/non-GET/cross-origin/PDFs/shares
   if (isOptions || isSupabaseFunction || isNonGet || isCrossOrigin || isPdfRequest || isShareRoute) {
+    event.respondWith(fetch(req));
+    return;
+  }
+
+  // Never intercept critical resources aggressively; let the browser handle
+  const criticalDestinations = ['script', 'style', 'font'];
+  if (criticalDestinations.includes(req.destination)) {
     event.respondWith(fetch(req));
     return;
   }
@@ -60,71 +67,46 @@ self.addEventListener('fetch', (event) => {
   event.respondWith(
     caches.open(CACHE_NAME).then(async (cache) => {
       try {
-        // iOS-optimized caching strategy
-        if (isIOS()) {
-          // For iOS, be more conservative with caching to prevent memory issues
-          const cached = await cache.match(req);
-          
-          // Try network first but with shorter timeout on iOS
-          let networkPromise;
+        // Special handling for navigations (index.html/app shell)
+        if (isNavigation) {
           try {
-            const hasTimeout = typeof AbortSignal !== 'undefined' && typeof AbortSignal.timeout === 'function';
-            if (hasTimeout) {
-              networkPromise = fetch(req, { signal: AbortSignal.timeout(5000) });
-            } else {
-              const controller = new AbortController();
-              const id = setTimeout(() => controller.abort(), 5000);
-              networkPromise = fetch(req, { signal: controller.signal }).finally(() => clearTimeout(id));
-            }
-          } catch (e) {
-            const controller = new AbortController();
-            const id = setTimeout(() => controller.abort(), 5000);
-            networkPromise = fetch(req, { signal: controller.signal }).finally(() => clearTimeout(id));
-          }
-          
-          try {
-            const networkResponse = await networkPromise;
-            
-            // Only cache smaller responses on iOS to prevent memory pressure
-            if (networkResponse.ok && 
-                networkResponse.headers.get('content-length') && 
-                parseInt(networkResponse.headers.get('content-length') || '0') < 1024 * 1024) { // 1MB limit
+            const networkResponse = await fetch(req); // no timeout for navigations to avoid blank screens
+            if (networkResponse.ok) {
+              cache.put('/', networkResponse.clone());
               cache.put(req, networkResponse.clone());
             }
-            
             return networkResponse;
-          } catch (networkError) {
-            // Fallback to cache on iOS if available
-            if (cached) {
-              return cached;
-            }
-            throw networkError;
+          } catch (e) {
+            // Fallback to cached shell
+            const cachedIndex = (await cache.match(req)) || (await cache.match('/'));
+            if (cachedIndex) return cachedIndex;
+            return new Response('<!DOCTYPE html><html><body><h1>Offline</h1><p>Please check your connection and try again.</p></body></html>', {
+              status: 503,
+              headers: { 'Content-Type': 'text/html' }
+            });
           }
-        } else {
-          // Standard caching for non-iOS devices
-          const networkResponse = await fetch(req);
-          
-          if (networkResponse.ok) {
-            cache.put(req, networkResponse.clone());
-          }
-          
-          return networkResponse;
         }
-      } catch (error) {
-        // Fallback to cache if network fails
+
+        // iOS-friendly caching for other assets
         const cached = await cache.match(req);
-        if (cached) {
-          return cached;
+        if (cached) return cached;
+
+        const response = await fetch(req);
+        if (response.ok) {
+          // Only cache smaller responses on iOS to prevent memory pressure
+          if (!isIOS()) {
+            cache.put(req, response.clone());
+          } else {
+            const len = parseInt(response.headers.get('content-length') || '0');
+            if (len && len < 1024 * 1024) {
+              cache.put(req, response.clone());
+            }
+          }
         }
-        
-        // Return offline page or generic error for HTML requests
-        if (req.headers.get('accept')?.includes('text/html')) {
-          return new Response('<!DOCTYPE html><html><body><h1>Offline</h1><p>Please check your connection and try again.</p></body></html>', {
-            status: 503,
-            headers: { 'Content-Type': 'text/html' }
-          });
-        }
-        
+        return response;
+      } catch (error) {
+        const cached = await cache.match(req);
+        if (cached) return cached;
         return new Response('', { status: 504 });
       }
     })

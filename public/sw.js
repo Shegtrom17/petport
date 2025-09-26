@@ -1,5 +1,9 @@
 const CACHE_NAME = 'petport-v12'; // iOS optimized cache management
-const urlsToCache = [];
+const urlsToCache = [
+  '/',
+  '/landing-hero.mp4',
+  '/lovable-uploads/213ccabc-3918-406d-b844-9c2730b7637d.png', // PetPort logo
+];
 
 // iOS detection
 const isIOS = () => {

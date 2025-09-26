@@ -25,18 +25,15 @@ export default function Landing() {
                    window.location.hostname.includes('lovable.app');
 
   useEffect(() => {
-    const isPreviewParam = new URLSearchParams(location.search).get("preview") === "1";
     const isShare = new URLSearchParams(location.search).get("share") === "true";
     
     if (isShare) {
       setShowSharePrompt(true);
     }
     
-    // Only auto-redirect from the root ("/") so logged-in users can view /landing
-    if (user && !isPreviewParam && location.pathname === "/") {
-      navigate('/app', { replace: true });
-    }
-  }, [user, navigate, location.search, location.pathname]);
+    // Landing page always stays on "/" - no auto-redirects
+    // Users manually navigate to /app via "Open App" button
+  }, [location.search]);
 
   // Load public pets for development navigation
   useEffect(() => {

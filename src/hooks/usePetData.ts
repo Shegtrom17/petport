@@ -42,20 +42,11 @@ export const usePetData = (initialPetId?: string) => {
     
     const result = await safeAsync(
       async () => {
-        // Ensure we have a valid user.id before proceeding
-        if (!user?.id) {
-          console.log("usePetData - No user.id available, cannot fetch pets");
-          setIsLoading(false);
-          return false;
-        }
-        
-        console.log("usePetData - User ID confirmed:", user.id);
-        
         const userPets = await fetchUserPets();
         console.log("usePetData - Fetched pets:", userPets);
         
         // Keep DB order (already ordered in fetchUserPets)
-        const orderedPets = userPets || [];
+        const orderedPets = userPets;
         setPets(orderedPets);
         
         if (orderedPets.length > 0) {
@@ -229,10 +220,7 @@ export const usePetData = (initialPetId?: string) => {
   };
 
   useEffect(() => {
-    if (user?.id) {
-      console.log("usePetData - User changed, loading pets for:", user.id);
-      loadPets();
-    }
+    loadPets();
   }, [user?.id]);
 
   return {

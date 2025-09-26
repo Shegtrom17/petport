@@ -132,25 +132,19 @@ export async function fetchUserPets(): Promise<any[]> {
   try {
     console.log("fetchUserPets: Starting to fetch user pets");
     
-    // Ensure we have a valid session and user from session (not stale data)
-    const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-    console.log("fetchUserPets: Session check result:", { 
-      sessionUser: session?.user?.id, 
-      email: session?.user?.email,
-      error: sessionError 
-    });
+    // Get current user first
+    const { data: { user }, error: userError } = await supabase.auth.getUser();
+    console.log("fetchUserPets: User check result:", { user: user?.id, error: userError });
     
-    if (sessionError) {
-      console.error("fetchUserPets: Error getting session:", sessionError);
+    if (userError) {
+      console.error("fetchUserPets: Error getting user:", userError);
       return [];
     }
     
-    if (!session?.user) {
-      console.log("fetchUserPets: No authenticated session found");
+    if (!user) {
+      console.log("fetchUserPets: No authenticated user found");
       return [];
     }
-    
-    const user = session.user;
 
     const { data: pets, error } = await supabase
       .from("pets")

@@ -369,8 +369,7 @@ const Index = () => {
 
         <main className="max-w-6xl mx-auto px-3 sm:px-4 py-4 sm:py-6 lg:py-8 pb-20 sm:pb-24">
             
-            {/* Only show AuthenticationPrompt after pets have finished loading */}
-            {!isLoading && <AuthenticationPrompt isSignedIn={!!user} hasPets={pets.length > 0} />}
+            <AuthenticationPrompt isSignedIn={!!user} hasPets={pets.length > 0} />
             
             {user && pets.length > 0 && (
               <>

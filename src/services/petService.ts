@@ -134,7 +134,7 @@ export async function fetchUserPets(): Promise<any[]> {
     
     // Get current user first
     const { data: { user }, error: userError } = await supabase.auth.getUser();
-    console.log("fetchUserPets: User check result:", { user: user?.id, error: userError });
+    console.log("fetchUserPets: User check result:", { user: user?.id, email: user?.email, error: userError });
     
     if (userError) {
       console.error("fetchUserPets: Error getting user:", userError);

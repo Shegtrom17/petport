@@ -44,6 +44,7 @@ export const usePetData = (initialPetId?: string) => {
       async () => {
         const userPets = await fetchUserPets();
         console.log("usePetData - Fetched pets:", userPets);
+        console.log("usePetData - User ID:", user?.id);
         
         // Keep DB order (already ordered in fetchUserPets)
         const orderedPets = userPets;
@@ -220,7 +221,10 @@ export const usePetData = (initialPetId?: string) => {
   };
 
   useEffect(() => {
-    loadPets();
+    if (user?.id) {
+      console.log("usePetData - User changed, loading pets for:", user.id);
+      loadPets();
+    }
   }, [user?.id]);
 
   return {

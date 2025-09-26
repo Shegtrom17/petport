@@ -13,9 +13,8 @@ export function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const [subscribed, setSubscribed] = useState<boolean | null>(null);
   const { safeAsync, isIOSDevice } = useIOSResilience();
 
-  // Detect if we're in Lovable preview environment
-  const isPreview = window.location.hostname.includes('lovableproject.com') || 
-                   window.location.hostname.includes('lovable.app');
+  // Link subscriber before checking subscription status
+  const [linkingSubscription, setLinkingSubscription] = useState<boolean>(false);
 
   useEffect(() => {
     console.log("Protected Route - Current location:", location.pathname);
@@ -23,11 +22,25 @@ export function ProtectedRoute({ children }: { children: React.ReactNode }) {
   }, [user, isLoading, location.pathname]);
 
   useEffect(() => {
-    const checkSubscription = async () => {
+    const linkAndCheckSubscription = async () => {
       if (!user) return;
+      
+      setLinkingSubscription(true);
       
       const result = await safeAsync(
         async () => {
+          // First, try to link any orphaned subscription
+          console.log("Protected Route - Linking subscription for user:", user.email);
+          
+          const { data: linkResult, error: linkError } = await supabase.functions.invoke('link-subscriber');
+          
+          if (linkError) {
+            console.warn("Protected Route - Link subscriber error:", linkError);
+          } else {
+            console.log("Protected Route - Link subscriber result:", linkResult);
+          }
+          
+          // Then check subscription status
           const { data, error } = await supabase
             .from("subscribers")
             .select("subscribed, status, grace_period_end")
@@ -46,7 +59,7 @@ export function ProtectedRoute({ children }: { children: React.ReactNode }) {
                            (data?.status === 'grace' && 
                             (!data.grace_period_end || new Date(data.grace_period_end) > now));
           
-          console.log("Protected Route - Subscription status:", { 
+          console.log("Protected Route - Subscription status after linking:", { 
             subscribed: data?.subscribed,
             status: data?.status,
             gracePeriodEnd: data?.grace_period_end,
@@ -56,21 +69,22 @@ export function ProtectedRoute({ children }: { children: React.ReactNode }) {
           return isActive;
         },
         true, // Fallback to allowing access on error
-        'subscription-check'
+        'subscription-link-and-check'
       );
       
       setSubscribed(result);
+      setLinkingSubscription(false);
       setCheckingSub(false);
     };
     
     if (user) {
       setCheckingSub(true);
-      checkSubscription();
+      linkAndCheckSubscription();
     }
   }, [user, safeAsync]);
 
-  // Show loading state with timeout (skip subscription check wait in test mode)
-  if (isLoading || (user && checkingSub && !featureFlags.testMode)) {
+  // Show loading state with timeout
+  if (isLoading || (user && (checkingSub || linkingSubscription))) {
     console.log("Protected Route - Showing loading state");
     
     // Shorter timeout for iOS devices
@@ -88,7 +102,9 @@ export function ProtectedRoute({ children }: { children: React.ReactNode }) {
       <SafeErrorBoundary level="page" name="Loading Protection">
         <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-blue-50 via-indigo-50 to-navy-100">
           <div className="flex flex-col items-center gap-3">
-            <div className="animate-pulse text-navy-800">Loading PetPort...</div>
+            <div className="animate-pulse text-navy-800">
+              {linkingSubscription ? "Linking subscription..." : "Loading PetPort..."}
+            </div>
             {isIOSDevice && (
               <div className="text-xs text-navy-600">
                 iOS detected - optimizing experience
@@ -106,9 +122,9 @@ export function ProtectedRoute({ children }: { children: React.ReactNode }) {
     return <Navigate to="/auth" state={{ from: location }} replace />;
   }
 
-  // In test mode or preview, bypass subscription gate
-  if (featureFlags.testMode || isPreview) {
-    console.log("Protected Route - Test mode or preview active; bypassing subscription gate");
+  // In test mode, bypass subscription gate
+  if (featureFlags.testMode) {
+    console.log("Protected Route - Test mode active; bypassing subscription gate");
     return <>{children}</>;
   }
 

@@ -9,11 +9,11 @@ export const initializeDomainGuard = (): void => {
   if (typeof window === 'undefined') return;
   
   const currentHost = window.location.hostname;
-  const isLovablePreview = currentHost.includes('lovableproject.com');
+  const isLovablePreview = currentHost.includes('lovableproject.com') || currentHost.includes('lovable.app');
   const productionURL = getBaseURL();
   
-  // If we're on the Lovable preview domain, redirect to production
-  if (isLovablePreview && !window.location.pathname.startsWith('/auth')) {
+  // If we're on ANY Lovable preview domain, redirect to production immediately
+  if (isLovablePreview) {
     console.log('Domain guard: Redirecting from preview to production');
     window.location.replace(productionURL + window.location.pathname + window.location.search);
     return;

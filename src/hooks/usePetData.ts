@@ -42,26 +42,20 @@ export const usePetData = (initialPetId?: string) => {
     
     const result = await safeAsync(
       async () => {
-        // Force session refresh before fetching pets to ensure cookie sync
-        console.log("usePetData - Checking and refreshing session...");
-        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-        console.log("usePetData - Current session:", { user: session?.user?.id, error: sessionError });
-        
-        if (!session && !sessionError) {
-          console.log("usePetData - No session found, attempting refresh...");
-          const { data: refreshData, error: refreshError } = await supabase.auth.refreshSession();
-          console.log("usePetData - Session refresh result:", { 
-            user: refreshData?.session?.user?.id, 
-            error: refreshError 
-          });
+        // Ensure we have a valid user.id before proceeding
+        if (!user?.id) {
+          console.log("usePetData - No user.id available, cannot fetch pets");
+          setIsLoading(false);
+          return false;
         }
+        
+        console.log("usePetData - User ID confirmed:", user.id);
         
         const userPets = await fetchUserPets();
         console.log("usePetData - Fetched pets:", userPets);
-        console.log("usePetData - User ID:", user?.id);
         
         // Keep DB order (already ordered in fetchUserPets)
-        const orderedPets = userPets;
+        const orderedPets = userPets || [];
         setPets(orderedPets);
         
         if (orderedPets.length > 0) {

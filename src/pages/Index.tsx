@@ -28,7 +28,7 @@ import { ReportIssueModal } from "@/components/ReportIssueModal";
 import { AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useUserSettings } from "@/hooks/useUserSettings";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Navigate } from "react-router-dom";
 import { SwipeContainer } from "@/components/layout/SwipeContainer";
 import { useOverlayOpen } from "@/stores/overlayStore";
 import { isTouchDevice } from "@/hooks/useIsTouchDevice";
@@ -49,7 +49,7 @@ const Index = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   
-  const { user } = useAuth();
+  const { user, status } = useAuth();
   const { settings } = useUserSettings(user?.id);
   const isOverlayOpen = useOverlayOpen();
   
@@ -335,6 +335,24 @@ const Index = () => {
   };
 
   console.log("About to render main component");
+
+  // Early status guards to prevent white screen on iOS
+  if (status === "loading") {
+    return (
+      <PWALayout>
+        <div className="flex items-center justify-center min-h-screen">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-primary mx-auto mb-4"></div>
+            <p className="text-muted-foreground">Loading...</p>
+          </div>
+        </div>
+      </PWALayout>
+    );
+  }
+
+  if (status === "unauthenticated") {
+    return <Navigate to="/auth" replace />;
+  }
 
   if (isLoading) {
     return (

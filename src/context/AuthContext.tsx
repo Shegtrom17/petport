@@ -8,6 +8,7 @@ interface AuthContextType {
   user: User | null;
   session: Session | null;
   isLoading: boolean;
+  status: "loading" | "authenticated" | "unauthenticated";
   signIn: (email: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
 }
@@ -26,6 +27,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [status, setStatus] = useState<"loading" | "authenticated" | "unauthenticated">("loading");
   const [hasInitialized, setHasInitialized] = useState(false);
   const { toast } = useToast();
 
@@ -40,6 +42,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         // Update state synchronously
         setSession(session);
         setUser(session?.user ?? null);
+        
+        // Update status based on session
+        if (session?.user) {
+          setStatus("authenticated");
+        } else {
+          setStatus("unauthenticated");
+        }
         
         // Only set loading to false after we've initialized at least once
         if (!hasInitialized) {
@@ -101,6 +110,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       console.log("Auth: Initial session check", { session: !!session, userId: session?.user?.id });
       setSession(session);
       setUser(session?.user ?? null);
+      
+      // Set initial status based on session
+      if (session?.user) {
+        setStatus("authenticated");
+      } else {
+        setStatus("unauthenticated");
+      }
       
       // Initialize loading state
       setHasInitialized(true);
@@ -190,8 +206,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     user,
     session,
     isLoading,
+    status,
     signIn,
-    
     signOut,
   };
 

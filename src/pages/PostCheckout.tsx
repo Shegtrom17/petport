@@ -37,6 +37,15 @@ export default function PostCheckout() {
     }
     (async () => {
       try {
+        // Force session refresh for iOS reliability
+        try {
+          await supabase.auth.getSession();
+          await supabase.auth.refreshSession();
+          console.log("✅ Session refreshed on PostCheckout");
+        } catch (e) {
+          console.warn("⚠️ Session refresh issue on PostCheckout:", e);
+        }
+
         const verifyFn = featureFlags.testMode ? "verify-checkout-sandbox" : "verify-checkout";
         const { data, error } = await supabase.functions.invoke(verifyFn, { body: { session_id } });
         if (!error && (data as any)?.success) {
@@ -127,7 +136,15 @@ export default function PostCheckout() {
 
         toast({ title: "Account created!", description: "Welcome to PetPort!" });
         
-        // Auto-login and redirect to app
+        // Force session refresh and auto-login then redirect to app
+        try {
+          await supabase.auth.getSession();
+          await supabase.auth.refreshSession();
+          console.log("✅ Session refreshed after account creation");
+        } catch (e) {
+          console.warn("⚠️ Session refresh issue after account creation:", e);
+        }
+        
         navigate("/app");
       } else {
         throw new Error("Account creation failed");

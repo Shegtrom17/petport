@@ -12,6 +12,64 @@ import { useToast } from "@/hooks/use-toast";
 import { PRICING } from "@/config/pricing";
 import { featureFlags } from "@/config/featureFlags";
 
+// Utility functions for post-checkout finalization
+async function finalizeAfterReturn() {
+  console.log("🔄 Finalizing after Stripe return...");
+  
+  // Force auth to be current (iOS sometimes loses context)
+  try {
+    await supabase.auth.getSession();
+    await supabase.auth.refreshSession();
+    console.log("✅ Session refreshed");
+  } catch (e) {
+    console.warn("⚠️ Session refresh issue:", e);
+  }
+
+  // Poll your check-subscription function for up to ~15s
+  const active = await pollSubscriptionActive({ timeoutMs: 15000, intervalMs: 1200 });
+  if (active) {
+    // navigate to the app/dashboard route you use
+    window.location.href = "/app";
+    console.log("✅ Subscription active — proceeding to app");
+  } else {
+    console.error("❌ Subscription not active after return (timeout).");
+    // show user-friendly guidance: "If you completed payment, please sign in again."
+  }
+}
+
+async function pollSubscriptionActive({
+  timeoutMs,
+  intervalMs,
+}: { timeoutMs: number; intervalMs: number }): Promise<boolean> {
+  const start = Date.now();
+  while (Date.now() - start < timeoutMs) {
+    try {
+      const { data, error } = await supabase.functions.invoke("check-subscription");
+      if (error) {
+        console.warn("⚠️ check-subscription error:", error);
+      } else if (data?.active === true) {
+        return true;
+      }
+    } catch (e) {
+      console.warn("⚠️ poll check-subscription threw:", e);
+    }
+    await new Promise((r) => setTimeout(r, intervalMs));
+  }
+  return false;
+}
+
+// Hook to detect Stripe return and call finalizeAfterReturn() automatically
+function useFinalizeOnStripeReturn() {
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const hasStripeSession = params.has("session_id") || params.has("setup_intent") || params.has("payment_intent");
+    if (hasStripeSession) {
+      console.log("🔍 Detected Stripe return, finalizing...");
+      finalizeAfterReturn();
+    }
+  }, []);
+}
+
 const SignupForm = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
@@ -26,6 +84,9 @@ const SignupForm = () => {
   
   // Generate correlation ID for debugging
   const corrId = useRef(`signup-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`);
+
+  // Auto-detect Stripe return and finalize
+  useFinalizeOnStripeReturn();
 
   const calculateTotal = () => {
     const planPrice = planData.priceCents;
@@ -62,11 +123,14 @@ const SignupForm = () => {
       setIsLoading(true);
       console.log(`🔁 [${corrId.current}] Redirecting to hosted Stripe Checkout...`);
       const fnName = featureFlags.testMode ? "public-create-checkout-sandbox" : "public-create-checkout";
+      
+      // IMPORTANT: always await the JSON body
       const { data, error } = await supabase.functions.invoke(fnName, {
         body: { plan }
       });
-      if (error || !data?.url) {
-        console.error(`❌ [${corrId.current}] Failed to create Stripe Checkout session:`, error || data);
+
+      if (error) {
+        console.error(`❌ [${corrId.current}] Subscription function error:`, error);
         toast({
           title: "Payment Error",
           description: `Could not start checkout. Please try again. (ID: ${corrId.current})`,
@@ -74,7 +138,29 @@ const SignupForm = () => {
         });
         return;
       }
-      window.location.href = data.url;
+
+      // A) Hosted Stripe Checkout -> expects a URL
+      if (data?.url) {
+        console.log(`✅ [${corrId.current}] Got checkout URL, redirecting...`);
+        // iOS-safe navigation (works on Android/Desktop too)
+        window.open(data.url, "_self");
+        return;
+      }
+
+      // B) Server-side provision (no Stripe UI) -> expects success
+      if (data?.success) {
+        console.log(`✅ [${corrId.current}] Server-side provision successful, finalizing...`);
+        // finalize locally as if we just returned from Stripe
+        await finalizeAfterReturn();
+        return;
+      }
+
+      console.error(`❌ [${corrId.current}] No checkout URL or success flag returned:`, JSON.stringify(data));
+      toast({
+        title: "Payment Error",
+        description: `Could not start checkout. Please try again. (ID: ${corrId.current})`,
+        variant: "destructive",
+      });
     } catch (err: any) {
       console.error(`❌ [${corrId.current}] Checkout error:`, err);
       toast({

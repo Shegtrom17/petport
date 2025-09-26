@@ -1,4 +1,4 @@
-const CACHE_NAME = 'petport-v13'; // iOS optimized cache management
+const CACHE_NAME = 'petport-v14'; // iOS optimized cache management
 const urlsToCache = [
   '/',
   '/lovable-uploads/213ccabc-3918-406d-b844-9c2730b7637d.png', // PetPort logo
@@ -57,10 +57,39 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Never intercept critical resources aggressively; let the browser handle
+  // Cache-first for critical resources with network fallback (keeps offline working on Safari)
   const criticalDestinations = ['script', 'style', 'font'];
   if (criticalDestinations.includes(req.destination)) {
-    event.respondWith(fetch(req));
+    event.respondWith(
+      caches.open(CACHE_NAME).then(async (cache) => {
+        const cached = await cache.match(req);
+        // Kick off network fetch and update cache in background
+        const fetchAndUpdate = (async () => {
+          try {
+            const resp = await fetch(req);
+            if (resp && resp.ok) {
+              const len = parseInt(resp.headers.get('content-length') || '0');
+              if (!isIOS() || !len || len < 1024 * 1024) {
+                cache.put(req, resp.clone());
+              }
+            }
+            return resp;
+          } catch {
+            return undefined;
+          }
+        })();
+
+        if (cached) {
+          // Return cached immediately; refresh in background
+          fetchAndUpdate;
+          return cached;
+        }
+
+        const resp = await fetchAndUpdate;
+        if (resp) return resp;
+        return new Response('', { status: 504 });
+      })
+    );
     return;
   }
 
@@ -69,15 +98,28 @@ self.addEventListener('fetch', (event) => {
       try {
         // Special handling for navigations (index.html/app shell)
         if (isNavigation) {
+          const navTimeoutMs = isIOS() ? 3000 : 5000;
           try {
-            const networkResponse = await fetch(req); // no timeout for navigations to avoid blank screens
-            if (networkResponse.ok) {
+            const networkResponse = await Promise.race([
+              fetch(req),
+              new Promise((_, reject) => setTimeout(() => reject(new Error('nav-timeout')), navTimeoutMs))
+            ]) as Response;
+
+            if (networkResponse && networkResponse.ok) {
+              // Cache the app shell and specific request for future offline
               cache.put('/', networkResponse.clone());
               cache.put(req, networkResponse.clone());
+              return networkResponse;
             }
-            return networkResponse;
+            // If network returned non-OK, try cache
+            const cachedIndex = (await cache.match(req)) || (await cache.match('/'));
+            if (cachedIndex) return cachedIndex;
+            return new Response('<!DOCTYPE html><html><body><h1>Offline</h1><p>Please check your connection and try again.</p></body></html>', {
+              status: 503,
+              headers: { 'Content-Type': 'text/html' }
+            });
           } catch (e) {
-            // Fallback to cached shell
+            // Fallback to cached shell on error or timeout
             const cachedIndex = (await cache.match(req)) || (await cache.match('/'));
             if (cachedIndex) return cachedIndex;
             return new Response('<!DOCTYPE html><html><body><h1>Offline</h1><p>Please check your connection and try again.</p></body></html>', {

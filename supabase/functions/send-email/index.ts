@@ -63,6 +63,14 @@ const generateEmailTemplate = (data: EmailRequest) => {
         ${customMessage ? `<blockquote style="border-left: 4px solid #e2e8f0; padding-left: 16px; margin: 16px 0; font-style: italic;">"${customMessage}"</blockquote>` : ''}
       `
     },
+    credentials: {
+      subject: `${sender} shared ${petName}'s credentials with you`,
+      content: `
+        <h2>${petName}'s Credentials</h2>
+        <p>${sender} has shared professional credentials or certifications for ${petName}.</p>
+        ${customMessage ? `<blockquote style="border-left: 4px solid #e2e8f0; padding-left: 16px; margin: 16px 0; font-style: italic;">"${customMessage}"</blockquote>` : ''}
+      `
+    },
     resume: {
       subject: `${sender} shared ${petName}'s resume with you`,
       content: `
@@ -253,6 +261,9 @@ const handler = async (req: Request): Promise<Response> => {
       },
       care: {
         subject: `${emailData.senderName || 'A PetPort user'} shared ${emailData.petName}'s care instructions with you`
+      },
+      credentials: {
+        subject: `${emailData.senderName || 'A PetPort user'} shared ${emailData.petName}'s credentials with you`
       },
       resume: {
         subject: `${emailData.senderName || 'A PetPort user'} shared ${emailData.petName}'s resume with you`

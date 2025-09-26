@@ -55,7 +55,7 @@ serve(async (req) => {
 
     log("Listing existing webhook endpoints");
     const existingList = await stripe.webhookEndpoints.list({ limit: 100 });
-    const existing = existingList.data.find((e) => e.url === endpointUrl);
+    const existing = existingList.data.find((e: any) => e.url === endpointUrl);
 
     if (existing) {
       log("Updating existing webhook endpoint", { id: existing.id });

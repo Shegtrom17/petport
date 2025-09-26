@@ -62,15 +62,14 @@ serve(async (req) => {
 
     // Check if a user exists
     log("Checking if user exists", { email });
-    const { data: users, error: listErr } = await supabase.auth.admin.listUsers({ page: 1, perPage: 1, email });
+    const { data: usersList, error: listErr } = await supabase.auth.admin.listUsers({ page: 1, perPage: 200 });
     if (listErr) throw new Error(`List users failed: ${listErr.message}`);
 
-    let existingUser = false;
-    let userId: string | null = null;
+    const matched = usersList?.users?.find((u: any) => u.email?.toLowerCase() === email.toLowerCase());
+    let existingUser = !!matched;
+    let userId: string | null = matched?.id ?? null;
 
-    if (users?.users?.length) {
-      existingUser = true;
-      userId = users.users[0].id;
+    if (existingUser) {
       log("Existing user found", { userId });
     } else {
       // For new users, we'll store payment info without creating account yet

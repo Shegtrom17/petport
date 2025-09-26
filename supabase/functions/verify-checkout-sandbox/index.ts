@@ -58,16 +58,13 @@ serve(async (req) => {
     );
 
     log("Checking if user exists", { email });
-    const { data: users, error: listErr } = await supabase.auth.admin.listUsers({ page: 1, perPage: 1, email });
+    const { data: usersList, error: listErr } = await supabase.auth.admin.listUsers({ page: 1, perPage: 200 });
     if (listErr) throw new Error(`List users failed: ${listErr.message}`);
 
-    let existingUser = false;
-    let userId: string | null = null;
-    if (users?.users?.length) {
-      existingUser = true;
-      userId = users.users[0].id;
-      log("Existing user found", { userId });
-    } else {
+    const matched = usersList?.users?.find((u: any) => u.email?.toLowerCase() === email.toLowerCase());
+    let existingUser = !!matched;
+    let userId: string | null = matched?.id ?? null;
+    if (!existingUser) {
       log("Inviting new user", { email });
       const { data: inviteData, error: inviteErr } = await supabase.auth.admin.inviteUserByEmail(email, {
         redirectTo: `${origin || ""}/auth`,

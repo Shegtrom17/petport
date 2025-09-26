@@ -64,7 +64,7 @@ serve(async (req) => {
       expand: ["data.items.data.price"],
     });
 
-    const activeOrTrialing = subscriptions.data.filter((s) => s.status === "active" || s.status === "trialing");
+    const activeOrTrialing = subscriptions.data.filter((s: any) => s.status === "active" || s.status === "trialing");
     const hasActiveSub = activeOrTrialing.length > 0;
 
     let subscriptionTier: string | null = null;
@@ -127,7 +127,7 @@ serve(async (req) => {
     } else {
       // Check for past_due, unpaid, or incomplete subscriptions
       const allSubs = subscriptions.data;
-      const problemSubs = allSubs.filter(s => 
+      const problemSubs = allSubs.filter((s: any) => 
         s.status === 'past_due' || 
         s.status === 'unpaid' || 
         s.status === 'incomplete'

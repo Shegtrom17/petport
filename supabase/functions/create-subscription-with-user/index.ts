@@ -299,7 +299,7 @@ const handler = async (req: Request): Promise<Response> => {
     );
 
   } catch (error: any) {
-    console.error(`❌ [${corrId || 'no-id'}] Error in create-subscription-with-user function:`, error);
+    console.error(`❌ [no-id] Error in create-subscription-with-user function:`, error);
     
     // Parse Stripe errors for better user feedback
     let statusCode = 500;
@@ -321,7 +321,7 @@ const handler = async (req: Request): Promise<Response> => {
       JSON.stringify({ 
         error: errorMessage,
         code: errorCode,
-        correlationId: corrId,
+         correlationId: 'no-id',
         statusCode
       }),
       {

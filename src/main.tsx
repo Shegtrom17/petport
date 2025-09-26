@@ -45,12 +45,24 @@ try {
 
 // Register Service Worker for PWA installability - gated registration
 if ('serviceWorker' in navigator && window.location.hostname !== 'localhost') {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker
-      .register('/sw.js')
-      .then((registration) => {
-        console.log('SW registered successfully');
-      })
-      .catch((err) => console.error('SW registration failed:', err));
+  window.addEventListener('load', async () => {
+    try {
+      const RESET_KEY = 'sw-reset-petport-v12';
+      if (!localStorage.getItem(RESET_KEY)) {
+        const regs = await navigator.serviceWorker.getRegistrations();
+        await Promise.all(regs.map((r) => r.unregister()));
+        if ('caches' in window) {
+          const names = await caches.keys();
+          await Promise.all(names.map((n) => caches.delete(n)));
+        }
+        localStorage.setItem(RESET_KEY, '1');
+        console.log('SW: performed one-time unregister and cache clear');
+      }
+
+      const registration = await navigator.serviceWorker.register('/sw.js');
+      console.log('SW registered successfully', registration.scope);
+    } catch (err) {
+      console.error('SW registration failed:', err);
+    }
   });
 }

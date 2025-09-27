@@ -21,6 +21,13 @@ export const PricingSection: React.FC<PricingSectionProps> = ({ context = "landi
   const [isLoading, setIsLoading] = useState(false);
 
   const startCheckout = async (plan: "monthly" | "yearly") => {
+    // Landing page should redirect to auth, not Stripe
+    if (context === "landing") {
+      navigate(`/auth?plan=${plan}`);
+      return;
+    }
+    
+    // Only authenticated users on subscribe page call Stripe directly
     try {
       setIsLoading(true);
       const { data, error } = await supabase.functions.invoke("create-checkout", {
@@ -51,6 +58,12 @@ export const PricingSection: React.FC<PricingSectionProps> = ({ context = "landi
   };
 
   const buyAdditionalPets = async (quantity: number) => {
+    // Landing page should redirect to auth for additional pets too
+    if (context === "landing") {
+      navigate("/auth?plan=monthly");
+      return;
+    }
+    
     try {
       setIsLoading(true);
       const fn = "purchase-addons";

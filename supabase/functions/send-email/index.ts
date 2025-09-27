@@ -181,6 +181,10 @@ const generateEmailTemplate = (data: EmailRequest) => {
         <h2>🐾 ${petName} is being transferred to you!</h2>
         <p>${sender} is transferring ${petName}'s complete pet profile and account to you on PetPort.</p>
         
+        <div style="background: #fef3c7; border: 2px solid #f59e0b; border-radius: 8px; padding: 15px; margin: 20px 0; text-align: center;">
+          <p style="margin: 0; color: #92400e; font-weight: bold;">⏰ This transfer link expires in 7 days</p>
+        </div>
+        
         <div style="background: linear-gradient(135deg, #5691af 10%, #4a7c95 90%); color: white; padding: 20px; border-radius: 8px; margin: 20px 0;">
           <h3 style="margin-top: 0; color: white;">✨ Create your PetPort account and start your free 7-day trial to complete the transfer</h3>
           <p style="margin: 10px 0; color: rgba(255,255,255,0.9);">
@@ -207,6 +211,10 @@ const generateEmailTemplate = (data: EmailRequest) => {
       content: `
         <h2>✅ ${petName}'s profile has been successfully transferred!</h2>
         <p>Great news! ${sender} has transferred ${petName}'s complete pet profile to your PetPort account.</p>
+        
+        <div style="background: #fef3c7; border: 2px solid #f59e0b; border-radius: 8px; padding: 15px; margin: 20px 0; text-align: center;">
+          <p style="margin: 0; color: #92400e; font-weight: bold;">⏰ This transfer link expires in 7 days</p>
+        </div>
         
         <div style="background: #ecfdf5; border: 2px solid #10b981; border-radius: 8px; padding: 20px; margin: 20px 0;">
           <h3 style="margin-top: 0; color: #047857;">🎉 ${petName} is now in your account</h3>

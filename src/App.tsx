@@ -17,7 +17,7 @@ import Index from "./pages/Index";
 import Landing from "./pages/Landing";
 import Onboarding from "./pages/Onboarding";
 import Auth from "./pages/Auth";
-import PlanSignup from "./pages/PlanSignup";
+
 import AddPet from "./pages/AddPet";
 import Profile from "./pages/Profile";
 
@@ -78,7 +78,7 @@ const App = () => {
                 <BrowserRouter>
                 <Routes>
                   <Route path="/auth" element={<Auth />} />
-                  <Route path="/signup" element={<PlanSignup />} />
+                  
                   <Route path="/" element={<Landing />} />
                   <Route path="/landing" element={<Landing />} />
                   <Route path="/app" element={

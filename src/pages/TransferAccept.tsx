@@ -8,7 +8,7 @@ import { useToast } from "@/hooks/use-toast";
 import { MetaTags } from "@/components/MetaTags";
 import { useAuth } from "@/context/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
-import { Crown, Plus } from "lucide-react";
+import { Crown, Plus, Clock, CheckCircle, Star } from "lucide-react";
 
 interface TransferStatus {
   status: string;
@@ -28,19 +28,54 @@ export default function TransferAccept() {
   const navigate = useNavigate();
   const [status, setStatus] = useState<TransferStatus | null>(null);
   const [loading, setLoading] = useState(false);
+  const [timeRemaining, setTimeRemaining] = useState<string>("");
 
+  // Calculate time remaining until expiration
   useEffect(() => {
-    const loadStatus = async () => {
-      if (!token) return;
-      const { data, error } = await supabase.functions.invoke("transfer-pet", {
-        body: { action: "status", token },
-      });
-      if (error) {
-        toast({ title: "Invalid or expired link", variant: "destructive" });
+    if (!status?.expires_at) return;
+    
+    const updateTimeRemaining = () => {
+      const now = new Date();
+      const expiry = new Date(status.expires_at!);
+      const diff = expiry.getTime() - now.getTime();
+      
+      if (diff <= 0) {
+        setTimeRemaining("Expired");
         return;
       }
-      setStatus(data);
+      
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      
+      if (days > 0) {
+        setTimeRemaining(`${days}d ${hours}h remaining`);
+      } else if (hours > 0) {
+        setTimeRemaining(`${hours}h ${minutes}m remaining`);
+      } else {
+        setTimeRemaining(`${minutes}m remaining`);
+      }
     };
+    
+    updateTimeRemaining();
+    const interval = setInterval(updateTimeRemaining, 60000); // Update every minute
+    
+    return () => clearInterval(interval);
+  }, [status?.expires_at]);
+
+  const loadStatus = async () => {
+    if (!token) return;
+    const { data, error } = await supabase.functions.invoke("transfer-pet", {
+      body: { action: "status", token },
+    });
+    if (error) {
+      toast({ title: "Invalid or expired link", variant: "destructive" });
+      return;
+    }
+    setStatus(data);
+  };
+
+  useEffect(() => {
     loadStatus();
   }, [token]);
 
@@ -52,7 +87,7 @@ export default function TransferAccept() {
       // New users need to sign up first, then subscribe
       toast({ 
         title: "Create your PetPort account", 
-        description: "Sign up to start your free trial and claim this pet profile." 
+        description: "Sign up to start your free 7-day trial and claim this pet profile." 
       });
       navigate(`/auth?plan=monthly&transfer_token=${token}`);
       return;
@@ -120,98 +155,193 @@ export default function TransferAccept() {
             ) : (
               <>
                 <div className="space-y-3">
+                  {/* Transfer Details with Urgency */}
                   <div className="bg-primary/5 border border-primary/20 rounded-lg p-4">
-                    <h3 className="font-semibold text-primary mb-2">
-                      {status.pet_name ? `${status.pet_name}'s Profile Transfer` : 'Pet Profile Transfer'}
-                    </h3>
+                    <div className="flex items-start justify-between mb-2">
+                      <h3 className="font-semibold text-primary">
+                        {status.pet_name ? `${status.pet_name}'s Profile Transfer` : 'Pet Profile Transfer'}
+                      </h3>
+                      {timeRemaining && (
+                        <div className={`flex items-center gap-1 text-xs font-medium px-2 py-1 rounded-full ${
+                          timeRemaining.includes('Expired') 
+                            ? 'bg-red-100 text-red-700' 
+                            : timeRemaining.includes('h') || timeRemaining.includes('d')
+                              ? 'bg-orange-100 text-orange-700'
+                              : 'bg-red-100 text-red-700'
+                        }`}>
+                          <Clock className="w-3 h-3" />
+                          {timeRemaining}
+                        </div>
+                      )}
+                    </div>
                     <p className="text-sm">
                       From: <strong>{status.sender_name || 'A PetPort user'}</strong>
                     </p>
                     <p className="text-sm">
                       To: <strong>{status.to_email}</strong>
                     </p>
-                    {status.expires_at && (
-                      <p className="text-sm text-muted-foreground mt-2">
-                        Expires: {new Date(status.expires_at).toLocaleString()}
-                      </p>
-                    )}
                   </div>
 
-                  {/* New User Flow */}
+                  {/* New User Flow - Enhanced Trial Messaging */}
                   {!user && (
-                    <div className="bg-azure/5 border border-azure/20 rounded-lg p-4">
-                      <h4 className="font-medium text-azure mb-2">
-                        🎉 {status.pet_name ? `${status.pet_name}'s` : 'This'} profile is waiting for you!
-                      </h4>
-                      <p className="text-sm text-muted-foreground">
-                        Create your PetPort account and start your free 7-day trial to receive this pet profile.
+                    <div className="bg-gradient-to-r from-azure/10 to-azure/5 border border-azure/30 rounded-lg p-5">
+                      <div className="flex items-center gap-2 mb-3">
+                        <Star className="w-5 h-5 text-azure" />
+                        <h4 className="font-semibold text-azure">
+                          🎉 {status.pet_name ? `${status.pet_name}'s` : 'This'} profile is waiting for you!
+                        </h4>
+                      </div>
+                      <p className="text-sm text-muted-foreground mb-4">
+                        Create your PetPort account and start your <strong>free 7-day trial</strong> to receive this pet profile.
+                      </p>
+                      
+                      {/* Trial Benefits */}
+                      <div className="bg-white/80 rounded-lg p-3 mb-3">
+                        <p className="text-xs font-medium text-azure mb-2">✨ Your 7-Day Free Trial Includes:</p>
+                        <div className="grid grid-cols-1 gap-1 text-xs text-muted-foreground">
+                          <div className="flex items-center gap-1">
+                            <CheckCircle className="w-3 h-3 text-green-500" />
+                            Complete access to {status.pet_name ? `${status.pet_name}'s` : 'this'} profile
+                          </div>
+                          <div className="flex items-center gap-1">
+                            <CheckCircle className="w-3 h-3 text-green-500" />
+                            Create unlimited pet profiles
+                          </div>
+                          <div className="flex items-center gap-1">
+                            <CheckCircle className="w-3 h-3 text-green-500" />
+                            Emergency contact & medical storage
+                          </div>
+                          <div className="flex items-center gap-1">
+                            <CheckCircle className="w-3 h-3 text-green-500" />
+                            Share profiles with caregivers & vets
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <p className="text-xs text-muted-foreground">
+                        <strong>Card required but not charged during trial.</strong> Cancel anytime before trial ends.
                       </p>
                     </div>
                   )}
 
-                  {/* Existing User - Needs Subscription */}
+                  {/* Existing User - Needs Subscription - Enhanced */}
                   {user && status.recipient_needs_subscription && (
-                    <div className="bg-azure/5 border border-azure/20 rounded-lg p-4">
-                      <h4 className="font-medium text-azure mb-2">
-                        📋 Subscription Required
-                      </h4>
-                      <p className="text-sm text-muted-foreground">
+                    <div className="bg-gradient-to-r from-azure/10 to-azure/5 border border-azure/30 rounded-lg p-5">
+                      <div className="flex items-center gap-2 mb-3">
+                        <Crown className="w-5 h-5 text-azure" />
+                        <h4 className="font-semibold text-azure">
+                          📋 Subscription Required
+                        </h4>
+                      </div>
+                      <p className="text-sm text-muted-foreground mb-3">
                         Complete your subscription to receive {status.pet_name ? `${status.pet_name}'s` : 'this'} profile.
-                        Start your 7-day free trial now.
                       </p>
+                      
+                      <div className="bg-white/80 rounded-lg p-3 mb-3">
+                        <p className="text-xs font-medium text-azure mb-2">🎯 Start Your 7-Day Free Trial Now:</p>
+                        <div className="text-xs text-muted-foreground space-y-1">
+                          <p>• Access to all premium features immediately</p>
+                          <p>• Card required but <strong>not charged during trial</strong></p>
+                          <p>• Cancel anytime before {new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString()}</p>
+                        </div>
+                      </div>
                     </div>
                   )}
 
-                  {/* Existing User - At Pet Limit */}
+                  {/* Existing User - At Pet Limit - Enhanced */}
                   {user && status.recipient_needs_upgrade && (
-                    <div className="bg-gold-500/5 border border-gold-500/20 rounded-lg p-4">
-                      <h4 className="font-medium text-gold-500 mb-2 flex items-center gap-1">
-                        <Plus className="w-4 h-4" />
-                        Additional Pet Slot Needed
-                      </h4>
-                      <p className="text-sm text-muted-foreground">
+                    <div className="bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-lg p-5">
+                      <div className="flex items-center gap-2 mb-3">
+                        <Plus className="w-5 h-5 text-amber-600" />
+                        <h4 className="font-semibold text-amber-700">
+                          Additional Pet Slot Needed
+                        </h4>
+                      </div>
+                      <p className="text-sm text-muted-foreground mb-3">
                         {status.pet_name ? `${status.pet_name}'s` : 'This'} profile is waiting for you — add an additional pet slot to your subscription to claim it.
                       </p>
-                      <p className="text-xs text-muted-foreground mt-2">
-                        Additional pet slots are just $3.99/year each.
-                      </p>
+                      
+                      <div className="bg-white/90 rounded-lg p-3 mb-3">
+                        <p className="text-xs font-medium text-amber-700 mb-2">💡 Simple & Affordable:</p>
+                        <div className="text-xs text-muted-foreground space-y-1">
+                          <p>• Additional pet slots: <strong>just $3.99/year each</strong></p>
+                          <p>• Immediate access after payment</p>
+                          <p>• Manage all your pets in one place</p>
+                        </div>
+                      </div>
                     </div>
                   )}
 
-                  {/* Active Subscriber - Ready to Accept */}
+                  {/* Active Subscriber - Ready to Accept - Enhanced */}
                   {user && !status.recipient_needs_subscription && !status.recipient_needs_upgrade && (
-                    <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-                      <h4 className="font-medium text-green-700 mb-2">
-                        ✅ Ready to Accept
-                      </h4>
-                      <p className="text-sm text-green-600">
+                    <div className="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-lg p-5">
+                      <div className="flex items-center gap-2 mb-3">
+                        <CheckCircle className="w-5 h-5 text-green-600" />
+                        <h4 className="font-semibold text-green-700">
+                          Ready to Accept
+                        </h4>
+                      </div>
+                      <p className="text-sm text-green-600 mb-3">
                         {status.pet_name ? `${status.pet_name}'s` : 'This'} profile will be added to your account immediately.
                       </p>
+                      
+                      <div className="bg-white/90 rounded-lg p-3">
+                        <p className="text-xs font-medium text-green-700 mb-1">✅ You're all set!</p>
+                        <p className="text-xs text-green-600">Active subscription with available pet slots detected.</p>
+                      </div>
                     </div>
                   )}
                 </div>
 
                 <Button 
                   onClick={handleAccept} 
-                  disabled={loading} 
-                  className="w-full bg-primary hover:bg-primary/90 text-white"
+                  disabled={loading || timeRemaining?.includes('Expired')} 
+                  className={`w-full text-white font-semibold py-3 ${
+                    timeRemaining?.includes('Expired') 
+                      ? 'bg-gray-400 cursor-not-allowed' 
+                      : 'bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary shadow-lg hover:shadow-xl transform hover:scale-[1.02] transition-all duration-200'
+                  }`}
                 >
                   {loading ? (
-                    "Processing…"
+                    <div className="flex items-center gap-2">
+                      <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                      Processing…
+                    </div>
+                  ) : timeRemaining?.includes('Expired') ? (
+                    "Transfer Link Expired"
                   ) : !user ? (
-                    "Create Account & Start Free Trial"
+                    <div className="flex items-center gap-2">
+                      <Star className="w-4 h-4" />
+                      Create Account & Start Free Trial
+                    </div>
                   ) : status.recipient_needs_subscription ? (
-                    "Complete Subscription"
+                    <div className="flex items-center gap-2">
+                      <Crown className="w-4 h-4" />
+                      Start 7-Day Free Trial
+                    </div>
                   ) : status.recipient_needs_upgrade ? (
-                    "Add Pet Slot & Accept"
+                    <div className="flex items-center gap-2">
+                      <Plus className="w-4 h-4" />
+                      Add Pet Slot & Accept ($3.99/year)
+                    </div>
                   ) : (
-                    `Accept ${status.pet_name || 'Pet'} Transfer`
+                    <div className="flex items-center gap-2">
+                      <CheckCircle className="w-4 h-4" />
+                      Accept {status.pet_name || 'Pet'} Transfer
+                    </div>
                   )}
                 </Button>
 
-                <p className="text-xs text-muted-foreground text-center">
-                  Not {status.to_email}? This link is intended for that email address only.
-                </p>
+                <div className="text-center space-y-2">
+                  <p className="text-xs text-muted-foreground">
+                    Not {status.to_email}? This link is intended for that email address only.
+                  </p>
+                  {timeRemaining && !timeRemaining.includes('Expired') && (
+                    <p className="text-xs text-orange-600 font-medium">
+                      ⏰ This transfer link expires in {timeRemaining.toLowerCase()}
+                    </p>
+                  )}
+                </div>
               </>
             )}
           </CardContent>

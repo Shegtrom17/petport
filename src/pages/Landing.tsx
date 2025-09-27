@@ -142,7 +142,7 @@ export default function Landing() {
                     Open App
                   </Button>
                 ) : (
-                  <Button onClick={() => navigate('/signup?plan=monthly')} size="lg" className="text-lg px-8 py-3 text-white">
+                  <Button onClick={() => navigate('/auth')} size="lg" className="text-lg px-8 py-3 text-white">
                     Start Free Trial
                   </Button>
                 )}
@@ -494,7 +494,7 @@ export default function Landing() {
                   Open App
                 </Button>
               ) : (
-                <Button onClick={() => navigate('/signup?plan=monthly')} size="lg" className="text-lg px-8 py-3 bg-white text-brand-primary hover:bg-gray-100">
+                <Button onClick={() => navigate('/auth')} size="lg" className="text-lg px-8 py-3 bg-white text-brand-primary hover:bg-gray-100">
                   Start Free Trial
                 </Button>
               )}

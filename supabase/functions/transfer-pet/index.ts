@@ -216,6 +216,73 @@ serve(async (req) => {
         .single();
       if (insertErr) throw insertErr;
 
+      // Auto-send transfer invitation email based on recipient status
+      try {
+        // Check if recipient exists and their subscription status
+        const { data: existingUsers } = await admin.auth.admin.listUsers();
+        const existingUser = existingUsers.users?.find(u => u.email?.toLowerCase() === to_email.toLowerCase());
+        
+        // Get sender and pet details for email
+        const { data: senderProfile } = await admin
+          .from("profiles")
+          .select("full_name")
+          .eq("id", user.id)
+          .maybeSingle();
+
+        let emailType = "transfer_invite_new";
+        let recipientStatus = "new";
+
+        if (existingUser) {
+          // Get subscription status
+          const { data: subscription } = await admin
+            .from("subscribers")
+            .select("status, pet_limit, additional_pets")
+            .eq("user_id", existingUser.id)
+            .maybeSingle();
+
+          // Get current pet count
+          const { count: petCount } = await admin
+            .from("pets")
+            .select("*", { count: "exact", head: true })
+            .eq("user_id", existingUser.id);
+
+          if (subscription && (subscription.status === 'active' || subscription.status === 'grace')) {
+            const totalLimit = (subscription.pet_limit || 1) + (subscription.additional_pets || 0);
+            const currentPets = petCount || 0;
+            
+            if (currentPets >= totalLimit) {
+              emailType = "transfer_limit_reached";
+              recipientStatus = "at_limit";
+            } else {
+              emailType = "transfer_invite_existing";
+              recipientStatus = "existing";
+            }
+          } else {
+            emailType = "transfer_invite_new";
+            recipientStatus = "needs_subscription";
+          }
+        }
+
+        // Send the appropriate email
+        await admin.functions.invoke("send-email", {
+          body: {
+            type: emailType,
+            recipientEmail: to_email,
+            petName: pet?.name || "Pet",
+            petId: pet_id,
+            senderName: senderProfile?.full_name || "A PetPort user",
+            transferToken: inserted.token,
+            transferUrl: `https://petport.app/transfer/accept/${inserted.token}`,
+            recipientStatus
+          }
+        });
+
+        console.log(`Transfer invite email sent: ${emailType} to ${to_email}`);
+      } catch (emailError) {
+        console.error("Error sending transfer invite email:", emailError);
+        // Don't fail the transfer creation for email issues
+      }
+
       return new Response(JSON.stringify({ ok: true, token: inserted.token }), {
         status: 200,
         headers: { ...corsHeaders, "Content-Type": "application/json" },

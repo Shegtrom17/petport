@@ -22,6 +22,8 @@ interface EmailRequest {
   pdfAttachment?: string; // Base64 encoded PDF
   pdfFileName?: string;
   transferToken?: string;
+  transferUrl?: string;
+  recipientStatus?: string;
 }
 
 const generateEmailTemplate = (data: EmailRequest) => {

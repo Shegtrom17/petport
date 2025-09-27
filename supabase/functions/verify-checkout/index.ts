@@ -113,11 +113,10 @@ serve(async (req) => {
     // Calculate total pet limit: base (1) + additional pets
     const petLimit = 1 + additionalPets;
 
-    // Upsert subscriber row with immediate activation
-    log("Upserting subscriber", { additionalPets, petLimit });
-    const { error: upsertErr } = await supabase.from("subscribers").upsert({
+    // Upsert subscriber row with immediate activation; skip user_id if not known yet
+    log("Upserting subscriber", { additionalPets, petLimit, hasUserId: !!userId });
+    const upsertData: any = {
       email,
-      user_id: userId,
       stripe_customer_id: customerId ?? null,
       subscribed: true,
       status: 'active',
@@ -129,7 +128,14 @@ serve(async (req) => {
       grace_period_end: null,
       payment_failed_at: null,
       updated_at: new Date().toISOString(),
-    }, { onConflict: "email" });
+    };
+    if (userId) {
+      upsertData.user_id = userId;
+    }
+
+    const { error: upsertErr } = await supabase
+      .from("subscribers")
+      .upsert(upsertData, { onConflict: "email" });
     if (upsertErr) throw new Error(`Upsert subscriber failed: ${upsertErr.message}`);
 
     const responseBody = JSON.stringify({ success: true, needsAccountSetup: !existingUser, existingUser, email });

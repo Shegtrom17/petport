@@ -903,7 +903,7 @@ export type Database = {
           subscription_tier: string | null
           suspended_at: string | null
           updated_at: string
-          user_id: string
+          user_id: string | null
         }
         Insert: {
           additional_pets?: number
@@ -923,7 +923,7 @@ export type Database = {
           subscription_tier?: string | null
           suspended_at?: string | null
           updated_at?: string
-          user_id: string
+          user_id?: string | null
         }
         Update: {
           additional_pets?: number
@@ -943,7 +943,7 @@ export type Database = {
           subscription_tier?: string | null
           suspended_at?: string | null
           updated_at?: string
-          user_id?: string
+          user_id?: string | null
         }
         Relationships: []
       }

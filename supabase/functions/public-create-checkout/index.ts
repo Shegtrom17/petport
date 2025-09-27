@@ -4,6 +4,8 @@ import Stripe from "https://esm.sh/stripe@14.21.0";
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Methods": "POST, GET, OPTIONS, PUT, DELETE",
+  "Access-Control-Max-Age": "86400",
 };
 
 serve(async (req) => {
@@ -18,7 +20,15 @@ serve(async (req) => {
 
     const { plan } = await req.json();
     if (plan !== "monthly" && plan !== "yearly") {
-      return new Response(JSON.stringify({ error: "Invalid plan" }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+      const errorBody = JSON.stringify({ error: "Invalid plan" });
+      return new Response(errorBody, { 
+        status: 400, 
+        headers: { 
+          ...corsHeaders, 
+          "Content-Type": "application/json",
+          "Content-Length": errorBody.length.toString()
+        } 
+      });
     }
 
     const amount = plan === "monthly" ? 199 : 1299; // cents
@@ -48,13 +58,23 @@ serve(async (req) => {
       allow_promotion_codes: true,
     });
 
-    return new Response(JSON.stringify({ url: session.url }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    const responseBody = JSON.stringify({ url: session.url });
+    return new Response(responseBody, {
+      headers: { 
+        ...corsHeaders, 
+        "Content-Type": "application/json",
+        "Content-Length": responseBody.length.toString()
+      },
       status: 200,
     });
   } catch (error: any) {
-    return new Response(JSON.stringify({ error: error?.message || "Unexpected error" }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    const errorBody = JSON.stringify({ error: error?.message || "Unexpected error" });
+    return new Response(errorBody, {
+      headers: { 
+        ...corsHeaders, 
+        "Content-Type": "application/json",
+        "Content-Length": errorBody.length.toString()
+      },
       status: 500,
     });
   }

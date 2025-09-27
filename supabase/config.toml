@@ -99,21 +99,6 @@ verify_jwt = false
 [functions.resume-share]
 verify_jwt = false
 
-# Sandbox/Test variants
-[functions.create-checkout-sandbox]
-verify_jwt = true
-
-[functions.public-create-checkout-sandbox]
-verify_jwt = false
-
-[functions.purchase-addons-sandbox]
-verify_jwt = true
-
-[functions.verify-checkout-sandbox]
-verify_jwt = false
-
-[functions.verify-addons-sandbox]
-verify_jwt = false
 
 [functions.upload-og-image]
 verify_jwt = false

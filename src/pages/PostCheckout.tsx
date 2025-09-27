@@ -46,10 +46,45 @@ export default function PostCheckout() {
           console.warn("⚠️ Session refresh issue on PostCheckout:", e);
         }
 
-        const verifyFn = "verify-checkout";
-        const { data, error } = await supabase.functions.invoke(verifyFn, { body: { session_id } });
-        if (!error && (data as any)?.success) {
-          const d: any = data;
+        // Retry verification with backoff
+        const verifyWithRetry = async (functionName: string) => {
+          const maxRetries = 3;
+          const baseDelay = 1200; // 1.2 seconds
+          
+          for (let attempt = 1; attempt <= maxRetries; attempt++) {
+            try {
+              console.log(`Attempting ${functionName} (attempt ${attempt}/${maxRetries})`);
+              const { data, error } = await supabase.functions.invoke(functionName, { body: { session_id } });
+              
+              if (!error && (data as any)?.success) {
+                return { data, error: null };
+              }
+              
+              if (attempt === maxRetries) {
+                return { data, error: error || new Error(`${functionName} failed after ${maxRetries} attempts`) };
+              }
+              
+              // Wait before retry with exponential backoff
+              const delay = baseDelay * Math.pow(1.5, attempt - 1);
+              console.log(`${functionName} failed, retrying in ${delay}ms...`);
+              await new Promise(resolve => setTimeout(resolve, delay));
+              
+            } catch (e) {
+              console.error(`${functionName} attempt ${attempt} error:`, e);
+              if (attempt === maxRetries) {
+                return { data: null, error: e };
+              }
+              
+              const delay = baseDelay * Math.pow(1.5, attempt - 1);
+              await new Promise(resolve => setTimeout(resolve, delay));
+            }
+          }
+        };
+
+        // Try verify-checkout first
+        const verifyResult = await verifyWithRetry("verify-checkout");
+        if (!verifyResult.error && (verifyResult.data as any)?.success) {
+          const d: any = verifyResult.data;
           setEmail(d.email || null);
           setNeedsAccountSetup(d.needsAccountSetup || false);
           
@@ -63,10 +98,10 @@ export default function PostCheckout() {
           return;
         }
 
-        const verifyAddonFn = "verify-addons";
-        const { data: addonData, error: addonError } = await supabase.functions.invoke(verifyAddonFn, { body: { session_id } });
-        if (!addonError && (addonData as any)?.success) {
-          const d: any = addonData;
+        // Try verify-addons if checkout verification failed
+        const addonResult = await verifyWithRetry("verify-addons");
+        if (!addonResult.error && (addonResult.data as any)?.success) {
+          const d: any = addonResult.data;
           setEmail(d.email || null);
           setState("success");
           setIsAddonPurchase(true);
@@ -74,7 +109,11 @@ export default function PostCheckout() {
           return;
         }
 
-        throw new Error((addonError as any)?.message || (error as any)?.message || "Unable to verify payment. Please contact support.");
+        throw new Error(
+          (addonResult.error as any)?.message || 
+          (verifyResult.error as any)?.message || 
+          "We're still verifying your payment. Please refresh this page or sign in again."
+        );
       } catch (e: any) {
         setState("error");
         setMsg(e?.message ?? "Verification failed");

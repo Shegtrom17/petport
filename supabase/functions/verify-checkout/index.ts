@@ -5,6 +5,8 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Methods": "POST, GET, OPTIONS, PUT, DELETE",
+  "Access-Control-Max-Age": "86400",
 };
 
 const log = (step: string, details?: any) => console.log(`[VERIFY-CHECKOUT] ${step}${details ? ` - ${JSON.stringify(details)}` : ""}`);
@@ -17,8 +19,13 @@ serve(async (req) => {
   try {
     const { session_id } = await req.json();
     if (!session_id) {
-      return new Response(JSON.stringify({ error: "session_id is required" }), {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      const errorBody = JSON.stringify({ error: "session_id is required" });
+      return new Response(errorBody, {
+        headers: { 
+          ...corsHeaders, 
+          "Content-Type": "application/json",
+          "Content-Length": errorBody.length.toString()
+        },
         status: 400,
       });
     }
@@ -38,8 +45,13 @@ serve(async (req) => {
 
     // Validate payment/subscription status
     if (session.mode !== "subscription" || session.status !== "complete") {
-      return new Response(JSON.stringify({ error: "Subscription not completed" }), {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      const errorBody = JSON.stringify({ error: "Subscription not completed" });
+      return new Response(errorBody, {
+        headers: { 
+          ...corsHeaders, 
+          "Content-Type": "application/json",
+          "Content-Length": errorBody.length.toString()
+        },
         status: 400,
       });
     }
@@ -120,14 +132,24 @@ serve(async (req) => {
     }, { onConflict: "email" });
     if (upsertErr) throw new Error(`Upsert subscriber failed: ${upsertErr.message}`);
 
-    return new Response(JSON.stringify({ success: true, needsAccountSetup: !existingUser, existingUser, email }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    const responseBody = JSON.stringify({ success: true, needsAccountSetup: !existingUser, existingUser, email });
+    return new Response(responseBody, {
+      headers: { 
+        ...corsHeaders, 
+        "Content-Type": "application/json",
+        "Content-Length": responseBody.length.toString()
+      },
       status: 200,
     });
   } catch (error: any) {
     log("ERROR", { message: error?.message });
-    return new Response(JSON.stringify({ error: error?.message || "Unexpected error" }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    const errorBody = JSON.stringify({ error: error?.message || "Unexpected error" });
+    return new Response(errorBody, {
+      headers: { 
+        ...corsHeaders, 
+        "Content-Type": "application/json",
+        "Content-Length": errorBody.length.toString()
+      },
       status: 500,
     });
   }

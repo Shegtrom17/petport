@@ -5,6 +5,8 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Methods": "POST, GET, OPTIONS, PUT, DELETE",
+  "Access-Control-Max-Age": "86400",
 };
 
 const logStep = (step: string, details?: unknown) => {
@@ -51,8 +53,13 @@ serve(async (req) => {
         subscription_end: null,
         updated_at: new Date().toISOString(),
       }, { onConflict: 'email' });
-      return new Response(JSON.stringify({ subscribed: false }), {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      const responseBody = JSON.stringify({ subscribed: false });
+      return new Response(responseBody, {
+        headers: { 
+          ...corsHeaders, 
+          "Content-Type": "application/json",
+          "Content-Length": responseBody.length.toString()
+        },
         status: 200,
       });
     }
@@ -178,7 +185,7 @@ serve(async (req) => {
       updated_at: new Date().toISOString(),
     }, { onConflict: 'email' });
 
-    return new Response(JSON.stringify({
+    const responseBody = JSON.stringify({
       subscribed: hasActiveSub,
       subscription_tier: subscriptionTier,
       subscription_end: subscriptionEnd,
@@ -186,15 +193,25 @@ serve(async (req) => {
       pet_limit: petLimit,
       status: status,
       grace_period_end: gracePeriodEnd,
-    }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
+    return new Response(responseBody, {
+      headers: { 
+        ...corsHeaders, 
+        "Content-Type": "application/json",
+        "Content-Length": responseBody.length.toString()
+      },
       status: 200,
     });
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
     logStep("ERROR", { message });
-    return new Response(JSON.stringify({ error: message }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    const errorBody = JSON.stringify({ error: message });
+    return new Response(errorBody, {
+      headers: { 
+        ...corsHeaders, 
+        "Content-Type": "application/json",
+        "Content-Length": errorBody.length.toString()
+      },
       status: 500,
     });
   }

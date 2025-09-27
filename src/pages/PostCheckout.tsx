@@ -153,7 +153,6 @@ export default function PostCheckout() {
         email,
         password,
         options: {
-          emailRedirectTo: `${window.location.origin}/`,
           data: {
             full_name: fullName.trim()
           }
@@ -191,22 +190,10 @@ export default function PostCheckout() {
       }
     } catch (error: any) {
       console.error("Account setup error:", error);
-      
-      let errorMessage = error.message || "Please try again or contact support";
-      
-      // Handle specific common errors
-      if (error.message?.includes("User already registered")) {
-        errorMessage = "An account with this email already exists. Please try signing in instead.";
-      } else if (error.message?.includes("email address is invalid")) {
-        errorMessage = "Invalid email address. Please check and try again.";
-      } else if (error.message?.includes("Password should be")) {
-        errorMessage = "Password does not meet requirements. Please use a stronger password.";
-      }
-      
       toast({ 
         variant: "destructive", 
         title: "Account creation failed", 
-        description: errorMessage
+        description: error.message || "Please try again or contact support" 
       });
     } finally {
       setIsCreatingAccount(false);

@@ -24,6 +24,11 @@ export default function Auth() {
   const location = useLocation();
   const { toast } = useToast();
 
+  // Extract transfer token from URL params
+  const searchParams = new URLSearchParams(location.search);
+  const transferToken = searchParams.get('transfer_token');
+  const plan = searchParams.get('plan');
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -56,8 +61,12 @@ export default function Auth() {
         await signIn(email, password);
         console.log("Auth: Sign in completed");
 
-        // Continue to app after sign in
-        navigate("/app");
+        // Redirect based on transfer token presence
+        if (transferToken) {
+          navigate(`/transfer/accept/${transferToken}`);
+        } else {
+          navigate("/app");
+        }
       } else {
         console.log("Auth: Attempting sign up");
         const { error } = await supabase.auth.signUp({
@@ -75,8 +84,14 @@ export default function Auth() {
           throw error;
         }
 
-        console.log("Auth: Sign up completed, redirecting to app");
-        navigate("/app");
+        console.log("Auth: Sign up completed, redirecting...");
+        
+        // Redirect to subscribe page for new users, especially with transfer tokens
+        if (transferToken) {
+          navigate(`/subscribe?transfer_token=${transferToken}`);
+        } else {
+          navigate("/subscribe");
+        }
       }
     } catch (error) {
       console.error("Auth: Authentication error:", error);

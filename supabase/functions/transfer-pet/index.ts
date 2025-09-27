@@ -4,6 +4,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.50.3";
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
 const SUPABASE_ANON_KEY = Deno.env.get("SUPABASE_ANON_KEY");
 const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+const APP_ORIGIN = Deno.env.get("APP_ORIGIN") ?? "https://petport.app";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -15,6 +16,7 @@ interface CreateRequestBody {
   action: "create";
   pet_id: string;
   to_email: string;
+  message?: string;
   organization_id?: string | null;
 }
 
@@ -272,8 +274,9 @@ serve(async (req) => {
             petId: pet_id,
             senderName: senderProfile?.full_name || "A PetPort user",
             transferToken: inserted.token,
-            transferUrl: `https://petport.app/transfer/accept/${inserted.token}`,
-            recipientStatus
+            transferUrl: `${APP_ORIGIN}/transfer/accept/${inserted.token}`,
+            recipientStatus,
+            customMessage: json.message
           }
         });
 
@@ -401,7 +404,7 @@ serve(async (req) => {
             recipientName: user.user_metadata?.full_name,
             petName: reqRow.pets?.name || "Pet",
             petId: reqRow.pet_id,
-            shareUrl: `https://petport.app/profile/${reqRow.pet_id}`,
+            shareUrl: `${APP_ORIGIN}/profile/${reqRow.pet_id}`,
             senderName: reqRow.profiles?.full_name
           }
         });

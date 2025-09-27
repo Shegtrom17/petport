@@ -28,6 +28,7 @@ export default function TransferAccept() {
   const navigate = useNavigate();
   const [status, setStatus] = useState<TransferStatus | null>(null);
   const [loading, setLoading] = useState(false);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [timeRemaining, setTimeRemaining] = useState<string>("");
 
   // Calculate time remaining until expiration
@@ -69,7 +70,7 @@ export default function TransferAccept() {
       body: { action: "status", token },
     });
     if (error) {
-      toast({ title: "Invalid or expired link", variant: "destructive" });
+      setLoadError("Invalid or expired transfer link");
       return;
     }
     setStatus(data);
@@ -136,7 +137,7 @@ export default function TransferAccept() {
   };
 
   return (
-    <PWALayout>
+    <PWALayout showBottomNav={false}>
       <MetaTags title="Accept Pet Transfer | PetPort" description="Securely accept a pet transfer to your PetPort account." url={window.location.href} />
       <AppHeader title="Accept Transfer" />
       <div className="p-4">
@@ -148,13 +149,55 @@ export default function TransferAccept() {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            {!status ? (
+            {loadError ? (
+              <Card className="border-destructive">
+                <CardHeader>
+                  <CardTitle className="text-destructive">{loadError}</CardTitle>
+                </CardHeader>
+                <CardContent className="text-sm text-muted-foreground space-y-3">
+                  <p>This transfer link may have expired, been used already, or is invalid.</p>
+                  <div className="space-y-2">
+                    <p className="font-medium">What you can do:</p>
+                    <ul className="list-disc list-inside space-y-1 text-xs">
+                      <li>Ask the sender to generate a fresh invite</li>
+                      <li>Make sure you're signed in with the email the invite was sent to</li>
+                      <li>Check if the link has expired (transfers expire after 7 days)</li>
+                    </ul>
+                  </div>
+                  <Button asChild variant="outline" className="w-full">
+                    <Link to="/help">Contact Support</Link>
+                  </Button>
+                </CardContent>
+              </Card>
+            ) : !status ? (
               <div className="text-center py-4">
                 <p className="text-muted-foreground">Validating transfer link…</p>
               </div>
             ) : (
               <>
                 <div className="space-y-3">
+                  {/* Wrong Account Warning */}
+                  {user?.email && status?.to_email &&
+                    user.email.toLowerCase() !== status.to_email.toLowerCase() && (
+                    <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 text-sm mb-3">
+                      <p className="mb-2">
+                        You're signed in as <strong>{user.email}</strong>, but this transfer was sent to{' '}
+                        <strong>{status.to_email}</strong>.
+                      </p>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="w-full"
+                        onClick={async () => {
+                          await supabase.auth.signOut();
+                          navigate(`/auth?transfer_token=${token}`);
+                        }}
+                      >
+                        Switch Account
+                      </Button>
+                    </div>
+                  )}
+
                   {/* Transfer Details with Urgency */}
                   <div className="bg-primary/5 border border-primary/20 rounded-lg p-4">
                     <div className="flex items-start justify-between mb-2">

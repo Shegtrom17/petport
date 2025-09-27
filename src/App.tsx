@@ -115,7 +115,7 @@ const App = () => {
                     <Route path="/missing-pet/:petId" element={<PublicMissingPet />} />
                     <Route path="/gallery/:petId" element={<PublicGallery />} />
                     <Route path="/travel/:petId" element={<PublicTravelMap />} />
-                  <Route path="/transfer/:token" element={<TransferAccept />} />
+                  <Route path="/transfer/accept/:token" element={<TransferAccept />} />
                   <Route path="/privacy" element={<Navigate to="/privacy-policy" replace />} />
             <Route path="/terms" element={<Terms />} />
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />

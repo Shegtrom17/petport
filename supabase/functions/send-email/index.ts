@@ -245,7 +245,14 @@ const handler = async (req: Request): Promise<Response> => {
   try {
     const emailData: EmailRequest = await req.json();
     
-    console.log("Sending email:", emailData);
+    console.log("=== EMAIL BEING SENT ===");
+    console.log("To:", emailData.recipientEmail);
+    console.log("Pet:", emailData.petName);
+    console.log("Type:", emailData.type);
+    console.log("Share URL:", emailData.shareUrl);
+    console.log("Custom Message:", emailData.customMessage || "None");
+    console.log("Sender:", emailData.senderName || "A PetPort user");
+    console.log("=========================");
 
     const templates = {
       profile: {
@@ -345,7 +352,11 @@ const handler = async (req: Request): Promise<Response> => {
       });
     }
 
-    console.log("Email sent successfully via Postmark:", result);
+    console.log("=== EMAIL SENT SUCCESSFULLY ===");
+    console.log("Message ID:", result.MessageID);
+    console.log("To:", emailData.recipientEmail);
+    console.log("Subject:", subject);
+    console.log("================================");
 
     return new Response(JSON.stringify({ 
       success: true, 

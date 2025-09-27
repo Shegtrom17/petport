@@ -21,12 +21,6 @@ export const PricingSection: React.FC<PricingSectionProps> = ({ context = "landi
   const [isLoading, setIsLoading] = useState(false);
 
   const startCheckout = async (plan: "monthly" | "yearly") => {
-    if (context === "landing") {
-      navigate(`/signup?plan=${plan}`);
-      return;
-    }
-    
-    // For authenticated users in subscribe page, call create-checkout directly
     try {
       setIsLoading(true);
       const { data, error } = await supabase.functions.invoke("create-checkout", {
@@ -57,11 +51,6 @@ export const PricingSection: React.FC<PricingSectionProps> = ({ context = "landi
   };
 
   const buyAdditionalPets = async (quantity: number) => {
-    if (context === "landing") {
-      navigate("/signup?plan=monthly");
-      return;
-    }
-    
     try {
       setIsLoading(true);
       const fn = "purchase-addons";

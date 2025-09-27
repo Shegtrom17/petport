@@ -290,7 +290,17 @@ const generateEmailTemplate = (data: EmailRequest) => {
           
           <div style="text-align: center; margin: 30px 0;">
             <a href="${(() => {
-              // Extract direct URL from shareUrl if it contains a redirect parameter
+              // Determine the correct button URL based on email type
+              const baseUrl = Deno.env.get("APP_ORIGIN") || "https://petport.app";
+              
+              // For transfer emails, use transferUrl instead of shareUrl
+              if (type === 'transfer_invite_new' || type === 'transfer_invite_existing' || type === 'transfer_limit_reached') {
+                return data.transferUrl || `${baseUrl}/transfer/accept/${data.transferToken}`;
+              } else if (type === 'transfer_success') {
+                return `${baseUrl}/profile/${data.petId}`;
+              }
+              
+              // For non-transfer emails, use shareUrl with redirect extraction
               try {
                 const url = new URL(shareUrl);
                 const redirectParam = url.searchParams.get('redirect');
@@ -341,8 +351,22 @@ const handler = async (req: Request): Promise<Response> => {
     console.log("Pet:", emailData.petName);
     console.log("Type:", emailData.type);
     console.log("Share URL:", emailData.shareUrl);
+    console.log("Transfer URL:", emailData.transferUrl);
+    console.log("Transfer Token:", emailData.transferToken);
     console.log("Custom Message:", emailData.customMessage || "None");
     console.log("Sender:", emailData.senderName || "A PetPort user");
+    
+    // Determine final button URL for logging
+    const baseUrl = Deno.env.get("APP_ORIGIN") || "https://petport.app";
+    let finalButtonUrl = emailData.shareUrl;
+    
+    if (emailData.type === 'transfer_invite_new' || emailData.type === 'transfer_invite_existing' || emailData.type === 'transfer_limit_reached') {
+      finalButtonUrl = emailData.transferUrl || `${baseUrl}/transfer/accept/${emailData.transferToken}`;
+    } else if (emailData.type === 'transfer_success') {
+      finalButtonUrl = `${baseUrl}/profile/${emailData.petId}`;
+    }
+    
+    console.log("Final Button URL:", finalButtonUrl);
     console.log("=========================");
 
     const templates = {

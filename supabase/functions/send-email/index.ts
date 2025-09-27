@@ -176,13 +176,13 @@ const generateEmailTemplate = (data: EmailRequest) => {
       `
     },
     transfer_invite_new: {
-      subject: `🐾 ${petName}'s pet profile is waiting for you - Start your free trial`,
+      subject: `🐾 ${petName} is being transferred to you - Start your free trial`,
       content: `
-        <h2>🐾 ${petName}'s profile is waiting for you!</h2>
-        <p>${sender} has shared ${petName}'s complete pet profile with you on PetPort.</p>
+        <h2>🐾 ${petName} is being transferred to you!</h2>
+        <p>${sender} is transferring ${petName}'s complete pet profile and account to you on PetPort.</p>
         
         <div style="background: linear-gradient(135deg, #5691af 10%, #4a7c95 90%); color: white; padding: 20px; border-radius: 8px; margin: 20px 0;">
-          <h3 style="margin-top: 0; color: white;">✨ Create your PetPort account and start your free 7-day trial to receive it</h3>
+          <h3 style="margin-top: 0; color: white;">✨ Create your PetPort account and start your free 7-day trial to complete the transfer</h3>
           <p style="margin: 10px 0; color: rgba(255,255,255,0.9);">
             Join thousands of pet owners who trust PetPort to keep their pets safe and organized.
           </p>
@@ -191,13 +191,13 @@ const generateEmailTemplate = (data: EmailRequest) => {
         ${customMessage ? `<blockquote style="border-left: 4px solid #5691af; padding-left: 16px; margin: 16px 0; font-style: italic; background-color: #f8fafc;">"${customMessage}"</blockquote>` : ''}
         
         <div style="background: #f0f9ff; padding: 20px; border-radius: 8px; margin: 20px 0;">
-          <h4 style="margin-top: 0; color: #0c4a6e;">🎯 What you'll get:</h4>
+          <h4 style="margin-top: 0; color: #0c4a6e;">🎯 What you'll receive:</h4>
           <ul style="color: #0c4a6e; margin: 15px 0; padding-left: 20px;">
-            <li>Access to ${petName}'s complete profile and information</li>
+            <li>Full ownership transfer of ${petName}'s complete profile</li>
             <li>7-day free trial with all premium features</li>
-            <li>Create unlimited digital profiles for your own pets</li>
-            <li>Emergency information and medical record storage</li>
-            <li>Share profiles with caregivers, vets, and boarders</li>
+            <li>All of ${petName}'s medical records and information</li>
+            <li>Emergency contact details and care instructions</li>
+            <li>Photo galleries and vaccination records</li>
           </ul>
         </div>
       `

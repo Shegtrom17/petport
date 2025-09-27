@@ -28,6 +28,13 @@ interface StatusRequestBody {
   token: string;
 }
 
+interface SubscriptionStatus {
+  status: 'active' | 'grace' | 'suspended' | 'none';
+  pet_limit: number;
+  current_pets: number;
+  can_add_pet: boolean;
+}
+
 type RequestBody = CreateRequestBody | AcceptRequestBody | StatusRequestBody;
 
 function isValidEmail(email: string) {
@@ -59,20 +66,86 @@ serve(async (req) => {
 
     if (json.action === "status") {
       const { token } = json;
-      const { data, error } = await admin
+      const { data: transfer, error } = await admin
         .from("transfer_requests")
-        .select("status, to_email, pet_id, expires_at")
+        .select(`
+          *,
+          pets!inner(name, user_id),
+          profiles!transfer_requests_from_user_id_fkey(full_name)
+        `)
         .eq("token", token)
-        .maybeSingle();
-      if (error) throw error;
-      if (!data)
-        return new Response(
-          JSON.stringify({ error: "Invalid token" }),
-          { status: 404, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-        );
-      return new Response(JSON.stringify({ ok: true, ...data }), {
+        .single();
+
+      if (error || !transfer) {
+        return new Response(JSON.stringify({ error: "Invalid or expired transfer" }), {
+          status: 400,
+          headers: { "Content-Type": "application/json", ...corsHeaders },
+        });
+      }
+
+      // Check if transfer has expired
+      if (new Date() > new Date(transfer.expires_at)) {
+        return new Response(JSON.stringify({ error: "Transfer has expired" }), {
+          status: 400,
+          headers: { "Content-Type": "application/json", ...corsHeaders },
+        });
+      }
+
+      // Check recipient subscription status
+      let recipientStatus: SubscriptionStatus = {
+        status: 'none',
+        pet_limit: 0,
+        current_pets: 0,
+        can_add_pet: false
+      };
+
+      // Check if recipient email exists in system and get their subscription status
+      const { data: existingUsers } = await admin.auth.admin.listUsers();
+      const existingUser = existingUsers.users?.find(u => u.email?.toLowerCase() === transfer.to_email.toLowerCase());
+      
+      if (existingUser) {
+        // Get subscription status
+        const { data: subscription } = await admin
+          .from("subscribers")
+          .select("status, pet_limit, additional_pets")
+          .eq("user_id", existingUser.id)
+          .single();
+
+        // Get current pet count
+        const { count: petCount } = await admin
+          .from("pets")
+          .select("*", { count: "exact", head: true })
+          .eq("user_id", existingUser.id);
+
+        if (subscription) {
+          const totalLimit = (subscription.pet_limit || 1) + (subscription.additional_pets || 0);
+          const currentPets = petCount || 0;
+          
+          recipientStatus = {
+            status: subscription.status === 'active' || subscription.status === 'grace' ? 'active' : 'suspended',
+            pet_limit: totalLimit,
+            current_pets: currentPets,
+            can_add_pet: currentPets < totalLimit
+          };
+        }
+      }
+
+      // Determine what the recipient needs to do
+      const needsSubscription = !existingUser || recipientStatus.status !== 'active';
+      const needsUpgrade = existingUser && recipientStatus.status === 'active' && !recipientStatus.can_add_pet;
+
+      const response = {
+        ...transfer,
+        pet_name: transfer.pets?.name,
+        sender_name: transfer.profiles?.full_name,
+        recipient_subscription_status: needsSubscription ? 'none' : (needsUpgrade ? 'at_limit' : 'active'),
+        recipient_needs_subscription: needsSubscription,
+        recipient_needs_upgrade: needsUpgrade
+      };
+
+      return new Response(JSON.stringify(response), {
         status: 200,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", ...corsHeaders },
       });
     }
 
@@ -160,7 +233,11 @@ serve(async (req) => {
 
       const { data: reqRow, error: reqErr } = await admin
         .from("transfer_requests")
-        .select("*, pets:user_id")
+        .select(`
+          *,
+          pets!inner(name, user_id),
+          profiles!transfer_requests_from_user_id_fkey(full_name)
+        `)
         .eq("token", token)
         .maybeSingle();
       if (reqErr) throw reqErr;
@@ -193,17 +270,37 @@ serve(async (req) => {
         });
       }
 
-      // Check if adopter has an active subscription
+      // Check if adopter has an active subscription and pet capacity
       const { data: subscriberData, error: subError } = await admin
         .from("subscribers")
-        .select("status")
+        .select("status, pet_limit, additional_pets")
         .eq("user_id", user.id)
         .maybeSingle();
       
       if (subError) throw subError;
       if (!subscriberData || (subscriberData.status !== "active" && subscriberData.status !== "grace")) {
-        return new Response(JSON.stringify({ error: "Adopter must have an active PetPort subscription to accept pet transfers" }), {
-          status: 403,
+        return new Response(JSON.stringify({ 
+          error: "Active subscription required",
+          redirect: "/subscribe" 
+        }), {
+          status: 402,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+
+      // Check if user can add another pet
+      const { count: currentPetCount } = await admin
+        .from("pets")
+        .select("*", { count: "exact", head: true })
+        .eq("user_id", user.id);
+
+      const totalLimit = (subscriberData.pet_limit || 1) + (subscriberData.additional_pets || 0);
+      if ((currentPetCount || 0) >= totalLimit) {
+        return new Response(JSON.stringify({ 
+          error: "Pet limit reached. Please upgrade your subscription.",
+          redirect: "/subscribe?upgrade=pets" 
+        }), {
+          status: 402,
           headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
       }
@@ -220,7 +317,7 @@ serve(async (req) => {
       const { error: reqUpdateErr } = await admin
         .from("transfer_requests")
         .update({
-          status: "accepted",
+          status: "completed",
           accepted_at: new Date().toISOString(),
           to_user_id: user.id,
           updated_at: new Date().toISOString(),
@@ -228,7 +325,29 @@ serve(async (req) => {
         .eq("id", reqRow.id);
       if (reqUpdateErr) throw reqUpdateErr;
 
-      return new Response(JSON.stringify({ ok: true }), {
+      // Send success email to recipient
+      try {
+        await admin.functions.invoke("send-email", {
+          body: {
+            type: "transfer_success",
+            recipientEmail: reqRow.to_email,
+            recipientName: user.user_metadata?.full_name,
+            petName: reqRow.pets?.name || "Pet",
+            petId: reqRow.pet_id,
+            shareUrl: `https://petport.app/profile/${reqRow.pet_id}`,
+            senderName: reqRow.profiles?.full_name
+          }
+        });
+      } catch (emailError) {
+        console.error("Error sending success email:", emailError);
+        // Don't fail the transfer for email issues
+      }
+
+      return new Response(JSON.stringify({ 
+        ok: true,
+        pet_name: reqRow.pets?.name,
+        message: "Transfer completed successfully" 
+      }), {
         status: 200,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });

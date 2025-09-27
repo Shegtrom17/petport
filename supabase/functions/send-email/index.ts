@@ -8,7 +8,7 @@ const corsHeaders = {
 };
 
 interface EmailRequest {
-  type: 'profile' | 'care' | 'credentials' | 'resume' | 'reviews' | 'review_request' | 'missing_pet' | 'app_share' | 'welcome_trial';
+  type: 'profile' | 'care' | 'credentials' | 'resume' | 'reviews' | 'review_request' | 'missing_pet' | 'app_share' | 'welcome_trial' | 'transfer_invite_new' | 'transfer_invite_existing' | 'transfer_success' | 'transfer_limit_reached';
   recipientEmail: string;
   recipientName?: string;
   petName: string;
@@ -21,6 +21,7 @@ interface EmailRequest {
   billingAmount?: string;
   pdfAttachment?: string; // Base64 encoded PDF
   pdfFileName?: string;
+  transferToken?: string;
 }
 
 const generateEmailTemplate = (data: EmailRequest) => {
@@ -171,6 +172,90 @@ const generateEmailTemplate = (data: EmailRequest) => {
         <p>Questions? Reply to this email or visit our Help Center. We're here to help!</p>
         <p>Welcome to the PetPort family! 🐾</p>
       `
+    },
+    transfer_invite_new: {
+      subject: `🐾 ${petName}'s pet profile is waiting for you - Start your free trial`,
+      content: `
+        <h2>🐾 ${petName}'s profile is waiting for you!</h2>
+        <p>${sender} has shared ${petName}'s complete pet profile with you on PetPort.</p>
+        
+        <div style="background: linear-gradient(135deg, #5691af 10%, #4a7c95 90%); color: white; padding: 20px; border-radius: 8px; margin: 20px 0;">
+          <h3 style="margin-top: 0; color: white;">✨ Create your PetPort account and start your free 7-day trial to receive it</h3>
+          <p style="margin: 10px 0; color: rgba(255,255,255,0.9);">
+            Join thousands of pet owners who trust PetPort to keep their pets safe and organized.
+          </p>
+        </div>
+        
+        ${customMessage ? `<blockquote style="border-left: 4px solid #5691af; padding-left: 16px; margin: 16px 0; font-style: italic; background-color: #f8fafc;">"${customMessage}"</blockquote>` : ''}
+        
+        <div style="background: #f0f9ff; padding: 20px; border-radius: 8px; margin: 20px 0;">
+          <h4 style="margin-top: 0; color: #0c4a6e;">🎯 What you'll get:</h4>
+          <ul style="color: #0c4a6e; margin: 15px 0; padding-left: 20px;">
+            <li>Access to ${petName}'s complete profile and information</li>
+            <li>7-day free trial with all premium features</li>
+            <li>Create unlimited digital profiles for your own pets</li>
+            <li>Emergency information and medical record storage</li>
+            <li>Share profiles with caregivers, vets, and boarders</li>
+          </ul>
+        </div>
+      `
+    },
+    transfer_invite_existing: {
+      subject: `✅ ${petName}'s pet profile has been transferred to your PetPort`,
+      content: `
+        <h2>✅ ${petName}'s profile has been successfully transferred!</h2>
+        <p>Great news! ${sender} has transferred ${petName}'s complete pet profile to your PetPort account.</p>
+        
+        <div style="background: #ecfdf5; border: 2px solid #10b981; border-radius: 8px; padding: 20px; margin: 20px 0;">
+          <h3 style="margin-top: 0; color: #047857;">🎉 ${petName} is now in your account</h3>
+          <p style="margin: 10px 0; color: #047857;">You can now access all of ${petName}'s information, photos, and documents in your PetPort dashboard.</p>
+        </div>
+        
+        ${customMessage ? `<blockquote style="border-left: 4px solid #5691af; padding-left: 16px; margin: 16px 0; font-style: italic; background-color: #f8fafc;">"${customMessage}"</blockquote>` : ''}
+        
+        <p>Click the button below to view ${petName}'s profile and start managing their information.</p>
+      `
+    },
+    transfer_success: {
+      subject: `🎉 ${petName}'s profile transfer completed successfully`,
+      content: `
+        <h2>🎉 Transfer Complete!</h2>
+        <p>Hi ${data.recipientName || 'there'},</p>
+        <p>${petName}'s profile has been successfully transferred to your PetPort account!</p>
+        
+        <div style="background: #ecfdf5; border: 2px solid #10b981; border-radius: 8px; padding: 20px; margin: 20px 0;">
+          <h3 style="margin-top: 0; color: #047857;">✅ What happens next:</h3>
+          <ul style="color: #047857; margin: 15px 0; padding-left: 20px;">
+            <li>${petName} now appears in your PetPort dashboard</li>
+            <li>You have full access to edit and manage their profile</li>
+            <li>All photos, documents, and information are preserved</li>
+            <li>You can share ${petName}'s profile with others anytime</li>
+          </ul>
+        </div>
+        
+        <p>Thank you for using PetPort to keep ${petName}'s information safe and organized!</p>
+      `
+    },
+    transfer_limit_reached: {
+      subject: `🐾 ${petName}'s profile is waiting - Add a pet slot to claim it`,
+      content: `
+        <h2>🐾 ${petName}'s profile is waiting for you!</h2>
+        <p>${sender} wants to transfer ${petName}'s profile to your PetPort account.</p>
+        
+        <div style="background: #fef3c7; border: 2px solid #f59e0b; border-radius: 8px; padding: 20px; margin: 20px 0;">
+          <h3 style="margin-top: 0; color: #92400e;">📋 Additional Pet Slot Needed</h3>
+          <p style="margin: 10px 0; color: #92400e;">
+            You've reached your current pet limit. Add an additional pet slot to your subscription to claim ${petName}'s profile.
+          </p>
+          <p style="margin: 10px 0; color: #92400e;">
+            <strong>Additional pet slots are just $3.99/year each.</strong>
+          </p>
+        </div>
+        
+        ${customMessage ? `<blockquote style="border-left: 4px solid #5691af; padding-left: 16px; margin: 16px 0; font-style: italic; background-color: #f8fafc;">"${customMessage}"</blockquote>` : ''}
+        
+        <p>Click the button below to add a pet slot and claim ${petName}'s profile.</p>
+      `
     }
   };
 
@@ -213,9 +298,13 @@ const generateEmailTemplate = (data: EmailRequest) => {
               }
             })()} " 
                style="display: inline-block; background: linear-gradient(135deg, #5691af 0%, #4a7c95 100%); color: white; text-decoration: none; padding: 15px 30px; border-radius: 8px; font-weight: bold; font-size: 16px;">
-               ${isDocumentShare ? '📄 View Document' : 
-                 type === 'review_request' ? `📝 Leave a Review for ${petName}` :
-                 `View ${petName}'s ${type === 'profile' ? 'Profile' : type === 'missing_pet' ? 'Missing Pet Alert' : type === 'resume' ? 'Resume' : type.charAt(0).toUpperCase() + type.slice(1)}`}
+                ${isDocumentShare ? '📄 View Document' : 
+                  type === 'review_request' ? `📝 Leave a Review for ${petName}` :
+                  type === 'transfer_invite_new' ? 'Create Account & Start Free Trial' :
+                  type === 'transfer_invite_existing' ? `Accept ${petName}'s Transfer` :
+                  type === 'transfer_success' ? `View ${petName}'s Profile` :
+                  type === 'transfer_limit_reached' ? 'Add Pet Slot & Claim Profile' :
+                  `View ${petName}'s ${type === 'profile' ? 'Profile' : type === 'missing_pet' ? 'Missing Pet Alert' : type === 'resume' ? 'Resume' : type.charAt(0).toUpperCase() + type.slice(1)}`}
             </a>
           </div>
           
@@ -289,6 +378,18 @@ const handler = async (req: Request): Promise<Response> => {
       },
       welcome_trial: {
         subject: `🎉 Welcome to PetPort - Your Free Trial Has Started!`
+      },
+      transfer_invite_new: {
+        subject: `🐾 ${emailData.petName}'s pet profile is waiting for you - Start your free trial`
+      },
+      transfer_invite_existing: {
+        subject: `✅ ${emailData.petName}'s pet profile has been transferred to your PetPort`
+      },
+      transfer_success: {
+        subject: `🎉 ${emailData.petName}'s profile transfer completed successfully`
+      },
+      transfer_limit_reached: {
+        subject: `🐾 ${emailData.petName}'s profile is waiting - Add a pet slot to claim it`
       }
     };
 

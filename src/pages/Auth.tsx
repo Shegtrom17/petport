@@ -13,7 +13,7 @@ import { StorageWarningBanner } from "@/components/StorageWarningBanner";
 export default function Auth() {
   console.log("Auth: Component rendering");
   
-  const [isSignIn, setIsSignIn] = useState(true);
+  const [isSignIn, setIsSignIn] = useState(false); // Default to signup for new users
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
@@ -131,9 +131,9 @@ export default function Auth() {
         
         <Card className="border-0 shadow-lg bg-white/90 backdrop-blur-sm">
           <CardHeader>
-            <CardTitle>{isSignIn ? "Sign In" : "Create Account"}</CardTitle>
+            <CardTitle>{isSignIn ? "Welcome Back" : "Start Your Free Trial"}</CardTitle>
             <CardDescription>
-              {isSignIn ? "Enter your credentials to access your account" : "Create a new PetPort account"}
+              {isSignIn ? "Sign in to access your pet profiles" : "Create your account - 7 days free, cancel anytime"}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -182,7 +182,7 @@ export default function Auth() {
                   className="w-full bg-brand-primary hover:bg-brand-primary-dark text-white border border-white/20"
                   disabled={isSubmitting}
                 >
-                  {isSubmitting ? "Processing..." : isSignIn ? "Sign In" : "Create Account"}
+                  {isSubmitting ? "Processing..." : isSignIn ? "Sign In" : "Start Free Trial"}
                 </Button>
               </div>
             </form>
@@ -196,7 +196,7 @@ export default function Auth() {
                   onClick={() => setIsSignIn(false)}
                   className="text-sm text-muted-foreground hover:text-primary"
                 >
-                  Don't have an account? Create one
+                  Need an account? Start your free trial
                 </Button>
               ) : (
                 <Button

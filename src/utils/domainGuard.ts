@@ -13,7 +13,9 @@ export const initializeDomainGuard = (): void => {
   const productionURL = getBaseURL();
   
   // If we're on ANY Lovable preview domain, redirect to production immediately
-  if (isLovablePreview) {
+  // But skip redirect when inside an iframe (Lovable editor preview)
+  const isInIframe = window.top !== window.self;
+  if (isLovablePreview && !isInIframe) {
     console.log('Domain guard: Redirecting from preview to production');
     window.location.replace(productionURL + window.location.pathname + window.location.search);
     return;

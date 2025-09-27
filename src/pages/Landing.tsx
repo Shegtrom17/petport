@@ -142,7 +142,7 @@ export default function Landing() {
                     Open App
                   </Button>
                 ) : (
-                  <Button onClick={() => navigate('/auth')} size="lg" className="text-lg px-8 py-3 text-white">
+                  <Button onClick={() => navigate('/auth?plan=monthly')} size="lg" className="text-lg px-8 py-3 text-white">
                     Start Free Trial
                   </Button>
                 )}

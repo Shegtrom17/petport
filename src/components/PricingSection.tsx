@@ -20,8 +20,40 @@ export const PricingSection: React.FC<PricingSectionProps> = ({ context = "landi
   const [selectedQuantity, setSelectedQuantity] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
 
-  const startCheckout = (plan: "monthly" | "yearly") => {
-    navigate(`/signup?plan=${plan}`);
+  const startCheckout = async (plan: "monthly" | "yearly") => {
+    if (context === "landing") {
+      navigate(`/signup?plan=${plan}`);
+      return;
+    }
+    
+    // For authenticated users in subscribe page, call create-checkout directly
+    try {
+      setIsLoading(true);
+      const { data, error } = await supabase.functions.invoke("create-checkout", {
+        body: { plan }
+      });
+
+      if (error) throw error;
+      
+      if (data?.url) {
+        window.location.href = data.url;
+      } else {
+        toast({
+          title: "Error",
+          description: "Failed to start checkout process",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.error('Error starting checkout:', error);
+      toast({
+        title: "Error", 
+        description: "Failed to start checkout process",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const buyAdditionalPets = async (quantity: number) => {

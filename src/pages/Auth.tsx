@@ -59,12 +59,24 @@ export default function Auth() {
         // Continue to app after sign in
         navigate("/app");
       } else {
-        // Redirect signup attempts to plan selection
-        toast({
-          title: "Choose your plan",
-          description: "Please select a subscription plan to create your account.",
+        console.log("Auth: Attempting sign up");
+        const { error } = await supabase.auth.signUp({
+          email,
+          password,
+          options: {
+            emailRedirectTo: `${window.location.origin}/`,
+            data: {
+              full_name: fullName.trim()
+            }
+          }
         });
-        navigate("/signup");
+
+        if (error) {
+          throw error;
+        }
+
+        console.log("Auth: Sign up completed, redirecting to app");
+        navigate("/app");
       }
     } catch (error) {
       console.error("Auth: Authentication error:", error);
@@ -181,10 +193,10 @@ export default function Auth() {
                 <Button
                   type="button"
                   variant="link"
-                  onClick={() => navigate("/signup")}
+                  onClick={() => setIsSignIn(false)}
                   className="text-sm text-muted-foreground hover:text-primary"
                 >
-                  Don't have an account? Choose a plan
+                  Don't have an account? Create one
                 </Button>
               ) : (
                 <Button

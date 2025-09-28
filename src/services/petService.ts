@@ -854,9 +854,25 @@ export async function uploadPetPhotos(petId: string, photos: {
     let fullBodyPhotoUrl = null;
 
     if (photos.profilePhoto) {
-      // Compress profile photo
+      // HEIC convert then compress profile photo
+      let fileToProcess = photos.profilePhoto;
+      if (
+        fileToProcess.type.toLowerCase().includes('heic') || fileToProcess.type.toLowerCase().includes('heif') ||
+        fileToProcess.name.toLowerCase().endsWith('.heic') || fileToProcess.name.toLowerCase().endsWith('.heif')
+      ) {
+        try {
+          const heic2any = (await import('heic2any')).default as any;
+          const convertedBlob = await heic2any({ blob: fileToProcess, toType: 'image/jpeg', quality: 0.9 });
+          fileToProcess = new File([convertedBlob], fileToProcess.name.replace(/\.[^.]+$/, '.jpg'), { type: 'image/jpeg' });
+          console.log('HEIC_CONVERT_SUCCESS: profile');
+        } catch (e) {
+          console.error('HEIC_CONVERT_ERROR: profile', e);
+          throw new Error('Failed to convert HEIC image. Please use JPEG/PNG.');
+        }
+      }
+
       const { compressImage } = await import('@/utils/imageCompression');
-      const compressionResult = await compressImage(photos.profilePhoto, {
+      const compressionResult = await compressImage(fileToProcess, {
         maxWidth: 1600,
         maxHeight: 1600,
         quality: 0.8,
@@ -868,9 +884,25 @@ export async function uploadPetPhotos(petId: string, photos: {
     }
 
     if (photos.fullBodyPhoto) {
-      // Compress full body photo
+      // HEIC convert then compress full body photo
+      let fileToProcess = photos.fullBodyPhoto;
+      if (
+        fileToProcess.type.toLowerCase().includes('heic') || fileToProcess.type.toLowerCase().includes('heif') ||
+        fileToProcess.name.toLowerCase().endsWith('.heic') || fileToProcess.name.toLowerCase().endsWith('.heif')
+      ) {
+        try {
+          const heic2any = (await import('heic2any')).default as any;
+          const convertedBlob = await heic2any({ blob: fileToProcess, toType: 'image/jpeg', quality: 0.9 });
+          fileToProcess = new File([convertedBlob], fileToProcess.name.replace(/\.[^.]+$/, '.jpg'), { type: 'image/jpeg' });
+          console.log('HEIC_CONVERT_SUCCESS: fullBody');
+        } catch (e) {
+          console.error('HEIC_CONVERT_ERROR: fullBody', e);
+          throw new Error('Failed to convert HEIC image. Please use JPEG/PNG.');
+        }
+      }
+
       const { compressImage } = await import('@/utils/imageCompression');
-      const compressionResult = await compressImage(photos.fullBodyPhoto, {
+      const compressionResult = await compressImage(fileToProcess, {
         maxWidth: 1600,
         maxHeight: 1600,
         quality: 0.8,
@@ -912,11 +944,21 @@ export async function uploadGalleryPhoto(petId: string, photo: File, caption?: s
   try {
     console.log("uploadGalleryPhoto: Starting upload", { petId, fileName: photo.name, fileSize: photo.size });
     
-    // Check for HEIC files
-    if (photo.type.toLowerCase().includes('heic') || photo.type.toLowerCase().includes('heif') || 
-        photo.name.toLowerCase().endsWith('.heic') || photo.name.toLowerCase().endsWith('.heif')) {
+    // HEIC/HEIF conversion fallback (iOS)
+    if (
+      photo.type.toLowerCase().includes('heic') || photo.type.toLowerCase().includes('heif') ||
+      photo.name.toLowerCase().endsWith('.heic') || photo.name.toLowerCase().endsWith('.heif')
+    ) {
       console.log("HEIC_DETECT: HEIC file detected in gallery upload", { fileName: photo.name });
-      throw new Error('heic_not_supported');
+      try {
+        const heic2any = (await import('heic2any')).default as any;
+        const convertedBlob = await heic2any({ blob: photo, toType: 'image/jpeg', quality: 0.9 });
+        photo = new File([convertedBlob], photo.name.replace(/\.[^.]+$/, '.jpg'), { type: 'image/jpeg' });
+        console.log("HEIC_CONVERT_SUCCESS: Converted gallery photo to JPEG", { newName: photo.name, type: photo.type, size: photo.size });
+      } catch (e) {
+        console.error('HEIC_CONVERT_ERROR (gallery):', e);
+        throw new Error('Failed to convert HEIC image. Please change your camera to Most Compatible (JPEG) and try again.');
+      }
     }
     
     // Compress image before upload
@@ -1128,11 +1170,24 @@ export async function deleteOfficialPhoto(petId: string, photoType: 'profile' | 
 export async function replaceOfficialPhoto(petId: string, photo: File, photoType: 'profile' | 'fullBody'): Promise<void> {
   console.log("replaceOfficialPhoto: Starting photo replacement", { petId, photoType, originalSize: photo.size });
   
-  // Check for HEIC files and provide user-friendly error
-  if (photo.type.toLowerCase().includes('heic') || photo.type.toLowerCase().includes('heif') || 
-      photo.name.toLowerCase().endsWith('.heic') || photo.name.toLowerCase().endsWith('.heif')) {
+  // HEIC/HEIF conversion fallback (iOS)
+  if (
+    photo.type.toLowerCase().includes('heic') ||
+    photo.type.toLowerCase().includes('heif') ||
+    photo.name.toLowerCase().endsWith('.heic') ||
+    photo.name.toLowerCase().endsWith('.heif')
+  ) {
     console.log("HEIC_DETECT: HEIC file detected", { fileName: photo.name, fileType: photo.type });
-    throw new Error('heic_not_supported');
+    try {
+      const heic2any = (await import('heic2any')).default as any;
+      const convertedBlob = await heic2any({ blob: photo, toType: 'image/jpeg', quality: 0.9 });
+      const convertedFile = new File([convertedBlob], photo.name.replace(/\.[^.]+$/, '.jpg'), { type: 'image/jpeg' });
+      photo = convertedFile;
+      console.log("HEIC_CONVERT_SUCCESS: Converted to JPEG", { newName: convertedFile.name, type: convertedFile.type, size: convertedFile.size });
+    } catch (e) {
+      console.error('HEIC_CONVERT_ERROR:', e);
+      throw new Error('Failed to convert HEIC image. Please change your camera to Most Compatible (JPEG) and try again.');
+    }
   }
   
   // Compress image before upload with error handling

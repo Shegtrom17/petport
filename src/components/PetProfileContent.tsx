@@ -243,6 +243,27 @@ export const PetProfileContent = ({
     }
   };
 
+  const openProfileFilePicker = (type: 'profile' | 'fullBody', useCamera: boolean) => {
+    console.log("OPENING_FILE_PICKER:", { type, useCamera });
+    
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/*';
+    if (useCamera) {
+      input.capture = 'environment';
+    }
+    
+    input.onchange = (e) => {
+      const file = (e.target as HTMLInputElement).files?.[0];
+      if (file) {
+        console.log("FILE_SELECTED:", { fileName: file.name, fileSize: file.size });
+        handlePhotoUpload(type, file);
+      }
+    };
+    
+    input.click();
+  };
+
   const handlePhotoDelete = async (type: 'profile' | 'fullBody') => {
     try {
       await deleteOfficialPhoto(enhancedPetData.id, type);
@@ -397,37 +418,26 @@ export const PetProfileContent = ({
             action={isOwner && (
               <div className="flex items-center space-x-2">
                 {/* Upload from gallery */}
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={(e) => e.target.files?.[0] && handlePhotoUpload('profile', e.target.files[0])}
-                  className="hidden"
-                  id="profile-photo-upload"
-                />
-                <label
-                  htmlFor="profile-photo-upload"
-                  className="flex items-center space-x-2 p-3 text-primary hover:text-primary/80 hover:scale-110 transition-all cursor-pointer"
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => openProfileFilePicker('profile', false)}
+                  className="flex items-center space-x-2 p-3 text-primary hover:text-primary/80 hover:scale-110 transition-all"
                 >
                   <Upload className="w-5 h-5" />
                   <span className="text-sm hidden sm:inline">Upload</span>
-                </label>
+                </Button>
                 
                 {/* Take photo with camera */}
-                <input
-                  type="file"
-                  accept="image/*"
-                  capture="environment"
-                  onChange={(e) => e.target.files?.[0] && handlePhotoUpload('profile', e.target.files[0])}
-                  className="hidden"
-                  id="profile-photo-camera"
-                />
-                <label
-                  htmlFor="profile-photo-camera"
-                  className="flex items-center space-x-2 p-3 text-primary hover:text-primary/80 hover:scale-110 transition-all cursor-pointer"
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => openProfileFilePicker('profile', true)}
+                  className="flex items-center space-x-2 p-3 text-primary hover:text-primary/80 hover:scale-110 transition-all"
                 >
                   <Camera className="w-5 h-5" />
                   <span className="text-sm hidden sm:inline">Camera</span>
-                </label>
+                </Button>
               </div>
             )}
           />
@@ -456,37 +466,22 @@ export const PetProfileContent = ({
               {isOwner && (
                 <div className="mt-3 flex justify-center space-x-2">
                   {/* Upload from gallery */}
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={(e) => e.target.files?.[0] && handlePhotoUpload('profile', e.target.files[0])}
-                    className="hidden"
-                    id="profile-photo-upload-individual"
-                  />
-                  <label
-                    htmlFor="profile-photo-upload-individual"
-                    className="flex items-center space-x-1 px-3 py-2 text-sm bg-brand-primary text-white rounded-lg hover:bg-brand-primary-dark transition-colors cursor-pointer"
+                  <Button
+                    onClick={() => openProfileFilePicker('profile', false)}
+                    className="flex items-center space-x-1 px-3 py-2 text-sm bg-brand-primary text-white rounded-lg hover:bg-brand-primary-dark transition-colors"
                   >
                     <Upload className="w-4 h-4" />
                     <span>Upload</span>
-                  </label>
+                  </Button>
                   
                   {/* Take photo with camera */}
-                  <input
-                    type="file"
-                    accept="image/*"
-                    capture="environment"
-                    onChange={(e) => e.target.files?.[0] && handlePhotoUpload('profile', e.target.files[0])}
-                    className="hidden"
-                    id="profile-photo-camera-individual"
-                  />
-                  <label
-                    htmlFor="profile-photo-camera-individual"
-                    className="flex items-center space-x-1 px-3 py-2 text-sm bg-brand-primary text-white rounded-lg hover:bg-brand-primary-dark transition-colors cursor-pointer"
+                  <Button
+                    onClick={() => openProfileFilePicker('profile', true)}
+                    className="flex items-center space-x-1 px-3 py-2 text-sm bg-brand-primary text-white rounded-lg hover:bg-brand-primary-dark transition-colors"
                   >
                     <Camera className="w-4 h-4" />
                     <span>Camera</span>
-                  </label>
+                  </Button>
                   
                   {enhancedPetData?.photoUrl && (
                     <Button
@@ -525,37 +520,22 @@ export const PetProfileContent = ({
               {isOwner && (
                 <div className="mt-3 flex justify-center space-x-2">
                   {/* Upload from gallery */}
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={(e) => e.target.files?.[0] && handlePhotoUpload('fullBody', e.target.files[0])}
-                    className="hidden"
-                    id="fullbody-photo-upload-individual"
-                  />
-                  <label
-                    htmlFor="fullbody-photo-upload-individual"
-                    className="flex items-center space-x-1 px-3 py-2 text-sm bg-brand-primary text-white rounded-lg hover:bg-brand-primary-dark transition-colors cursor-pointer"
+                  <Button
+                    onClick={() => openProfileFilePicker('fullBody', false)}
+                    className="flex items-center space-x-1 px-3 py-2 text-sm bg-brand-primary text-white rounded-lg hover:bg-brand-primary-dark transition-colors"
                   >
                     <Upload className="w-4 h-4" />
                     <span>Upload</span>
-                  </label>
+                  </Button>
                   
                   {/* Take photo with camera */}
-                  <input
-                    type="file"
-                    accept="image/*"
-                    capture="environment"
-                    onChange={(e) => e.target.files?.[0] && handlePhotoUpload('fullBody', e.target.files[0])}
-                    className="hidden"
-                    id="fullbody-photo-camera-individual"
-                  />
-                  <label
-                    htmlFor="fullbody-photo-camera-individual"
-                    className="flex items-center space-x-1 px-3 py-2 text-sm bg-brand-primary text-white rounded-lg hover:bg-brand-primary-dark transition-colors cursor-pointer"
+                  <Button
+                    onClick={() => openProfileFilePicker('fullBody', true)}
+                    className="flex items-center space-x-1 px-3 py-2 text-sm bg-brand-primary text-white rounded-lg hover:bg-brand-primary-dark transition-colors"
                   >
                     <Camera className="w-4 h-4" />
                     <span>Camera</span>
-                  </label>
+                  </Button>
                   
                   {enhancedPetData?.fullBodyPhotoUrl && (
                     <Button

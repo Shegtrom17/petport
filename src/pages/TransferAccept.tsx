@@ -164,9 +164,31 @@ export default function TransferAccept() {
                       <li>Check if the link has expired (transfers expire after 7 days)</li>
                     </ul>
                   </div>
-                  <Button asChild variant="outline" className="w-full">
-                    <Link to="/help">Contact Support</Link>
-                  </Button>
+                  
+                  {/* Show conversion CTAs even on error for unauthenticated users */}
+                  {!user ? (
+                    <div className="space-y-2 pt-2 border-t border-border">
+                      <p className="text-sm font-medium text-foreground">New to PetPort?</p>
+                      <Button 
+                        asChild 
+                        className="w-full bg-gradient-to-r from-primary to-primary/90 text-white"
+                      >
+                        <Link to={`/auth?plan=monthly&transfer_token=${token}`}>
+                          <Star className="w-4 h-4 mr-2" />
+                          Create Account & Start Free Trial
+                        </Link>
+                      </Button>
+                      <Button asChild variant="outline" className="w-full">
+                        <Link to={`/auth?transfer_token=${token}`}>
+                          Sign In to Existing Account
+                        </Link>
+                      </Button>
+                    </div>
+                  ) : (
+                    <Button asChild variant="outline" className="w-full">
+                      <Link to="/help">Contact Support</Link>
+                    </Button>
+                  )}
                 </CardContent>
               </Card>
             ) : !status ? (

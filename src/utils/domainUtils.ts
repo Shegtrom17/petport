@@ -5,8 +5,15 @@ import { featureFlags } from '@/config/featureFlags';
  * @returns The appropriate base URL for the current environment
  */
 export const getBaseURL = (): string => {
-  // Always use production domain to prevent cross-domain issues
-  // Test mode is handled internally via feature flags, not domain switching
+  // In Lovable preview environments, use the current origin to avoid cross-domain issues
+  if (typeof window !== 'undefined') {
+    const host = window.location.hostname;
+    const isPreview = host.includes('lovableproject.com') || host.includes('lovable.app');
+    if (isPreview) {
+      return window.location.origin;
+    }
+  }
+  // Default to production domain otherwise
   return 'https://petport.app';
 };
 

@@ -66,19 +66,26 @@ export default function TransferAccept() {
 
   const loadStatus = async () => {
     if (!token) return;
+    console.info("TransferAccept: Invoking status", { token });
     const { data, error } = await supabase.functions.invoke("transfer-pet", {
       body: { action: "status", token },
     });
     if (error) {
+      console.warn("TransferAccept: status error", { message: error.message, token });
       setLoadError("Invalid or expired transfer link");
       return;
     }
+    console.info("TransferAccept: status ok", { hasData: !!data, dataKeys: data ? Object.keys(data) : [] });
     setStatus(data);
   };
 
   useEffect(() => {
     loadStatus();
   }, [token]);
+
+  useEffect(() => {
+    console.log("TransferAccept: state", { user: !!user, loadError, hasStatus: !!status, token });
+  }, [user, loadError, status, token]);
 
   const handleAccept = async () => {
     if (!token || !status) return;

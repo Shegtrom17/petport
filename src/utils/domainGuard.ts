@@ -16,9 +16,14 @@ export const initializeDomainGuard = (): void => {
   // But skip redirect when inside an iframe (Lovable editor preview)
   const isInIframe = window.top !== window.self;
   if (isLovablePreview && !isInIframe) {
-    console.log('Domain guard: Redirecting from preview to production');
-    window.location.replace(productionURL + window.location.pathname + window.location.search);
-    return;
+    // If getBaseURL resolves to the same origin (preview), do not redirect
+    if (productionURL.includes(currentHost)) {
+      console.log('Domain guard: Preview environment detected; staying on current origin');
+    } else {
+      console.log('Domain guard: Redirecting from preview to production');
+      window.location.replace(productionURL + window.location.pathname + window.location.search);
+      return;
+    }
   }
   
   // Add robots noindex for preview domain

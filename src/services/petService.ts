@@ -804,6 +804,13 @@ export async function uploadFile(file: File, bucket: string, path: string): Prom
   try {
     console.log("uploadFile: Starting upload", { bucket, path, fileSize: file.size, fileType: file.type });
     
+    // Check authentication before upload
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) {
+      console.error("uploadFile: No valid session found");
+      throw new Error("Authentication required. Please sign in and try again.");
+    }
+    
     const { data, error } = await supabase.storage
       .from(bucket)
       .upload(path, file, { 
@@ -814,6 +821,12 @@ export async function uploadFile(file: File, bucket: string, path: string): Prom
 
     if (error) {
       console.error("uploadFile: Storage upload error", { bucket, path, message: error.message });
+      
+      // Handle authentication errors
+      if (error.message.includes('Invalid JWT') || error.message.includes('JWT expired')) {
+        throw new Error("Your session has expired. Please refresh the page and try again.");
+      }
+      
       throw error;
     }
 
@@ -834,18 +847,38 @@ export async function uploadPetPhotos(petId: string, photos: {
   fullBodyPhoto?: File;
 }): Promise<boolean> {
   try {
+    console.log("uploadPetPhotos: Starting uploads", { petId, hasProfile: !!photos.profilePhoto, hasFullBody: !!photos.fullBodyPhoto });
+    
     const uploads: Promise<string | null>[] = [];
     let photoUrl = null;
     let fullBodyPhotoUrl = null;
 
     if (photos.profilePhoto) {
-      const profilePath = `${petId}/profile-${Date.now()}.${photos.profilePhoto.name.split('.').pop()}`;
-      uploads.push(uploadFile(photos.profilePhoto, 'pet_photos', profilePath));
+      // Compress profile photo
+      const { compressImage } = await import('@/utils/imageCompression');
+      const compressionResult = await compressImage(photos.profilePhoto, {
+        maxWidth: 1600,
+        maxHeight: 1600,
+        quality: 0.8,
+        maxSizeKB: 1024
+      });
+      
+      const profilePath = `${petId}/profile-${Date.now()}.jpg`;
+      uploads.push(uploadFile(compressionResult.file, 'pet_photos', profilePath));
     }
 
     if (photos.fullBodyPhoto) {
-      const fullBodyPath = `${petId}/fullbody-${Date.now()}.${photos.fullBodyPhoto.name.split('.').pop()}`;
-      uploads.push(uploadFile(photos.fullBodyPhoto, 'pet_photos', fullBodyPath));
+      // Compress full body photo
+      const { compressImage } = await import('@/utils/imageCompression');
+      const compressionResult = await compressImage(photos.fullBodyPhoto, {
+        maxWidth: 1600,
+        maxHeight: 1600,
+        quality: 0.8,
+        maxSizeKB: 1024
+      });
+      
+      const fullBodyPath = `${petId}/fullbody-${Date.now()}.jpg`;
+      uploads.push(uploadFile(compressionResult.file, 'pet_photos', fullBodyPath));
     }
 
     const results = await Promise.all(uploads);
@@ -877,8 +910,31 @@ export async function uploadPetPhotos(petId: string, photos: {
 
 export async function uploadGalleryPhoto(petId: string, photo: File, caption?: string): Promise<boolean> {
   try {
-    const photoPath = `${petId}/gallery-${Date.now()}.${photo.name.split('.').pop()}`;
-    const photoUrl = await uploadFile(photo, 'pet_photos', photoPath);
+    console.log("uploadGalleryPhoto: Starting upload", { petId, fileName: photo.name, fileSize: photo.size });
+    
+    // Check for HEIC files
+    if (photo.type.toLowerCase().includes('heic') || photo.type.toLowerCase().includes('heif') || 
+        photo.name.toLowerCase().endsWith('.heic') || photo.name.toLowerCase().endsWith('.heif')) {
+      console.log("HEIC_DETECT: HEIC file detected in gallery upload", { fileName: photo.name });
+      throw new Error('heic_not_supported');
+    }
+    
+    // Compress image before upload
+    const { compressImage } = await import('@/utils/imageCompression');
+    const compressionResult = await compressImage(photo, {
+      maxWidth: 1600,
+      maxHeight: 1600,
+      quality: 0.8,
+      maxSizeKB: 1024
+    });
+    
+    console.log("uploadGalleryPhoto: Image compressed", {
+      originalSize: compressionResult.originalSize,
+      compressedSize: compressionResult.compressedSize
+    });
+    
+    const photoPath = `${petId}/gallery-${Date.now()}.jpg`;
+    const photoUrl = await uploadFile(compressionResult.file, 'pet_photos', photoPath);
 
     if (!photoUrl) {
       throw new Error("Failed to upload photo");
@@ -1072,20 +1128,42 @@ export async function deleteOfficialPhoto(petId: string, photoType: 'profile' | 
 export async function replaceOfficialPhoto(petId: string, photo: File, photoType: 'profile' | 'fullBody'): Promise<void> {
   console.log("replaceOfficialPhoto: Starting photo replacement", { petId, photoType, originalSize: photo.size });
   
-  // Compress image before upload
-  const { compressImage } = await import('@/utils/imageCompression');
-  const compressionResult = await compressImage(photo, {
-    maxWidth: 1600,
-    maxHeight: 1600,
-    quality: 0.8,
-    maxSizeKB: 1024
-  });
+  // Check for HEIC files and provide user-friendly error
+  if (photo.type.toLowerCase().includes('heic') || photo.type.toLowerCase().includes('heif') || 
+      photo.name.toLowerCase().endsWith('.heic') || photo.name.toLowerCase().endsWith('.heif')) {
+    console.log("HEIC_DETECT: HEIC file detected", { fileName: photo.name, fileType: photo.type });
+    throw new Error('heic_not_supported');
+  }
   
-  console.log("replaceOfficialPhoto: Image compressed", {
-    originalSize: compressionResult.originalSize,
-    compressedSize: compressionResult.compressedSize,
-    compressionRatio: compressionResult.compressionRatio
-  });
+  // Compress image before upload with error handling
+  let compressionResult;
+  try {
+    const { compressImage } = await import('@/utils/imageCompression');
+    compressionResult = await compressImage(photo, {
+      maxWidth: 1600,
+      maxHeight: 1600,
+      quality: 0.8,
+      maxSizeKB: 1024
+    });
+    
+    console.log("replaceOfficialPhoto: Image compressed", {
+      originalSize: compressionResult.originalSize,
+      compressedSize: compressionResult.compressedSize,
+      compressionRatio: compressionResult.compressionRatio
+    });
+  } catch (compressionError) {
+    console.error("COMPRESSION_ERROR:", compressionError);
+    
+    // Check if it's a HEIC file that failed to load
+    if (compressionError instanceof Error && 
+        (compressionError.message.includes('Failed to load image') || 
+         compressionError.message.includes('decode'))) {
+      console.log("HEIC_DETECT: Compression failed, likely HEIC file", { fileName: photo.name });
+      throw new Error('heic_not_supported');
+    }
+    
+    throw new Error(`Image compression failed: ${compressionError instanceof Error ? compressionError.message : 'Unknown error'}`);
+  }
   
   // First get current photo URL to delete old one
   const petDetails = await fetchPetDetails(petId);
@@ -1096,8 +1174,9 @@ export async function replaceOfficialPhoto(petId: string, photo: File, photoType
     }
   }
 
-  // Upload compressed photo
-  const photoPath = `${petId}/${photoType}-${Date.now()}.${compressionResult.file.name.split('.').pop()}`;
+  // Upload compressed photo with forced .jpg extension
+  const ext = 'jpg'; // Force JPG extension for consistency
+  const photoPath = `${petId}/${photoType}-${Date.now()}.${ext}`;
   const photoUrl = await uploadFile(compressionResult.file, 'pet_photos', photoPath);
 
   if (!photoUrl) {

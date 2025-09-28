@@ -194,12 +194,18 @@ export const PetProfileContent = ({
       
       let errorMessage = "Failed to upload photo. Please try again.";
       if (error instanceof Error) {
-        if (error.message.includes("size too large")) {
+        if (error.message === 'heic_not_supported') {
+          errorMessage = "HEIC files are not supported. Please use your camera's 'Most Compatible' setting (JPEG) or convert to JPG/PNG.";
+        } else if (error.message.includes("size too large")) {
           errorMessage = "Image file is too large. Please choose a smaller image.";
+        } else if (error.message.includes("session has expired") || error.message.includes("Authentication required")) {
+          errorMessage = "Your session has expired. Please refresh the page and try again.";
         } else if (error.message.includes("network") || error.message.includes("fetch")) {
           errorMessage = "Network error. Please check your connection and try again.";
         } else if (error.message.includes("format") || error.message.includes("type")) {
           errorMessage = "Invalid file format. Please choose a JPG, PNG, or WEBP image.";
+        } else if (error.message.includes("compression failed")) {
+          errorMessage = "Failed to process image. Please try a different photo or convert to JPG format.";
         }
       }
       

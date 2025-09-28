@@ -340,40 +340,9 @@ serve(async (req) => {
         });
       }
 
-      // Check if adopter has an active subscription and pet capacity
-      const { data: subscriberData, error: subError } = await admin
-        .from("subscribers")
-        .select("status, pet_limit, additional_pets")
-        .eq("user_id", user.id)
-        .maybeSingle();
-      
-      if (subError) throw subError;
-      if (!subscriberData || (subscriberData.status !== "active" && subscriberData.status !== "grace")) {
-        return new Response(JSON.stringify({ 
-          error: "Active subscription required",
-          redirect: "/subscribe" 
-        }), {
-          status: 402,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-        });
-      }
-
-      // Check if user can add another pet
-      const { count: currentPetCount } = await admin
-        .from("pets")
-        .select("*", { count: "exact", head: true })
-        .eq("user_id", user.id);
-
-      const totalLimit = (subscriberData.pet_limit || 1) + (subscriberData.additional_pets || 0);
-      if ((currentPetCount || 0) >= totalLimit) {
-        return new Response(JSON.stringify({ 
-          error: "Pet limit reached. Please upgrade your subscription.",
-          redirect: "/subscribe?upgrade=pets" 
-        }), {
-          status: 402,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-        });
-      }
+      // NOTE: Frontend handles subscription validation and redirects users to subscribe
+      // The accept endpoint should allow the transfer once the user is authenticated
+      // and the frontend has verified they have the necessary subscription/capacity
 
       // Perform transfer transactionally
       // 1) Update pet owner

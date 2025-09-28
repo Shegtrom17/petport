@@ -1069,62 +1069,57 @@ export async function deleteOfficialPhoto(petId: string, photoType: 'profile' | 
   }
 }
 
-export async function replaceOfficialPhoto(petId: string, photo: File, photoType: 'profile' | 'fullBody'): Promise<boolean> {
-  try {
-    console.log("replaceOfficialPhoto: Starting photo replacement", { petId, photoType, originalSize: photo.size });
-    
-    // Compress image before upload
-    const { compressImage } = await import('@/utils/imageCompression');
-    const compressionResult = await compressImage(photo, {
-      maxWidth: 1600,
-      maxHeight: 1600,
-      quality: 0.8,
-      maxSizeKB: 1024
-    });
-    
-    console.log("replaceOfficialPhoto: Image compressed", {
-      originalSize: compressionResult.originalSize,
-      compressedSize: compressionResult.compressedSize,
-      compressionRatio: compressionResult.compressionRatio
-    });
-    
-    // First get current photo URL to delete old one
-    const petDetails = await fetchPetDetails(petId);
-    if (petDetails) {
-      const currentPhotoUrl = photoType === 'profile' ? petDetails.photoUrl : petDetails.fullBodyPhotoUrl;
-      if (currentPhotoUrl && currentPhotoUrl !== "/placeholder.svg") {
-        await deletePhotoFromStorage(currentPhotoUrl);
-      }
+export async function replaceOfficialPhoto(petId: string, photo: File, photoType: 'profile' | 'fullBody'): Promise<void> {
+  console.log("replaceOfficialPhoto: Starting photo replacement", { petId, photoType, originalSize: photo.size });
+  
+  // Compress image before upload
+  const { compressImage } = await import('@/utils/imageCompression');
+  const compressionResult = await compressImage(photo, {
+    maxWidth: 1600,
+    maxHeight: 1600,
+    quality: 0.8,
+    maxSizeKB: 1024
+  });
+  
+  console.log("replaceOfficialPhoto: Image compressed", {
+    originalSize: compressionResult.originalSize,
+    compressedSize: compressionResult.compressedSize,
+    compressionRatio: compressionResult.compressionRatio
+  });
+  
+  // First get current photo URL to delete old one
+  const petDetails = await fetchPetDetails(petId);
+  if (petDetails) {
+    const currentPhotoUrl = photoType === 'profile' ? petDetails.photoUrl : petDetails.fullBodyPhotoUrl;
+    if (currentPhotoUrl && currentPhotoUrl !== "/placeholder.svg") {
+      await deletePhotoFromStorage(currentPhotoUrl);
     }
-
-    // Upload compressed photo
-    const photoPath = `${petId}/${photoType}-${Date.now()}.${compressionResult.file.name.split('.').pop()}`;
-    const photoUrl = await uploadFile(compressionResult.file, 'pet_photos', photoPath);
-
-    if (!photoUrl) {
-      throw new Error("Failed to upload new photo");
-    }
-
-    // Update database with new photo URL
-    const updateData = photoType === 'profile' 
-      ? { _photo_url: photoUrl }
-      : { _full_body_photo_url: photoUrl };
-
-    const { error } = await supabase.rpc('handle_photo_upload', {
-      _pet_id: petId,
-      ...updateData
-    });
-
-    if (error) {
-      console.error("Error updating photo in database:", error);
-      throw error;
-    }
-
-    return true;
-  } catch (error) {
-    console.error("Error in replaceOfficialPhoto:", error);
-    return false;
   }
+
+  // Upload compressed photo
+  const photoPath = `${petId}/${photoType}-${Date.now()}.${compressionResult.file.name.split('.').pop()}`;
+  const photoUrl = await uploadFile(compressionResult.file, 'pet_photos', photoPath);
+
+  if (!photoUrl) {
+    throw new Error("Failed to upload new photo to storage");
+  }
+
+  // Update database with new photo URL
+  const updateData = photoType === 'profile' 
+    ? { _photo_url: photoUrl }
+    : { _full_body_photo_url: photoUrl };
+
+  const { error } = await supabase.rpc('handle_photo_upload', {
+    _pet_id: petId,
+    ...updateData
+  });
+
+  if (error) {
+    console.error("Error updating photo in database:", error);
+    throw new Error(`Database update failed: ${error.message}`);
+  }
+
+  console.log("replaceOfficialPhoto: Successfully completed photo replacement");
 }
 
 export async function uploadDocument(petId: string, document: File, type: string): Promise<boolean> {

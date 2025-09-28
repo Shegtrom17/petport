@@ -802,12 +802,18 @@ export async function updateProfessionalData(petId: string, data: {
 
 export async function uploadFile(file: File, bucket: string, path: string): Promise<string | null> {
   try {
+    console.log("uploadFile: Starting upload", { bucket, path, fileSize: file.size, fileType: file.type });
+    
     const { data, error } = await supabase.storage
       .from(bucket)
-      .upload(path, file, { upsert: true });
+      .upload(path, file, { 
+        upsert: true,
+        contentType: file.type,
+        cacheControl: "3600"
+      });
 
     if (error) {
-      console.error("Error uploading file:", error);
+      console.error("uploadFile: Storage upload error", { bucket, path, message: error.message });
       throw error;
     }
 
@@ -815,9 +821,10 @@ export async function uploadFile(file: File, bucket: string, path: string): Prom
       .from(bucket)
       .getPublicUrl(data.path);
 
+    console.log("uploadFile: Upload successful", { bucket, path, publicUrl });
     return publicUrl;
   } catch (error) {
-    console.error("Error in uploadFile:", error);
+    console.error("uploadFile: Error", { bucket, path, message: error instanceof Error ? error.message : error });
     return null;
   }
 }
@@ -1064,6 +1071,23 @@ export async function deleteOfficialPhoto(petId: string, photoType: 'profile' | 
 
 export async function replaceOfficialPhoto(petId: string, photo: File, photoType: 'profile' | 'fullBody'): Promise<boolean> {
   try {
+    console.log("replaceOfficialPhoto: Starting photo replacement", { petId, photoType, originalSize: photo.size });
+    
+    // Compress image before upload
+    const { compressImage } = await import('@/utils/imageCompression');
+    const compressionResult = await compressImage(photo, {
+      maxWidth: 1600,
+      maxHeight: 1600,
+      quality: 0.8,
+      maxSizeKB: 1024
+    });
+    
+    console.log("replaceOfficialPhoto: Image compressed", {
+      originalSize: compressionResult.originalSize,
+      compressedSize: compressionResult.compressedSize,
+      compressionRatio: compressionResult.compressionRatio
+    });
+    
     // First get current photo URL to delete old one
     const petDetails = await fetchPetDetails(petId);
     if (petDetails) {
@@ -1073,9 +1097,9 @@ export async function replaceOfficialPhoto(petId: string, photo: File, photoType
       }
     }
 
-    // Upload new photo
-    const photoPath = `${petId}/${photoType}-${Date.now()}.${photo.name.split('.').pop()}`;
-    const photoUrl = await uploadFile(photo, 'pet_photos', photoPath);
+    // Upload compressed photo
+    const photoPath = `${petId}/${photoType}-${Date.now()}.${compressionResult.file.name.split('.').pop()}`;
+    const photoUrl = await uploadFile(compressionResult.file, 'pet_photos', photoPath);
 
     if (!photoUrl) {
       throw new Error("Failed to upload new photo");

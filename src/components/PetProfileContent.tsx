@@ -176,6 +176,13 @@ export const PetProfileContent = ({
   const handlePhotoUpload = async (type: 'profile' | 'fullBody', file: File) => {
     setPhotoLoading(prev => ({ ...prev, [type]: true }));
     try {
+      console.log("handlePhotoUpload: Starting upload", { type, fileName: file.name, fileSize: file.size });
+      
+      // Check file size before processing
+      if (file.size > 50 * 1024 * 1024) { // 50MB limit
+        throw new Error("File size too large. Please choose a smaller image.");
+      }
+      
       await replaceOfficialPhoto(enhancedPetData.id, file, type);
       toast({
         title: "Photo uploaded successfully",
@@ -183,10 +190,22 @@ export const PetProfileContent = ({
       });
       onPhotoUpdate?.();
     } catch (error) {
-      console.error('Photo upload error:', error);
+      console.error('handlePhotoUpload: Error', { type, error: error instanceof Error ? error.message : error });
+      
+      let errorMessage = "Failed to upload photo. Please try again.";
+      if (error instanceof Error) {
+        if (error.message.includes("size too large")) {
+          errorMessage = "Image file is too large. Please choose a smaller image.";
+        } else if (error.message.includes("network") || error.message.includes("fetch")) {
+          errorMessage = "Network error. Please check your connection and try again.";
+        } else if (error.message.includes("format") || error.message.includes("type")) {
+          errorMessage = "Invalid file format. Please choose a JPG, PNG, or WEBP image.";
+        }
+      }
+      
       toast({
         title: "Upload failed",
-        description: "Failed to upload photo. Please try again.",
+        description: errorMessage,
         variant: "destructive",
       });
     } finally {

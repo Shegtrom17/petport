@@ -90,6 +90,8 @@ export default function TransferAccept() {
   const handleAccept = async () => {
     if (!token || !status) return;
     
+    console.info("TransferAccept: Starting accept process", { token, hasUser: !!user, status });
+    
     // Handle different recipient scenarios based on subscription status
     if (!user) {
       // New users need to sign up first, then subscribe
@@ -122,12 +124,16 @@ export default function TransferAccept() {
 
     // User has active subscription and space - complete transfer immediately
     setLoading(true);
+    console.info("TransferAccept: Invoking accept", { token });
     const { data, error } = await supabase.functions.invoke("transfer-pet", {
       body: { action: "accept", token },
     });
     setLoading(false);
     
+    console.info("TransferAccept: Accept response", { hasData: !!data, hasError: !!error, success: data?.ok });
+    
     if (error || !data?.ok) {
+      console.warn("TransferAccept: Accept failed", { message: error?.message, data });
       toast({ 
         title: "Unable to accept transfer", 
         description: error?.message || "Please check the link and try again.", 
@@ -136,6 +142,7 @@ export default function TransferAccept() {
       return;
     }
     
+    console.info("TransferAccept: Accept successful");
     toast({ 
       title: "Transfer complete", 
       description: `${status.pet_name || 'This pet'} is now in your account.` 

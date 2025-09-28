@@ -98,17 +98,44 @@ export default function Auth() {
       
       // Provide more specific error messages
       if (error instanceof Error) {
-        if (error.message.includes('duplicate key') || error.message.includes('Pet Pass ID')) {
+        const errorMessage = error.message.toLowerCase();
+        
+        if (errorMessage.includes('invalid credentials') || errorMessage.includes('invalid login')) {
+          toast({
+            variant: "destructive",
+            title: "Sign in failed",
+            description: "Invalid email or password. Please check your credentials and try again.",
+          });
+        } else if (errorMessage.includes('email not confirmed') || errorMessage.includes('email_not_confirmed')) {
+          toast({
+            variant: "destructive",
+            title: "Email not confirmed",
+            description: "Please check your email and click the confirmation link before signing in.",
+          });
+        } else if (errorMessage.includes('user already registered') || errorMessage.includes('email already registered')) {
+          toast({
+            variant: "destructive",
+            title: "Account already exists",
+            description: "An account with this email already exists. Try signing in instead.",
+          });
+          setIsSignIn(true);
+        } else if (errorMessage.includes('duplicate key') || errorMessage.includes('pet pass id')) {
           toast({
             variant: "destructive",
             title: "Account creation failed",
             description: "There was an issue setting up your account. Please try again in a moment.",
           });
-        } else if (error.message.includes('Invalid Token') || error.message.includes('signature')) {
+        } else if (errorMessage.includes('invalid token') || errorMessage.includes('signature')) {
           toast({
             variant: "destructive",
             title: "Email confirmation failed",
             description: "There was an issue with email confirmation. Please check your email settings or try again.",
+          });
+        } else if (errorMessage.includes('password') && errorMessage.includes('characters')) {
+          toast({
+            variant: "destructive",
+            title: "Password too weak",
+            description: "Password must be at least 6 characters long.",
           });
         } else {
           toast({

@@ -68,13 +68,10 @@ serve(async (req) => {
 
     if (json.action === "status") {
       const { token } = json;
+      // Fetch transfer request without relational joins to avoid PostgREST FK dependency
       const { data: transfer, error } = await admin
         .from("transfer_requests")
-        .select(`
-          *,
-          pets!inner(name, user_id),
-          profiles!transfer_requests_from_user_id_fkey(full_name)
-        `)
+        .select("*")
         .eq("token", token)
         .single();
 
@@ -92,6 +89,19 @@ serve(async (req) => {
           headers: { "Content-Type": "application/json", ...corsHeaders },
         });
       }
+
+      // Fetch pet name and sender name separately
+      const { data: pet } = await admin
+        .from("pets")
+        .select("name")
+        .eq("id", transfer.pet_id)
+        .maybeSingle();
+
+      const { data: senderProfile } = await admin
+        .from("profiles")
+        .select("full_name")
+        .eq("id", transfer.from_user_id)
+        .maybeSingle();
 
       // Check recipient subscription status
       let recipientStatus: SubscriptionStatus = {
@@ -138,8 +148,8 @@ serve(async (req) => {
 
       const response = {
         ...transfer,
-        pet_name: transfer.pets?.name,
-        sender_name: transfer.profiles?.full_name,
+        pet_name: pet?.name,
+        sender_name: senderProfile?.full_name,
         recipient_subscription_status: needsSubscription ? 'none' : (needsUpgrade ? 'at_limit' : 'active'),
         recipient_needs_subscription: needsSubscription,
         recipient_needs_upgrade: needsUpgrade
@@ -303,11 +313,7 @@ serve(async (req) => {
 
       const { data: reqRow, error: reqErr } = await admin
         .from("transfer_requests")
-        .select(`
-          *,
-          pets!inner(name, user_id),
-          profiles!transfer_requests_from_user_id_fkey(full_name)
-        `)
+        .select("*")
         .eq("token", token)
         .maybeSingle();
       if (reqErr) throw reqErr;
@@ -364,17 +370,28 @@ serve(async (req) => {
         .eq("id", reqRow.id);
       if (reqUpdateErr) throw reqUpdateErr;
 
-      // Send success email to recipient
       try {
+        // Fetch pet and sender profile for email content
+        const { data: pet } = await admin
+          .from("pets")
+          .select("name")
+          .eq("id", reqRow.pet_id)
+          .maybeSingle();
+        const { data: senderProfile } = await admin
+          .from("profiles")
+          .select("full_name")
+          .eq("id", reqRow.from_user_id)
+          .maybeSingle();
+
         await admin.functions.invoke("send-email", {
           body: {
             type: "transfer_success",
             recipientEmail: reqRow.to_email,
             recipientName: user.user_metadata?.full_name,
-            petName: reqRow.pets?.name || "Pet",
+            petName: pet?.name || "Pet",
             petId: reqRow.pet_id,
             shareUrl: `${APP_ORIGIN}/profile/${reqRow.pet_id}`,
-            senderName: reqRow.profiles?.full_name
+            senderName: senderProfile?.full_name
           }
         });
       } catch (emailError) {

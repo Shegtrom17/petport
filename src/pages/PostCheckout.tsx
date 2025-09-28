@@ -304,7 +304,7 @@ export default function PostCheckout() {
             <div className="space-y-3">
               <p>{msg}</p>
               {email && <p className="text-sm text-muted-foreground">Email: {email}</p>}
-              <div className="flex gap-2">
+              <div className="flex flex-col gap-3">
                 {/* Show Add Pet button for addon purchases */}
                 {isAddonPurchase && (
                   <Button onClick={() => navigate("/add-pet")} className="flex items-center gap-2 bg-brand-primary hover:bg-brand-primary-dark">
@@ -312,10 +312,22 @@ export default function PostCheckout() {
                     Add Pet Now
                   </Button>
                 )}
-                <Button onClick={() => navigate("/auth")}>Sign In</Button>
-                <Button variant="outline" onClick={() => navigate(isAddonPurchase ? "/app" : "/")}>
-                  {isAddonPurchase ? "Go to App" : "Return Home"}
-                </Button>
+                
+                {!needsAccountSetup && !isAddonPurchase && (
+                  <div className="bg-blue-50 p-3 rounded-lg border border-blue-200">
+                    <p className="text-sm text-blue-800 font-medium mb-2">Next step: Sign in to your new account</p>
+                    <p className="text-xs text-blue-600">Use the email and password you just created to access PetPort</p>
+                  </div>
+                )}
+                
+                <div className="flex gap-2">
+                  <Button onClick={() => navigate("/auth")} className="flex-1">
+                    {needsAccountSetup ? "Sign In" : "Sign In to PetPort"}
+                  </Button>
+                  <Button variant="outline" onClick={() => navigate(isAddonPurchase ? "/app" : "/")} className="flex-1">
+                    {isAddonPurchase ? "Go to App" : "Return Home"}
+                  </Button>
+                </div>
               </div>
             </div>
           )}

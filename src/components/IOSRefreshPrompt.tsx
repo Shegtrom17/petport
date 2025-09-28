@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { AzureButton } from '@/components/ui/azure-button';
 import { Card, CardContent } from '@/components/ui/card';
 
 export const IOSRefreshPrompt = () => {
@@ -52,7 +53,7 @@ export const IOSRefreshPrompt = () => {
                 Pull down from the top or tap refresh to get the latest improvements and fixes.
               </p>
               <div className="flex gap-2">
-                <Button 
+                <AzureButton 
                   size="sm" 
                   onClick={handleRefresh}
                   disabled={isRefreshing}
@@ -69,7 +70,7 @@ export const IOSRefreshPrompt = () => {
                       Refresh Now
                     </>
                   )}
-                </Button>
+                </AzureButton>
                 <Button 
                   size="sm" 
                   variant="outline" 

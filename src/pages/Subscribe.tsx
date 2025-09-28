@@ -128,20 +128,6 @@ export default function Subscribe() {
               <p className="text-sm text-azure">Checking transfer status...</p>
             </div>
           )}
-          {user && (
-            <div className="mt-4 space-y-2">
-              <div className="flex flex-wrap items-center justify-center gap-2">
-                <Button onClick={openPortal} disabled={loadingPortal}>
-                  {loadingPortal ? "Opening..." : "Manage Subscription"}
-                </Button>
-              </div>
-              {featureFlags.showBillingTroubleshooting && (
-                <p className="text-xs text-muted-foreground">
-                  Tip: If the portal doesn't open, allow pop-ups; we’ll copy the link for you.
-                </p>
-              )}
-            </div>
-          )}
         </header>
         <PricingSection context="profile" />
         <section aria-labelledby="cancellation-policy" className="mt-6 space-y-3">

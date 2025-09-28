@@ -176,26 +176,50 @@ export const PetProfileContent = ({
   const handlePhotoUpload = async (type: 'profile' | 'fullBody', file: File) => {
     setPhotoLoading(prev => ({ ...prev, [type]: true }));
     try {
-      console.log("handlePhotoUpload: Starting upload", { type, fileName: file.name, fileSize: file.size });
+      console.log("START_UPLOAD_PROFILE:", { type, fileName: file.name, fileSize: file.size });
       
       // Check file size before processing
       if (file.size > 50 * 1024 * 1024) { // 50MB limit
         throw new Error("File size too large. Please choose a smaller image.");
       }
       
-      await replaceOfficialPhoto(enhancedPetData.id, file, type);
+      // Pre-compress image (same as gallery for consistency)
+      const { compressMultipleImages } = await import('@/utils/imageCompression');
+      const compressionResults = await compressMultipleImages([file], {
+        maxWidth: 1200,
+        maxHeight: 1200,
+        quality: 0.85,
+        maxSizeKB: 800
+      });
+      
+      const compressedFile = compressionResults[0].file;
+      console.log("COMPRESS_OK:", { 
+        originalSize: file.size, 
+        compressedSize: compressedFile.size,
+        compressionRatio: compressionResults[0].compressionRatio 
+      });
+      
+      await replaceOfficialPhoto(enhancedPetData.id, compressedFile, type);
+      console.log("STORAGE_UPLOAD_OK:", { type });
+      
       toast({
         title: "Photo uploaded successfully",
         description: `${enhancedPetData.name}'s ${type === 'profile' ? 'profile' : 'full body'} photo has been updated.`,
       });
+      
+      // Refresh data for PDFs/links
       onPhotoUpdate?.();
+      if (handlePetUpdate) {
+        await handlePetUpdate();
+        console.log("DB_UPDATE_OK: Pet data refreshed for PDFs/links");
+      }
     } catch (error) {
-      console.error('handlePhotoUpload: Error', { type, error: error instanceof Error ? error.message : error });
+      console.error('UPLOAD_ERROR:', { type, error: error instanceof Error ? error.message : error });
       
       let errorMessage = "Failed to upload photo. Please try again.";
       if (error instanceof Error) {
-        if (error.message === 'heic_not_supported') {
-          errorMessage = "HEIC files are not supported. Please use your camera's 'Most Compatible' setting (JPEG) or convert to JPG/PNG.";
+        if (error.message.includes("Failed to convert HEIC")) {
+          errorMessage = "HEIC files need conversion. Please use your camera's 'Most Compatible' setting (JPEG) or convert to JPG/PNG.";
         } else if (error.message.includes("size too large")) {
           errorMessage = "Image file is too large. Please choose a smaller image.";
         } else if (error.message.includes("session has expired") || error.message.includes("Authentication required")) {

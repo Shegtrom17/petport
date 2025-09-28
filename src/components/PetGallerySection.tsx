@@ -18,6 +18,7 @@ import { featureFlags, GALLERY_CONFIG } from '@/config/featureFlags';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 import { GalleryLightbox } from "@/components/GalleryLightbox";
 import { useLongPress } from "@/hooks/useLongPress";
+import { AspectRatio } from "@/components/ui/aspect-ratio";
 
 const MAX_GALLERY_PHOTOS = GALLERY_CONFIG.MAX_PHOTOS;
 
@@ -670,12 +671,15 @@ export const PetGallerySection = ({ petData, onUpdate, handlePetUpdate }: PetGal
                               </div>
                             )}
 
-                            <img 
-                              src={photo.url} 
-                              alt={photo.caption || `${petData.name} photo ${index + 1}`}
-                              className="w-full h-48 object-cover"
-                              style={{ touchAction: 'pan-x pan-y pinch-zoom' }}
-                            />
+                            <AspectRatio ratio={4/3}>
+                              <img 
+                                src={photo.url} 
+                                alt={photo.caption || `${petData.name} photo ${index + 1}`}
+                                className="h-full w-full object-cover"
+                                style={{ touchAction: 'pan-x pan-y pinch-zoom' }}
+                                loading="lazy"
+                              />
+                            </AspectRatio>
                             
                             {/* Selection Overlay */}
                             {isSelectionMode && (

@@ -321,7 +321,7 @@ export default function PostCheckout() {
                 )}
                 
                 <div className="flex gap-2">
-                  <Button onClick={() => navigate("/auth")} className="flex-1">
+                  <Button onClick={() => navigate("/auth?mode=signin")} className="flex-1">
                     {needsAccountSetup ? "Sign In" : "Sign In to PetPort"}
                   </Button>
                   <Button variant="outline" onClick={() => navigate(isAddonPurchase ? "/app" : "/")} className="flex-1">

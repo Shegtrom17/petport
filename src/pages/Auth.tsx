@@ -13,21 +13,24 @@ import { StorageWarningBanner } from "@/components/StorageWarningBanner";
 export default function Auth() {
   console.log("Auth: Component rendering");
   
-  const [isSignIn, setIsSignIn] = useState(false); // Default to signup for new users
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { toast } = useToast();
+
+  // Extract URL params
+  const searchParams = new URLSearchParams(location.search);
+  const transferToken = searchParams.get('transfer_token');
+  const plan = searchParams.get('plan');
+  const mode = searchParams.get('mode'); // 'signin' or 'signup'
+  
+  // Default to signin if coming from post-checkout, otherwise signup for new users
+  const [isSignIn, setIsSignIn] = useState(mode === 'signin' || location.state?.mode === 'signin' || false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   
   const { signIn } = useAuth();
-  const navigate = useNavigate();
-  const location = useLocation();
-  const { toast } = useToast();
-
-  // Extract transfer token from URL params
-  const searchParams = new URLSearchParams(location.search);
-  const transferToken = searchParams.get('transfer_token');
-  const plan = searchParams.get('plan');
 
 
   const handleSubmit = async (e: React.FormEvent) => {

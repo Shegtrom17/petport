@@ -26,6 +26,7 @@ import { SectionHeader } from "@/components/ui/section-header";
 import { GuidanceHint } from "@/components/ui/guidance-hint";
 import { QuickShareHub } from "@/components/QuickShareHub";
 import { ContactsDisplay } from "@/components/ContactsDisplay";
+import { compressMultipleImages } from "@/utils/imageCompression";
 
 
 interface PetProfileContentProps {
@@ -184,7 +185,6 @@ export const PetProfileContent = ({
       }
       
       // Pre-compress image (same as gallery for consistency)
-      const { compressMultipleImages } = await import('@/utils/imageCompression');
       const compressionResults = await compressMultipleImages([file], {
         maxWidth: 1200,
         maxHeight: 1200,

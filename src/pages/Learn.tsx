@@ -35,12 +35,15 @@ export default function Learn() {
         {/* Hero Section */}
         <section className="text-center mb-16">
           <h1 className="text-5xl font-bold text-brand-primary mb-6 leading-tight">
-            Complete Pet Care Guide
+            Instant Access Anywhere Anytime for Anyone
           </h1>
-          <p className="text-xl text-brand-primary-dark leading-relaxed max-w-3xl mx-auto">
-            Everything you need to know about organizing pet documents, building professional credentials, 
-            and creating a comprehensive digital portfolio for your beloved pet.
-          </p>
+          <div className="text-xl text-brand-primary-dark leading-relaxed max-w-3xl mx-auto">
+            <ul className="text-left space-y-3">
+              <li>• Instant PDF generation for vet visits, boarding, travel</li>
+              <li>• Live-updating shareable links - when you update info, shared links update too</li>
+              <li>• From phone/desktop to PDF in seconds, from phone/ to shareable link instantly updated and viewed digitally</li>
+            </ul>
+          </div>
         </section>
 
         {/* Table of Contents */}

@@ -413,6 +413,120 @@ export default function Landing() {
           </div>
         </section>
 
+        {/* FAQ Section */}
+        <section id="faq" className="py-20 bg-white">
+          <div className="max-w-4xl mx-auto px-4">
+            <div className="text-center mb-16">
+              <h2 className="text-3xl md:text-4xl font-bold text-brand-primary mb-4">
+                Frequently Asked Questions
+              </h2>
+              <p className="text-xl text-brand-primary-dark">
+                Everything you need to know about PetPort
+              </p>
+            </div>
+            
+            <div className="space-y-8">
+              <div className="border-b border-gray-200 pb-8">
+                <h3 className="text-xl font-semibold text-brand-primary mb-4">
+                  How can I store and access my pet's medical records digitally?
+                </h3>
+                <p className="text-brand-primary-dark leading-relaxed">
+                  With PetPort, your pet's vaccines, health records, and certifications are all stored in one secure place. But unlike other apps, PetPort goes further — you can also attach emergency contacts, request vet or host referrals, and update care instructions in real time.
+                </p>
+              </div>
+
+              <div className="border-b border-gray-200 pb-8">
+                <h3 className="text-xl font-semibold text-brand-primary mb-4">
+                  Is there an app to keep all my pet's documents in one place?
+                </h3>
+                <p className="text-brand-primary-dark leading-relaxed">
+                  Yes! PetPort organizes everything — from adoption papers to insurance cards — and generates professional PDFs you can share instantly. Plus, you get extras like lost-pet flyers with one tap, travel maps, pet resumes builder and with referral request link, a photo gallery and care and handling instructions you can update from anywhere, Plus there is quick share hub with QR codes and live links to view all features on the web!
+                </p>
+              </div>
+
+              <div className="border-b border-gray-200 pb-8">
+                <h3 className="text-xl font-semibold text-brand-primary mb-4">
+                  How do I transfer my pet's records if they go to a new owner or foster?
+                </h3>
+                <p className="text-brand-primary-dark leading-relaxed">
+                  PetPort was designed for fosters and rescues. With one tap, you can securely transfer a pet's entire digital portfolio — photos, medical history, behavior notes — so the new owner gets everything they need immediately.
+                </p>
+              </div>
+
+              <div className="border-b border-gray-200 pb-8">
+                <h3 className="text-xl font-semibold text-brand-primary mb-4">
+                  Can I share my pet's care instructions with sitters or vets?
+                </h3>
+                <p className="text-brand-primary-dark leading-relaxed">
+                  Absolutely. PetPort makes it simple to share real-time updates about diets, medications, allergies, and routines. It is viewable by anyone with the link or send an PDF via email. You control what's shared publicly vs. privately, and your sitter or vet always has the latest version.
+                </p>
+              </div>
+
+              <div className="pb-8">
+                <h3 className="text-xl font-semibold text-brand-primary mb-4">
+                  Why should I use PetPort instead of a paper file or basic notes app?
+                </h3>
+                <p className="text-brand-primary-dark leading-relaxed">
+                  Paper gets lost, notes get outdated. PetPort is a living digital record: always backed up, easy to update, and instantly shareable. Beyond records, you can collect hospitality reviews, track travel history, and build a complete story of your pet's life.
+                </p>
+              </div>
+            </div>
+          </div>
+          
+          {/* Schema Markup for FAQ */}
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{
+              __html: JSON.stringify({
+                "@context": "https://schema.org",
+                "@type": "FAQPage",
+                "mainEntity": [
+                  {
+                    "@type": "Question",
+                    "name": "How can I store and access my pet's medical records digitally?",
+                    "acceptedAnswer": {
+                      "@type": "Answer",
+                      "text": "With PetPort, your pet's vaccines, health records, and certifications are all stored in one secure place. But unlike other apps, PetPort goes further — you can also attach emergency contacts, request vet or host referrals, and update care instructions in real time."
+                    }
+                  },
+                  {
+                    "@type": "Question",
+                    "name": "Is there an app to keep all my pet's documents in one place?",
+                    "acceptedAnswer": {
+                      "@type": "Answer",
+                      "text": "Yes! PetPort organizes everything — from adoption papers to insurance cards — and generates professional PDFs you can share instantly. Plus, you get extras like lost-pet flyers with one tap, travel maps, pet resumes builder and with referral request link, a photo gallery and care and handling instructions you can update from anywhere, Plus there is quick share hub with QR codes and live links to view all features on the web!"
+                    }
+                  },
+                  {
+                    "@type": "Question",
+                    "name": "How do I transfer my pet's records if they go to a new owner or foster?",
+                    "acceptedAnswer": {
+                      "@type": "Answer",
+                      "text": "PetPort was designed for fosters and rescues. With one tap, you can securely transfer a pet's entire digital portfolio — photos, medical history, behavior notes — so the new owner gets everything they need immediately."
+                    }
+                  },
+                  {
+                    "@type": "Question",
+                    "name": "Can I share my pet's care instructions with sitters or vets?",
+                    "acceptedAnswer": {
+                      "@type": "Answer",
+                      "text": "Absolutely. PetPort makes it simple to share real-time updates about diets, medications, allergies, and routines. It is viewable by anyone with the link or send an PDF via email. You control what's shared publicly vs. privately, and your sitter or vet always has the latest version."
+                    }
+                  },
+                  {
+                    "@type": "Question",
+                    "name": "Why should I use PetPort instead of a paper file or basic notes app?",
+                    "acceptedAnswer": {
+                      "@type": "Answer",
+                      "text": "Paper gets lost, notes get outdated. PetPort is a living digital record: always backed up, easy to update, and instantly shareable. Beyond records, you can collect hospitality reviews, track travel history, and build a complete story of your pet's life."
+                    }
+                  }
+                ]
+              })
+            }}
+          />
+        </section>
+
         <Testimonials />
 
 

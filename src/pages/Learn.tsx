@@ -233,28 +233,35 @@ export default function Learn() {
             </p>
 
             <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 mb-8">
-              <h3 className="text-xl font-semibold text-brand-primary mb-4">Travel Documentation Checklist</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <h4 className="font-semibold text-brand-primary mb-3">Domestic Travel</h4>
-                  <ul className="text-brand-primary-dark space-y-2">
-                    <li>✓ Current vaccination records</li>
-                    <li>✓ Health certificate (airline required)</li>
-                    <li>✓ Rabies vaccination proof</li>
-                    <li>✓ Carrier requirements documentation</li>
-                    <li>✓ Microchip information</li>
-                  </ul>
-                </div>
-                <div>
-                  <h4 className="font-semibold text-brand-primary mb-3">International Travel</h4>
-                  <ul className="text-brand-primary-dark space-y-2">
-                    <li>✓ International health certificate</li>
-                    <li>✓ Country-specific vaccination requirements</li>
-                    <li>✓ Import/export permits</li>
-                    <li>✓ Quarantine documentation</li>
-                    <li>✓ Embassy endorsements</li>
-                  </ul>
-                </div>
+              <h3 className="text-xl font-semibold text-brand-primary mb-4">✈️ Pet Travel Made Simple</h3>
+              <p className="text-brand-primary-dark mb-6">
+                Travel with confidence, whether it's a road trip or crossing state lines.
+                With PetPort, your pet's important health and ID records are always at your fingertips — no frantic searching before a trip.
+              </p>
+              
+              <div className="mb-6">
+                <h4 className="font-semibold text-brand-primary mb-3">What you'll always have ready in your PetPort profile:</h4>
+                <ul className="text-brand-primary-dark space-y-2">
+                  <li>✅ Vaccination & rabies records (often required for boarding, hotels, or travel)</li>
+                  <li>✅ Vet-issued health certificate (for airlines or border checks)</li>
+                  <li>✅ Microchip info and ID tags</li>
+                  <li>✅ Care instructions and emergency contacts</li>
+                </ul>
+              </div>
+
+              <div className="mb-6">
+                <h4 className="font-semibold text-brand-primary mb-3">Pet Resume</h4>
+                <p className="text-brand-primary-dark">
+                  Build your pet's travel reputation with reviews from boarding facilities, hotels, and service providers.
+                </p>
+              </div>
+
+              <div className="bg-blue-50 rounded-lg p-4">
+                <h4 className="font-semibold text-brand-primary mb-3">For International Travelers (when needed):</h4>
+                <ul className="text-brand-primary-dark space-y-2">
+                  <li>📝 General vaccination documentation for border checks</li>
+                  <li>🌍 Guidance notes on where to find official requirements (embassies, airlines)</li>
+                </ul>
               </div>
             </div>
 

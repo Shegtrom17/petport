@@ -306,11 +306,11 @@ export default function Learn() {
                 <h3 className="text-xl font-semibold text-green-700 mb-4">✅ Benefits of Digital Records</h3>
                 <ul className="text-green-600 space-y-2">
                   <li>• Accessible from anywhere</li>
+                  <li>• Accessible from phone with a tap</li>
                   <li>• Automatically organized</li>
                   <li>• Easy to share with providers</li>
                   <li>• Searchable and filterable</li>
                   <li>• Cloud backup protection</li>
-                  <li>• Clear, legible information</li>
                 </ul>
               </div>
             </div>

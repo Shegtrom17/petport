@@ -270,7 +270,7 @@ export const PetEditForm = ({ petData, onSave, onCancel, togglePetPublicVisibili
     <Card className="bg-[#f8f8f8] shadow-md">
       <CardHeader>
         <CardTitle className="text-xl font-sans text-foreground border-b-2 border-gold-500 pb-2">
-          ✏️ Edit Pet Profile
+          ⚙️ Profile Management Hub
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">

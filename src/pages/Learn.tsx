@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { MetaTags } from "@/components/MetaTags";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
+import { PricingSection } from "@/components/PricingSection";
 import createProfileScreenshot from "@/assets/create-profile-screenshot.png";
 import documentUploadScreenshot from "@/assets/document-upload-screenshot.png";
 import resumeDetailsScreenshot from "@/assets/resume-details-screenshot.png";
@@ -415,6 +416,9 @@ export default function Learn() {
             </div>
           </div>
         </section>
+
+        {/* Pricing Section */}
+        <PricingSection context="landing" />
 
         {/* Getting Started */}
         <section id="getting-started" className="mb-16">

@@ -41,7 +41,7 @@ export default function Learn() {
             <ul className="text-left space-y-3">
               <li>• Instant PDF generation for vet visits, boarding, travel</li>
               <li>• Live-updating shareable links - when you update info, shared links update too</li>
-              <li>• From phone/desktop to PDF in seconds, from phone/ to shareable link instantly updated and viewed digitally</li>
+              <li>• From phone to PDF in seconds, from profile to shareable link instantly</li>
             </ul>
           </div>
         </section>

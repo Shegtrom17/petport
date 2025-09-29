@@ -330,7 +330,7 @@ export const PetProfileContent = ({
             )}
           />
           
-          <p className="text-xs text-muted-foreground mb-4">This is the core of your pet's profile. Recommended for professional sharing.</p>
+          <p className="text-xs text-muted-foreground mb-4">Essential pet information including medical alerts, transfer records, and vital stats like age, weight, and breed. Perfect for veterinary visits, emergencies, and professional services.</p>
           
           {/* Show guidance hint for new users when basic info is incomplete */}
           {isOwner && (

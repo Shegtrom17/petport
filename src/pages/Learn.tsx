@@ -323,7 +323,8 @@ export default function Learn() {
           <div className="prose prose-lg max-w-none">
             <p className="text-brand-primary-dark mb-6">
               Foster caregivers play a crucial role in pet rehabilitation and adoption. Learn how to document 
-              your foster pet's journey to help them find their forever home.
+              your foster pet's journey to help them find their forever home. Share pet's profile on social media 
+              or through links to interested adopters.
             </p>
 
             <div className="bg-gradient-to-r from-green-50 to-blue-50 rounded-xl p-6 mb-8">

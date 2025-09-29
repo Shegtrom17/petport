@@ -415,49 +415,6 @@ export default function Landing() {
 
         <Testimonials />
 
-        {/* FAQ Section */}
-        <section className="max-w-4xl mx-auto px-4 py-20">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-brand-primary mb-4">Frequently Asked Questions</h2>
-          </div>
-          
-          <div className="space-y-6">
-            <div className="bg-white rounded-xl shadow-sm p-6">
-              <h3 className="text-lg font-semibold text-brand-primary mb-2">What is the primary focus of this app?</h3>
-              <p className="text-brand-primary-dark">We focus on preserving and sharing your pet's life story. Unlike a simple appointment tracker, Petport captures —all documents/records, care instructions, achievements, even referrals. This ensures a seamless relay of information, whether to a pet sitter, vet or a new family.</p>
-            </div>
-            
-            <div className="bg-white rounded-xl shadow-sm p-6">
-              <h3 className="text-lg font-semibold text-brand-primary mb-2">Is my pet's data secure?</h3>
-              <p className="text-brand-primary-dark">Yes! All data is encrypted and stored securely. You control what's shared publicly vs. kept private.</p>
-            </div>
-            
-            <div className="bg-white rounded-xl shadow-sm p-6">
-              <h3 className="text-lg font-semibold text-brand-primary mb-2">How many pets can I add?</h3>
-              <p className="text-brand-primary-dark">Each plan includes 1 pet. You can add more pets with our affordable add-on packages.</p>
-            </div>
-            
-            <div className="bg-white rounded-xl shadow-sm p-6">
-              <h3 className="text-lg font-semibold text-brand-primary mb-2">Does it work on all devices?</h3>
-              <p className="text-brand-primary-dark">Yes! PetPort works on phones, tablets, and computers. Install it like an app or use it in your browser.</p>
-            </div>
-            
-            <div className="bg-white rounded-xl shadow-sm p-6">
-              <h3 className="text-lg font-semibold text-brand-primary mb-2">How does the 7-day free trial work?</h3>
-              <p className="text-brand-primary-dark">Sign up with your card for instant access to all features. You won't be charged for 7 days, and you can cancel anytime during or after the trial period.</p>
-            </div>
-            
-            <div className="bg-white rounded-xl shadow-sm p-6">
-              <h3 className="text-lg font-semibold text-brand-primary mb-2">Do I need a credit card for the free trial?</h3>
-              <p className="text-brand-primary-dark">Yes, a card is required to start your trial, but you won't be charged until after the 7-day period. This ensures uninterrupted access if you choose to continue.</p>
-            </div>
-            
-            <div className="bg-white rounded-xl shadow-sm p-6">
-              <h3 className="text-lg font-semibold text-brand-primary mb-2">Can I cancel anytime?</h3>
-              <p className="text-brand-primary-dark">Absolutely. Cancel anytime from your account settings. No long-term commitments.</p>
-            </div>
-          </div>
-        </section>
 
         {/* Share Prompt */}
         {showSharePrompt && (

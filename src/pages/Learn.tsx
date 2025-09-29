@@ -60,7 +60,7 @@ export default function Learn() {
             <div className="space-y-2">
               <a href="#health-records" className="block text-brand-primary hover:text-blue-600 font-medium">🏥 Health Record Management</a>
               <a href="#foster-care" className="block text-brand-primary hover:text-blue-600 font-medium">🤝 Foster Care Best Practices</a>
-              <a href="#sharing-securely" className="block text-brand-primary hover:text-blue-600 font-medium">🔒 Secure Information Sharing</a>
+              <a href="#frequently-asked-questions" className="block text-brand-primary hover:text-blue-600 font-medium">❓ Frequently Asked Questions</a>
               <a href="#getting-started" className="block text-brand-primary hover:text-blue-600 font-medium">🚀 Getting Started with PetPort</a>
             </div>
           </div>
@@ -401,48 +401,43 @@ export default function Learn() {
           </div>
         </section>
 
-        {/* Secure Sharing */}
-        <section id="sharing-securely" className="mb-16">
-          <h2 className="text-3xl font-bold text-brand-primary mb-6">🔒 Secure Information Sharing</h2>
-          <div className="prose prose-lg max-w-none">
-            <p className="text-brand-primary-dark mb-6">
-              Privacy and security are paramount when sharing your pet's information. Learn how to control 
-              what you share and with whom.
-            </p>
-
-            <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 mb-8">
-              <h3 className="text-xl font-semibold text-brand-primary mb-4">Privacy Control Features</h3>
-              <div className="space-y-4">
-                <div className="flex items-start gap-3">
-                  <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
-                    <span className="text-blue-600 text-sm font-bold">1</span>
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-brand-primary">Selective Sharing</h4>
-                    <p className="text-brand-primary-dark text-sm">Choose exactly what information to share - emergency info only, full profile, or custom selections.</p>
-                  </div>
-                </div>
-                
-                <div className="flex items-start gap-3">
-                  <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
-                    <span className="text-blue-600 text-sm font-bold">2</span>
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-brand-primary">Time-Limited Access</h4>
-                    <p className="text-brand-primary-dark text-sm">Set expiration dates on shared links for temporary access during boarding or sitting.</p>
-                  </div>
-                </div>
-                
-                <div className="flex items-start gap-3">
-                  <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
-                    <span className="text-blue-600 text-sm font-bold">3</span>
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-brand-primary">Access Tracking</h4>
-                    <p className="text-brand-primary-dark text-sm">See who has accessed your pet's information and when.</p>
-                  </div>
-                </div>
-              </div>
+        {/* FAQ Section */}
+        <section id="frequently-asked-questions" className="mb-16">
+          <h2 className="text-3xl font-bold text-brand-primary mb-6">❓ Frequently Asked Questions</h2>
+          <div className="space-y-6">
+            <div className="bg-white rounded-xl shadow-sm p-6">
+              <h3 className="text-lg font-semibold text-brand-primary mb-2">What is the primary focus of this app?</h3>
+              <p className="text-brand-primary-dark">We focus on preserving and sharing your pet's life story. Unlike a simple appointment tracker, Petport captures —all documents/records, care instructions, achievements, even referrals. This ensures a seamless relay of information, whether to a pet sitter, vet or a new family.</p>
+            </div>
+            
+            <div className="bg-white rounded-xl shadow-sm p-6">
+              <h3 className="text-lg font-semibold text-brand-primary mb-2">Is my pet's data secure?</h3>
+              <p className="text-brand-primary-dark">Yes! All data is encrypted and stored securely. You control what's shared publicly vs. kept private.</p>
+            </div>
+            
+            <div className="bg-white rounded-xl shadow-sm p-6">
+              <h3 className="text-lg font-semibold text-brand-primary mb-2">How many pets can I add?</h3>
+              <p className="text-brand-primary-dark">Each plan includes 1 pet. You can add more pets with our affordable add-on packages.</p>
+            </div>
+            
+            <div className="bg-white rounded-xl shadow-sm p-6">
+              <h3 className="text-lg font-semibold text-brand-primary mb-2">Does it work on all devices?</h3>
+              <p className="text-brand-primary-dark">Yes! PetPort works on phones, tablets, and computers. Install it like an app or use it in your browser.</p>
+            </div>
+            
+            <div className="bg-white rounded-xl shadow-sm p-6">
+              <h3 className="text-lg font-semibold text-brand-primary mb-2">How does the 7-day free trial work?</h3>
+              <p className="text-brand-primary-dark">Sign up with your card for instant access to all features. You won't be charged for 7 days, and you can cancel anytime during or after the trial period.</p>
+            </div>
+            
+            <div className="bg-white rounded-xl shadow-sm p-6">
+              <h3 className="text-lg font-semibold text-brand-primary mb-2">Do I need a credit card for the free trial?</h3>
+              <p className="text-brand-primary-dark">Yes, a card is required to start your trial, but you won't be charged until after the 7-day period. This ensures uninterrupted access if you choose to continue.</p>
+            </div>
+            
+            <div className="bg-white rounded-xl shadow-sm p-6">
+              <h3 className="text-lg font-semibold text-brand-primary mb-2">Can I cancel anytime?</h3>
+              <p className="text-brand-primary-dark">Absolutely. Cancel anytime from your account settings. No long-term commitments.</p>
             </div>
           </div>
         </section>

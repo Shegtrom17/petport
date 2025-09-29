@@ -26,9 +26,9 @@ export default function Learn() {
           </Link>
         </div>
         <div className="flex items-center gap-3">
-          <Link to="/auth">
+          <a href="#pricing">
             <Button className="text-white">Get Started</Button>
-          </Link>
+          </a>
         </div>
       </header>
 

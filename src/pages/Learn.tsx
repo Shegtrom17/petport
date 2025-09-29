@@ -117,7 +117,8 @@ export default function Learn() {
           <div className="prose prose-lg max-w-none">
             <p className="text-brand-primary-dark mb-6">
               Every pet owner's worst nightmare is a lost pet. Learn how to create an emergency-ready profile 
-              that can help bring your pet home faster.
+              that can help bring your pet home faster. Create Social media shareable link and PDF with a tap. 
+              No design skills needed.
             </p>
 
             <div className="bg-red-50 rounded-xl p-6 mb-8">

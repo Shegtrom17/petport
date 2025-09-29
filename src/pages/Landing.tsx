@@ -125,7 +125,7 @@ export default function Landing() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div className="text-left lg:text-left">
               <h1 className="text-5xl lg:text-6xl font-bold text-brand-primary leading-tight">
-                Digital Pet Portfolio
+                Digital Pet Passport
               </h1>
               <p className="mt-6 text-xl text-brand-primary-dark leading-relaxed">
                 One place for everything about your pet. Beautiful profiles, emergency info, instant lost pet flyers, shareable links, PDFs, documents, and travel maps.

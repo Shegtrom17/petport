@@ -296,6 +296,21 @@ export default function Learn() {
           </div>
         </section>
 
+        {/* Mid-Page Call to Action */}
+        <section className="bg-gradient-to-r from-brand-primary/5 to-blue-50 rounded-2xl p-8 text-center mb-16">
+          <h2 className="text-2xl font-bold mb-4 text-brand-primary">Excited About What PetPort Can Do?</h2>
+          <p className="text-lg text-brand-primary-dark mb-6 max-w-2xl mx-auto">
+            You've seen the features - now discover how affordable it is to give your pet the digital portfolio they deserve.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <a href="#pricing">
+              <Button size="lg" className="text-lg px-8 py-3 bg-brand-primary text-white hover:bg-brand-primary-dark">
+                See Pricing & Start Free Trial
+              </Button>
+            </a>
+          </div>
+        </section>
+
         {/* Health Records Management */}
         <section id="health-records" className="mb-16">
           <h2 className="text-3xl font-bold text-brand-primary mb-6">🏥 Digital vs Paper: Health Record Management</h2>
@@ -505,29 +520,9 @@ export default function Learn() {
         </section>
 
         {/* Pricing Section */}
-        <PricingSection context="landing" />
-
-        {/* Call to Action */}
-        <section className="bg-white rounded-2xl border border-gray-200 shadow-sm p-12 text-center">
-          <h2 className="text-3xl font-bold mb-4 text-brand-primary">Ready to Get Started?</h2>
-          <p className="text-xl text-brand-primary-dark mb-8 max-w-2xl mx-auto">
-            Join thousands of pet parents who never worry about lost paperwork, missing documentation, 
-            or emergency preparedness again.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link to="/auth">
-              <Button size="lg" className="text-lg px-8 py-3 bg-brand-primary text-white hover:bg-brand-primary-dark">
-                Start Free Trial
-              </Button>
-            </Link>
-            <Link to="/">
-              <Button size="lg" variant="outline" className="text-lg px-8 py-3 border-brand-primary text-brand-primary hover:bg-brand-primary/5">
-                Learn More About PetPort
-              </Button>
-            </Link>
-          </div>
-          <p className="text-brand-primary/70 text-sm mt-4">7-day free trial • No charges for 7 days • Cancel anytime</p>
-        </section>
+        <div id="pricing">
+          <PricingSection context="landing" />
+        </div>
       </main>
 
       {/* Footer */}

@@ -312,7 +312,7 @@ export const PetProfileContent = ({
       <div className="mb-8">
         <div className="bg-white/50 backdrop-blur-sm rounded-2xl p-6">
           <SectionHeader
-            title="Pet Profile"
+            title="Profile Management Hub"
             action={isOwner && (
               <div className="flex items-center space-x-2">
                 <div

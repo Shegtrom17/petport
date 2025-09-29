@@ -130,7 +130,8 @@ export default function Learn() {
                     <li>• Distinguishing marks, scars, or unique features</li>
                     <li>• Behavioral traits (friendly, shy, fearful)</li>
                     <li>• Last known location and time</li>
-                    <li>• Microchip number and registration info</li>
+                     <li>• Microchip number and registration info</li>
+                     <li>• Reward information</li>
                   </ul>
                 </div>
                 

@@ -128,7 +128,7 @@ export default function Landing() {
                 Digital Pet Passport
               </h1>
               <p className="mt-6 text-xl text-brand-primary-dark leading-relaxed">
-                PetPort is the all-in-one pet passport and digital record keeper. Store every vaccine, vet visit, and health document in one secure place, alongside detailed care instructions for sitters or adopters. With instant lost pet flyers, shareable profile links that update in real time, downloadable PDFs, and even a travel map for adventures, PetPort gives you and your pet peace of mind everywhere you go.
+                PetPort is your all-in-one pet app. Store medical records, vet visits, and travel documents. Create instant lost pet flyers and shareable social media links with just a tap—no design skills needed. Plus, care instructions for sitters and adopters, and even a resume builder for all pets, horses included!
               </p>
               
               {/* Free Trial Badge */}

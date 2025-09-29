@@ -277,7 +277,7 @@ export const PetEditForm = ({ petData, onSave, onCancel, togglePetPublicVisibili
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Pet Profile */}
           <div>
-            <h3 className="text-lg font-sans text-foreground mb-4">Pet Profile (Recommended)</h3>
+            <h3 className="text-lg font-sans text-foreground mb-4">Basic Information (Recommended)</h3>
             <p className="text-xs text-muted-foreground mb-4">This is the core of your pet's profile. Complete this section for professional PDFs and optimal sharing quality.</p>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>

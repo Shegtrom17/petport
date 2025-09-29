@@ -10,7 +10,7 @@ interface MetaTagsProps {
 }
 
 export const MetaTags = ({ title, description, image, url, type = "website" }: MetaTagsProps) => {
-  const ogImage = image || "https://pub-a7c2c18b8d6143b9a256105ef44f2da0.r2.dev/OG%20General.png";
+  const ogImage = image || "https://petport.app/og/general-og.png";
   const canonicalUrl = url.includes('petport.app') ? url : getSafeBaseURL() + new URL(url).pathname;
   
   useEffect(() => {

@@ -498,8 +498,8 @@ export default function Landing() {
                   Start Free Trial
                 </Button>
               )}
-              <Button size="lg" className="text-lg px-8 py-3 bg-white text-brand-primary hover:bg-gray-100">
-                Learn More
+              <Button size="lg" className="text-lg px-8 py-3 bg-white text-brand-primary hover:bg-gray-100" asChild>
+                <Link to="/learn">Learn More</Link>
               </Button>
             </div>
           </div>

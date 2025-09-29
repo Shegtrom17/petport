@@ -15,6 +15,7 @@ import { AuthKeepAliveWrapper } from "@/components/AuthKeepAliveWrapper";
 import { initializeDomainGuard } from "@/utils/domainGuard";
 import Index from "./pages/Index";
 import Landing from "./pages/Landing";
+import Learn from "./pages/Learn";
 import Onboarding from "./pages/Onboarding";
 import Auth from "./pages/Auth";
 
@@ -81,6 +82,7 @@ const App = () => {
                   
                   <Route path="/" element={<Landing />} />
                   <Route path="/landing" element={<Landing />} />
+                  <Route path="/learn" element={<Learn />} />
                   <Route path="/app" element={
                     <ProtectedRoute>
                       <Index />

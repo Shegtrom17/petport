@@ -103,9 +103,9 @@ export default function Learn() {
             <div className="bg-green-50 rounded-xl p-6 mb-8">
               <h3 className="text-xl font-semibold text-brand-primary mb-4">💡 Pro Tip: Photo Documentation</h3>
               <p className="text-brand-primary-dark">
-                Instead of keeping physical papers, take high-quality photos of all documents. 
-                PetPort automatically organizes them by category and makes them searchable, 
-                so you'll never lose important information again.
+                Instead of keeping physical papers, upload or take high-quality photos of all documents. 
+                PetPort automatically organizes them by category and makes them searchable and into instant PDF's, 
+                so you'll never lose important information again and can view or forward information anytime, anywhere.
               </p>
             </div>
           </div>

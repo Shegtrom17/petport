@@ -428,6 +428,24 @@ export default function Landing() {
             <div className="space-y-8">
               <div className="border-b border-gray-200 pb-8">
                 <h3 className="text-xl font-semibold text-brand-primary mb-4">
+                  How can I quickly make a lost pet flyer if my pet goes missing?
+                </h3>
+                <p className="text-brand-primary-dark leading-relaxed">
+                  With PetPort, it takes seconds — not hours — to get the word out. Our One-Tap Missing Pet Flyer instantly pulls your pet's photos, name, and last-seen details into a ready-to-share PDF flyer. Each flyer includes:
+                </p>
+                <p className="text-brand-primary-dark leading-relaxed mt-4">
+                  A QR code printed right on the flyer that links directly to your pet's live profile page. Anyone who scans it sees the most up-to-date info, even if you add new sightings later.
+                </p>
+                <p className="text-brand-primary-dark leading-relaxed mt-4">
+                  A social media–ready share link, so you can blast the flyer to Facebook, Instagram, Nextdoor, or text it to neighbors with one tap.
+                </p>
+                <p className="text-brand-primary-dark leading-relaxed mt-4">
+                  No graphic design, no formatting headaches — just click, print, or share. It's the fastest way to rally help when minutes matter.
+                </p>
+              </div>
+
+              <div className="border-b border-gray-200 pb-8">
+                <h3 className="text-xl font-semibold text-brand-primary mb-4">
                   How can I store and access my pet's medical records digitally?
                 </h3>
                 <p className="text-brand-primary-dark leading-relaxed">
@@ -481,6 +499,14 @@ export default function Landing() {
                 "@context": "https://schema.org",
                 "@type": "FAQPage",
                 "mainEntity": [
+                  {
+                    "@type": "Question",
+                    "name": "How can I quickly make a lost pet flyer if my pet goes missing?",
+                    "acceptedAnswer": {
+                      "@type": "Answer",
+                      "text": "With PetPort, it takes seconds — not hours — to get the word out. Our One-Tap Missing Pet Flyer instantly pulls your pet's photos, name, and last-seen details into a ready-to-share PDF flyer. Each flyer includes: A QR code printed right on the flyer that links directly to your pet's live profile page. Anyone who scans it sees the most up-to-date info, even if you add new sightings later. A social media–ready share link, so you can blast the flyer to Facebook, Instagram, Nextdoor, or text it to neighbors with one tap. No graphic design, no formatting headaches — just click, print, or share. It's the fastest way to rally help when minutes matter."
+                    }
+                  },
                   {
                     "@type": "Question",
                     "name": "How can I store and access my pet's medical records digitally?",

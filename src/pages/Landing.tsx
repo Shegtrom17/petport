@@ -128,7 +128,7 @@ export default function Landing() {
                 Digital Pet Passport
               </h1>
               <p className="mt-6 text-xl text-brand-primary-dark leading-relaxed">
-                PetPort is your all-in-one pet app. Store medical records, vet visits, and travel documents. Create instant lost pet flyers and shareable social media links with just a tap—no design skills needed. Plus, care instructions for sitters and adopters, and even a resume builder for all pets, horses included!
+                PetPort is your all-in-one pet app. Store medical records, vet visits, and travel documents. Create instant PDFs, QR codes, lost pet flyers, and shareable social media links with just a tap—no design skills needed. Plus, care instructions for sitters and adopters, and even a resume builder for all pets, horses included!
               </p>
               
               {/* Free Trial Badge */}

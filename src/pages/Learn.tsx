@@ -476,25 +476,25 @@ export default function Learn() {
         </section>
 
         {/* Call to Action */}
-        <section className="bg-gradient-to-r from-brand-primary to-blue-600 rounded-2xl text-white p-12 text-center">
-          <h2 className="text-3xl font-bold mb-4">Ready to Get Started?</h2>
-          <p className="text-xl text-white/90 mb-8 max-w-2xl mx-auto">
+        <section className="bg-white rounded-2xl border border-gray-200 shadow-sm p-12 text-center">
+          <h2 className="text-3xl font-bold mb-4 text-brand-primary">Ready to Get Started?</h2>
+          <p className="text-xl text-brand-primary-dark mb-8 max-w-2xl mx-auto">
             Join thousands of pet parents who never worry about lost paperwork, missing documentation, 
             or emergency preparedness again.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link to="/auth">
-              <Button size="lg" className="text-lg px-8 py-3 bg-white text-brand-primary hover:bg-gray-100">
+              <Button size="lg" className="text-lg px-8 py-3 bg-brand-primary text-white hover:bg-brand-primary-dark">
                 Start Free Trial
               </Button>
             </Link>
             <Link to="/">
-              <Button size="lg" variant="outline" className="text-lg px-8 py-3 border-white text-white hover:bg-white/10">
+              <Button size="lg" variant="outline" className="text-lg px-8 py-3 border-brand-primary text-brand-primary hover:bg-brand-primary/5">
                 Learn More About PetPort
               </Button>
             </Link>
           </div>
-          <p className="text-white/70 text-sm mt-4">7-day free trial • No charges for 7 days • Cancel anytime</p>
+          <p className="text-brand-primary/70 text-sm mt-4">7-day free trial • No charges for 7 days • Cancel anytime</p>
         </section>
       </main>
 

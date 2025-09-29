@@ -417,9 +417,6 @@ export default function Learn() {
           </div>
         </section>
 
-        {/* Pricing Section */}
-        <PricingSection context="landing" />
-
         {/* Getting Started */}
         <section id="getting-started" className="mb-16">
           <h2 className="text-3xl font-bold text-brand-primary mb-6">🚀 Getting Started with PetPort</h2>
@@ -491,6 +488,9 @@ export default function Learn() {
             </div>
           </div>
         </section>
+
+        {/* Pricing Section */}
+        <PricingSection context="landing" />
 
         {/* Call to Action */}
         <section className="bg-white rounded-2xl border border-gray-200 shadow-sm p-12 text-center">

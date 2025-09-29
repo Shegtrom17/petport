@@ -137,6 +137,21 @@ export default function Learn() {
                   </ul>
                 </div>
                 
+                <div>
+                  <h4 className="font-semibold text-brand-primary mb-2">🚨 Medical Alerts & Care Instructions</h4>
+                  <ul className="text-brand-primary-dark space-y-1">
+                    <li>• Critical medical conditions and allergies</li>
+                    <li>• Emergency medication requirements</li>
+                    <li>• Special care instructions for finders/caregivers</li>
+                    <li>• Emergency vet contact information</li>
+                    <li>• Behavioral warnings for safe handling</li>
+                  </ul>
+                  <p className="text-brand-primary-dark text-sm mt-3 italic">
+                    These medical alerts automatically appear in both your care instructions and lost pet profiles, 
+                    ensuring anyone helping your pet has critical safety information.
+                  </p>
+                </div>
+                
                 <div className="bg-white rounded-lg p-4">
                   <h4 className="font-semibold text-brand-primary mb-2">🚀 One-Tap Missing Pet Flyer</h4>
                   <p className="text-brand-primary-dark text-sm">

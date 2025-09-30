@@ -12,6 +12,8 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { SocialShareButtons } from "@/components/SocialShareButtons";
 import { generateShareURL } from "@/utils/domainUtils";
+import { FloatingAIButton } from "@/components/FloatingAIButton";
+import { AITravelAssistantModal } from "@/components/AITravelAssistantModal";
 
 interface TravelLocation {
   id: string;
@@ -47,6 +49,7 @@ interface TravelMapSectionProps {
 export const TravelMapSection = ({ petData, onUpdate }: TravelMapSectionProps) => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+  const [isAIModalOpen, setIsAIModalOpen] = useState(false);
   const [editMode, setEditMode] = useState<'edit' | 'add'>('add');
   const [locations, setLocations] = useState<TravelLocation[]>(petData.travel_locations || []);
   const [mapPins, setMapPins] = useState<MapPin[]>([]);
@@ -178,7 +181,7 @@ export const TravelMapSection = ({ petData, onUpdate }: TravelMapSectionProps) =
   };
 
   return (
-    <div className="space-y-4 sm:space-y-6">
+    <div className="space-y-4 sm:space-y-6 relative">
       {/* Header with Stats */}
       <Card className="border-0 shadow-xl bg-brand-primary text-white">
         <CardContent className="p-4 sm:p-6">
@@ -280,6 +283,15 @@ export const TravelMapSection = ({ petData, onUpdate }: TravelMapSectionProps) =
           />
         </DialogContent>
       </Dialog>
+
+      {/* AI Travel Assistant Modal */}
+      <AITravelAssistantModal
+        open={isAIModalOpen}
+        onOpenChange={setIsAIModalOpen}
+      />
+
+      {/* Floating AI Button */}
+      <FloatingAIButton onClick={() => setIsAIModalOpen(true)} />
 
       {/* Enhanced Interactive Map */}
       <EnhancedInteractiveMap 

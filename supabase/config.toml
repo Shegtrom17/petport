@@ -1,1 +1,86 @@
 project_id = "dxghbhujugsfmaecilrq"
+
+[api]
+enabled = true
+port = 54321
+schemas = ["public", "graphql_public"]
+extra_search_path = ["public", "extensions"]
+max_rows = 1000
+
+[functions.care-instructions-share]
+verify_jwt = false
+
+[functions.check-subscription]
+verify_jwt = true
+
+[functions.create-checkout]
+verify_jwt = true
+
+[functions.create-payment]
+verify_jwt = true
+
+[functions.create-setup-intent]
+verify_jwt = true
+
+[functions.create-subscription-with-user]
+verify_jwt = false
+
+[functions.customer-portal]
+verify_jwt = true
+
+[functions.emergency-share]
+verify_jwt = false
+
+[functions.generate-pet-pdf]
+verify_jwt = false
+
+[functions.link-subscriber]
+verify_jwt = true
+
+[functions.missing-pet-share]
+verify_jwt = false
+
+[functions.profile-share]
+verify_jwt = false
+
+[functions.public-create-checkout]
+verify_jwt = false
+
+[functions.purchase-addons]
+verify_jwt = true
+
+[functions.resume-share]
+verify_jwt = false
+
+[functions.send-email]
+verify_jwt = true
+
+[functions.setup-stripe-products]
+verify_jwt = false
+
+[functions.setup-stripe-webhook]
+verify_jwt = false
+
+[functions.stripe-webhook]
+verify_jwt = false
+
+[functions.suspend-expired-grace]
+verify_jwt = false
+
+[functions.transfer-pet]
+verify_jwt = true
+
+[functions.travel-share]
+verify_jwt = false
+
+[functions.upload-og-image]
+verify_jwt = false
+
+[functions.verify-addons]
+verify_jwt = true
+
+[functions.verify-checkout]
+verify_jwt = true
+
+[functions.travel-assistant]
+verify_jwt = true

@@ -3,6 +3,7 @@ export type FeatureFlags = {
   enableSwipeNavigation: boolean;
   enableSelectPhotos: boolean;
   useHostedCheckout: boolean;
+  testMode: boolean;
 };
 
 export const featureFlags: FeatureFlags = {
@@ -10,6 +11,7 @@ export const featureFlags: FeatureFlags = {
   enableSwipeNavigation: true,
   enableSelectPhotos: true,
   useHostedCheckout: true,
+  testMode: false, // Set to true for development, false for production
 };
 
 // Gallery configuration

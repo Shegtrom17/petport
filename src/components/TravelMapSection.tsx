@@ -291,7 +291,11 @@ export const TravelMapSection = ({ petData, onUpdate }: TravelMapSectionProps) =
       />
 
       {/* Floating AI Button */}
-      <FloatingAIButton onClick={() => setIsAIModalOpen(true)} />
+      <FloatingAIButton 
+        onClick={() => setIsAIModalOpen(true)} 
+        label="AI Travel Assistant"
+        description="Get pet-friendly suggestions"
+      />
 
       {/* Enhanced Interactive Map */}
       <EnhancedInteractiveMap 

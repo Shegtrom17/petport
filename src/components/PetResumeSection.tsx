@@ -692,7 +692,11 @@ export const PetResumeSection = ({ petData, onUpdate, handlePetUpdate }: PetResu
       />
 
       {/* Floating AI Button */}
-      <FloatingAIButton onClick={() => setIsAIBioModalOpen(true)} />
+      <FloatingAIButton 
+        onClick={() => setIsAIBioModalOpen(true)} 
+        label="AI Bio & Resume Assistant"
+        description="Get writing help & suggestions"
+      />
     </div>
   );
 };

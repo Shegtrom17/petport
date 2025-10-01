@@ -5,7 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from "@/components/ui/dialog";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { Input } from "@/components/ui/input";
-import { Heart, Clock, Pill, Coffee, Moon, AlertTriangle, Edit, Loader2, FileText, Download, Share2, ExternalLink, Eye, Phone, Copy, Stethoscope } from "lucide-react";
+import { Heart, Clock, Pill, Coffee, Moon, AlertTriangle, Edit, Loader2, FileText, Download, Share2, ExternalLink, Eye, Phone, Copy, Stethoscope, Sparkles } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { ScrollControls } from "@/components/ui/scroll-controls";
 import { ContactsDisplay } from "@/components/ContactsDisplay";
 import { extractPhoneNumber, formatPhoneForTel } from "@/utils/contactUtils";
@@ -835,22 +836,47 @@ export const CareInstructionsSection = ({ petData, onUpdate, handlePetUpdate }: 
 
       {/* Dual Floating AI Buttons */}
       <div className="fixed bottom-6 right-6 flex flex-col gap-3 z-50">
-        <Button
-          onClick={() => setIsAICareModalOpen(true)}
-          size="lg"
-          className="h-14 w-14 rounded-full shadow-lg hover:shadow-xl transition-all bg-gradient-to-br from-blue-500 to-blue-600 hover:scale-110"
-          aria-label="Care AI Assistant"
-        >
-          <Heart className="h-6 w-6" />
-        </Button>
-        <Button
-          onClick={() => setIsAIMedicalModalOpen(true)}
-          size="lg"
-          className="h-14 w-14 rounded-full shadow-lg hover:shadow-xl transition-all bg-gradient-to-br from-red-500 to-red-600 hover:scale-110"
-          aria-label="Medical AI Assistant"
-        >
-          <Stethoscope className="h-6 w-6" />
-        </Button>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                onClick={() => setIsAICareModalOpen(true)}
+                size="lg"
+                className="h-14 w-14 rounded-full shadow-lg hover:shadow-xl transition-all bg-[#5691af] hover:bg-[#4a7d99] hover:scale-110"
+                aria-label="AI Care Assistant"
+              >
+                <Sparkles className="h-6 w-6" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent side="left" className="text-sm">
+              <p className="font-semibold flex items-center gap-1">
+                <Sparkles className="h-3 w-3" /> AI Care Assistant
+              </p>
+              <p className="text-xs text-muted-foreground">Ask about feeding, routines & care</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+        
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                onClick={() => setIsAIMedicalModalOpen(true)}
+                size="lg"
+                className="h-14 w-14 rounded-full shadow-lg hover:shadow-xl transition-all bg-red-500/90 hover:bg-red-600 hover:scale-110"
+                aria-label="AI Medical Advisor"
+              >
+                <Sparkles className="h-6 w-6" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent side="left" className="text-sm">
+              <p className="font-semibold flex items-center gap-1">
+                <Sparkles className="h-3 w-3" /> AI Medical Advisor
+              </p>
+              <p className="text-xs text-muted-foreground">Ask about health & symptoms</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </div>
     </div>
   );

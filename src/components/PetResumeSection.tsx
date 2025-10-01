@@ -12,6 +12,8 @@ import { ContactsDisplay } from "@/components/ContactsDisplay";
 import { PrivacyHint } from "@/components/PrivacyHint";
 import { toast } from "sonner";
 import { SocialShareButtons } from "@/components/SocialShareButtons";
+import { FloatingAIButton } from "@/components/FloatingAIButton";
+import { AIBioAssistantModal } from "@/components/AIBioAssistantModal";
 
 // Helper function to extract phone number and create tel link
 const extractPhoneNumber = (contactString: string) => {
@@ -86,6 +88,7 @@ export const PetResumeSection = ({ petData, onUpdate, handlePetUpdate }: PetResu
   const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
   const [isShareDialogOpen, setIsShareDialogOpen] = useState(false);
   const [isSharing, setIsSharing] = useState(false);
+  const [isAIBioModalOpen, setIsAIBioModalOpen] = useState(false);
 
   const averageRating = petData.reviews?.length 
     ? petData.reviews.reduce((sum, review) => sum + review.rating, 0) / petData.reviews.length 
@@ -681,7 +684,15 @@ export const PetResumeSection = ({ petData, onUpdate, handlePetUpdate }: PetResu
         </Card>
       )}
 
+      {/* AI Bio Assistant Modal */}
+      <AIBioAssistantModal
+        open={isAIBioModalOpen}
+        onOpenChange={setIsAIBioModalOpen}
+        petData={petData}
+      />
 
+      {/* Floating AI Button */}
+      <FloatingAIButton onClick={() => setIsAIBioModalOpen(true)} />
     </div>
   );
 };

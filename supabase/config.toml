@@ -84,3 +84,12 @@ verify_jwt = true
 
 [functions.travel-assistant]
 verify_jwt = true
+
+[functions.bio-assistant]
+verify_jwt = true
+
+[functions.care-assistant]
+verify_jwt = true
+
+[functions.medical-assistant]
+verify_jwt = true

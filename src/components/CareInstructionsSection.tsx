@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from "@/components/ui/dialog";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { Input } from "@/components/ui/input";
-import { Heart, Clock, Pill, Coffee, Moon, AlertTriangle, Edit, Loader2, FileText, Download, Share2, ExternalLink, Eye, Phone, Copy } from "lucide-react";
+import { Heart, Clock, Pill, Coffee, Moon, AlertTriangle, Edit, Loader2, FileText, Download, Share2, ExternalLink, Eye, Phone, Copy, Stethoscope } from "lucide-react";
 import { ScrollControls } from "@/components/ui/scroll-controls";
 import { ContactsDisplay } from "@/components/ContactsDisplay";
 import { extractPhoneNumber, formatPhoneForTel } from "@/utils/contactUtils";
@@ -16,6 +16,9 @@ import { generateClientPetPDF, downloadPDFBlob } from "@/services/clientPdfServi
 import { useToast } from "@/hooks/use-toast";
 import { SocialShareButtons } from "@/components/SocialShareButtons";
 import { supabase } from "@/integrations/supabase/client";
+import { FloatingAIButton } from "@/components/FloatingAIButton";
+import { AICareAssistantModal } from "@/components/AICareAssistantModal";
+import { AIMedicalAssistantModal } from "@/components/AIMedicalAssistantModal";
 
 interface CareInstructionsSectionProps {
   petData: any;
@@ -33,7 +36,8 @@ export const CareInstructionsSection = ({ petData, onUpdate, handlePetUpdate }: 
   const dialogContentRef = useRef<HTMLDivElement>(null);
   const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
   const [careShareDialogOpen, setCareShareDialogOpen] = useState(false);
-  
+  const [isAICareModalOpen, setIsAICareModalOpen] = useState(false);
+  const [isAIMedicalModalOpen, setIsAIMedicalModalOpen] = useState(false);
   const [isSharing, setIsSharing] = useState(false);
   const { toast } = useToast();
   const isHorse = petData.species?.toLowerCase() === 'horse';
@@ -814,6 +818,40 @@ export const CareInstructionsSection = ({ petData, onUpdate, handlePetUpdate }: 
           </p>
         </CardContent>
       </Card>
+
+      {/* AI Care Assistant Modal */}
+      <AICareAssistantModal
+        open={isAICareModalOpen}
+        onOpenChange={setIsAICareModalOpen}
+        petData={petData}
+      />
+
+      {/* AI Medical Assistant Modal */}
+      <AIMedicalAssistantModal
+        open={isAIMedicalModalOpen}
+        onOpenChange={setIsAIMedicalModalOpen}
+        petData={petData}
+      />
+
+      {/* Dual Floating AI Buttons */}
+      <div className="fixed bottom-6 right-6 flex flex-col gap-3 z-50">
+        <Button
+          onClick={() => setIsAICareModalOpen(true)}
+          size="lg"
+          className="h-14 w-14 rounded-full shadow-lg hover:shadow-xl transition-all bg-gradient-to-br from-blue-500 to-blue-600 hover:scale-110"
+          aria-label="Care AI Assistant"
+        >
+          <Heart className="h-6 w-6" />
+        </Button>
+        <Button
+          onClick={() => setIsAIMedicalModalOpen(true)}
+          size="lg"
+          className="h-14 w-14 rounded-full shadow-lg hover:shadow-xl transition-all bg-gradient-to-br from-red-500 to-red-600 hover:scale-110"
+          aria-label="Medical AI Assistant"
+        >
+          <Stethoscope className="h-6 w-6" />
+        </Button>
+      </div>
     </div>
   );
 };

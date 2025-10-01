@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { AzureButton } from "@/components/ui/azure-button";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -114,10 +115,10 @@ export function AIBioAssistantModal({ open, onOpenChange, petData }: AIBioAssist
                 rows={3}
               />
             </div>
-            <Button onClick={() => handleGenerate('bio')} disabled={loading} className="w-full">
+            <AzureButton onClick={() => handleGenerate('bio')} disabled={loading} className="w-full">
               {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Sparkles className="mr-2 h-4 w-4" />}
               Generate Bio
-            </Button>
+            </AzureButton>
           </TabsContent>
 
           <TabsContent value="experience" className="space-y-4">
@@ -131,10 +132,10 @@ export function AIBioAssistantModal({ open, onOpenChange, petData }: AIBioAssist
                 rows={3}
               />
             </div>
-            <Button onClick={() => handleGenerate('experience')} disabled={loading} className="w-full">
+            <AzureButton onClick={() => handleGenerate('experience')} disabled={loading} className="w-full">
               {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Sparkles className="mr-2 h-4 w-4" />}
               Generate Experiences
-            </Button>
+            </AzureButton>
           </TabsContent>
 
           <TabsContent value="achievement" className="space-y-4">
@@ -148,10 +149,10 @@ export function AIBioAssistantModal({ open, onOpenChange, petData }: AIBioAssist
                 rows={3}
               />
             </div>
-            <Button onClick={() => handleGenerate('achievement')} disabled={loading} className="w-full">
+            <AzureButton onClick={() => handleGenerate('achievement')} disabled={loading} className="w-full">
               {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Sparkles className="mr-2 h-4 w-4" />}
               Generate Achievements
-            </Button>
+            </AzureButton>
           </TabsContent>
 
           <TabsContent value="polish" className="space-y-4">
@@ -165,10 +166,10 @@ export function AIBioAssistantModal({ open, onOpenChange, petData }: AIBioAssist
                 rows={4}
               />
             </div>
-            <Button onClick={() => handleGenerate('polish')} disabled={loading || !customPrompt} className="w-full">
+            <AzureButton onClick={() => handleGenerate('polish')} disabled={loading || !customPrompt} className="w-full">
               {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Wand2 className="mr-2 h-4 w-4" />}
               Polish Text
-            </Button>
+            </AzureButton>
           </TabsContent>
         </Tabs>
 

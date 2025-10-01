@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { AzureButton } from "@/components/ui/azure-button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -130,7 +131,7 @@ export function AITravelAssistantModal({
 
           {/* Action Buttons */}
           <div className="flex gap-2">
-            <Button 
+            <AzureButton 
               onClick={handleGetSuggestions} 
               disabled={loading}
               className="flex-1"
@@ -146,7 +147,7 @@ export function AITravelAssistantModal({
                   Get AI Suggestions
                 </>
               )}
-            </Button>
+            </AzureButton>
             
             {suggestions && (
               <Button 

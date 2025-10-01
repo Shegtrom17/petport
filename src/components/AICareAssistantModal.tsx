@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { AzureButton } from "@/components/ui/azure-button";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Loader2, Sparkles, HelpCircle } from "lucide-react";
@@ -138,7 +139,7 @@ export function AICareAssistantModal({ open, onOpenChange, petData }: AICareAssi
 
           {/* Action Buttons */}
           <div className="flex gap-2">
-            <Button 
+            <AzureButton 
               onClick={handleAskQuestion} 
               disabled={loading}
               className="flex-1"
@@ -154,7 +155,7 @@ export function AICareAssistantModal({ open, onOpenChange, petData }: AICareAssi
                   Ask AI Assistant
                 </>
               )}
-            </Button>
+            </AzureButton>
             
             {answer && (
               <Button 

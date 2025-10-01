@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { AzureButton } from "@/components/ui/azure-button";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -149,7 +150,7 @@ export function AIMedicalAssistantModal({ open, onOpenChange, petData }: AIMedic
 
           {/* Action Buttons */}
           <div className="flex gap-2">
-            <Button 
+            <AzureButton 
               onClick={handleAskQuestion} 
               disabled={loading}
               className="flex-1"
@@ -165,7 +166,7 @@ export function AIMedicalAssistantModal({ open, onOpenChange, petData }: AIMedic
                   Get Health Information
                 </>
               )}
-            </Button>
+            </AzureButton>
             
             {answer && (
               <Button 

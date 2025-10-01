@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { AzureButton } from "@/components/ui/azure-button";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { MapPin, Camera, Trophy, Edit, Share2 } from "lucide-react";
@@ -362,13 +362,13 @@ export const TravelMapSection = ({ petData, onUpdate }: TravelMapSectionProps) =
               <br />
               Or add detailed travel locations below.
             </p>
-            <Button 
+            <AzureButton 
               onClick={handleAddNewLocation}
-              className="bg-blue-600 hover:bg-blue-700 text-sm sm:text-base"
+              className="text-sm sm:text-base"
             >
               <MapPin className="w-4 h-4 mr-2" />
               Add First Location
-            </Button>
+            </AzureButton>
           </CardContent>
         </Card>
       )}
@@ -382,13 +382,13 @@ export const TravelMapSection = ({ petData, onUpdate }: TravelMapSectionProps) =
             <p className="text-blue-700 mb-4 text-sm sm:text-base px-2">
               Record a new place you've visited with {petData.name}
             </p>
-            <Button 
+            <AzureButton 
               onClick={handleAddNewLocation}
-              className="bg-blue-600 hover:bg-blue-700 text-sm sm:text-base"
+              className="text-sm sm:text-base"
             >
               <MapPin className="w-4 h-4 mr-2" />
               Add Location
-            </Button>
+            </AzureButton>
           </CardContent>
         </Card>
       )}

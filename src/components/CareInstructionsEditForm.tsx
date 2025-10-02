@@ -10,6 +10,7 @@ import { useToast } from "@/hooks/use-toast";
 import { updateCareInstructions } from "@/services/careInstructionsService";
 import { Clock, Heart, AlertTriangle, Activity, Pill, Loader2 } from "lucide-react";
 import { sanitizeText } from "@/utils/inputSanitizer";
+import { VoiceRecorder } from "@/components/VoiceRecorder";
 
 interface CareInstructionsEditFormProps {
   petData: any;
@@ -21,7 +22,7 @@ export const CareInstructionsEditForm = ({ petData, onSave, onCancel }: CareInst
   console.log("CareInstructionsEditForm petData:", petData);
   console.log("CareInstructionsEditForm medications:", petData.medications);
   
-  const { register, handleSubmit, formState: { isDirty } } = useForm({
+  const { register, handleSubmit, formState: { isDirty }, setValue } = useForm({
     defaultValues: {
       feedingSchedule: petData.careInstructions?.feedingSchedule || "",
       morningRoutine: petData.careInstructions?.morningRoutine || "",
@@ -89,13 +90,19 @@ export const CareInstructionsEditForm = ({ petData, onSave, onCancel }: CareInst
           <CardContent className="space-y-4">
             <div>
               <Label htmlFor="feedingSchedule">Feeding Schedule</Label>
-              <Textarea
-                id="feedingSchedule"
-                {...register("feedingSchedule")}
-                placeholder="e.g., 7 AM - 1 cup dry food, 6 PM - 1 cup dry food"
-                rows={3}
-                disabled={isLoading}
-              />
+              <div className="relative">
+                <Textarea
+                  id="feedingSchedule"
+                  {...register("feedingSchedule")}
+                  placeholder="e.g., 7 AM - 1 cup dry food, 6 PM - 1 cup dry food"
+                  rows={3}
+                  disabled={isLoading}
+                />
+                <VoiceRecorder
+                  onTranscript={(text) => setValue("feedingSchedule", text)}
+                  disabled={isLoading}
+                />
+              </div>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>

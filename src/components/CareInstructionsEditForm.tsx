@@ -107,23 +107,35 @@ export const CareInstructionsEditForm = ({ petData, onSave, onCancel }: CareInst
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <Label htmlFor="morningRoutine">Morning Routine</Label>
-                <Textarea
-                  id="morningRoutine"
-                  {...register("morningRoutine")}
-                  placeholder="Morning walk, breakfast, medications..."
-                  rows={3}
-                  disabled={isLoading}
-                />
+                <div className="relative">
+                  <Textarea
+                    id="morningRoutine"
+                    {...register("morningRoutine")}
+                    placeholder="Morning walk, breakfast, medications..."
+                    rows={3}
+                    disabled={isLoading}
+                  />
+                  <VoiceRecorder
+                    onTranscript={(text) => setValue("morningRoutine", text)}
+                    disabled={isLoading}
+                  />
+                </div>
               </div>
               <div>
                 <Label htmlFor="eveningRoutine">Evening Routine</Label>
-                <Textarea
-                  id="eveningRoutine"
-                  {...register("eveningRoutine")}
-                  placeholder="Evening walk, dinner, bedtime..."
-                  rows={3}
-                  disabled={isLoading}
-                />
+                <div className="relative">
+                  <Textarea
+                    id="eveningRoutine"
+                    {...register("eveningRoutine")}
+                    placeholder="Evening walk, dinner, bedtime..."
+                    rows={3}
+                    disabled={isLoading}
+                  />
+                  <VoiceRecorder
+                    onTranscript={(text) => setValue("eveningRoutine", text)}
+                    disabled={isLoading}
+                  />
+                </div>
               </div>
             </div>
           </CardContent>
@@ -143,13 +155,19 @@ export const CareInstructionsEditForm = ({ petData, onSave, onCancel }: CareInst
               <div className="text-xs text-amber-600 bg-amber-50 p-2 rounded-md mb-2 border border-amber-200">
                 ⚠️ Providing accurate medical details is highly recommended for emergencies.
               </div>
-              <Textarea
-                id="medications"
-                {...register("medications")}
-                placeholder="Medication/Supplement 1, Medication/Supplement 2, ..."
-                rows={3}
-                disabled={isLoading}
-              />
+              <div className="relative">
+                <Textarea
+                  id="medications"
+                  {...register("medications")}
+                  placeholder="Medication/Supplement 1, Medication/Supplement 2, ..."
+                  rows={3}
+                  disabled={isLoading}
+                />
+                <VoiceRecorder
+                  onTranscript={(text) => setValue("medications", text)}
+                  disabled={isLoading}
+                />
+              </div>
               <div className="mt-2 p-2 bg-blue-50 border border-blue-200 rounded-md">
                 <p className="text-sm font-semibold text-blue-800">
                   💡 Use commas to create separate medication & supplement entries
@@ -164,13 +182,19 @@ export const CareInstructionsEditForm = ({ petData, onSave, onCancel }: CareInst
               <div className="text-xs text-amber-600 bg-amber-50 p-2 rounded-md mb-2 border border-amber-200">
                 ⚠️ Allergy information is crucial for emergency responders. Even "None" is helpful.
               </div>
-              <Textarea
-                id="allergies"
-                {...register("allergies")}
-                placeholder="Food allergies, environmental allergies, restrictions..."
-                rows={3}
-                disabled={isLoading}
-              />
+              <div className="relative">
+                <Textarea
+                  id="allergies"
+                  {...register("allergies")}
+                  placeholder="Food allergies, environmental allergies, restrictions..."
+                  rows={3}
+                  disabled={isLoading}
+                />
+                <VoiceRecorder
+                  onTranscript={(text) => setValue("allergies", text)}
+                  disabled={isLoading}
+                />
+              </div>
             </div>
           </CardContent>
         </Card>
@@ -186,23 +210,35 @@ export const CareInstructionsEditForm = ({ petData, onSave, onCancel }: CareInst
           <CardContent className="space-y-4">
             <div>
               <Label htmlFor="behavioralNotes">Behavioral Notes</Label>
-              <Textarea
-                id="behavioralNotes"
-                {...register("behavioralNotes")}
-                placeholder="Personality traits, quirks, things to watch for..."
-                rows={3}
-                disabled={isLoading}
-              />
+              <div className="relative">
+                <Textarea
+                  id="behavioralNotes"
+                  {...register("behavioralNotes")}
+                  placeholder="Personality traits, quirks, things to watch for..."
+                  rows={3}
+                  disabled={isLoading}
+                />
+                <VoiceRecorder
+                  onTranscript={(text) => setValue("behavioralNotes", text)}
+                  disabled={isLoading}
+                />
+              </div>
             </div>
             <div>
               <Label htmlFor="favoriteActivities">Favorite Activities</Label>
-              <Textarea
-                id="favoriteActivities"
-                {...register("favoriteActivities")}
-                placeholder="Playing fetch, going to the park, swimming..."
-                rows={3}
-                disabled={isLoading}
-              />
+              <div className="relative">
+                <Textarea
+                  id="favoriteActivities"
+                  {...register("favoriteActivities")}
+                  placeholder="Playing fetch, going to the park, swimming..."
+                  rows={3}
+                  disabled={isLoading}
+                />
+                <VoiceRecorder
+                  onTranscript={(text) => setValue("favoriteActivities", text)}
+                  disabled={isLoading}
+                />
+              </div>
             </div>
           </CardContent>
         </Card>

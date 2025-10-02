@@ -15,6 +15,7 @@ import { PrivacyToggle } from "@/components/PrivacyToggle";
 import { PetTransferDialog } from "@/components/PetTransferDialog";
 import { PetDeleteDialog } from "@/components/PetDeleteDialog";
 import { supabase } from "@/integrations/supabase/client";
+import { VoiceRecorder } from "@/components/VoiceRecorder";
 
 import { getSpeciesConfig, getSpeciesOptions } from "@/utils/speciesConfig";
 
@@ -360,12 +361,24 @@ export const PetEditForm = ({ petData, onSave, onCancel, togglePetPublicVisibili
             
             <div className="mt-4">
               <Label htmlFor="bio">Bio</Label>
-              <Textarea id="bio" name="bio" value={formData.bio} onChange={handleChange} className="min-h-20" />
+              <div className="relative">
+                <Textarea id="bio" name="bio" value={formData.bio} onChange={handleChange} className="min-h-20" />
+                <VoiceRecorder
+                  onTranscript={(text) => setFormData(prev => ({ ...prev, bio: text }))}
+                  disabled={isSaving}
+                />
+              </div>
             </div>
             
             <div className="mt-4">
               <Label htmlFor="notes">Notes</Label>
-              <Textarea id="notes" name="notes" value={formData.notes} onChange={handleChange} className="min-h-20" />
+              <div className="relative">
+                <Textarea id="notes" name="notes" value={formData.notes} onChange={handleChange} className="min-h-20" />
+                <VoiceRecorder
+                  onTranscript={(text) => setFormData(prev => ({ ...prev, notes: text }))}
+                  disabled={isSaving}
+                />
+              </div>
             </div>
           </div>
 
@@ -426,13 +439,19 @@ export const PetEditForm = ({ petData, onSave, onCancel, togglePetPublicVisibili
               </div>
               <div>
                 <Label htmlFor="medicalConditions">Medical Conditions</Label>
-                <Textarea
-                  id="medicalConditions"
-                  name="medicalConditions"
-                  value={formData.medicalConditions || ''}
-                  onChange={handleChange}
-                  className="min-h-20"
-                />
+                <div className="relative">
+                  <Textarea
+                    id="medicalConditions"
+                    name="medicalConditions"
+                    value={formData.medicalConditions || ''}
+                    onChange={handleChange}
+                    className="min-h-20"
+                  />
+                  <VoiceRecorder
+                    onTranscript={(text) => setFormData(prev => ({ ...prev, medicalConditions: text }))}
+                    disabled={isSaving}
+                  />
+                </div>
               </div>
             </div>
           </div>

@@ -13,6 +13,7 @@ import {
   updatePetTraining 
 } from "@/services/petService";
 import { Plus, Trash2, Activity, Trophy, GraduationCap, Loader2 } from "lucide-react";
+import { VoiceRecorder } from "@/components/VoiceRecorder";
 
 interface PetResumeEditFormProps {
   petData: {
@@ -39,7 +40,7 @@ interface PetResumeEditFormProps {
 }
 
 export const PetResumeEditForm = ({ petData, onSave, onCancel }: PetResumeEditFormProps) => {
-  const { control, handleSubmit, register, formState: { isSubmitting } } = useForm({
+  const { control, handleSubmit, register, setValue, formState: { isSubmitting } } = useForm({
     defaultValues: {
       experiences: petData.experiences && petData.experiences.length > 0 ? petData.experiences : [{ activity: "", contact: "", description: "" }],
       achievements: petData.achievements && petData.achievements.length > 0 ? petData.achievements : [{ title: "", description: "" }],
@@ -169,12 +170,18 @@ export const PetResumeEditForm = ({ petData, onSave, onCancel }: PetResumeEditFo
                 
                 <div>
                   <Label htmlFor={`experiences.${index}.description`}>Description</Label>
-                  <Textarea
-                    {...register(`experiences.${index}.description`)}
-                    placeholder="Describe the experience..."
-                    rows={3}
-                    disabled={isLoading}
-                  />
+                  <div className="relative">
+                    <Textarea
+                      {...register(`experiences.${index}.description`)}
+                      placeholder="Describe the experience..."
+                      rows={3}
+                      disabled={isLoading}
+                    />
+                    <VoiceRecorder
+                      onTranscript={(text) => setValue(`experiences.${index}.description`, text)}
+                      disabled={isLoading}
+                    />
+                  </div>
                 </div>
               </div>
             ))}
@@ -228,12 +235,18 @@ export const PetResumeEditForm = ({ petData, onSave, onCancel }: PetResumeEditFo
                 
                 <div>
                   <Label htmlFor={`achievements.${index}.description`}>Description</Label>
-                  <Textarea
-                    {...register(`achievements.${index}.description`)}
-                    placeholder="Describe the achievement..."
-                    rows={3}
-                    disabled={isLoading}
-                  />
+                  <div className="relative">
+                    <Textarea
+                      {...register(`achievements.${index}.description`)}
+                      placeholder="Describe the achievement..."
+                      rows={3}
+                      disabled={isLoading}
+                    />
+                    <VoiceRecorder
+                      onTranscript={(text) => setValue(`achievements.${index}.description`, text)}
+                      disabled={isLoading}
+                    />
+                  </div>
                 </div>
               </div>
             ))}

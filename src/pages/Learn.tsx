@@ -10,7 +10,7 @@ import shareInstructionsScreenshot from "@/assets/share-instructions-screenshot.
 
 export default function Learn() {
   return (
-    <div className="min-h-screen bg-white">
+    <div className="h-screen flex flex-col bg-white">
       <MetaTags
         title="Complete Pet Care Guide: Digital Documentation & Reviews | PetPort"
         description="Learn how to organize pet documents, request reviews from trainers, groomers & sitters, and create emergency profiles. Complete guide to digital pet management."
@@ -32,7 +32,7 @@ export default function Learn() {
         </div>
       </header>
 
-      <main className="max-w-4xl mx-auto px-4 py-12">
+      <main className="flex-1 overflow-y-auto native-scroll hide-scrollbar touch-pan-y overscroll-y-contain max-w-4xl mx-auto px-4 py-12">
         {/* Hero Section */}
         <section className="text-center mb-16">
           <h1 className="text-5xl font-bold text-brand-primary mb-6 leading-tight">

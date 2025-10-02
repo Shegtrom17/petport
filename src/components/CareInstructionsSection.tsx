@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from "@/components/ui/dialog";
+import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerTrigger, DrawerDescription } from "@/components/ui/drawer";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { Input } from "@/components/ui/input";
 import { Heart, Clock, Pill, Coffee, Moon, AlertTriangle, Edit, Loader2, FileText, Download, Share2, ExternalLink, Eye, Phone, Copy, Stethoscope, Sparkles } from "lucide-react";
@@ -15,6 +16,7 @@ import { fetchCareInstructions } from "@/services/careInstructionsService";
 import { generateQRCodeUrl, shareProfile, shareProfileOptimized, sharePDFBlob, generatePublicCareUrl } from "@/services/pdfService";
 import { generateClientPetPDF, downloadPDFBlob } from "@/services/clientPdfService";
 import { useToast } from "@/hooks/use-toast";
+import { useIsMobile } from "@/hooks/useIsMobile";
 import { SocialShareButtons } from "@/components/SocialShareButtons";
 import { supabase } from "@/integrations/supabase/client";
 import { FloatingAIButton } from "@/components/FloatingAIButton";
@@ -42,6 +44,7 @@ export const CareInstructionsSection = ({ petData, onUpdate, handlePetUpdate }: 
   const [isSharing, setIsSharing] = useState(false);
   const { toast } = useToast();
   const isHorse = petData.species?.toLowerCase() === 'horse';
+  const isMobile = useIsMobile();
 
 
   // Load care instructions from database
@@ -323,67 +326,64 @@ export const CareInstructionsSection = ({ petData, onUpdate, handlePetUpdate }: 
                 <Download className="w-4 h-4" />
                 <span className="text-sm">PDF</span>
               </div>
-              <Dialog open={careShareDialogOpen} onOpenChange={setCareShareDialogOpen}>
-                <DialogTrigger asChild>
-                  <div
-                    className={`flex items-center space-x-2 p-2 text-white hover:text-blue-200 hover:scale-110 transition-all cursor-pointer ${isSharing ? 'opacity-50 cursor-not-allowed' : ''}`}
-                    role="button"
-                    tabIndex={0}
-                    aria-label="Share care instructions"
-                    onKeyDown={(e) => e.key === 'Enter' && !isSharing && setCareShareDialogOpen(true)}
-                  >
-                    {isSharing ? (
-                      <Loader2 className="w-4 h-4 animate-spin" />
-                    ) : (
-                      <Share2 className="w-4 h-4" />
-                    )}
-                    <span className="text-sm">Share</span>
-                  </div>
-                </DialogTrigger>
-                <DialogContent 
-                  ref={dialogContentRef}
-                  className="max-w-[100vw] sm:max-w-md w-full min-w-0 max-h-[90vh] overflow-y-auto bg-[#f8f8f8] px-4"
-                >
-                  <ScrollControls targetRef={dialogContentRef} />
-                  <DialogHeader>
-                    <DialogTitle className="text-navy-900 border-b-2 border-gold-500 pb-2">
-                      🌿 Share {petData.name}'s Care Instructions
-                    </DialogTitle>
-                    <DialogDescription className="text-navy-600 text-sm">
-                      Share your pet's care instructions with pet sitters and caregivers
-                    </DialogDescription>
-                  </DialogHeader>
-                  
-                  <div className="space-y-6">
-                     {/* Public Care Instructions Link */}
-                     <div className="bg-white p-4 rounded-lg border border-gold-500/30 shadow-sm">
-                       <h4 className="font-bold text-foreground mb-2 flex items-center gap-2">
-                         <div className="w-6 h-6 bg-gold-500/20 rounded-full flex items-center justify-center">
-                           <ExternalLink className="w-3 h-3 text-gold-600" />
-                         </div>
+              {isMobile ? (
+                <Drawer open={careShareDialogOpen} onOpenChange={setCareShareDialogOpen}>
+                  <DrawerTrigger asChild>
+                    <div
+                      className={`flex items-center space-x-2 p-2 text-white hover:text-blue-200 hover:scale-110 transition-all cursor-pointer ${isSharing ? 'opacity-50 cursor-not-allowed' : ''}`}
+                      role="button"
+                      tabIndex={0}
+                      aria-label="Share care instructions"
+                      onKeyDown={(e) => e.key === 'Enter' && !isSharing && setCareShareDialogOpen(true)}
+                    >
+                      {isSharing ? (
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                      ) : (
+                        <Share2 className="w-4 h-4" />
+                      )}
+                      <span className="text-sm">Share</span>
+                    </div>
+                  </DrawerTrigger>
+                  <DrawerContent className="px-4 bg-[#f8f8f8]">
+                    <DrawerHeader>
+                      <DrawerTitle className="text-navy-900 border-b-2 border-gold-500 pb-2">
+                        🌿 Share {petData.name}'s Care Instructions
+                      </DrawerTitle>
+                      <DrawerDescription className="text-navy-600 text-sm">
+                        Share your pet's care instructions with pet sitters and caregivers
+                      </DrawerDescription>
+                    </DrawerHeader>
+                    <div ref={dialogContentRef} className="max-h-[75vh] overflow-y-auto space-y-6">
+                      <ScrollControls targetRef={dialogContentRef} />
+                      {/* Public Care Instructions Link */}
+                      <div className="bg-white p-4 rounded-lg border border-gold-500/30 shadow-sm">
+                        <h4 className="font-bold text-foreground mb-2 flex items-center gap-2">
+                          <div className="w-6 h-6 bg-gold-500/20 rounded-full flex items-center justify-center">
+                            <ExternalLink className="w-3 h-3 text-gold-600" />
+                          </div>
                           Public Care Instructions
                         </h4>
                         <p className="text-sm text-muted-foreground mb-3">Share detailed daily care info with pet sitters and caregivers. <strong>Profile must be public to share.</strong></p>
 
-                      <Button
-                        onClick={handleShareCareLink}
-                        disabled={isSharing || !petData.is_public}
-                        variant="outline"
-                        className="w-full border-border text-foreground hover:bg-muted"
-                      >
-                        {isSharing ? (
-                          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                        ) : (
-                          <Share2 className="w-4 h-4 mr-2" />
+                        <Button
+                          onClick={handleShareCareLink}
+                          disabled={isSharing || !petData.is_public}
+                          variant="outline"
+                          className="w-full border-border text-foreground hover:bg-muted"
+                        >
+                          {isSharing ? (
+                            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                          ) : (
+                            <Share2 className="w-4 h-4 mr-2" />
+                          )}
+                          Get Shareable Link
+                        </Button>
+                        {!petData.is_public && (
+                          <p className="text-xs text-red-700 mt-2">Make your pet profile public to enable sharing.</p>
                         )}
-                        Get Shareable Link
-                      </Button>
-                      {!petData.is_public && (
-                        <p className="text-xs text-red-700 mt-2">Make your pet profile public to enable sharing.</p>
-                      )}
-                    </div>
+                      </div>
 
-                     {/* Social sharing options */}
+                      {/* Social sharing options */}
                       {petData.is_public ? (
                         <div className="w-full min-w-0">
                           <ErrorBoundary>
@@ -396,7 +396,7 @@ export const CareInstructionsSection = ({ petData, onUpdate, handlePetUpdate }: 
                             />
                           </ErrorBoundary>
                         </div>
-                       ) : null}
+                      ) : null}
 
                       {/* QR Code Section */}
                       {petData.is_public ? (
@@ -442,15 +442,146 @@ export const CareInstructionsSection = ({ petData, onUpdate, handlePetUpdate }: 
                         </div>
                       ) : null}
 
-                     {/* Direct Links */}
-                    <div className="text-xs text-muted-foreground space-y-1 bg-muted p-3 rounded-lg">
-                      <p className="font-medium">Direct Links:</p>
-                      <p className="break-all">Care: {generatePublicCareUrl(petData.id)}</p>
-                      {generatedPdfBlob && <p className="break-all">PDF: Available after generation</p>}
+                      {/* Direct Links */}
+                      <div className="text-xs text-muted-foreground space-y-1 bg-muted p-3 rounded-lg">
+                        <p className="font-medium">Direct Links:</p>
+                        <p className="break-all">Care: {generatePublicCareUrl(petData.id)}</p>
+                        {generatedPdfBlob && <p className="break-all">PDF: Available after generation</p>}
+                      </div>
                     </div>
-                  </div>
-                </DialogContent>
-              </Dialog>
+                  </DrawerContent>
+                </Drawer>
+              ) : (
+                <Dialog open={careShareDialogOpen} onOpenChange={setCareShareDialogOpen}>
+                  <DialogTrigger asChild>
+                    <div
+                      className={`flex items-center space-x-2 p-2 text-white hover:text-blue-200 hover:scale-110 transition-all cursor-pointer ${isSharing ? 'opacity-50 cursor-not-allowed' : ''}`}
+                      role="button"
+                      tabIndex={0}
+                      aria-label="Share care instructions"
+                      onKeyDown={(e) => e.key === 'Enter' && !isSharing && setCareShareDialogOpen(true)}
+                    >
+                      {isSharing ? (
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                      ) : (
+                        <Share2 className="w-4 h-4" />
+                      )}
+                      <span className="text-sm">Share</span>
+                    </div>
+                  </DialogTrigger>
+                  <DialogContent 
+                    ref={dialogContentRef}
+                    className="max-w-[100vw] sm:max-w-md w-full min-w-0 max-h-[90vh] overflow-y-auto bg-[#f8f8f8] px-4"
+                  >
+                    <ScrollControls targetRef={dialogContentRef} />
+                    <DialogHeader>
+                      <DialogTitle className="text-navy-900 border-b-2 border-gold-500 pb-2">
+                        🌿 Share {petData.name}'s Care Instructions
+                      </DialogTitle>
+                      <DialogDescription className="text-navy-600 text-sm">
+                        Share your pet's care instructions with pet sitters and caregivers
+                      </DialogDescription>
+                    </DialogHeader>
+                    
+                    <div className="space-y-6">
+                      {/* Public Care Instructions Link */}
+                      <div className="bg-white p-4 rounded-lg border border-gold-500/30 shadow-sm">
+                        <h4 className="font-bold text-foreground mb-2 flex items-center gap-2">
+                          <div className="w-6 h-6 bg-gold-500/20 rounded-full flex items-center justify-center">
+                            <ExternalLink className="w-3 h-3 text-gold-600" />
+                          </div>
+                          Public Care Instructions
+                        </h4>
+                        <p className="text-sm text-muted-foreground mb-3">Share detailed daily care info with pet sitters and caregivers. <strong>Profile must be public to share.</strong></p>
+
+                        <Button
+                          onClick={handleShareCareLink}
+                          disabled={isSharing || !petData.is_public}
+                          variant="outline"
+                          className="w-full border-border text-foreground hover:bg-muted"
+                        >
+                          {isSharing ? (
+                            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                          ) : (
+                            <Share2 className="w-4 h-4 mr-2" />
+                          )}
+                          Get Shareable Link
+                        </Button>
+                        {!petData.is_public && (
+                          <p className="text-xs text-red-700 mt-2">Make your pet profile public to enable sharing.</p>
+                        )}
+                      </div>
+
+                      {/* Social sharing options */}
+                      {petData.is_public ? (
+                        <div className="w-full min-w-0">
+                          <ErrorBoundary>
+                            <SocialShareButtons 
+                              petName={petData.name} 
+                              petId={petData.id} 
+                              context="care" 
+                              shareUrlOverride={generatePublicCareUrl(petData.id)} 
+                              defaultOpenOptions={true}
+                            />
+                          </ErrorBoundary>
+                        </div>
+                      ) : null}
+
+                      {/* QR Code Section */}
+                      {petData.is_public ? (
+                        <div className="border-t pt-6">
+                          <h4 className="font-semibold mb-3 text-center">Care Instructions QR Code</h4>
+                          <p className="text-sm text-muted-foreground mb-4 text-center">
+                            Scan to view care instructions
+                          </p>
+                          <div className="flex flex-col items-center space-y-4">
+                            <ErrorBoundary>
+                              <img 
+                                src={generateQRCodeUrl(generatePublicCareUrl(petData.id), 200)} 
+                                alt="QR Code for Care Instructions"
+                                className="border rounded-lg"
+                                onError={(e) => {
+                                  console.error('QR Code failed to load');
+                                  e.currentTarget.style.display = 'none';
+                                }}
+                              />
+                            </ErrorBoundary>
+                            <div className="w-full">
+                              <div className="flex items-center space-x-2">
+                                <Input
+                                  value={generatePublicCareUrl(petData.id)}
+                                  readOnly
+                                  className="text-xs"
+                                />
+                                <Button
+                                  size="sm"
+                                  onClick={() => {
+                                    navigator.clipboard.writeText(generatePublicCareUrl(petData.id));
+                                    toast({
+                                      title: "URL copied!",
+                                      description: "Care instructions URL copied to clipboard",
+                                    });
+                                  }}
+                                >
+                                  <Copy className="w-4 h-4" />
+                                </Button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      ) : null}
+
+                      {/* Direct Links */}
+                      <div className="text-xs text-muted-foreground space-y-1 bg-muted p-3 rounded-lg">
+                        <p className="font-medium">Direct Links:</p>
+                        <p className="break-all">Care: {generatePublicCareUrl(petData.id)}</p>
+                        {generatedPdfBlob && <p className="break-all">PDF: Available after generation</p>}
+                      </div>
+                    </div>
+                  </DialogContent>
+                </Dialog>
+              )}
+
             </div>
           </div>
 

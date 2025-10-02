@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { VoiceRecorder } from "@/components/VoiceRecorder";
 
 interface CertificationSectionProps {
   petData: {
@@ -326,13 +327,19 @@ export const CertificationSection = ({ petData, onUpdate }: CertificationSection
 
             <div>
               <Label htmlFor="notes">Additional Notes</Label>
-              <Textarea
-                id="notes"
-                value={formData.notes}
-                onChange={(e) => setFormData({...formData, notes: e.target.value})}
-                placeholder="Any additional information about the certification..."
-                rows={3}
-              />
+              <div className="relative">
+                <Textarea
+                  id="notes"
+                  value={formData.notes}
+                  onChange={(e) => setFormData({...formData, notes: e.target.value})}
+                  placeholder="Any additional information about the certification..."
+                  rows={3}
+                />
+                <VoiceRecorder
+                  onTranscript={(text) => setFormData({...formData, notes: text})}
+                  disabled={isLoading}
+                />
+              </div>
             </div>
 
             <div className="flex justify-end space-x-2 pt-4">

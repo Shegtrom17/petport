@@ -1,11 +1,12 @@
-
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { EnhancedSheet } from "@/components/ui/enhanced-sheet";
-import { HelpCircle, AlertTriangle, FileText, Heart, Badge, MapPin, Camera, Search, Syringe, Settings } from "lucide-react";
+import { HelpCircle, AlertTriangle, FileText, Heart, Badge, MapPin, Camera, Search, Syringe, Settings, RefreshCw } from "lucide-react";
 import { ReportIssueModal } from "@/components/ReportIssueModal";
 import { useNavigate } from "react-router-dom";
+import { isIOSDevice } from "@/utils/iosDetection";
+import { toast } from "sonner";
 
 interface MobileNavigationMenuProps {
   isOpen: boolean;
@@ -14,7 +15,20 @@ interface MobileNavigationMenuProps {
 
 export const MobileNavigationMenu = ({ isOpen, onClose }: MobileNavigationMenuProps) => {
   const [showReportModal, setShowReportModal] = useState(false);
+  const [showIOSRefresh, setShowIOSRefresh] = useState(false);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    setShowIOSRefresh(isIOSDevice());
+  }, []);
+
+  const handleRefresh = () => {
+    onClose();
+    toast.info("Refreshing...");
+    setTimeout(() => {
+      window.location.reload();
+    }, 300);
+  };
 
   const handlePageNavigation = (tab: string) => {
     // Trigger the tab change event for the Index page
@@ -88,6 +102,21 @@ export const MobileNavigationMenu = ({ isOpen, onClose }: MobileNavigationMenuPr
                 <AlertTriangle className="w-5 h-5 mr-3" />
                 Report an Issue
               </Button>
+              
+              {/* iOS-only refresh fallback */}
+              {showIOSRefresh && (
+                <>
+                  <div className="border-t border-border my-2" />
+                  <Button
+                    variant="ghost"
+                    className="w-full justify-start text-sm"
+                    onClick={handleRefresh}
+                  >
+                    <RefreshCw className="w-5 h-5 mr-3" />
+                    Refresh App
+                  </Button>
+                </>
+              )}
             </div>
           </div>
         </SheetContent>

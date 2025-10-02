@@ -113,8 +113,26 @@
   * {
     @apply border-border;
   }
+  
+  /* Lock root scrolling for iOS PTR control */
+  html,
   body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    overflow: hidden;
+    overscroll-behavior-y: none;
+    -webkit-overflow-scrolling: touch;
     @apply bg-background text-foreground;
+  }
+
+  /* Dedicated scroll container */
+  #app-scroll-container {
+    height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    overscroll-behavior-y: none;
+    -webkit-overflow-scrolling: touch;
   }
 
   /* Emergency/Alert Colors */

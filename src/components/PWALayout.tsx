@@ -17,8 +17,15 @@ export const PWALayout = ({ children, showBottomNav = true }: PWALayoutProps) =>
       {/* PWA Install Prompt */}
       <PWAInstallPrompt />
       
-      {/* Main content with bottom padding for tab navigation */}
-      <main className={`${showBottomNav ? "pb-16 pb-safe-area-inset-bottom" : ""}`}>
+      {/* Dedicated scroll container for iOS PTR control */}
+      <main 
+        id="app-scroll-container"
+        className={`h-full overflow-y-auto overflow-x-hidden ${showBottomNav ? "pb-16 pb-safe-area-inset-bottom" : ""}`}
+        style={{
+          overscrollBehaviorY: 'none',
+          WebkitOverflowScrolling: 'touch'
+        }}
+      >
         {children}
       </main>
       

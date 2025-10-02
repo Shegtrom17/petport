@@ -14,11 +14,14 @@ export const AppHeader = ({ title, showBack = false, actions }: AppHeaderProps) 
   const location = useLocation();
 
   const handleBack = () => {
-    if (window.history.length > 1) {
-      navigate(-1);
-    } else {
-      navigate('/');
+    // Prevent exiting PWA on back
+    if (location.pathname === '/app' || location.pathname === '/') {
+      // Already at home, do nothing
+      return;
     }
+    
+    // Navigate back within app
+    navigate(-1);
   };
 
   return (

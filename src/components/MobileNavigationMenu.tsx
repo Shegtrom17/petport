@@ -1,62 +1,80 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { EnhancedSheet } from "@/components/ui/enhanced-sheet";
-import { Menu, X, AlertTriangle } from "lucide-react";
+import { HelpCircle, AlertTriangle } from "lucide-react";
 import { NavigationTabs } from "@/components/NavigationTabs";
 import { ReportIssueModal } from "@/components/ReportIssueModal";
+import { useNavigate } from "react-router-dom";
 
 interface MobileNavigationMenuProps {
-  activeTab: string;
-  onTabChange: (tab: string) => void;
+  isOpen: boolean;
+  onClose: () => void;
+  activeTab?: string;
+  onTabChange?: (tab: string) => void;
 }
 
-export const MobileNavigationMenu = ({ activeTab, onTabChange }: MobileNavigationMenuProps) => {
-  const [isOpen, setIsOpen] = useState(false);
+export const MobileNavigationMenu = ({ isOpen, onClose, activeTab, onTabChange }: MobileNavigationMenuProps) => {
+  const [showReportModal, setShowReportModal] = useState(false);
+  const navigate = useNavigate();
 
   const handleTabChange = (tab: string) => {
-    onTabChange(tab);
-    setIsOpen(false); // Close menu after selection
+    if (onTabChange) {
+      onTabChange(tab);
+    }
+    onClose();
   };
 
   return (
-    <div className="md:hidden">
-      <EnhancedSheet open={isOpen} onOpenChange={setIsOpen}>
-        <SheetTrigger asChild>
-          <Button 
-            variant="ghost"
-            size="icon" 
-            className="md:hidden h-8 w-8 sm:h-10 sm:w-10 bg-transparent hover:bg-transparent"
-          >
-            <Menu className="h-4 w-4 sm:h-5 sm:w-5" />
-          </Button>
-        </SheetTrigger>
-        <SheetContent side="left" className="w-72 sm:w-80 p-4 sm:p-6 bg-white text-[#5691af]">
-          <div className="mb-4 sm:mb-6">
-            <h2 className="text-base sm:text-lg font-semibold text-[#5691af]">Navigation</h2>
-          </div>
-          <div className="space-y-2">
-            <NavigationTabs 
-              activeTab={activeTab} 
-              onTabChange={handleTabChange}
-              isMobile={true}
-            />
-          </div>
-          
-          <div className="mt-6 pt-4 border-t border-[#5691af]/20">
-            <ReportIssueModal>
-              <Button 
+    <>
+      <EnhancedSheet open={isOpen} onOpenChange={onClose}>
+        <SheetContent side="left" className="w-72 sm:w-80 p-0">
+          <SheetHeader className="p-4 sm:p-6 border-b border-border">
+            <SheetTitle>Menu</SheetTitle>
+          </SheetHeader>
+          <div className="py-4">
+            {activeTab && onTabChange && (
+              <div className="px-2">
+                <NavigationTabs 
+                  activeTab={activeTab}
+                  onTabChange={handleTabChange}
+                  isMobile={true}
+                />
+              </div>
+            )}
+            <div className="px-4 space-y-2 mt-4 pt-4 border-t border-border">
+              <Button
                 variant="ghost"
-                className="w-full justify-start space-x-3 text-sm py-3 text-[#5691af] hover:bg-[#5691af]/10 transition-all"
+                className="w-full justify-start"
+                onClick={() => {
+                  navigate('/help');
+                  onClose();
+                }}
               >
-                <AlertTriangle className="w-4 h-4" />
-                <span className="font-medium">Report Issue</span>
+                <HelpCircle className="w-5 h-5 mr-2" />
+                Help
               </Button>
-            </ReportIssueModal>
+              <Button
+                variant="ghost"
+                className="w-full justify-start"
+                onClick={() => {
+                  setShowReportModal(true);
+                  onClose();
+                }}
+              >
+                <AlertTriangle className="w-5 h-5 mr-2" />
+                Report an Issue
+              </Button>
+            </div>
           </div>
         </SheetContent>
       </EnhancedSheet>
-    </div>
+
+      <ReportIssueModal 
+        isOpen={showReportModal} 
+        onClose={() => setShowReportModal(false)} 
+      />
+    </>
   );
 };

@@ -1,19 +1,21 @@
 import { NavLink, useLocation } from "react-router-dom";
-import { Home, PlusCircle, Settings, AlertTriangle, HelpCircle } from "lucide-react";
+import { Home, PlusCircle, Settings, AlertTriangle, Menu } from "lucide-react";
 import { ReportIssueModal } from "./ReportIssueModal";
+import { MobileNavigationMenu } from "./MobileNavigationMenu";
 import { useState } from "react";
 
 export const BottomTabNavigation = () => {
   const location = useLocation();
   const [showReportModal, setShowReportModal] = useState(false);
 
+  const [showMenuSheet, setShowMenuSheet] = useState(false);
   const homePath = '/app';
   const tabs = [
     { id: 'home', path: homePath, icon: Home, label: 'Home' },
     { id: 'lost-pet', path: '/app', icon: AlertTriangle, label: 'Lost Pet', event: 'navigate-to-quickid' },
     { id: 'add-pet', path: '/add-pet', icon: PlusCircle, label: 'Add Pet' },
     { id: 'settings', path: '/profile', icon: Settings, label: 'Settings' },
-    { id: 'help', path: '/help', icon: HelpCircle, label: 'Help' },
+    { id: 'menu', path: '#', icon: Menu, label: 'Menu', isMenu: true },
   ];
 
   return (
@@ -28,7 +30,10 @@ export const BottomTabNavigation = () => {
                 key={tab.id}
                 to={tab.path}
                 onClick={(e) => {
-                  if (tab.id === 'lost-pet') {
+                  if (tab.id === 'menu') {
+                    e.preventDefault();
+                    setShowMenuSheet(true);
+                  } else if (tab.id === 'lost-pet') {
                     e.preventDefault(); // Prevent navigation to /app
                     window.dispatchEvent(new Event('navigate-to-quickid'));
                   } else if (tab.path === homePath) {
@@ -56,6 +61,11 @@ export const BottomTabNavigation = () => {
           })}
         </div>
       </nav>
+      
+      <MobileNavigationMenu 
+        isOpen={showMenuSheet}
+        onClose={() => setShowMenuSheet(false)}
+      />
       
       <ReportIssueModal 
         isOpen={showReportModal} 

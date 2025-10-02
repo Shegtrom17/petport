@@ -1,9 +1,8 @@
 
-import { PlusCircle, LogOut, LogIn } from "lucide-react";
+import { ArrowLeft, LogIn } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
-import { MobileNavigationMenu } from "@/components/MobileNavigationMenu";
 import { CompactPrivacyToggle } from "@/components/CompactPrivacyToggle";
 import { AppShareButton } from "@/components/AppShareButton";
 import worldMapOutline from "@/assets/world-map-outline.png";
@@ -19,7 +18,18 @@ interface PetHeaderProps {
 
 export const PetHeader = ({ activeTab, onTabChange, selectedPetId, selectedPetName, selectedPet, onPrivacyToggle }: PetHeaderProps) => {
   const navigate = useNavigate();
-  const { signOut, user } = useAuth();
+  const location = useLocation();
+  const { user } = useAuth();
+
+  const handleBack = () => {
+    // Prevent exiting PWA on back
+    if (location.pathname === '/app' || location.pathname === '/') {
+      return;
+    }
+    navigate(-1);
+  };
+
+  const showBackButton = location.pathname !== '/app' && location.pathname !== '/';
 
   return (
     <header className="bg-white/80 backdrop-blur-sm border-b border-blue-100 sticky top-0 z-50 relative passport-map-container">
@@ -44,9 +54,18 @@ export const PetHeader = ({ activeTab, onTabChange, selectedPetId, selectedPetNa
       <div className="max-w-6xl mx-auto px-3 sm:px-4 py-2 sm:py-4 relative z-10">
         {/* Mobile Layout */}
         <div className="flex sm:hidden items-center justify-between">
-          {/* Left: Hamburger Menu + Title */}
-          <div className="flex items-center space-x-3 flex-1 min-w-0">
-            {user && <MobileNavigationMenu activeTab={activeTab} onTabChange={onTabChange} />}
+          {/* Left: Back Button + Title */}
+          <div className="flex items-center space-x-2 flex-1 min-w-0">
+            {showBackButton && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleBack}
+                className="p-2 touch-feedback h-8 w-8"
+              >
+                <ArrowLeft className="w-4 h-4" />
+              </Button>
+            )}
             <h1 className="text-base font-bold text-foreground tracking-wide truncate">
               Digital Portfolio
             </h1>
@@ -83,6 +102,16 @@ export const PetHeader = ({ activeTab, onTabChange, selectedPetId, selectedPetNa
         {/* Desktop Layout */}
         <div className="hidden sm:flex items-center justify-between">
           <div className="flex items-center space-x-2 sm:space-x-3 md:space-x-4 flex-1 min-w-0">
+            {showBackButton && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleBack}
+                className="p-2 touch-feedback"
+              >
+                <ArrowLeft className="w-5 h-5" />
+              </Button>
+            )}
             <div className="w-12 h-12 md:w-16 md:h-16 lg:w-18 lg:h-18 flex-shrink-0">
               <img 
                 src="/lovable-uploads/22b5b776-467c-4cee-be36-887346e71205.png" 

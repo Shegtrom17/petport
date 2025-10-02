@@ -1,6 +1,7 @@
-import { ReactNode } from "react";
+import { ReactNode, useEffect } from "react";
 import { BottomTabNavigation } from "./BottomTabNavigation";
 import { PWAInstallPrompt } from "./PWAInstallPrompt";
+import { useAndroidBackButton } from "@/hooks/useAndroidBackButton";
 
 interface PWALayoutProps {
   children: ReactNode;
@@ -8,6 +9,9 @@ interface PWALayoutProps {
 }
 
 export const PWALayout = ({ children, showBottomNav = true }: PWALayoutProps) => {
+  // Prevent Android back button from exiting PWA
+  useAndroidBackButton();
+
   return (
     <div className="min-h-screen bg-background">
       {/* PWA Install Prompt */}

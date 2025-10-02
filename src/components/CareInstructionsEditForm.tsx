@@ -76,8 +76,7 @@ export const CareInstructionsEditForm = ({ petData, onSave, onCancel }: CareInst
   };
 
   return (
-    <div className="max-h-[85vh] overflow-y-auto native-scroll hide-scrollbar touch-pan-y overscroll-y-contain">
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 p-1">
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 p-1">
         {/* Daily Routines */}
         <Card>
           <CardHeader>
@@ -231,6 +230,5 @@ export const CareInstructionsEditForm = ({ petData, onSave, onCancel }: CareInst
           </Button>
         </div>
       </form>
-    </div>
   );
 };

@@ -1,26 +1,25 @@
 import { useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 
 /**
  * Prevents Android back button from exiting PWA
  * Handles back navigation within the app instead
  */
 export const useAndroidBackButton = () => {
-  const navigate = useNavigate();
   const location = useLocation();
 
   useEffect(() => {
-    const handlePopState = (e: PopStateEvent) => {
-      // Prevent exiting PWA when at root
-      if (location.pathname === '/app' || location.pathname === '/') {
-        e.preventDefault();
-        // Push current state back to prevent exit
-        window.history.pushState(null, '', location.pathname);
-        return;
-      }
+    // Only handle back button on root paths
+    const isRootPath = location.pathname === '/app' || location.pathname === '/';
+    
+    if (!isRootPath) return;
+
+    const handlePopState = () => {
+      // Keep user in PWA by pushing state back
+      window.history.pushState(null, '', location.pathname);
     };
 
-    // Add a state to history to catch back button
+    // Push initial state
     window.history.pushState(null, '', location.pathname);
     
     window.addEventListener('popstate', handlePopState);

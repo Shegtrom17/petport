@@ -14,8 +14,8 @@ export const BottomTabNavigation = () => {
     { id: 'home', path: homePath, icon: Home, label: 'Home' },
     { id: 'lost-pet', path: '/app', icon: AlertTriangle, label: 'Lost Pet', event: 'navigate-to-quickid' },
     { id: 'add-pet', path: '/add-pet', icon: PlusCircle, label: 'Add Pet' },
-    { id: 'settings', path: '/profile', icon: Settings, label: 'Settings' },
     { id: 'menu', path: '#', icon: Menu, label: 'Menu', isMenu: true },
+    { id: 'settings', path: '/profile', icon: Settings, label: 'Settings' },
   ];
 
   return (

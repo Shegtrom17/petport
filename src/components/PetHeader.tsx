@@ -29,8 +29,6 @@ export const PetHeader = ({ activeTab, onTabChange, selectedPetId, selectedPetNa
     navigate(-1);
   };
 
-  const showBackButton = location.pathname !== '/app' && location.pathname !== '/';
-
   return (
     <header className="bg-white/80 backdrop-blur-sm border-b border-blue-100 sticky top-0 z-50 relative passport-map-container">
       <div 
@@ -56,16 +54,14 @@ export const PetHeader = ({ activeTab, onTabChange, selectedPetId, selectedPetNa
         <div className="flex sm:hidden items-center justify-between">
           {/* Left: Back Button + Title */}
           <div className="flex items-center space-x-2 flex-1 min-w-0">
-            {showBackButton && (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={handleBack}
-                className="p-2 touch-feedback h-8 w-8"
-              >
-                <ArrowLeft className="w-4 h-4" />
-              </Button>
-            )}
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleBack}
+              className="p-2 touch-feedback h-8 w-8"
+            >
+              <ArrowLeft className="w-4 h-4" />
+            </Button>
             <h1 className="text-base font-bold text-foreground tracking-wide truncate">
               Digital Portfolio
             </h1>
@@ -74,27 +70,21 @@ export const PetHeader = ({ activeTab, onTabChange, selectedPetId, selectedPetNa
           {/* Right: Action Buttons */}
           <div className="flex items-center space-x-2 flex-shrink-0">
             {user && selectedPet && onPrivacyToggle && (
-              <div className="flex flex-col items-center space-y-1">
-                <div className="scale-75 origin-center">
-                  <CompactPrivacyToggle
-                    isPublic={selectedPet.is_public || false}
-                    onToggle={onPrivacyToggle}
-                  />
-                </div>
-                <AppShareButton variant="icon" />
+              <div className="scale-75 origin-center">
+                <CompactPrivacyToggle
+                  isPublic={selectedPet.is_public || false}
+                  onToggle={onPrivacyToggle}
+                />
               </div>
             )}
             {!user && (
-              <>
-                <AppShareButton variant="icon" />
-                <Button 
-                  className="bg-brand-primary hover:bg-brand-primary-dark text-white border border-white/20 text-xs px-2 h-8 whitespace-nowrap"
-                  onClick={() => navigate('/auth')}
-                >
-                  <LogIn className="mr-1 h-3 w-3" /> 
-                  <span>Sign In</span>
-                </Button>
-              </>
+              <Button 
+                className="bg-brand-primary hover:bg-brand-primary-dark text-white border border-white/20 text-xs px-2 h-8 whitespace-nowrap"
+                onClick={() => navigate('/auth')}
+              >
+                <LogIn className="mr-1 h-3 w-3" /> 
+                <span>Sign In</span>
+              </Button>
             )}
           </div>
         </div>
@@ -102,16 +92,14 @@ export const PetHeader = ({ activeTab, onTabChange, selectedPetId, selectedPetNa
         {/* Desktop Layout */}
         <div className="hidden sm:flex items-center justify-between">
           <div className="flex items-center space-x-2 sm:space-x-3 md:space-x-4 flex-1 min-w-0">
-            {showBackButton && (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={handleBack}
-                className="p-2 touch-feedback"
-              >
-                <ArrowLeft className="w-5 h-5" />
-              </Button>
-            )}
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleBack}
+              className="p-2 touch-feedback"
+            >
+              <ArrowLeft className="w-5 h-5" />
+            </Button>
             <div className="w-12 h-12 md:w-16 md:h-16 lg:w-18 lg:h-18 flex-shrink-0">
               <img 
                 src="/lovable-uploads/22b5b776-467c-4cee-be36-887346e71205.png" 
@@ -133,27 +121,21 @@ export const PetHeader = ({ activeTab, onTabChange, selectedPetId, selectedPetNa
           
           <div className="flex items-center space-x-2 flex-shrink-0">
             {user && selectedPet && onPrivacyToggle && (
-              <div className="flex flex-col items-center space-y-2">
-                <div className="scale-90 origin-center">
-                  <CompactPrivacyToggle
-                    isPublic={selectedPet.is_public || false}
-                    onToggle={onPrivacyToggle}
-                  />
-                </div>
-                <AppShareButton variant="icon" />
+              <div className="scale-90 origin-center">
+                <CompactPrivacyToggle
+                  isPublic={selectedPet.is_public || false}
+                  onToggle={onPrivacyToggle}
+                />
               </div>
             )}
             {!user && (
-              <>
-                <AppShareButton variant="icon" />
-                <Button 
-                  className="bg-brand-primary hover:bg-brand-primary-dark text-white border border-white/20 text-sm px-3 h-10 whitespace-nowrap"
-                  onClick={() => navigate('/auth')}
-                >
-                  <LogIn className="mr-1 h-4 w-4" /> 
-                  <span>Sign In</span>
-                </Button>
-              </>
+              <Button 
+                className="bg-brand-primary hover:bg-brand-primary-dark text-white border border-white/20 text-sm px-3 h-10 whitespace-nowrap"
+                onClick={() => navigate('/auth')}
+              >
+                <LogIn className="mr-1 h-4 w-4" /> 
+                <span>Sign In</span>
+              </Button>
             )}
           </div>
         </div>

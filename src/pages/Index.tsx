@@ -77,6 +77,19 @@ const Index = () => {
     }
   };
 
+  // Listen for navigation events from hamburger menu
+  useEffect(() => {
+    const handleNavigateToTab = (e: Event) => {
+      const customEvent = e as CustomEvent<string>;
+      if (customEvent.detail) {
+        handleTabChange(customEvent.detail);
+      }
+    };
+
+    window.addEventListener('navigate-to-tab', handleNavigateToTab);
+    return () => window.removeEventListener('navigate-to-tab', handleNavigateToTab);
+  }, [user?.id, settings.rememberLastTab]);
+
   const { prev, next } = getPrevNext(activeTab as TabId);
 
   const handlePrivacyToggle = async (isPublic: boolean): Promise<boolean> => {

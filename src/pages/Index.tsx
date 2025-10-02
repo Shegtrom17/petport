@@ -39,6 +39,8 @@ import { getPrevNext, type TabId } from "@/features/navigation/tabOrder";
 import { ExternalLink } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { PullToRefresh } from "@/components/PullToRefresh";
+import { useQueryClient } from "@tanstack/react-query";
 
 const Index = () => {
   console.log("Index component is rendering");
@@ -48,6 +50,7 @@ const Index = () => {
   const [petLimit, setPetLimit] = useState<number>(0);
   const navigate = useNavigate();
   const { toast } = useToast();
+  const queryClient = useQueryClient();
   
   const { user, status } = useAuth();
   const { settings } = useUserSettings(user?.id);
@@ -95,6 +98,13 @@ const Index = () => {
   const handlePrivacyToggle = async (isPublic: boolean): Promise<boolean> => {
     if (!selectedPet?.id) return false;
     return await togglePetPublicVisibility(selectedPet.id, isPublic);
+  };
+
+  // Pull-to-refresh handler
+  const handleRefresh = async () => {
+    console.log('iOS PTR: Refreshing data...');
+    await queryClient.invalidateQueries();
+    window.location.reload();
   };
 
   // Fetch pet limit when user changes
@@ -381,15 +391,16 @@ const Index = () => {
     <IOSOptimizedIndex activeTab={activeTab}>
       <PWALayout>
         <IOSMonitor />
-        <div className="min-h-screen bg-white">
-          <PetHeader 
-            activeTab={activeTab} 
-            onTabChange={handleTabChange} 
-            selectedPetId={selectedPet?.id || petData.id}
-            selectedPetName={selectedPet?.name || petData.name}
-            selectedPet={selectedPet || petData}
-            onPrivacyToggle={handlePrivacyToggle}
-          />
+        <PullToRefresh onRefresh={handleRefresh}>
+          <div className="min-h-screen bg-white">
+            <PetHeader 
+              activeTab={activeTab} 
+              onTabChange={handleTabChange} 
+              selectedPetId={selectedPet?.id || petData.id}
+              selectedPetName={selectedPet?.name || petData.name}
+              selectedPet={selectedPet || petData}
+              onPrivacyToggle={handlePrivacyToggle}
+            />
 
           <InAppSharingModal
             isOpen={isInAppSharingOpen}
@@ -440,7 +451,8 @@ const Index = () => {
           </main>
 
           {/* Floating Report Issue Button */}
-        </div>
+          </div>
+        </PullToRefresh>
       </PWALayout>
     </IOSOptimizedIndex>
   );

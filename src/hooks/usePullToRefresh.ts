@@ -1,4 +1,5 @@
 import { useEffect, useState, useCallback } from 'react';
+import { isIOSDevice } from '@/utils/iosDetection';
 
 interface PullToRefreshOptions {
   onRefresh: () => Promise<void> | void;
@@ -14,22 +15,36 @@ export const usePullToRefresh = ({
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [pullDistance, setPullDistance] = useState(0);
   const [startY, setStartY] = useState(0);
+  
+  // iOS-only feature - return no-op for Android
+  const isiOS = isIOSDevice();
+  
+  if (!isiOS) {
+    return {
+      isRefreshing: false,
+      pullDistance: 0,
+      isThresholdReached: false,
+      isPtrActive: false,
+    };
+  }
 
   const handleTouchStart = useCallback((e: TouchEvent) => {
     if (disabled || window.scrollY > 0 || e.touches.length > 1) return;
     
-    // Don't trigger PTR when interacting with gallery or lightbox
+    // Extended safe zones - don't trigger PTR on these elements
     const target = e.target as HTMLElement;
-    if (target.closest('[data-gallery-area]') || target.closest('[role="dialog"]')) {
+    if (
+      target.closest('[data-gallery-area]') || 
+      target.closest('[role="dialog"]') ||
+      target.closest('.leaflet-container') || // Maps
+      target.closest('[data-carousel]') || // Carousels
+      target.closest('[data-swiper]') // Swiper elements
+    ) {
       return;
     }
     
-    // Enhanced iOS Safari specific handling
-    const isIOSSafari = /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream;
-    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-    
-    if ((isIOSSafari || isIOS) && window.scrollY === 0) {
-      // More aggressive prevention of iOS native pull-to-refresh
+    // Prevent iOS native rubber-band refresh
+    if (window.scrollY === 0) {
       e.preventDefault();
       document.body.style.overscrollBehavior = 'none';
       document.documentElement.style.overscrollBehavior = 'none';
@@ -41,40 +56,33 @@ export const usePullToRefresh = ({
   const handleTouchMove = useCallback((e: TouchEvent) => {
     if (disabled || window.scrollY > 0 || startY === 0 || e.touches.length > 1) return;
     
-    // Don't trigger PTR when interacting with gallery or lightbox
+    // Extended safe zones
     const target = e.target as HTMLElement;
-    if (target.closest('[data-gallery-area]') || target.closest('[role="dialog"]')) {
+    if (
+      target.closest('[data-gallery-area]') || 
+      target.closest('[role="dialog"]') ||
+      target.closest('.leaflet-container') ||
+      target.closest('[data-carousel]') ||
+      target.closest('[data-swiper]')
+    ) {
       return;
     }
     
     const currentY = e.touches[0].clientY;
     const distance = Math.max(0, currentY - startY);
     
-    // Enhanced iOS Safari specific handling
-    const isIOSSafari = /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream;
-    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-    
     if (distance > 0) {
-      // More aggressive prevention on iOS
-      if (isIOSSafari || isIOS) {
-        e.preventDefault();
-        e.stopPropagation();
-        // Reduce sensitivity for iOS to make it feel more responsive
-        setPullDistance(Math.min(distance * 0.7, threshold * 1.5));
-      } else {
-        e.preventDefault();
-        setPullDistance(Math.min(distance * 0.5, threshold * 1.5));
-      }
+      e.preventDefault();
+      e.stopPropagation();
+      // iOS-optimized sensitivity
+      setPullDistance(Math.min(distance * 0.7, threshold * 1.5));
     }
   }, [disabled, startY, threshold]);
 
   const handleTouchEnd = useCallback(async () => {
     // Reset iOS overscroll behavior
-    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-    if (isIOS) {
-      document.body.style.overscrollBehavior = '';
-      document.documentElement.style.overscrollBehavior = '';
-    }
+    document.body.style.overscrollBehavior = '';
+    document.documentElement.style.overscrollBehavior = '';
     
     if (disabled || pullDistance < threshold) {
       setPullDistance(0);
@@ -82,13 +90,18 @@ export const usePullToRefresh = ({
       return;
     }
 
+    // Trigger refresh immediately on release
     setIsRefreshing(true);
+    setPullDistance(0); // Reset distance to trigger bar animation
+    setStartY(0);
+    
     try {
       await onRefresh();
     } finally {
-      setIsRefreshing(false);
-      setPullDistance(0);
-      setStartY(0);
+      // Keep refreshing state for bar visibility
+      setTimeout(() => {
+        setIsRefreshing(false);
+      }, 3000); // Bar stays visible for 3s
     }
   }, [disabled, pullDistance, threshold, onRefresh]);
 

@@ -1,4 +1,4 @@
-const CACHE_NAME = 'petport-v14'; // iOS optimized cache management
+const CACHE_NAME = 'petport-v15'; // iOS optimized cache management - Fixed SW syntax
 const urlsToCache = [
   '/',
   '/lovable-uploads/213ccabc-3918-406d-b844-9c2730b7637d.png', // PetPort logo
@@ -103,7 +103,7 @@ self.addEventListener('fetch', (event) => {
             const networkResponse = await Promise.race([
               fetch(req),
               new Promise((_, reject) => setTimeout(() => reject(new Error('nav-timeout')), navTimeoutMs))
-            ]) as Response;
+            ]);
 
             if (networkResponse && networkResponse.ok) {
               // Cache the app shell and specific request for future offline

@@ -2,15 +2,15 @@ import * as React from "react"
 import { isTouchDevice } from "./useIsTouchDevice"
 
 export function useIsMobile() {
-  const [isMobile, setIsMobile] = React.useState<boolean | undefined>(undefined)
+  const [isMobile, setIsMobile] = React.useState<boolean>(() => {
+    if (typeof window === "undefined") return false
+    return isTouchDevice()
+  })
 
   React.useEffect(() => {
     const updateIsMobile = () => {
       setIsMobile(isTouchDevice())
     }
-
-    // Initial check
-    updateIsMobile()
 
     // Listen for orientation changes on mobile devices
     const handleOrientationChange = () => {

@@ -4,9 +4,11 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from "@/components/ui/drawer";
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { useIsMobile } from "@/hooks/useIsMobile";
 
 interface AppShareButtonProps {
   variant?: "icon" | "full";
@@ -22,6 +24,7 @@ export const AppShareButton = ({ variant = "icon", className = "" }: AppShareBut
   });
   const [isSending, setIsSending] = useState(false);
   const [isStandalone, setIsStandalone] = useState(false);
+  const isMobile = useIsMobile();
 
   // Detect if app is running in standalone mode (PWA)
   useEffect(() => {
@@ -179,56 +182,108 @@ export const AppShareButton = ({ variant = "icon", className = "" }: AppShareBut
           </Card>
         )}
 
-        {/* Email Modal */}
-        <Dialog open={showEmailModal} onOpenChange={setShowEmailModal}>
-          <DialogContent className="sm:max-w-md">
-            <DialogHeader>
-              <DialogTitle>Share PetPort via Email</DialogTitle>
-            </DialogHeader>
-            <div className="space-y-4">
-              <div>
-                <label htmlFor="email" className="text-sm font-medium">
-                  Email address
-                </label>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="friend@example.com"
-                  value={emailForm.to}
-                  onChange={(e) => setEmailForm({ ...emailForm, to: e.target.value })}
-                />
+{/* Email Modal/Drawer */}
+        {isMobile ? (
+          <Drawer open={showEmailModal} onOpenChange={setShowEmailModal}>
+            <DrawerContent className="px-4 pb-4">
+              <DrawerHeader>
+                <DrawerTitle>Share PetPort via Email</DrawerTitle>
+              </DrawerHeader>
+              <div className="space-y-4 max-h-[60vh] overflow-y-auto">
+                <div>
+                  <label htmlFor="email" className="text-sm font-medium">
+                    Email address
+                  </label>
+                  <Input
+                    id="email"
+                    type="email"
+                    placeholder="friend@example.com"
+                    value={emailForm.to}
+                    onChange={(e) => setEmailForm({ ...emailForm, to: e.target.value })}
+                  />
+                </div>
+                <div>
+                  <label htmlFor="message" className="text-sm font-medium">
+                    Personal message (optional)
+                  </label>
+                  <Textarea
+                    id="message"
+                    placeholder="Check out this amazing app for pet owners!"
+                    value={emailForm.message}
+                    onChange={(e) => setEmailForm({ ...emailForm, message: e.target.value })}
+                    rows={3}
+                  />
+                </div>
+                <div className="flex gap-2 justify-end">
+                  <Button
+                    variant="outline"
+                    onClick={() => setShowEmailModal(false)}
+                    disabled={isSending}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    onClick={sendAppEmail}
+                    disabled={isSending}
+                    className="bg-brand-primary text-white hover:bg-brand-primary-dark hover:text-white"
+                  >
+                    {isSending ? "Sending..." : "Send Email"}
+                  </Button>
+                </div>
               </div>
-              <div>
-                <label htmlFor="message" className="text-sm font-medium">
-                  Personal message (optional)
-                </label>
-                <Textarea
-                  id="message"
-                  placeholder="Check out this amazing app for pet owners!"
-                  value={emailForm.message}
-                  onChange={(e) => setEmailForm({ ...emailForm, message: e.target.value })}
-                  rows={3}
-                />
+            </DrawerContent>
+          </Drawer>
+        ) : (
+          <Dialog open={showEmailModal} onOpenChange={setShowEmailModal}>
+            <DialogContent className="sm:max-w-md">
+              <DialogHeader>
+                <DialogTitle>Share PetPort via Email</DialogTitle>
+              </DialogHeader>
+              <div className="space-y-4">
+                <div>
+                  <label htmlFor="email" className="text-sm font-medium">
+                    Email address
+                  </label>
+                  <Input
+                    id="email"
+                    type="email"
+                    placeholder="friend@example.com"
+                    value={emailForm.to}
+                    onChange={(e) => setEmailForm({ ...emailForm, to: e.target.value })}
+                  />
+                </div>
+                <div>
+                  <label htmlFor="message" className="text-sm font-medium">
+                    Personal message (optional)
+                  </label>
+                  <Textarea
+                    id="message"
+                    placeholder="Check out this amazing app for pet owners!"
+                    value={emailForm.message}
+                    onChange={(e) => setEmailForm({ ...emailForm, message: e.target.value })}
+                    rows={3}
+                  />
+                </div>
+                <div className="flex gap-2 justify-end">
+                  <Button
+                    variant="outline"
+                    onClick={() => setShowEmailModal(false)}
+                    disabled={isSending}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    onClick={sendAppEmail}
+                    disabled={isSending}
+                    className="bg-brand-primary text-white hover:bg-brand-primary-dark hover:text-white"
+                  >
+                    {isSending ? "Sending..." : "Send Email"}
+                  </Button>
+                </div>
               </div>
-              <div className="flex gap-2 justify-end">
-                <Button
-                  variant="outline"
-                  onClick={() => setShowEmailModal(false)}
-                  disabled={isSending}
-                >
-                  Cancel
-                </Button>
-                <Button
-                  onClick={sendAppEmail}
-                  disabled={isSending}
-                  className="bg-brand-primary text-white hover:bg-brand-primary-dark hover:text-white"
-                >
-                  {isSending ? "Sending..." : "Send Email"}
-                </Button>
-              </div>
-            </div>
-          </DialogContent>
-        </Dialog>
+            </DialogContent>
+          </Dialog>
+        )}
       </div>
     );
   }

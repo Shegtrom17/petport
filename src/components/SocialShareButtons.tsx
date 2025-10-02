@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerTrigger, DrawerClose } from "@/components/ui/drawer";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Share2, Facebook, Copy, Check, Smartphone, MessageCircle, Mail } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
@@ -15,6 +16,7 @@ import { useEmailSharing } from "@/hooks/useEmailSharing";
 import { useAuth } from "@/context/AuthContext";
 import { generateShareURL } from "@/utils/domainUtils";
 import { generatePetPDF } from "@/services/clientPdfService";
+import { useIsMobile } from "@/hooks/useIsMobile";
 
   interface SocialShareButtonsProps {
   petName: string;
@@ -41,6 +43,7 @@ export const SocialShareButtons = ({ petName, petId, isMissingPet = false, conte
   const { toast } = useToast();
   const { sendEmail, isLoading: emailLoading } = useEmailSharing();
   const { user } = useAuth();
+  const isMobile = useIsMobile();
   
 // Add cache-busting parameter to ensure fresh loads
 const isCare = context === 'care';
@@ -375,84 +378,165 @@ title: "Link Copied! 📋",
                     <span className="text-responsive-xs">Text/SMS</span>
                   </Button>
                   
-                  <Dialog open={showEmailForm} onOpenChange={setShowEmailForm}>
-                    <DialogTrigger asChild>
-                      <Button
-                        onClick={handleEmailShare}
-                        variant="outline"
-                        size="sm"
-                        className={`${optionBtnBase} ${isMissingPet ? 'border-red-600 text-red-700 hover:bg-red-600 hover:text-white' : 'border-brand-primary text-brand-primary hover:bg-brand-primary hover:text-white'}`}
-                      >
-                        <Mail className="w-4 h-4 mr-1 flex-shrink-0" />
-                        <span className="text-responsive-xs">Email</span>
-                      </Button>
-                    </DialogTrigger>
-                    <DialogContent className="sm:max-w-md">
-                      <DialogHeader>
-                        <DialogTitle>Share via Email</DialogTitle>
-                      </DialogHeader>
-                      <div className="space-y-4">
-                        <div>
-                          <Label htmlFor="recipientEmail">Recipient Email *</Label>
-                          <Input
-                            id="recipientEmail"
-                            type="email"
-                            placeholder="Enter email address"
-                            value={emailData.recipientEmail}
-                            onChange={(e) => setEmailData(prev => ({ ...prev, recipientEmail: e.target.value }))}
-                          />
-                        </div>
-                        <div>
-                          <Label htmlFor="recipientName">Recipient Name (optional)</Label>
-                          <Input
-                            id="recipientName"
-                            placeholder="Enter recipient's name"
-                            value={emailData.recipientName}
-                            onChange={(e) => setEmailData(prev => ({ ...prev, recipientName: e.target.value }))}
-                          />
-                        </div>
-                        <div>
-                          <Label htmlFor="customMessage">Personal Message (optional)</Label>
-                          <Textarea
-                            id="customMessage"
-                            placeholder="Add a personal message..."
-                            value={emailData.customMessage}
-                            onChange={(e) => setEmailData(prev => ({ ...prev, customMessage: e.target.value }))}
-                            rows={3}
-                          />
-                        </div>
-                        {(isCare || isResume) && (
-                          <div className="flex items-center space-x-2">
-                            <Checkbox 
-                              id="attachPdf"
-                              checked={emailData.attachPdf}
-                              onCheckedChange={(checked) => setEmailData(prev => ({ ...prev, attachPdf: !!checked }))}
+{isMobile ? (
+                    <Drawer open={showEmailForm} onOpenChange={setShowEmailForm}>
+                      <DrawerTrigger asChild>
+                        <Button
+                          onClick={handleEmailShare}
+                          variant="outline"
+                          size="sm"
+                          className={`${optionBtnBase} ${isMissingPet ? 'border-red-600 text-red-700 hover:bg-red-600 hover:text-white' : 'border-brand-primary text-brand-primary hover:bg-brand-primary hover:text-white'}`}
+                        >
+                          <Mail className="w-4 h-4 mr-1 flex-shrink-0" />
+                          <span className="text-responsive-xs">Email</span>
+                        </Button>
+                      </DrawerTrigger>
+                      <DrawerContent className="px-4 pb-4">
+                        <DrawerHeader>
+                          <DrawerTitle>Share via Email</DrawerTitle>
+                        </DrawerHeader>
+                        <div className="space-y-4 max-h-[60vh] overflow-y-auto">
+                          <div>
+                            <Label htmlFor="recipientEmail">Recipient Email *</Label>
+                            <Input
+                              id="recipientEmail"
+                              type="email"
+                              placeholder="Enter email address"
+                              value={emailData.recipientEmail}
+                              onChange={(e) => setEmailData(prev => ({ ...prev, recipientEmail: e.target.value }))}
                             />
-                            <Label htmlFor="attachPdf" className="text-sm text-muted-foreground">
-                              Attach as PDF file
-                            </Label>
                           </div>
-                        )}
-                        <div className="flex gap-2">
-                          <Button
-                            onClick={handleSendEmail}
-                            disabled={emailLoading}
-                            className="flex-1 bg-brand-primary text-white hover:bg-brand-primary-dark hover:text-white"
-                          >
-                            <span className="text-responsive-sm">{emailLoading ? 'Sending...' : 'Send Email'}</span>
-                          </Button>
-                          <Button
-                            variant="outline"
-                            onClick={() => setShowEmailForm(false)}
-                            disabled={emailLoading}
-                            className="border-brand-primary text-brand-primary hover:bg-brand-primary hover:text-white"
-                          >
-                            <span className="text-responsive-sm">Cancel</span>
-                          </Button>
+                          <div>
+                            <Label htmlFor="recipientName">Recipient Name (optional)</Label>
+                            <Input
+                              id="recipientName"
+                              placeholder="Enter recipient's name"
+                              value={emailData.recipientName}
+                              onChange={(e) => setEmailData(prev => ({ ...prev, recipientName: e.target.value }))}
+                            />
+                          </div>
+                          <div>
+                            <Label htmlFor="customMessage">Personal Message (optional)</Label>
+                            <Textarea
+                              id="customMessage"
+                              placeholder="Add a personal message..."
+                              value={emailData.customMessage}
+                              onChange={(e) => setEmailData(prev => ({ ...prev, customMessage: e.target.value }))}
+                              rows={3}
+                            />
+                          </div>
+                          {(isCare || isResume) && (
+                            <div className="flex items-center space-x-2">
+                              <Checkbox 
+                                id="attachPdf"
+                                checked={emailData.attachPdf}
+                                onCheckedChange={(checked) => setEmailData(prev => ({ ...prev, attachPdf: !!checked }))}
+                              />
+                              <Label htmlFor="attachPdf" className="text-sm text-muted-foreground">
+                                Attach as PDF file
+                              </Label>
+                            </div>
+                          )}
+                          <div className="flex gap-2">
+                            <Button
+                              onClick={handleSendEmail}
+                              disabled={emailLoading}
+                              className="flex-1 bg-brand-primary text-white hover:bg-brand-primary-dark hover:text-white"
+                            >
+                              <span className="text-responsive-sm">{emailLoading ? 'Sending...' : 'Send Email'}</span>
+                            </Button>
+                            <Button
+                              variant="outline"
+                              onClick={() => setShowEmailForm(false)}
+                              disabled={emailLoading}
+                              className="border-brand-primary text-brand-primary hover:bg-brand-primary hover:text-white"
+                            >
+                              <span className="text-responsive-sm">Cancel</span>
+                            </Button>
+                          </div>
                         </div>
-                      </div>
-                    </DialogContent>
-                  </Dialog>
+                      </DrawerContent>
+                    </Drawer>
+                  ) : (
+                    <Dialog open={showEmailForm} onOpenChange={setShowEmailForm}>
+                      <DialogTrigger asChild>
+                        <Button
+                          onClick={handleEmailShare}
+                          variant="outline"
+                          size="sm"
+                          className={`${optionBtnBase} ${isMissingPet ? 'border-red-600 text-red-700 hover:bg-red-600 hover:text-white' : 'border-brand-primary text-brand-primary hover:bg-brand-primary hover:text-white'}`}
+                        >
+                          <Mail className="w-4 h-4 mr-1 flex-shrink-0" />
+                          <span className="text-responsive-xs">Email</span>
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent className="sm:max-w-md">
+                        <DialogHeader>
+                          <DialogTitle>Share via Email</DialogTitle>
+                        </DialogHeader>
+                        <div className="space-y-4">
+                          <div>
+                            <Label htmlFor="recipientEmail">Recipient Email *</Label>
+                            <Input
+                              id="recipientEmail"
+                              type="email"
+                              placeholder="Enter email address"
+                              value={emailData.recipientEmail}
+                              onChange={(e) => setEmailData(prev => ({ ...prev, recipientEmail: e.target.value }))}
+                            />
+                          </div>
+                          <div>
+                            <Label htmlFor="recipientName">Recipient Name (optional)</Label>
+                            <Input
+                              id="recipientName"
+                              placeholder="Enter recipient's name"
+                              value={emailData.recipientName}
+                              onChange={(e) => setEmailData(prev => ({ ...prev, recipientName: e.target.value }))}
+                            />
+                          </div>
+                          <div>
+                            <Label htmlFor="customMessage">Personal Message (optional)</Label>
+                            <Textarea
+                              id="customMessage"
+                              placeholder="Add a personal message..."
+                              value={emailData.customMessage}
+                              onChange={(e) => setEmailData(prev => ({ ...prev, customMessage: e.target.value }))}
+                              rows={3}
+                            />
+                          </div>
+                          {(isCare || isResume) && (
+                            <div className="flex items-center space-x-2">
+                              <Checkbox 
+                                id="attachPdf"
+                                checked={emailData.attachPdf}
+                                onCheckedChange={(checked) => setEmailData(prev => ({ ...prev, attachPdf: !!checked }))}
+                              />
+                              <Label htmlFor="attachPdf" className="text-sm text-muted-foreground">
+                                Attach as PDF file
+                              </Label>
+                            </div>
+                          )}
+                          <div className="flex gap-2">
+                            <Button
+                              onClick={handleSendEmail}
+                              disabled={emailLoading}
+                              className="flex-1 bg-brand-primary text-white hover:bg-brand-primary-dark hover:text-white"
+                            >
+                              <span className="text-responsive-sm">{emailLoading ? 'Sending...' : 'Send Email'}</span>
+                            </Button>
+                            <Button
+                              variant="outline"
+                              onClick={() => setShowEmailForm(false)}
+                              disabled={emailLoading}
+                              className="border-brand-primary text-brand-primary hover:bg-brand-primary hover:text-white"
+                            >
+                              <span className="text-responsive-sm">Cancel</span>
+                            </Button>
+                          </div>
+                        </div>
+                      </DialogContent>
+                    </Dialog>
+                  )}
                   
                   <Button
                     onClick={handleFacebookShare}

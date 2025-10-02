@@ -3,12 +3,14 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerClose } from "@/components/ui/drawer";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { useEmailSharing } from "@/hooks/useEmailSharing";
 import { shareViaMessenger, copyToClipboard } from "@/utils/messengerShare";
+import { useIsMobile } from "@/hooks/useIsMobile";
 import { 
   Heart, 
   Shield, 
@@ -60,6 +62,7 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
   
   const { toast } = useToast();
   const { sendEmail, isLoading: emailLoading } = useEmailSharing();
+  const isMobile = useIsMobile();
 
   const baseUrl = window.location.origin;
 
@@ -558,62 +561,120 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
         </div>
       </CardContent>
 
-      {/* Email Dialog */}
-      <Dialog open={showEmailForm} onOpenChange={setShowEmailForm}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle>Share via Email</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4">
-            <div>
-              <Label htmlFor="recipientEmail">Recipient Email *</Label>
-              <Input
-                id="recipientEmail"
-                type="email"
-                placeholder="Enter email address"
-                value={emailData.recipientEmail}
-                onChange={(e) => setEmailData(prev => ({ ...prev, recipientEmail: e.target.value }))}
-              />
+{/* Email Dialog/Drawer */}
+      {isMobile ? (
+        <Drawer open={showEmailForm} onOpenChange={setShowEmailForm}>
+          <DrawerContent className="px-4 pb-4">
+            <DrawerHeader>
+              <DrawerTitle>Share via Email</DrawerTitle>
+            </DrawerHeader>
+            <div className="space-y-4 max-h-[60vh] overflow-y-auto">
+              <div>
+                <Label htmlFor="recipientEmail">Recipient Email *</Label>
+                <Input
+                  id="recipientEmail"
+                  type="email"
+                  placeholder="Enter email address"
+                  value={emailData.recipientEmail}
+                  onChange={(e) => setEmailData(prev => ({ ...prev, recipientEmail: e.target.value }))}
+                />
+              </div>
+              <div>
+                <Label htmlFor="recipientName">Recipient Name (optional)</Label>
+                <Input
+                  id="recipientName"
+                  placeholder="Enter recipient's name"
+                  value={emailData.recipientName}
+                  onChange={(e) => setEmailData(prev => ({ ...prev, recipientName: e.target.value }))}
+                />
+              </div>
+              <div>
+                <Label htmlFor="customMessage">Personal Message (optional)</Label>
+                <Textarea
+                  id="customMessage"
+                  placeholder="Add a personal message..."
+                  value={emailData.customMessage}
+                  onChange={(e) => setEmailData(prev => ({ ...prev, customMessage: e.target.value }))}
+                  rows={3}
+                />
+              </div>
+              <div className="flex gap-2">
+                <Button
+                  onClick={handleSendEmail}
+                  disabled={emailLoading}
+                  className="flex-1 bg-primary hover:bg-primary/90 text-white"
+                >
+                  {emailLoading ? 'Sending...' : 'Send Email'}
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() => setShowEmailForm(false)}
+                  disabled={emailLoading}
+                  className="text-muted-foreground border-muted-foreground hover:bg-muted/10"
+                >
+                  Cancel
+                </Button>
+              </div>
             </div>
-            <div>
-              <Label htmlFor="recipientName">Recipient Name (optional)</Label>
-              <Input
-                id="recipientName"
-                placeholder="Enter recipient's name"
-                value={emailData.recipientName}
-                onChange={(e) => setEmailData(prev => ({ ...prev, recipientName: e.target.value }))}
-              />
+          </DrawerContent>
+        </Drawer>
+      ) : (
+        <Dialog open={showEmailForm} onOpenChange={setShowEmailForm}>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle>Share via Email</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4">
+              <div>
+                <Label htmlFor="recipientEmail">Recipient Email *</Label>
+                <Input
+                  id="recipientEmail"
+                  type="email"
+                  placeholder="Enter email address"
+                  value={emailData.recipientEmail}
+                  onChange={(e) => setEmailData(prev => ({ ...prev, recipientEmail: e.target.value }))}
+                />
+              </div>
+              <div>
+                <Label htmlFor="recipientName">Recipient Name (optional)</Label>
+                <Input
+                  id="recipientName"
+                  placeholder="Enter recipient's name"
+                  value={emailData.recipientName}
+                  onChange={(e) => setEmailData(prev => ({ ...prev, recipientName: e.target.value }))}
+                />
+              </div>
+              <div>
+                <Label htmlFor="customMessage">Personal Message (optional)</Label>
+                <Textarea
+                  id="customMessage"
+                  placeholder="Add a personal message..."
+                  value={emailData.customMessage}
+                  onChange={(e) => setEmailData(prev => ({ ...prev, customMessage: e.target.value }))}
+                  rows={3}
+                />
+              </div>
+              <div className="flex gap-2">
+                <Button
+                  onClick={handleSendEmail}
+                  disabled={emailLoading}
+                  className="flex-1 bg-primary hover:bg-primary/90 text-white"
+                >
+                  {emailLoading ? 'Sending...' : 'Send Email'}
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() => setShowEmailForm(false)}
+                  disabled={emailLoading}
+                  className="text-muted-foreground border-muted-foreground hover:bg-muted/10"
+                >
+                  Cancel
+                </Button>
+              </div>
             </div>
-            <div>
-              <Label htmlFor="customMessage">Personal Message (optional)</Label>
-              <Textarea
-                id="customMessage"
-                placeholder="Add a personal message..."
-                value={emailData.customMessage}
-                onChange={(e) => setEmailData(prev => ({ ...prev, customMessage: e.target.value }))}
-                rows={3}
-              />
-            </div>
-            <div className="flex gap-2">
-              <Button
-                onClick={handleSendEmail}
-                disabled={emailLoading}
-                className="flex-1 bg-primary hover:bg-primary/90 text-white"
-              >
-                {emailLoading ? 'Sending...' : 'Send Email'}
-              </Button>
-              <Button
-                variant="outline"
-                onClick={() => setShowEmailForm(false)}
-                disabled={emailLoading}
-                className="text-muted-foreground border-muted-foreground hover:bg-muted/10"
-              >
-                Cancel
-              </Button>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
+          </DialogContent>
+        </Dialog>
+      )}
     </Card>
   );
 };

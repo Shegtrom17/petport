@@ -8,6 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Loader2, Sparkles, FileText, Award, Briefcase, Wand2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { VoiceRecorder } from "@/components/VoiceRecorder";
 
 interface AIBioAssistantModalProps {
   open: boolean;
@@ -106,7 +107,13 @@ export function AIBioAssistantModal({ open, onOpenChange, petData }: AIBioAssist
 
           <TabsContent value="bio" className="space-y-4">
             <div className="space-y-2">
-              <Label>Custom Instructions (Optional)</Label>
+              <div className="flex items-center justify-between">
+                <Label>Custom Instructions (Optional)</Label>
+                <VoiceRecorder 
+                  onTranscription={(text) => setCustomPrompt(prev => prev ? `${prev} ${text}` : text)}
+                  disabled={loading}
+                />
+              </div>
               <Textarea
                 placeholder="e.g., Focus on their playful personality and love of swimming..."
                 value={customPrompt}
@@ -123,7 +130,13 @@ export function AIBioAssistantModal({ open, onOpenChange, petData }: AIBioAssist
 
           <TabsContent value="experience" className="space-y-4">
             <div className="space-y-2">
-              <Label>Custom Instructions (Optional)</Label>
+              <div className="flex items-center justify-between">
+                <Label>Custom Instructions (Optional)</Label>
+                <VoiceRecorder 
+                  onTranscription={(text) => setCustomPrompt(prev => prev ? `${prev} ${text}` : text)}
+                  disabled={loading}
+                />
+              </div>
               <Textarea
                 placeholder="e.g., Include therapy dog work and agility training..."
                 value={customPrompt}
@@ -140,7 +153,13 @@ export function AIBioAssistantModal({ open, onOpenChange, petData }: AIBioAssist
 
           <TabsContent value="achievement" className="space-y-4">
             <div className="space-y-2">
-              <Label>Custom Instructions (Optional)</Label>
+              <div className="flex items-center justify-between">
+                <Label>Custom Instructions (Optional)</Label>
+                <VoiceRecorder 
+                  onTranscription={(text) => setCustomPrompt(prev => prev ? `${prev} ${text}` : text)}
+                  disabled={loading}
+                />
+              </div>
               <Textarea
                 placeholder="e.g., Focus on training milestones and certifications..."
                 value={customPrompt}
@@ -157,7 +176,13 @@ export function AIBioAssistantModal({ open, onOpenChange, petData }: AIBioAssist
 
           <TabsContent value="polish" className="space-y-4">
             <div className="space-y-2">
-              <Label>Text to Polish</Label>
+              <div className="flex items-center justify-between">
+                <Label>Text to Polish</Label>
+                <VoiceRecorder 
+                  onTranscription={(text) => setCustomPrompt(prev => prev ? `${prev} ${text}` : text)}
+                  disabled={loading}
+                />
+              </div>
               <Textarea
                 placeholder="Paste your existing text here to improve it..."
                 value={customPrompt}

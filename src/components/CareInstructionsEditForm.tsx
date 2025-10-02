@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
@@ -10,6 +9,7 @@ import { useToast } from "@/hooks/use-toast";
 import { updateCareInstructions } from "@/services/careInstructionsService";
 import { Clock, Heart, AlertTriangle, Activity, Pill, Loader2 } from "lucide-react";
 import { sanitizeText } from "@/utils/inputSanitizer";
+import { VoiceRecorder } from "@/components/VoiceRecorder";
 
 interface CareInstructionsEditFormProps {
   petData: any;
@@ -21,7 +21,7 @@ export const CareInstructionsEditForm = ({ petData, onSave, onCancel }: CareInst
   console.log("CareInstructionsEditForm petData:", petData);
   console.log("CareInstructionsEditForm medications:", petData.medications);
   
-  const { register, handleSubmit, formState: { isDirty } } = useForm({
+  const { register, handleSubmit, formState: { isDirty }, setValue, watch } = useForm({
     defaultValues: {
       feedingSchedule: petData.careInstructions?.feedingSchedule || "",
       morningRoutine: petData.careInstructions?.morningRoutine || "",
@@ -35,6 +35,14 @@ export const CareInstructionsEditForm = ({ petData, onSave, onCancel }: CareInst
 
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
+
+  type FormFieldName = 'feedingSchedule' | 'morningRoutine' | 'eveningRoutine' | 'allergies' | 'behavioralNotes' | 'favoriteActivities' | 'medications';
+  
+  const handleVoiceInput = (fieldName: FormFieldName, text: string) => {
+    const currentValue = watch(fieldName);
+    const newValue = currentValue ? `${currentValue} ${text}` : text;
+    setValue(fieldName, newValue, { shouldDirty: true });
+  };
 
   console.log("CareInstructionsEditForm initial data:", petData);
 
@@ -88,7 +96,13 @@ export const CareInstructionsEditForm = ({ petData, onSave, onCancel }: CareInst
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
-              <Label htmlFor="feedingSchedule">Feeding Schedule</Label>
+              <div className="flex items-center justify-between mb-2">
+                <Label htmlFor="feedingSchedule">Feeding Schedule</Label>
+                <VoiceRecorder 
+                  onTranscription={(text) => handleVoiceInput('feedingSchedule', text)}
+                  disabled={isLoading}
+                />
+              </div>
               <Textarea
                 id="feedingSchedule"
                 {...register("feedingSchedule")}
@@ -99,7 +113,13 @@ export const CareInstructionsEditForm = ({ petData, onSave, onCancel }: CareInst
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="morningRoutine">Morning Routine</Label>
+                <div className="flex items-center justify-between mb-2">
+                  <Label htmlFor="morningRoutine">Morning Routine</Label>
+                  <VoiceRecorder 
+                    onTranscription={(text) => handleVoiceInput('morningRoutine', text)}
+                    disabled={isLoading}
+                  />
+                </div>
                 <Textarea
                   id="morningRoutine"
                   {...register("morningRoutine")}
@@ -109,7 +129,13 @@ export const CareInstructionsEditForm = ({ petData, onSave, onCancel }: CareInst
                 />
               </div>
               <div>
-                <Label htmlFor="eveningRoutine">Evening Routine</Label>
+                <div className="flex items-center justify-between mb-2">
+                  <Label htmlFor="eveningRoutine">Evening Routine</Label>
+                  <VoiceRecorder 
+                    onTranscription={(text) => handleVoiceInput('eveningRoutine', text)}
+                    disabled={isLoading}
+                  />
+                </div>
                 <Textarea
                   id="eveningRoutine"
                   {...register("eveningRoutine")}
@@ -132,7 +158,13 @@ export const CareInstructionsEditForm = ({ petData, onSave, onCancel }: CareInst
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
-              <Label htmlFor="medications">Current Medication & Supplements</Label>
+              <div className="flex items-center justify-between mb-2">
+                <Label htmlFor="medications">Current Medication & Supplements</Label>
+                <VoiceRecorder 
+                  onTranscription={(text) => handleVoiceInput('medications', text)}
+                  disabled={isLoading}
+                />
+              </div>
               <div className="text-xs text-amber-600 bg-amber-50 p-2 rounded-md mb-2 border border-amber-200">
                 ⚠️ Providing accurate medical details is highly recommended for emergencies.
               </div>
@@ -153,7 +185,13 @@ export const CareInstructionsEditForm = ({ petData, onSave, onCancel }: CareInst
               </div>
             </div>
             <div>
-              <Label htmlFor="allergies">Allergies & Dietary Restrictions</Label>
+              <div className="flex items-center justify-between mb-2">
+                <Label htmlFor="allergies">Allergies & Dietary Restrictions</Label>
+                <VoiceRecorder 
+                  onTranscription={(text) => handleVoiceInput('allergies', text)}
+                  disabled={isLoading}
+                />
+              </div>
               <div className="text-xs text-amber-600 bg-amber-50 p-2 rounded-md mb-2 border border-amber-200">
                 ⚠️ Allergy information is crucial for emergency responders. Even "None" is helpful.
               </div>
@@ -178,7 +216,13 @@ export const CareInstructionsEditForm = ({ petData, onSave, onCancel }: CareInst
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
-              <Label htmlFor="behavioralNotes">Behavioral Notes</Label>
+              <div className="flex items-center justify-between mb-2">
+                <Label htmlFor="behavioralNotes">Behavioral Notes</Label>
+                <VoiceRecorder 
+                  onTranscription={(text) => handleVoiceInput('behavioralNotes', text)}
+                  disabled={isLoading}
+                />
+              </div>
               <Textarea
                 id="behavioralNotes"
                 {...register("behavioralNotes")}
@@ -188,7 +232,13 @@ export const CareInstructionsEditForm = ({ petData, onSave, onCancel }: CareInst
               />
             </div>
             <div>
-              <Label htmlFor="favoriteActivities">Favorite Activities</Label>
+              <div className="flex items-center justify-between mb-2">
+                <Label htmlFor="favoriteActivities">Favorite Activities</Label>
+                <VoiceRecorder 
+                  onTranscription={(text) => handleVoiceInput('favoriteActivities', text)}
+                  disabled={isLoading}
+                />
+              </div>
               <Textarea
                 id="favoriteActivities"
                 {...register("favoriteActivities")}

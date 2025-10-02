@@ -60,7 +60,7 @@ export default function Landing() {
   }, [isPreview, user]);
 
   return (
-    <div className="h-screen flex flex-col bg-white">
+    <div className="min-h-screen bg-white">
       <MetaTags
         title="PetPort: Digital Pet Portfolio"
         description="Create a digital pet portfolio for pet owners and foster caregivers."
@@ -110,7 +110,7 @@ export default function Landing() {
         </div>
       )}
 
-      <main className="flex-1 overflow-y-auto native-scroll hide-scrollbar touch-pan-y overscroll-y-contain">
+      <main>
         {/* Hero Section with Video/Animation Placeholder */}
         <section className="max-w-7xl mx-auto px-4 py-16 text-center">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">

@@ -9,7 +9,6 @@ import { Loader2, Sparkles, FileText, Award, Briefcase, Wand2 } from "lucide-rea
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 
-
 interface AIBioAssistantModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -74,7 +73,7 @@ export function AIBioAssistantModal({ open, onOpenChange, petData }: AIBioAssist
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-3xl max-h-[85vh] overflow-y-auto native-scroll hide-scrollbar overscroll-y-contain touch-pan-y">
+      <DialogContent className="max-w-3xl max-h-[85vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Sparkles className="h-5 w-5 text-primary" />
@@ -86,7 +85,7 @@ export function AIBioAssistantModal({ open, onOpenChange, petData }: AIBioAssist
         </DialogHeader>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-4 mb-4">
+          <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="bio" className="text-xs sm:text-sm">
               <FileText className="h-4 w-4 mr-1" />
               Bio
@@ -107,9 +106,7 @@ export function AIBioAssistantModal({ open, onOpenChange, petData }: AIBioAssist
 
           <TabsContent value="bio" className="space-y-4">
             <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <Label>Custom Instructions (Optional)</Label>
-              </div>
+              <Label>Custom Instructions (Optional)</Label>
               <Textarea
                 placeholder="e.g., Focus on their playful personality and love of swimming..."
                 value={customPrompt}
@@ -126,9 +123,7 @@ export function AIBioAssistantModal({ open, onOpenChange, petData }: AIBioAssist
 
           <TabsContent value="experience" className="space-y-4">
             <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <Label>Custom Instructions (Optional)</Label>
-              </div>
+              <Label>Custom Instructions (Optional)</Label>
               <Textarea
                 placeholder="e.g., Include therapy dog work and agility training..."
                 value={customPrompt}
@@ -145,9 +140,7 @@ export function AIBioAssistantModal({ open, onOpenChange, petData }: AIBioAssist
 
           <TabsContent value="achievement" className="space-y-4">
             <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <Label>Custom Instructions (Optional)</Label>
-              </div>
+              <Label>Custom Instructions (Optional)</Label>
               <Textarea
                 placeholder="e.g., Focus on training milestones and certifications..."
                 value={customPrompt}
@@ -164,9 +157,7 @@ export function AIBioAssistantModal({ open, onOpenChange, petData }: AIBioAssist
 
           <TabsContent value="polish" className="space-y-4">
             <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <Label>Text to Polish</Label>
-              </div>
+              <Label>Text to Polish</Label>
               <Textarea
                 placeholder="Paste your existing text here to improve it..."
                 value={customPrompt}

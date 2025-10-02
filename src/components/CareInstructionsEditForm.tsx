@@ -1,12 +1,14 @@
+
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { updateCareInstructions } from "@/services/careInstructionsService";
-import { Clock, Heart, Pill, Loader2 } from "lucide-react";
+import { Clock, Heart, AlertTriangle, Activity, Pill, Loader2 } from "lucide-react";
 import { sanitizeText } from "@/utils/inputSanitizer";
 
 interface CareInstructionsEditFormProps {
@@ -19,7 +21,7 @@ export const CareInstructionsEditForm = ({ petData, onSave, onCancel }: CareInst
   console.log("CareInstructionsEditForm petData:", petData);
   console.log("CareInstructionsEditForm medications:", petData.medications);
   
-  const { register, handleSubmit, formState: { isDirty }, setValue, watch } = useForm({
+  const { register, handleSubmit, formState: { isDirty } } = useForm({
     defaultValues: {
       feedingSchedule: petData.careInstructions?.feedingSchedule || "",
       morningRoutine: petData.careInstructions?.morningRoutine || "",
@@ -34,8 +36,6 @@ export const CareInstructionsEditForm = ({ petData, onSave, onCancel }: CareInst
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
 
-  type FormFieldName = 'feedingSchedule' | 'morningRoutine' | 'eveningRoutine' | 'allergies' | 'behavioralNotes' | 'favoriteActivities' | 'medications';
-  
   console.log("CareInstructionsEditForm initial data:", petData);
 
   const onSubmit = async (data: any) => {
@@ -76,7 +76,8 @@ export const CareInstructionsEditForm = ({ petData, onSave, onCancel }: CareInst
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 p-1">
+    <div className="space-y-6">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         {/* Daily Routines */}
         <Card>
           <CardHeader>
@@ -87,9 +88,7 @@ export const CareInstructionsEditForm = ({ petData, onSave, onCancel }: CareInst
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
-              <div className="flex items-center justify-between mb-2">
-                <Label htmlFor="feedingSchedule">Feeding Schedule</Label>
-              </div>
+              <Label htmlFor="feedingSchedule">Feeding Schedule</Label>
               <Textarea
                 id="feedingSchedule"
                 {...register("feedingSchedule")}
@@ -100,9 +99,7 @@ export const CareInstructionsEditForm = ({ petData, onSave, onCancel }: CareInst
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <div className="flex items-center justify-between mb-2">
-                  <Label htmlFor="morningRoutine">Morning Routine</Label>
-                </div>
+                <Label htmlFor="morningRoutine">Morning Routine</Label>
                 <Textarea
                   id="morningRoutine"
                   {...register("morningRoutine")}
@@ -112,9 +109,7 @@ export const CareInstructionsEditForm = ({ petData, onSave, onCancel }: CareInst
                 />
               </div>
               <div>
-                <div className="flex items-center justify-between mb-2">
-                  <Label htmlFor="eveningRoutine">Evening Routine</Label>
-                </div>
+                <Label htmlFor="eveningRoutine">Evening Routine</Label>
                 <Textarea
                   id="eveningRoutine"
                   {...register("eveningRoutine")}
@@ -137,9 +132,7 @@ export const CareInstructionsEditForm = ({ petData, onSave, onCancel }: CareInst
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
-              <div className="flex items-center justify-between mb-2">
-                <Label htmlFor="medications">Current Medication & Supplements</Label>
-              </div>
+              <Label htmlFor="medications">Current Medication & Supplements</Label>
               <div className="text-xs text-amber-600 bg-amber-50 p-2 rounded-md mb-2 border border-amber-200">
                 ⚠️ Providing accurate medical details is highly recommended for emergencies.
               </div>
@@ -160,9 +153,7 @@ export const CareInstructionsEditForm = ({ petData, onSave, onCancel }: CareInst
               </div>
             </div>
             <div>
-              <div className="flex items-center justify-between mb-2">
-                <Label htmlFor="allergies">Allergies & Dietary Restrictions</Label>
-              </div>
+              <Label htmlFor="allergies">Allergies & Dietary Restrictions</Label>
               <div className="text-xs text-amber-600 bg-amber-50 p-2 rounded-md mb-2 border border-amber-200">
                 ⚠️ Allergy information is crucial for emergency responders. Even "None" is helpful.
               </div>
@@ -187,9 +178,7 @@ export const CareInstructionsEditForm = ({ petData, onSave, onCancel }: CareInst
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
-              <div className="flex items-center justify-between mb-2">
-                <Label htmlFor="behavioralNotes">Behavioral Notes</Label>
-              </div>
+              <Label htmlFor="behavioralNotes">Behavioral Notes</Label>
               <Textarea
                 id="behavioralNotes"
                 {...register("behavioralNotes")}
@@ -199,9 +188,7 @@ export const CareInstructionsEditForm = ({ petData, onSave, onCancel }: CareInst
               />
             </div>
             <div>
-              <div className="flex items-center justify-between mb-2">
-                <Label htmlFor="favoriteActivities">Favorite Activities</Label>
-              </div>
+              <Label htmlFor="favoriteActivities">Favorite Activities</Label>
               <Textarea
                 id="favoriteActivities"
                 {...register("favoriteActivities")}
@@ -230,5 +217,6 @@ export const CareInstructionsEditForm = ({ petData, onSave, onCancel }: CareInst
           </Button>
         </div>
       </form>
+    </div>
   );
 };

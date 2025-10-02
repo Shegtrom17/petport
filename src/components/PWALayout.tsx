@@ -13,15 +13,12 @@ export const PWALayout = ({ children, showBottomNav = true }: PWALayoutProps) =>
   useAndroidBackButton();
 
   return (
-    <div className="h-screen flex flex-col bg-background">
+    <div className="min-h-screen bg-background">
       {/* PWA Install Prompt */}
       <PWAInstallPrompt />
       
-      {/* Dedicated scroll container for iOS PTR control */}
-      <main 
-        id="app-scroll-container"
-        className={`flex-1 overflow-y-auto overflow-x-hidden native-scroll hide-scrollbar touch-pan-y overscroll-y-contain ${showBottomNav ? "pb-16 pb-safe-area-inset-bottom" : ""}`}
-      >
+      {/* Main content with bottom padding for tab navigation */}
+      <main className={`${showBottomNav ? "pb-16 pb-safe-area-inset-bottom" : ""}`}>
         {children}
       </main>
       

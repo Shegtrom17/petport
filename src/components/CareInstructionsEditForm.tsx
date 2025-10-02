@@ -2,14 +2,12 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { updateCareInstructions } from "@/services/careInstructionsService";
-import { Clock, Heart, AlertTriangle, Activity, Pill, Loader2 } from "lucide-react";
+import { Clock, Heart, Pill, Loader2 } from "lucide-react";
 import { sanitizeText } from "@/utils/inputSanitizer";
-import { VoiceRecorder } from "@/components/VoiceRecorder";
 
 interface CareInstructionsEditFormProps {
   petData: any;
@@ -38,12 +36,6 @@ export const CareInstructionsEditForm = ({ petData, onSave, onCancel }: CareInst
 
   type FormFieldName = 'feedingSchedule' | 'morningRoutine' | 'eveningRoutine' | 'allergies' | 'behavioralNotes' | 'favoriteActivities' | 'medications';
   
-  const handleVoiceInput = (fieldName: FormFieldName, text: string) => {
-    const currentValue = watch(fieldName);
-    const newValue = currentValue ? `${currentValue} ${text}` : text;
-    setValue(fieldName, newValue, { shouldDirty: true });
-  };
-
   console.log("CareInstructionsEditForm initial data:", petData);
 
   const onSubmit = async (data: any) => {
@@ -84,7 +76,7 @@ export const CareInstructionsEditForm = ({ petData, onSave, onCancel }: CareInst
   };
 
   return (
-    <div className="max-h-[85vh] overflow-y-auto [-webkit-overflow-scrolling:touch] touch-action-pan-y overscroll-behavior-contain">
+    <div className="max-h-[85vh] overflow-y-auto native-scroll hide-scrollbar touch-pan-y overscroll-y-contain">
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 p-1">
         {/* Daily Routines */}
         <Card>
@@ -98,10 +90,6 @@ export const CareInstructionsEditForm = ({ petData, onSave, onCancel }: CareInst
             <div>
               <div className="flex items-center justify-between mb-2">
                 <Label htmlFor="feedingSchedule">Feeding Schedule</Label>
-                <VoiceRecorder 
-                  onTranscription={(text) => handleVoiceInput('feedingSchedule', text)}
-                  disabled={isLoading}
-                />
               </div>
               <Textarea
                 id="feedingSchedule"
@@ -115,10 +103,6 @@ export const CareInstructionsEditForm = ({ petData, onSave, onCancel }: CareInst
               <div>
                 <div className="flex items-center justify-between mb-2">
                   <Label htmlFor="morningRoutine">Morning Routine</Label>
-                  <VoiceRecorder 
-                    onTranscription={(text) => handleVoiceInput('morningRoutine', text)}
-                    disabled={isLoading}
-                  />
                 </div>
                 <Textarea
                   id="morningRoutine"
@@ -131,10 +115,6 @@ export const CareInstructionsEditForm = ({ petData, onSave, onCancel }: CareInst
               <div>
                 <div className="flex items-center justify-between mb-2">
                   <Label htmlFor="eveningRoutine">Evening Routine</Label>
-                  <VoiceRecorder 
-                    onTranscription={(text) => handleVoiceInput('eveningRoutine', text)}
-                    disabled={isLoading}
-                  />
                 </div>
                 <Textarea
                   id="eveningRoutine"
@@ -160,10 +140,6 @@ export const CareInstructionsEditForm = ({ petData, onSave, onCancel }: CareInst
             <div>
               <div className="flex items-center justify-between mb-2">
                 <Label htmlFor="medications">Current Medication & Supplements</Label>
-                <VoiceRecorder 
-                  onTranscription={(text) => handleVoiceInput('medications', text)}
-                  disabled={isLoading}
-                />
               </div>
               <div className="text-xs text-amber-600 bg-amber-50 p-2 rounded-md mb-2 border border-amber-200">
                 ⚠️ Providing accurate medical details is highly recommended for emergencies.
@@ -187,10 +163,6 @@ export const CareInstructionsEditForm = ({ petData, onSave, onCancel }: CareInst
             <div>
               <div className="flex items-center justify-between mb-2">
                 <Label htmlFor="allergies">Allergies & Dietary Restrictions</Label>
-                <VoiceRecorder 
-                  onTranscription={(text) => handleVoiceInput('allergies', text)}
-                  disabled={isLoading}
-                />
               </div>
               <div className="text-xs text-amber-600 bg-amber-50 p-2 rounded-md mb-2 border border-amber-200">
                 ⚠️ Allergy information is crucial for emergency responders. Even "None" is helpful.
@@ -218,10 +190,6 @@ export const CareInstructionsEditForm = ({ petData, onSave, onCancel }: CareInst
             <div>
               <div className="flex items-center justify-between mb-2">
                 <Label htmlFor="behavioralNotes">Behavioral Notes</Label>
-                <VoiceRecorder 
-                  onTranscription={(text) => handleVoiceInput('behavioralNotes', text)}
-                  disabled={isLoading}
-                />
               </div>
               <Textarea
                 id="behavioralNotes"
@@ -234,10 +202,6 @@ export const CareInstructionsEditForm = ({ petData, onSave, onCancel }: CareInst
             <div>
               <div className="flex items-center justify-between mb-2">
                 <Label htmlFor="favoriteActivities">Favorite Activities</Label>
-                <VoiceRecorder 
-                  onTranscription={(text) => handleVoiceInput('favoriteActivities', text)}
-                  disabled={isLoading}
-                />
               </div>
               <Textarea
                 id="favoriteActivities"

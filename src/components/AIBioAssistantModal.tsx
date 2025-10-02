@@ -8,7 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Loader2, Sparkles, FileText, Award, Briefcase, Wand2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { VoiceRecorder } from "@/components/VoiceRecorder";
+
 
 interface AIBioAssistantModalProps {
   open: boolean;
@@ -74,7 +74,7 @@ export function AIBioAssistantModal({ open, onOpenChange, petData }: AIBioAssist
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-3xl max-h-[85vh] overflow-y-auto [-webkit-overflow-scrolling:touch] overscroll-behavior-contain">
+      <DialogContent className="max-w-3xl max-h-[85vh] overflow-y-auto native-scroll hide-scrollbar overscroll-y-contain touch-pan-y">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Sparkles className="h-5 w-5 text-primary" />
@@ -109,10 +109,6 @@ export function AIBioAssistantModal({ open, onOpenChange, petData }: AIBioAssist
             <div className="space-y-2">
               <div className="flex items-center justify-between">
                 <Label>Custom Instructions (Optional)</Label>
-                <VoiceRecorder 
-                  onTranscription={(text) => setCustomPrompt(prev => prev ? `${prev} ${text}` : text)}
-                  disabled={loading}
-                />
               </div>
               <Textarea
                 placeholder="e.g., Focus on their playful personality and love of swimming..."
@@ -132,10 +128,6 @@ export function AIBioAssistantModal({ open, onOpenChange, petData }: AIBioAssist
             <div className="space-y-2">
               <div className="flex items-center justify-between">
                 <Label>Custom Instructions (Optional)</Label>
-                <VoiceRecorder 
-                  onTranscription={(text) => setCustomPrompt(prev => prev ? `${prev} ${text}` : text)}
-                  disabled={loading}
-                />
               </div>
               <Textarea
                 placeholder="e.g., Include therapy dog work and agility training..."
@@ -155,10 +147,6 @@ export function AIBioAssistantModal({ open, onOpenChange, petData }: AIBioAssist
             <div className="space-y-2">
               <div className="flex items-center justify-between">
                 <Label>Custom Instructions (Optional)</Label>
-                <VoiceRecorder 
-                  onTranscription={(text) => setCustomPrompt(prev => prev ? `${prev} ${text}` : text)}
-                  disabled={loading}
-                />
               </div>
               <Textarea
                 placeholder="e.g., Focus on training milestones and certifications..."
@@ -178,10 +166,6 @@ export function AIBioAssistantModal({ open, onOpenChange, petData }: AIBioAssist
             <div className="space-y-2">
               <div className="flex items-center justify-between">
                 <Label>Text to Polish</Label>
-                <VoiceRecorder 
-                  onTranscription={(text) => setCustomPrompt(prev => prev ? `${prev} ${text}` : text)}
-                  disabled={loading}
-                />
               </div>
               <Textarea
                 placeholder="Paste your existing text here to improve it..."

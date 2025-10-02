@@ -74,7 +74,7 @@ export function AIBioAssistantModal({ open, onOpenChange, petData }: AIBioAssist
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-3xl max-h-[85vh] overflow-y-auto">
+      <DialogContent className="max-w-3xl max-h-[85vh] overflow-y-auto [-webkit-overflow-scrolling:touch] overscroll-behavior-contain">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Sparkles className="h-5 w-5 text-primary" />
@@ -86,7 +86,7 @@ export function AIBioAssistantModal({ open, onOpenChange, petData }: AIBioAssist
         </DialogHeader>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-4">
+          <TabsList className="grid w-full grid-cols-4 mb-4">
             <TabsTrigger value="bio" className="text-xs sm:text-sm">
               <FileText className="h-4 w-4 mr-1" />
               Bio

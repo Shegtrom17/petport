@@ -84,8 +84,8 @@ export const CareInstructionsEditForm = ({ petData, onSave, onCancel }: CareInst
   };
 
   return (
-    <div className="space-y-6">
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+    <div className="max-h-[85vh] overflow-y-auto [-webkit-overflow-scrolling:touch] touch-action-pan-y overscroll-behavior-contain">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 p-1">
         {/* Daily Routines */}
         <Card>
           <CardHeader>

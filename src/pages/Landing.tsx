@@ -244,7 +244,7 @@ export default function Landing() {
                     </div>
                     <div>
                       <strong className="text-brand-primary">Pet Credentials</strong>
-                      <p className="text-brand-primary-dark text-sm">resume, referrals, and achievements for hotels, groomers, and sitters.</p>
+                      <p className="text-brand-primary-dark text-sm">resume, referrals, and achievements for hotels, groomers, and sitters. Voice-to-text for bio and information builders.</p>
                     </div>
                   </div>
 

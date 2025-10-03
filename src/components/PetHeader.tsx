@@ -22,11 +22,13 @@ export const PetHeader = ({ activeTab, onTabChange, selectedPetId, selectedPetNa
   const { user } = useAuth();
 
   const handleBack = () => {
-    // Prevent exiting PWA on back
-    if (location.pathname === '/app' || location.pathname === '/') {
-      return;
+    // Check if we can go back in history
+    if (window.history.length > 1) {
+      navigate(-1);
+    } else {
+      // No history to go back to, navigate to home
+      navigate('/app');
     }
-    navigate(-1);
   };
 
   return (

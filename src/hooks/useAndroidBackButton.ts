@@ -9,18 +9,24 @@ export const useAndroidBackButton = () => {
   const location = useLocation();
 
   useEffect(() => {
-    // Only handle back button on root paths
+    // Only intercept back button on root paths when history is empty
     const isRootPath = location.pathname === '/app' || location.pathname === '/';
     
     if (!isRootPath) return;
 
-    const handlePopState = () => {
-      // Keep user in PWA by pushing state back
-      window.history.pushState(null, '', location.pathname);
+    const handlePopState = (e: PopStateEvent) => {
+      // Only prevent exit if we're at the bottom of history stack
+      if (window.history.length <= 2) {
+        e.preventDefault();
+        // Keep user in PWA by pushing state back
+        window.history.pushState(null, '', location.pathname);
+      }
     };
 
-    // Push initial state
-    window.history.pushState(null, '', location.pathname);
+    // Push initial state only if needed
+    if (window.history.state === null) {
+      window.history.pushState(null, '', location.pathname);
+    }
     
     window.addEventListener('popstate', handlePopState);
 

@@ -123,24 +123,26 @@ export default function Landing() {
               </p>
 
               {/* AI Features Callout */}
-              <div className="mt-6 bg-gradient-to-r from-purple-50 to-blue-50 border border-purple-200 rounded-xl p-4">
+              <div className="mt-6 bg-white border-2 border-[#5691af] rounded-lg p-5 shadow-sm">
                 <div className="flex items-start gap-3">
-                  <div className="flex-shrink-0 w-10 h-10 bg-gradient-to-br from-purple-500 to-blue-500 rounded-lg flex items-center justify-center">
-                    <span className="text-white text-xl">✨</span>
+                  <div className="flex-shrink-0 w-8 h-8 bg-[#5691af] rounded flex items-center justify-center">
+                    <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
                   </div>
                   <div>
-                    <h3 className="font-semibold text-brand-primary mb-2">NEW: AI-Powered Features</h3>
-                    <ul className="space-y-1 text-sm text-brand-primary-dark">
-                      <li className="flex items-start gap-2">
-                        <span className="text-purple-600 mt-0.5">🎤</span>
+                    <h3 className="font-semibold text-[#5691af] mb-3 text-base">NEW: AI-Powered Features</h3>
+                    <ul className="space-y-2.5 text-sm text-brand-primary-dark">
+                      <li className="flex items-start gap-2.5">
+                        <div className="w-1.5 h-1.5 bg-[#5691af] rounded-full mt-1.5 flex-shrink-0"></div>
                         <span>Voice-to-text for quick notes and care instructions</span>
                       </li>
-                      <li className="flex items-start gap-2">
-                        <span className="text-purple-600 mt-0.5">✍️</span>
+                      <li className="flex items-start gap-2.5">
+                        <div className="w-1.5 h-1.5 bg-[#5691af] rounded-full mt-1.5 flex-shrink-0"></div>
                         <span>Smart bio builder that writes compelling pet profiles</span>
                       </li>
-                      <li className="flex items-start gap-2">
-                        <span className="text-purple-600 mt-0.5">🤖</span>
+                      <li className="flex items-start gap-2.5">
+                        <div className="w-1.5 h-1.5 bg-[#5691af] rounded-full mt-1.5 flex-shrink-0"></div>
                         <span>AI assistant to help fill out pet information effortlessly</span>
                       </li>
                     </ul>

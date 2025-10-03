@@ -121,6 +121,32 @@ export default function Landing() {
               <p className="mt-6 text-xl text-brand-primary-dark leading-relaxed">
                 PetPort is your all-in-one app for pets and horses. Keep vaccines, vet visits, and travel documents organized. Instantly create lost pet flyers, PDFs, and QR codes — all with shareable links that update automatically. Add care instructions for sitters or adopters, plus a résumé builder, photo gallery and travel maps to showcase your pet's achievements.
               </p>
+
+              {/* AI Features Callout */}
+              <div className="mt-6 bg-gradient-to-r from-purple-50 to-blue-50 border border-purple-200 rounded-xl p-4">
+                <div className="flex items-start gap-3">
+                  <div className="flex-shrink-0 w-10 h-10 bg-gradient-to-br from-purple-500 to-blue-500 rounded-lg flex items-center justify-center">
+                    <span className="text-white text-xl">✨</span>
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-brand-primary mb-2">NEW: AI-Powered Features</h3>
+                    <ul className="space-y-1 text-sm text-brand-primary-dark">
+                      <li className="flex items-start gap-2">
+                        <span className="text-purple-600 mt-0.5">🎤</span>
+                        <span>Voice-to-text for quick notes and care instructions</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <span className="text-purple-600 mt-0.5">✍️</span>
+                        <span>Smart bio builder that writes compelling pet profiles</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <span className="text-purple-600 mt-0.5">🤖</span>
+                        <span>AI assistant to help fill out pet information effortlessly</span>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
               
               {/* Free Trial Badge */}
               <div className="mt-4 inline-flex items-center gap-2 bg-transparent border border-[#5691af]/30 rounded-full px-4 py-2">

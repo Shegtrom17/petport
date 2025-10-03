@@ -142,7 +142,7 @@ export default function Landing() {
             <div className="relative">
               {/* Hero Video */}
               <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
-                <video key="hero-6"
+                <video key="hero-9"
                   autoPlay
                   muted
                   loop
@@ -151,7 +151,7 @@ export default function Landing() {
                   className="w-full h-auto rounded-2xl"
                   poster=""
                 >
-                  <source src="/hero-6.mp4" type="video/mp4" />
+                  <source src="/hero-9.mp4" type="video/mp4" />
                   Your browser does not support the video tag.
                 </video>
               </div>

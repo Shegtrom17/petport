@@ -48,6 +48,7 @@ import PublicGallery from "./pages/PublicGallery";
 import PublicEmergencyProfile from "./pages/PublicEmergencyProfile";
 import EmailTest from "./pages/EmailTest";
 import SetupStripe from "./pages/SetupStripe";
+import Referrals from "./pages/Referrals";
 
 // Redirect component for credentials -> resume consolidation
 const CredentialsRedirect = () => {
@@ -154,6 +155,11 @@ const App = () => {
                      <Route path="/setup-stripe" element={
                        <ProtectedRoute>
                          <SetupStripe />
+                       </ProtectedRoute>
+                     } />
+                     <Route path="/referrals" element={
+                       <ProtectedRoute>
+                         <Referrals />
                        </ProtectedRoute>
                      } />
                    <Route path="*" element={<NotFound />} />

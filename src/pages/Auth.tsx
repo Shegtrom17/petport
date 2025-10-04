@@ -99,6 +99,11 @@ export default function Auth() {
           ? `${baseUrl}${baseUrl.includes('?') ? '&' : '?'}ref=${referralCode}`
           : baseUrl;
         
+        // Clear referral code immediately after use
+        if (referralCode) {
+          localStorage.removeItem('petport_referral');
+        }
+        
         navigate(finalUrl);
       }
     } catch (error) {

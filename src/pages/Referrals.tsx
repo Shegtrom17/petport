@@ -28,6 +28,7 @@ interface Referral {
   created_at: string;
   approved_at: string | null;
   paid_at: string | null;
+  referred_plan_interval?: string | null;
 }
 
 interface UserPayout {
@@ -329,7 +330,25 @@ export default function Referrals() {
                         <TableCell className="font-medium">
                           {formatDate(referral.created_at)}
                         </TableCell>
-                        <TableCell>{getStatusBadge(referral.commission_status)}</TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-2">
+                            {getStatusBadge(referral.commission_status)}
+                            
+                            {/* Show ineligibility badge for monthly plans */}
+                            {referral.referred_plan_interval === 'month' && (
+                              <Badge variant="outline" className="text-xs text-muted-foreground border-muted-foreground/30">
+                                Monthly - Not Eligible
+                              </Badge>
+                            )}
+                            
+                            {/* Show if plan interval is missing */}
+                            {!referral.referred_plan_interval && referral.commission_status === 'pending' && (
+                              <Badge variant="outline" className="text-xs text-amber-600 border-amber-600/30">
+                                Plan Info Pending
+                              </Badge>
+                            )}
+                          </div>
+                        </TableCell>
                         <TableCell className="font-semibold text-[#5691af]">
                           ${(referral.commission_amount / 100).toFixed(2)}
                         </TableCell>

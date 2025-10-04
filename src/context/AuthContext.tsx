@@ -150,11 +150,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       if (error) {
         console.error("Auth: Sign in error:", error);
-        toast({
-          variant: "destructive",
-          title: "Sign in failed",
-          description: error.message,
-        });
+        // Don't show toast here - let the calling component handle it
         throw error;
       }
 
@@ -170,7 +166,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }, 500);
       
     } catch (error) {
-      console.error("Auth: Sign in error:", error);
+      console.error("Auth: Sign in error caught:", error);
       throw error;
     }
   };

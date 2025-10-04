@@ -89,7 +89,7 @@ export default function Learn() {
                     <li>• Insurance policies</li>
                     <li>• Adoption certificates</li>
                     <li>• Microchip information</li>
-                    <li>• Travel permits</li>
+                    <li className="bg-zinc-100">• Travel permits</li>
                   </ul>
                 </div>
               </div>

@@ -89,12 +89,17 @@ export default function Auth() {
 
         console.log("Auth: Sign up completed, redirecting...");
         
-        // Redirect to subscribe page for new users, especially with transfer tokens
-        if (transferToken) {
-          navigate(`/subscribe?transfer_token=${transferToken}`);
-        } else {
-          navigate("/subscribe");
-        }
+        // Check for referral code and append to subscribe redirect
+        const referralCode = localStorage.getItem('petport_referral');
+        const baseUrl = transferToken 
+          ? `/subscribe?transfer_token=${transferToken}`
+          : '/subscribe';
+        
+        const finalUrl = referralCode 
+          ? `${baseUrl}${baseUrl.includes('?') ? '&' : '?'}ref=${referralCode}`
+          : baseUrl;
+        
+        navigate(finalUrl);
       }
     } catch (error) {
       console.error("Auth: Authentication error:", error);

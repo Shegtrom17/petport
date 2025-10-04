@@ -33,7 +33,7 @@ serve(async (req) => {
     const user = userData.user;
     if (!user?.email) throw new Error("User email not available");
 
-    const { plan }: { plan?: Plan } = await req.json().catch(() => ({}));
+    const { plan, referral_code }: { plan?: Plan; referral_code?: string } = await req.json().catch(() => ({}));
     if (!plan || (plan !== "monthly" && plan !== "yearly")) {
       throw new Error("Invalid plan. Use 'monthly' or 'yearly'.");
     }
@@ -64,11 +64,16 @@ serve(async (req) => {
       payment_method_collection: "always",
       subscription_data: {
         trial_period_days: 7,
+        metadata: referral_code ? { referral_code } : {},
       },
       allow_promotion_codes: true,
       success_url: `${req.headers.get("origin")}/post-checkout?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${req.headers.get("origin")}/`,
     });
+    
+    if (referral_code) {
+      console.log('[CREATE-CHECKOUT] Referral code attached to session:', referral_code);
+    }
 
     return new Response(JSON.stringify({ url: session.url }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },

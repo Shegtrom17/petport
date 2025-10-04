@@ -20,6 +20,7 @@ export default function Subscribe() {
   const searchParams = new URLSearchParams(location.search);
   const transferToken = searchParams.get('transfer_token');
   const upgrade = searchParams.get('upgrade');
+  const referralCode = searchParams.get('ref');
 
   const openPortal = async () => {
     setLoadingPortal(true);
@@ -129,7 +130,7 @@ export default function Subscribe() {
             </div>
           )}
         </header>
-        <PricingSection context="profile" />
+        <PricingSection context="profile" referralCode={referralCode || undefined} />
         <section aria-labelledby="cancellation-policy" className="mt-6 space-y-3">
           <h2 id="cancellation-policy" className="text-lg font-medium">Cancellation Policy</h2>
           <p className="text-sm text-muted-foreground">

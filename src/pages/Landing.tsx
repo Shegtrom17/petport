@@ -19,14 +19,29 @@ export default function Landing() {
   const location = useLocation();
   const [showSharePrompt, setShowSharePrompt] = useState(false);
   const [publicPets, setPublicPets] = useState<any[]>([]);
+  const [hasReferralCode, setHasReferralCode] = useState(false);
   
   // Detect if we're in preview environment
   const isPreview = window.location.hostname.includes('lovableproject.com') || 
                    window.location.hostname.includes('lovable.app');
 
   useEffect(() => {
-    const isShare = new URLSearchParams(location.search).get("share") === "true";
+    const urlParams = new URLSearchParams(location.search);
     
+    // Capture referral code
+    const refCode = urlParams.get('ref');
+    if (refCode) {
+      localStorage.setItem('petport_referral', refCode);
+      setHasReferralCode(true);
+      console.log('Referral code captured:', refCode);
+    }
+    
+    // Check for existing referral code
+    if (localStorage.getItem('petport_referral')) {
+      setHasReferralCode(true);
+    }
+    
+    const isShare = urlParams.get("share") === "true";
     if (isShare) {
       setShowSharePrompt(true);
     }
@@ -66,6 +81,13 @@ export default function Landing() {
         description="Create a digital pet portfolio for pet owners and foster caregivers."
         url={window.location.origin + "/"}
       />
+      
+      {/* Referral Banner */}
+      {hasReferralCode && (
+        <div className="bg-brand-primary text-white py-2 text-center text-sm">
+          🎉 You were referred! Start your free trial to thank your friend.
+        </div>
+      )}
 
       {/* Header Navigation */}
       <header className="max-w-7xl mx-auto px-4 py-6 flex items-center justify-between">

@@ -4,6 +4,7 @@ export type FeatureFlags = {
   enableSelectPhotos: boolean;
   useHostedCheckout: boolean;
   testMode: boolean;
+  enablePullToRefresh: boolean;
 };
 
 export const featureFlags: FeatureFlags = {
@@ -12,6 +13,7 @@ export const featureFlags: FeatureFlags = {
   enableSelectPhotos: true,
   useHostedCheckout: true,
   testMode: false, // Set to true for development, false for production
+  enablePullToRefresh: false, // Disabled by default to fix iOS freeze - can be enabled after testing
 };
 
 // Gallery configuration

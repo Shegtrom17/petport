@@ -41,6 +41,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { PullToRefresh } from "@/components/PullToRefresh";
 import { useQueryClient } from "@tanstack/react-query";
+import { featureFlags } from "@/config/featureFlags";
 
 const Index = () => {
   console.log("Index component is rendering");
@@ -387,72 +388,76 @@ const Index = () => {
     );
   }
 
+  const content = (
+    <div className="min-h-screen bg-white">
+      <PetHeader 
+        activeTab={activeTab} 
+        onTabChange={handleTabChange} 
+        selectedPetId={selectedPet?.id || petData.id}
+        selectedPetName={selectedPet?.name || petData.name}
+        selectedPet={selectedPet || petData}
+        onPrivacyToggle={handlePrivacyToggle}
+      />
+
+      <InAppSharingModal
+        isOpen={isInAppSharingOpen}
+        onClose={() => setIsInAppSharingOpen(false)}
+        petId={selectedPet?.id || petData.id || ""}
+        petName={petData.name}
+      />
+
+      <main className="max-w-6xl mx-auto px-3 sm:px-4 py-4 sm:py-6 lg:py-8 pb-20 sm:pb-24">
+        <AuthenticationPrompt isSignedIn={!!user} hasPets={pets.length > 0} />
+        
+        {user && pets.length > 0 && (
+          <>
+            <PetSelector 
+              pets={pets}
+              selectedPet={selectedPet}
+              onSelectPet={handleSelectPet}
+              onReorderPets={handleReorderPets}
+              petLimit={petLimit}
+              showEmptySlots={true}
+            />
+
+            {/* Show PetPassportCard only on Profile tab */}
+            {activeTab === "profile" && (
+              <PetPassportCard petData={petData} onUpdate={handlePetUpdate} />
+            )}
+
+            <div className="mb-4 sm:mb-6">
+              <NavigationTabs activeTab={activeTab} onTabChange={handleTabChange} />
+            </div>
+
+            <SwipeContainer
+              enabled={swipeEnabled}
+              isOverlayOpen={isOverlayOpen}
+              isPtrActive={false}
+              onPrev={() => handleTabChange(prev)}
+              onNext={() => handleTabChange(next)}
+              debug={false}
+            >
+              <div className="space-y-4 sm:space-y-6">
+                {renderTabContent()}
+              </div>
+            </SwipeContainer>
+          </>
+        )}
+      </main>
+    </div>
+  );
+
   return (
     <IOSOptimizedIndex activeTab={activeTab}>
       <PWALayout>
         <IOSMonitor />
-        <PullToRefresh onRefresh={handleRefresh}>
-          <div className="min-h-screen bg-white">
-            <PetHeader 
-              activeTab={activeTab} 
-              onTabChange={handleTabChange} 
-              selectedPetId={selectedPet?.id || petData.id}
-              selectedPetName={selectedPet?.name || petData.name}
-              selectedPet={selectedPet || petData}
-              onPrivacyToggle={handlePrivacyToggle}
-            />
-
-          <InAppSharingModal
-            isOpen={isInAppSharingOpen}
-            onClose={() => setIsInAppSharingOpen(false)}
-            petId={selectedPet?.id || petData.id || ""}
-            petName={petData.name}
-          />
-
-        <main className="max-w-6xl mx-auto px-3 sm:px-4 py-4 sm:py-6 lg:py-8 pb-20 sm:pb-24">
-            
-            <AuthenticationPrompt isSignedIn={!!user} hasPets={pets.length > 0} />
-            
-            {user && pets.length > 0 && (
-              <>
-                <PetSelector 
-                  pets={pets}
-                  selectedPet={selectedPet}
-                  onSelectPet={handleSelectPet}
-                  onReorderPets={handleReorderPets}
-                  petLimit={petLimit}
-                  showEmptySlots={true}
-                />
-
-
-                {/* Show PetPassportCard only on Profile tab */}
-                {activeTab === "profile" && (
-                  <PetPassportCard petData={petData} onUpdate={handlePetUpdate} />
-                )}
-
-                <div className="mb-4 sm:mb-6">
-                  <NavigationTabs activeTab={activeTab} onTabChange={handleTabChange} />
-                </div>
-
-                <SwipeContainer
-                  enabled={swipeEnabled}
-                  isOverlayOpen={isOverlayOpen}
-                  isPtrActive={false}
-                  onPrev={() => handleTabChange(prev)}
-                  onNext={() => handleTabChange(next)}
-                  debug={false}
-                >
-                  <div className="space-y-4 sm:space-y-6">
-                    {renderTabContent()}
-                  </div>
-                </SwipeContainer>
-              </>
-            )}
-          </main>
-
-          {/* Floating Report Issue Button */}
-          </div>
-        </PullToRefresh>
+        {featureFlags.enablePullToRefresh ? (
+          <PullToRefresh onRefresh={handleRefresh}>
+            {content}
+          </PullToRefresh>
+        ) : (
+          content
+        )}
       </PWALayout>
     </IOSOptimizedIndex>
   );

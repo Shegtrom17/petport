@@ -77,7 +77,7 @@ export default function ReferralProgram() {
                   <Clock className="h-8 w-8 text-white" />
                 </div>
                 <h3 className="text-xl font-semibold mb-3 text-gray-900">3. Get Paid</h3>
-                <p className="text-gray-600">
+                <p className="text-[#5691af]">
                   Receive your commission via Stripe Connect 45 days after paid membership begins.
                 </p>
               </div>

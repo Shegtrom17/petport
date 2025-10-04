@@ -321,7 +321,7 @@ export default function Learn() {
                   <li>• Easy to lose or damage</li>
                   <li>• Hard to organize and find</li>
                   <li>• Can't share quickly with vets</li>
-                  <li>• Take up physical storage space</li>
+                  <li className="bg-neutral-100">• Take up physical storage space</li>
                   <li>• No backup if lost</li>
                   <li>• Difficult to read handwriting</li>
                 </ul>

@@ -134,10 +134,16 @@ export const PetEditForm = ({ petData, onSave, onCancel, togglePetPublicVisibili
       if (existingIndex >= 0) {
         // Update existing contact
         const updated = [...prev];
-        updated[existingIndex] = { ...updated[existingIndex], [field]: value };
+        updated[existingIndex] = { 
+          ...updated[existingIndex], 
+          [field]: value,
+          // Ensure both fields exist
+          contact_name: field === 'contact_name' ? value : (updated[existingIndex].contact_name || ''),
+          contact_phone: field === 'contact_phone' ? value : (updated[existingIndex].contact_phone || '')
+        };
         return updated;
       } else {
-        // Create new contact
+        // Create new contact with both fields initialized
         const newContact: Contact = {
           contact_name: field === 'contact_name' ? value : '',
           contact_phone: field === 'contact_phone' ? value : '',
@@ -156,22 +162,31 @@ export const PetEditForm = ({ petData, onSave, onCancel, togglePetPublicVisibili
         .delete()
         .eq('pet_id', petData.id);
 
-      // Insert updated contacts
-      const contactsToInsert = contacts.filter(contact => 
-        contact.contact_name.trim() || contact.contact_phone.trim()
-      ).map(contact => ({
-        pet_id: petData.id,
-        contact_name: sanitizeText(contact.contact_name.trim()),
-        contact_phone: sanitizeText(contact.contact_phone.trim()),
-        contact_type: contact.contact_type
-      }));
+      // Insert updated contacts - only insert if at least phone is provided
+      const contactsToInsert = contacts
+        .filter(contact => {
+          const hasPhone = contact.contact_phone && contact.contact_phone.trim();
+          const hasName = contact.contact_name && contact.contact_name.trim();
+          // Save if either phone or name exists
+          return hasPhone || hasName;
+        })
+        .map(contact => ({
+          pet_id: petData.id,
+          contact_name: sanitizeText((contact.contact_name || '').trim()),
+          contact_phone: sanitizeText((contact.contact_phone || '').trim()),
+          contact_type: contact.contact_type
+        }));
 
       if (contactsToInsert.length > 0) {
+        console.log('Saving contacts:', contactsToInsert); // Debug log
         const { error } = await supabase
           .from('pet_contacts')
           .insert(contactsToInsert);
         
-        if (error) throw error;
+        if (error) {
+          console.error('Contact insert error:', error);
+          throw error;
+        }
       }
       
       return true;

@@ -102,3 +102,6 @@ verify_jwt = true
 
 [functions.stripe-connect-status]
 verify_jwt = true
+
+[functions.approve-referrals]
+verify_jwt = false

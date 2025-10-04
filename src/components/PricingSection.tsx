@@ -12,9 +12,10 @@ import { featureFlags } from "@/config/featureFlags";
 
 interface PricingSectionProps {
   context?: "landing" | "profile";
+  referralCode?: string;
 }
 
-export const PricingSection: React.FC<PricingSectionProps> = ({ context = "landing" }) => {
+export const PricingSection: React.FC<PricingSectionProps> = ({ context = "landing", referralCode }) => {
   const { toast } = useToast();
   const navigate = useNavigate();
   const [selectedQuantity, setSelectedQuantity] = useState(1);
@@ -31,7 +32,10 @@ export const PricingSection: React.FC<PricingSectionProps> = ({ context = "landi
     try {
       setIsLoading(true);
       const { data, error } = await supabase.functions.invoke("create-checkout", {
-        body: { plan }
+        body: { 
+          plan,
+          referral_code: referralCode 
+        }
       });
 
       if (error) throw error;

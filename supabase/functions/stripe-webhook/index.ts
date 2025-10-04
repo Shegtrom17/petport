@@ -199,6 +199,48 @@ async function handleSubscriptionEvent(
     planInterval,
     email: customer.email 
   });
+  
+  // Link referral if code exists in metadata
+  const referralCode = subscription.metadata?.referral_code;
+  if (referralCode && status === 'active') {
+    logStep("Processing referral code", { referralCode });
+    
+    try {
+      const { data: referralData, error: referralError } = await supabaseClient
+        .from('referrals')
+        .select('id, referrer_user_id')
+        .eq('referral_code', referralCode)
+        .is('referred_user_id', null)
+        .single();
+      
+      if (!referralError && referralData) {
+        const trialEnd = subscription.trial_end 
+          ? new Date(subscription.trial_end * 1000).toISOString()
+          : new Date().toISOString();
+        
+        await supabaseClient
+          .from('referrals')
+          .update({
+            referred_user_id: user.id,
+            trial_completed_at: trialEnd,
+            referred_plan_interval: planInterval,
+            updated_at: new Date().toISOString()
+          })
+          .eq('id', referralData.id);
+        
+        logStep("Referral linked successfully", { 
+          referralId: referralData.id,
+          referredUserId: user.id,
+          planInterval,
+          trialEnd
+        });
+      } else {
+        logStep("Referral code not found or already used", { referralCode });
+      }
+    } catch (error) {
+      logStep("Error linking referral", { error: error.message, referralCode });
+    }
+  }
 }
 
 async function handlePaymentFailed(event: any, supabaseClient: any) {

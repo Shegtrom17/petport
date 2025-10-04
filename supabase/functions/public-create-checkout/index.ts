@@ -18,7 +18,7 @@ serve(async (req) => {
     if (!stripeSecret) throw new Error("Missing STRIPE_SECRET_KEY");
     const stripe = new Stripe(stripeSecret, { apiVersion: "2023-10-16" });
 
-    const { plan } = await req.json();
+    const { plan, referral_code } = await req.json();
     if (plan !== "monthly" && plan !== "yearly") {
       const errorBody = JSON.stringify({ error: "Invalid plan" });
       return new Response(errorBody, { 
@@ -52,11 +52,16 @@ serve(async (req) => {
       payment_method_collection: "always",
       subscription_data: {
         trial_period_days: 7,
+        metadata: referral_code ? { referral_code } : {},
       },
       success_url: `${origin}/post-checkout?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${origin}/subscribe`,
       allow_promotion_codes: true,
     });
+    
+    if (referral_code) {
+      console.log('[PUBLIC-CREATE-CHECKOUT] Referral code attached to session:', referral_code);
+    }
 
     const responseBody = JSON.stringify({ url: session.url });
     return new Response(responseBody, {

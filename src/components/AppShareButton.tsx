@@ -197,8 +197,8 @@ export const AppShareButton = ({ variant = "icon", className = "" }: AppShareBut
               <DrawerHeader>
                 <DrawerTitle>Share PetPort via Email</DrawerTitle>
               </DrawerHeader>
-              <div className="space-y-4 max-h-[60vh] overflow-y-auto" data-touch-safe="true">
-                <div data-touch-safe="true">
+              <div className="space-y-4 max-h-[60vh] overflow-y-auto">
+                <div>
                   <label htmlFor="email" className="text-sm font-medium">
                     Email address
                   </label>
@@ -208,11 +208,9 @@ export const AppShareButton = ({ variant = "icon", className = "" }: AppShareBut
                     placeholder="friend@example.com"
                     value={emailForm.to}
                     onChange={(e) => setEmailForm({ ...emailForm, to: e.target.value })}
-                    data-touch-safe="true"
-                    style={{ touchAction: 'none' }}
                   />
                 </div>
-                <div data-touch-safe="true">
+                <div>
                   <label htmlFor="message" className="text-sm font-medium">
                     Personal message (optional)
                   </label>
@@ -222,8 +220,6 @@ export const AppShareButton = ({ variant = "icon", className = "" }: AppShareBut
                     value={emailForm.message}
                     onChange={(e) => setEmailForm({ ...emailForm, message: e.target.value })}
                     rows={3}
-                    data-touch-safe="true"
-                    style={{ touchAction: 'none' }}
                   />
                 </div>
                 <div className="flex gap-2 justify-end">
@@ -251,8 +247,8 @@ export const AppShareButton = ({ variant = "icon", className = "" }: AppShareBut
               <DialogHeader>
                 <DialogTitle>Share PetPort via Email</DialogTitle>
               </DialogHeader>
-              <div className="space-y-4" data-touch-safe="true">
-                <div data-touch-safe="true">
+              <div className="space-y-4">
+                <div>
                   <label htmlFor="email" className="text-sm font-medium">
                     Email address
                   </label>
@@ -262,11 +258,9 @@ export const AppShareButton = ({ variant = "icon", className = "" }: AppShareBut
                     placeholder="friend@example.com"
                     value={emailForm.to}
                     onChange={(e) => setEmailForm({ ...emailForm, to: e.target.value })}
-                    data-touch-safe="true"
-                    style={{ touchAction: 'none' }}
                   />
                 </div>
-                <div data-touch-safe="true">
+                <div>
                   <label htmlFor="message" className="text-sm font-medium">
                     Personal message (optional)
                   </label>
@@ -276,8 +270,6 @@ export const AppShareButton = ({ variant = "icon", className = "" }: AppShareBut
                     value={emailForm.message}
                     onChange={(e) => setEmailForm({ ...emailForm, message: e.target.value })}
                     rows={3}
-                    data-touch-safe="true"
-                    style={{ touchAction: 'none' }}
                   />
                 </div>
                 <div className="flex gap-2 justify-end">

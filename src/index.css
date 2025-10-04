@@ -203,17 +203,9 @@
   padding-right: 1rem;
 }
 
-/* iOS-specific overscroll behavior */
-@supports (-webkit-overflow-scrolling: touch) {
-  body {
-    -webkit-overflow-scrolling: touch;
-    overscroll-behavior-y: none;
-  }
-  
-  .ios-scroll-container {
-    -webkit-overflow-scrolling: touch;
-    overscroll-behavior: contain;
-  }
+/* iOS-specific overscroll behavior - single definition */
+body {
+  overscroll-behavior-y: none;
 }
 
 /* Native-like scroll behavior */
@@ -230,13 +222,6 @@
 
 .hide-scrollbar::-webkit-scrollbar {
   display: none;
-}
-
-/* Add data attributes to carousels/maps that need their own gestures */
-[data-carousel],
-[data-map] {
-  touch-action: pan-y pan-x pinch-zoom;
-  overscroll-behavior: contain;
 }
 
 /* Native-like button press feedback */
@@ -289,13 +274,10 @@
   z-index: 1000;
 }
 
-/* Prevent nested carousels/maps from triggering page swipes */
+/* Carousels and maps control their own gestures */
 [data-carousel],
 [data-map] {
-  touch-action: pan-y pan-x pinch-zoom; /* they own gestures inside */
-}
-
-[data-carousel] * {
+  touch-action: pan-y pan-x pinch-zoom;
   overscroll-behavior: contain;
 }
 

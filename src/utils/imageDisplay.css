@@ -1,0 +1,24 @@
+/* Image display styles for photo gallery and profile photos */
+/* Prevents stretching while preserving aspect ratio */
+
+.photo-container img,
+.gallery-photo img,
+.profile-photo img {
+  object-fit: contain;
+  max-width: 100%;
+  height: auto;
+}
+
+/* For lightbox/full-screen views */
+.photo-lightbox img {
+  object-fit: contain;
+  width: 100%;
+  height: 100%;
+}
+
+/* Ensure wrappers don't force dimensions */
+.photo-wrapper {
+  width: auto;
+  height: auto;
+  max-width: 100%;
+}

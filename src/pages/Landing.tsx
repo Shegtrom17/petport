@@ -177,17 +177,22 @@ export default function Landing() {
                 <span className="w-2 h-2 bg-[#5691af] rounded-full"></span>
                 <span className="text-[#5691af] font-medium text-sm">7-Day Free Trial • No charges for 7 days • Cancel anytime</span>
               </div>
-              <div className="mt-8 flex justify-center md:justify-start">
+              <div className="mt-8 flex flex-col items-center md:items-start gap-2">
                 {user ? (
                   <Button onClick={() => navigate('/app')} size="lg" className="text-lg px-8 py-3 text-white">
                     Open App
                   </Button>
                 ) : (
-                  <a href="#pricing">
-                    <Button size="lg" className="text-lg px-8 py-3 text-white">
-                      Start Free Trial
-                    </Button>
-                  </a>
+                  <>
+                    <a href="#pricing">
+                      <Button size="lg" className="text-lg px-8 py-3 text-white">
+                        Start Free Trial
+                      </Button>
+                    </a>
+                    <p className="text-sm text-white/80">
+                      7-day free trial • Card required; billed after trial unless canceled
+                    </p>
+                  </>
                 )}
               </div>
             </div>

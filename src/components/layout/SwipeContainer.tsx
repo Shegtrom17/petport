@@ -48,7 +48,7 @@ export function SwipeContainer({
       data-swipe-container="true"
       style={{
         touchAction,
-        overscrollBehaviorY: "contain",  // mitigates iOS PTR bounce
+        // overscroll behavior managed by PTR hook; allow native when idle
         willChange: "transform",
         ...style,
       }}

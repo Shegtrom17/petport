@@ -43,13 +43,11 @@ export const usePullToRefresh = ({
       return;
     }
     
-    // Prevent iOS native rubber-band refresh
+    // Start tracking but don't block native scroll yet; wait for small pull
     if (window.scrollY === 0) {
-      e.preventDefault();
-      document.body.style.overscrollBehavior = 'none';
-      document.documentElement.style.overscrollBehavior = 'none';
+      // activate PTR control after small threshold in touchmove
     }
-    
+
     setStartY(e.touches[0].clientY);
   }, [disabled]);
 
@@ -70,10 +68,15 @@ export const usePullToRefresh = ({
     
     const currentY = e.touches[0].clientY;
     const distance = Math.max(0, currentY - startY);
-    
+
     if (distance > 0) {
-      e.preventDefault();
-      e.stopPropagation();
+      // Only take over once user has pulled a bit to avoid conflicts
+      if (distance > 12) {
+        document.body.style.overscrollBehavior = 'none';
+        document.documentElement.style.overscrollBehavior = 'none';
+        e.preventDefault();
+        e.stopPropagation();
+      }
       // iOS-optimized sensitivity
       setPullDistance(Math.min(distance * 0.7, threshold * 1.5));
     }

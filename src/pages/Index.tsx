@@ -451,7 +451,7 @@ const Index = () => {
     <IOSOptimizedIndex activeTab={activeTab}>
       <PWALayout>
         {featureFlags.enablePullToRefresh ? (
-          <PullToRefresh onRefresh={handleRefresh}>
+          <PullToRefresh onRefresh={handleRefresh} disabled={isOverlayOpen}>
             {content}
           </PullToRefresh>
         ) : (

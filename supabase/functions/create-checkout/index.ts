@@ -38,7 +38,7 @@ serve(async (req) => {
       throw new Error("Invalid plan. Use 'monthly' or 'yearly'.");
     }
 
-    const price = plan === "monthly" ? 199 : 1299;
+    const price = plan === "monthly" ? 199 : 1499;
     const interval = plan === "monthly" ? "month" : "year";
 
     const stripe = new Stripe(stripeKey, { apiVersion: "2023-10-16" });

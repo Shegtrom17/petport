@@ -1,7 +1,7 @@
 export const PRICING = {
   plans: [
     { id: "monthly", name: "Monthly", priceCents: 199, interval: "month", priceText: "$1.99/month", includes: "Includes 1 pet account" },
-    { id: "yearly", name: "Yearly", priceCents: 1299, interval: "year", priceText: "$12.99/year", includes: "Includes 1 pet account" },
+    { id: "yearly", name: "Yearly", priceCents: 1499, interval: "year", priceText: "$14.99/year", includes: "Includes 1 pet account" },
   ],
   addons: [
     { 

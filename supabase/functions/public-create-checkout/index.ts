@@ -31,7 +31,7 @@ serve(async (req) => {
       });
     }
 
-    const amount = plan === "monthly" ? 199 : 1299; // cents
+    const amount = plan === "monthly" ? 199 : 1499; // cents
     const interval = plan === "monthly" ? "month" : "year";
 
     const origin = req.headers.get("origin") || "https://petport.app";

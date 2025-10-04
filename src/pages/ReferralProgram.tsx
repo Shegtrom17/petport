@@ -224,7 +224,7 @@ export default function ReferralProgram() {
                   alt="PetPort Logo"
                   className="w-8 h-8"
                 />
-                <span className="text-sm text-gray-600">© 2024 PetPort. All rights reserved.</span>
+                <span className="text-sm text-gray-600">© PetPort. All rights reserved.</span>
               </div>
               <nav className="flex gap-6 text-sm text-gray-600">
                 <Link to="/privacy-policy" className="hover:text-[#5691af]">Privacy</Link>

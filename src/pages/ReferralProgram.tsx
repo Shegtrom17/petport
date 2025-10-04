@@ -3,27 +3,16 @@ import { DollarSign, Users, Clock, ArrowRight } from "lucide-react";
 import { AzureButton } from "@/components/ui/azure-button";
 import { MetaTags } from "@/components/MetaTags";
 import { PricingSection } from "@/components/PricingSection";
-
 export default function ReferralProgram() {
-  return (
-    <>
-      <MetaTags 
-        title="Referral Program - Earn $2 Per Friend | PetPort"
-        description="Join PetPort's referral program and earn $2 for every friend who subscribes to a yearly plan. Get paid via Stripe Connect. Start earning today!"
-        url={window.location.origin + "/referral-program"}
-        type="website"
-      />
+  return <>
+      <MetaTags title="Referral Program - Earn $2 Per Friend | PetPort" description="Join PetPort's referral program and earn $2 for every friend who subscribes to a yearly plan. Get paid via Stripe Connect. Start earning today!" url={window.location.origin + "/referral-program"} type="website" />
       
       <div className="min-h-screen bg-white">
         {/* Header */}
         <header className="border-b border-gray-100">
           <div className="container max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
             <Link to="/" className="flex items-center gap-2">
-              <img 
-                src="/lovable-uploads/213ccabc-3918-406d-b844-9c2730b7637d.png" 
-                alt="PetPort Logo"
-                className="w-10 h-10"
-              />
+              <img src="/lovable-uploads/213ccabc-3918-406d-b844-9c2730b7637d.png" alt="PetPort Logo" className="w-10 h-10" />
               <span className="text-xl font-bold text-[#5691af]">PetPort</span>
             </Link>
             <nav className="flex items-center gap-4">
@@ -40,7 +29,7 @@ export default function ReferralProgram() {
         {/* Hero Section */}
         <section className="py-20 px-4">
           <div className="container max-w-4xl mx-auto text-center">
-            <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6">
+            <h1 className="text-5xl md:text-6xl font-bold mb-6 text-[#5691af]">
               Earn $2 for Every Friend
             </h1>
             <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
@@ -59,7 +48,7 @@ export default function ReferralProgram() {
         {/* How It Works */}
         <section className="py-16 px-4 bg-gray-50">
           <div className="container max-w-6xl mx-auto">
-            <h2 className="text-3xl font-bold text-center mb-12 text-gray-900">
+            <h2 className="text-3xl font-bold text-center mb-12 text-[#5691af]">
               How It Works
             </h2>
             <div className="grid md:grid-cols-3 gap-8">
@@ -204,7 +193,7 @@ export default function ReferralProgram() {
         {/* CTA Section */}
         <section className="py-20 px-4">
           <div className="container max-w-4xl mx-auto text-center">
-            <h2 className="text-4xl font-bold mb-6 text-gray-900">
+            <h2 className="text-4xl font-bold mb-6 text-[#5691af]">
               Ready to Start Earning?
             </h2>
             <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
@@ -231,11 +220,7 @@ export default function ReferralProgram() {
           <div className="container max-w-6xl mx-auto">
             <div className="flex flex-col md:flex-row items-center justify-between gap-4">
               <div className="flex items-center gap-2">
-                <img 
-                  src="/lovable-uploads/213ccabc-3918-406d-b844-9c2730b7637d.png" 
-                  alt="PetPort Logo"
-                  className="w-8 h-8"
-                />
+                <img src="/lovable-uploads/213ccabc-3918-406d-b844-9c2730b7637d.png" alt="PetPort Logo" className="w-8 h-8" />
                 <span className="text-sm text-gray-600">© PetPort. All rights reserved.</span>
               </div>
               <nav className="flex gap-6 text-sm text-gray-600">
@@ -247,6 +232,5 @@ export default function ReferralProgram() {
           </div>
         </footer>
       </div>
-    </>
-  );
+    </>;
 }

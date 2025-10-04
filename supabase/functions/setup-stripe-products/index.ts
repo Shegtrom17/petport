@@ -80,7 +80,7 @@ const handler = async (req: Request): Promise<Response> => {
 
     console.log(`Monthly Plan created: ${monthlyProduct.id}, Price: ${monthlyPrice.id}`);
 
-    // 2. Create Yearly Plan Product ($12.99/year, includes 1 pet)
+    // 2. Create Yearly Plan Product ($14.99/year, includes 1 pet)
     console.log('Creating PetPort Yearly Plan product...');
     const yearlyProduct = await stripe.products.create({
       name: 'PetPort Yearly Plan',
@@ -93,7 +93,7 @@ const handler = async (req: Request): Promise<Response> => {
 
     const yearlyPrice = await stripe.prices.create({
       product: yearlyProduct.id,
-      unit_amount: 1299, // $12.99
+      unit_amount: 1499, // $14.99
       currency: 'usd',
       recurring: {
         interval: 'year'
@@ -169,7 +169,7 @@ const handler = async (req: Request): Promise<Response> => {
         yearly: {
           productId: yearlyProduct.id,
           priceId: yearlyPrice.id,
-          amount: 1299,
+          amount: 1499,
           interval: 'year'
         },
         additionalPets: {

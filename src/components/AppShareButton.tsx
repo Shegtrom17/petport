@@ -140,13 +140,15 @@ export const AppShareButton = ({ variant = "icon", className = "" }: AppShareBut
         </Button>
 
         {isExpanded && (
-          <Card className="absolute top-10 right-0 z-50 p-2 min-w-[180px] shadow-lg border-border/50">
+          <Card className="absolute top-10 right-0 z-50 p-2 min-w-[180px] shadow-lg border-border/50" data-touch-safe="true">
             <div className="space-y-1">
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={handleNativeShare}
+                onTouchEnd={(e) => e.stopPropagation()}
                 className="w-full justify-start gap-2"
+                style={{ touchAction: 'none' }}
               >
                 <Share2 className="w-4 h-4" />
                 Share App
@@ -155,7 +157,9 @@ export const AppShareButton = ({ variant = "icon", className = "" }: AppShareBut
                 variant="ghost"
                 size="sm"
                 onClick={handleCopyLink}
+                onTouchEnd={(e) => e.stopPropagation()}
                 className="w-full justify-start gap-2"
+                style={{ touchAction: 'none' }}
               >
                 <Copy className="w-4 h-4" />
                 Copy Link
@@ -164,7 +168,9 @@ export const AppShareButton = ({ variant = "icon", className = "" }: AppShareBut
                 variant="ghost"
                 size="sm"
                 onClick={handleSMSShare}
+                onTouchEnd={(e) => e.stopPropagation()}
                 className="w-full justify-start gap-2"
+                style={{ touchAction: 'none' }}
               >
                 <MessageSquare className="w-4 h-4" />
                 Text Message
@@ -173,7 +179,9 @@ export const AppShareButton = ({ variant = "icon", className = "" }: AppShareBut
                 variant="ghost"
                 size="sm"
                 onClick={handleEmailShare}
+                onTouchEnd={(e) => e.stopPropagation()}
                 className="w-full justify-start gap-2"
+                style={{ touchAction: 'none' }}
               >
                 <Mail className="w-4 h-4" />
                 Email
@@ -289,7 +297,7 @@ export const AppShareButton = ({ variant = "icon", className = "" }: AppShareBut
   }
 
   return (
-    <Card className={`p-4 ${className}`}>
+    <Card className={`p-4 ${className}`} data-touch-safe="true">
       <div className="space-y-3">
         <h3 className="font-semibold text-sm">Share PetPort</h3>
         <p className="text-xs text-muted-foreground">
@@ -298,8 +306,10 @@ export const AppShareButton = ({ variant = "icon", className = "" }: AppShareBut
         <div className="flex gap-2">
           <Button
             onClick={handleNativeShare}
+            onTouchEnd={(e) => e.stopPropagation()}
             className="flex-1 gap-2 bg-brand-primary text-white hover:bg-brand-primary-dark hover:text-white"
             size="sm"
+            style={{ touchAction: 'none' }}
           >
             <Share2 className="w-4 h-4" />
             Share
@@ -307,8 +317,10 @@ export const AppShareButton = ({ variant = "icon", className = "" }: AppShareBut
           <Button
             variant="outline"
             onClick={handleCopyLink}
+            onTouchEnd={(e) => e.stopPropagation()}
             size="sm"
             className="gap-2 border-brand-primary text-brand-primary hover:bg-brand-primary hover:text-white"
+            style={{ touchAction: 'none' }}
           >
             <Copy className="w-4 h-4" />
             Copy

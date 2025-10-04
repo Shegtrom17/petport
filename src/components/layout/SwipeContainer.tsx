@@ -33,12 +33,21 @@ export function SwipeContainer({
     debug,
   });
 
+  // Detect iOS for optimized touch handling
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+  
+  // Disable pinch-zoom on iOS when overlays are open to prevent conflicts
+  const touchAction = isIOS && (isOverlayOpen || isPtrActive) 
+    ? "pan-y" 
+    : "pan-y pinch-zoom";
+
   return (
     <div
       {...(swipeHandlers ?? {})}
       className={className ?? "h-full w-full"}
+      data-swipe-container="true"
       style={{
-        touchAction: "pan-y pinch-zoom", // vertical scroll + pinch zoom win
+        touchAction,
         overscrollBehaviorY: "contain",  // mitigates iOS PTR bounce
         willChange: "transform",
         ...style,

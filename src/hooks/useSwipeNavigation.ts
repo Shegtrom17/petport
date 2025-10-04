@@ -31,8 +31,30 @@ export function useSwipeNavigation({
       preventScrollOnSwipe: false, // vertical scroll should win
       onSwiping: (e: any) => {
         if (!enabled || isOverlayOpen || isPtrActive) return;
+        
         // Ignore multi-touch (pinch gestures)
         if (e.event?.touches && e.event.touches.length > 1) return;
+        
+        // Check if touch originated from interactive/touch-safe element
+        const target = e.event?.target as HTMLElement;
+        if (target) {
+          // Check for touch-safe attribute on element or parents
+          let el: HTMLElement | null = target;
+          while (el) {
+            if (el.hasAttribute?.('data-touch-safe')) {
+              if (debug) console.log("[swipe] ignoring - touch-safe element");
+              return;
+            }
+            // Check for interactive elements
+            const tagName = el.tagName?.toLowerCase();
+            if (tagName === 'button' || tagName === 'a' || tagName === 'input' || tagName === 'textarea') {
+              if (debug) console.log("[swipe] ignoring - interactive element:", tagName);
+              return;
+            }
+            el = el.parentElement;
+          }
+        }
+        
         if (debug) console.log("[swipe] swiping", { dir: e.dir, dx: e.deltaX, dy: e.deltaY });
         const angle = Math.abs((Math.atan2(e.deltaY, e.deltaX) * 180) / Math.PI);
         if (angle > maxAngle) return; // mostly vertical → ignore

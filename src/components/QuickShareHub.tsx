@@ -384,11 +384,12 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
                 )}
               </div>
               
-              <div className="space-y-2">
+              <div className="space-y-2" data-touch-safe="true">
                 {showOptionsFor !== page.id ? (
                   /* Show Options Button */
                   <Button
                     onClick={() => page.available ? setShowOptionsFor(page.id) : null}
+                    onTouchEnd={(e) => e.stopPropagation()}
                     size="sm"
                     disabled={!page.available}
                     className={`w-full text-xs ${
@@ -398,6 +399,7 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
                           : 'bg-gray-400 text-gray-600 cursor-not-allowed'
                         : 'bg-primary hover:bg-primary/90 text-white'
                     }`}
+                    style={{ touchAction: 'none' }}
                   >
                     <Share2 className="w-3 h-3 mr-1 text-white" />
                     {page.available ? 'Share' : 'Unavailable'}
@@ -407,6 +409,7 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
                     {/* Quick Share Button */}
                     <Button
                       onClick={() => page.available ? handleNativeShare(page) : null}
+                      onTouchEnd={(e) => e.stopPropagation()}
                       size="sm"
                       disabled={!page.available || sharingId === page.id}
                       className={`w-full text-xs ${
@@ -416,6 +419,7 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
                             : 'bg-gray-400 text-gray-600 cursor-not-allowed'
                           : 'bg-primary hover:bg-primary/90 text-white'
                       }`}
+                      style={{ touchAction: 'none' }}
                     >
                       {sharingId === page.id ? (
                         <>
@@ -431,12 +435,14 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
                     </Button>
                     
                     {/* Secondary Options */}
-                    <div className="grid grid-cols-3 gap-1">
+                    <div className="grid grid-cols-3 gap-1" data-touch-safe="true">
                       <Button
                         onClick={() => page.available ? handleCopyLink(page) : null}
+                        onTouchEnd={(e) => e.stopPropagation()}
                         variant="outline"
                         size="sm"
                         disabled={!page.available || copyingId === page.id}
+                        style={{ touchAction: 'none' }}
                         className={`text-sm flex flex-col items-center py-3 px-2 h-16 min-h-16 ${
                           page.variant === 'missing' 
                             ? page.available
@@ -457,9 +463,11 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
                       
                       <Button
                         onClick={() => page.available ? handleSMSShare(page) : null}
+                        onTouchEnd={(e) => e.stopPropagation()}
                         variant="outline"
                         size="sm"
                         disabled={!page.available}
+                        style={{ touchAction: 'none' }}
                         className={`text-sm flex flex-col items-center py-3 px-2 h-16 min-h-16 ${
                           page.variant === 'missing' 
                             ? page.available
@@ -474,9 +482,11 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
                       
                       <Button
                         onClick={() => page.available ? handleEmailShare(page) : null}
+                        onTouchEnd={(e) => e.stopPropagation()}
                         variant="outline"
                         size="sm"
                         disabled={!page.available}
+                        style={{ touchAction: 'none' }}
                         className={`text-sm flex flex-col items-center py-3 px-2 h-16 min-h-16 ${
                           page.variant === 'missing' 
                             ? page.available
@@ -490,12 +500,14 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
                       </Button>
                     </div>
                     
-                    <div className="grid grid-cols-3 gap-1">
+                    <div className="grid grid-cols-3 gap-1" data-touch-safe="true">
                       <Button
                         onClick={() => page.available ? handleFacebookShare(page) : null}
+                        onTouchEnd={(e) => e.stopPropagation()}
                         variant="outline"
                         size="sm"
                         disabled={!page.available}
+                        style={{ touchAction: 'none' }}
                         className={`text-sm flex flex-col items-center py-3 px-2 h-16 min-h-16 ${
                           page.variant === 'missing' 
                             ? page.available
@@ -510,9 +522,11 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
                       
                       <Button
                         onClick={() => page.available ? handleMessengerShare(page) : null}
+                        onTouchEnd={(e) => e.stopPropagation()}
                         variant="outline"
                         size="sm"
                         disabled={!page.available}
+                        style={{ touchAction: 'none' }}
                         className={`text-sm flex flex-col items-center py-3 px-2 h-16 min-h-16 ${
                           page.variant === 'missing' 
                             ? page.available
@@ -536,9 +550,11 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
                             });
                           }
                         }}
+                        onTouchEnd={(e) => e.stopPropagation()}
                         variant="outline"
                         size="sm"
                         disabled={!page.available}
+                        style={{ touchAction: 'none' }}
                         className={`text-sm flex flex-col items-center py-3 px-2 h-16 min-h-16 bg-gradient-to-r from-purple-500 via-pink-500 to-orange-400 hover:from-purple-600 hover:via-pink-600 hover:to-orange-500 text-white border-transparent`}
                       >
                         <svg className="w-4 h-4 mb-1" viewBox="0 0 24 24" fill="currentColor">

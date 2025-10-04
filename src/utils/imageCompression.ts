@@ -146,39 +146,60 @@ export async function compressImage(
       try {
         // Get EXIF orientation
         const orientation = await getImageOrientation(file);
+        console.log('[Image Compression] EXIF orientation:', orientation, 'Original dimensions:', img.width, 'x', img.height);
         
-        // Calculate new dimensions while maintaining aspect ratio
+        // Get original dimensions
         let { width, height } = img;
-        const aspectRatio = width / height;
-
-        // For orientations 5-8, width and height are swapped
-        let displayWidth = width;
-        let displayHeight = height;
-        if (orientation >= 5 && orientation <= 8) {
-          displayWidth = height;
-          displayHeight = width;
+        
+        // For orientations 5-8, the image needs to be rotated 90/270 degrees
+        // This means width and height are swapped in the final display
+        const needsDimensionSwap = orientation >= 5 && orientation <= 8;
+        
+        // Calculate the aspect ratio based on the ORIGINAL image dimensions
+        const originalAspectRatio = width / height;
+        
+        // Determine final display dimensions (after rotation is applied)
+        let finalWidth = needsDimensionSwap ? height : width;
+        let finalHeight = needsDimensionSwap ? width : height;
+        
+        // Calculate the aspect ratio of the FINAL rotated image
+        const finalAspectRatio = finalWidth / finalHeight;
+        
+        // Apply max constraints to the FINAL dimensions
+        if (finalWidth > maxWidth) {
+          finalWidth = maxWidth;
+          finalHeight = finalWidth / finalAspectRatio;
         }
-
-        // Apply max constraints to display dimensions
-        if (displayWidth > maxWidth) {
-          displayWidth = maxWidth;
-          displayHeight = displayWidth / (displayWidth === width ? aspectRatio : 1/aspectRatio);
+        
+        if (finalHeight > maxHeight) {
+          finalHeight = maxHeight;
+          finalWidth = finalHeight * finalAspectRatio;
         }
-
-        if (displayHeight > maxHeight) {
-          displayHeight = maxHeight;
-          displayWidth = displayHeight * (displayHeight === height ? aspectRatio : 1/aspectRatio);
+        
+        // Round to avoid sub-pixel rendering issues
+        finalWidth = Math.round(finalWidth);
+        finalHeight = Math.round(finalHeight);
+        
+        console.log('[Image Compression] Final dimensions:', finalWidth, 'x', finalHeight, 'Swap needed:', needsDimensionSwap);
+        
+        // Set canvas to the FINAL dimensions (what the user will see)
+        canvas.width = finalWidth;
+        canvas.height = finalHeight;
+        
+        // Apply the orientation transformation
+        // The transformation will handle the rotation/flipping
+        applyOrientation(ctx, orientation, finalWidth, finalHeight);
+        
+        // Draw the image at the source size
+        // For rotated images (5-8), we draw using swapped dimensions
+        // because the transformation has already rotated the coordinate space
+        if (needsDimensionSwap) {
+          // Coordinate space is rotated, so draw with swapped dimensions
+          ctx.drawImage(img, 0, 0, finalHeight, finalWidth);
+        } else {
+          // No rotation, draw normally
+          ctx.drawImage(img, 0, 0, finalWidth, finalHeight);
         }
-
-        // Set canvas size to final display dimensions
-        canvas.width = displayWidth;
-        canvas.height = displayHeight;
-
-        // Apply orientation transformation
-        applyOrientation(ctx, orientation, displayWidth, displayHeight);
-
-        // Draw image with correct orientation
-        ctx.drawImage(img, 0, 0, displayWidth, displayHeight);
 
         // Convert to blob with compression
         canvas.toBlob(

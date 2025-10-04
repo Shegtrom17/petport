@@ -152,10 +152,10 @@ export default function ReferralProgram() {
               
               <div>
                 <h3 className="font-semibold text-lg mb-2 text-gray-900">
-                  Do monthly subscriptions earn commissions?
+                  If I refer someone and they sign up for a monthly plan, will I earn a commission?
                 </h3>
                 <p className="text-gray-600">
-                  No, only yearly subscriptions are eligible for referral commissions. If your referral signs up for a monthly plan, you won't earn a commission.
+                  No, only referrals who subscribe to a yearly plan earn you a commission. If your friend chooses the monthly plan, you won't receive a payout.
                 </p>
               </div>
               

@@ -163,8 +163,11 @@ export default function ReferralProgram() {
                 <h3 className="font-semibold text-lg mb-2 text-gray-900">
                   Is there a limit to how many people I can refer?
                 </h3>
-                <p className="text-gray-600">
+                <p className="text-gray-600 mb-2">
                   No! You can refer as many people as you want. There's no cap on your earnings.
+                </p>
+                <p className="text-sm text-gray-600 bg-blue-50 rounded-lg p-3 mt-2">
+                  <strong>Tax Note:</strong> If you earn $600 or more in a calendar year, Stripe will automatically issue you a 1099-K form for tax reporting purposes. This is a standard IRS requirement for payment processors.
                 </p>
               </div>
               

@@ -75,7 +75,7 @@ export const ReferralCard = ({
             </AzureButton>
           </div>
           <p className="text-xs text-muted-foreground">
-            Earn $2.00 for every friend who subscribes to PetPort
+            Earn $2.00 for every friend who subscribes to a yearly plan
           </p>
         </div>
 

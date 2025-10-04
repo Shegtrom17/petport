@@ -36,7 +36,7 @@ export const ConnectStripeButton = ({
         </div>
         <div className="text-sm text-blue-700 dark:text-blue-300">
           Connect your Stripe account to receive referral payouts. Payouts are
-          issued 45 days after your friend starts their subscription.
+          issued 45 days after your friend starts their yearly subscription.
         </div>
       </div>
 

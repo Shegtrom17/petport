@@ -272,7 +272,7 @@ export default function Referrals() {
           <div>
             <h1 className="text-3xl font-bold">Referral Program</h1>
             <p className="text-muted-foreground mt-1">
-              Earn $2 for every friend who subscribes
+              Earn $2 for every friend who subscribes to a yearly plan
             </p>
           </div>
         </div>
@@ -365,7 +365,7 @@ export default function Referrals() {
               <li className="flex gap-2">
                 <span className="text-[#5691af] font-bold">2.</span>
                 <span>
-                  When they subscribe to PetPort, you earn $2.00
+                  When they subscribe to a yearly plan, you earn $2.00
                 </span>
               </li>
               <li className="flex gap-2">

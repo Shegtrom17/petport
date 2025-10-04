@@ -96,3 +96,9 @@ verify_jwt = true
 
 [functions.transcribe-audio]
 verify_jwt = true
+
+[functions.stripe-connect-onboard]
+verify_jwt = true
+
+[functions.stripe-connect-status]
+verify_jwt = true

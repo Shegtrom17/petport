@@ -48,7 +48,59 @@ export default function Referrals() {
   useEffect(() => {
     if (!user) return;
     loadReferralData();
+    checkStripeStatus();
   }, [user]);
+
+  // Check for Stripe Connect redirect
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const stripeParam = urlParams.get("stripe");
+
+    if (stripeParam === "success") {
+      toast({
+        title: "Stripe Connected!",
+        description: "Your Stripe account has been successfully linked.",
+      });
+      // Clean up URL
+      window.history.replaceState({}, "", "/referrals");
+      // Refresh status
+      checkStripeStatus();
+    } else if (stripeParam === "refresh") {
+      toast({
+        title: "Onboarding Incomplete",
+        description: "Please complete the Stripe onboarding process.",
+        variant: "destructive",
+      });
+      window.history.replaceState({}, "", "/referrals");
+    }
+  }, []);
+
+  const checkStripeStatus = async () => {
+    if (!user) return;
+
+    try {
+      const { data, error } = await supabase.functions.invoke(
+        "stripe-connect-status"
+      );
+
+      if (error) throw error;
+
+      if (data?.status === "completed") {
+        // Update local state
+        setPayoutInfo((prev) =>
+          prev
+            ? { ...prev, onboarding_status: "completed" }
+            : {
+                stripe_connect_id: null,
+                onboarding_status: "completed",
+                yearly_earnings: 0,
+              }
+        );
+      }
+    } catch (error) {
+      console.error("Failed to check Stripe status:", error);
+    }
+  };
 
   const loadReferralData = async () => {
     if (!user) return;
@@ -61,8 +113,8 @@ export default function Referrals() {
         .from("referrals")
         .select("referral_code")
         .eq("referrer_user_id", user.id)
-        .eq("referred_user_id", null)
-        .single();
+        .is("referred_user_id", null)
+        .maybeSingle();
 
       if (referralError) {
         console.error("Error loading referral code:", referralError);
@@ -89,7 +141,7 @@ export default function Referrals() {
         .from("user_payouts")
         .select("*")
         .eq("user_id", user.id)
-        .single();
+        .maybeSingle();
 
       if (payoutError) {
         console.error("Error loading payout info:", payoutError);
@@ -109,12 +161,39 @@ export default function Referrals() {
   };
 
   const handleConnectStripe = async () => {
+    if (!user) return;
+
     setConnectingStripe(true);
-    toast({
-      title: "Coming Soon",
-      description: "Stripe Connect onboarding will be available in Phase 3.",
-    });
-    setConnectingStripe(false);
+    try {
+      const { data, error } = await supabase.functions.invoke(
+        "stripe-connect-onboard",
+        {
+          body: { userId: user.id },
+        }
+      );
+
+      if (error) throw error;
+
+      if (data?.url) {
+        // Redirect to Stripe Connect onboarding
+        window.location.href = data.url;
+      } else {
+        toast({
+          title: "Error",
+          description: "Failed to generate onboarding link.",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.error("Stripe Connect error:", error);
+      toast({
+        title: "Error",
+        description: "Failed to start Stripe Connect onboarding.",
+        variant: "destructive",
+      });
+    } finally {
+      setConnectingStripe(false);
+    }
   };
 
   const getStatusBadge = (status: string) => {

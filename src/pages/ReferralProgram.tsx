@@ -143,10 +143,19 @@ export default function ReferralProgram() {
             <div className="space-y-6">
               <div>
                 <h3 className="font-semibold text-lg mb-2 text-gray-900">
+                  Can I participate if I'm on a monthly plan?
+                </h3>
+                <p className="text-gray-600">
+                  Yes! Both monthly and yearly subscribers can share their referral link and earn commissions. You earn $2.00 for every friend who subscribes to a yearly plan, regardless of your own subscription type.
+                </p>
+              </div>
+              
+              <div>
+                <h3 className="font-semibold text-lg mb-2 text-gray-900">
                   Do monthly subscriptions earn commissions?
                 </h3>
                 <p className="text-gray-600">
-                  No, only yearly subscriptions are eligible for referral commissions.
+                  No, only yearly subscriptions are eligible for referral commissions. If your referral signs up for a monthly plan, you won't earn a commission.
                 </p>
               </div>
               
@@ -199,7 +208,7 @@ export default function ReferralProgram() {
               Ready to Start Earning?
             </h2>
             <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
-              Create your free account and get your unique referral link in seconds.
+              Join PetPort and get your unique referral link in seconds.
             </p>
             <a href="#pricing">
               <AzureButton size="lg" className="text-lg px-8 py-6">

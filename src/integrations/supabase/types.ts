@@ -810,6 +810,51 @@ export type Database = {
         }
         Relationships: []
       }
+      referrals: {
+        Row: {
+          approved_at: string | null
+          commission_amount: number
+          commission_status: string
+          created_at: string
+          id: string
+          paid_at: string | null
+          referral_code: string
+          referral_type: string | null
+          referred_user_id: string | null
+          referrer_user_id: string
+          trial_completed_at: string | null
+          updated_at: string
+        }
+        Insert: {
+          approved_at?: string | null
+          commission_amount?: number
+          commission_status?: string
+          created_at?: string
+          id?: string
+          paid_at?: string | null
+          referral_code: string
+          referral_type?: string | null
+          referred_user_id?: string | null
+          referrer_user_id: string
+          trial_completed_at?: string | null
+          updated_at?: string
+        }
+        Update: {
+          approved_at?: string | null
+          commission_amount?: number
+          commission_status?: string
+          created_at?: string
+          id?: string
+          paid_at?: string | null
+          referral_code?: string
+          referral_type?: string | null
+          referred_user_id?: string | null
+          referrer_user_id?: string
+          trial_completed_at?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       reviews: {
         Row: {
           created_at: string
@@ -1082,6 +1127,39 @@ export type Database = {
           },
         ]
       }
+      user_payouts: {
+        Row: {
+          created_at: string
+          id: string
+          last_earnings_reset: string | null
+          onboarding_status: string
+          stripe_connect_id: string | null
+          updated_at: string
+          user_id: string
+          yearly_earnings: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          last_earnings_reset?: string | null
+          onboarding_status?: string
+          stripe_connect_id?: string | null
+          updated_at?: string
+          user_id: string
+          yearly_earnings?: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          last_earnings_reset?: string | null
+          onboarding_status?: string
+          stripe_connect_id?: string | null
+          updated_at?: string
+          user_id?: string
+          yearly_earnings?: number
+        }
+        Relationships: []
+      }
       webhook_events: {
         Row: {
           created_at: string
@@ -1115,7 +1193,15 @@ export type Database = {
         Args: { user_uuid: string }
         Returns: boolean
       }
+      create_user_referral: {
+        Args: { _user_id: string }
+        Returns: string
+      }
       generate_petport_id: {
+        Args: Record<PropertyKey, never>
+        Returns: string
+      }
+      generate_referral_code: {
         Args: Record<PropertyKey, never>
         Returns: string
       }

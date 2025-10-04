@@ -1,6 +1,4 @@
 // Image compression utility for mobile photo uploads
-import * as EXIF from 'exif-js';
-
 export interface CompressedImageResult {
   file: File;
   originalSize: number;
@@ -16,117 +14,110 @@ export interface CompressionOptions {
 }
 
 /**
- * Fixes image orientation by reading EXIF data and rotating the image
- * This "bakes" the orientation into the image pixels, removing the EXIF tag
+ * Gets the EXIF orientation of an image file
  * @param file The image file
- * @returns Promise with orientation-corrected file
+ * @returns Promise with orientation value (1-8)
  */
-function fixOrientation(file: File): Promise<File> {
+function getImageOrientation(file: File): Promise<number> {
   return new Promise((resolve) => {
-    const img = new Image();
     const reader = new FileReader();
-    
     reader.onload = (e) => {
-      img.onload = () => {
-        // @ts-ignore - EXIF library types
-        EXIF.getData(img, function() {
-          // @ts-ignore
-          const orientation = EXIF.getTag(this, "Orientation") || 1;
-          console.log('[fixOrientation] Detected orientation:', orientation);
+      const view = new DataView(e.target?.result as ArrayBuffer);
+      if (view.getUint16(0, false) !== 0xFFD8) {
+        resolve(1); // Not a JPEG, default orientation
+        return;
+      }
+      
+      const length = view.byteLength;
+      let offset = 2;
+      
+      while (offset < length) {
+        const marker = view.getUint16(offset, false);
+        offset += 2;
+        
+        if (marker === 0xFFE1) { // EXIF marker
+          offset += 2;
           
-          const canvas = document.createElement("canvas");
-          const ctx = canvas.getContext("2d");
-          
-          if (!ctx) {
-            console.warn('[fixOrientation] No canvas context, returning original');
-            resolve(file);
+          if (view.getUint32(offset, false) !== 0x45786966) {
+            resolve(1); // Invalid EXIF
             return;
           }
           
-          const { width, height } = img;
+          const tiffOffset = offset + 6;
+          const littleEndian = view.getUint16(tiffOffset, false) === 0x4949;
+          const firstIFDOffset = view.getUint32(tiffOffset + 4, littleEndian);
+          const tagCount = view.getUint16(tiffOffset + firstIFDOffset, littleEndian);
           
-          // For orientations 5-8, dimensions are swapped
-          if (orientation >= 5 && orientation <= 8) {
-            canvas.width = height;
-            canvas.height = width;
-          } else {
-            canvas.width = width;
-            canvas.height = height;
-          }
-          
-          // Apply the transformation based on EXIF orientation
-          switch (orientation) {
-            case 2: // Flip horizontal
-              ctx.translate(width, 0);
-              ctx.scale(-1, 1);
-              break;
-            case 3: // Rotate 180°
-              ctx.translate(width, height);
-              ctx.rotate(Math.PI);
-              break;
-            case 4: // Flip vertical
-              ctx.translate(0, height);
-              ctx.scale(1, -1);
-              break;
-            case 5: // Rotate 90° CW and flip horizontal
-              ctx.rotate(0.5 * Math.PI);
-              ctx.scale(1, -1);
-              break;
-            case 6: // Rotate 90° CW
-              ctx.rotate(0.5 * Math.PI);
-              ctx.translate(0, -height);
-              break;
-            case 7: // Rotate 90° CCW and flip horizontal
-              ctx.rotate(-0.5 * Math.PI);
-              ctx.translate(-width, height);
-              ctx.scale(1, -1);
-              break;
-            case 8: // Rotate 90° CCW
-              ctx.rotate(-0.5 * Math.PI);
-              ctx.translate(-width, 0);
-              break;
-            default:
-              // Orientation 1 or undefined - no transformation
-              break;
-          }
-          
-          // Draw the corrected image
-          ctx.drawImage(img, 0, 0);
-          
-          // Convert to blob and create new file
-          canvas.toBlob((blob) => {
-            if (blob) {
-              const correctedFile = new File([blob], file.name, { type: file.type || 'image/jpeg' });
-              console.log('[fixOrientation] Orientation corrected, orientation value was:', orientation);
-              resolve(correctedFile);
-            } else {
-              console.warn('[fixOrientation] Blob creation failed, returning original');
-              resolve(file);
+          for (let i = 0; i < tagCount; i++) {
+            const tagOffset = tiffOffset + firstIFDOffset + 2 + i * 12;
+            const tag = view.getUint16(tagOffset, littleEndian);
+            
+            if (tag === 0x0112) { // Orientation tag
+              const orientation = view.getUint16(tagOffset + 8, littleEndian);
+              resolve(orientation);
+              return;
             }
-          }, file.type || 'image/jpeg');
-        });
-      };
+          }
+          break;
+        } else {
+          if (offset + 2 > length) break;
+          offset += view.getUint16(offset, false);
+        }
+      }
       
-      img.onerror = () => {
-        console.warn('[fixOrientation] Image load error, returning original');
-        resolve(file);
-      };
-      
-      img.src = e.target!.result as string;
+      resolve(1); // Default orientation
     };
-    
-    reader.onerror = () => {
-      console.warn('[fixOrientation] FileReader error, returning original');
-      resolve(file);
-    };
-    
-    reader.readAsDataURL(file);
+    reader.onerror = () => resolve(1);
+    reader.readAsArrayBuffer(file.slice(0, 64 * 1024));
   });
 }
 
 /**
+ * Applies orientation transformation to canvas context
+ * @param ctx Canvas 2D context
+ * @param orientation EXIF orientation value
+ * @param width Final canvas width
+ * @param height Final canvas height
+ */
+function applyOrientation(ctx: CanvasRenderingContext2D, orientation: number, width: number, height: number) {
+  switch (orientation) {
+    case 2: // Flip horizontal
+      ctx.translate(width, 0);
+      ctx.scale(-1, 1);
+      break;
+    case 3: // Rotate 180°
+      ctx.translate(width, height);
+      ctx.rotate(Math.PI);
+      break;
+    case 4: // Flip vertical
+      ctx.translate(0, height);
+      ctx.scale(1, -1);
+      break;
+    case 5: // Rotate 90° CW and flip horizontal
+      ctx.rotate(0.5 * Math.PI);
+      ctx.scale(1, -1);
+      break;
+    case 6: // Rotate 90° CW
+      ctx.rotate(0.5 * Math.PI);
+      ctx.translate(0, -height);
+      break;
+    case 7: // Rotate 90° CCW and flip horizontal
+      ctx.rotate(-0.5 * Math.PI);
+      ctx.translate(-width, height);
+      ctx.scale(1, -1);
+      break;
+    case 8: // Rotate 90° CCW
+      ctx.rotate(-0.5 * Math.PI);
+      ctx.translate(-width, 0);
+      break;
+    default:
+      // No transformation needed
+      break;
+  }
+}
+/**
  * Compresses an image file to reduce file size and dimensions
- * Now uses fixOrientation first to normalize the image before compression
+ * EXIF orientation is read and applied during compression to "bake" the correct orientation
  * @param file The original image file
  * @param options Compression options
  * @returns Promise with compressed image result
@@ -142,8 +133,9 @@ export async function compressImage(
     maxSizeKB = 500
   } = options;
 
-  // FIRST: Fix orientation to normalize the image
-  const orientationCorrectedFile = await fixOrientation(file);
+  // Read EXIF orientation first
+  const orientation = await getImageOrientation(file);
+  console.log('[compressImage] EXIF orientation detected:', orientation);
 
   return new Promise((resolve, reject) => {
     const canvas = document.createElement('canvas');
@@ -157,33 +149,43 @@ export async function compressImage(
 
     img.onload = () => {
       try {
-        // Image is already orientation-corrected, just resize
+        // Get original dimensions
         let { width, height } = img;
-        const aspectRatio = width / height;
+        
+        // For orientations 5-8, dimensions are swapped after rotation
+        const needsDimensionSwap = orientation >= 5 && orientation <= 8;
+        
+        // Calculate final dimensions after rotation
+        let finalWidth = needsDimensionSwap ? height : width;
+        let finalHeight = needsDimensionSwap ? width : height;
+        const aspectRatio = finalWidth / finalHeight;
 
         // Apply max constraints
-        if (width > maxWidth) {
-          width = maxWidth;
-          height = width / aspectRatio;
+        if (finalWidth > maxWidth) {
+          finalWidth = maxWidth;
+          finalHeight = finalWidth / aspectRatio;
         }
 
-        if (height > maxHeight) {
-          height = maxHeight;
-          width = height * aspectRatio;
+        if (finalHeight > maxHeight) {
+          finalHeight = maxHeight;
+          finalWidth = finalHeight * aspectRatio;
         }
 
         // Round to avoid sub-pixel issues
-        width = Math.round(width);
-        height = Math.round(height);
+        finalWidth = Math.round(finalWidth);
+        finalHeight = Math.round(finalHeight);
 
-        console.log('[compressImage] Resizing to:', width, 'x', height);
+        console.log('[compressImage] Final dimensions:', finalWidth, 'x', finalHeight, 'needsSwap:', needsDimensionSwap);
 
-        // Set canvas size
-        canvas.width = width;
-        canvas.height = height;
+        // Set canvas to final dimensions
+        canvas.width = finalWidth;
+        canvas.height = finalHeight;
 
-        // Draw the already-corrected image
-        ctx.drawImage(img, 0, 0, width, height);
+        // Apply orientation transformation
+        applyOrientation(ctx, orientation, finalWidth, finalHeight);
+
+        // Draw the image
+        ctx.drawImage(img, 0, 0, finalWidth, finalHeight);
 
         // Convert to blob with compression
         canvas.toBlob(
@@ -208,7 +210,7 @@ export async function compressImage(
                     return;
                   }
 
-                  const compressedFile = new File([secondBlob], orientationCorrectedFile.name, {
+                  const compressedFile = new File([secondBlob], file.name, {
                     type: 'image/jpeg',
                     lastModified: Date.now(),
                   });
@@ -224,7 +226,7 @@ export async function compressImage(
                 finalQuality
               );
             } else {
-              const compressedFile = new File([blob], orientationCorrectedFile.name, {
+              const compressedFile = new File([blob], file.name, {
                 type: 'image/jpeg',
                 lastModified: Date.now(),
               });
@@ -250,8 +252,8 @@ export async function compressImage(
       reject(new Error('Failed to load image'));
     };
 
-    // Create object URL for the orientation-corrected image
-    img.src = URL.createObjectURL(orientationCorrectedFile);
+    // Create object URL for the image
+    img.src = URL.createObjectURL(file);
   });
 }
 

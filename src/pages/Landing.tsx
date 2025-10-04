@@ -183,9 +183,11 @@ export default function Landing() {
                     Open App
                   </Button>
                 ) : (
-                  <Button onClick={() => navigate('/auth?plan=monthly')} size="lg" className="text-lg px-8 py-3 text-white">
-                    Start Free Trial
-                  </Button>
+                  <a href="#pricing">
+                    <Button size="lg" className="text-lg px-8 py-3 text-white">
+                      Start Free Trial
+                    </Button>
+                  </a>
                 )}
               </div>
             </div>
@@ -605,7 +607,7 @@ export default function Landing() {
         )}
 
         {/* Pricing Section */}
-        <section className="bg-gradient-to-br from-blue-50 to-indigo-50 py-20">
+        <section id="pricing" className="bg-gradient-to-br from-blue-50 to-indigo-50 py-20">
           {/* Free Trial Banner */}
           <div className="max-w-4xl mx-auto px-4 mb-12">
             <div className="bg-gradient-to-r from-[#5691af] to-[#4a7c9d] rounded-2xl text-white text-center py-6 px-8 shadow-lg">

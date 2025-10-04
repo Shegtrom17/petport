@@ -485,7 +485,11 @@ export const PetProfileContent = ({
                   
                   {enhancedPetData?.photoUrl && (
                     <Button
-                      onClick={() => handlePhotoDelete('profile')}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        e.preventDefault();
+                        handlePhotoDelete('profile');
+                      }}
                       variant="outline"
                       size="sm"
                       className="text-red-600 border-red-300 hover:border-red-500 hover:text-red-700 hover:scale-105 transition-all touch-manipulation"
@@ -539,7 +543,11 @@ export const PetProfileContent = ({
                   
                   {enhancedPetData?.fullBodyPhotoUrl && (
                     <Button
-                      onClick={() => handlePhotoDelete('fullBody')}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        e.preventDefault();
+                        handlePhotoDelete('fullBody');
+                      }}
                       variant="outline"
                       size="sm"
                       className="text-red-600 border-red-300 hover:border-red-500 hover:text-red-700 hover:scale-105 transition-all touch-manipulation"

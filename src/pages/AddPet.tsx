@@ -16,6 +16,7 @@ import { AppHeader } from "@/components/AppHeader";
 import { getSpeciesConfig, getSpeciesOptions } from "@/utils/speciesConfig";
 import { PRICING } from "@/config/pricing";
 import { InfoIcon } from "lucide-react";
+import { VoiceRecorder } from "@/components/VoiceRecorder";
 
 export default function AddPet() {
   const navigate = useNavigate();
@@ -393,27 +394,41 @@ export default function AddPet() {
                 {/* Bio */}
                 <div className="space-y-2">
                   <Label htmlFor="bio">Bio</Label>
-                  <Textarea
-                    id="bio"
-                    name="bio"
-                    value={petData.bio}
-                    onChange={handleChange}
-                    placeholder="Tell us about your pet"
-                    rows={4}
-                  />
+                  <div className="relative">
+                    <Textarea
+                      id="bio"
+                      name="bio"
+                      value={petData.bio}
+                      onChange={handleChange}
+                      placeholder="Tell us about your pet"
+                      rows={4}
+                      className="pr-12"
+                    />
+                    <VoiceRecorder
+                      onTranscript={(text) => setPetData(prev => ({ ...prev, bio: prev.bio + " " + text }))}
+                      disabled={isSubmitting}
+                    />
+                  </div>
                 </div>
 
                 {/* Notes */}
                 <div className="space-y-2">
                   <Label htmlFor="notes">Notes</Label>
-                  <Textarea
-                    id="notes"
-                    name="notes"
-                    value={petData.notes}
-                    onChange={handleChange}
-                    placeholder="Additional notes (e.g., special needs, behavior)"
-                    rows={3}
-                  />
+                  <div className="relative">
+                    <Textarea
+                      id="notes"
+                      name="notes"
+                      value={petData.notes}
+                      onChange={handleChange}
+                      placeholder="Additional notes (e.g., special needs, behavior)"
+                      rows={3}
+                      className="pr-12"
+                    />
+                    <VoiceRecorder
+                      onTranscript={(text) => setPetData(prev => ({ ...prev, notes: prev.notes + " " + text }))}
+                      disabled={isSubmitting}
+                    />
+                  </div>
                 </div>
 
                 <div className="pt-4 flex justify-end space-x-4">

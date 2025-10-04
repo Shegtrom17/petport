@@ -66,7 +66,7 @@ function getImageOrientation(file: File): Promise<number> {
       
       resolve(1); // Default orientation
     };
-    reader.readAsArrayBuffer(file.slice(0, 64 * 1024)); // Read first 64KB
+    reader.readAsArrayBuffer(file.slice(0, 512 * 1024)); // Read first 512KB (more robust for EXIF)
   });
 }
 
@@ -79,35 +79,34 @@ function getImageOrientation(file: File): Promise<number> {
  */
 function applyOrientation(ctx: CanvasRenderingContext2D, orientation: number, width: number, height: number) {
   switch (orientation) {
-    case 2:
-      // Flip horizontal
-      ctx.transform(-1, 0, 0, 1, width, 0);
+    case 2: // Flip horizontal
+      ctx.translate(width, 0);
+      ctx.scale(-1, 1);
       break;
-    case 3:
-      // Rotate 180°
-      ctx.transform(-1, 0, 0, -1, width, height);
+    case 3: // Rotate 180°
+      ctx.translate(width, height);
+      ctx.rotate(Math.PI);
       break;
-    case 4:
-      // Flip vertical
-      ctx.transform(1, 0, 0, -1, 0, height);
+    case 4: // Flip vertical
+      ctx.translate(0, height);
+      ctx.scale(1, -1);
       break;
-    case 5:
-      // Rotate 90° and flip horizontal
-      ctx.transform(0, 1, 1, 0, 0, 0);
-      ctx.transform(-1, 0, 0, 1, height, 0);
+    case 5: // Transpose: vertical flip + 90° CW
+      ctx.rotate(0.5 * Math.PI);
+      ctx.scale(1, -1);
       break;
-    case 6:
-      // Rotate 90°
-      ctx.transform(0, 1, -1, 0, height, 0);
+    case 6: // Rotate 90° CW
+      ctx.rotate(0.5 * Math.PI);
+      ctx.translate(0, -height);
       break;
-    case 7:
-      // Rotate 270° and flip horizontal
-      ctx.transform(0, -1, -1, 0, height, width);
-      ctx.transform(-1, 0, 0, 1, height, 0);
+    case 7: // Transverse: horizontal flip + 90° CW
+      ctx.rotate(0.5 * Math.PI);
+      ctx.translate(width, -height);
+      ctx.scale(-1, 1);
       break;
-    case 8:
-      // Rotate 270°
-      ctx.transform(0, -1, 1, 0, 0, width);
+    case 8: // Rotate 90° CCW
+      ctx.rotate(-0.5 * Math.PI);
+      ctx.translate(-width, 0);
       break;
     default:
       // No transformation needed
@@ -190,16 +189,8 @@ export async function compressImage(
         // The transformation will handle the rotation/flipping
         applyOrientation(ctx, orientation, finalWidth, finalHeight);
         
-        // Draw the image at the source size
-        // For rotated images (5-8), we draw using swapped dimensions
-        // because the transformation has already rotated the coordinate space
-        if (needsDimensionSwap) {
-          // Coordinate space is rotated, so draw with swapped dimensions
-          ctx.drawImage(img, 0, 0, finalHeight, finalWidth);
-        } else {
-          // No rotation, draw normally
-          ctx.drawImage(img, 0, 0, finalWidth, finalHeight);
-        }
+        // Draw the image scaled to canvas
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
         // Convert to blob with compression
         canvas.toBlob(

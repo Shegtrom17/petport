@@ -89,7 +89,7 @@ export default function ReferralProgram() {
                 </div>
                 <h3 className="text-xl font-semibold mb-3 text-gray-900">3. Get Paid</h3>
                 <p className="text-gray-600">
-                  Receive your commission via Stripe Connect 45 days after their trial ends.
+                  Receive your commission via Stripe Connect 45 days after paid membership begins.
                 </p>
               </div>
             </div>
@@ -120,7 +120,7 @@ export default function ReferralProgram() {
               <div className="border-l-4 border-[#5691af] pl-6 py-2">
                 <h3 className="font-semibold text-lg mb-2 text-gray-900">Payout Timeline</h3>
                 <p className="text-gray-600">
-                  Commissions are approved 45 days after the referred user completes their trial period.
+                  Commissions are approved 45 days after paid membership begins.
                 </p>
               </div>
               
@@ -155,7 +155,7 @@ export default function ReferralProgram() {
                   When do I get paid?
                 </h3>
                 <p className="text-gray-600">
-                  Commissions are approved 45 days after your referral completes their trial period. Once approved, payouts are processed through Stripe Connect.
+                  Commissions are approved 45 days after paid membership begins. Once approved, payouts are processed through Stripe Connect.
                 </p>
               </div>
               

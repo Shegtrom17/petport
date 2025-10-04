@@ -7,15 +7,9 @@ import createProfileScreenshot from "@/assets/create-profile-screenshot.png";
 import documentUploadScreenshot from "@/assets/document-upload-screenshot.png";
 import resumeDetailsScreenshot from "@/assets/resume-details-screenshot.png";
 import shareInstructionsScreenshot from "@/assets/share-instructions-screenshot.png";
-
 export default function Learn() {
-  return (
-    <div className="min-h-screen bg-white">
-      <MetaTags
-        title="Complete Pet Care Guide: Digital Documentation & Reviews | PetPort"
-        description="Learn how to organize pet documents, request reviews from trainers, groomers & sitters, and create emergency profiles. Complete guide to digital pet management."
-        url={window.location.origin + "/learn"}
-      />
+  return <div className="min-h-screen bg-white">
+      <MetaTags title="Complete Pet Care Guide: Digital Documentation & Reviews | PetPort" description="Learn how to organize pet documents, request reviews from trainers, groomers & sitters, and create emergency profiles. Complete guide to digital pet management." url={window.location.origin + "/learn"} />
 
       {/* Header Navigation */}
       <header className="max-w-7xl mx-auto px-4 py-6 flex items-center justify-between border-b border-gray-200">
@@ -122,7 +116,7 @@ export default function Learn() {
               No design skills needed.
             </p>
 
-            <div className="bg-red-50 rounded-xl p-6 mb-8">
+            <div className="rounded-xl p-6 mb-8 bg-slate-50">
               <h3 className="text-xl font-semibold text-brand-primary mb-4">Critical Information for Lost Pet Situations</h3>
               <div className="space-y-4">
                 <div>
@@ -454,12 +448,7 @@ export default function Learn() {
               <div className="text-center">
                 <div className="mb-6 rounded-2xl overflow-hidden shadow-lg">
                   <AspectRatio ratio={4 / 3}>
-                    <img 
-                      src={createProfileScreenshot} 
-                      alt="Step 1: Create your pet's profile with basic information and photos"
-                      className="w-full h-full object-cover"
-                      loading="lazy"
-                    />
+                    <img src={createProfileScreenshot} alt="Step 1: Create your pet's profile with basic information and photos" className="w-full h-full object-cover" loading="lazy" />
                   </AspectRatio>
                 </div>
                 <h3 className="text-xl font-semibold text-brand-primary mb-2">Step 1: Create Profile</h3>
@@ -469,12 +458,7 @@ export default function Learn() {
               <div className="text-center">
                 <div className="mb-6 rounded-2xl overflow-hidden shadow-lg">
                   <AspectRatio ratio={4 / 3}>
-                    <img 
-                      src={documentUploadScreenshot} 
-                      alt="Step 2: Upload important documents like vaccination records and certificates"
-                      className="w-full h-full object-cover"
-                      loading="lazy"
-                    />
+                    <img src={documentUploadScreenshot} alt="Step 2: Upload important documents like vaccination records and certificates" className="w-full h-full object-cover" loading="lazy" />
                   </AspectRatio>
                 </div>
                 <h3 className="text-xl font-semibold text-brand-primary mb-2">Step 2: Upload Documents</h3>
@@ -484,12 +468,7 @@ export default function Learn() {
               <div className="text-center">
                 <div className="mb-6 rounded-2xl overflow-hidden shadow-lg">
                   <AspectRatio ratio={4 / 3}>
-                    <img 
-                      src={resumeDetailsScreenshot} 
-                      alt="Step 3: Build your pet's professional resume and request reviews"
-                      className="w-full h-full object-cover"
-                      loading="lazy"
-                    />
+                    <img src={resumeDetailsScreenshot} alt="Step 3: Build your pet's professional resume and request reviews" className="w-full h-full object-cover" loading="lazy" />
                   </AspectRatio>
                 </div>
                 <h3 className="text-xl font-semibold text-brand-primary mb-2">Step 3: Build Resume & Request Reviews</h3>
@@ -499,12 +478,7 @@ export default function Learn() {
               <div className="text-center">
                 <div className="mb-6 rounded-2xl overflow-hidden shadow-lg">
                   <AspectRatio ratio={4 / 3}>
-                    <img 
-                      src={shareInstructionsScreenshot} 
-                      alt="Step 4: Share your pet's information securely with caregivers and service providers"
-                      className="w-full h-full object-cover"
-                      loading="lazy"
-                    />
+                    <img src={shareInstructionsScreenshot} alt="Step 4: Share your pet's information securely with caregivers and service providers" className="w-full h-full object-cover" loading="lazy" />
                   </AspectRatio>
                 </div>
                 <h3 className="text-xl font-semibold text-brand-primary mb-2">Step 4: Share & Go</h3>
@@ -554,6 +528,5 @@ export default function Learn() {
           </div>
         </div>
       </footer>
-    </div>
-  );
+    </div>;
 }

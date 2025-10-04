@@ -60,6 +60,12 @@ serve(async (req) => {
     const currentPeriodEnd = subscription?.current_period_end ? new Date(subscription.current_period_end * 1000).toISOString() : null;
     const priceAmount = subscription?.items?.data?.[0]?.price?.unit_amount ?? 0;
     const customerId = typeof session.customer === "string" ? session.customer : session.customer?.id;
+    
+    // Determine plan interval (monthly vs yearly)
+    const planInterval = subscription?.items?.data?.[0]?.plan?.interval || 
+                         subscription?.items?.data?.[0]?.price?.recurring?.interval || 
+                         'year';
+    log("Detected plan interval", { planInterval });
 
     // Determine tier from amount (simple mapping)
     let tier: string | null = null;
@@ -114,7 +120,7 @@ serve(async (req) => {
     const petLimit = 1 + additionalPets;
 
     // Upsert subscriber row with immediate activation; skip user_id if not known yet
-    log("Upserting subscriber", { additionalPets, petLimit, hasUserId: !!userId });
+    log("Upserting subscriber", { additionalPets, petLimit, planInterval, hasUserId: !!userId });
     const upsertData: any = {
       email,
       stripe_customer_id: customerId ?? null,
@@ -124,6 +130,7 @@ serve(async (req) => {
       subscription_end: currentPeriodEnd,
       pet_limit: petLimit,
       additional_pets: additionalPets,
+      plan_interval: planInterval, // Track plan interval for referral eligibility
       // Clear any grace period fields on successful checkout
       grace_period_end: null,
       payment_failed_at: null,

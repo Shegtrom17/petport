@@ -155,6 +155,13 @@ async function handleSubscriptionEvent(
     throw new Error("Customer not found or has no email");
   }
 
+  // Determine plan interval from subscription
+  const planInterval = subscription.items?.data?.[0]?.plan?.interval || 
+                       subscription.items?.data?.[0]?.price?.recurring?.interval || 
+                       'year';
+  
+  logStep("Detected plan interval", { planInterval });
+
   // Find user by email
   const { data: userData } = await supabaseClient.auth.admin.listUsers({
     email: customer.email
@@ -177,15 +184,19 @@ async function handleSubscriptionEvent(
     _canceled_at: canceledAt
   });
 
-  // Update legacy subscribed field
+  // Update legacy subscribed field AND plan_interval
   await supabaseClient
     .from("subscribers")
-    .update({ subscribed: status === 'active' })
+    .update({ 
+      subscribed: status === 'active',
+      plan_interval: planInterval
+    })
     .eq("user_id", user.id);
 
   logStep("Updated subscriber status", { 
     userId: user.id, 
     status,
+    planInterval,
     email: customer.email 
   });
 }

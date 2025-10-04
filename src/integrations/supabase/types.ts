@@ -820,6 +820,7 @@ export type Database = {
           paid_at: string | null
           referral_code: string
           referral_type: string | null
+          referred_plan_interval: string | null
           referred_user_id: string | null
           referrer_user_id: string
           trial_completed_at: string | null
@@ -834,6 +835,7 @@ export type Database = {
           paid_at?: string | null
           referral_code: string
           referral_type?: string | null
+          referred_plan_interval?: string | null
           referred_user_id?: string | null
           referrer_user_id: string
           trial_completed_at?: string | null
@@ -848,6 +850,7 @@ export type Database = {
           paid_at?: string | null
           referral_code?: string
           referral_type?: string | null
+          referred_plan_interval?: string | null
           referred_user_id?: string | null
           referrer_user_id?: string
           trial_completed_at?: string | null
@@ -940,6 +943,7 @@ export type Database = {
           id: string
           payment_failed_at: string | null
           pet_limit: number
+          plan_interval: string | null
           reactivated_at: string | null
           status: Database["public"]["Enums"]["subscription_status"]
           stripe_customer_id: string | null
@@ -960,6 +964,7 @@ export type Database = {
           id?: string
           payment_failed_at?: string | null
           pet_limit?: number
+          plan_interval?: string | null
           reactivated_at?: string | null
           status?: Database["public"]["Enums"]["subscription_status"]
           stripe_customer_id?: string | null
@@ -980,6 +985,7 @@ export type Database = {
           id?: string
           payment_failed_at?: string | null
           pet_limit?: number
+          plan_interval?: string | null
           reactivated_at?: string | null
           status?: Database["public"]["Enums"]["subscription_status"]
           stripe_customer_id?: string | null

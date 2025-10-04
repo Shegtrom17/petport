@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { DollarSign, Users, Clock, ArrowRight } from "lucide-react";
 import { AzureButton } from "@/components/ui/azure-button";
 import { MetaTags } from "@/components/MetaTags";
+import { PricingSection } from "@/components/PricingSection";
 
 export default function ReferralProgram() {
   return (
@@ -29,9 +30,9 @@ export default function ReferralProgram() {
               <Link to="/learn" className="text-sm text-gray-600 hover:text-[#5691af]">
                 Learn
               </Link>
-              <Link to="/auth">
-                <AzureButton>Sign In</AzureButton>
-              </Link>
+              <a href="#pricing">
+                <AzureButton>Get Started</AzureButton>
+              </a>
             </nav>
           </div>
         </header>
@@ -46,12 +47,12 @@ export default function ReferralProgram() {
               Share PetPort with friends and earn money when they subscribe to a yearly plan. 
               Simple, transparent, and paid directly to your Stripe account.
             </p>
-            <Link to="/auth">
+            <a href="#pricing">
               <AzureButton size="lg" className="text-lg px-8 py-6">
                 Join & Get Your Link
                 <ArrowRight className="ml-2 h-5 w-5" />
               </AzureButton>
-            </Link>
+            </a>
           </div>
         </section>
 
@@ -197,12 +198,19 @@ export default function ReferralProgram() {
             <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
               Create your free account and get your unique referral link in seconds.
             </p>
-            <Link to="/auth">
+            <a href="#pricing">
               <AzureButton size="lg" className="text-lg px-8 py-6">
-                Get Started Now
+                See Plans & Pricing
                 <ArrowRight className="ml-2 h-5 w-5" />
               </AzureButton>
-            </Link>
+            </a>
+          </div>
+        </section>
+
+        {/* Pricing Section */}
+        <section id="pricing" className="py-16 px-4 bg-gray-50">
+          <div className="container max-w-4xl mx-auto">
+            <PricingSection context="landing" />
           </div>
         </section>
 

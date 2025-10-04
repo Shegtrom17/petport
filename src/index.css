@@ -203,10 +203,7 @@
   padding-right: 1rem;
 }
 
-/* iOS-specific overscroll behavior - single definition */
-body {
-  overscroll-behavior-y: none;
-}
+/* iOS-specific overscroll behavior - managed dynamically by usePullToRefresh hook */
 
 /* Native-like scroll behavior */
 .native-scroll {

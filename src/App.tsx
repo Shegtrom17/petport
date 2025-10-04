@@ -49,6 +49,7 @@ import PublicEmergencyProfile from "./pages/PublicEmergencyProfile";
 import EmailTest from "./pages/EmailTest";
 import SetupStripe from "./pages/SetupStripe";
 import Referrals from "./pages/Referrals";
+import ReferralProgram from "./pages/ReferralProgram";
 
 // Redirect component for credentials -> resume consolidation
 const CredentialsRedirect = () => {
@@ -84,6 +85,7 @@ const App = () => {
                   <Route path="/" element={<Landing />} />
                   <Route path="/landing" element={<Landing />} />
                   <Route path="/learn" element={<Learn />} />
+                  <Route path="/referral-program" element={<ReferralProgram />} />
                   <Route path="/app" element={
                     <ProtectedRoute>
                       <Index />

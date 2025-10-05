@@ -7,7 +7,7 @@ import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerTrigger, Drawer
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { Input } from "@/components/ui/input";
 import { Heart, Clock, Pill, Coffee, Moon, AlertTriangle, Edit, Loader2, FileText, Download, Share2, ExternalLink, Eye, Phone, Copy, Stethoscope, Sparkles } from "lucide-react";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { ScrollControls } from "@/components/ui/scroll-controls";
 import { ContactsDisplay } from "@/components/ContactsDisplay";
 import { extractPhoneNumber, formatPhoneForTel } from "@/utils/contactUtils";
@@ -967,47 +967,43 @@ export const CareInstructionsSection = ({ petData, onUpdate, handlePetUpdate }: 
 
       {/* Dual Floating AI Buttons */}
       <div className="fixed bottom-6 right-6 flex flex-col gap-3 z-50">
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                onClick={() => setIsAICareModalOpen(true)}
-                size="lg"
-                className="h-14 w-14 rounded-full shadow-lg hover:shadow-xl transition-all bg-[#5691af] hover:bg-[#4a7d99] hover:scale-110"
-                aria-label="AI Care Assistant"
-              >
-                <Sparkles className="h-6 w-6" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent side="left" className="text-sm">
-              <p className="font-semibold flex items-center gap-1">
-                <Sparkles className="h-3 w-3" /> AI Care Assistant
-              </p>
-              <p className="text-xs text-muted-foreground">Ask about feeding, routines & care</p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              onClick={() => setIsAICareModalOpen(true)}
+              size="lg"
+              className="h-14 w-14 rounded-full shadow-lg hover:shadow-xl transition-all bg-[#5691af] hover:bg-[#4a7d99] hover:scale-110"
+              aria-label="AI Care Assistant"
+            >
+              <Sparkles className="h-6 w-6" />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent side="left" className="text-sm">
+            <p className="font-semibold flex items-center gap-1">
+              <Sparkles className="h-3 w-3" /> AI Care Assistant
+            </p>
+            <p className="text-xs text-muted-foreground">Ask about feeding, routines & care</p>
+          </TooltipContent>
+        </Tooltip>
         
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                onClick={() => setIsAIMedicalModalOpen(true)}
-                size="lg"
-                className="h-14 w-14 rounded-full shadow-lg hover:shadow-xl transition-all bg-red-500/90 hover:bg-red-600 hover:scale-110"
-                aria-label="AI Medical Advisor"
-              >
-                <Sparkles className="h-6 w-6" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent side="left" className="text-sm">
-              <p className="font-semibold flex items-center gap-1">
-                <Sparkles className="h-3 w-3" /> AI Medical Advisor
-              </p>
-              <p className="text-xs text-muted-foreground">Ask about health & symptoms</p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              onClick={() => setIsAIMedicalModalOpen(true)}
+              size="lg"
+              className="h-14 w-14 rounded-full shadow-lg hover:shadow-xl transition-all bg-red-500/90 hover:bg-red-600 hover:scale-110"
+              aria-label="AI Medical Advisor"
+            >
+              <Sparkles className="h-6 w-6" />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent side="left" className="text-sm">
+            <p className="font-semibold flex items-center gap-1">
+              <Sparkles className="h-3 w-3" /> AI Medical Advisor
+            </p>
+            <p className="text-xs text-muted-foreground">Ask about health & symptoms</p>
+          </TooltipContent>
+        </Tooltip>
       </div>
     </div>
   );

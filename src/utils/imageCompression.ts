@@ -181,14 +181,13 @@ export async function compressImage(
         canvas.width = finalWidth;
         canvas.height = finalHeight;
 
-        // Apply orientation transformation BEFORE drawing
-        // Pass ORIGINAL (pre-rotation) dimensions for proper transformation
-        const transformWidth = needsDimensionSwap ? finalHeight : finalWidth;
-        const transformHeight = needsDimensionSwap ? finalWidth : finalHeight;
-        applyOrientation(ctx, orientation, transformWidth, transformHeight);
+        // Apply orientation transformation using canvas dimensions
+        applyOrientation(ctx, orientation, canvas.width, canvas.height);
 
-        // Draw the image using ORIGINAL dimensions
-        ctx.drawImage(img, 0, 0, transformWidth, transformHeight);
+        // Draw using pre-swap dimensions so rotation works correctly
+        const drawWidth = needsDimensionSwap ? canvas.height : canvas.width;
+        const drawHeight = needsDimensionSwap ? canvas.width : canvas.height;
+        ctx.drawImage(img, 0, 0, drawWidth, drawHeight);
 
         // Convert to blob with compression
         canvas.toBlob(

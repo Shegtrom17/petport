@@ -27,31 +27,30 @@ function getImageOrientation(file: File): Promise<number> {
         resolve(1); // Not a JPEG, default orientation
         return;
       }
-      
+
       const length = view.byteLength;
       let offset = 2;
-      
+
       while (offset < length) {
         const marker = view.getUint16(offset, false);
         offset += 2;
-        
+
         if (marker === 0xFFE1) { // EXIF marker
           offset += 2;
-          
           if (view.getUint32(offset, false) !== 0x45786966) {
-            resolve(1); // Invalid EXIF
+            resolve(1);
             return;
           }
-          
+
           const tiffOffset = offset + 6;
           const littleEndian = view.getUint16(tiffOffset, false) === 0x4949;
           const firstIFDOffset = view.getUint32(tiffOffset + 4, littleEndian);
           const tagCount = view.getUint16(tiffOffset + firstIFDOffset, littleEndian);
-          
+
           for (let i = 0; i < tagCount; i++) {
             const tagOffset = tiffOffset + firstIFDOffset + 2 + i * 12;
             const tag = view.getUint16(tagOffset, littleEndian);
-            
+
             if (tag === 0x0112) { // Orientation tag
               const orientation = view.getUint16(tagOffset + 8, littleEndian);
               resolve(orientation);
@@ -64,7 +63,7 @@ function getImageOrientation(file: File): Promise<number> {
           offset += view.getUint16(offset, false);
         }
       }
-      
+
       resolve(1); // Default orientation
     };
     reader.onerror = () => resolve(1);
@@ -76,8 +75,8 @@ function getImageOrientation(file: File): Promise<number> {
  * Applies orientation transformation to canvas context
  * @param ctx Canvas 2D context
  * @param orientation EXIF orientation value
- * @param width Image width BEFORE rotation
- * @param height Image height BEFORE rotation
+ * @param width Canvas width
+ * @param height Canvas height
  */
 function applyOrientation(ctx: CanvasRenderingContext2D, orientation: number, width: number, height: number) {
   switch (orientation) {
@@ -94,6 +93,7 @@ function applyOrientation(ctx: CanvasRenderingContext2D, orientation: number, wi
       ctx.scale(1, -1);
       break;
     case 5: // Rotate 90° CW and flip horizontal
+      ctx.translate(width, 0);
       ctx.rotate(0.5 * Math.PI);
       ctx.scale(1, -1);
       break;
@@ -102,19 +102,19 @@ function applyOrientation(ctx: CanvasRenderingContext2D, orientation: number, wi
       ctx.rotate(0.5 * Math.PI);
       break;
     case 7: // Rotate 90° CCW and flip horizontal
+      ctx.translate(0, height);
       ctx.rotate(-0.5 * Math.PI);
-      ctx.translate(-width, height);
       ctx.scale(1, -1);
       break;
-    case 8: // Rotate 90° CCW
+    case 8: // Rotate 90° CCW (Android portrait)
       ctx.translate(0, height);
       ctx.rotate(-0.5 * Math.PI);
       break;
     default:
-      // No transformation needed
       break;
   }
 }
+
 /**
  * Compresses an image file to reduce file size and dimensions
  * EXIF orientation is read and applied during compression to "bake" the correct orientation
@@ -133,7 +133,6 @@ export async function compressImage(
     maxSizeKB = 500
   } = options;
 
-  // Read EXIF orientation first
   const orientation = await getImageOrientation(file);
   console.log('[compressImage] EXIF orientation detected:', orientation);
 
@@ -149,18 +148,13 @@ export async function compressImage(
 
     img.onload = () => {
       try {
-        // Get original dimensions
         let { width, height } = img;
-        
-        // For orientations 5-8, dimensions are swapped after rotation
         const needsDimensionSwap = orientation >= 5 && orientation <= 8;
-        
-        // Calculate final dimensions after rotation
+
         let finalWidth = needsDimensionSwap ? height : width;
         let finalHeight = needsDimensionSwap ? width : height;
         const aspectRatio = finalWidth / finalHeight;
 
-        // Apply max constraints
         if (finalWidth > maxWidth) {
           finalWidth = maxWidth;
           finalHeight = finalWidth / aspectRatio;
@@ -171,23 +165,20 @@ export async function compressImage(
           finalWidth = finalHeight * aspectRatio;
         }
 
-        // Round to avoid sub-pixel issues
         finalWidth = Math.round(finalWidth);
         finalHeight = Math.round(finalHeight);
 
         console.log('[compressImage] Original:', width, 'x', height, '| Orientation:', orientation, '| Final:', finalWidth, 'x', finalHeight);
 
-        // Set canvas to final dimensions (AFTER rotation)
+        // --- Corrected orientation handling and drawing ---
         canvas.width = finalWidth;
         canvas.height = finalHeight;
 
-        // Apply orientation transformation using canvas dimensions
+        // Apply orientation using canvas dimensions
         applyOrientation(ctx, orientation, canvas.width, canvas.height);
 
-        // Draw using pre-swap dimensions so rotation works correctly
-        const drawWidth = needsDimensionSwap ? canvas.height : canvas.width;
-        const drawHeight = needsDimensionSwap ? canvas.width : canvas.height;
-        ctx.drawImage(img, 0, 0, drawWidth, drawHeight);
+        // Draw using canvas dimensions (no pre/post rotation swap)
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
         // Convert to blob with compression
         canvas.toBlob(
@@ -197,14 +188,11 @@ export async function compressImage(
               return;
             }
 
-            // Check if we need further compression based on file size
             let finalQuality = quality;
             const targetSize = maxSizeKB * 1024;
 
             if (blob.size > targetSize && quality > 0.3) {
-              // Reduce quality if file is still too large
               finalQuality = Math.max(0.3, quality * (targetSize / blob.size));
-              
               canvas.toBlob(
                 (secondBlob) => {
                   if (!secondBlob) {
@@ -250,34 +238,26 @@ export async function compressImage(
       }
     };
 
-    img.onerror = () => {
-      reject(new Error('Failed to load image'));
-    };
-
-    // Create object URL for the image
+    img.onerror = () => reject(new Error('Failed to load image'));
     img.src = URL.createObjectURL(file);
   });
 }
 
 /**
  * Compresses multiple images
- * @param files Array of image files
- * @param options Compression options
- * @returns Promise with array of compressed results
  */
 export async function compressMultipleImages(
   files: File[],
   options: CompressionOptions = {}
 ): Promise<CompressedImageResult[]> {
   const results: CompressedImageResult[] = [];
-  
+
   for (const file of files) {
     try {
       const result = await compressImage(file, options);
       results.push(result);
     } catch (error) {
       console.error(`Failed to compress ${file.name}:`, error);
-      // Return original file if compression fails
       results.push({
         file,
         originalSize: file.size,
@@ -286,21 +266,17 @@ export async function compressMultipleImages(
       });
     }
   }
-  
+
   return results;
 }
 
 /**
  * Formats file size for display
- * @param bytes File size in bytes
- * @returns Formatted string
  */
 export function formatFileSize(bytes: number): string {
   if (bytes === 0) return '0 Bytes';
-  
   const k = 1024;
   const sizes = ['Bytes', 'KB', 'MB', 'GB'];
   const i = Math.floor(Math.log(bytes) / Math.log(k));
-  
   return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
 }

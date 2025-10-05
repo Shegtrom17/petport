@@ -271,7 +271,6 @@ export const PetProfileContent = ({
         title: "Photo deleted",
         description: `${enhancedPetData.name}'s ${type === 'profile' ? 'profile' : 'full body'} photo has been removed.`,
       });
-      onPhotoUpdate?.();
     } catch (error) {
       console.error('Photo delete error:', error);
       toast({

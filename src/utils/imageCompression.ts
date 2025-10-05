@@ -76,8 +76,8 @@ function getImageOrientation(file: File): Promise<number> {
  * Applies orientation transformation to canvas context
  * @param ctx Canvas 2D context
  * @param orientation EXIF orientation value
- * @param width Final canvas width
- * @param height Final canvas height
+ * @param width Image width BEFORE rotation
+ * @param height Image height BEFORE rotation
  */
 function applyOrientation(ctx: CanvasRenderingContext2D, orientation: number, width: number, height: number) {
   switch (orientation) {
@@ -97,9 +97,9 @@ function applyOrientation(ctx: CanvasRenderingContext2D, orientation: number, wi
       ctx.rotate(0.5 * Math.PI);
       ctx.scale(1, -1);
       break;
-    case 6: // Rotate 90° CW
+    case 6: // Rotate 90° CW (most common iPhone portrait)
+      ctx.translate(width, 0);
       ctx.rotate(0.5 * Math.PI);
-      ctx.translate(0, -height);
       break;
     case 7: // Rotate 90° CCW and flip horizontal
       ctx.rotate(-0.5 * Math.PI);
@@ -107,8 +107,8 @@ function applyOrientation(ctx: CanvasRenderingContext2D, orientation: number, wi
       ctx.scale(1, -1);
       break;
     case 8: // Rotate 90° CCW
+      ctx.translate(0, height);
       ctx.rotate(-0.5 * Math.PI);
-      ctx.translate(-width, 0);
       break;
     default:
       // No transformation needed
@@ -175,17 +175,20 @@ export async function compressImage(
         finalWidth = Math.round(finalWidth);
         finalHeight = Math.round(finalHeight);
 
-        console.log('[compressImage] Final dimensions:', finalWidth, 'x', finalHeight, 'needsSwap:', needsDimensionSwap);
+        console.log('[compressImage] Original:', width, 'x', height, '| Orientation:', orientation, '| Final:', finalWidth, 'x', finalHeight);
 
-        // Set canvas to final dimensions
+        // Set canvas to final dimensions (AFTER rotation)
         canvas.width = finalWidth;
         canvas.height = finalHeight;
 
-        // Apply orientation transformation
-        applyOrientation(ctx, orientation, finalWidth, finalHeight);
+        // Apply orientation transformation BEFORE drawing
+        // Pass ORIGINAL (pre-rotation) dimensions for proper transformation
+        const transformWidth = needsDimensionSwap ? finalHeight : finalWidth;
+        const transformHeight = needsDimensionSwap ? finalWidth : finalHeight;
+        applyOrientation(ctx, orientation, transformWidth, transformHeight);
 
-        // Draw the image
-        ctx.drawImage(img, 0, 0, finalWidth, finalHeight);
+        // Draw the image using ORIGINAL dimensions
+        ctx.drawImage(img, 0, 0, transformWidth, transformHeight);
 
         // Convert to blob with compression
         canvas.toBlob(

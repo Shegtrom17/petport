@@ -675,7 +675,7 @@ export const PetGallerySection = ({ petData, onUpdate, handlePetUpdate }: PetGal
                               <img 
                                 src={photo.url} 
                                 alt={photo.caption || `${petData.name} photo ${index + 1}`}
-                                className="h-full w-full object-cover"
+                                className="h-full w-full object-contain bg-muted"
                                 style={{ touchAction: 'pan-x pan-y pinch-zoom' }}
                                 loading="lazy"
                               />

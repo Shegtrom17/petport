@@ -1,16 +1,12 @@
-/create-referral/index.ts
-
 import { serve } from "https://deno.land/std@0.177.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 serve(async (req) => {
   try {
-    // Connect using service role key for secure inserts
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    // Expecting a JSON payload: { referralCode, referredUserId }
     const { referralCode, referredUserId } = await req.json();
 
     if (!referralCode || !referredUserId) {
@@ -20,7 +16,6 @@ serve(async (req) => {
       );
     }
 
-    // Find the referrer by their referral code
     const { data: referrer, error: findError } = await supabase
       .from("referrals")
       .select("referrer_user_id")
@@ -34,13 +29,12 @@ serve(async (req) => {
       );
     }
 
-    // Create a new referral record for this signup
     const { error: insertError } = await supabase.from("referrals").insert([
       {
         referrer_user_id: referrer.referrer_user_id,
         referred_user_id: referredUserId,
         referral_code: referralCode,
-        commission_amount: 200, // $2.00 in cents
+        commission_amount: 200,
         commission_status: "pending",
         referral_type: "yearly_plan",
       },

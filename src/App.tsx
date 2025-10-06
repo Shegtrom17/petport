@@ -13,6 +13,7 @@ import { SafeErrorBoundary } from "@/components/SafeErrorBoundary";
 import { IOSRefreshPrompt } from "@/components/IOSRefreshPrompt";
 import { AuthKeepAliveWrapper } from "@/components/AuthKeepAliveWrapper";
 import { initializeDomainGuard } from "@/utils/domainGuard";
+import { ScrollToTop } from "@/components/ScrollToTop";
 import Index from "./pages/Index";
 import Landing from "./pages/Landing";
 import Learn from "./pages/Learn";
@@ -79,6 +80,7 @@ const App = () => {
                   <Sonner />
                 
                 <BrowserRouter>
+                <ScrollToTop />
                 <Routes>
                   <Route path="/auth" element={<Auth />} />
                   

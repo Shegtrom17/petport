@@ -673,7 +673,7 @@ export default function Landing() {
                 <li><a href="#pricing" className="text-brand-primary-dark hover:text-brand-primary transition-colors">Sign Up</a></li>
                 <li><a href="#features" className="text-brand-primary-dark hover:text-brand-primary transition-colors">Features</a></li>
                 <li><a href="#pricing" className="text-brand-primary-dark hover:text-brand-primary transition-colors">Pricing</a></li>
-                <li><Link to="/referral-program#" className="text-brand-primary-dark hover:text-brand-primary transition-colors">Referral Program</Link></li>
+                <li><Link to="/referral-program" className="text-brand-primary-dark hover:text-brand-primary transition-colors">Referral Program</Link></li>
                 <li><a href="#faq" className="text-brand-primary-dark hover:text-brand-primary transition-colors">FAQ</a></li>
               </ul>
             </div>

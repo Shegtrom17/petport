@@ -174,7 +174,7 @@ export default function ReferralProgram() {
                   Do I need a Stripe account?
                 </h3>
                 <p className="text-gray-600">
-                  Yes, you'll need to connect a Stripe account to receive payouts. This is free and takes just a few minutes to set up.
+                  You can start sharing your referral link right away, but you'll need to connect a Stripe account to receive payouts. Stripe Connect is free and takes just a few minutes to set up whenever you're ready.
                 </p>
               </div>
               

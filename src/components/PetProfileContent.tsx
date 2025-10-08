@@ -307,105 +307,104 @@ export const PetProfileContent = ({
     <div className="passport-map-container">
       <div className="passport-map-bg" />
       
-      {/* Basic Information Section - First */}
+      {/* Profile Management Hub - Streamlined */}
       <div className="mb-8">
-        <div className="bg-white/50 backdrop-blur-sm rounded-2xl p-6">
-          <SectionHeader
-            title="Profile Management Hub"
-            action={isOwner && (
-              <div className="flex items-center space-x-2">
-                <div
+        <Card className="bg-white shadow-xl">
+          <CardHeader>
+            <CardTitle className="text-xl flex items-center gap-2">
+              <Edit className="w-6 h-6 text-[#5691af]" />
+              Profile Management Hub
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-xs text-muted-foreground mb-4">
+              Manage your pet's profile, photos, documents, and privacy settings
+            </p>
+
+            {/* Guidance hint for incomplete profiles */}
+            {isOwner && (
+              !enhancedPetData?.name || 
+              !enhancedPetData?.breed || 
+              !enhancedPetData?.age || 
+              !enhancedPetData?.weight
+            ) && (
+              <GuidanceHint
+                message="Complete your pet's profile for professional PDFs and comprehensive sharing"
+                actionLabel="Edit Pet Profile"
+                onAction={handleProfileEdit}
+                variant="gentle"
+              />
+            )}
+
+            {/* Action Buttons Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
+              {/* Edit Profile Button */}
+              {isOwner && (
+                <Button
                   onClick={handleProfileEdit}
-                  className="flex items-center space-x-2 p-3 text-primary hover:text-primary/80 hover:scale-110 transition-all cursor-pointer"
-                  role="button"
-                  tabIndex={0}
-                  aria-label="Edit pet profile"
-                  onKeyDown={(e) => e.key === 'Enter' && handleProfileEdit()}
+                  className="bg-[#5691af] hover:bg-[#4a7d99] text-white w-full flex items-center justify-center gap-2 h-12"
                 >
-                  <Edit className="w-5 h-5" />
-                  <span className="text-sm hidden sm:inline">Edit</span>
-                </div>
-              </div>
-            )}
-          />
-          
-          <p className="text-xs text-muted-foreground mb-4">Essential pet information including medical alerts, transfer records, and vital stats like age, weight, and breed. Perfect for veterinary visits, emergencies, and professional services.</p>
-          
-          {/* Show guidance hint for new users when basic info is incomplete */}
-          {isOwner && (
-            !enhancedPetData?.name || 
-            !enhancedPetData?.breed || 
-            !enhancedPetData?.age || 
-            !enhancedPetData?.weight
-          ) && (
-            <GuidanceHint
-              message="Complete your pet's Pet Profile below for professional PDFs, optimal sharing links, and comprehensive identification documents."
-              actionLabel="Edit Pet Profile"
-              onAction={handleProfileEdit}
-              variant="gentle"
-            />
-          )}
-          
-          <div className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6">
-              <div>
-                <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-2">NAME</p>
-                <p className="text-base font-medium text-foreground">{enhancedPetData?.name || "Not specified"}</p>
-              </div>
-              <div>
-                <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-2">BREED</p>
-                <p className="text-base font-medium text-foreground">{enhancedPetData?.breed || "Not specified"}</p>
-              </div>
-              <div>
-                <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-2">AGE</p>
-                <p className="text-base font-medium text-foreground">{enhancedPetData?.age || "Not specified"}</p>
-              </div>
-              <div>
-                <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-2">WEIGHT</p>
-                <p className="text-base font-medium text-foreground">{enhancedPetData?.weight || "Not specified"}</p>
-              </div>
-              <div>
-                <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-2">SEX</p>
-                <p className="text-base font-medium text-foreground">{enhancedPetData?.sex ? enhancedPetData.sex.charAt(0).toUpperCase() + enhancedPetData.sex.slice(1) : "Not specified"}</p>
-              </div>
-              {enhancedPetData?.height && (
-                <div>
-                  <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-2">HEIGHT</p>
-                  <p className="text-base font-medium text-foreground">{enhancedPetData.height}</p>
+                  <Edit className="w-4 h-4" />
+                  <span>Edit Pet Profile</span>
+                </Button>
+              )}
+
+              {/* View Gallery Button */}
+              <Button
+                onClick={() => {
+                  const gallerySection = document.getElementById('pet-gallery-section');
+                  gallerySection?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }}
+                className="bg-[#5691af] hover:bg-[#4a7d99] text-white w-full flex items-center justify-center gap-2 h-12"
+              >
+                <Camera className="w-4 h-4" />
+                <span>View Gallery</span>
+              </Button>
+
+              {/* Upload Documents Button */}
+              {isOwner && (
+                <Button
+                  onClick={() => {
+                    const docsSection = document.getElementById('documents-section');
+                    docsSection?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                  }}
+                  className="bg-[#5691af] hover:bg-[#4a7d99] text-white w-full flex items-center justify-center gap-2 h-12"
+                >
+                  <Upload className="w-4 h-4" />
+                  <span>Upload Documents</span>
+                </Button>
+              )}
+
+              {/* Privacy Toggle in Button Style */}
+              {isOwner && togglePetPublicVisibility && (
+                <div className="flex items-center justify-between p-3 border rounded-lg bg-gray-50">
+                  <span className="text-sm font-medium text-gray-700">Privacy</span>
+                  <CompactPrivacyToggle
+                    isPublic={enhancedPetData?.is_public || false}
+                    onToggle={(isPublic) => togglePetPublicVisibility(enhancedPetData.id, isPublic)}
+                  />
                 </div>
               )}
             </div>
-            
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <div>
-                <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-2">MICROCHIP NUMBER</p>
-                <p className="text-base font-mono bg-background px-4 py-3 rounded-md border text-foreground">
-                  {enhancedPetData?.microchipId || "Not specified"}
-                </p>
-              </div>
-              {enhancedPetData?.registrationNumber && (
-                <div>
-                  <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-2">REGISTRATION NUMBER</p>
-                  <p className="text-base font-mono bg-background px-4 py-3 rounded-md border text-foreground">
-                    {enhancedPetData.registrationNumber}
-                  </p>
-                </div>
-              )}
-            </div>
-            
-            {enhancedPetData?.bio && (
-              <div className="bg-background p-6 rounded-lg border">
-                <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-3">BIO</p>
-                <p className="text-foreground leading-relaxed">{enhancedPetData.bio}</p>
+
+            {/* Delete Pet Section (Owner Only) */}
+            {isOwner && (
+              <div className="pt-4 border-t border-gray-200">
+                <PetDeleteDialog
+                  petId={enhancedPetData.id}
+                  petName={enhancedPetData.name}
+                  onPetDeleted={() => {
+                    navigate('/');
+                    toast({
+                      title: "Pet deleted",
+                      description: `${enhancedPetData.name}'s profile has been removed.`,
+                    });
+                  }}
+                />
               </div>
             )}
-            
-            <div className="bg-background p-6 rounded-lg border">
-              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-3">DESCRIPTION & UNIQUE TRAITS</p>
-              <p className="text-foreground leading-relaxed">{enhancedPetData?.notes || "No description specified"}</p>
-            </div>
-          </div>
-        </div>
+          </CardContent>
+        </Card>
       </div>
 
       {/* Official Photo Section */}

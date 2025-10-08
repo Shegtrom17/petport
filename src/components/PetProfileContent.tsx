@@ -349,7 +349,7 @@ export const PetProfileContent = ({
                 </Button>
               )}
 
-              {/* Privacy Toggle in Button Style */}
+            {/* Privacy Toggle in Button Style */}
               {isOwner && togglePetPublicVisibility && (
                 <div className="flex items-center justify-between p-3 border rounded-lg bg-gray-50">
                   <span className="text-sm font-medium text-gray-700">Privacy</span>
@@ -360,23 +360,6 @@ export const PetProfileContent = ({
                 </div>
               )}
             </div>
-
-            {/* Delete Pet Section (Owner Only) */}
-            {isOwner && (
-              <div className="pt-4 border-t border-gray-200">
-                <PetDeleteDialog
-                  petId={enhancedPetData.id}
-                  petName={enhancedPetData.name}
-                  onPetDeleted={() => {
-                    navigate('/');
-                    toast({
-                      title: "Pet deleted",
-                      description: `${enhancedPetData.name}'s profile has been removed.`,
-                    });
-                  }}
-                />
-              </div>
-            )}
           </CardContent>
         </Card>
       </div>

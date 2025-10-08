@@ -16,10 +16,10 @@ export const PetPassportCard = ({ petData, onUpdate }: PetPassportCardProps) => 
     sex,
     petPassId,
     photoUrl,
-    microchip_id,
-    registration_number,
+    microchipId,
+    registrationNumber,
     height,
-    medical
+    medicalAlert
   } = petData || {};
 
   return (
@@ -64,22 +64,22 @@ export const PetPassportCard = ({ petData, onUpdate }: PetPassportCardProps) => 
                   </div>
                 )}
 
-                {microchip_id && (
+                {microchipId && (
                   <div className="flex items-center space-x-1">
                     <div className="w-1.5 h-1.5 bg-gold-400 rounded-full"></div>
-                    <span className="text-gold-200 truncate max-w-[150px]">Microchip: {microchip_id}</span>
+                    <span className="text-gold-200 truncate max-w-[150px]">Microchip: {microchipId}</span>
                   </div>
                 )}
 
-                {registration_number && (
+                {registrationNumber && (
                   <div className="flex items-center space-x-1">
                     <div className="w-1.5 h-1.5 bg-gold-400 rounded-full"></div>
-                    <span className="text-gold-200 truncate max-w-[120px]">Reg #: {registration_number}</span>
+                    <span className="text-gold-200 truncate max-w-[120px]">Reg #: {registrationNumber}</span>
                   </div>
                 )}
 
                 {/* Medical Alert Badge - Inline */}
-                {medical?.medical_alert && (
+                {medicalAlert && (
                   <Badge variant="destructive" className="text-xs flex items-center gap-1 whitespace-nowrap">
                     🩺 Medical Alert
                   </Badge>

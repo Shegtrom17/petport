@@ -336,8 +336,8 @@ export const PetProfileContent = ({
               />
             )}
 
-            {/* Action Buttons Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
+            {/* Action Buttons */}
+            <div className="space-y-3 mb-4">
               {/* Edit Profile Button */}
               {isOwner && (
                 <Button
@@ -346,32 +346,6 @@ export const PetProfileContent = ({
                 >
                   <Edit className="w-4 h-4" />
                   <span>Edit Pet Profile</span>
-                </Button>
-              )}
-
-              {/* View Gallery Button */}
-              <Button
-                onClick={() => {
-                  const gallerySection = document.getElementById('pet-gallery-section');
-                  gallerySection?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }}
-                className="bg-[#5691af] hover:bg-[#4a7d99] text-white w-full flex items-center justify-center gap-2 h-12"
-              >
-                <Camera className="w-4 h-4" />
-                <span>View Gallery</span>
-              </Button>
-
-              {/* Upload Documents Button */}
-              {isOwner && (
-                <Button
-                  onClick={() => {
-                    const docsSection = document.getElementById('documents-section');
-                    docsSection?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                  }}
-                  className="bg-[#5691af] hover:bg-[#4a7d99] text-white w-full flex items-center justify-center gap-2 h-12"
-                >
-                  <Upload className="w-4 h-4" />
-                  <span>Upload Documents</span>
                 </Button>
               )}
 

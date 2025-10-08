@@ -20,13 +20,13 @@ export const PetHeader = ({ activeTab, onTabChange, selectedPetId, selectedPetNa
   const navigate = useNavigate();
   const location = useLocation();
   const { user } = useAuth();
+  const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
 
   const handleBack = () => {
-    // Check if we can go back in history
-    if (window.history.length > 1) {
-      navigate(-1);
+    // Use browser history when available, fallback to dashboard
+    if (window.history.length > 2) {
+      window.history.back();
     } else {
-      // No history to go back to, navigate to home
       navigate('/app');
     }
   };
@@ -56,14 +56,16 @@ export const PetHeader = ({ activeTab, onTabChange, selectedPetId, selectedPetNa
         <div className="flex sm:hidden items-center justify-between">
           {/* Left: Back Button + Title */}
           <div className="flex items-center space-x-2 flex-1 min-w-0">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={handleBack}
-              className="p-2 touch-feedback h-8 w-8"
-            >
-              <ArrowLeft className="w-4 h-4" />
-            </Button>
+            {isIOS && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleBack}
+                className="p-2 touch-feedback h-8 w-8"
+              >
+                <ArrowLeft className="w-4 h-4" />
+              </Button>
+            )}
             <h1 className="text-base font-bold text-foreground tracking-wide truncate">
               Digital Portfolio
             </h1>
@@ -94,14 +96,16 @@ export const PetHeader = ({ activeTab, onTabChange, selectedPetId, selectedPetNa
         {/* Desktop Layout */}
         <div className="hidden sm:flex items-center justify-between">
           <div className="flex items-center space-x-2 sm:space-x-3 md:space-x-4 flex-1 min-w-0">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={handleBack}
-              className="p-2 touch-feedback"
-            >
-              <ArrowLeft className="w-5 h-5" />
-            </Button>
+            {isIOS && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleBack}
+                className="p-2 touch-feedback"
+              >
+                <ArrowLeft className="w-5 h-5" />
+              </Button>
+            )}
             <div className="w-12 h-12 md:w-16 md:h-16 lg:w-18 lg:h-18 flex-shrink-0">
               <img 
                 src="/lovable-uploads/22b5b776-467c-4cee-be36-887346e71205.png" 

@@ -14,28 +14,32 @@ export const AppHeader = ({ title, showBack = false, actions }: AppHeaderProps) 
   const navigate = useNavigate();
   const location = useLocation();
   const isPWA = isIOSPWA();
-  const { user } = useAuth();
+  const { user, isLoading } = useAuth();
 
   const handleBack = () => {
     if (window.history.length > 1) {
       navigate(-1);
-    } else {
-      const path = location.pathname;
+      return;
+    }
 
-      // Smart fallback with auth awareness
-      const isProtectedRoute = path.includes('/profile/') || path.includes('/resume/') ||
-                               path.includes('/care/') || path.includes('/gallery/') ||
-                               path.includes('/travel/') || path.includes('/documents/');
+    // If auth is still loading, do nothing to prevent premature redirect
+    if (isLoading) return;
 
-      if (user) {
-        // Authenticated: go to /app for protected pages
-        if (isProtectedRoute || (path !== '/app' && path !== '/')) {
-          navigate('/app');
-        }
-      } else {
-        // Not signed in: go to home instead of /app to avoid auth redirect
-        navigate('/');
+    const path = location.pathname;
+
+    // Smart fallback with auth awareness
+    const isProtectedRoute = path.includes('/profile/') || path.includes('/resume/') ||
+                             path.includes('/care/') || path.includes('/gallery/') ||
+                             path.includes('/travel/') || path.includes('/documents/');
+
+    if (user) {
+      // Authenticated: go to /app for protected pages
+      if (isProtectedRoute || (path !== '/app' && path !== '/')) {
+        navigate('/app');
       }
+    } else {
+      // Not signed in: go to home instead of /app to avoid auth redirect
+      navigate('/');
     }
   };
 

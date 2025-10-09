@@ -188,18 +188,15 @@ export default function Landing() {
               {/* Pet Owners Section */}
               <div className="bg-white rounded-2xl p-8 border border-gray-200">
                 <div className="flex items-center gap-4 mb-6">
-                  {/* PLACEHOLDER: Pet Owner Icon/Image */}
-                  <div className="w-16 h-16 rounded-full flex items-center justify-center border-2 border-dashed border-blue-400 bg-slate-300">
-                    <span className="text-blue-600">👨‍👩‍👧‍👦</span>
+                  <div className="w-16 h-16 rounded-full flex items-center justify-center bg-brand-primary/10">
+                    <img src="/lovable-uploads/213ccabc-3918-406d-b844-9c2730b7637d.png" alt="PetPort logo" className="w-12 h-12" />
                   </div>
                   <h3 className="text-2xl font-semibold text-brand-primary">For Pet Owners</h3>
                 </div>
                 
                 <div className="grid gap-4">
                   <div className="flex items-start gap-3">
-                    <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
-                      <span className="text-white text-xs">🚨</span>
-                    </div>
+                    <div className="w-2 h-2 bg-brand-primary rounded-full flex-shrink-0 mt-2"></div>
                     <div>
                       <strong className="text-brand-primary">One‑Tap Missing Pet Flyer</strong>
                       <p className="text-brand-primary-dark text-sm">with photos, last-seen details, and a shareable QR code, Instant Flyer (no designing needed). All can be updated on shared public link instantly from  any device. </p>
@@ -207,9 +204,7 @@ export default function Landing() {
                   </div>
                   
                   <div className="flex items-start gap-3">
-                    <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
-                      <span className="text-white text-xs">📁</span>
-                    </div>
+                    <div className="w-2 h-2 bg-brand-primary rounded-full flex-shrink-0 mt-2"></div>
                     <div>
                       <strong className="text-brand-primary">Digital Pet File</strong>
                       <p className="text-brand-primary-dark text-sm">for vaccines, health records, medications, insurance, and adoption/certification—snap a photo and upload.</p>
@@ -217,9 +212,7 @@ export default function Landing() {
                   </div>
 
                   <div className="flex items-start gap-3">
-                    <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
-                      <span className="text-white text-xs">💊</span>
-                    </div>
+                    <div className="w-2 h-2 bg-brand-primary rounded-full flex-shrink-0 mt-2"></div>
                     <div>
                       <strong className="text-brand-primary">Care & Handling</strong>
                       <p className="text-brand-primary-dark text-sm">routines, diet, meds, allergies, and behaviors so any caregiver has precise instructions.</p>
@@ -227,9 +220,7 @@ export default function Landing() {
                   </div>
 
                   <div className="flex items-start gap-3">
-                    <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
-                      <span className="text-white text-xs">🏆</span>
-                    </div>
+                    <div className="w-2 h-2 bg-brand-primary rounded-full flex-shrink-0 mt-2"></div>
                     <div>
                       <strong className="text-brand-primary">Pet Credentials</strong>
                       <p className="text-brand-primary-dark text-sm">resume, referrals, and achievements for hotels, groomers, and sitters. Voice-to-text for bio and information builders.</p>
@@ -237,9 +228,7 @@ export default function Landing() {
                   </div>
 
                   <div className="flex items-start gap-3">
-                    <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
-                      <span className="text-white text-xs">🗺️</span>
-                    </div>
+                    <div className="w-2 h-2 bg-brand-primary rounded-full flex-shrink-0 mt-2"></div>
                     <div>
                       <strong className="text-brand-primary">Travel Map</strong>
                       <p className="text-brand-primary-dark text-sm">drop pins to track trips and attach proof for pet‑friendly stays.</p>
@@ -247,9 +236,7 @@ export default function Landing() {
                   </div>
 
                   <div className="flex items-start gap-3">
-                    <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
-                      <span className="text-white text-xs">⭐</span>
-                    </div>
+                    <div className="w-2 h-2 bg-brand-primary rounded-full flex-shrink-0 mt-2"></div>
                     <div>
                       <strong className="text-brand-primary">Reviews & Hospitality</strong>
                       <p className="text-brand-primary-dark text-sm">collect, store, and share vet or host reviews for references.</p>

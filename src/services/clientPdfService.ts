@@ -1515,6 +1515,55 @@ const generateResumePDF = async (doc: jsPDF, pageManager: PDFPageManager, petDat
     }
   });
 
+  // Photo Gallery Section (after contact info)
+  const galleryPhotos = petData.gallery_photos || [];
+  if (galleryPhotos.length > 0) {
+    pageManager.addY(10);
+    addSubtitle(doc, pageManager, 'Photo Gallery', '#1e40af');
+    pageManager.addY(5);
+    
+    const photosToShow = galleryPhotos.slice(0, 5); // Show up to 5 photos
+    const photoSize = 55;
+    const spacing = 60; // 55 photo width + 5 margin
+    const startX = 20;
+    const photosPerRow = 3;
+    
+    for (let i = 0; i < photosToShow.length; i += photosPerRow) {
+      const startY = pageManager.getCurrentY();
+      const rowPhotos = photosToShow.slice(i, i + photosPerRow);
+      
+      // Check if we need a new page for this row
+      pageManager.checkPageSpace(photoSize + 25);
+      const currentRowY = pageManager.getCurrentY();
+      
+      // Place photos horizontally in the same row
+      for (let j = 0; j < rowPhotos.length; j++) {
+        const photoX = startX + (j * spacing);
+        
+        // Draw photo without advancing Y cursor
+        try {
+          const base64 = await loadOrientedImageAsBase64(rowPhotos[j].url);
+          doc.addImage(base64, 'JPEG', photoX, currentRowY, photoSize, photoSize);
+        } catch (error) {
+          console.error('Error adding gallery image:', error);
+        }
+        
+        // Add caption below photo
+        if (rowPhotos[j].caption) {
+          doc.setFontSize(8);
+          doc.setTextColor('#374151');
+          doc.setFont('helvetica', 'normal');
+          const captionY = currentRowY + photoSize + 3;
+          const captionLines = doc.splitTextToSize(sanitizeText(rowPhotos[j].caption), photoSize);
+          doc.text(captionLines, photoX, captionY);
+        }
+      }
+      
+      // Advance Y position for next row
+      pageManager.addY(photoSize + 20); // Photo height + space for caption and row spacing
+    }
+  }
+
   // Footer
   addFooterBottom(doc, pageManager, [
     'Petport.app - The Ultimate Digital Pet Portfolio',

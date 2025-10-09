@@ -773,7 +773,7 @@ export const PetGallerySection = ({ petData, onUpdate, handlePetUpdate }: PetGal
           {galleryPhotos.length > 1 && (
             <div className="mt-4 bg-blue-50 border border-blue-200 rounded-lg p-3">
               <p className="text-sm text-blue-800">
-                💡 <strong>Long-press and drag</strong> to reorder photos. The first four photos (#1-#4) will be used in lost pet flyers. Tap photos to zoom.
+                💡 <strong>Long-press and drag</strong> to reorder photos. The first four photos (#1-#4) appear in lost pet flyers & resume. Share PDF or link for full gallery. Tap to zoom.
               </p>
             </div>
           )}

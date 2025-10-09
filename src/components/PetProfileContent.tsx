@@ -413,7 +413,7 @@ export const PetProfileContent = ({
           </CardHeader>
           <CardContent>
             <p className="text-xs text-muted-foreground mb-4">
-              Manage your pet's profile specific info, bio, contacts, medical alerts, privacy settings, and foster-to-adopter transfer options.
+              Manage your pet's profile specific info, bio, contacts, medical alerts, privacy settings, and <span className="text-orange-700 font-semibold">foster-to-adopter transfer options</span>.
             </p>
 
             {/* Guidance hint for incomplete profiles */}

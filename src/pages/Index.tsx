@@ -421,8 +421,8 @@ const Index = () => {
               showEmptySlots={true}
             />
 
-            {/* Medical Alert Banner - At top of page */}
-            {petData.medicalAlert && (
+            {/* Medical Alert Banner - Only on Profile, Care & QuickID tabs */}
+            {petData.medicalAlert && (activeTab === "profile" || activeTab === "care" || activeTab === "quickid") && (
               <Alert className="mb-6 border-red-600 bg-red-50">
                 <AlertTriangle className="h-4 w-4 text-red-600" />
                 <AlertDescription className="ml-2 text-sm">

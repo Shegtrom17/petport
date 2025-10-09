@@ -1,7 +1,6 @@
 import { ArrowLeft } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { isIOSPWA } from "@/utils/iosDetection";
 import { useAuth } from "@/context/AuthContext";
 
 interface AppHeaderProps {
@@ -12,42 +11,27 @@ interface AppHeaderProps {
 
 export const AppHeader = ({ title, showBack = false, actions }: AppHeaderProps) => {
   const navigate = useNavigate();
-  const location = useLocation();
-  const isPWA = isIOSPWA();
   const { user, isLoading } = useAuth();
 
+  // ---- iOS Version Detection ----
+  const ua = navigator.userAgent;
+  const isiOS = /iPhone|iPad|iPod/i.test(ua);
+  const match = ua.match(/OS (\d+)_/);
+  const iosVersion = match ? parseInt(match[1], 10) : 0;
+  const isStandalone =
+    (navigator as any).standalone === true ||
+    window.matchMedia("(display-mode: standalone)").matches;
+
+  // Show back button ONLY for older iOS PWAs (below iOS 15)
+  const showForOldIOS = isiOS && iosVersion < 15 && isStandalone;
+  const hasHistory = window.history.length > 1;
+
   const handleBack = () => {
-    if (window.history.length > 1) {
-      navigate(-1);
-      return;
-    }
-
-    // If auth is still loading, do nothing to prevent premature redirect
-    if (isLoading) return;
-
-    const path = location.pathname;
-
-    // Smart fallback with auth awareness
-    const isProtectedRoute = path.includes('/profile/') || path.includes('/resume/') ||
-                             path.includes('/care/') || path.includes('/gallery/') ||
-                             path.includes('/travel/') || path.includes('/documents/');
-
-    if (user) {
-      // Authenticated: go to /app for protected pages
-      if (isProtectedRoute || (path !== '/app' && path !== '/')) {
-        navigate('/app');
-      }
-    } else {
-      // Not signed in: go to home instead of /app to avoid auth redirect
-      navigate('/');
-    }
+    if (hasHistory) navigate(-1);
   };
 
-  // Show back button if:
-  // 1. Explicitly requested via showBack prop, OR
-  // 2. Running as iOS PWA (no native back button), OR
-  // 3. There's history to go back to
-  const shouldShowBack = showBack || isPWA || window.history.length > 1;
+  // ---- Display Rule ----
+  const shouldShowBack = showForOldIOS && hasHistory;
 
   return (
     <header className="sticky top-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border">
@@ -65,7 +49,7 @@ export const AppHeader = ({ title, showBack = false, actions }: AppHeaderProps) 
           )}
           <h1 className="text-lg font-semibold truncate">{title}</h1>
         </div>
-        
+
         <div className="flex items-center space-x-2">
           {actions}
         </div>

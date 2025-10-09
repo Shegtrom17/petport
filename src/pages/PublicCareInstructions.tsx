@@ -358,14 +358,14 @@ const PublicCareInstructions = () => {
               </div>
 
               {/* Medical Information */}
-              {(medicalData?.medical_conditions || medicalData?.medical_alert || medicalData?.last_vaccination || medicalData?.medical_emergency_document) && (
+              {(medicalData?.medical_conditions || medicalData?.medical_alert || medicalData?.last_vaccination || medicalData?.medical_emergency_document || careData?.allergies) && (
                 <div className="space-y-4 pt-4 border-t border-sage-200">
-                  {medicalData.medical_alert && (
+                  {(medicalData?.medical_alert || medicalData?.medical_conditions || careData?.allergies) && (
                      <Alert className="border-red-600 bg-red-50">
-                       <AlertTriangle className="h-5 w-5 text-red-600" />
-                       <AlertDescription className="ml-2">
+                       <AlertTriangle className="h-4 w-4 text-red-600" />
+                       <AlertDescription className="ml-2 text-sm">
                          <strong className="text-red-900">MEDICAL ALERT:</strong>{' '}
-                         <span className="text-red-800">This pet has active medical alerts requiring immediate attention.</span>
+                         <span className="text-red-800">This pet has medical conditions or allergies requiring attention.</span>
                        </AlertDescription>
                      </Alert>
                   )}

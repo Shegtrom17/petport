@@ -603,10 +603,12 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
                   className="mt-1"
                   autoFocus
                   onFocus={(e) => {
-                    // Scroll input into view for iOS keyboard
+                    const el = e.currentTarget as HTMLElement;
+                    const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+                    const delay = isIOS ? 700 : 0;
                     setTimeout(() => {
-                      e.target.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    }, 300);
+                      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }, delay);
                   }}
                 />
               </div>
@@ -619,9 +621,12 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
                   onChange={(e) => setEmailData(prev => ({ ...prev, recipientName: e.target.value }))}
                   className="mt-1"
                   onFocus={(e) => {
+                    const el = e.currentTarget as HTMLElement;
+                    const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+                    const delay = isIOS ? 700 : 0;
                     setTimeout(() => {
-                      e.target.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    }, 300);
+                      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }, delay);
                   }}
                 />
               </div>
@@ -635,9 +640,12 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
                   rows={3}
                   className="mt-1"
                   onFocus={(e) => {
+                    const el = e.currentTarget as HTMLElement;
+                    const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+                    const delay = isIOS ? 700 : 0;
                     setTimeout(() => {
-                      e.target.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    }, 300);
+                      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }, delay);
                   }}
                 />
               </div>

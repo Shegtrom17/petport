@@ -693,9 +693,12 @@ export const PetPDFGenerator = ({ petId, petName, petData, handlePetUpdate }: Pe
                             className="mt-1"
                             autoFocus
                             onFocus={(e) => {
+                              const el = e.currentTarget as HTMLElement;
+                              const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+                              const delay = isIOS ? 700 : 0;
                               setTimeout(() => {
-                                e.target.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                              }, 300);
+                                el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                              }, delay);
                             }}
                           />
                         </div>
@@ -712,9 +715,12 @@ export const PetPDFGenerator = ({ petId, petName, petData, handlePetUpdate }: Pe
                             className="mt-1"
                             rows={3}
                             onFocus={(e) => {
+                              const el = e.currentTarget as HTMLElement;
+                              const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+                              const delay = isIOS ? 700 : 0;
                               setTimeout(() => {
-                                e.target.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                              }, 300);
+                                el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                              }, delay);
                             }}
                           />
                         </div>

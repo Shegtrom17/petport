@@ -397,7 +397,7 @@ export const PetProfileContent = ({
             )}
           />
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="flex justify-center">
             <div className="text-center">
               <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-4">PROFILE PHOTO</p>
               <div className="relative w-48 h-48 mx-auto">
@@ -444,64 +444,6 @@ export const PetProfileContent = ({
                         e.stopPropagation();
                         e.preventDefault();
                         handlePhotoDelete('profile');
-                      }}
-                      variant="outline"
-                      size="sm"
-                      className="text-red-600 border-red-300 hover:border-red-500 hover:text-red-700 hover:scale-105 transition-all touch-manipulation"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </Button>
-                  )}
-                </div>
-              )}
-            </div>
-            
-            <div className="text-center">
-              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-4">FULL BODY PHOTO</p>
-              <div className="relative w-48 h-48 mx-auto">
-                {enhancedPetData?.fullBodyPhotoUrl ? (
-                  <img
-                    src={enhancedPetData.fullBodyPhotoUrl}
-                    alt={`${enhancedPetData.name} full body photo`}
-                    className="w-full h-full object-cover rounded-lg border-2 border-brand-primary"
-                  />
-                ) : (
-                  <div className="w-full h-full bg-gray-100 rounded-lg border-2 border-brand-primary flex items-center justify-center">
-                    <Camera className="w-12 h-12 text-gray-400" />
-                  </div>
-                )}
-                {photoLoading.fullBody && (
-                  <div className="absolute inset-0 bg-white/80 rounded-lg flex items-center justify-center">
-                    <Loader2 className="w-8 h-8 animate-spin text-brand-primary" />
-                  </div>
-                )}
-              </div>
-              {isOwner && (
-                <div className="mt-3 flex justify-center space-x-2">
-                  {/* Upload from gallery */}
-                  <Button
-                    onClick={() => openProfileFilePicker('fullBody', false)}
-                    className="flex items-center space-x-1 px-3 py-2 text-sm bg-brand-primary text-white rounded-lg hover:bg-brand-primary-dark transition-colors"
-                  >
-                    <Upload className="w-4 h-4" />
-                    <span>Upload</span>
-                  </Button>
-                  
-                  {/* Take photo with camera */}
-                  <Button
-                    onClick={() => openProfileFilePicker('fullBody', true)}
-                    className="flex items-center space-x-1 px-3 py-2 text-sm bg-brand-primary text-white rounded-lg hover:bg-brand-primary-dark transition-colors"
-                  >
-                    <Camera className="w-4 h-4" />
-                    <span>Camera</span>
-                  </Button>
-                  
-                  {enhancedPetData?.fullBodyPhotoUrl && (
-                    <Button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        e.preventDefault();
-                        handlePhotoDelete('fullBody');
                       }}
                       variant="outline"
                       size="sm"

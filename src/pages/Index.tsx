@@ -14,6 +14,7 @@ import { PWALayout } from "@/components/PWALayout";
 
 import { useAuth } from "@/context/AuthContext";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { ContactsDisplay } from "@/components/ContactsDisplay";
 import { Phone, Shield } from "lucide-react";
 import { PetHeader } from "@/components/PetHeader";
@@ -419,6 +420,19 @@ const Index = () => {
               petLimit={petLimit}
               showEmptySlots={true}
             />
+
+            {/* Medical Alert Banner - At top of page */}
+            {petData.medicalAlert && (
+              <Alert className="mb-6 border-red-600 bg-red-50">
+                <AlertTriangle className="h-4 w-4 text-red-600" />
+                <AlertDescription className="ml-2 text-sm">
+                  <strong className="text-red-900">MEDICAL ALERT:</strong>{' '}
+                  <span className="text-red-800">
+                    {petData.medicalConditions || 'This pet has active medical alerts requiring immediate attention.'}
+                  </span>
+                </AlertDescription>
+              </Alert>
+            )}
 
             {/* Show PetPassportCard only on Profile tab */}
             {activeTab === "profile" && (

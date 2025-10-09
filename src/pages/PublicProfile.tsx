@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams, useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 import { Heart, MapPin, Phone, Star, Award, GraduationCap, Plane, Trophy, Briefcase, Shield, Building, Mail, Globe, Camera, AlertTriangle, FileText, Eye } from "lucide-react";
@@ -383,19 +384,15 @@ const PublicProfile = () => {
             </Card>
           )}
 
-          {/* Medical Alert */}
+          {/* Medical Alert - Smaller */}
           {petData.medical?.medical_alert && petData.medical?.medical_conditions && (
-             <Card className="mb-6 border-primary/20 bg-primary/10">
-               <CardContent className="p-6">
-                 <div className="flex items-center space-x-3">
-                   <span className="text-2xl">⚠️</span>
-                   <div>
-                     <h3 className="font-semibold text-primary">Medical Alert</h3>
-                     <p className="text-primary">{petData.medical.medical_conditions}</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+             <Alert className="mb-6 border-red-600 bg-red-50">
+               <AlertTriangle className="h-5 w-5 text-red-600" />
+               <AlertDescription className="ml-2">
+                 <strong className="text-red-900">MEDICAL ALERT:</strong>{' '}
+                 <span className="text-red-800">{petData.medical.medical_conditions}</span>
+               </AlertDescription>
+             </Alert>
            )}
 
           {/* Emergency Summary Section */}

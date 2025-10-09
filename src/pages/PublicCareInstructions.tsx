@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { Clock, Heart, AlertTriangle, Phone, MapPin, Pill } from "lucide-react";
@@ -360,13 +361,13 @@ const PublicCareInstructions = () => {
               {(medicalData?.medical_conditions || medicalData?.medical_alert || medicalData?.last_vaccination || medicalData?.medical_emergency_document) && (
                 <div className="space-y-4 pt-4 border-t border-sage-200">
                   {medicalData.medical_alert && (
-                     <div className="bg-primary/10 border border-primary/20 rounded-lg p-4">
-                       <div className="flex items-center gap-2 mb-2">
-                         <AlertTriangle className="w-5 h-5 text-primary" />
-                         <h4 className="font-medium text-primary">Medical Alert</h4>
-                       </div>
-                       <p className="text-primary font-medium">This pet has active medical alerts requiring immediate attention.</p>
-                    </div>
+                     <Alert className="border-red-600 bg-red-50">
+                       <AlertTriangle className="h-5 w-5 text-red-600" />
+                       <AlertDescription className="ml-2">
+                         <strong className="text-red-900">MEDICAL ALERT:</strong>{' '}
+                         <span className="text-red-800">This pet has active medical alerts requiring immediate attention.</span>
+                       </AlertDescription>
+                     </Alert>
                   )}
 
                   {medicalData.medical_conditions && (

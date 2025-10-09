@@ -38,6 +38,8 @@ interface MissingPetData {
   updatedAt: string;
   isPublic?: boolean;
   galleryPhotoCount?: number;
+  medicalAlert?: boolean;
+  medicalConditions?: string;
 }
 
 export default function PublicMissingPet() {
@@ -106,6 +108,13 @@ export default function PublicMissingPet() {
         .select('contact_name, contact_phone, contact_type')
         .eq('pet_id', id);
 
+      // Fetch medical data for medical alert
+      const { data: medicalData } = await supabase
+        .from('medical')
+        .select('medical_alert, medical_conditions')
+        .eq('pet_id', id)
+        .single();
+
       // Fetch gallery photo count if pet is public
       let galleryPhotoCount = 0;
       if (petInfo.is_public) {
@@ -139,7 +148,9 @@ export default function PublicMissingPet() {
         contacts: petContacts || [],
         updatedAt: lostData.updated_at,
         isPublic: petInfo.is_public,
-        galleryPhotoCount
+        galleryPhotoCount,
+        medicalAlert: medicalData?.medical_alert || false,
+        medicalConditions: sanitizeText(medicalData?.medical_conditions || '')
       };
 
       setPetData(sanitizedData);
@@ -217,6 +228,17 @@ export default function PublicMissingPet() {
       </div>
 
       <div className="container mx-auto px-4 py-8 max-w-4xl">
+        {/* Medical Alert Banner - Smaller */}
+        {petData.medicalAlert && petData.medicalConditions && (
+          <Alert className="mb-6 border-red-600 bg-red-50">
+            <AlertTriangle className="h-5 w-5 text-red-600" />
+            <AlertDescription className="ml-2">
+              <strong className="text-red-900">MEDICAL ALERT:</strong>{' '}
+              <span className="text-red-800">{petData.medicalConditions}</span>
+            </AlertDescription>
+          </Alert>
+        )}
+
         {/* Pet Info Card */}
         <Card className="mb-6">
           <CardHeader className="bg-brand-primary text-white">

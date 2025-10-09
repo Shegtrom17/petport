@@ -2,9 +2,10 @@ import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import worldMapOutline from "@/assets/world-map-outline.png";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
-import { Heart, MapPin, Phone, Shield, Building, Mail, Globe } from "lucide-react";
+import { Heart, MapPin, Phone, Shield, Building, Mail, Globe, AlertTriangle } from "lucide-react";
 import { SocialShareButtons } from "@/components/SocialShareButtons";
 import { MetaTags } from "@/components/MetaTags";
 import { sanitizeText } from "@/utils/inputSanitizer";
@@ -238,19 +239,15 @@ const PublicEmergencyProfile = () => {
             </CardContent>
           </Card>
 
-          {/* Medical Alert */}
+          {/* Medical Alert - Smaller */}
           {petData.medical?.medical_alert && petData.medical?.medical_conditions && (
-            <Card className="mb-6 border-red-300 bg-red-50">
-              <CardContent className="p-6">
-                <div className="flex items-center space-x-3">
-                  <span className="text-2xl">⚠️</span>
-                  <div>
-                    <h3 className="font-semibold text-red-800 text-lg">MEDICAL ALERT</h3>
-                    <p className="text-red-700 font-medium">{petData.medical.medical_conditions}</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+            <Alert className="mb-6 border-red-600 bg-red-50">
+              <AlertTriangle className="h-5 w-5 text-red-600" />
+              <AlertDescription className="ml-2">
+                <strong className="text-red-900">MEDICAL ALERT:</strong>{' '}
+                <span className="text-red-800">{petData.medical.medical_conditions}</span>
+              </AlertDescription>
+            </Alert>
           )}
 
           {/* Organization Contact */}

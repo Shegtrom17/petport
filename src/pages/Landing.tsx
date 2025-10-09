@@ -254,18 +254,15 @@ export default function Landing() {
               {/* Foster Caregivers Section */}
               <div className="bg-white rounded-2xl p-8 border border-gray-200">
                 <div className="flex items-center gap-4 mb-6">
-                  {/* PLACEHOLDER: Foster Caregiver Icon/Image */}
-                  <div className="w-16 h-16 bg-green-200 rounded-full flex items-center justify-center border-2 border-dashed border-green-400">
-                    <span className="text-green-600">🤝</span>
+                  <div className="w-16 h-16 rounded-full flex items-center justify-center bg-brand-primary/10">
+                    <img src="/lovable-uploads/213ccabc-3918-406d-b844-9c2730b7637d.png" alt="PetPort logo" className="w-12 h-12" />
                   </div>
                   <h3 className="text-2xl font-semibold text-brand-primary">Perfect App for Foster Caregivers</h3>
                 </div>
                 
                 <div className="grid gap-4">
                   <div className="flex items-start gap-3">
-                    <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
-                      <span className="text-white text-xs">📦</span>
-                    </div>
+                    <div className="w-2 h-2 bg-brand-primary rounded-full flex-shrink-0 mt-2"></div>
                     <div>
                       <strong className="text-brand-primary">Foster-to-Adopter Transfer</strong>
                       <p className="text-brand-primary-dark text-sm">Streamline the transition. Give adopters a complete, digital version of the pet's profile with all your recorded notes, photos, and health logs.</p>
@@ -273,9 +270,7 @@ export default function Landing() {
                   </div>
                   
                   <div className="flex items-start gap-3">
-                    <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
-                      <span className="text-white text-xs">📅</span>
-                    </div>
+                    <div className="w-2 h-2 bg-brand-primary rounded-full flex-shrink-0 mt-2"></div>
                     <div>
                       <strong className="text-brand-primary">Care & Medication Schedule</strong>
                       <p className="text-brand-primary-dark text-sm">diets, routines, meds, allergies, behaviors.</p>
@@ -283,9 +278,7 @@ export default function Landing() {
                   </div>
 
                   <div className="flex items-start gap-3">
-                    <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
-                      <span className="text-white text-xs">📝</span>
-                    </div>
+                    <div className="w-2 h-2 bg-brand-primary rounded-full flex-shrink-0 mt-2"></div>
                     <div>
                       <strong className="text-brand-primary">Behavior & Notes</strong>
                       <p className="text-brand-primary-dark text-sm">track quirks, training progress, and tips.</p>
@@ -293,9 +286,7 @@ export default function Landing() {
                   </div>
 
                   <div className="flex items-start gap-3">
-                    <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
-                      <span className="text-white text-xs">📸</span>
-                    </div>
+                    <div className="w-2 h-2 bg-brand-primary rounded-full flex-shrink-0 mt-2"></div>
                     <div>
                       <strong className="text-brand-primary">Photos & Bio Builder</strong>
                       <p className="text-brand-primary-dark text-sm">create a great adoption profile fast.</p>
@@ -303,9 +294,7 @@ export default function Landing() {
                   </div>
 
                   <div className="flex items-start gap-3">
-                    <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
-                      <span className="text-white text-xs">🔄</span>
-                    </div>
+                    <div className="w-2 h-2 bg-brand-primary rounded-full flex-shrink-0 mt-2"></div>
                     <div>
                       <strong className="text-brand-primary">One‑Tap Transfer to Adopter</strong>
                       <p className="text-brand-primary-dark text-sm">move the full pet record to the new owner securely.</p>
@@ -313,9 +302,7 @@ export default function Landing() {
                   </div>
 
                   <div className="flex items-start gap-3">
-                    <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
-                      <span className="text-white text-xs">🔒</span>
-                    </div>
+                    <div className="w-2 h-2 bg-brand-primary rounded-full flex-shrink-0 mt-2"></div>
                     <div>
                       <strong className="text-brand-primary">Privacy by Default</strong>
                       <p className="text-brand-primary-dark text-sm">you choose what's shared publicly.</p>

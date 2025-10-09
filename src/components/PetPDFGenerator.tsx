@@ -659,7 +659,14 @@ export const PetPDFGenerator = ({ petId, petName, petData, handlePetUpdate }: Pe
 
                   {/* Email Form */}
                   {showEmailForm && (
-                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 space-y-3">
+                    <div 
+                      className="bg-blue-50 border border-blue-200 rounded-lg p-4 space-y-3 overflow-y-auto overscroll-contain"
+                      style={{
+                        WebkitOverflowScrolling: 'touch',
+                        overscrollBehavior: 'contain',
+                        paddingBottom: 'env(safe-area-inset-bottom)',
+                      }}
+                    >
                       <div className="flex items-center justify-between">
                         <h4 className="font-semibold text-blue-800">Email PDF</h4>
                         <Button

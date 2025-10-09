@@ -584,7 +584,14 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
             <DrawerHeader>
               <DrawerTitle>Share via Email</DrawerTitle>
             </DrawerHeader>
-            <div className="space-y-4 pb-4">
+            <div 
+              className="space-y-4 pb-4 overflow-y-auto overscroll-contain"
+              style={{
+                WebkitOverflowScrolling: 'touch',
+                overscrollBehavior: 'contain',
+                paddingBottom: 'env(safe-area-inset-bottom)',
+              }}
+            >
               <div>
                 <Label htmlFor="recipientEmail">Recipient Email *</Label>
                 <Input

@@ -580,13 +580,13 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
 {/* Email Dialog/Drawer */}
       {isMobile ? (
         <Drawer open={showEmailForm} onOpenChange={setShowEmailForm}>
-          <DrawerContent className="px-4 pb-4 max-h-[85vh]">
-            <DrawerHeader className="pb-2">
+          <DrawerContent className="px-4 pb-4">
+            <DrawerHeader>
               <DrawerTitle>Share via Email</DrawerTitle>
             </DrawerHeader>
-            <div className="space-y-3 overflow-y-auto flex-1 pb-2">
+            <div className="space-y-4 pb-4">
               <div>
-                <Label htmlFor="recipientEmail" className="text-sm">Recipient Email *</Label>
+                <Label htmlFor="recipientEmail">Recipient Email *</Label>
                 <Input
                   id="recipientEmail"
                   type="email"
@@ -594,46 +594,63 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
                   value={emailData.recipientEmail}
                   onChange={(e) => setEmailData(prev => ({ ...prev, recipientEmail: e.target.value }))}
                   className="mt-1"
+                  autoFocus
+                  onFocus={(e) => {
+                    // Scroll input into view for iOS keyboard
+                    setTimeout(() => {
+                      e.target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }, 300);
+                  }}
                 />
               </div>
               <div>
-                <Label htmlFor="recipientName" className="text-sm">Recipient Name (optional)</Label>
+                <Label htmlFor="recipientName">Recipient Name (optional)</Label>
                 <Input
                   id="recipientName"
                   placeholder="Enter recipient's name"
                   value={emailData.recipientName}
                   onChange={(e) => setEmailData(prev => ({ ...prev, recipientName: e.target.value }))}
                   className="mt-1"
+                  onFocus={(e) => {
+                    setTimeout(() => {
+                      e.target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }, 300);
+                  }}
                 />
               </div>
               <div>
-                <Label htmlFor="customMessage" className="text-sm">Personal Message (optional)</Label>
+                <Label htmlFor="customMessage">Personal Message (optional)</Label>
                 <Textarea
                   id="customMessage"
                   placeholder="Add a personal message..."
                   value={emailData.customMessage}
                   onChange={(e) => setEmailData(prev => ({ ...prev, customMessage: e.target.value }))}
-                  rows={2}
-                  className="mt-1 resize-none"
+                  rows={3}
+                  className="mt-1"
+                  onFocus={(e) => {
+                    setTimeout(() => {
+                      e.target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }, 300);
+                  }}
                 />
               </div>
-            </div>
-            <div className="flex gap-2 pt-3 border-t mt-2">
-              <Button
-                onClick={handleSendEmail}
-                disabled={emailLoading}
-                className="flex-1 bg-primary hover:bg-primary/90 text-white"
-              >
-                {emailLoading ? 'Sending...' : 'Send Email'}
-              </Button>
-              <Button
-                variant="outline"
-                onClick={() => setShowEmailForm(false)}
-                disabled={emailLoading}
-                className="text-muted-foreground border-muted-foreground hover:bg-muted/10"
-              >
-                Cancel
-              </Button>
+              <div className="flex gap-2">
+                <Button
+                  onClick={handleSendEmail}
+                  disabled={emailLoading}
+                  className="flex-1 bg-primary hover:bg-primary/90 text-white"
+                >
+                  {emailLoading ? 'Sending...' : 'Send Email'}
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() => setShowEmailForm(false)}
+                  disabled={emailLoading}
+                  className="text-muted-foreground border-muted-foreground hover:bg-muted/10"
+                >
+                  Cancel
+                </Button>
+              </div>
             </div>
           </DrawerContent>
         </Drawer>

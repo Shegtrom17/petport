@@ -657,71 +657,81 @@ export const PetPDFGenerator = ({ petId, petName, petData, handlePetUpdate }: Pe
                     </div>
                  </div>
 
-                 {/* Email Form */}
-                 {showEmailForm && (
-                   <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 space-y-3 max-h-[50vh] overflow-y-auto">
-                     <div className="flex items-center justify-between sticky top-0 bg-blue-50 pb-2">
-                       <h4 className="font-semibold text-blue-800">Email PDF</h4>
-                       <Button
-                         onClick={() => setShowEmailForm(false)}
-                         variant="ghost"
-                         size="sm"
-                         className="h-auto p-1 text-blue-600 hover:text-blue-800"
-                       >
-                         <X className="w-4 h-4" />
-                       </Button>
-                     </div>
-                     
-                     <div className="space-y-3 pb-2">
-                       <div>
-                         <Label htmlFor="recipient-email" className="text-sm font-medium text-blue-800">
-                           Recipient Email *
-                         </Label>
-                         <Input
-                           id="recipient-email"
-                           type="email"
-                           placeholder="recipient@email.com"
-                           value={emailData.recipientEmail}
-                           onChange={(e) => setEmailData(prev => ({ ...prev, recipientEmail: e.target.value }))}
-                           className="mt-1"
-                           autoFocus
-                         />
-                       </div>
-                       
-                       <div>
-                         <Label htmlFor="custom-message" className="text-sm font-medium text-blue-800">
-                           Custom Message (optional)
-                         </Label>
-                         <Textarea
-                           id="custom-message"
-                           placeholder="Add a personal message..."
-                           value={emailData.customMessage}
-                           onChange={(e) => setEmailData(prev => ({ ...prev, customMessage: e.target.value }))}
-                           className="mt-1"
-                           rows={3}
-                         />
-                       </div>
-                       
-                       <Button
-                         onClick={handleEmailPDF}
-                         disabled={isEmailLoading || !emailData.recipientEmail.trim()}
-                         className="w-full bg-blue-600 hover:bg-blue-700 text-white sticky bottom-0"
-                       >
-                         {isEmailLoading ? (
-                           <>
-                             <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                             Sending Email...
-                           </>
-                         ) : (
-                           <>
-                             <Mail className="w-4 h-4 mr-2" />
-                             Send PDF via Email
-                           </>
-                         )}
-                       </Button>
-                     </div>
-                   </div>
-                 )}
+                  {/* Email Form */}
+                  {showEmailForm && (
+                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 space-y-3">
+                      <div className="flex items-center justify-between">
+                        <h4 className="font-semibold text-blue-800">Email PDF</h4>
+                        <Button
+                          onClick={() => setShowEmailForm(false)}
+                          variant="ghost"
+                          size="sm"
+                          className="h-auto p-1 text-blue-600 hover:text-blue-800"
+                        >
+                          <X className="w-4 h-4" />
+                        </Button>
+                      </div>
+                      
+                      <div className="space-y-3">
+                        <div>
+                          <Label htmlFor="recipient-email" className="text-sm font-medium text-blue-800">
+                            Recipient Email *
+                          </Label>
+                          <Input
+                            id="recipient-email"
+                            type="email"
+                            placeholder="recipient@email.com"
+                            value={emailData.recipientEmail}
+                            onChange={(e) => setEmailData(prev => ({ ...prev, recipientEmail: e.target.value }))}
+                            className="mt-1"
+                            autoFocus
+                            onFocus={(e) => {
+                              setTimeout(() => {
+                                e.target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                              }, 300);
+                            }}
+                          />
+                        </div>
+                        
+                        <div>
+                          <Label htmlFor="custom-message" className="text-sm font-medium text-blue-800">
+                            Custom Message (optional)
+                          </Label>
+                          <Textarea
+                            id="custom-message"
+                            placeholder="Add a personal message..."
+                            value={emailData.customMessage}
+                            onChange={(e) => setEmailData(prev => ({ ...prev, customMessage: e.target.value }))}
+                            className="mt-1"
+                            rows={3}
+                            onFocus={(e) => {
+                              setTimeout(() => {
+                                e.target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                              }, 300);
+                            }}
+                          />
+                        </div>
+                        
+                        <Button
+                          onClick={handleEmailPDF}
+                          disabled={isEmailLoading || !emailData.recipientEmail.trim()}
+                          className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+                        >
+                          {isEmailLoading ? (
+                            <>
+                              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                              Sending Email...
+                            </>
+                          ) : (
+                            <>
+                              <Mail className="w-4 h-4 mr-2" />
+                              Send PDF via Email
+                            </>
+                          )}
+                        </Button>
+                      </div>
+                    </div>
+                  )}
 
                  {/* Sharing Options */}
                 <div className="border-t border-gold-500/30 pt-4 space-y-3">

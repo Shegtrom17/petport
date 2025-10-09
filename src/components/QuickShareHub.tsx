@@ -585,7 +585,7 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
               <DrawerTitle>Share via Email</DrawerTitle>
             </DrawerHeader>
             <div 
-              className="space-y-4 pb-4 overflow-y-auto overscroll-contain"
+              className="pb-4 overflow-y-auto overscroll-contain"
               style={{
                 WebkitOverflowScrolling: 'touch',
                 overscrollBehavior: 'contain',
@@ -612,7 +612,7 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
                   }}
                 />
               </div>
-              <div>
+              <div className="mt-4">
                 <Label htmlFor="recipientName">Recipient Name (optional)</Label>
                 <Input
                   id="recipientName"
@@ -630,7 +630,7 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
                   }}
                 />
               </div>
-              <div>
+              <div className="mt-4">
                 <Label htmlFor="customMessage">Personal Message (optional)</Label>
                 <Textarea
                   id="customMessage"
@@ -649,7 +649,7 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
                   }}
                 />
               </div>
-              <div className="flex gap-2">
+              <div className="mt-4 flex gap-2">
                 <Button
                   onClick={handleSendEmail}
                   disabled={emailLoading}

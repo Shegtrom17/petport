@@ -660,7 +660,7 @@ export const PetPDFGenerator = ({ petId, petName, petData, handlePetUpdate }: Pe
                   {/* Email Form */}
                   {showEmailForm && (
                     <div 
-                      className="bg-blue-50 border border-blue-200 rounded-lg p-4 space-y-3 overflow-y-auto overscroll-contain"
+                      className="bg-blue-50 border border-blue-200 rounded-lg p-4 overflow-y-auto overscroll-contain"
                       style={{
                         WebkitOverflowScrolling: 'touch',
                         overscrollBehavior: 'contain',
@@ -679,7 +679,7 @@ export const PetPDFGenerator = ({ petId, petName, petData, handlePetUpdate }: Pe
                         </Button>
                       </div>
                       
-                      <div className="space-y-3">
+                      <div>
                         <div>
                           <Label htmlFor="recipient-email" className="text-sm font-medium text-blue-800">
                             Recipient Email *
@@ -703,7 +703,7 @@ export const PetPDFGenerator = ({ petId, petName, petData, handlePetUpdate }: Pe
                           />
                         </div>
                         
-                        <div>
+                        <div className="mt-3">
                           <Label htmlFor="custom-message" className="text-sm font-medium text-blue-800">
                             Custom Message (optional)
                           </Label>
@@ -728,7 +728,7 @@ export const PetPDFGenerator = ({ petId, petName, petData, handlePetUpdate }: Pe
                         <Button
                           onClick={handleEmailPDF}
                           disabled={isEmailLoading || !emailData.recipientEmail.trim()}
-                          className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+                          className="mt-3 w-full bg-blue-600 hover:bg-blue-700 text-white"
                         >
                           {isEmailLoading ? (
                             <>

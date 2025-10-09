@@ -413,7 +413,7 @@ export const PetProfileContent = ({
           </CardHeader>
           <CardContent>
             <p className="text-xs text-muted-foreground mb-4">
-              Manage your pet's profile specific info, bio, contacts, Medical alerts. This is recommended for basic information.
+              Manage your pet's profile specific info, bio, contacts, medical alerts, privacy settings, and foster-to-adopter transfer options.
             </p>
 
             {/* Guidance hint for incomplete profiles */}
@@ -442,17 +442,6 @@ export const PetProfileContent = ({
                   <Edit className="w-4 h-4" />
                   <span>Edit Pet Profile</span>
                 </Button>
-              )}
-
-            {/* Privacy Toggle in Button Style */}
-              {isOwner && togglePetPublicVisibility && (
-                <div className="flex items-center justify-between p-3 border rounded-lg bg-gray-50">
-                  <span className="text-sm font-medium text-gray-700">Privacy</span>
-                  <CompactPrivacyToggle
-                    isPublic={enhancedPetData?.is_public || false}
-                    onToggle={(isPublic) => togglePetPublicVisibility(enhancedPetData.id, isPublic)}
-                  />
-                </div>
               )}
             </div>
           </CardContent>

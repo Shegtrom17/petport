@@ -13,6 +13,14 @@ export const isIOSSafari = (): boolean => {
   return isIOS && isSafari;
 };
 
+export const isIOSPWA = (): boolean => {
+  const isIOS = isIOSDevice();
+  // Check for iOS standalone mode (PWA)
+  const isStandalone = (window.navigator as any).standalone === true || 
+                       window.matchMedia('(display-mode: standalone)').matches;
+  return isIOS && isStandalone;
+};
+
 export interface IOSContext {
   userAgent: string;
   memory: any;

@@ -239,17 +239,6 @@ const PublicEmergencyProfile = () => {
             </CardContent>
           </Card>
 
-          {/* Medical Alert - Smaller */}
-          {petData.medical?.medical_alert && petData.medical?.medical_conditions && (
-            <Alert className="mb-6 border-red-600 bg-red-50">
-              <AlertTriangle className="h-5 w-5 text-red-600" />
-              <AlertDescription className="ml-2">
-                <strong className="text-red-900">MEDICAL ALERT:</strong>{' '}
-                <span className="text-red-800">{petData.medical.medical_conditions}</span>
-              </AlertDescription>
-            </Alert>
-          )}
-
           {/* Organization Contact */}
           {petData.organization_name && (
             <Card className="mb-6 border-blue-200 bg-blue-50">

@@ -2,6 +2,7 @@ import { ArrowLeft } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { isIOSPWA } from "@/utils/iosDetection";
+import { useAuth } from "@/context/AuthContext";
 
 interface AppHeaderProps {
   title: string;
@@ -13,25 +14,28 @@ export const AppHeader = ({ title, showBack = false, actions }: AppHeaderProps) 
   const navigate = useNavigate();
   const location = useLocation();
   const isPWA = isIOSPWA();
+  const { user } = useAuth();
 
   const handleBack = () => {
-    // Check if we can go back in history
     if (window.history.length > 1) {
       navigate(-1);
     } else {
-      // No history - smart fallback based on current route
       const path = location.pathname;
-      
-      // If on a pet-specific page, go to /app
-      if (path.includes('/profile/') || path.includes('/resume/') || 
-          path.includes('/care/') || path.includes('/gallery/') ||
-          path.includes('/travel/') || path.includes('/documents/')) {
-        navigate('/app');
-      } else if (path !== '/app' && path !== '/') {
-        // For other pages, go to /app
-        navigate('/app');
+
+      // Smart fallback with auth awareness
+      const isProtectedRoute = path.includes('/profile/') || path.includes('/resume/') ||
+                               path.includes('/care/') || path.includes('/gallery/') ||
+                               path.includes('/travel/') || path.includes('/documents/');
+
+      if (user) {
+        // Authenticated: go to /app for protected pages
+        if (isProtectedRoute || (path !== '/app' && path !== '/')) {
+          navigate('/app');
+        }
+      } else {
+        // Not signed in: go to home instead of /app to avoid auth redirect
+        navigate('/');
       }
-      // If already on /app or /, do nothing (no back available)
     }
   };
 

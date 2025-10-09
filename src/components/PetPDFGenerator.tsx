@@ -659,8 +659,8 @@ export const PetPDFGenerator = ({ petId, petName, petData, handlePetUpdate }: Pe
 
                  {/* Email Form */}
                  {showEmailForm && (
-                   <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 space-y-3">
-                     <div className="flex items-center justify-between">
+                   <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 space-y-3 max-h-[50vh] overflow-y-auto">
+                     <div className="flex items-center justify-between sticky top-0 bg-blue-50 pb-2">
                        <h4 className="font-semibold text-blue-800">Email PDF</h4>
                        <Button
                          onClick={() => setShowEmailForm(false)}
@@ -672,7 +672,7 @@ export const PetPDFGenerator = ({ petId, petName, petData, handlePetUpdate }: Pe
                        </Button>
                      </div>
                      
-                     <div className="space-y-3">
+                     <div className="space-y-3 pb-2">
                        <div>
                          <Label htmlFor="recipient-email" className="text-sm font-medium text-blue-800">
                            Recipient Email *
@@ -684,6 +684,7 @@ export const PetPDFGenerator = ({ petId, petName, petData, handlePetUpdate }: Pe
                            value={emailData.recipientEmail}
                            onChange={(e) => setEmailData(prev => ({ ...prev, recipientEmail: e.target.value }))}
                            className="mt-1"
+                           autoFocus
                          />
                        </div>
                        
@@ -704,7 +705,7 @@ export const PetPDFGenerator = ({ petId, petName, petData, handlePetUpdate }: Pe
                        <Button
                          onClick={handleEmailPDF}
                          disabled={isEmailLoading || !emailData.recipientEmail.trim()}
-                         className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+                         className="w-full bg-blue-600 hover:bg-blue-700 text-white sticky bottom-0"
                        >
                          {isEmailLoading ? (
                            <>

@@ -584,7 +584,7 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
             <DrawerHeader>
               <DrawerTitle>Share via Email</DrawerTitle>
             </DrawerHeader>
-            <div className="space-y-4 max-h-[60vh] overflow-y-auto">
+            <div className="space-y-4 max-h-[70vh] overflow-y-auto pb-4">
               <div>
                 <Label htmlFor="recipientEmail">Recipient Email *</Label>
                 <Input
@@ -593,6 +593,8 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
                   placeholder="Enter email address"
                   value={emailData.recipientEmail}
                   onChange={(e) => setEmailData(prev => ({ ...prev, recipientEmail: e.target.value }))}
+                  className="mt-1"
+                  autoFocus
                 />
               </div>
               <div>
@@ -602,6 +604,7 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
                   placeholder="Enter recipient's name"
                   value={emailData.recipientName}
                   onChange={(e) => setEmailData(prev => ({ ...prev, recipientName: e.target.value }))}
+                  className="mt-1"
                 />
               </div>
               <div>
@@ -612,9 +615,10 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
                   value={emailData.customMessage}
                   onChange={(e) => setEmailData(prev => ({ ...prev, customMessage: e.target.value }))}
                   rows={3}
+                  className="mt-1"
                 />
               </div>
-              <div className="flex gap-2">
+              <div className="flex gap-2 sticky bottom-0 bg-white pt-2 pb-2">
                 <Button
                   onClick={handleSendEmail}
                   disabled={emailLoading}

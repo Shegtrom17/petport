@@ -300,44 +300,116 @@ export const QuickIDSection = ({ petData, onUpdate }: QuickIDSectionProps) => {
             <div className="space-y-4">
               <h4 className="font-bold text-lg text-brand-primary">Contacts</h4>
               <div className="space-y-2">
-                <div className="bg-white p-3 rounded-lg border shadow-sm">
-                  <div className="flex items-center space-x-2">
-                    <Phone className="w-4 h-4 text-red-600" />
-                    <strong>Primary:</strong>
+                {petData.emergencyContact && (
+                  <div className="bg-white p-3 rounded-lg border shadow-sm">
+                    {(() => {
+                      const phone = extractPhoneNumber(petData.emergencyContact);
+                      if (phone) {
+                        return (
+                          <a href={`tel:${formatPhoneForTel(phone)}`} className="block">
+                            <div className="flex items-center space-x-2">
+                              <Phone className="w-4 h-4 text-red-600" />
+                              <strong className="hover:opacity-80">Primary:</strong>
+                            </div>
+                            <p className="ml-6 hover:opacity-80">{petData.emergencyContact}</p>
+                            <p className="ml-6 text-xs text-muted-foreground">Tap to call</p>
+                          </a>
+                        );
+                      }
+                      return (
+                        <>
+                          <div className="flex items-center space-x-2">
+                            <Phone className="w-4 h-4 text-red-600" />
+                            <strong>Primary:</strong>
+                          </div>
+                          <p className="ml-6">{petData.emergencyContact}</p>
+                        </>
+                      );
+                    })()}
                   </div>
-                   <p className="ml-6">{petData.emergencyContact || 'Not set'}</p>
-                   {petData.emergencyContact && petData.emergencyContact !== 'Not set' && (
-                     <p className="ml-6 text-xs text-muted-foreground">Tap to call</p>
-                   )}
-                </div>
+                )}
                 {petData.secondEmergencyContact && (
                   <div className="bg-white p-3 rounded-lg border shadow-sm">
-                    <div className="flex items-center space-x-2">
-                      <Phone className="w-4 h-4 text-brand-primary" />
-                      <strong>Secondary:</strong>
-                    </div>
-                     <p className="ml-6">{petData.secondEmergencyContact}</p>
-                     <p className="ml-6 text-xs text-muted-foreground">Tap to call</p>
+                    {(() => {
+                      const phone = extractPhoneNumber(petData.secondEmergencyContact);
+                      if (phone) {
+                        return (
+                          <a href={`tel:${formatPhoneForTel(phone)}`} className="block">
+                            <div className="flex items-center space-x-2">
+                              <Phone className="w-4 h-4 text-brand-primary" />
+                              <strong className="hover:opacity-80">Secondary:</strong>
+                            </div>
+                            <p className="ml-6 hover:opacity-80">{petData.secondEmergencyContact}</p>
+                            <p className="ml-6 text-xs text-muted-foreground">Tap to call</p>
+                          </a>
+                        );
+                      }
+                      return (
+                        <>
+                          <div className="flex items-center space-x-2">
+                            <Phone className="w-4 h-4 text-brand-primary" />
+                            <strong>Secondary:</strong>
+                          </div>
+                          <p className="ml-6">{petData.secondEmergencyContact}</p>
+                        </>
+                      );
+                    })()}
                   </div>
                 )}
                 {petData.vetContact && (
-                   <div className="bg-white p-3 rounded-lg border shadow-sm">
-                    <div className="flex items-center space-x-2">
-                      <Stethoscope className="w-4 h-4 text-blue-600" />
-                      <strong>Veterinarian:</strong>
-                    </div>
-                     <p className="ml-6">{petData.vetContact}</p>
-                     <p className="ml-6 text-xs text-muted-foreground">Tap to call</p>
+                  <div className="bg-white p-3 rounded-lg border shadow-sm">
+                    {(() => {
+                      const phone = extractPhoneNumber(petData.vetContact);
+                      if (phone) {
+                        return (
+                          <a href={`tel:${formatPhoneForTel(phone)}`} className="block">
+                            <div className="flex items-center space-x-2">
+                              <Stethoscope className="w-4 h-4 text-blue-600" />
+                              <strong className="hover:opacity-80">Veterinarian:</strong>
+                            </div>
+                            <p className="ml-6 hover:opacity-80">{petData.vetContact}</p>
+                            <p className="ml-6 text-xs text-muted-foreground">Tap to call</p>
+                          </a>
+                        );
+                      }
+                      return (
+                        <>
+                          <div className="flex items-center space-x-2">
+                            <Stethoscope className="w-4 h-4 text-blue-600" />
+                            <strong>Veterinarian:</strong>
+                          </div>
+                          <p className="ml-6">{petData.vetContact}</p>
+                        </>
+                      );
+                    })()}
                   </div>
                 )}
                 {petData.petCaretaker && (
                   <div className="bg-white p-3 rounded-lg border shadow-sm">
-                    <div className="flex items-center space-x-2">
-                      <Users className="w-4 h-4 text-green-600" />
-                      <strong>Pet Caretaker:</strong>
-                    </div>
-                     <p className="ml-6">{petData.petCaretaker}</p>
-                     <p className="ml-6 text-xs text-muted-foreground">Tap to call</p>
+                    {(() => {
+                      const phone = extractPhoneNumber(petData.petCaretaker);
+                      if (phone) {
+                        return (
+                          <a href={`tel:${formatPhoneForTel(phone)}`} className="block">
+                            <div className="flex items-center space-x-2">
+                              <Users className="w-4 h-4 text-green-600" />
+                              <strong className="hover:opacity-80">Pet Caretaker:</strong>
+                            </div>
+                            <p className="ml-6 hover:opacity-80">{petData.petCaretaker}</p>
+                            <p className="ml-6 text-xs text-muted-foreground">Tap to call</p>
+                          </a>
+                        );
+                      }
+                      return (
+                        <>
+                          <div className="flex items-center space-x-2">
+                            <Users className="w-4 h-4 text-green-600" />
+                            <strong>Pet Caretaker:</strong>
+                          </div>
+                          <p className="ml-6">{petData.petCaretaker}</p>
+                        </>
+                      );
+                    })()}
                   </div>
                 )}
               </div>

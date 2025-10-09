@@ -340,112 +340,116 @@ export const PetProfileContent = ({
             )}
           />
           
-          <div className="flex justify-center">
-            <div className="text-center">
-              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-4">PROFILE PHOTO</p>
-              <div className="relative w-48 h-48 mx-auto">
-                {enhancedPetData?.photoUrl ? (
-                  <img
-                    src={enhancedPetData.photoUrl}
-                    alt={`${enhancedPetData.name} profile photo`}
-                    className="w-full h-full object-cover rounded-lg border-2 border-brand-primary"
-                  />
-                ) : (
-                  <div className="w-full h-full bg-gray-100 rounded-lg border-2 border-brand-primary flex items-center justify-center">
-                    <Camera className="w-12 h-12 text-gray-400" />
-                  </div>
-                )}
-                {photoLoading.profile && (
-                  <div className="absolute inset-0 bg-white/80 rounded-lg flex items-center justify-center">
-                    <Loader2 className="w-8 h-8 animate-spin text-brand-primary" />
+          {/* Profile Photo + Management Hub - Side by Side on Desktop */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Profile Photo Section */}
+            <div className="flex justify-center">
+              <div className="text-center">
+                <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-4">PROFILE PHOTO</p>
+                <div className="relative w-48 h-48 mx-auto">
+                  {enhancedPetData?.photoUrl ? (
+                    <img
+                      src={enhancedPetData.photoUrl}
+                      alt={`${enhancedPetData.name} profile photo`}
+                      className="w-full h-full object-cover rounded-lg border-2 border-brand-primary"
+                    />
+                  ) : (
+                    <div className="w-full h-full bg-gray-100 rounded-lg border-2 border-brand-primary flex items-center justify-center">
+                      <Camera className="w-12 h-12 text-gray-400" />
+                    </div>
+                  )}
+                  {photoLoading.profile && (
+                    <div className="absolute inset-0 bg-white/80 rounded-lg flex items-center justify-center">
+                      <Loader2 className="w-8 h-8 animate-spin text-brand-primary" />
+                    </div>
+                  )}
+                </div>
+                {isOwner && (
+                  <div className="mt-3 flex justify-center space-x-2">
+                    {/* Upload from gallery */}
+                    <Button
+                      onClick={() => openProfileFilePicker('profile', false)}
+                      className="flex items-center space-x-1 px-3 py-2 text-sm bg-brand-primary text-white rounded-lg hover:bg-brand-primary-dark transition-colors"
+                    >
+                      <Upload className="w-4 h-4" />
+                      <span>Upload</span>
+                    </Button>
+                    
+                    {/* Take photo with camera */}
+                    <Button
+                      onClick={() => openProfileFilePicker('profile', true)}
+                      className="flex items-center space-x-1 px-3 py-2 text-sm bg-brand-primary text-white rounded-lg hover:bg-brand-primary-dark transition-colors"
+                    >
+                      <Camera className="w-4 h-4" />
+                      <span>Camera</span>
+                    </Button>
+                    
+                    {enhancedPetData?.photoUrl && (
+                      <Button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          e.preventDefault();
+                          handlePhotoDelete('profile');
+                        }}
+                        variant="outline"
+                        size="sm"
+                        className="text-red-600 border-red-300 hover:border-red-500 hover:text-red-700 hover:scale-105 transition-all touch-manipulation"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    )}
                   </div>
                 )}
               </div>
-              {isOwner && (
-                <div className="mt-3 flex justify-center space-x-2">
-                  {/* Upload from gallery */}
-                  <Button
-                    onClick={() => openProfileFilePicker('profile', false)}
-                    className="flex items-center space-x-1 px-3 py-2 text-sm bg-brand-primary text-white rounded-lg hover:bg-brand-primary-dark transition-colors"
-                  >
-                    <Upload className="w-4 h-4" />
-                    <span>Upload</span>
-                  </Button>
-                  
-                  {/* Take photo with camera */}
-                  <Button
-                    onClick={() => openProfileFilePicker('profile', true)}
-                    className="flex items-center space-x-1 px-3 py-2 text-sm bg-brand-primary text-white rounded-lg hover:bg-brand-primary-dark transition-colors"
-                  >
-                    <Camera className="w-4 h-4" />
-                    <span>Camera</span>
-                  </Button>
-                  
-                  {enhancedPetData?.photoUrl && (
-                    <Button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        e.preventDefault();
-                        handlePhotoDelete('profile');
-                      }}
-                      variant="outline"
-                      size="sm"
-                      className="text-red-600 border-red-300 hover:border-red-500 hover:text-red-700 hover:scale-105 transition-all touch-manipulation"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </Button>
+            </div>
+
+            {/* Profile Management Hub */}
+            <div>
+              <Card className="bg-white shadow-xl h-full">
+                <CardHeader>
+                  <CardTitle className="text-xl flex items-center gap-2">
+                    <Edit className="w-6 h-6 text-[#5691af]" />
+                    Profile Management Hub
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-xs text-muted-foreground mb-4">
+                    Manage your pet's profile specific info, bio, contacts, medical alerts, privacy settings, and <span className="text-orange-700 font-semibold">foster-to-adopter transfer options</span>.
+                  </p>
+
+                  {/* Guidance hint for incomplete profiles */}
+                  {isOwner && (
+                    !enhancedPetData?.name || 
+                    !enhancedPetData?.breed || 
+                    !enhancedPetData?.age || 
+                    !enhancedPetData?.weight
+                  ) && (
+                    <GuidanceHint
+                      message="Complete your pet's profile for professional PDFs and comprehensive sharing"
+                      actionLabel="Edit Pet Profile"
+                      onAction={handleProfileEdit}
+                      variant="gentle"
+                    />
                   )}
-                </div>
-              )}
+
+                  {/* Action Buttons */}
+                  <div className="space-y-3 mb-4">
+                    {/* Edit Profile Button */}
+                    {isOwner && (
+                      <Button
+                        onClick={handleProfileEdit}
+                        className="bg-[#5691af] hover:bg-[#4a7d99] text-white w-full flex items-center justify-center gap-2 h-12"
+                      >
+                        <Edit className="w-4 h-4" />
+                        <span>Edit Pet Profile</span>
+                      </Button>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
             </div>
           </div>
         </div>
-      </div>
-
-      {/* Profile Management Hub - Streamlined */}
-      <div className="mb-8">
-        <Card className="bg-white shadow-xl">
-          <CardHeader>
-            <CardTitle className="text-xl flex items-center gap-2">
-              <Edit className="w-6 h-6 text-[#5691af]" />
-              Profile Management Hub
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-xs text-muted-foreground mb-4">
-              Manage your pet's profile specific info, bio, contacts, medical alerts, privacy settings, and <span className="text-orange-700 font-semibold">foster-to-adopter transfer options</span>.
-            </p>
-
-            {/* Guidance hint for incomplete profiles */}
-            {isOwner && (
-              !enhancedPetData?.name || 
-              !enhancedPetData?.breed || 
-              !enhancedPetData?.age || 
-              !enhancedPetData?.weight
-            ) && (
-              <GuidanceHint
-                message="Complete your pet's profile for professional PDFs and comprehensive sharing"
-                actionLabel="Edit Pet Profile"
-                onAction={handleProfileEdit}
-                variant="gentle"
-              />
-            )}
-
-            {/* Action Buttons */}
-            <div className="space-y-3 mb-4">
-              {/* Edit Profile Button */}
-              {isOwner && (
-                <Button
-                  onClick={handleProfileEdit}
-                  className="bg-[#5691af] hover:bg-[#4a7d99] text-white w-full flex items-center justify-center gap-2 h-12"
-                >
-                  <Edit className="w-4 h-4" />
-                  <span>Edit Pet Profile</span>
-                </Button>
-              )}
-            </div>
-          </CardContent>
-        </Card>
       </div>
 
 

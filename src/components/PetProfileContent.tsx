@@ -368,7 +368,7 @@ export const PetProfileContent = ({
       <div className="mb-8">
         <div className="bg-white/50 backdrop-blur-sm rounded-2xl p-6">
           <SectionHeader
-            title="Official Photos"
+            title="Profile Photo"
             icon={<Camera className="w-5 h-5" />}
             action={isOwner && (
               <div className="flex items-center space-x-2">

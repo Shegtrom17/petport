@@ -12,22 +12,21 @@ import createProfileScreenshot from "@/assets/create-profile-screenshot.png";
 import documentUploadScreenshot from "@/assets/document-upload-screenshot.png";
 import resumeDetailsScreenshot from "@/assets/resume-details-screenshot.png";
 import shareInstructionsScreenshot from "@/assets/share-instructions-screenshot.png";
-
 export default function Landing() {
-  const { user } = useAuth();
+  const {
+    user
+  } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const [showSharePrompt, setShowSharePrompt] = useState(false);
   const [publicPets, setPublicPets] = useState<any[]>([]);
   const [hasReferralCode, setHasReferralCode] = useState(false);
-  
-  // Detect if we're in preview environment
-  const isPreview = window.location.hostname.includes('lovableproject.com') || 
-                   window.location.hostname.includes('lovable.app');
 
+  // Detect if we're in preview environment
+  const isPreview = window.location.hostname.includes('lovableproject.com') || window.location.hostname.includes('lovable.app');
   useEffect(() => {
     const urlParams = new URLSearchParams(location.search);
-    
+
     // Capture referral code
     const refCode = urlParams.get('ref');
     if (refCode) {
@@ -35,17 +34,16 @@ export default function Landing() {
       setHasReferralCode(true);
       console.log('Referral code captured:', refCode);
     }
-    
+
     // Check for existing referral code
     if (localStorage.getItem('petport_referral')) {
       setHasReferralCode(true);
     }
-    
     const isShare = urlParams.get("share") === "true";
     if (isShare) {
       setShowSharePrompt(true);
     }
-    
+
     // Landing page always stays on "/" - no auto-redirects
     // Users manually navigate to /app via "Open App" button
   }, [location.search]);
@@ -55,13 +53,9 @@ export default function Landing() {
     if (isPreview && user) {
       const loadPublicPets = async () => {
         try {
-          const { data: pets } = await supabase
-            .from('pets')
-            .select('id, name, species, breed')
-            .eq('is_public', true)
-            .eq('user_id', user.id)
-            .limit(5);
-          
+          const {
+            data: pets
+          } = await supabase.from('pets').select('id, name, species, breed').eq('is_public', true).eq('user_id', user.id).limit(5);
           if (pets) {
             setPublicPets(pets);
           }
@@ -69,25 +63,16 @@ export default function Landing() {
           console.error('Error loading public pets:', error);
         }
       };
-      
       loadPublicPets();
     }
   }, [isPreview, user]);
-
-  return (
-    <div className="min-h-screen bg-white">
-      <MetaTags
-        title="PetPort: Digital Pet Portfolio"
-        description="Create a digital pet portfolio for pet owners and foster caregivers."
-        url={window.location.origin + "/"}
-      />
+  return <div className="min-h-screen bg-white">
+      <MetaTags title="PetPort: Digital Pet Portfolio" description="Create a digital pet portfolio for pet owners and foster caregivers." url={window.location.origin + "/"} />
       
       {/* Referral Banner */}
-      {hasReferralCode && (
-        <div className="bg-brand-primary text-white py-2 text-center text-sm">
+      {hasReferralCode && <div className="bg-brand-primary text-white py-2 text-center text-sm">
           🎉 You were referred! Start your free trial to thank your friend.
-        </div>
-      )}
+        </div>}
 
       {/* Header Navigation */}
       <header className="max-w-7xl mx-auto px-4 py-6 flex items-center justify-between">
@@ -97,17 +82,12 @@ export default function Landing() {
         </div>
         <div className="flex items-center gap-3">
           <AppShareButton variant="icon" />
-          {user ? (
-            <Button onClick={() => navigate('/app')} className="text-white">Open App</Button>
-          ) : (
-            <Button onClick={() => navigate('/auth')} className="text-white">Sign In</Button>
-          )}
+          {user ? <Button onClick={() => navigate('/app')} className="text-white">Open App</Button> : <Button onClick={() => navigate('/auth')} className="text-white">Sign In</Button>}
         </div>
       </header>
 
       {/* Development Navigation Helper - Preview Only */}
-      {isPreview && user && publicPets.length > 0 && (
-        <div className="bg-blue-50 border-b border-blue-200">
+      {isPreview && user && publicPets.length > 0 && <div className="bg-blue-50 border-b border-blue-200">
           <div className="max-w-7xl mx-auto px-4 py-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
@@ -115,22 +95,13 @@ export default function Landing() {
                 <span className="text-blue-600 text-sm">Quick links to your public pet profiles</span>
               </div>
               <div className="flex items-center gap-2 flex-wrap">
-                {publicPets.map((pet) => (
-                  <Button
-                    key={pet.id}
-                    variant="outline"
-                    size="sm"
-                    onClick={() => window.open(`/profile/${pet.id}`, '_blank')}
-                    className="text-xs border-blue-300 text-blue-700 hover:bg-blue-100"
-                  >
+                {publicPets.map(pet => <Button key={pet.id} variant="outline" size="sm" onClick={() => window.open(`/profile/${pet.id}`, '_blank')} className="text-xs border-blue-300 text-blue-700 hover:bg-blue-100">
                     {pet.name} ({pet.species})
-                  </Button>
-                ))}
+                  </Button>)}
               </div>
             </div>
           </div>
-        </div>
-      )}
+        </div>}
 
       <main>
         {/* Hero Section with Video/Animation Placeholder */}
@@ -178,12 +149,9 @@ export default function Landing() {
                 <span className="text-[#5691af] font-medium text-sm">7-Day Free Trial • No charges for 7 days • Cancel anytime</span>
               </div>
               <div className="mt-8 flex flex-col items-center md:items-start gap-2">
-                {user ? (
-                  <Button onClick={() => navigate('/app')} size="lg" className="text-lg px-8 py-3 text-white">
+                {user ? <Button onClick={() => navigate('/app')} size="lg" className="text-lg px-8 py-3 text-white">
                     Open App
-                  </Button>
-                ) : (
-                  <>
+                  </Button> : <>
                     <a href="#pricing">
                       <Button size="lg" className="text-lg px-8 py-3 text-white">
                         Start Free Trial
@@ -192,22 +160,13 @@ export default function Landing() {
                     <p className="text-sm text-white/80">
                       7-day free trial • Card required; billed after trial unless canceled
                     </p>
-                  </>
-                )}
+                  </>}
               </div>
             </div>
             <div className="relative">
               {/* Hero Video */}
               <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
-                <video key="hero-11"
-                  autoPlay
-                  muted
-                  loop
-                  playsInline
-                  preload="metadata"
-                  className="w-full h-auto rounded-2xl"
-                  poster=""
-                >
+                <video key="hero-11" autoPlay muted loop playsInline preload="metadata" className="w-full h-auto rounded-2xl" poster="">
                   <source src="/hero-11.mp4" type="video/mp4" />
                   Your browser does not support the video tag.
                 </video>
@@ -230,7 +189,7 @@ export default function Landing() {
               <div className="bg-white rounded-2xl p-8 border border-gray-200">
                 <div className="flex items-center gap-4 mb-6">
                   {/* PLACEHOLDER: Pet Owner Icon/Image */}
-                  <div className="w-16 h-16 bg-blue-200 rounded-full flex items-center justify-center border-2 border-dashed border-blue-400">
+                  <div className="w-16 h-16 rounded-full flex items-center justify-center border-2 border-dashed border-blue-400 bg-slate-300">
                     <span className="text-blue-600">👨‍👩‍👧‍👦</span>
                   </div>
                   <h3 className="text-2xl font-semibold text-brand-primary">For Pet Owners</h3>
@@ -243,7 +202,7 @@ export default function Landing() {
                     </div>
                     <div>
                       <strong className="text-brand-primary">One‑Tap Missing Pet Flyer</strong>
-                      <p className="text-brand-primary-dark text-sm">with photos, last-seen details, and a shareable QR code (no designing needed).</p>
+                      <p className="text-brand-primary-dark text-sm">with photos, last-seen details, and a shareable QR code, Instant Flyer (no designing needed). All can be updated on shared public link instantly from  any device. </p>
                     </div>
                   </div>
                   
@@ -399,12 +358,7 @@ export default function Landing() {
               {/* Step 1 Screenshot */}
               <div className="mb-6 rounded-2xl overflow-hidden shadow-lg">
                 <AspectRatio ratio={4 / 3}>
-                  <img 
-                    src={createProfileScreenshot} 
-                    alt="Creating a pet profile - Add your pet's basic info, photos, and personality details"
-                    className="w-full h-full object-cover"
-                    loading="lazy"
-                  />
+                  <img src={createProfileScreenshot} alt="Creating a pet profile - Add your pet's basic info, photos, and personality details" className="w-full h-full object-cover" loading="lazy" />
                 </AspectRatio>
               </div>
               <h3 className="text-xl font-semibold text-brand-primary mb-2">1. Create Profile</h3>
@@ -415,12 +369,7 @@ export default function Landing() {
               {/* Step 2 Screenshot */}
               <div className="mb-6 rounded-2xl overflow-hidden shadow-lg">
                 <AspectRatio ratio={4 / 3}>
-                  <img 
-                    src={documentUploadScreenshot} 
-                    alt="Uploading documents - Snap photos of vaccines, health records, and certifications"
-                    className="w-full h-full object-cover"
-                    loading="lazy"
-                  />
+                  <img src={documentUploadScreenshot} alt="Uploading documents - Snap photos of vaccines, health records, and certifications" className="w-full h-full object-cover" loading="lazy" />
                 </AspectRatio>
               </div>
               <h3 className="text-xl font-semibold text-brand-primary mb-2">2. Upload Documents</h3>
@@ -431,12 +380,7 @@ export default function Landing() {
               {/* Step 3 Screenshot */}
               <div className="mb-6 rounded-2xl overflow-hidden shadow-lg">
                 <AspectRatio ratio={4 / 3}>
-                  <img 
-                    src={resumeDetailsScreenshot} 
-                    alt="Adding resume details - Showcase achievements, certifications, and professional pet credentials"
-                    className="w-full h-full object-cover"
-                    loading="lazy"
-                  />
+                  <img src={resumeDetailsScreenshot} alt="Adding resume details - Showcase achievements, certifications, and professional pet credentials" className="w-full h-full object-cover" loading="lazy" />
                 </AspectRatio>
               </div>
               <h3 className="text-xl font-semibold text-brand-primary mb-2">3. Add Resume Details (optional)</h3>
@@ -447,12 +391,7 @@ export default function Landing() {
               {/* Step 4 Screenshot */}
               <div className="mb-6 rounded-2xl overflow-hidden shadow-lg">
                 <AspectRatio ratio={4 / 3}>
-                  <img 
-                    src={shareInstructionsScreenshot} 
-                    alt="Sharing pet information - Quick Share Hub with emergency profile, care instructions, and QR codes"
-                    className="w-full h-full object-cover"
-                    loading="lazy"
-                  />
+                  <img src={shareInstructionsScreenshot} alt="Sharing pet information - Quick Share Hub with emergency profile, care instructions, and QR codes" className="w-full h-full object-cover" loading="lazy" />
                 </AspectRatio>
               </div>
               <h3 className="text-xl font-semibold text-brand-primary mb-2">4. Share & Go</h3>
@@ -540,76 +479,64 @@ export default function Landing() {
           </div>
           
           {/* Schema Markup for FAQ */}
-          <script
-            type="application/ld+json"
-            dangerouslySetInnerHTML={{
-              __html: JSON.stringify({
-                "@context": "https://schema.org",
-                "@type": "FAQPage",
-                "mainEntity": [
-                  {
-                    "@type": "Question",
-                    "name": "How can I quickly make a lost pet flyer if my pet goes missing?",
-                    "acceptedAnswer": {
-                      "@type": "Answer",
-                      "text": "With PetPort, it takes seconds — not hours — to get the word out. Our One-Tap Missing Pet Flyer instantly pulls your pet's photos, name, and last-seen details into a ready-to-share PDF flyer. Each flyer includes: A QR code printed right on the flyer that links directly to your pet's live profile page. Anyone who scans it sees the most up-to-date info, even if you add new sightings later. A social media–ready share link, so you can blast the flyer to Facebook, Instagram, Nextdoor, or text it to neighbors with one tap. No graphic design, no formatting headaches — just click, print, or share. It's the fastest way to rally help when minutes matter."
-                    }
-                  },
-                  {
-                    "@type": "Question",
-                    "name": "How can I store and access my pet's medical records digitally?",
-                    "acceptedAnswer": {
-                      "@type": "Answer",
-                      "text": "With PetPort, your pet's vaccines, health records, and certifications are all stored in one secure place. But unlike other apps, PetPort goes further — you can also attach emergency contacts, request vet or host referrals, and update care instructions in real time."
-                    }
-                  },
-                  {
-                    "@type": "Question",
-                    "name": "Is there an app to keep all my pet's documents in one place?",
-                    "acceptedAnswer": {
-                      "@type": "Answer",
-                      "text": "Yes! PetPort organizes everything — from adoption papers to insurance cards — and generates professional PDFs you can share instantly. Plus, you get extras like lost-pet flyers with one tap, travel maps, pet resumes builder and with referral request link, a photo gallery and care and handling instructions you can update from anywhere, Plus there is quick share hub with QR codes and live links to view all features on the web!"
-                    }
-                  },
-                  {
-                    "@type": "Question",
-                    "name": "How do I transfer my pet's records if they go to a new owner or foster?",
-                    "acceptedAnswer": {
-                      "@type": "Answer",
-                      "text": "PetPort was designed for fosters and rescues. With one tap, you can securely transfer a pet's entire digital portfolio — photos, medical history, behavior notes — so the new owner gets everything they need immediately."
-                    }
-                  },
-                  {
-                    "@type": "Question",
-                    "name": "Can I share my pet's care instructions with sitters or vets?",
-                    "acceptedAnswer": {
-                      "@type": "Answer",
-                      "text": "Absolutely. PetPort makes it simple to share real-time updates about diets, medications, allergies, and routines. It is viewable by anyone with the link or send an PDF via email. You control what's shared publicly vs. privately, and your sitter or vet always has the latest version."
-                    }
-                  },
-                  {
-                    "@type": "Question",
-                    "name": "Why should I use PetPort instead of a paper file or basic notes app?",
-                    "acceptedAnswer": {
-                      "@type": "Answer",
-                      "text": "Paper gets lost, notes get outdated. PetPort is a living digital record: always backed up, easy to update, and instantly shareable. Beyond records, you can collect hospitality reviews, track travel history, and build a complete story of your pet's life."
-                    }
-                  }
-                ]
-              })
-            }}
-          />
+          <script type="application/ld+json" dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            "mainEntity": [{
+              "@type": "Question",
+              "name": "How can I quickly make a lost pet flyer if my pet goes missing?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "With PetPort, it takes seconds — not hours — to get the word out. Our One-Tap Missing Pet Flyer instantly pulls your pet's photos, name, and last-seen details into a ready-to-share PDF flyer. Each flyer includes: A QR code printed right on the flyer that links directly to your pet's live profile page. Anyone who scans it sees the most up-to-date info, even if you add new sightings later. A social media–ready share link, so you can blast the flyer to Facebook, Instagram, Nextdoor, or text it to neighbors with one tap. No graphic design, no formatting headaches — just click, print, or share. It's the fastest way to rally help when minutes matter."
+              }
+            }, {
+              "@type": "Question",
+              "name": "How can I store and access my pet's medical records digitally?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "With PetPort, your pet's vaccines, health records, and certifications are all stored in one secure place. But unlike other apps, PetPort goes further — you can also attach emergency contacts, request vet or host referrals, and update care instructions in real time."
+              }
+            }, {
+              "@type": "Question",
+              "name": "Is there an app to keep all my pet's documents in one place?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Yes! PetPort organizes everything — from adoption papers to insurance cards — and generates professional PDFs you can share instantly. Plus, you get extras like lost-pet flyers with one tap, travel maps, pet resumes builder and with referral request link, a photo gallery and care and handling instructions you can update from anywhere, Plus there is quick share hub with QR codes and live links to view all features on the web!"
+              }
+            }, {
+              "@type": "Question",
+              "name": "How do I transfer my pet's records if they go to a new owner or foster?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "PetPort was designed for fosters and rescues. With one tap, you can securely transfer a pet's entire digital portfolio — photos, medical history, behavior notes — so the new owner gets everything they need immediately."
+              }
+            }, {
+              "@type": "Question",
+              "name": "Can I share my pet's care instructions with sitters or vets?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Absolutely. PetPort makes it simple to share real-time updates about diets, medications, allergies, and routines. It is viewable by anyone with the link or send an PDF via email. You control what's shared publicly vs. privately, and your sitter or vet always has the latest version."
+              }
+            }, {
+              "@type": "Question",
+              "name": "Why should I use PetPort instead of a paper file or basic notes app?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Paper gets lost, notes get outdated. PetPort is a living digital record: always backed up, easy to update, and instantly shareable. Beyond records, you can collect hospitality reviews, track travel history, and build a complete story of your pet's life."
+              }
+            }]
+          })
+        }} />
         </section>
 
         <Testimonials />
 
 
         {/* Share Prompt */}
-        {showSharePrompt && (
-          <section className="max-w-md mx-auto px-4 py-8">
+        {showSharePrompt && <section className="max-w-md mx-auto px-4 py-8">
             <AppShareButton variant="full" className="w-full" />
-          </section>
-        )}
+          </section>}
 
         {/* Pricing Section */}
         <section id="pricing" className="bg-gradient-to-br from-blue-50 to-indigo-50 py-20">
@@ -634,15 +561,11 @@ export default function Landing() {
             <h2 className="text-4xl font-bold mb-4">Ready to Create Your Pet's Digital Portfolio?</h2>
             <p className="text-xl text-white/80 mb-8">Join thousands of pet parents who never worry about lost paperwork again.</p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              {user ? (
-                <Button onClick={() => navigate('/app')} size="lg" className="text-lg px-8 py-3 bg-white text-brand-primary hover:bg-gray-100">
+              {user ? <Button onClick={() => navigate('/app')} size="lg" className="text-lg px-8 py-3 bg-white text-brand-primary hover:bg-gray-100">
                   Open App
-                </Button>
-              ) : (
-                <Button onClick={() => navigate('/auth')} size="lg" className="text-lg px-8 py-3 bg-white text-brand-primary hover:bg-gray-100">
+                </Button> : <Button onClick={() => navigate('/auth')} size="lg" className="text-lg px-8 py-3 bg-white text-brand-primary hover:bg-gray-100">
                   Start Free Trial
-                </Button>
-              )}
+                </Button>}
               <Button size="lg" className="text-lg px-8 py-3 bg-white text-brand-primary hover:bg-gray-100" asChild>
                 <Link to="/learn">Learn More</Link>
               </Button>
@@ -688,6 +611,5 @@ export default function Landing() {
           </div>
         </div>
       </footer>
-    </div>
-  );
+    </div>;
 }

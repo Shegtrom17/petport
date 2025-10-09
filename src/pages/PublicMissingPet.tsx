@@ -230,14 +230,14 @@ export default function PublicMissingPet() {
       </div>
 
       <div className="container mx-auto px-4 py-8 max-w-4xl">
-        {/* Medical Alert Banner - Smaller */}
-        {(petData.medicalAlert || petData.medicalConditions) && (
+        {/* Medical Alert Banner - Only shows when toggle is TRUE */}
+        {petData.medicalAlert && (
           <Alert className="mb-6 border-red-600 bg-red-50">
             <AlertTriangle className="h-4 w-4 text-red-600" />
             <AlertDescription className="ml-2 text-sm">
               <strong className="text-red-900">MEDICAL ALERT:</strong>{' '}
               <span className="text-red-800">
-                {petData.medicalConditions || 'This pet has medical conditions requiring attention.'}
+                {petData.medicalConditions || 'This pet has active medical alerts requiring immediate attention.'}
               </span>
             </AlertDescription>
           </Alert>

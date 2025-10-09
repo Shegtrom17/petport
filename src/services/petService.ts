@@ -546,9 +546,9 @@ export async function updatePetMedical(petId: string, medicalData: {
   medical_emergency_document?: string;
 }): Promise<boolean> {
   try {
-    console.log("Updating medical for pet:", petId, "with data:", medicalData);
+    console.log("[updatePetMedical] Updating medical for pet:", petId, "with data:", medicalData);
     
-    const { error } = await supabase
+    const { data, error } = await supabase
       .from("medical")
       .upsert({
         pet_id: petId,
@@ -556,17 +556,18 @@ export async function updatePetMedical(petId: string, medicalData: {
         updated_at: new Date().toISOString()
       }, {
         onConflict: 'pet_id'
-      });
+      })
+      .select();
 
     if (error) {
-      console.error("Error updating medical:", error);
+      console.error("[updatePetMedical] Error updating medical:", error);
       throw error;
     }
 
-    console.log("Medical info updated successfully");
+    console.log("[updatePetMedical] Medical info updated successfully, result:", data);
     return true;
   } catch (error) {
-    console.error("Error in updatePetMedical:", error);
+    console.error("[updatePetMedical] Error in updatePetMedical:", error);
     return false;
   }
 }

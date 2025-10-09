@@ -114,6 +114,8 @@ export default function PublicMissingPet() {
         .select('medical_alert, medical_conditions')
         .eq('pet_id', id)
         .single();
+      
+      console.log('[PublicMissingPet] Fetched medical data:', medicalData);
 
       // Fetch gallery photo count if pet is public
       let galleryPhotoCount = 0;
@@ -229,12 +231,14 @@ export default function PublicMissingPet() {
 
       <div className="container mx-auto px-4 py-8 max-w-4xl">
         {/* Medical Alert Banner - Smaller */}
-        {petData.medicalAlert && petData.medicalConditions && (
+        {(petData.medicalAlert || petData.medicalConditions) && (
           <Alert className="mb-6 border-red-600 bg-red-50">
-            <AlertTriangle className="h-5 w-5 text-red-600" />
-            <AlertDescription className="ml-2">
+            <AlertTriangle className="h-4 w-4 text-red-600" />
+            <AlertDescription className="ml-2 text-sm">
               <strong className="text-red-900">MEDICAL ALERT:</strong>{' '}
-              <span className="text-red-800">{petData.medicalConditions}</span>
+              <span className="text-red-800">
+                {petData.medicalConditions || 'This pet has medical conditions requiring attention.'}
+              </span>
             </AlertDescription>
           </Alert>
         )}

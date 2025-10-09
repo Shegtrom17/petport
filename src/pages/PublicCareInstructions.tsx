@@ -136,6 +136,8 @@ const PublicCareInstructions = () => {
           .eq('pet_id', petId)
           .single();
         
+        console.log('[PublicCareInstructions] Fetched medical data:', medical);
+        
         if (medical) {
           setMedicalData(medical);
         }

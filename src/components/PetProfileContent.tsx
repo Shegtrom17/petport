@@ -307,64 +307,7 @@ export const PetProfileContent = ({
     <div className="passport-map-container">
       <div className="passport-map-bg" />
       
-      {/* Profile Management Hub - Streamlined */}
-      <div className="mb-8">
-        <Card className="bg-white shadow-xl">
-          <CardHeader>
-            <CardTitle className="text-xl flex items-center gap-2">
-              <Edit className="w-6 h-6 text-[#5691af]" />
-              Profile Management Hub
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-xs text-muted-foreground mb-4">
-              Manage your pet's profile, photos, documents, and privacy settings
-            </p>
-
-            {/* Guidance hint for incomplete profiles */}
-            {isOwner && (
-              !enhancedPetData?.name || 
-              !enhancedPetData?.breed || 
-              !enhancedPetData?.age || 
-              !enhancedPetData?.weight
-            ) && (
-              <GuidanceHint
-                message="Complete your pet's profile for professional PDFs and comprehensive sharing"
-                actionLabel="Edit Pet Profile"
-                onAction={handleProfileEdit}
-                variant="gentle"
-              />
-            )}
-
-            {/* Action Buttons */}
-            <div className="space-y-3 mb-4">
-              {/* Edit Profile Button */}
-              {isOwner && (
-                <Button
-                  onClick={handleProfileEdit}
-                  className="bg-[#5691af] hover:bg-[#4a7d99] text-white w-full flex items-center justify-center gap-2 h-12"
-                >
-                  <Edit className="w-4 h-4" />
-                  <span>Edit Pet Profile</span>
-                </Button>
-              )}
-
-            {/* Privacy Toggle in Button Style */}
-              {isOwner && togglePetPublicVisibility && (
-                <div className="flex items-center justify-between p-3 border rounded-lg bg-gray-50">
-                  <span className="text-sm font-medium text-gray-700">Privacy</span>
-                  <CompactPrivacyToggle
-                    isPublic={enhancedPetData?.is_public || false}
-                    onToggle={(isPublic) => togglePetPublicVisibility(enhancedPetData.id, isPublic)}
-                  />
-                </div>
-              )}
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Official Photo Section */}
+      {/* Profile Photo Section */}
       <div className="mb-8">
         <div className="bg-white/50 backdrop-blur-sm rounded-2xl p-6">
           <SectionHeader
@@ -458,6 +401,64 @@ export const PetProfileContent = ({
           </div>
         </div>
       </div>
+
+      {/* Profile Management Hub - Streamlined */}
+      <div className="mb-8">
+        <Card className="bg-white shadow-xl">
+          <CardHeader>
+            <CardTitle className="text-xl flex items-center gap-2">
+              <Edit className="w-6 h-6 text-[#5691af]" />
+              Profile Management Hub
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-xs text-muted-foreground mb-4">
+              Manage your pet's profile, photos, documents, and privacy settings
+            </p>
+
+            {/* Guidance hint for incomplete profiles */}
+            {isOwner && (
+              !enhancedPetData?.name || 
+              !enhancedPetData?.breed || 
+              !enhancedPetData?.age || 
+              !enhancedPetData?.weight
+            ) && (
+              <GuidanceHint
+                message="Complete your pet's profile for professional PDFs and comprehensive sharing"
+                actionLabel="Edit Pet Profile"
+                onAction={handleProfileEdit}
+                variant="gentle"
+              />
+            )}
+
+            {/* Action Buttons */}
+            <div className="space-y-3 mb-4">
+              {/* Edit Profile Button */}
+              {isOwner && (
+                <Button
+                  onClick={handleProfileEdit}
+                  className="bg-[#5691af] hover:bg-[#4a7d99] text-white w-full flex items-center justify-center gap-2 h-12"
+                >
+                  <Edit className="w-4 h-4" />
+                  <span>Edit Pet Profile</span>
+                </Button>
+              )}
+
+            {/* Privacy Toggle in Button Style */}
+              {isOwner && togglePetPublicVisibility && (
+                <div className="flex items-center justify-between p-3 border rounded-lg bg-gray-50">
+                  <span className="text-sm font-medium text-gray-700">Privacy</span>
+                  <CompactPrivacyToggle
+                    isPublic={enhancedPetData?.is_public || false}
+                    onToggle={(isPublic) => togglePetPublicVisibility(enhancedPetData.id, isPublic)}
+                  />
+                </div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
 
       {/* Contacts Display Section */}
       <div className="mb-8">

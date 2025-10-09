@@ -580,12 +580,12 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
 {/* Email Dialog/Drawer */}
       {isMobile ? (
         <Drawer open={showEmailForm} onOpenChange={setShowEmailForm}>
-          <DrawerContent className="px-4 pb-4">
+          <DrawerContent className="drawer-content px-4 pb-4">
             <DrawerHeader>
               <DrawerTitle>Share via Email</DrawerTitle>
             </DrawerHeader>
             <div 
-              className="pb-4 overflow-y-auto overscroll-contain"
+              className="max-h-[70vh] overflow-y-auto overscroll-contain"
               style={{
                 WebkitOverflowScrolling: 'touch',
                 overscrollBehavior: 'contain',

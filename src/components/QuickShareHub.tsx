@@ -26,16 +26,25 @@ import {
   Mail,
   Check,
   Facebook,
-  MessageSquare
+  MessageSquare,
+  Printer,
+  FileDown,
+  Eye,
+  Loader2,
+  X
 } from "lucide-react";
 import { generateShareURL } from "@/utils/domainUtils";
+import { generateClientPetPDF, viewPDFBlob, downloadPDFBlob, isIOS } from '@/services/clientPdfService';
+import { sharePDFBlob } from '@/services/pdfService';
 
 interface QuickShareHubProps {
   petData: {
-    id?: string;
+    id: string;
     name: string;
+    careInstructions?: any;
   };
-  isLost: boolean;
+  isLost?: boolean;
+  handlePetUpdate?: () => Promise<void>;
 }
 
 interface SharePage {
@@ -59,6 +68,11 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
     recipientName: '',
     customMessage: ''
   });
+  const [carePdfBlob, setCarePdfBlob] = useState<Blob | null>(null);
+  const [isGeneratingCarePdf, setIsGeneratingCarePdf] = useState(false);
+  const [carePdfError, setCarePdfError] = useState<string | null>(null);
+  const [showCarePdfDialog, setShowCarePdfDialog] = useState(false);
+  const [carePdfEmailData, setCarePdfEmailData] = useState({ to: '', name: '', message: '' });
   
   const { toast } = useToast();
   const { sendEmail, isLoading: emailLoading } = useEmailSharing();

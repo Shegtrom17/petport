@@ -667,10 +667,15 @@ export const QuickIDSection = ({ petData, onUpdate }: QuickIDSectionProps) => {
       )}
 
       {/* Quick Share Hub */}
-      <QuickShareHub 
-        petData={petData}
-        isLost={lostPetData.is_missing}
-      />
+      {petData.id && (
+        <QuickShareHub 
+          petData={{
+            id: petData.id,
+            name: petData.name
+          }}
+          isLost={lostPetData.is_missing}
+        />
+      )}
 
       {/* QR Code Section */}
       <Card className="bg-white shadow-sm border border-gray-200">

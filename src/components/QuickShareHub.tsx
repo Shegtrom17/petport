@@ -358,6 +358,165 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
     window.open(directUrl, '_blank');
   };
 
+  const handleGenerateCarePdf = async () => {
+    if (!petData.id) {
+      toast({ description: "Pet ID is required", variant: "destructive" });
+      return;
+    }
+
+    setIsGeneratingCarePdf(true);
+    setCarePdfError(null);
+
+    try {
+      const result = await generateClientPetPDF({ id: petData.id }, 'care');
+      
+      if (result.success && result.blob) {
+        setCarePdfBlob(result.blob);
+        toast({ description: "Care PDF generated successfully" });
+      } else {
+        throw new Error(result.error || "Failed to generate PDF");
+      }
+    } catch (error: any) {
+      console.error('[Care PDF] Generation failed:', error);
+      setCarePdfError(error.message || "Failed to generate PDF");
+      toast({ description: error.message || "Failed to generate Care PDF", variant: "destructive" });
+    } finally {
+      setIsGeneratingCarePdf(false);
+    }
+  };
+
+  const clearCarePdfCache = () => {
+    setCarePdfBlob(null);
+    setCarePdfError(null);
+  };
+
+  const handleViewCarePdf = async () => {
+    if (!carePdfBlob) {
+      toast({ description: "Please generate the PDF first", variant: "destructive" });
+      return;
+    }
+    
+    try {
+      await viewPDFBlob(carePdfBlob, `${petData.name}_Care_Instructions.pdf`);
+    } catch (error: any) {
+      console.error('[Care PDF] View failed:', error);
+      toast({ description: "Failed to open PDF", variant: "destructive" });
+    }
+  };
+
+  const handlePrintCarePdf = async () => {
+    if (!carePdfBlob) {
+      toast({ description: "Please generate the PDF first", variant: "destructive" });
+      return;
+    }
+    
+    try {
+      const url = URL.createObjectURL(carePdfBlob);
+      const iframe = document.createElement('iframe');
+      iframe.style.display = 'none';
+      iframe.src = url;
+      document.body.appendChild(iframe);
+      
+      iframe.onload = () => {
+        iframe.contentWindow?.print();
+        setTimeout(() => {
+          document.body.removeChild(iframe);
+          URL.revokeObjectURL(url);
+        }, 100);
+      };
+    } catch (error: any) {
+      console.error('[Care PDF] Print failed:', error);
+      toast({ description: "Failed to print PDF", variant: "destructive" });
+    }
+  };
+
+  const handleDownloadCarePdf = async () => {
+    if (!carePdfBlob) {
+      toast({ description: "Please generate the PDF first", variant: "destructive" });
+      return;
+    }
+    
+    try {
+      await downloadPDFBlob(carePdfBlob, `${petData.name}_Care_Instructions.pdf`);
+      toast({ description: "PDF downloaded successfully" });
+    } catch (error: any) {
+      console.error('[Care PDF] Download failed:', error);
+      toast({ description: "Failed to download PDF", variant: "destructive" });
+    }
+  };
+
+  const handleShareCarePdf = async () => {
+    if (!carePdfBlob) {
+      toast({ description: "Please generate the PDF first", variant: "destructive" });
+      return;
+    }
+
+    try {
+      const result = await sharePDFBlob(
+        carePdfBlob,
+        `${petData.name}_Care_Instructions.pdf`,
+        petData.name,
+        'care'
+      );
+
+      if (result.success) {
+        toast({ description: result.message || "Shared successfully" });
+      } else {
+        toast({ description: result.message || "Failed to share", variant: "destructive" });
+      }
+    } catch (error: any) {
+      console.error('[Care PDF] Share failed:', error);
+      toast({ description: "Failed to share PDF", variant: "destructive" });
+    }
+  };
+
+  const handleEmailCarePdf = async () => {
+    if (!carePdfEmailData.to || !carePdfEmailData.name) {
+      toast({ description: "Please fill in recipient email and name", variant: "destructive" });
+      return;
+    }
+
+    if (!carePdfBlob) {
+      toast({ description: "Please generate the PDF first", variant: "destructive" });
+      return;
+    }
+
+    try {
+      const base64 = await new Promise<string>((resolve) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result as string);
+        reader.readAsDataURL(carePdfBlob);
+      });
+
+      const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/send-email`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          to: carePdfEmailData.to,
+          subject: `${petData.name}'s Care & Handling Instructions`,
+          html: `
+            <p>Hi ${carePdfEmailData.name},</p>
+            <p>${carePdfEmailData.message || `Here are ${petData.name}'s care and handling instructions.`}</p>
+            <p>Please find the PDF attached.</p>
+          `,
+          attachments: [{
+            filename: `${petData.name}_Care_Instructions.pdf`,
+            content: base64.split(',')[1]
+          }]
+        })
+      });
+
+      if (!response.ok) throw new Error('Failed to send email');
+      
+      toast({ description: "Email sent successfully" });
+      setShowCarePdfDialog(false);
+      setCarePdfEmailData({ to: '', name: '', message: '' });
+    } catch (error: any) {
+      console.error('[Care PDF] Email failed:', error);
+      toast({ description: "Failed to send email", variant: "destructive" });
+    }
+  };
+
   // Show all pages, but Lost Pet will be disabled if not available
   const availablePages = sharePages;
 

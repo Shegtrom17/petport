@@ -207,10 +207,10 @@ const generateEmailTemplate = (data: EmailRequest) => {
       `
     },
     transfer_invite_existing: {
-      subject: `✅ ${petName}'s pet profile has been transferred to your PetPort`,
+      subject: `🐾 ${petName} is being transferred to you - Accept to claim`,
       content: `
-        <h2>✅ ${petName}'s profile has been successfully transferred!</h2>
-        <p>Great news! ${sender} has transferred ${petName}'s complete pet profile to your PetPort account.</p>
+        <h2>🐾 ${petName} is being transferred to you!</h2>
+        <p>${sender} wants to transfer ${petName}'s complete pet profile to your PetPort account.</p>
         
         <div style="background: #fef3c7; border: 2px solid #f59e0b; border-radius: 8px; padding: 15px; margin: 20px 0; text-align: center;">
           <p style="margin: 0; color: #92400e; font-weight: bold;">⏰ This transfer link expires in 7 days</p>

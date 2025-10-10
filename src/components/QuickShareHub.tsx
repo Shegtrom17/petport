@@ -155,10 +155,10 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
     {
       id: 'gallery',
       title: 'Portrait Gallery',
-      description: 'Photo collection & memories',
+      description: 'Professional photo gallery',
       icon: <Camera className="w-5 h-5" />,
       path: `/gallery/${petData.id}`,
-      available: true,
+      available: !!(petData?.id && petData.gallery_photos?.length > 0),
       variant: 'default'
     },
     {

@@ -31,7 +31,8 @@ import {
   FileDown,
   Eye,
   Loader2,
-  X
+  X,
+  Download
 } from "lucide-react";
 import { generateShareURL } from "@/utils/domainUtils";
 import { generateClientPetPDF, viewPDFBlob, downloadPDFBlob, isIOS } from '@/services/clientPdfService';
@@ -1762,26 +1763,69 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
                     </Button>
                   ) : (
                     <>
-                      {/* Generate PDF Button */}
-                      <Button
-                        onClick={handleGenerateProfilePDF}
-                        disabled={isGeneratingProfilePdf || !page.available}
-                        className="w-full text-xs"
-                        variant="outline"
-                        size="sm"
-                      >
-                        {isGeneratingProfilePdf ? (
-                          <>
-                            <Loader2 className="mr-1 h-3 w-3 animate-spin" />
-                            Generating...
-                          </>
-                        ) : (
-                          <>
-                            <FileDown className="mr-1 h-3 w-3" />
-                            Generate Profile PDF
-                          </>
+                      {/* PDF Actions */}
+                      <div className="space-y-2">
+                        <Button
+                          onClick={handleGenerateProfilePDF}
+                          disabled={isGeneratingProfilePdf || !page.available}
+                          className="w-full text-xs"
+                          variant="outline"
+                          size="sm"
+                        >
+                          {isGeneratingProfilePdf ? (
+                            <>
+                              <Loader2 className="mr-1 h-3 w-3 animate-spin" />
+                              Generating...
+                            </>
+                          ) : (
+                            <>
+                              <FileDown className="mr-1 h-3 w-3" />
+                              Generate Profile PDF
+                            </>
+                          )}
+                        </Button>
+
+                        {profilePdfBlob && (
+                          <div className="grid grid-cols-3 gap-1">
+                            <Button
+                              onClick={() => viewPDFBlob(profilePdfBlob, `${petData?.name || 'pet'}-profile.pdf`)}
+                              variant="outline"
+                              size="sm"
+                              className="text-xs"
+                            >
+                              <Eye className="mr-1 h-3 w-3" />
+                              View
+                            </Button>
+                            <Button
+                              onClick={() => downloadPDFBlob(profilePdfBlob, `${petData?.name || 'pet'}-profile.pdf`)}
+                              variant="outline"
+                              size="sm"
+                              className="text-xs"
+                            >
+                              <Download className="mr-1 h-3 w-3" />
+                              Download
+                            </Button>
+                            <Button
+                              onClick={() => {
+                                const url = URL.createObjectURL(profilePdfBlob);
+                                const printWindow = window.open(url, '_blank');
+                                if (printWindow) {
+                                  printWindow.onload = () => {
+                                    printWindow.print();
+                                    URL.revokeObjectURL(url);
+                                  };
+                                }
+                              }}
+                              variant="outline"
+                              size="sm"
+                              className="text-xs"
+                            >
+                              <Printer className="mr-1 h-3 w-3" />
+                              Print
+                            </Button>
+                          </div>
                         )}
-                      </Button>
+                      </div>
 
                       {/* Quick Share Button */}
                       <Button

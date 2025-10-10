@@ -373,7 +373,6 @@ export const PetResumeSection = ({ petData, onUpdate, handlePetUpdate }: PetResu
           <div className="space-y-6">
             {/* Resume Share Section */}
             <div className="space-y-4">
-              <h4 className="font-semibold text-navy-900">Share Credentials</h4>
               <div className="w-full min-w-0">
                 <SocialShareButtons 
                   petName={petData.name}

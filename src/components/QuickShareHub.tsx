@@ -78,6 +78,14 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
   const [showEmergencyPdfDialog, setShowEmergencyPdfDialog] = useState(false);
   const [emergencyPdfEmailData, setEmergencyPdfEmailData] = useState({ to: '', name: '', message: '' });
   
+  // Resume PDF State
+  const [resumePdfBlob, setResumePdfBlob] = useState<Blob | null>(null);
+  const [isGeneratingResumePdf, setIsGeneratingResumePdf] = useState(false);
+  const [resumePdfError, setResumePdfError] = useState<string | null>(null);
+  const [showResumePdfDialog, setShowResumePdfDialog] = useState(false);
+  const [resumePdfEmailData, setResumePdfEmailData] = useState({ to: '', name: '', message: '' });
+  const [showResumeQuickShare, setShowResumeQuickShare] = useState(false);
+  
   const { toast } = useToast();
   const { sendEmail, isLoading: emailLoading } = useEmailSharing();
   const isMobile = useIsMobile();
@@ -583,7 +591,7 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
     if (!emergencyPdfBlob) return;
     
     try {
-      const result = await sharePDFBlob(emergencyPdfBlob, `${petData.name}_Emergency_Profile.pdf`, petData.id);
+      const result = await sharePDFBlob(emergencyPdfBlob, `${petData.name}_Emergency_Profile.pdf`, petData.name, 'emergency');
       if (result.success) {
         toast({
           title: result.shared ? "PDF Shared!" : "Link Copied!",
@@ -651,6 +659,144 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
       }
     } catch (error) {
       console.error('Emergency PDF email error:', error);
+      toast({
+        title: "Email Failed",
+        description: "Unable to send email. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  // ==================== RESUME PDF HANDLERS ====================
+  const handleGenerateResumePdf = async () => {
+    setIsGeneratingResumePdf(true);
+    setResumePdfError(null);
+    try {
+      const result = await generateClientPetPDF(petData, 'resume');
+      if (result.success && result.blob) {
+        setResumePdfBlob(result.blob);
+        toast({
+          title: "Resume PDF Generated",
+          description: "Your pet's credentials are ready to view, download, or share.",
+        });
+      } else {
+        throw new Error(result.error || 'PDF generation failed');
+      }
+    } catch (error) {
+      console.error('Resume PDF generation error:', error);
+      const errorMsg = error instanceof Error ? error.message : 'Failed to generate resume PDF';
+      setResumePdfError(errorMsg);
+      toast({
+        title: "Generation Failed",
+        description: errorMsg,
+        variant: "destructive",
+      });
+    } finally {
+      setIsGeneratingResumePdf(false);
+    }
+  };
+
+  const handleViewResumePdf = () => {
+    if (resumePdfBlob) {
+      viewPDFBlob(resumePdfBlob, `${petData.name}_Resume.pdf`);
+    }
+  };
+
+  const handlePrintResumePdf = () => {
+    if (resumePdfBlob) {
+      const url = URL.createObjectURL(resumePdfBlob);
+      const printWindow = window.open(url, '_blank');
+      if (printWindow) {
+        printWindow.onload = () => {
+          printWindow.print();
+          URL.revokeObjectURL(url);
+        };
+      }
+    }
+  };
+
+  const handleDownloadResumePdf = () => {
+    if (resumePdfBlob) {
+      downloadPDFBlob(resumePdfBlob, `${petData.name}_Resume.pdf`);
+      toast({
+        title: "Download Started",
+        description: "Resume PDF is downloading.",
+      });
+    }
+  };
+
+  const handleShareResumePdf = async () => {
+    if (!resumePdfBlob) return;
+    
+    try {
+      const result = await sharePDFBlob(resumePdfBlob, `${petData.name}_Resume.pdf`, petData.name, 'resume');
+      if (result.success) {
+        toast({
+          title: result.shared ? "PDF Shared!" : "Link Copied!",
+          description: result.message,
+        });
+      } else {
+        throw new Error(result.error || 'Share failed');
+      }
+    } catch (error) {
+      console.error('Resume PDF share error:', error);
+      toast({
+        title: "Share Failed",
+        description: "Unable to share PDF. Please try download instead.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleEmailResumePdf = async () => {
+    if (!resumePdfBlob || !resumePdfEmailData.to.trim()) {
+      toast({
+        title: "Missing Information",
+        description: "Please enter recipient email address.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      const reader = new FileReader();
+      const base64Promise = new Promise<string>((resolve, reject) => {
+        reader.onloadend = () => {
+          const base64 = reader.result as string;
+          resolve(base64.split(',')[1]);
+        };
+        reader.onerror = reject;
+      });
+      reader.readAsDataURL(resumePdfBlob);
+      
+      const pdfAttachment = await base64Promise;
+      const fileName = `PetPort_Resume_${petData.name}.pdf`;
+      const baseUrl = window.location.origin;
+      const profileUrl = `${baseUrl}/resume/${petData.id}`;
+      
+      const success = await sendEmail({
+        type: 'resume',
+        recipientEmail: resumePdfEmailData.to.trim(),
+        recipientName: resumePdfEmailData.name.trim() || undefined,
+        petName: petData.name,
+        petId: petData.id,
+        shareUrl: profileUrl,
+        customMessage: resumePdfEmailData.message.trim() || undefined,
+        senderName: 'PetPort User',
+        pdfAttachment,
+        pdfFileName: fileName
+      });
+
+      if (success) {
+        toast({
+          title: "Email Sent!",
+          description: `Resume PDF sent to ${resumePdfEmailData.to}`,
+        });
+        setShowResumePdfDialog(false);
+        setResumePdfEmailData({ to: '', name: '', message: '' });
+      }
+    } catch (error) {
+      console.error('Resume PDF email error:', error);
       toast({
         title: "Email Failed",
         description: "Unable to send email. Please try again.",
@@ -1066,6 +1212,187 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
                           <span className="text-xs font-medium leading-tight">Instagram</span>
                         </Button>
                       </div>
+                    </>
+                  )}
+                </div>
+              ) : page.id === 'resume' ? (
+                /* Enhanced Resume Card with PDF Actions */
+                <div className="space-y-2" data-touch-safe="true">
+                  {showOptionsFor !== page.id ? (
+                    <Button
+                      onClick={() => page.available ? setShowOptionsFor(page.id) : null}
+                      size="sm"
+                      disabled={!page.available}
+                      className="w-full text-xs bg-primary hover:bg-primary/90 text-white"
+                    >
+                      <Share2 className="w-3 h-3 mr-1 text-white" />
+                      {page.available ? 'Share' : 'Unavailable'}
+                    </Button>
+                  ) : (
+                    <>
+                      {/* PDF Actions Section */}
+                      <div className="space-y-2 border-t pt-2 mb-2">
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs font-medium">Resume PDF</span>
+                          {resumePdfBlob && (
+                            <Button
+                              onClick={() => setResumePdfBlob(null)}
+                              variant="ghost"
+                              size="sm"
+                              className="h-5 px-1 text-xs"
+                            >
+                              <X className="h-2 w-2 mr-1" />
+                              Clear
+                            </Button>
+                          )}
+                        </div>
+
+                        {!resumePdfBlob ? (
+                          <Button
+                            onClick={handleGenerateResumePdf}
+                            disabled={isGeneratingResumePdf || !page.available}
+                            className="w-full text-xs"
+                            variant="outline"
+                            size="sm"
+                          >
+                            {isGeneratingResumePdf ? (
+                              <>
+                                <Loader2 className="mr-1 h-3 w-3 animate-spin" />
+                                Generating...
+                              </>
+                            ) : (
+                              <>
+                                <FileDown className="mr-1 h-3 w-3" />
+                                Generate Resume PDF
+                              </>
+                            )}
+                          </Button>
+                        ) : (
+                          <div className="grid grid-cols-2 gap-1">
+                            <Button onClick={handleViewResumePdf} variant="outline" size="sm" className="text-xs py-2">
+                              <Eye className="mr-1 h-2 w-2" />
+                              View
+                            </Button>
+                            <Button onClick={handleDownloadResumePdf} variant="outline" size="sm" className="text-xs py-2">
+                              <FileDown className="mr-1 h-2 w-2" />
+                              Download
+                            </Button>
+                            <Button onClick={handlePrintResumePdf} variant="outline" size="sm" className="text-xs py-2">
+                              <Printer className="mr-1 h-2 w-2" />
+                              Print
+                            </Button>
+                            <Button onClick={handleShareResumePdf} variant="outline" size="sm" className="text-xs py-2">
+                              <Share2 className="mr-1 h-2 w-2" />
+                              Share
+                            </Button>
+                          </div>
+                        )}
+                        
+                        {resumePdfError && (
+                          <p className="text-xs text-destructive">{resumePdfError}</p>
+                        )}
+                      </div>
+
+                      {/* Email Resume PDF Button */}
+                      <Button 
+                        onClick={() => setShowResumePdfDialog(true)} 
+                        disabled={!resumePdfBlob}
+                        variant="outline" 
+                        size="sm" 
+                        className="w-full text-xs"
+                      >
+                        <Mail className="mr-1 h-2 w-2" />
+                        Email Resume PDF
+                      </Button>
+
+                      {/* Quick Share Button */}
+                      <Button
+                        onClick={() => setShowResumeQuickShare(!showResumeQuickShare)}
+                        variant="outline"
+                        size="sm"
+                        className="w-full text-xs"
+                      >
+                        <Share2 className="mr-1 h-2 w-2" />
+                        Quick Share
+                      </Button>
+
+                      {/* Sharing Options (shown when Quick Share is clicked) */}
+                      {showResumeQuickShare && (
+                        <div className="grid grid-cols-3 gap-1 pt-1">
+                          <Button
+                            onClick={() => handleCopyLink(page)}
+                            variant="outline"
+                            size="sm"
+                            disabled={copyingId === page.id}
+                            className="text-xs py-2"
+                          >
+                            {copyingId === page.id ? <Check className="h-2 w-2" /> : <Copy className="mr-1 h-2 w-2" />}
+                            Copy
+                          </Button>
+                          <Button
+                            onClick={() => handleSMSShare(page)}
+                            variant="outline"
+                            size="sm"
+                            className="text-xs py-2"
+                          >
+                            <MessageCircle className="mr-1 h-2 w-2" />
+                            SMS
+                          </Button>
+                          <Button
+                            onClick={() => handleEmailShare(page)}
+                            variant="outline"
+                            size="sm"
+                            className="text-xs py-2"
+                          >
+                            <Mail className="mr-1 h-2 w-2" />
+                            Email
+                          </Button>
+                          <Button
+                            onClick={() => handleFacebookShare(page)}
+                            variant="outline"
+                            size="sm"
+                            className="text-xs py-2"
+                          >
+                            <Facebook className="mr-1 h-2 w-2" />
+                            Facebook
+                          </Button>
+                          <Button
+                            onClick={() => handleMessengerShare(page)}
+                            variant="outline"
+                            size="sm"
+                            className="text-xs py-2"
+                          >
+                            <MessageSquare className="mr-1 h-2 w-2" />
+                            Messenger
+                          </Button>
+                          <Button
+                            onClick={() => {
+                              handleCopyLink(page);
+                              toast({
+                                title: "Instagram Limitation",
+                                description: "Instagram doesn't support direct sharing. Link copied - paste it in Instagram.",
+                                duration: 4000,
+                              });
+                            }}
+                            variant="outline"
+                            size="sm"
+                            className="text-xs py-2"
+                          >
+                            <Camera className="mr-1 h-2 w-2" />
+                            Instagram
+                          </Button>
+                        </div>
+                      )}
+
+                      {/* Close Button */}
+                      <Button
+                        onClick={() => setShowOptionsFor(null)}
+                        variant="ghost"
+                        size="sm"
+                        className="w-full text-xs mt-2"
+                      >
+                        Close
+                      </Button>
                     </>
                   )}
                 </div>
@@ -1489,6 +1816,121 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Resume PDF Email Dialog */}
+      {isMobile ? (
+        <Drawer open={showResumePdfDialog} onOpenChange={setShowResumePdfDialog}>
+          <DrawerContent>
+            <DrawerHeader>
+              <DrawerTitle>Email Resume PDF</DrawerTitle>
+            </DrawerHeader>
+            <div className="p-4 space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="resume-email">Recipient Email *</Label>
+                <Input
+                  id="resume-email"
+                  type="email"
+                  placeholder="recipient@example.com"
+                  value={resumePdfEmailData.to}
+                  onChange={(e) => setResumePdfEmailData(prev => ({ ...prev, to: e.target.value }))}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="resume-name">Recipient Name</Label>
+                <Input
+                  id="resume-name"
+                  placeholder="John Doe"
+                  value={resumePdfEmailData.name}
+                  onChange={(e) => setResumePdfEmailData(prev => ({ ...prev, name: e.target.value }))}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="resume-message">Custom Message (Optional)</Label>
+                <Textarea
+                  id="resume-message"
+                  placeholder="Add a personal message..."
+                  value={resumePdfEmailData.message}
+                  onChange={(e) => setResumePdfEmailData(prev => ({ ...prev, message: e.target.value }))}
+                  rows={3}
+                />
+              </div>
+              <Button 
+                onClick={handleEmailResumePdf} 
+                disabled={emailLoading || !resumePdfEmailData.to}
+                className="w-full"
+              >
+                {emailLoading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Sending...
+                  </>
+                ) : (
+                  <>
+                    <Mail className="mr-2 h-4 w-4" />
+                    Send Email
+                  </>
+                )}
+              </Button>
+            </div>
+          </DrawerContent>
+        </Drawer>
+      ) : (
+        <Dialog open={showResumePdfDialog} onOpenChange={setShowResumePdfDialog}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Email Resume PDF</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="resume-email-desktop">Recipient Email *</Label>
+                <Input
+                  id="resume-email-desktop"
+                  type="email"
+                  placeholder="recipient@example.com"
+                  value={resumePdfEmailData.to}
+                  onChange={(e) => setResumePdfEmailData(prev => ({ ...prev, to: e.target.value }))}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="resume-name-desktop">Recipient Name</Label>
+                <Input
+                  id="resume-name-desktop"
+                  placeholder="John Doe"
+                  value={resumePdfEmailData.name}
+                  onChange={(e) => setResumePdfEmailData(prev => ({ ...prev, name: e.target.value }))}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="resume-message-desktop">Custom Message (Optional)</Label>
+                <Textarea
+                  id="resume-message-desktop"
+                  placeholder="Add a personal message..."
+                  value={resumePdfEmailData.message}
+                  onChange={(e) => setResumePdfEmailData(prev => ({ ...prev, message: e.target.value }))}
+                  rows={3}
+                />
+              </div>
+              <Button 
+                onClick={handleEmailResumePdf} 
+                disabled={emailLoading || !resumePdfEmailData.to}
+                className="w-full"
+              >
+                {emailLoading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Sending...
+                  </>
+                ) : (
+                  <>
+                    <Mail className="mr-2 h-4 w-4" />
+                    Send Email
+                  </>
+                )}
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
+      )}
     </Card>
   );
 };

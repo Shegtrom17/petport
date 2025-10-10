@@ -251,7 +251,7 @@ export async function sharePDFBlob(
   pdfBlob: Blob,
   fileName: string,
   petName: string,
-  contentType: 'profile' | 'care' | 'emergency' | 'credentials' | 'reviews' = 'profile'
+  contentType: 'profile' | 'care' | 'emergency' | 'credentials' | 'reviews' | 'resume' = 'profile'
 ): Promise<ShareResult> {
   console.log('📤 Starting PDF share process...', { fileName, petName, contentType });
   

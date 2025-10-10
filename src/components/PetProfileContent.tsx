@@ -499,15 +499,17 @@ export const PetProfileContent = ({
         </div>
       </div>
 
-      {/* PDF Generator Section */}
-      <div className="mb-8">
-        <PetPDFGenerator
-          petId={enhancedPetData.id}
-          petName={enhancedPetData.name}
-          petData={enhancedPetData}
-          handlePetUpdate={handlePetUpdate}
-        />
-      </div>
+      {/* PDF Generator Section - HIDDEN: Migrated to Quick Share Hub */}
+      {false && (
+        <div className="mb-8">
+          <PetPDFGenerator
+            petId={enhancedPetData.id}
+            petName={enhancedPetData.name}
+            petData={enhancedPetData}
+            handlePetUpdate={handlePetUpdate}
+          />
+        </div>
+      )}
 
 
     </div>

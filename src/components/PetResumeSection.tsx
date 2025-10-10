@@ -381,20 +381,6 @@ export const PetResumeSection = ({ petData, onUpdate, handlePetUpdate }: PetResu
               />
             </div>
 
-            {/* Reviews Share Section */}
-            {petData.reviews && petData.reviews.length > 0 && (
-              <div className="space-y-4 border-t pt-4">
-                <h4 className="font-semibold text-navy-900">Share Reviews</h4>
-                <SocialShareButtons 
-                  petName={petData.name}
-                  petId={petData.id}
-                  context="reviews"
-                  defaultOpenOptions={true}
-                  shareUrlOverride={`${window.location.origin}/reviews/${petData.id}`}
-                />
-              </div>
-            )}
-
             {/* General Profile QR Section */}
             <div className="space-y-4 border-t pt-4">
               <h4 className="font-semibold text-navy-900">General Profile</h4>

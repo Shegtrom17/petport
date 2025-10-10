@@ -70,6 +70,13 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
   const [showCarePdfDialog, setShowCarePdfDialog] = useState(false);
   const [carePdfEmailData, setCarePdfEmailData] = useState({ to: '', name: '', message: '' });
   
+  // Emergency PDF State
+  const [emergencyPdfBlob, setEmergencyPdfBlob] = useState<Blob | null>(null);
+  const [isGeneratingEmergencyPdf, setIsGeneratingEmergencyPdf] = useState(false);
+  const [emergencyPdfError, setEmergencyPdfError] = useState<string | null>(null);
+  const [showEmergencyPdfDialog, setShowEmergencyPdfDialog] = useState(false);
+  const [emergencyPdfEmailData, setEmergencyPdfEmailData] = useState({ to: '', name: '', message: '' });
+  
   const { toast } = useToast();
   const { sendEmail, isLoading: emailLoading } = useEmailSharing();
   const isMobile = useIsMobile();

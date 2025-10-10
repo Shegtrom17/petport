@@ -1389,6 +1389,77 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
           </DialogContent>
         </Dialog>
       )}
+
+      {/* Emergency PDF Email Dialog */}
+      <Dialog open={showEmergencyPdfDialog} onOpenChange={setShowEmergencyPdfDialog}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Mail className="w-5 h-5 text-red-600" />
+              Email Emergency PDF
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label htmlFor="emergency-email-to">Recipient Email *</Label>
+              <Input
+                id="emergency-email-to"
+                type="email"
+                placeholder="friend@example.com"
+                value={emergencyPdfEmailData.to}
+                onChange={(e) => setEmergencyPdfEmailData(prev => ({ ...prev, to: e.target.value }))}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="emergency-email-name">Recipient Name (Optional)</Label>
+              <Input
+                id="emergency-email-name"
+                placeholder="Friend's name"
+                value={emergencyPdfEmailData.name}
+                onChange={(e) => setEmergencyPdfEmailData(prev => ({ ...prev, name: e.target.value }))}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="emergency-email-message">Custom Message (Optional)</Label>
+              <Textarea
+                id="emergency-email-message"
+                placeholder="Add a personal message..."
+                value={emergencyPdfEmailData.message}
+                onChange={(e) => setEmergencyPdfEmailData(prev => ({ ...prev, message: e.target.value }))}
+                rows={3}
+              />
+            </div>
+            <div className="flex gap-2 pt-2">
+              <Button
+                onClick={handleEmailEmergencyPdf}
+                disabled={emailLoading || !emergencyPdfEmailData.to.trim()}
+                className="flex-1 bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600"
+              >
+                {emailLoading ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    Sending...
+                  </>
+                ) : (
+                  <>
+                    <Mail className="w-4 h-4 mr-2" />
+                    Send Email
+                  </>
+                )}
+              </Button>
+              <Button
+                onClick={() => {
+                  setShowEmergencyPdfDialog(false);
+                  setEmergencyPdfEmailData({ to: '', name: '', message: '' });
+                }}
+                variant="outline"
+              >
+                Cancel
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </Card>
   );
 };

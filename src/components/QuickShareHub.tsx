@@ -699,132 +699,151 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
               </div>
               
               {page.id === 'emergency' ? (
-                /* Emergency Profile Card with PDF Actions */
-                <Card 
-                  className={`transition-all duration-200 ${
-                    page.variant === 'missing' 
-                      ? 'border-2 border-red-500 bg-red-50' 
-                      : 'border border-gray-200 hover:border-blue-300 hover:shadow-md'
-                  }`}
-                >
-                  <CardHeader className="pb-3">
-                    <CardTitle className="text-base flex items-center gap-2">
-                      <div className="p-2 rounded-lg bg-gradient-to-br from-red-50 to-orange-50">
-                        {page.icon}
-                      </div>
-                      <div className="flex-1">
-                        <div className="font-semibold text-gray-900">{page.title}</div>
-                        <p className="text-xs text-gray-500 font-normal mt-0.5">{page.description}</p>
-                      </div>
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-3">
-                    {/* Sharing Buttons */}
-                    <div className="grid grid-cols-2 gap-2">
-                      <Button
-                        onClick={() => handleCopyLink(page)}
-                        variant="outline"
-                        size="sm"
-                        disabled={copyingId === page.id}
-                        className="w-full"
-                      >
-                        {copyingId === page.id ? <Check className="w-4 h-4 mr-1.5" /> : <Copy className="w-4 h-4 mr-1.5" />}
-                        {copyingId === page.id ? 'Copied!' : 'Copy'}
-                      </Button>
-                      <Button
-                        onClick={() => handleNativeShare(page)}
-                        variant="outline"
-                        size="sm"
-                        disabled={sharingId === page.id}
-                        className="w-full"
-                      >
-                        {sharingId === page.id ? <Loader2 className="w-4 h-4 mr-1.5 animate-spin" /> : <Smartphone className="w-4 h-4 mr-1.5" />}
-                        Share
-                      </Button>
-                      <Button
-                        onClick={() => handleSMSShare(page)}
-                        variant="outline"
-                        size="sm"
-                        className="w-full"
-                      >
-                        <MessageCircle className="w-4 h-4 mr-1.5" />
-                        SMS
-                      </Button>
-                      <Button
-                        onClick={() => handleEmailShare(page)}
-                        variant="outline"
-                        size="sm"
-                        className="w-full"
-                      >
-                        <Mail className="w-4 h-4 mr-1.5" />
-                        Email
-                      </Button>
-                    </div>
+                /* Enhanced Emergency Card with PDF Actions */
+                <div className="space-y-2" data-touch-safe="true">
+                  {showOptionsFor !== page.id ? (
+                    <Button
+                      onClick={() => page.available ? setShowOptionsFor(page.id) : null}
+                      onTouchEnd={(e) => e.stopPropagation()}
+                      size="sm"
+                      disabled={!page.available}
+                      className="w-full text-xs bg-primary hover:bg-primary/90 text-white"
+                      style={{ touchAction: 'none' }}
+                    >
+                      <Share2 className="w-3 h-3 mr-1 text-white" />
+                      {page.available ? 'Share' : 'Unavailable'}
+                    </Button>
+                  ) : (
+                    <>
+                      {/* PDF Actions Section */}
+                      <div className="space-y-2 border-t pt-2 mb-2">
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs font-medium">Emergency PDF</span>
+                          {emergencyPdfBlob && (
+                            <Button
+                              onClick={() => setEmergencyPdfBlob(null)}
+                              variant="ghost"
+                              size="sm"
+                              className="h-5 px-1 text-xs"
+                            >
+                              <X className="h-2 w-2 mr-1" />
+                              Clear
+                            </Button>
+                          )}
+                        </div>
 
-    {/* PDF Section */}
-    <div className="space-y-2 border-t pt-2 mb-2">
-      <div className="flex items-center justify-between">
-        <span className="text-xs font-medium">Emergency PDF</span>
-        {emergencyPdfBlob && (
-          <Button
-            onClick={() => setEmergencyPdfBlob(null)}
-            variant="ghost"
-            size="sm"
-            className="h-5 px-1 text-xs"
-          >
-            <X className="h-2 w-2 mr-1" />
-            Clear
-          </Button>
-        )}
-      </div>
-                      
-      {!emergencyPdfBlob ? (
-        <Button
-          onClick={handleGenerateEmergencyPdf}
-          disabled={isGeneratingEmergencyPdf}
-          variant="outline"
-          size="sm"
-          className="w-full text-xs"
-        >
-          {isGeneratingEmergencyPdf ? (
-            <>
-              <Loader2 className="mr-1 h-3 w-3 animate-spin" />
-              Generating...
-            </>
-          ) : (
-            <>
-              <FileDown className="mr-1 h-3 w-3" />
-              Generate Emergency PDF
-            </>
-          )}
-        </Button>
-      ) : (
-        <div className="grid grid-cols-2 gap-1">
-          <Button onClick={handleViewEmergencyPdf} variant="outline" size="sm" className="text-xs py-2">
-            <Eye className="mr-1 h-2 w-2" />
-            View
-          </Button>
-          <Button onClick={handleDownloadEmergencyPdf} variant="outline" size="sm" className="text-xs py-2">
-            <FileDown className="mr-1 h-2 w-2" />
-            Download
-          </Button>
-          <Button onClick={handlePrintEmergencyPdf} variant="outline" size="sm" className="text-xs py-2">
-            <Printer className="mr-1 h-2 w-2" />
-            Print
-          </Button>
-          <Button onClick={handleShareEmergencyPdf} variant="outline" size="sm" className="text-xs py-2">
-            <Share2 className="mr-1 h-2 w-2" />
-            Share
-          </Button>
-        </div>
-                      )}
-                      
-      {emergencyPdfError && (
-        <p className="text-xs text-destructive">{emergencyPdfError}</p>
-      )}
-                    </div>
-                  </CardContent>
-                </Card>
+                        {!emergencyPdfBlob ? (
+                          <Button
+                            onClick={handleGenerateEmergencyPdf}
+                            disabled={isGeneratingEmergencyPdf || !page.available}
+                            className="w-full text-xs"
+                            variant="outline"
+                            size="sm"
+                          >
+                            {isGeneratingEmergencyPdf ? (
+                              <>
+                                <Loader2 className="mr-1 h-3 w-3 animate-spin" />
+                                Generating...
+                              </>
+                            ) : (
+                              <>
+                                <FileDown className="mr-1 h-3 w-3" />
+                                Generate Emergency PDF
+                              </>
+                            )}
+                          </Button>
+                        ) : (
+                          <div className="grid grid-cols-2 gap-1">
+                            <Button onClick={handleViewEmergencyPdf} variant="outline" size="sm" className="text-xs py-2">
+                              <Eye className="mr-1 h-2 w-2" />
+                              View
+                            </Button>
+                            <Button onClick={handleDownloadEmergencyPdf} variant="outline" size="sm" className="text-xs py-2">
+                              <FileDown className="mr-1 h-2 w-2" />
+                              Download
+                            </Button>
+                            <Button onClick={handlePrintEmergencyPdf} variant="outline" size="sm" className="text-xs py-2">
+                              <Printer className="mr-1 h-2 w-2" />
+                              Print
+                            </Button>
+                            <Button onClick={handleShareEmergencyPdf} variant="outline" size="sm" className="text-xs py-2">
+                              <Share2 className="mr-1 h-2 w-2" />
+                              Share
+                            </Button>
+                          </div>
+                        )}
+                        
+                        {emergencyPdfError && (
+                          <p className="text-xs text-destructive">{emergencyPdfError}</p>
+                        )}
+                      </div>
+
+                      {/* Email Emergency PDF Button */}
+                      <Button 
+                        onClick={() => setShowEmergencyPdfDialog(true)} 
+                        disabled={!emergencyPdfBlob}
+                        variant="outline" 
+                        size="sm" 
+                        className="w-full text-xs"
+                      >
+                        <Mail className="mr-1 h-2 w-2" />
+                        Email Emergency PDF
+                      </Button>
+
+                      {/* Sharing Options */}
+                      <div className="grid grid-cols-2 gap-1">
+                        <Button
+                          onClick={() => handleCopyLink(page)}
+                          variant="outline"
+                          size="sm"
+                          disabled={copyingId === page.id}
+                          className="text-xs"
+                        >
+                          {copyingId === page.id ? <Check className="mr-1 h-2 w-2" /> : <Copy className="mr-1 h-2 w-2" />}
+                          {copyingId === page.id ? 'Copied!' : 'Copy Link'}
+                        </Button>
+                        <Button
+                          onClick={() => handleNativeShare(page)}
+                          variant="outline"
+                          size="sm"
+                          disabled={sharingId === page.id}
+                          className="text-xs"
+                        >
+                          {sharingId === page.id ? <Loader2 className="mr-1 h-2 w-2 animate-spin" /> : <Smartphone className="mr-1 h-2 w-2" />}
+                          Share Link
+                        </Button>
+                        <Button
+                          onClick={() => handleSMSShare(page)}
+                          variant="outline"
+                          size="sm"
+                          className="text-xs"
+                        >
+                          <MessageCircle className="mr-1 h-2 w-2" />
+                          SMS
+                        </Button>
+                        <Button
+                          onClick={() => handleEmailShare(page)}
+                          variant="outline"
+                          size="sm"
+                          className="text-xs"
+                        >
+                          <Mail className="mr-1 h-2 w-2" />
+                          Email Link
+                        </Button>
+                      </div>
+
+                      {/* Close Button */}
+                      <Button
+                        onClick={() => setShowOptionsFor(null)}
+                        variant="ghost"
+                        size="sm"
+                        className="w-full text-xs mt-2"
+                      >
+                        Close
+                      </Button>
+                    </>
+                  )}
+                </div>
               ) : page.id === 'care' ? (
                 /* Enhanced Care Card with PDF Actions */
                 <div className="space-y-2" data-touch-safe="true">

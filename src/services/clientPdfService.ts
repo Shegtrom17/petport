@@ -1664,8 +1664,13 @@ const generateCarePDF = async (doc: jsPDF, pageManager: PDFPageManager, petData:
     if (petData.medical_alert || petData.medical_conditions || petData.last_vaccination || petData.medical_emergency_document) {
       addSection(doc, pageManager, 'MEDICAL INFORMATION', () => {
         if (petData.medical_alert) {
-          addText(doc, pageManager, '⚠️ MEDICAL ALERT: This pet requires immediate medical attention', '#dc2626', 12);
-          pageManager.addY(3);
+          doc.setFontSize(11);
+          doc.setTextColor('#dc2626');
+          doc.setFont('helvetica', 'bold');
+          const alertText = 'MEDICAL ALERT: This pet requires immediate medical attention';
+          const alertLines = doc.splitTextToSize(alertText, pageManager.getContentWidth());
+          doc.text(alertLines, pageManager.getCurrentX(), pageManager.getCurrentY());
+          pageManager.addY(alertLines.length * 6 + 5);
         }
         
         if (petData.medical_conditions) {

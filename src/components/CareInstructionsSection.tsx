@@ -292,8 +292,8 @@ export const CareInstructionsSection = ({ petData, onUpdate, handlePetUpdate }: 
 
 
       {/* Care Summary */}
-      <Card className="border-0 shadow-xl bg-brand-primary text-white">
-        <CardContent className="p-6">
+      <Card className="border-0 shadow-xl bg-brand-primary text-white relative z-10">
+        <CardContent className="p-6 relative z-10">
           <div className="flex justify-between items-start">
             <div className="flex items-center space-x-3 flex-1">
               <Heart className="w-8 h-8 text-yellow-400" />

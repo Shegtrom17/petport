@@ -761,81 +761,67 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
                       </Button>
                     </div>
 
-                    {/* PDF Section */}
-                    <div className="pt-3 border-t border-gray-200">
-                      <div className="flex items-center justify-between mb-2">
-                        <span className="text-sm font-medium text-gray-700">PDF Options</span>
-                        {emergencyPdfBlob && (
-                          <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
-                            Ready
-                          </Badge>
-                        )}
-                      </div>
+    {/* PDF Section */}
+    <div className="space-y-2 border-t pt-2 mb-2">
+      <div className="flex items-center justify-between">
+        <span className="text-xs font-medium">Emergency PDF</span>
+        {emergencyPdfBlob && (
+          <Button
+            onClick={() => setEmergencyPdfBlob(null)}
+            variant="ghost"
+            size="sm"
+            className="h-5 px-1 text-xs"
+          >
+            <X className="h-2 w-2 mr-1" />
+            Clear
+          </Button>
+        )}
+      </div>
                       
-                      {!emergencyPdfBlob ? (
-                        <Button
-                          onClick={handleGenerateEmergencyPdf}
-                          disabled={isGeneratingEmergencyPdf}
-                          variant="default"
-                          size="sm"
-                          className="w-full bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600"
-                        >
-                          {isGeneratingEmergencyPdf ? (
-                            <>
-                              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                              Generating PDF...
-                            </>
-                          ) : (
-                            <>
-                              <FileText className="w-4 h-4 mr-2" />
-                              Generate Emergency PDF
-                            </>
-                          )}
-                        </Button>
-                      ) : (
-                        <div className="space-y-2">
-                          <div className="grid grid-cols-2 gap-2">
-                            <Button onClick={handleViewEmergencyPdf} variant="outline" size="sm" className="w-full">
-                              <Eye className="w-4 h-4 mr-1.5" />
-                              View
-                            </Button>
-                            <Button onClick={handlePrintEmergencyPdf} variant="outline" size="sm" className="w-full">
-                              <Printer className="w-4 h-4 mr-1.5" />
-                              Print
-                            </Button>
-                            <Button onClick={handleDownloadEmergencyPdf} variant="outline" size="sm" className="w-full">
-                              <FileDown className="w-4 h-4 mr-1.5" />
-                              Download
-                            </Button>
-                            <Button onClick={handleShareEmergencyPdf} variant="outline" size="sm" className="w-full">
-                              <Share2 className="w-4 h-4 mr-1.5" />
-                              Share PDF
-                            </Button>
-                          </div>
-                          <Button 
-                            onClick={() => setShowEmergencyPdfDialog(true)} 
-                            variant="outline" 
-                            size="sm" 
-                            className="w-full border-blue-300 text-blue-700 hover:bg-blue-50"
-                          >
-                            <Mail className="w-4 h-4 mr-2" />
-                            Email Emergency PDF
-                          </Button>
-                          <Button
-                            onClick={() => setEmergencyPdfBlob(null)}
-                            variant="ghost"
-                            size="sm"
-                            className="w-full text-gray-500 hover:text-gray-700"
-                          >
-                            <X className="w-4 h-4 mr-2" />
-                            Clear PDF
-                          </Button>
-                        </div>
+      {!emergencyPdfBlob ? (
+        <Button
+          onClick={handleGenerateEmergencyPdf}
+          disabled={isGeneratingEmergencyPdf}
+          variant="outline"
+          size="sm"
+          className="w-full text-xs"
+        >
+          {isGeneratingEmergencyPdf ? (
+            <>
+              <Loader2 className="mr-1 h-3 w-3 animate-spin" />
+              Generating...
+            </>
+          ) : (
+            <>
+              <FileDown className="mr-1 h-3 w-3" />
+              Generate Emergency PDF
+            </>
+          )}
+        </Button>
+      ) : (
+        <div className="grid grid-cols-2 gap-1">
+          <Button onClick={handleViewEmergencyPdf} variant="outline" size="sm" className="text-xs py-2">
+            <Eye className="mr-1 h-2 w-2" />
+            View
+          </Button>
+          <Button onClick={handleDownloadEmergencyPdf} variant="outline" size="sm" className="text-xs py-2">
+            <FileDown className="mr-1 h-2 w-2" />
+            Download
+          </Button>
+          <Button onClick={handlePrintEmergencyPdf} variant="outline" size="sm" className="text-xs py-2">
+            <Printer className="mr-1 h-2 w-2" />
+            Print
+          </Button>
+          <Button onClick={handleShareEmergencyPdf} variant="outline" size="sm" className="text-xs py-2">
+            <Share2 className="mr-1 h-2 w-2" />
+            Share
+          </Button>
+        </div>
                       )}
                       
-                      {emergencyPdfError && (
-                        <p className="text-xs text-red-600 mt-2">{emergencyPdfError}</p>
-                      )}
+      {emergencyPdfError && (
+        <p className="text-xs text-destructive">{emergencyPdfError}</p>
+      )}
                     </div>
                   </CardContent>
                 </Card>
@@ -1395,7 +1381,7 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <Mail className="w-5 h-5 text-red-600" />
+              <Mail className="w-5 h-5" />
               Email Emergency PDF
             </DialogTitle>
           </DialogHeader>
@@ -1433,7 +1419,7 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
               <Button
                 onClick={handleEmailEmergencyPdf}
                 disabled={emailLoading || !emergencyPdfEmailData.to.trim()}
-                className="flex-1 bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600"
+                className="flex-1"
               >
                 {emailLoading ? (
                   <>

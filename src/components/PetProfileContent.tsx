@@ -464,11 +464,7 @@ export const PetProfileContent = ({
       <div className="mb-8">
         <div className="bg-white/50 backdrop-blur-sm rounded-2xl p-6">
           <QuickShareHub
-            petData={{
-              id: enhancedPetData.id,
-              name: enhancedPetData.name,
-              careInstructions: enhancedPetData.care_instructions
-            }}
+            petData={enhancedPetData}
             isLost={enhancedPetData.is_lost || enhancedPetData.lost_pet_data?.is_missing || false}
             handlePetUpdate={handlePetUpdate}
           />

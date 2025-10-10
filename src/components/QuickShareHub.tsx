@@ -38,11 +38,7 @@ import { generateClientPetPDF, viewPDFBlob, downloadPDFBlob, isIOS } from '@/ser
 import { sharePDFBlob } from '@/services/pdfService';
 
 interface QuickShareHubProps {
-  petData: {
-    id: string;
-    name: string;
-    careInstructions?: any;
-  };
+  petData: any; // Accept full pet object with all fields
   isLost?: boolean;
   handlePetUpdate?: () => Promise<void>;
 }
@@ -368,7 +364,7 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
     setCarePdfError(null);
 
     try {
-      const result = await generateClientPetPDF({ id: petData.id }, 'care');
+      const result = await generateClientPetPDF(petData, 'care');
       
       if (result.success && result.blob) {
         setCarePdfBlob(result.blob);

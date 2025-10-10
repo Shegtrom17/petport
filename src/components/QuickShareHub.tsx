@@ -95,6 +95,9 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
   // Profile PDF State
   const [profilePdfBlob, setProfilePdfBlob] = useState<Blob | null>(null);
   const [isGeneratingProfilePdf, setIsGeneratingProfilePdf] = useState(false);
+  const [profilePdfError, setProfilePdfError] = useState<string | null>(null);
+  const [showProfilePdfDialog, setShowProfilePdfDialog] = useState(false);
+  const [profilePdfEmailData, setProfilePdfEmailData] = useState({ to: '', name: '', message: '' });
   
   const { toast } = useToast();
   const { sendEmail, isLoading: emailLoading } = useEmailSharing();
@@ -412,6 +415,35 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
     setCarePdfError(null);
   };
 
+  // Profile PDF Handlers
+  const handleGenerateProfilePDF = async () => {
+    if (!petData?.id) {
+      toast({ description: "Pet data not available", variant: "destructive" });
+      return;
+    }
+    
+    setIsGeneratingProfilePdf(true);
+    setProfilePdfError(null);
+    toast({ title: "Generating Profile PDF...", description: "Please wait while we create your pet's full profile." });
+    
+    try {
+      const result = await generateClientPetPDF(petData, 'full');
+      
+      if (result.success && result.blob) {
+        setProfilePdfBlob(result.blob);
+        toast({ title: "Profile PDF Ready!", description: "Your full profile PDF has been generated." });
+      } else {
+        throw new Error(result.error || "Failed to generate PDF");
+      }
+    } catch (error: any) {
+      console.error('[Profile PDF] Generation failed:', error);
+      setProfilePdfError(error.message || "Failed to generate PDF");
+      toast({ title: "Generation Failed", description: "Could not generate profile PDF.", variant: "destructive" });
+    } finally {
+      setIsGeneratingProfilePdf(false);
+    }
+  };
+
   // Gallery PDF Handlers
   const handleGenerateGalleryPDF = async () => {
     if (!petData?.id) {
@@ -436,33 +468,6 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
       toast({ title: "Generation Failed", description: "Could not generate gallery PDF.", variant: "destructive" });
     } finally {
       setIsGeneratingGalleryPdf(false);
-    }
-  };
-
-  // Profile PDF Handlers
-  const handleGenerateProfilePDF = async () => {
-    if (!petData?.id) {
-      toast({ description: "Pet data not available", variant: "destructive" });
-      return;
-    }
-    
-    setIsGeneratingProfilePdf(true);
-    toast({ title: "Generating Profile PDF...", description: "Please wait while we create your pet's full profile." });
-    
-    try {
-      const result = await generateClientPetPDF(petData, 'full');
-      
-      if (result.success && result.blob) {
-        setProfilePdfBlob(result.blob);
-        toast({ title: "Profile PDF Ready!", description: "Your full profile PDF has been generated." });
-      } else {
-        throw new Error(result.error || "Failed to generate PDF");
-      }
-    } catch (error: any) {
-      console.error('[Profile PDF] Generation failed:', error);
-      toast({ title: "Generation Failed", description: "Could not generate profile PDF.", variant: "destructive" });
-    } finally {
-      setIsGeneratingProfilePdf(false);
     }
   };
 

@@ -46,6 +46,74 @@ export type Database = {
           },
         ]
       }
+      campaigns: {
+        Row: {
+          clicks_count: number | null
+          created_at: string | null
+          created_by: string | null
+          discount_code_id: string | null
+          id: string
+          opens_count: number | null
+          postmark_template_alias: string | null
+          postmark_template_id: string | null
+          scheduled_for: string | null
+          sent_at: string | null
+          status: string | null
+          subject_line: string
+          target_segment: string | null
+          title: string
+          total_recipients: number | null
+          unsubscribes_count: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          clicks_count?: number | null
+          created_at?: string | null
+          created_by?: string | null
+          discount_code_id?: string | null
+          id?: string
+          opens_count?: number | null
+          postmark_template_alias?: string | null
+          postmark_template_id?: string | null
+          scheduled_for?: string | null
+          sent_at?: string | null
+          status?: string | null
+          subject_line: string
+          target_segment?: string | null
+          title: string
+          total_recipients?: number | null
+          unsubscribes_count?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          clicks_count?: number | null
+          created_at?: string | null
+          created_by?: string | null
+          discount_code_id?: string | null
+          id?: string
+          opens_count?: number | null
+          postmark_template_alias?: string | null
+          postmark_template_id?: string | null
+          scheduled_for?: string | null
+          sent_at?: string | null
+          status?: string | null
+          subject_line?: string
+          target_segment?: string | null
+          title?: string
+          total_recipients?: number | null
+          unsubscribes_count?: number | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "campaigns_discount_code_id_fkey"
+            columns: ["discount_code_id"]
+            isOneToOne: false
+            referencedRelation: "discount_codes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       care_instructions: {
         Row: {
           allergies: string | null
@@ -176,6 +244,80 @@ export type Database = {
           },
         ]
       }
+      coupon_redemptions: {
+        Row: {
+          campaign_id: string | null
+          discount_code_id: string | null
+          id: string
+          redeemed_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          campaign_id?: string | null
+          discount_code_id?: string | null
+          id?: string
+          redeemed_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          campaign_id?: string | null
+          discount_code_id?: string | null
+          id?: string
+          redeemed_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "coupon_redemptions_discount_code_id_fkey"
+            columns: ["discount_code_id"]
+            isOneToOne: false
+            referencedRelation: "discount_codes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      discount_codes: {
+        Row: {
+          campaign_id: string | null
+          code: string
+          created_at: string | null
+          created_by: string | null
+          current_redemptions: number | null
+          discount_type: string | null
+          discount_value: number
+          expires_at: string | null
+          id: string
+          is_active: boolean | null
+          max_redemptions: number | null
+        }
+        Insert: {
+          campaign_id?: string | null
+          code: string
+          created_at?: string | null
+          created_by?: string | null
+          current_redemptions?: number | null
+          discount_type?: string | null
+          discount_value: number
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          max_redemptions?: number | null
+        }
+        Update: {
+          campaign_id?: string | null
+          code?: string
+          created_at?: string | null
+          created_by?: string | null
+          current_redemptions?: number | null
+          discount_type?: string | null
+          discount_value?: number
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          max_redemptions?: number | null
+        }
+        Relationships: []
+      }
       documents: {
         Row: {
           created_at: string
@@ -216,6 +358,33 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      email_preferences: {
+        Row: {
+          created_at: string | null
+          email: string
+          unsubscribe_reason: string | null
+          unsubscribed_at: string | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          email: string
+          unsubscribe_reason?: string | null
+          unsubscribed_at?: string | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          email?: string
+          unsubscribe_reason?: string | null
+          unsubscribed_at?: string | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
       }
       experiences: {
         Row: {
@@ -932,6 +1101,30 @@ export type Database = {
         }
         Relationships: []
       }
+      subscriber_tags: {
+        Row: {
+          color: string | null
+          created_at: string | null
+          description: string | null
+          id: string
+          tag_name: string
+        }
+        Insert: {
+          color?: string | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          tag_name: string
+        }
+        Update: {
+          color?: string | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          tag_name?: string
+        }
+        Relationships: []
+      }
       subscribers: {
         Row: {
           additional_pets: number
@@ -1166,6 +1359,56 @@ export type Database = {
         }
         Relationships: []
       }
+      user_roles: {
+        Row: {
+          created_at: string | null
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_tags: {
+        Row: {
+          applied_at: string | null
+          id: string
+          tag_id: string
+          user_id: string
+        }
+        Insert: {
+          applied_at?: string | null
+          id?: string
+          tag_id: string
+          user_id: string
+        }
+        Update: {
+          applied_at?: string | null
+          id?: string
+          tag_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_tags_tag_id_fkey"
+            columns: ["tag_id"]
+            isOneToOne: false
+            referencedRelation: "subscriber_tags"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       webhook_events: {
         Row: {
           created_at: string
@@ -1264,6 +1507,13 @@ export type Database = {
         }
         Returns: string
       }
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
       is_org_admin: {
         Args: { _org_id: string; _user_id: string }
         Returns: boolean
@@ -1297,6 +1547,7 @@ export type Database = {
       }
     }
     Enums: {
+      app_role: "admin" | "user"
       subscription_status:
         | "active"
         | "grace"
@@ -1430,6 +1681,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      app_role: ["admin", "user"],
       subscription_status: [
         "active",
         "grace",

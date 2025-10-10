@@ -557,34 +557,217 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
                 )}
               </div>
               
-              <div className="space-y-2" data-touch-safe="true">
-                {showOptionsFor !== page.id ? (
-                  /* Show Options Button */
-                  <Button
-                    onClick={() => page.available ? setShowOptionsFor(page.id) : null}
-                    onTouchEnd={(e) => e.stopPropagation()}
-                    size="sm"
-                    disabled={!page.available}
-                    className={`w-full text-xs ${
-                      page.variant === 'missing' 
-                        ? page.available
-                          ? 'bg-red-600 hover:bg-red-700 text-white' 
-                          : 'bg-gray-400 text-gray-600 cursor-not-allowed'
-                        : 'bg-primary hover:bg-primary/90 text-white'
-                    }`}
-                    style={{ touchAction: 'none' }}
-                  >
-                    <Share2 className="w-3 h-3 mr-1 text-white" />
-                    {page.available ? 'Share' : 'Unavailable'}
-                  </Button>
-                ) : (
-                  <>
-                    {/* Quick Share Button */}
+              {page.id === 'care' ? (
+                /* Enhanced Care Card with PDF Actions */
+                <div className="space-y-2" data-touch-safe="true">
+                  {showOptionsFor !== page.id ? (
                     <Button
-                      onClick={() => page.available ? handleNativeShare(page) : null}
+                      onClick={() => page.available ? setShowOptionsFor(page.id) : null}
                       onTouchEnd={(e) => e.stopPropagation()}
                       size="sm"
-                      disabled={!page.available || sharingId === page.id}
+                      disabled={!page.available}
+                      className="w-full text-xs bg-primary hover:bg-primary/90 text-white"
+                      style={{ touchAction: 'none' }}
+                    >
+                      <Share2 className="w-3 h-3 mr-1 text-white" />
+                      {page.available ? 'Share' : 'Unavailable'}
+                    </Button>
+                  ) : (
+                    <>
+                      {/* PDF Actions Section */}
+                      <div className="space-y-2 border-t pt-2 mb-2">
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs font-medium">Care PDF</span>
+                          {carePdfBlob && (
+                            <Button
+                              onClick={clearCarePdfCache}
+                              variant="ghost"
+                              size="sm"
+                              className="h-5 px-1 text-xs"
+                            >
+                              <X className="h-2 w-2 mr-1" />
+                              Clear
+                            </Button>
+                          )}
+                        </div>
+
+                        {!carePdfBlob ? (
+                          <Button
+                            onClick={handleGenerateCarePdf}
+                            disabled={isGeneratingCarePdf || !page.available}
+                            className="w-full text-xs"
+                            variant="outline"
+                            size="sm"
+                          >
+                            {isGeneratingCarePdf ? (
+                              <>
+                                <Loader2 className="mr-1 h-3 w-3 animate-spin" />
+                                Generating...
+                              </>
+                            ) : (
+                              <>
+                                <FileDown className="mr-1 h-3 w-3" />
+                                Generate Care PDF
+                              </>
+                            )}
+                          </Button>
+                        ) : (
+                          <div className="grid grid-cols-2 gap-1">
+                            <Button onClick={handleViewCarePdf} variant="outline" size="sm" className="text-xs py-2">
+                              <Eye className="mr-1 h-2 w-2" />
+                              View
+                            </Button>
+                            <Button onClick={handleDownloadCarePdf} variant="outline" size="sm" className="text-xs py-2">
+                              <FileDown className="mr-1 h-2 w-2" />
+                              Download
+                            </Button>
+                            <Button onClick={handlePrintCarePdf} variant="outline" size="sm" className="text-xs py-2">
+                              <Printer className="mr-1 h-2 w-2" />
+                              Print
+                            </Button>
+                            <Button onClick={handleShareCarePdf} variant="outline" size="sm" className="text-xs py-2">
+                              <Share2 className="mr-1 h-2 w-2" />
+                              Share
+                            </Button>
+                          </div>
+                        )}
+
+                        {carePdfError && (
+                          <p className="text-xs text-destructive">{carePdfError}</p>
+                        )}
+                      </div>
+
+                      {/* Share Options */}
+                      <Button
+                        onClick={() => page.available ? handleNativeShare(page) : null}
+                        onTouchEnd={(e) => e.stopPropagation()}
+                        size="sm"
+                        disabled={!page.available || sharingId === page.id}
+                        className="w-full text-xs bg-primary hover:bg-primary/90 text-white"
+                        style={{ touchAction: 'none' }}
+                      >
+                        {sharingId === page.id ? (
+                          <>
+                            <div className="w-3 h-3 animate-spin rounded-full border border-white border-t-transparent mr-1" />
+                            Sharing...
+                          </>
+                        ) : (
+                          <>
+                            <Smartphone className="w-3 h-3 mr-1 text-white" />
+                            Quick Share
+                          </>
+                        )}
+                      </Button>
+                      
+                      <div className="grid grid-cols-3 gap-1" data-touch-safe="true">
+                        <Button
+                          onClick={() => page.available ? handleCopyLink(page) : null}
+                          onTouchEnd={(e) => e.stopPropagation()}
+                          variant="outline"
+                          size="sm"
+                          disabled={!page.available || copyingId === page.id}
+                          style={{ touchAction: 'none' }}
+                          className="text-sm flex flex-col items-center py-3 px-2 h-16 min-h-16 bg-white border-primary text-primary hover:bg-primary/10 hover:text-primary"
+                        >
+                          {copyingId === page.id ? (
+                            <Check className="w-4 h-4 mb-1" />
+                          ) : (
+                            <Copy className="w-4 h-4 mb-1" />
+                          )}
+                          <span className="text-xs font-medium leading-tight">
+                            {copyingId === page.id ? 'Copied' : 'Copy'}
+                          </span>
+                        </Button>
+                        
+                        <Button
+                          onClick={() => page.available ? handleSMSShare(page) : null}
+                          onTouchEnd={(e) => e.stopPropagation()}
+                          variant="outline"
+                          size="sm"
+                          disabled={!page.available}
+                          style={{ touchAction: 'none' }}
+                          className="text-sm flex flex-col items-center py-3 px-2 h-16 min-h-16 bg-white border-primary text-primary hover:bg-primary/10 hover:text-primary"
+                        >
+                          <MessageCircle className="w-4 h-4 mb-1" />
+                          <span className="text-xs font-medium leading-tight">SMS</span>
+                        </Button>
+                        
+                        <Button
+                          onClick={() => page.available ? handleEmailShare(page) : null}
+                          onTouchEnd={(e) => e.stopPropagation()}
+                          variant="outline"
+                          size="sm"
+                          disabled={!page.available}
+                          style={{ touchAction: 'none' }}
+                          className="text-sm flex flex-col items-center py-3 px-2 h-16 min-h-16 bg-white border-primary text-primary hover:bg-primary/10 hover:text-primary"
+                        >
+                          <Mail className="w-4 h-4 mb-1" />
+                          <span className="text-xs font-medium leading-tight">Email</span>
+                        </Button>
+                      </div>
+                      
+                      <div className="grid grid-cols-3 gap-1" data-touch-safe="true">
+                        <Button
+                          onClick={() => page.available ? handleFacebookShare(page) : null}
+                          onTouchEnd={(e) => e.stopPropagation()}
+                          variant="outline"
+                          size="sm"
+                          disabled={!page.available}
+                          style={{ touchAction: 'none' }}
+                          className="text-sm flex flex-col items-center py-3 px-2 h-16 min-h-16 bg-white border-primary text-primary hover:bg-primary/10 hover:text-primary"
+                        >
+                          <Facebook className="w-4 h-4 mb-1" />
+                          <span className="text-xs font-medium leading-tight">Facebook</span>
+                        </Button>
+                        
+                        <Button
+                          onClick={() => page.available ? handleMessengerShare(page) : null}
+                          onTouchEnd={(e) => e.stopPropagation()}
+                          variant="outline"
+                          size="sm"
+                          disabled={!page.available}
+                          style={{ touchAction: 'none' }}
+                          className="text-sm flex flex-col items-center py-3 px-2 h-16 min-h-16 bg-white border-primary text-primary hover:bg-primary/10 hover:text-primary"
+                        >
+                          <MessageSquare className="w-4 h-4 mb-1" />
+                          <span className="text-xs font-medium leading-tight">Messenger</span>
+                        </Button>
+                        
+                        <Button
+                          onClick={() => {
+                            if (page.available) {
+                              handleCopyLink(page);
+                              toast({
+                                title: "Instagram Limitation",
+                                description: "Instagram doesn't support direct sharing. Link copied - paste it in Instagram Stories or posts.",
+                                duration: 4000,
+                              });
+                            }
+                          }}
+                          onTouchEnd={(e) => e.stopPropagation()}
+                          variant="outline"
+                          size="sm"
+                          disabled={!page.available}
+                          style={{ touchAction: 'none' }}
+                          className="text-sm flex flex-col items-center py-3 px-2 h-16 min-h-16 bg-white border-primary text-primary hover:bg-primary/10 hover:text-primary"
+                        >
+                          <Camera className="w-4 h-4 mb-1" />
+                          <span className="text-xs font-medium leading-tight">Instagram</span>
+                        </Button>
+                      </div>
+                    </>
+                  )}
+                </div>
+              ) : (
+                /* Standard Card Layout for Other Pages */
+                <div className="space-y-2" data-touch-safe="true">
+                  {showOptionsFor !== page.id ? (
+                    /* Show Options Button */
+                    <Button
+                      onClick={() => page.available ? setShowOptionsFor(page.id) : null}
+                      onTouchEnd={(e) => e.stopPropagation()}
+                      size="sm"
+                      disabled={!page.available}
                       className={`w-full text-xs ${
                         page.variant === 'missing' 
                           ? page.available
@@ -594,151 +777,176 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
                       }`}
                       style={{ touchAction: 'none' }}
                     >
-                      {sharingId === page.id ? (
-                        <>
-                          <div className="w-3 h-3 animate-spin rounded-full border border-white border-t-transparent mr-1" />
-                          Sharing...
-                        </>
-                      ) : (
-                        <>
-                          <Smartphone className="w-3 h-3 mr-1 text-white" />
-                          Quick Share
-                        </>
-                      )}
+                      <Share2 className="w-3 h-3 mr-1 text-white" />
+                      {page.available ? 'Share' : 'Unavailable'}
                     </Button>
-                    
-                    {/* Secondary Options */}
-                    <div className="grid grid-cols-3 gap-1" data-touch-safe="true">
+                  ) : (
+                    <>
+                      {/* Quick Share Button */}
                       <Button
-                        onClick={() => page.available ? handleCopyLink(page) : null}
+                        onClick={() => page.available ? handleNativeShare(page) : null}
                         onTouchEnd={(e) => e.stopPropagation()}
-                        variant="outline"
                         size="sm"
-                        disabled={!page.available || copyingId === page.id}
-                        style={{ touchAction: 'none' }}
-                        className={`text-sm flex flex-col items-center py-3 px-2 h-16 min-h-16 ${
+                        disabled={!page.available || sharingId === page.id}
+                        className={`w-full text-xs ${
                           page.variant === 'missing' 
                             ? page.available
-                              ? 'border-red-600 text-red-700 hover:bg-red-50' 
-                              : 'border-gray-300 text-gray-400 cursor-not-allowed'
-                            : 'bg-white border-primary text-primary hover:bg-primary/10 hover:text-primary'
+                              ? 'bg-red-600 hover:bg-red-700 text-white' 
+                              : 'bg-gray-400 text-gray-600 cursor-not-allowed'
+                            : 'bg-primary hover:bg-primary/90 text-white'
                         }`}
+                        style={{ touchAction: 'none' }}
                       >
-                        {copyingId === page.id ? (
-                          <Check className="w-4 h-4 mb-1" />
+                        {sharingId === page.id ? (
+                          <>
+                            <div className="w-3 h-3 animate-spin rounded-full border border-white border-t-transparent mr-1" />
+                            Sharing...
+                          </>
                         ) : (
-                          <Copy className="w-4 h-4 mb-1" />
+                          <>
+                            <Smartphone className="w-3 h-3 mr-1 text-white" />
+                            Quick Share
+                          </>
                         )}
-                        <span className="text-xs font-medium leading-tight">
-                          {copyingId === page.id ? 'Copied' : 'Copy'}
-                        </span>
                       </Button>
                       
-                      <Button
-                        onClick={() => page.available ? handleSMSShare(page) : null}
-                        onTouchEnd={(e) => e.stopPropagation()}
-                        variant="outline"
-                        size="sm"
-                        disabled={!page.available}
-                        style={{ touchAction: 'none' }}
-                        className={`text-sm flex flex-col items-center py-3 px-2 h-16 min-h-16 ${
-                          page.variant === 'missing' 
-                            ? page.available
-                              ? 'border-red-600 text-red-700 hover:bg-red-50' 
-                              : 'border-gray-300 text-gray-400 cursor-not-allowed'
-                            : 'bg-white border-primary text-primary hover:bg-primary/10 hover:text-primary'
-                        }`}
-                      >
-                        <MessageCircle className="w-4 h-4 mb-1" />
-                        <span className="text-xs font-medium leading-tight">SMS</span>
-                      </Button>
+                      {/* Secondary Options */}
+                      <div className="grid grid-cols-3 gap-1" data-touch-safe="true">
+                        <Button
+                          onClick={() => page.available ? handleCopyLink(page) : null}
+                          onTouchEnd={(e) => e.stopPropagation()}
+                          variant="outline"
+                          size="sm"
+                          disabled={!page.available || copyingId === page.id}
+                          style={{ touchAction: 'none' }}
+                          className={`text-sm flex flex-col items-center py-3 px-2 h-16 min-h-16 ${
+                            page.variant === 'missing' 
+                              ? page.available
+                                ? 'border-red-600 text-red-700 hover:bg-red-50' 
+                                : 'border-gray-300 text-gray-400 cursor-not-allowed'
+                              : 'bg-white border-primary text-primary hover:bg-primary/10 hover:text-primary'
+                          }`}
+                        >
+                          {copyingId === page.id ? (
+                            <Check className="w-4 h-4 mb-1" />
+                          ) : (
+                            <Copy className="w-4 h-4 mb-1" />
+                          )}
+                          <span className="text-xs font-medium leading-tight">
+                            {copyingId === page.id ? 'Copied' : 'Copy'}
+                          </span>
+                        </Button>
+                        
+                        <Button
+                          onClick={() => page.available ? handleSMSShare(page) : null}
+                          onTouchEnd={(e) => e.stopPropagation()}
+                          variant="outline"
+                          size="sm"
+                          disabled={!page.available}
+                          style={{ touchAction: 'none' }}
+                          className={`text-sm flex flex-col items-center py-3 px-2 h-16 min-h-16 ${
+                            page.variant === 'missing' 
+                              ? page.available
+                                ? 'border-red-600 text-red-700 hover:bg-red-50' 
+                                : 'border-gray-300 text-gray-400 cursor-not-allowed'
+                              : 'bg-white border-primary text-primary hover:bg-primary/10 hover:text-primary'
+                          }`}
+                        >
+                          <MessageCircle className="w-4 h-4 mb-1" />
+                          <span className="text-xs font-medium leading-tight">SMS</span>
+                        </Button>
+                        
+                        <Button
+                          onClick={() => page.available ? handleEmailShare(page) : null}
+                          onTouchEnd={(e) => e.stopPropagation()}
+                          variant="outline"
+                          size="sm"
+                          disabled={!page.available}
+                          style={{ touchAction: 'none' }}
+                          className={`text-sm flex flex-col items-center py-3 px-2 h-16 min-h-16 ${
+                            page.variant === 'missing' 
+                              ? page.available
+                                ? 'border-red-600 text-red-700 hover:bg-red-50' 
+                                : 'border-gray-300 text-gray-400 cursor-not-allowed'
+                              : 'bg-white border-primary text-primary hover:bg-primary/10 hover:text-primary'
+                          }`}
+                        >
+                          <Mail className="w-4 h-4 mb-1" />
+                          <span className="text-xs font-medium leading-tight">Email</span>
+                        </Button>
+                      </div>
                       
-                      <Button
-                        onClick={() => page.available ? handleEmailShare(page) : null}
-                        onTouchEnd={(e) => e.stopPropagation()}
-                        variant="outline"
-                        size="sm"
-                        disabled={!page.available}
-                        style={{ touchAction: 'none' }}
-                        className={`text-sm flex flex-col items-center py-3 px-2 h-16 min-h-16 ${
-                          page.variant === 'missing' 
-                            ? page.available
-                              ? 'border-red-600 text-red-700 hover:bg-red-50' 
-                              : 'border-gray-300 text-gray-400 cursor-not-allowed'
-                            : 'bg-white border-primary text-primary hover:bg-primary/10 hover:text-primary'
-                        }`}
-                      >
-                        <Mail className="w-4 h-4 mb-1" />
-                        <span className="text-xs font-medium leading-tight">Email</span>
-                      </Button>
-                    </div>
-                    
-                    <div className="grid grid-cols-3 gap-1" data-touch-safe="true">
-                      <Button
-                        onClick={() => page.available ? handleFacebookShare(page) : null}
-                        onTouchEnd={(e) => e.stopPropagation()}
-                        variant="outline"
-                        size="sm"
-                        disabled={!page.available}
-                        style={{ touchAction: 'none' }}
-                        className={`text-sm flex flex-col items-center py-3 px-2 h-16 min-h-16 ${
-                          page.variant === 'missing' 
-                            ? page.available
-                              ? 'border-red-600 text-red-700 hover:bg-red-50' 
-                              : 'border-gray-300 text-gray-400 cursor-not-allowed'
-                            : 'bg-white border-primary text-primary hover:bg-primary/10 hover:text-primary'
-                        }`}
-                      >
-                        <Facebook className="w-4 h-4 mb-1" />
-                        <span className="text-xs font-medium leading-tight">Facebook</span>
-                      </Button>
-                      
-                      <Button
-                        onClick={() => page.available ? handleMessengerShare(page) : null}
-                        onTouchEnd={(e) => e.stopPropagation()}
-                        variant="outline"
-                        size="sm"
-                        disabled={!page.available}
-                        style={{ touchAction: 'none' }}
-                        className={`text-sm flex flex-col items-center py-3 px-2 h-16 min-h-16 ${
-                          page.variant === 'missing' 
-                            ? page.available
-                              ? 'border-red-600 text-red-700 hover:bg-red-50' 
-                              : 'border-gray-300 text-gray-400 cursor-not-allowed'
-                            : 'bg-white border-primary text-primary hover:bg-primary/10 hover:text-primary'
-                        }`}
-                      >
-                        <MessageSquare className="w-4 h-4 mb-1" />
-                        <span className="text-xs font-medium leading-tight">Messenger</span>
-                      </Button>
-                      
-                      <Button
-                        onClick={() => {
-                          if (page.available) {
-                            handleCopyLink(page);
-                            toast({
-                              title: "Instagram Limitation",
-                              description: "Instagram doesn't support direct sharing. Link copied - paste it in Instagram Stories or posts.",
-                              duration: 4000,
-                            });
-                          }
-                        }}
-                        onTouchEnd={(e) => e.stopPropagation()}
-                        variant="outline"
-                        size="sm"
-                        disabled={!page.available}
-                        style={{ touchAction: 'none' }}
-                        className={`text-sm flex flex-col items-center py-3 px-2 h-16 min-h-16 bg-gradient-to-r from-purple-500 via-pink-500 to-orange-400 hover:from-purple-600 hover:via-pink-600 hover:to-orange-500 text-white border-transparent`}
-                      >
-                        <svg className="w-4 h-4 mb-1" viewBox="0 0 24 24" fill="currentColor">
-                          <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
-                        </svg>
-                        <span className="text-xs font-medium leading-tight">Instagram</span>
-                      </Button>
-                    </div>
-                  </>
-                )}
-              </div>
+                      <div className="grid grid-cols-3 gap-1" data-touch-safe="true">
+                        <Button
+                          onClick={() => page.available ? handleFacebookShare(page) : null}
+                          onTouchEnd={(e) => e.stopPropagation()}
+                          variant="outline"
+                          size="sm"
+                          disabled={!page.available}
+                          style={{ touchAction: 'none' }}
+                          className={`text-sm flex flex-col items-center py-3 px-2 h-16 min-h-16 ${
+                            page.variant === 'missing' 
+                              ? page.available
+                                ? 'border-red-600 text-red-700 hover:bg-red-50' 
+                                : 'border-gray-300 text-gray-400 cursor-not-allowed'
+                              : 'bg-white border-primary text-primary hover:bg-primary/10 hover:text-primary'
+                          }`}
+                        >
+                          <Facebook className="w-4 h-4 mb-1" />
+                          <span className="text-xs font-medium leading-tight">Facebook</span>
+                        </Button>
+                        
+                        <Button
+                          onClick={() => page.available ? handleMessengerShare(page) : null}
+                          onTouchEnd={(e) => e.stopPropagation()}
+                          variant="outline"
+                          size="sm"
+                          disabled={!page.available}
+                          style={{ touchAction: 'none' }}
+                          className={`text-sm flex flex-col items-center py-3 px-2 h-16 min-h-16 ${
+                            page.variant === 'missing' 
+                              ? page.available
+                                ? 'border-red-600 text-red-700 hover:bg-red-50' 
+                                : 'border-gray-300 text-gray-400 cursor-not-allowed'
+                              : 'bg-white border-primary text-primary hover:bg-primary/10 hover:text-primary'
+                          }`}
+                        >
+                          <MessageSquare className="w-4 h-4 mb-1" />
+                          <span className="text-xs font-medium leading-tight">Messenger</span>
+                        </Button>
+                        
+                        <Button
+                          onClick={() => {
+                            if (page.available) {
+                              handleCopyLink(page);
+                              toast({
+                                title: "Instagram Limitation",
+                                description: "Instagram doesn't support direct sharing. Link copied - paste it in Instagram Stories or posts.",
+                                duration: 4000,
+                              });
+                            }
+                          }}
+                          onTouchEnd={(e) => e.stopPropagation()}
+                          variant="outline"
+                          size="sm"
+                          disabled={!page.available}
+                          style={{ touchAction: 'none' }}
+                          className={`text-sm flex flex-col items-center py-3 px-2 h-16 min-h-16 ${
+                            page.variant === 'missing' 
+                              ? page.available
+                                ? 'border-red-600 text-red-700 hover:bg-red-50' 
+                                : 'border-gray-300 text-gray-400 cursor-not-allowed'
+                              : 'bg-white border-primary text-primary hover:bg-primary/10 hover:text-primary'
+                          }`}
+                        >
+                          <Camera className="w-4 h-4 mb-1" />
+                          <span className="text-xs font-medium leading-tight">Instagram</span>
+                        </Button>
+                      </div>
+                    </>
+                  )}
+                </div>
+              )}
             </div>
           ))}
         </div>

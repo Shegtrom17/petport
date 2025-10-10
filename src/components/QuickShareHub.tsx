@@ -698,7 +698,148 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
                 )}
               </div>
               
-              {page.id === 'care' ? (
+              {page.id === 'emergency' ? (
+                /* Emergency Profile Card with PDF Actions */
+                <Card 
+                  className={`transition-all duration-200 ${
+                    page.variant === 'missing' 
+                      ? 'border-2 border-red-500 bg-red-50' 
+                      : 'border border-gray-200 hover:border-blue-300 hover:shadow-md'
+                  }`}
+                >
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-base flex items-center gap-2">
+                      <div className="p-2 rounded-lg bg-gradient-to-br from-red-50 to-orange-50">
+                        {page.icon}
+                      </div>
+                      <div className="flex-1">
+                        <div className="font-semibold text-gray-900">{page.title}</div>
+                        <p className="text-xs text-gray-500 font-normal mt-0.5">{page.description}</p>
+                      </div>
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-3">
+                    {/* Sharing Buttons */}
+                    <div className="grid grid-cols-2 gap-2">
+                      <Button
+                        onClick={() => handleCopyLink(page)}
+                        variant="outline"
+                        size="sm"
+                        disabled={copyingId === page.id}
+                        className="w-full"
+                      >
+                        {copyingId === page.id ? <Check className="w-4 h-4 mr-1.5" /> : <Copy className="w-4 h-4 mr-1.5" />}
+                        {copyingId === page.id ? 'Copied!' : 'Copy'}
+                      </Button>
+                      <Button
+                        onClick={() => handleNativeShare(page)}
+                        variant="outline"
+                        size="sm"
+                        disabled={sharingId === page.id}
+                        className="w-full"
+                      >
+                        {sharingId === page.id ? <Loader2 className="w-4 h-4 mr-1.5 animate-spin" /> : <Smartphone className="w-4 h-4 mr-1.5" />}
+                        Share
+                      </Button>
+                      <Button
+                        onClick={() => handleSMSShare(page)}
+                        variant="outline"
+                        size="sm"
+                        className="w-full"
+                      >
+                        <MessageCircle className="w-4 h-4 mr-1.5" />
+                        SMS
+                      </Button>
+                      <Button
+                        onClick={() => handleEmailShare(page)}
+                        variant="outline"
+                        size="sm"
+                        className="w-full"
+                      >
+                        <Mail className="w-4 h-4 mr-1.5" />
+                        Email
+                      </Button>
+                    </div>
+
+                    {/* PDF Section */}
+                    <div className="pt-3 border-t border-gray-200">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-sm font-medium text-gray-700">PDF Options</span>
+                        {emergencyPdfBlob && (
+                          <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
+                            Ready
+                          </Badge>
+                        )}
+                      </div>
+                      
+                      {!emergencyPdfBlob ? (
+                        <Button
+                          onClick={handleGenerateEmergencyPdf}
+                          disabled={isGeneratingEmergencyPdf}
+                          variant="default"
+                          size="sm"
+                          className="w-full bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600"
+                        >
+                          {isGeneratingEmergencyPdf ? (
+                            <>
+                              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                              Generating PDF...
+                            </>
+                          ) : (
+                            <>
+                              <FileText className="w-4 h-4 mr-2" />
+                              Generate Emergency PDF
+                            </>
+                          )}
+                        </Button>
+                      ) : (
+                        <div className="space-y-2">
+                          <div className="grid grid-cols-2 gap-2">
+                            <Button onClick={handleViewEmergencyPdf} variant="outline" size="sm" className="w-full">
+                              <Eye className="w-4 h-4 mr-1.5" />
+                              View
+                            </Button>
+                            <Button onClick={handlePrintEmergencyPdf} variant="outline" size="sm" className="w-full">
+                              <Printer className="w-4 h-4 mr-1.5" />
+                              Print
+                            </Button>
+                            <Button onClick={handleDownloadEmergencyPdf} variant="outline" size="sm" className="w-full">
+                              <FileDown className="w-4 h-4 mr-1.5" />
+                              Download
+                            </Button>
+                            <Button onClick={handleShareEmergencyPdf} variant="outline" size="sm" className="w-full">
+                              <Share2 className="w-4 h-4 mr-1.5" />
+                              Share PDF
+                            </Button>
+                          </div>
+                          <Button 
+                            onClick={() => setShowEmergencyPdfDialog(true)} 
+                            variant="outline" 
+                            size="sm" 
+                            className="w-full border-blue-300 text-blue-700 hover:bg-blue-50"
+                          >
+                            <Mail className="w-4 h-4 mr-2" />
+                            Email Emergency PDF
+                          </Button>
+                          <Button
+                            onClick={() => setEmergencyPdfBlob(null)}
+                            variant="ghost"
+                            size="sm"
+                            className="w-full text-gray-500 hover:text-gray-700"
+                          >
+                            <X className="w-4 h-4 mr-2" />
+                            Clear PDF
+                          </Button>
+                        </div>
+                      )}
+                      
+                      {emergencyPdfError && (
+                        <p className="text-xs text-red-600 mt-2">{emergencyPdfError}</p>
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+              ) : page.id === 'care' ? (
                 /* Enhanced Care Card with PDF Actions */
                 <div className="space-y-2" data-touch-safe="true">
                   {showOptionsFor !== page.id ? (

@@ -439,7 +439,7 @@ const handler = async (req: Request): Promise<Response> => {
         "X-Postmark-Server-Token": POSTMARK_API_KEY!,
       },
       body: JSON.stringify({
-        From: "PetPort <noreply@petport.app>",
+        From: "PetPort <campaign@petport.app>",
         To: emailData.recipientEmail,
         Subject: subject,
         HtmlBody: emailTemplate,

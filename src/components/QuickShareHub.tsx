@@ -91,6 +91,10 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
   const [showGalleryPdfDialog, setShowGalleryPdfDialog] = useState(false);
   const [galleryPdfEmailData, setGalleryPdfEmailData] = useState({ to: '', subject: '', message: '' });
   
+  // Profile PDF State
+  const [profilePdfBlob, setProfilePdfBlob] = useState<Blob | null>(null);
+  const [isGeneratingProfilePdf, setIsGeneratingProfilePdf] = useState(false);
+  
   const { toast } = useToast();
   const { sendEmail, isLoading: emailLoading } = useEmailSharing();
   const isMobile = useIsMobile();
@@ -431,6 +435,33 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
       toast({ title: "Generation Failed", description: "Could not generate gallery PDF.", variant: "destructive" });
     } finally {
       setIsGeneratingGalleryPdf(false);
+    }
+  };
+
+  // Profile PDF Handlers
+  const handleGenerateProfilePDF = async () => {
+    if (!petData?.id) {
+      toast({ description: "Pet data not available", variant: "destructive" });
+      return;
+    }
+    
+    setIsGeneratingProfilePdf(true);
+    toast({ title: "Generating Profile PDF...", description: "Please wait while we create your pet's full profile." });
+    
+    try {
+      const result = await generateClientPetPDF(petData, 'full');
+      
+      if (result.success && result.blob) {
+        setProfilePdfBlob(result.blob);
+        toast({ title: "Profile PDF Ready!", description: "Your full profile PDF has been generated." });
+      } else {
+        throw new Error(result.error || "Failed to generate PDF");
+      }
+    } catch (error: any) {
+      console.error('[Profile PDF] Generation failed:', error);
+      toast({ title: "Generation Failed", description: "Could not generate profile PDF.", variant: "destructive" });
+    } finally {
+      setIsGeneratingProfilePdf(false);
     }
   };
 
@@ -1652,6 +1683,177 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
                         </Button>
                       </div>
                       
+                      <div className="grid grid-cols-3 gap-1" data-touch-safe="true">
+                        <Button
+                          onClick={() => page.available ? handleFacebookShare(page) : null}
+                          onTouchEnd={(e) => e.stopPropagation()}
+                          variant="outline"
+                          size="sm"
+                          disabled={!page.available}
+                          style={{ touchAction: 'none' }}
+                          className="text-sm flex flex-col items-center py-3 px-2 h-16 min-h-16 bg-white border-primary text-primary hover:bg-primary/10 hover:text-primary"
+                        >
+                          <Facebook className="w-4 h-4 mb-1" />
+                          <span className="text-xs font-medium leading-tight">Facebook</span>
+                        </Button>
+                        
+                        <Button
+                          onClick={() => page.available ? handleMessengerShare(page) : null}
+                          onTouchEnd={(e) => e.stopPropagation()}
+                          variant="outline"
+                          size="sm"
+                          disabled={!page.available}
+                          style={{ touchAction: 'none' }}
+                          className="text-sm flex flex-col items-center py-3 px-2 h-16 min-h-16 bg-white border-primary text-primary hover:bg-primary/10 hover:text-primary"
+                        >
+                          <MessageSquare className="w-4 h-4 mb-1" />
+                          <span className="text-xs font-medium leading-tight">Messenger</span>
+                        </Button>
+                        
+                        <Button
+                          onClick={() => {
+                            if (page.available) {
+                              handleCopyLink(page);
+                              toast({
+                                title: "Instagram Limitation",
+                                description: "Instagram doesn't support direct sharing. Link copied - paste it in Instagram Stories or posts.",
+                                duration: 4000,
+                              });
+                            }
+                          }}
+                          onTouchEnd={(e) => e.stopPropagation()}
+                          variant="outline"
+                          size="sm"
+                          disabled={!page.available}
+                          style={{ touchAction: 'none' }}
+                          className="text-sm flex flex-col items-center py-3 px-2 h-16 min-h-16 bg-white border-primary text-primary hover:bg-primary/10 hover:text-primary"
+                        >
+                          <Camera className="w-4 h-4 mb-1" />
+                          <span className="text-xs font-medium leading-tight">Instagram</span>
+                        </Button>
+                      </div>
+
+                      {/* Close Button */}
+                      <Button
+                        onClick={() => setShowOptionsFor(null)}
+                        variant="ghost"
+                        size="sm"
+                        className="w-full text-xs mt-2"
+                      >
+                        Close
+                      </Button>
+                    </>
+                  )}
+                </div>
+              ) : page.id === 'profile' ? (
+                /* Enhanced Profile Card - Matches Care Structure */
+                <div className="space-y-2" data-touch-safe="true">
+                  {showOptionsFor !== page.id ? (
+                    <Button
+                      onClick={() => page.available ? setShowOptionsFor(page.id) : null}
+                      onTouchEnd={(e) => e.stopPropagation()}
+                      size="sm"
+                      disabled={!page.available}
+                      className="w-full text-xs bg-primary hover:bg-primary/90 text-white"
+                      style={{ touchAction: 'none' }}
+                    >
+                      <Share2 className="w-3 h-3 mr-1 text-white" />
+                      {page.available ? 'Share' : 'Unavailable'}
+                    </Button>
+                  ) : (
+                    <>
+                      {/* Generate PDF Button */}
+                      <Button
+                        onClick={handleGenerateProfilePDF}
+                        disabled={isGeneratingProfilePdf || !page.available}
+                        className="w-full text-xs"
+                        variant="outline"
+                        size="sm"
+                      >
+                        {isGeneratingProfilePdf ? (
+                          <>
+                            <Loader2 className="mr-1 h-3 w-3 animate-spin" />
+                            Generating...
+                          </>
+                        ) : (
+                          <>
+                            <FileDown className="mr-1 h-3 w-3" />
+                            Generate Profile PDF
+                          </>
+                        )}
+                      </Button>
+
+                      {/* Quick Share Button */}
+                      <Button
+                        onClick={() => page.available ? handleNativeShare(page) : null}
+                        onTouchEnd={(e) => e.stopPropagation()}
+                        size="sm"
+                        disabled={!page.available || sharingId === page.id}
+                        className="w-full text-xs bg-primary hover:bg-primary/90 text-white"
+                        style={{ touchAction: 'none' }}
+                      >
+                        {sharingId === page.id ? (
+                          <>
+                            <div className="w-3 h-3 animate-spin rounded-full border border-white border-t-transparent mr-1" />
+                            Sharing...
+                          </>
+                        ) : (
+                          <>
+                            <Smartphone className="w-3 h-3 mr-1 text-white" />
+                            Quick Share
+                          </>
+                        )}
+                      </Button>
+
+                      {/* Sharing Options - Row 1 */}
+                      <div className="grid grid-cols-3 gap-1" data-touch-safe="true">
+                        <Button
+                          onClick={() => page.available ? handleCopyLink(page) : null}
+                          onTouchEnd={(e) => e.stopPropagation()}
+                          variant="outline"
+                          size="sm"
+                          disabled={!page.available || copyingId === page.id}
+                          style={{ touchAction: 'none' }}
+                          className="text-sm flex flex-col items-center py-3 px-2 h-16 min-h-16 bg-white border-primary text-primary hover:bg-primary/10 hover:text-primary"
+                        >
+                          {copyingId === page.id ? (
+                            <Check className="w-4 h-4 mb-1" />
+                          ) : (
+                            <Copy className="w-4 h-4 mb-1" />
+                          )}
+                          <span className="text-xs font-medium leading-tight">
+                            {copyingId === page.id ? 'Copied' : 'Copy'}
+                          </span>
+                        </Button>
+                        
+                        <Button
+                          onClick={() => page.available ? handleSMSShare(page) : null}
+                          onTouchEnd={(e) => e.stopPropagation()}
+                          variant="outline"
+                          size="sm"
+                          disabled={!page.available}
+                          style={{ touchAction: 'none' }}
+                          className="text-sm flex flex-col items-center py-3 px-2 h-16 min-h-16 bg-white border-primary text-primary hover:bg-primary/10 hover:text-primary"
+                        >
+                          <MessageCircle className="w-4 h-4 mb-1" />
+                          <span className="text-xs font-medium leading-tight">SMS</span>
+                        </Button>
+                        
+                        <Button
+                          onClick={() => page.available ? handleEmailShare(page) : null}
+                          onTouchEnd={(e) => e.stopPropagation()}
+                          variant="outline"
+                          size="sm"
+                          disabled={!page.available}
+                          style={{ touchAction: 'none' }}
+                          className="text-sm flex flex-col items-center py-3 px-2 h-16 min-h-16 bg-white border-primary text-primary hover:bg-primary/10 hover:text-primary"
+                        >
+                          <Mail className="w-4 h-4 mb-1" />
+                          <span className="text-xs font-medium leading-tight">Email</span>
+                        </Button>
+                      </div>
+                      
+                      {/* Sharing Options - Row 2 */}
                       <div className="grid grid-cols-3 gap-1" data-touch-safe="true">
                         <Button
                           onClick={() => page.available ? handleFacebookShare(page) : null}

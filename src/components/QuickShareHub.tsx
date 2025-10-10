@@ -84,6 +84,12 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
   const [showResumePdfDialog, setShowResumePdfDialog] = useState(false);
   const [resumePdfEmailData, setResumePdfEmailData] = useState({ to: '', name: '', message: '' });
   
+  // Gallery PDF State
+  const [galleryPdfBlob, setGalleryPdfBlob] = useState<Blob | null>(null);
+  const [isGeneratingGalleryPdf, setIsGeneratingGalleryPdf] = useState(false);
+  const [showGalleryPdfDialog, setShowGalleryPdfDialog] = useState(false);
+  const [galleryPdfEmailData, setGalleryPdfEmailData] = useState({ to: '', subject: '', message: '' });
+  
   const { toast } = useToast();
   const { sendEmail, isLoading: emailLoading } = useEmailSharing();
   const isMobile = useIsMobile();
@@ -398,6 +404,33 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
   const clearCarePdfCache = () => {
     setCarePdfBlob(null);
     setCarePdfError(null);
+  };
+
+  // Gallery PDF Handlers
+  const handleGenerateGalleryPDF = async () => {
+    if (!petData?.id) {
+      toast({ description: "Pet data not available", variant: "destructive" });
+      return;
+    }
+    
+    setIsGeneratingGalleryPdf(true);
+    toast({ title: "Generating Gallery PDF...", description: "Please wait while we create your portrait gallery." });
+    
+    try {
+      const result = await generateClientPetPDF(petData, 'gallery');
+      
+      if (result.success && result.blob) {
+        setGalleryPdfBlob(result.blob);
+        toast({ title: "Gallery PDF Ready!", description: "Your portrait gallery PDF has been generated." });
+      } else {
+        throw new Error(result.error || "Failed to generate PDF");
+      }
+    } catch (error: any) {
+      console.error('[Gallery PDF] Generation failed:', error);
+      toast({ title: "Generation Failed", description: "Could not generate gallery PDF.", variant: "destructive" });
+    } finally {
+      setIsGeneratingGalleryPdf(false);
+    }
   };
 
   const handleViewCarePdf = async () => {
@@ -1467,6 +1500,190 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
                       </Button>
                     </>
                   )}
+                </div>
+              ) : page.id === 'gallery' && showOptionsFor === 'gallery' ? (
+                /* Pet Gallery Section */
+                <div className="space-y-2 animate-fade-in">
+                  {/* PDF Actions Header */}
+                  <div className="flex items-center justify-between">
+                    <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Gallery PDF</h4>
+                  </div>
+
+                  {/* Primary Actions Row */}
+                  <div className="grid grid-cols-2 gap-1">
+                    <Button 
+                      onClick={handleGenerateGalleryPDF} 
+                      disabled={isGeneratingGalleryPdf} 
+                      size="sm" 
+                      className="w-full text-xs bg-primary hover:bg-primary/90 text-white"
+                    >
+                      {isGeneratingGalleryPdf ? (
+                        <>
+                          <Loader2 className="w-3 h-3 mr-1 animate-spin" />
+                          Generating...
+                        </>
+                      ) : (
+                        <>
+                          <FileText className="w-3 h-3 mr-1" />
+                          Generate Gallery PDF
+                        </>
+                      )}
+                    </Button>
+                    <Button 
+                      onClick={() => galleryPdfBlob && viewPDFBlob(galleryPdfBlob, `${petData?.name}_Gallery.pdf`)} 
+                      disabled={!galleryPdfBlob} 
+                      variant="outline" 
+                      size="sm" 
+                      className="w-full text-xs"
+                    >
+                      <Eye className="mr-1 h-3 w-3" />
+                      View PDF
+                    </Button>
+                  </div>
+
+                  {/* Secondary Actions Row */}
+                  <div className="grid grid-cols-3 gap-1">
+                    <Button 
+                      onClick={() => galleryPdfBlob && downloadPDFBlob(galleryPdfBlob, `${petData?.name}_Gallery.pdf`)} 
+                      disabled={!galleryPdfBlob} 
+                      variant="outline" 
+                      size="sm" 
+                      className="w-full text-xs"
+                    >
+                      <FileDown className="mr-1 h-2 w-2" />
+                      Download
+                    </Button>
+                    <Button 
+                      onClick={() => galleryPdfBlob && viewPDFBlob(galleryPdfBlob, `${petData?.name}_Gallery.pdf`)} 
+                      disabled={!galleryPdfBlob} 
+                      variant="outline" 
+                      size="sm" 
+                      className="w-full text-xs"
+                    >
+                      <Printer className="mr-1 h-2 w-2" />
+                      Print
+                    </Button>
+                    {(() => {
+                      const page = sharePages.find(p => p.id === 'gallery');
+                      return page ? (
+                        <Button
+                          onClick={() => page.available ? handleNativeShare(page) : null}
+                          onTouchEnd={(e) => e.stopPropagation()}
+                          size="sm"
+                          disabled={!page.available || sharingId === page.id}
+                          className="w-full text-xs bg-primary hover:bg-primary/90 text-white"
+                          style={{ touchAction: 'none' }}
+                        >
+                          {sharingId === page.id ? (
+                            <>
+                              <div className="w-3 h-3 animate-spin rounded-full border border-white border-t-transparent mr-1" />
+                              Sharing...
+                            </>
+                          ) : (
+                            <>
+                              <Smartphone className="w-3 h-3 mr-1 text-white" />
+                              Quick Share
+                            </>
+                          )}
+                        </Button>
+                      ) : null;
+                    })()}
+                  </div>
+
+                  {/* Share Grid - Row 1 */}
+                  <div className="grid grid-cols-3 gap-1" data-touch-safe="true">
+                    <Button
+                      onClick={() => {const p = sharePages.find(pg => pg.id === 'gallery'); p?.available && handleCopyLink(p);}}
+                      onTouchEnd={(e) => e.stopPropagation()}
+                      variant="outline"
+                      size="sm"
+                      disabled={copyingId === 'gallery'}
+                      style={{ touchAction: 'none' }}
+                      className="text-sm flex flex-col items-center py-3 px-2 h-16 min-h-16 bg-white border-primary text-primary hover:bg-primary/10"
+                    >
+                      {copyingId === 'gallery' ? <Check className="w-4 h-4 mb-1" /> : <Copy className="w-4 h-4 mb-1" />}
+                      <span className="text-xs font-medium leading-tight">{copyingId === 'gallery' ? 'Copied' : 'Copy'}</span>
+                    </Button>
+                    <Button
+                      onClick={() => {const p = sharePages.find(pg => pg.id === 'gallery'); p?.available && handleSMSShare(p);}}
+                      onTouchEnd={(e) => e.stopPropagation()}
+                      variant="outline"
+                      size="sm"
+                      style={{ touchAction: 'none' }}
+                      className="text-sm flex flex-col items-center py-3 px-2 h-16 min-h-16 bg-white border-primary text-primary hover:bg-primary/10"
+                    >
+                      <MessageCircle className="w-4 h-4 mb-1" />
+                      <span className="text-xs font-medium leading-tight">SMS</span>
+                    </Button>
+                    <Button
+                      onClick={() => {const p = sharePages.find(pg => pg.id === 'gallery'); p?.available && handleEmailShare(p);}}
+                      onTouchEnd={(e) => e.stopPropagation()}
+                      variant="outline"
+                      size="sm"
+                      style={{ touchAction: 'none' }}
+                      className="text-sm flex flex-col items-center py-3 px-2 h-16 min-h-16 bg-white border-primary text-primary hover:bg-primary/10"
+                    >
+                      <Mail className="w-4 h-4 mb-1" />
+                      <span className="text-xs font-medium leading-tight">Email</span>
+                    </Button>
+                  </div>
+
+                  {/* Share Grid - Row 2 */}
+                  <div className="grid grid-cols-3 gap-1" data-touch-safe="true">
+                    <Button
+                      onClick={() => {const p = sharePages.find(pg => pg.id === 'gallery'); p?.available && handleFacebookShare(p);}}
+                      onTouchEnd={(e) => e.stopPropagation()}
+                      variant="outline"
+                      size="sm"
+                      style={{ touchAction: 'none' }}
+                      className="text-sm flex flex-col items-center py-3 px-2 h-16 min-h-16 bg-white border-primary text-primary hover:bg-primary/10"
+                    >
+                      <Facebook className="w-4 h-4 mb-1" />
+                      <span className="text-xs font-medium leading-tight">Facebook</span>
+                    </Button>
+                    <Button
+                      onClick={() => {const p = sharePages.find(pg => pg.id === 'gallery'); p?.available && handleMessengerShare(p);}}
+                      onTouchEnd={(e) => e.stopPropagation()}
+                      variant="outline"
+                      size="sm"
+                      style={{ touchAction: 'none' }}
+                      className="text-sm flex flex-col items-center py-3 px-2 h-16 min-h-16 bg-white border-primary text-primary hover:bg-primary/10"
+                    >
+                      <MessageSquare className="w-4 h-4 mb-1" />
+                      <span className="text-xs font-medium leading-tight">Messenger</span>
+                    </Button>
+                    <Button
+                      onClick={() => {
+                        const p = sharePages.find(pg => pg.id === 'gallery');
+                        if (p?.available) {
+                          handleCopyLink(p);
+                          toast({
+                            title: "Instagram Limitation",
+                            description: "Instagram doesn't support direct sharing. Link copied - paste it in Instagram Stories or posts.",
+                            duration: 4000,
+                          });
+                        }
+                      }}
+                      onTouchEnd={(e) => e.stopPropagation()}
+                      variant="outline"
+                      size="sm"
+                      style={{ touchAction: 'none' }}
+                      className="text-sm flex flex-col items-center py-3 px-2 h-16 min-h-16 bg-white border-primary text-primary hover:bg-primary/10"
+                    >
+                      <Camera className="w-4 h-4 mb-1" />
+                      <span className="text-xs font-medium leading-tight">Instagram</span>
+                    </Button>
+                  </div>
+
+                  {/* Close Button */}
+                  <Button
+                    onClick={() => setShowOptionsFor(null)}
+                    variant="ghost"
+                    size="sm"
+                    className="w-full text-xs"
+                  >
+                    Close
+                  </Button>
                 </div>
               ) : (
                 /* Standard Card Layout for Other Pages */

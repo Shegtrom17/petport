@@ -440,6 +440,7 @@ const handler = async (req: Request): Promise<Response> => {
       },
       body: JSON.stringify({
         From: "PetPort <campaign@petport.app>",
+        ReplyTo: "info@petport.app",
         To: emailData.recipientEmail,
         Subject: subject,
         HtmlBody: emailTemplate,

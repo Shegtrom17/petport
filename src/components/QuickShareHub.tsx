@@ -520,6 +520,144 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
     }
   };
 
+  // ==================== EMERGENCY PDF HANDLERS ====================
+  const handleGenerateEmergencyPdf = async () => {
+    setIsGeneratingEmergencyPdf(true);
+    setEmergencyPdfError(null);
+    try {
+      const result = await generateClientPetPDF(petData, 'emergency');
+      if (result.success && result.blob) {
+        setEmergencyPdfBlob(result.blob);
+        toast({
+          title: "Emergency PDF Generated",
+          description: "Your emergency profile is ready to view, download, or share.",
+        });
+      } else {
+        throw new Error(result.error || 'PDF generation failed');
+      }
+    } catch (error) {
+      console.error('Emergency PDF generation error:', error);
+      const errorMsg = error instanceof Error ? error.message : 'Failed to generate emergency PDF';
+      setEmergencyPdfError(errorMsg);
+      toast({
+        title: "Generation Failed",
+        description: errorMsg,
+        variant: "destructive",
+      });
+    } finally {
+      setIsGeneratingEmergencyPdf(false);
+    }
+  };
+
+  const handleViewEmergencyPdf = () => {
+    if (emergencyPdfBlob) {
+      viewPDFBlob(emergencyPdfBlob, `${petData.name}_Emergency_Profile.pdf`);
+    }
+  };
+
+  const handlePrintEmergencyPdf = () => {
+    if (emergencyPdfBlob) {
+      const url = URL.createObjectURL(emergencyPdfBlob);
+      const printWindow = window.open(url, '_blank');
+      if (printWindow) {
+        printWindow.onload = () => {
+          printWindow.print();
+          URL.revokeObjectURL(url);
+        };
+      }
+    }
+  };
+
+  const handleDownloadEmergencyPdf = () => {
+    if (emergencyPdfBlob) {
+      downloadPDFBlob(emergencyPdfBlob, `${petData.name}_Emergency_Profile.pdf`);
+      toast({
+        title: "Download Started",
+        description: "Emergency profile PDF is downloading.",
+      });
+    }
+  };
+
+  const handleShareEmergencyPdf = async () => {
+    if (!emergencyPdfBlob) return;
+    
+    try {
+      const result = await sharePDFBlob(emergencyPdfBlob, `${petData.name}_Emergency_Profile.pdf`, petData.id);
+      if (result.success) {
+        toast({
+          title: result.shared ? "PDF Shared!" : "Link Copied!",
+          description: result.message,
+        });
+      } else {
+        throw new Error(result.error || 'Share failed');
+      }
+    } catch (error) {
+      console.error('Emergency PDF share error:', error);
+      toast({
+        title: "Share Failed",
+        description: "Unable to share PDF. Please try download instead.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleEmailEmergencyPdf = async () => {
+    if (!emergencyPdfBlob || !emergencyPdfEmailData.to.trim()) {
+      toast({
+        title: "Missing Information",
+        description: "Please enter recipient email address.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      const reader = new FileReader();
+      const base64Promise = new Promise<string>((resolve, reject) => {
+        reader.onloadend = () => {
+          const base64 = reader.result as string;
+          resolve(base64.split(',')[1]);
+        };
+        reader.onerror = reject;
+      });
+      reader.readAsDataURL(emergencyPdfBlob);
+      
+      const pdfAttachment = await base64Promise;
+      const fileName = `PetPort_Emergency_Profile_${petData.name}.pdf`;
+      const baseUrl = window.location.origin;
+      const profileUrl = `${baseUrl}/emergency/${petData.id}`;
+      
+      const success = await sendEmail({
+        type: 'profile',
+        recipientEmail: emergencyPdfEmailData.to.trim(),
+        recipientName: emergencyPdfEmailData.name.trim() || undefined,
+        petName: petData.name,
+        petId: petData.id,
+        shareUrl: profileUrl,
+        customMessage: emergencyPdfEmailData.message.trim() || undefined,
+        senderName: 'PetPort User',
+        pdfAttachment,
+        pdfFileName: fileName
+      });
+
+      if (success) {
+        toast({
+          title: "Email Sent!",
+          description: `Emergency profile PDF sent to ${emergencyPdfEmailData.to}`,
+        });
+        setShowEmergencyPdfDialog(false);
+        setEmergencyPdfEmailData({ to: '', name: '', message: '' });
+      }
+    } catch (error) {
+      console.error('Emergency PDF email error:', error);
+      toast({
+        title: "Email Failed",
+        description: "Unable to send email. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
   // Show all pages, but Lost Pet will be disabled if not available
   const availablePages = sharePages;
 

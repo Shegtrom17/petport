@@ -57,6 +57,7 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
   const [copyingId, setCopyingId] = useState<string | null>(null);
   const [sharingId, setSharingId] = useState<string | null>(null);
   const [showOptionsFor, setShowOptionsFor] = useState<string | null>(null);
+  const [showEmergencyQuickShare, setShowEmergencyQuickShare] = useState(false);
   const [showEmailForm, setShowEmailForm] = useState(false);
   const [currentPage, setCurrentPage] = useState<SharePage | null>(null);
   const [emailData, setEmailData] = useState({
@@ -790,47 +791,70 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
                         Email Emergency PDF
                       </Button>
 
-                      {/* Sharing Options */}
-                      <div className="grid grid-cols-2 gap-1">
-                        <Button
-                          onClick={() => handleCopyLink(page)}
-                          variant="outline"
-                          size="sm"
-                          disabled={copyingId === page.id}
-                          className="text-xs"
-                        >
-                          {copyingId === page.id ? <Check className="mr-1 h-2 w-2" /> : <Copy className="mr-1 h-2 w-2" />}
-                          {copyingId === page.id ? 'Copied!' : 'Copy Link'}
-                        </Button>
-                        <Button
-                          onClick={() => handleNativeShare(page)}
-                          variant="outline"
-                          size="sm"
-                          disabled={sharingId === page.id}
-                          className="text-xs"
-                        >
-                          {sharingId === page.id ? <Loader2 className="mr-1 h-2 w-2 animate-spin" /> : <Smartphone className="mr-1 h-2 w-2" />}
-                          Share Link
-                        </Button>
-                        <Button
-                          onClick={() => handleSMSShare(page)}
-                          variant="outline"
-                          size="sm"
-                          className="text-xs"
-                        >
-                          <MessageCircle className="mr-1 h-2 w-2" />
-                          SMS
-                        </Button>
-                        <Button
-                          onClick={() => handleEmailShare(page)}
-                          variant="outline"
-                          size="sm"
-                          className="text-xs"
-                        >
-                          <Mail className="mr-1 h-2 w-2" />
-                          Email Link
-                        </Button>
-                      </div>
+                      {/* Quick Share Button */}
+                      <Button
+                        onClick={() => setShowEmergencyQuickShare(!showEmergencyQuickShare)}
+                        onTouchEnd={(e) => e.stopPropagation()}
+                        size="sm"
+                        disabled={!page.available}
+                        className="w-full text-xs bg-primary hover:bg-primary/90 text-white"
+                        style={{ touchAction: 'none' }}
+                      >
+                        <Smartphone className="w-3 h-3 mr-1 text-white" />
+                        Quick Share
+                      </Button>
+
+                      {/* Sharing Options (shown when Quick Share is clicked) */}
+                      {showEmergencyQuickShare && (
+                        <div className="grid grid-cols-2 gap-1">
+                          <Button
+                            onClick={() => handleCopyLink(page)}
+                            variant="outline"
+                            size="sm"
+                            disabled={copyingId === page.id}
+                            className="text-xs"
+                          >
+                            {copyingId === page.id ? <Check className="mr-1 h-2 w-2" /> : <Copy className="mr-1 h-2 w-2" />}
+                            {copyingId === page.id ? 'Copied!' : 'Copy'}
+                          </Button>
+                          <Button
+                            onClick={() => handleSMSShare(page)}
+                            variant="outline"
+                            size="sm"
+                            className="text-xs"
+                          >
+                            <MessageCircle className="mr-1 h-2 w-2" />
+                            SMS
+                          </Button>
+                          <Button
+                            onClick={() => handleEmailShare(page)}
+                            variant="outline"
+                            size="sm"
+                            className="text-xs"
+                          >
+                            <Mail className="mr-1 h-2 w-2" />
+                            Email
+                          </Button>
+                          <Button
+                            onClick={() => handleFacebookShare(page)}
+                            variant="outline"
+                            size="sm"
+                            className="text-xs"
+                          >
+                            <Facebook className="mr-1 h-2 w-2" />
+                            Facebook
+                          </Button>
+                          <Button
+                            onClick={() => handleMessengerShare(page)}
+                            variant="outline"
+                            size="sm"
+                            className="text-xs"
+                          >
+                            <MessageCircle className="mr-1 h-2 w-2" />
+                            Messenger
+                          </Button>
+                        </div>
+                      )}
 
                       {/* Close Button */}
                       <Button

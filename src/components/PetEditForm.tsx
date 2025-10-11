@@ -106,6 +106,33 @@ export const PetEditForm = ({ petData, onSave, onCancel, togglePetPublicVisibili
     fetchData();
   }, [user?.id, petData.id]);
 
+  // Auto-save form data to localStorage as user types
+  useEffect(() => {
+    if (user && formData && formData.id) {
+      localStorage.setItem(`petDraft-edit-${formData.id}-${user.id}`, JSON.stringify(formData));
+    }
+  }, [formData, user]);
+
+  // Restore form data on mount (e.g., after mic permission prompt)
+  useEffect(() => {
+    if (!user || !petData.id) return;
+    
+    const savedKey = `petDraft-edit-${petData.id}-${user.id}`;
+    const savedData = localStorage.getItem(savedKey);
+    
+    if (savedData) {
+      try {
+        const parsedData = JSON.parse(savedData);
+        // Only restore if it's newer than the original petData
+        if (new Date(parsedData.updated_at || 0) >= new Date(petData.updated_at || 0)) {
+          setFormData(parsedData);
+        }
+      } catch (error) {
+        console.error('Error restoring form data:', error);
+      }
+    }
+  }, [user, petData.id]); // Only run on mount
+
   const speciesConfig = useMemo(() => {
     return getSpeciesConfig(formData.species);
   }, [formData.species]);
@@ -262,6 +289,10 @@ export const PetEditForm = ({ petData, onSave, onCancel, togglePetPublicVisibili
       const contactsUpdateSuccess = await updateContacts();
 
       if (basicUpdateSuccess && medicalUpdateSuccess && contactsUpdateSuccess) {
+        // Clear localStorage after successful save
+        if (user) {
+          localStorage.removeItem(`petDraft-edit-${petData.id}-${user.id}`);
+        }
         toast({
           title: "Success",
           description: "Pet profile updated successfully!",

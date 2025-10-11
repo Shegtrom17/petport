@@ -46,6 +46,13 @@ export default function AddPet() {
   const speciesConfig = useMemo(() => getSpeciesConfig(petData.species), [petData.species]);
   const speciesOptions = useMemo(() => getSpeciesOptions(), []);
 
+  // Auto-save form data to localStorage as user types
+  useEffect(() => {
+    if (user && petData && (petData.name.trim() || Object.values(petData).some(v => v.trim()))) {
+      localStorage.setItem(`petDraft-new-${user.id}`, JSON.stringify(petData));
+    }
+  }, [petData, user]);
+
   // Check pet limits on page load
   useEffect(() => {
     const checkPetLimits = async () => {
@@ -121,6 +128,10 @@ export default function AddPet() {
       const petId = await createPet(petData);
       
       if (petId) {
+        // Clear localStorage after successful save
+        if (user) {
+          localStorage.removeItem(`petDraft-new-${user.id}`);
+        }
         toast({
           title: "Success!",
           description: `${petData.name} has been added to your pets.`,
@@ -146,21 +157,28 @@ export default function AddPet() {
   };
 
   const handleUpgradeClick = () => {
-    // Save form data to localStorage as fallback
-    if (petData.name.trim()) {
-      localStorage.setItem('addPetFormData', JSON.stringify(petData));
-    }
+    // Data is already auto-saved, just navigate
     navigate('/billing');
   };
 
-  // Restore form data if returning from billing
+  // Restore form data if returning from billing OR after mic permission prompt
   useEffect(() => {
-    const savedData = localStorage.getItem('addPetFormData');
+    const savedKey = user ? `petDraft-new-${user.id}` : null;
+    const legacyKey = 'addPetFormData'; // Keep for backward compatibility
+    
+    if (!savedKey) return;
+    
+    const savedData = localStorage.getItem(savedKey) || localStorage.getItem(legacyKey);
     if (savedData) {
       try {
         const parsedData = JSON.parse(savedData);
         setPetData(parsedData);
-        localStorage.removeItem('addPetFormData');
+        
+        // Clean up legacy key if it was used
+        if (localStorage.getItem(legacyKey)) {
+          localStorage.removeItem(legacyKey);
+        }
+        
         toast({
           title: "Form data restored",
           description: "Your pet information has been restored.",
@@ -170,7 +188,7 @@ export default function AddPet() {
         console.error('Error restoring form data:', error);
       }
     }
-  }, [toast]);
+  }, [user, toast]);
 
   // Show loading spinner while checking limits
   if (isLoadingLimits) {

@@ -412,7 +412,7 @@ export default function Referrals() {
               {/* Message 2 */}
               <div className="bg-muted/50 rounded-lg p-4 border border-border">
                 <p className="text-sm mb-3">
-                  "Fellow pet parents! 🐶🐱 Check out PetPort - it's like a digital passport for your pets. Perfect for tracking medical records, travel history, and sharing with vets or pet sitters. Use my referral code for a smooth start:{" "}
+                  "Fellow pet parents! 🐶🐱🐴🦜 Check out PetPort - it's the ALL-IN-ONE digital information sharing platform for pets, horses, birds, and more! Medical records & all documents, one-tap links, QR codes & PDFs for care and handling instructions, ask for reviews from groomers & trainers, build a pet resume, certificates, one-tap LOST PET FLYER (no design needed), and so much more! Use my referral code:{" "}
                   <span className="font-mono text-[#5691af]">
                     {referralCode ? `https://petport.app?ref=${referralCode}` : "[Your link will appear here]"}
                   </span>
@@ -422,7 +422,7 @@ export default function Referrals() {
                   size="sm"
                   variant="outline"
                   onClick={() => {
-                    const message = `Fellow pet parents! 🐶🐱 Check out PetPort - it's like a digital passport for your pets. Perfect for tracking medical records, travel history, and sharing with vets or pet sitters. Use my referral code for a smooth start: https://petport.app?ref=${referralCode}`;
+                    const message = `Fellow pet parents! 🐶🐱🐴🦜 Check out PetPort - it's the ALL-IN-ONE digital information sharing platform for pets, horses, birds, and more! Medical records & all documents, one-tap links, QR codes & PDFs for care and handling instructions, ask for reviews from groomers & trainers, build a pet resume, certificates, one-tap LOST PET FLYER (no design needed), and so much more! Use my referral code: https://petport.app?ref=${referralCode}`;
                     navigator.clipboard.writeText(message);
                     toast({ title: "Copied!", description: "Message copied to clipboard" });
                   }}

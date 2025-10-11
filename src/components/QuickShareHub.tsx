@@ -2258,7 +2258,7 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
         
         <div className="mt-4 p-3 bg-blue-50 rounded-lg">
           <p className="text-xs text-blue-700">
-            💡 <strong>Centralized Tip:</strong> Visit each page to add and update content for richer, more complete profiles!
+            💡 <strong>Tip:</strong> Add content to Resume, Care Instructions, Documents, and more for complete profiles! <span className="md:hidden">Tap the <strong>Menu (☰)</strong> button in the bottom right to navigate.</span><span className="hidden md:inline">Use the tabs above to navigate.</span>
           </p>
         </div>
       </CardContent>

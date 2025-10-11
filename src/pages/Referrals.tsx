@@ -434,11 +434,14 @@ export default function Referrals() {
                 </Button>
               </div>
 
-              {/* Message 3 */}
-              <div className="bg-muted/50 rounded-lg p-4 border border-border">
-                <p className="text-sm mb-3">
-                  "Love staying organized with my pets' info! 📋 PetPort keeps everything in one place - vaccines, care instructions, emergency contacts. Perfect for travel or vet visits. Try it:{" "}
-                  <span className="font-mono text-[#5691af]">
+              {/* Message 3 - Foster to Adopter Transfer */}
+              <div className="bg-gradient-to-br from-[#5691af]/10 to-purple-50 rounded-lg p-4 border-2 border-[#5691af]/30">
+                <p className="text-sm mb-3 leading-relaxed">
+                  "🏡❤️ Foster to Forever - Give your foster friend a story for life! 
+                  PetPort's full account transfer seamlessly passes everything to the adopter - 
+                  complete bio, resume, medical alerts, documents, care instructions, and so much more. 
+                  Their entire journey transfers with them. Start their story today:{" "}
+                  <span className="font-mono text-[#5691af] font-semibold">
                     {referralCode ? `https://petport.app?ref=${referralCode}` : "[Your link will appear here]"}
                   </span>
                   "
@@ -447,12 +450,12 @@ export default function Referrals() {
                   size="sm"
                   variant="outline"
                   onClick={() => {
-                    const message = `Love staying organized with my pets' info! 📋 PetPort keeps everything in one place - vaccines, care instructions, emergency contacts. Perfect for travel or vet visits. Try it: https://petport.app?ref=${referralCode}`;
+                    const message = `🏡❤️ Foster to Forever - Give your foster friend a story for life! PetPort's full account transfer seamlessly passes everything to the adopter - complete bio, resume, medical alerts, documents, care instructions, and so much more. Their entire journey transfers with them. Start their story today: https://petport.app?ref=${referralCode}`;
                     navigator.clipboard.writeText(message);
                     toast({ title: "Copied!", description: "Message copied to clipboard" });
                   }}
                   disabled={!referralCode}
-                  className="border-[#5691af] text-[#5691af] hover:bg-[#5691af]/10"
+                  className="border-[#5691af] text-[#5691af] hover:bg-[#5691af]/10 font-semibold"
                 >
                   <Copy className="h-3 w-3 mr-1" />
                   Copy Message

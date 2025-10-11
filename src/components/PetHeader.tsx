@@ -1,11 +1,13 @@
 
-import { ArrowLeft, LogIn } from "lucide-react";
+import { ArrowLeft, LogIn, Gift } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { CompactPrivacyToggle } from "@/components/CompactPrivacyToggle";
 import { AppShareButton } from "@/components/AppShareButton";
 import worldMapOutline from "@/assets/world-map-outline.png";
+import { QuickReferralModal } from "@/components/QuickReferralModal";
+import { useState } from "react";
 
 interface PetHeaderProps {
   activeTab: string;
@@ -21,6 +23,7 @@ export const PetHeader = ({ activeTab, onTabChange, selectedPetId, selectedPetNa
   const location = useLocation();
   const { user } = useAuth();
   const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+  const [showReferralModal, setShowReferralModal] = useState(false);
 
   const handleBack = () => {
     // Use browser history when available, fallback to dashboard
@@ -67,12 +70,23 @@ export const PetHeader = ({ activeTab, onTabChange, selectedPetId, selectedPetNa
               </Button>
             )}
             <h1 className="text-base font-bold text-foreground tracking-wide truncate">
-              Digital Portfolio
+              {selectedPetName || 'PetPort'}
             </h1>
           </div>
           
           {/* Right: Action Buttons */}
           <div className="flex items-center space-x-2 flex-shrink-0">
+            {user && (
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setShowReferralModal(true)}
+                className="text-[#5691af] hover:text-[#4a7d99] hover:bg-[#5691af]/10 h-8 w-8"
+                title="Refer & Earn"
+              >
+                <Gift className="h-4 w-4" />
+              </Button>
+            )}
             {user && selectedPet && onPrivacyToggle && (
               <div className="scale-75 origin-center">
                 <CompactPrivacyToggle
@@ -120,12 +134,23 @@ export const PetHeader = ({ activeTab, onTabChange, selectedPetId, selectedPetNa
             </div>
             <div className="min-w-0 flex-1">
               <h1 className="text-lg md:text-xl lg:text-2xl font-bold text-foreground tracking-wide truncate">
-                Digital Portfolio
+                {selectedPetName || 'PetPort'}
               </h1>
             </div>
           </div>
           
           <div className="flex items-center space-x-2 flex-shrink-0">
+            {user && (
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setShowReferralModal(true)}
+                className="text-[#5691af] hover:text-[#4a7d99] hover:bg-[#5691af]/10"
+                title="Refer & Earn"
+              >
+                <Gift className="h-5 w-5" />
+              </Button>
+            )}
             {user && selectedPet && onPrivacyToggle && (
               <div className="scale-90 origin-center">
                 <CompactPrivacyToggle
@@ -146,6 +171,11 @@ export const PetHeader = ({ activeTab, onTabChange, selectedPetId, selectedPetNa
           </div>
         </div>
       </div>
+
+      <QuickReferralModal
+        isOpen={showReferralModal}
+        onClose={() => setShowReferralModal(false)}
+      />
     </header>
   );
 };

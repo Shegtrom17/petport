@@ -17,8 +17,9 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "@/hooks/use-toast";
-import { ArrowLeft, DollarSign, Users, Clock } from "lucide-react";
+import { ArrowLeft, DollarSign, Users, Clock, Share2, Copy } from "lucide-react";
 import { AzureButton } from "@/components/ui/azure-button";
+import { Button } from "@/components/ui/button";
 
 interface Referral {
   id: string;
@@ -364,6 +365,100 @@ export default function Referrals() {
                 </Table>
               </div>
             )}
+          </CardContent>
+        </Card>
+
+        {/* Media Kit Section */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-xl font-bold flex items-center gap-2">
+              <Share2 className="h-5 w-5 text-[#5691af]" />
+              Media Kit & Share Resources
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <p className="text-sm text-muted-foreground">
+              Use these pre-written messages to share PetPort with your network.
+              Just copy and paste!
+            </p>
+
+            {/* Sample Messages */}
+            <div className="space-y-3">
+              {/* Message 1 */}
+              <div className="bg-muted/50 rounded-lg p-4 border border-border">
+                <p className="text-sm mb-3">
+                  "Just found the perfect pet management app! 🐾 Get organized with PetPort - track health, travel, and more. Use my link to try it:{" "}
+                  <span className="font-mono text-[#5691af]">
+                    {referralCode ? `https://petport.app?ref=${referralCode}` : "[Your link will appear here]"}
+                  </span>
+                  "
+                </p>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => {
+                    const message = `Just found the perfect pet management app! 🐾 Get organized with PetPort - track health, travel, and more. Use my link to try it: https://petport.app?ref=${referralCode}`;
+                    navigator.clipboard.writeText(message);
+                    toast({ title: "Copied!", description: "Message copied to clipboard" });
+                  }}
+                  disabled={!referralCode}
+                  className="border-[#5691af] text-[#5691af] hover:bg-[#5691af]/10"
+                >
+                  <Copy className="h-3 w-3 mr-1" />
+                  Copy Message
+                </Button>
+              </div>
+
+              {/* Message 2 */}
+              <div className="bg-muted/50 rounded-lg p-4 border border-border">
+                <p className="text-sm mb-3">
+                  "Fellow pet parents! 🐶🐱 Check out PetPort - it's like a digital passport for your pets. Perfect for tracking medical records, travel history, and sharing with vets or pet sitters. Use my referral code for a smooth start:{" "}
+                  <span className="font-mono text-[#5691af]">
+                    {referralCode ? `https://petport.app?ref=${referralCode}` : "[Your link will appear here]"}
+                  </span>
+                  "
+                </p>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => {
+                    const message = `Fellow pet parents! 🐶🐱 Check out PetPort - it's like a digital passport for your pets. Perfect for tracking medical records, travel history, and sharing with vets or pet sitters. Use my referral code for a smooth start: https://petport.app?ref=${referralCode}`;
+                    navigator.clipboard.writeText(message);
+                    toast({ title: "Copied!", description: "Message copied to clipboard" });
+                  }}
+                  disabled={!referralCode}
+                  className="border-[#5691af] text-[#5691af] hover:bg-[#5691af]/10"
+                >
+                  <Copy className="h-3 w-3 mr-1" />
+                  Copy Message
+                </Button>
+              </div>
+
+              {/* Message 3 */}
+              <div className="bg-muted/50 rounded-lg p-4 border border-border">
+                <p className="text-sm mb-3">
+                  "Love staying organized with my pets' info! 📋 PetPort keeps everything in one place - vaccines, care instructions, emergency contacts. Perfect for travel or vet visits. Try it:{" "}
+                  <span className="font-mono text-[#5691af]">
+                    {referralCode ? `https://petport.app?ref=${referralCode}` : "[Your link will appear here]"}
+                  </span>
+                  "
+                </p>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => {
+                    const message = `Love staying organized with my pets' info! 📋 PetPort keeps everything in one place - vaccines, care instructions, emergency contacts. Perfect for travel or vet visits. Try it: https://petport.app?ref=${referralCode}`;
+                    navigator.clipboard.writeText(message);
+                    toast({ title: "Copied!", description: "Message copied to clipboard" });
+                  }}
+                  disabled={!referralCode}
+                  className="border-[#5691af] text-[#5691af] hover:bg-[#5691af]/10"
+                >
+                  <Copy className="h-3 w-3 mr-1" />
+                  Copy Message
+                </Button>
+              </div>
+            </div>
           </CardContent>
         </Card>
 

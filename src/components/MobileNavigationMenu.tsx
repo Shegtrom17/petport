@@ -55,17 +55,17 @@ export const MobileNavigationMenu = ({ isOpen, onClose }: MobileNavigationMenuPr
               ))}
             </div>
             <div className="px-2 space-y-2 mt-4 pt-4 border-t border-border">
-              <Button
-                variant="ghost"
-                className="w-full justify-start text-sm"
-                onClick={() => {
-                  navigate('/referrals');
-                  onClose();
-                }}
-              >
-                <DollarSign className="w-5 h-5 mr-3" />
-                Referral Program
-              </Button>
+          <Button
+            variant="ghost"
+            className="w-full justify-start text-sm text-[#5691af] hover:text-[#4a7d99] hover:bg-[#5691af]/10 font-medium"
+            onClick={() => {
+              navigate('/referrals');
+              onClose();
+            }}
+          >
+            <DollarSign className="w-5 h-5 mr-3" />
+            🎁 Refer & Earn
+          </Button>
               <Button
                 variant="ghost"
                 className="w-full justify-start text-sm"

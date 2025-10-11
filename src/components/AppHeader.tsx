@@ -1,7 +1,9 @@
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Gift } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/context/AuthContext";
+import { QuickReferralModal } from "@/components/QuickReferralModal";
+import { useState } from "react";
 
 interface AppHeaderProps {
   title: string;
@@ -12,6 +14,7 @@ interface AppHeaderProps {
 export const AppHeader = ({ title, showBack = false, actions }: AppHeaderProps) => {
   const navigate = useNavigate();
   const { user, isLoading } = useAuth();
+  const [showReferralModal, setShowReferralModal] = useState(false);
 
   // ---- iOS Version Detection ----
   const ua = navigator.userAgent;
@@ -51,9 +54,25 @@ export const AppHeader = ({ title, showBack = false, actions }: AppHeaderProps) 
         </div>
 
         <div className="flex items-center space-x-2">
+          {user && (
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setShowReferralModal(true)}
+              className="text-[#5691af] hover:text-[#4a7d99] hover:bg-[#5691af]/10"
+              title="Refer & Earn"
+            >
+              <Gift className="h-5 w-5" />
+            </Button>
+          )}
           {actions}
         </div>
       </div>
+
+      <QuickReferralModal
+        isOpen={showReferralModal}
+        onClose={() => setShowReferralModal(false)}
+      />
     </header>
   );
 };

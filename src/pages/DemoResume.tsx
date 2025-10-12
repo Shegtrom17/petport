@@ -1,17 +1,45 @@
+import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Star, MapPin, Award, GraduationCap, Trophy, MessageSquare, Sparkles } from "lucide-react";
+import { Star, MapPin, Award, GraduationCap, Trophy, MessageSquare, Sparkles, Heart, Activity, Shield, Phone } from "lucide-react";
 import { MetaTags } from "@/components/MetaTags";
 import { SupportAnimalBanner } from "@/components/SupportAnimalBanner";
 import { CertificationBanner } from "@/components/CertificationBanner";
-import { FINN_DEMO_DATA } from "@/data/finnDemoData";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
+import { fetchPetDetails } from "@/services/petService";
+
+const FINNEGAN_ID = "297d1397-c876-4075-bf24-41ee1862853a";
 
 export default function DemoResume() {
   const navigate = useNavigate();
-  const data = FINN_DEMO_DATA;
+  const [data, setData] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const load = async () => {
+      const pet = await fetchPetDetails(FINNEGAN_ID);
+      setData(pet);
+      setLoading(false);
+    };
+    load();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-2 border-primary border-t-transparent" />
+      </div>
+    );
+  }
+
+  if (!data) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p>Unable to load demo data</p>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-brand-cream via-white to-brand-cream">
@@ -22,11 +50,11 @@ export default function DemoResume() {
         url={`https://petport.app/demo/resume`}
       />
 
-      {/* Demo Banner */}
+      {/* Live Demo Banner */}
       <div className="bg-gradient-to-r from-brand-primary via-brand-secondary to-brand-primary text-white py-3 px-4 text-center sticky top-0 z-50 shadow-lg">
         <div className="max-w-4xl mx-auto flex items-center justify-center gap-2 flex-wrap">
           <Sparkles className="h-5 w-5" />
-          <span className="font-semibold">✨ Live Demo - Experience a Real PetPort Whiteboard</span>
+          <span className="font-semibold">✨ Live Demo – Real PetPort Whiteboard</span>
           <Button 
             onClick={() => navigate('/auth')}
             variant="outline" 
@@ -38,78 +66,78 @@ export default function DemoResume() {
         </div>
       </div>
 
-      <div className="max-w-4xl mx-auto px-4 py-8">
+      <main className="container mx-auto px-4 py-8 max-w-4xl">
         {/* Header Section */}
-        <div className="bg-white rounded-lg shadow-lg p-8 mb-6">
-          <div className="flex flex-col md:flex-row gap-6 items-center md:items-start">
-            <img
-              src={data.photo_url}
-              alt={data.name}
-              className="w-32 h-32 rounded-full object-cover border-4 border-brand-primary shadow-lg"
-            />
-            <div className="flex-1 text-center md:text-left">
-              <h1 className="text-4xl font-bold text-brand-primary mb-2">{data.name}</h1>
-              <div className="flex flex-wrap gap-2 justify-center md:justify-start mb-3">
-                <Badge variant="secondary">{data.species}</Badge>
-                {data.breed && <Badge variant="outline">{data.breed}</Badge>}
-                <Badge variant="outline">{data.age} years old</Badge>
-                <Badge variant="outline">{data.weight} lbs</Badge>
-              </div>
-              <p className="text-lg text-brand-primary-dark mb-2">
-                PetPort ID: <span className="font-mono font-semibold">{data.petport_id}</span>
-              </p>
-              {data.microchip_id && (
-                <p className="text-sm text-muted-foreground">
-                  Microchip: {data.microchip_id}
-                </p>
-              )}
+        <header className="text-center mb-8">
+          {data.photoUrl && (
+            <div className="mb-6">
+              <img 
+                src={data.photoUrl} 
+                alt={data.name}
+                className="w-32 h-32 rounded-full mx-auto object-cover border-4 border-sage-200"
+              />
             </div>
+          )}
+          <h1 className="text-3xl font-sans font-bold text-navy-900 mb-2">
+            {data.name}'s Resume
+          </h1>
+          <div className="flex flex-wrap items-center justify-center gap-2 text-navy-600 mb-2">
+            {data.breed && <Badge variant="secondary">{data.breed}</Badge>}
+            {data.species && <Badge variant="secondary">{data.species}</Badge>}
+            {data.age && <Badge variant="secondary">Age: {data.age}</Badge>}
           </div>
-        </div>
+          <div className="flex flex-wrap items-center justify-center gap-2 text-navy-600 mb-4">
+            {data.sex && <Badge variant="secondary">Sex: {data.sex}</Badge>}
+            {data.weight && <Badge variant="secondary">Weight: {data.weight}</Badge>}
+            {data.height && <Badge variant="secondary">Height: {data.height}</Badge>}
+            {data.registrationNumber && <Badge variant="secondary">Registration: {data.registrationNumber}</Badge>}
+            {data.microchipId && <Badge variant="secondary">Microchip: {data.microchipId}</Badge>}
+          </div>
+          {(data.state || data.county) && (
+            <div className="flex items-center justify-center gap-1 text-sm text-navy-500">
+              <MapPin className="w-4 h-4" />
+              <span>{[data.county, data.state].filter(Boolean).join(', ')}</span>
+            </div>
+          )}
+        </header>
 
-        {/* Support Animal Banner */}
-        {data.professional_data?.support_animal_status === 'therapy_dog' && (
-          <SupportAnimalBanner status="therapy_dog" />
-        )}
-
-        {/* Certification Banner */}
-        {data.certifications && data.certifications.length > 0 && (
-          <CertificationBanner certificationData={data.certifications[0]} />
-        )}
+        {/* Support Animal Status */}
+        <SupportAnimalBanner status={data.supportAnimalStatus || null} />
 
         {/* About Section */}
-        {data.bio && (
-          <Card className="mb-6">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <MessageSquare className="h-5 w-5 text-brand-primary" />
-                About {data.name}
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-brand-primary-dark leading-relaxed">{data.bio}</p>
-            </CardContent>
-          </Card>
-        )}
+        <Card className="mb-6">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-navy-900">
+              <Heart className="w-5 h-5 text-red-500" />
+              About {data.name}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-gray-700 leading-relaxed">
+              {data.bio || `${data.name} is a wonderful ${data.breed?.toLowerCase()} with a gentle temperament and friendly disposition.`}
+            </p>
+          </CardContent>
+        </Card>
 
-        {/* Experience & Activities */}
+        {/* Experience */}
         {data.experiences && data.experiences.length > 0 && (
           <Card className="mb-6">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <MapPin className="h-5 w-5 text-brand-primary" />
+              <CardTitle className="flex items-center gap-2 text-navy-900">
+                <Activity className="w-5 h-5 text-primary" />
                 Experience & Activities
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
-              {data.experiences.map((exp) => (
-                <div key={exp.id} className="border-l-4 border-brand-primary pl-4">
-                  <h3 className="font-semibold text-lg text-brand-primary">{exp.activity}</h3>
-                  <p className="text-brand-primary-dark mt-1">{exp.description}</p>
-                  {exp.contact && (
-                    <p className="text-sm text-muted-foreground mt-1">
-                      Contact: {exp.contact}
-                    </p>
+            <CardContent className="space-y-3">
+              {data.experiences.map((e, idx) => (
+                <div key={idx} className="p-3 rounded border">
+                  <div className="font-medium">{e.activity}</div>
+                  {e.description && <div className="text-sm text-muted-foreground mb-2">{e.description}</div>}
+                  {e.contact && (
+                    <div className="flex items-center space-x-2 text-sm text-primary">
+                      <Phone className="w-3 h-3" />
+                      <span>Contact: {e.contact}</span>
+                    </div>
                   )}
                 </div>
               ))}
@@ -117,107 +145,80 @@ export default function DemoResume() {
           </Card>
         )}
 
-        {/* Professional Certifications */}
+        {/* Certification Banner */}
+        <div className="my-4">
+          <CertificationBanner certificationData={data.certifications && data.certifications.length > 0 ? data.certifications[0] : undefined} />
+        </div>
+
+        {/* Professional Certifications Detail */}
         {data.certifications && data.certifications.length > 0 && (
           <Card className="mb-6">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Award className="h-5 w-5 text-brand-primary" />
-                Professional Certifications
+              <CardTitle className="flex items-center gap-2 text-navy-900">
+                <Shield className="w-5 h-5 text-primary" />
+                Professional Certification
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              {data.certifications.map((cert) => (
-                <div key={cert.id} className="border rounded-lg p-4 bg-brand-cream/30">
-                  <div className="flex items-start justify-between mb-2">
-                    <h3 className="font-semibold text-lg text-brand-primary">{cert.type}</h3>
-                    <Badge variant={cert.status === 'active' ? 'default' : 'secondary'}>
-                      {cert.status}
-                    </Badge>
+              {data.certifications.map((c) => (
+                <div key={c.id} className="p-4 rounded border">
+                  <div className="flex flex-wrap items-center gap-2 mb-1">
+                    <Badge variant="secondary">{c.type}</Badge>
+                    <Badge>{c.status}</Badge>
+                    {c.certification_number && (
+                      <span className="text-sm text-muted-foreground">#{c.certification_number}</span>
+                    )}
                   </div>
-                  <p className="text-sm text-brand-primary-dark">
-                    <strong>Issuer:</strong> {cert.issuer}
+                  <p className="text-sm text-muted-foreground">
+                    {c.issuer ? `${c.issuer}` : ''}
+                    {c.issue_date ? ` • Issued: ${new Date(c.issue_date).toLocaleDateString()}` : ''}
+                    {c.expiry_date ? ` • Expires: ${new Date(c.expiry_date).toLocaleDateString()}` : ''}
                   </p>
-                  {cert.certification_number && (
-                    <p className="text-sm text-brand-primary-dark">
-                      <strong>Certificate #:</strong> {cert.certification_number}
-                    </p>
-                  )}
-                  {cert.issue_date && (
-                    <p className="text-sm text-brand-primary-dark">
-                      <strong>Issued:</strong> {new Date(cert.issue_date).toLocaleDateString()}
-                    </p>
-                  )}
-                  {cert.expiry_date && (
-                    <p className="text-sm text-brand-primary-dark">
-                      <strong>Expires:</strong> {new Date(cert.expiry_date).toLocaleDateString()}
-                    </p>
-                  )}
-                  {cert.notes && (
-                    <p className="text-sm text-muted-foreground mt-2">{cert.notes}</p>
-                  )}
+                  {c.notes && <p className="mt-2 text-sm">{c.notes}</p>}
                 </div>
               ))}
             </CardContent>
           </Card>
         )}
 
-        {/* Notable Training */}
+        {/* Training */}
         {data.training && data.training.length > 0 && (
           <Card className="mb-6">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <GraduationCap className="h-5 w-5 text-brand-primary" />
+              <CardTitle className="flex items-center gap-2 text-navy-900">
+                <GraduationCap className="w-5 h-5 text-primary" />
                 Notable Training
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
-              {data.training.map((training) => (
-                <div key={training.id} className="border-l-4 border-brand-secondary pl-4">
-                  <h3 className="font-semibold text-brand-primary">{training.course}</h3>
-                  <p className="text-sm text-brand-primary-dark">
-                    {training.facility}
-                  </p>
-                  {training.completed && (
-                    <p className="text-sm text-muted-foreground">
-                      Completed: {new Date(training.completed).toLocaleDateString()}
-                    </p>
-                  )}
-                  {training.phone && (
-                    <p className="text-sm text-muted-foreground">
-                      Contact: {training.phone}
-                    </p>
-                  )}
+              {data.training.map((t, idx) => (
+                <div key={idx} className="p-3 rounded border">
+                  <div className="font-medium">{t.course}</div>
+                  <div className="text-sm text-muted-foreground">
+                    {t.facility ? `${t.facility}` : ''}
+                    {t.phone ? ` • ${t.phone}` : ''}
+                    {t.completed ? ` • Completed: ${t.completed}` : ''}
+                  </div>
                 </div>
               ))}
             </CardContent>
           </Card>
         )}
 
-        {/* Notable Achievements */}
+        {/* Achievements */}
         {data.achievements && data.achievements.length > 0 && (
           <Card className="mb-6">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Trophy className="h-5 w-5 text-brand-primary" />
+              <CardTitle className="flex items-center gap-2 text-navy-900">
+                <Trophy className="w-5 h-5 text-primary" />
                 Notable Achievements
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
-              {data.achievements.map((achievement) => (
-                <div key={achievement.id} className="border rounded-lg p-4 bg-amber-50">
-                  <div className="flex items-start gap-3">
-                    <Trophy className="h-5 w-5 text-amber-600 flex-shrink-0 mt-1" />
-                    <div>
-                      <h3 className="font-semibold text-brand-primary">{achievement.title}</h3>
-                      <p className="text-sm text-brand-primary-dark mt-1">{achievement.description}</p>
-                      {achievement.date && (
-                        <p className="text-xs text-muted-foreground mt-1">
-                          {new Date(achievement.date).toLocaleDateString()}
-                        </p>
-                      )}
-                    </div>
-                  </div>
+              {data.achievements.map((a, idx) => (
+                <div key={idx} className="p-3 rounded border">
+                  <div className="font-medium">{a.title}</div>
+                  {a.description && <div className="text-sm text-muted-foreground">{a.description}</div>}
                 </div>
               ))}
             </CardContent>
@@ -228,36 +229,36 @@ export default function DemoResume() {
         {data.reviews && data.reviews.length > 0 && (
           <Card className="mb-6">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Star className="h-5 w-5 text-brand-primary" />
+              <CardTitle className="flex items-center gap-2 text-navy-900">
+                <Star className="w-5 h-5 text-primary" />
                 References & Reviews
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              {data.reviews.map((review) => (
-                <div key={review.id} className="border rounded-lg p-4 bg-white shadow-sm">
-                  <div className="flex items-start justify-between mb-2">
-                    <div>
-                      <h3 className="font-semibold text-brand-primary">{review.reviewer_name}</h3>
-                      {review.location && (
-                        <p className="text-sm text-muted-foreground">{review.location}</p>
-                      )}
-                    </div>
+              {data.reviews.map((review, idx) => (
+                <div key={idx} className="p-4 rounded border">
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="font-medium">{review.reviewerName}</div>
                     <div className="flex items-center gap-1">
-                      {[...Array(5)].map((_, i) => (
-                        <Star
-                          key={i}
-                          className={`h-4 w-4 ${
-                            i < review.rating ? "fill-amber-400 text-amber-400" : "text-gray-300"
-                          }`}
-                        />
+                      {[1,2,3,4,5].map(i => (
+                        <Star key={i} className={`w-4 h-4 ${i <= review.rating ? 'text-yellow-500 fill-current' : 'text-yellow-300'}`} />
                       ))}
                     </div>
                   </div>
-                  <p className="text-brand-primary-dark mb-2">{review.text}</p>
-                  <div className="flex items-center justify-between text-sm text-muted-foreground">
-                    {review.type && <Badge variant="outline">{review.type}</Badge>}
-                    {review.date && <span>{new Date(review.date).toLocaleDateString()}</span>}
+                  {review.text && (
+                    <p className="text-sm text-muted-foreground mb-2">{review.text}</p>
+                  )}
+                  <div className="text-xs text-muted-foreground space-y-1">
+                    <div>
+                      {review.location && <span>{review.location}</span>}
+                      {review.date && <span> • {review.date}</span>}
+                    </div>
+                    {review.reviewerContact && (
+                      <div className="flex items-center space-x-1 text-primary">
+                        <Phone className="w-3 h-3" />
+                        <span>Contact: {review.reviewerContact}</span>
+                      </div>
+                    )}
                   </div>
                 </div>
               ))}
@@ -278,22 +279,24 @@ export default function DemoResume() {
           </Button>
         </div>
 
-        {/* Branding Footer */}
-        <div className="text-center py-6 border-t">
-          <p className="text-sm text-muted-foreground">
-            Powered by{" "}
-            <a
-              href="https://petport.app"
-              className="text-brand-primary hover:text-brand-secondary font-semibold"
+        {/* Footer */}
+        <div className="mt-12 text-center text-gray-500 text-sm pb-8">
+          <div className="border-t border-sage-200 mb-6 max-w-md mx-auto" />
+          <p>This is a live demo of {data.name}'s real PetPort resume.</p>
+          <p className="mt-2">
+            Generated by{" "}
+            <a 
+              href={window.location.origin}
               target="_blank"
               rel="noopener noreferrer"
+              className="text-primary hover:underline font-medium"
             >
               PetPort.app
             </a>
-            {" "}— The Professional Whiteboard for Pets
+            {" "}— Be ready for travel, sitters, lost pet, and emergencies. Try it free.
           </p>
         </div>
-      </div>
+      </main>
     </div>
   );
 }

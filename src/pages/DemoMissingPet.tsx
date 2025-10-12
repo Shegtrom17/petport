@@ -274,26 +274,32 @@ export default function DemoMissingPet() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Camera className="h-6 w-6 text-brand-primary" />
-                Additional Photos
+                Additional Photos of {data.name}
               </CardTitle>
+              <p className="text-sm text-muted-foreground mt-2">
+                These photos can help identify {data.name} from different angles and in various situations
+              </p>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                 {data.gallery_photos.map((photo) => (
                   <div key={photo.id} className="relative group">
                     <img
                       src={photo.url}
                       alt={photo.caption || `${data.name} photo`}
-                      className="w-full h-40 object-cover rounded-lg shadow-md group-hover:shadow-xl transition-shadow"
+                      className="w-full h-40 object-cover rounded-lg shadow-md group-hover:shadow-xl transition-shadow cursor-pointer border-2 border-transparent hover:border-brand-primary"
                     />
                     {photo.caption && (
-                      <p className="text-xs text-center mt-1 text-muted-foreground">
+                      <p className="text-xs text-center mt-1 text-muted-foreground line-clamp-2">
                         {photo.caption}
                       </p>
                     )}
                   </div>
                 ))}
               </div>
+              <p className="text-sm text-center text-muted-foreground mt-4">
+                Showing all {data.gallery_photos.length} photos • Tap to view larger
+              </p>
             </CardContent>
           </Card>
         )}

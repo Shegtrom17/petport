@@ -41,7 +41,6 @@ export const TravelEditForm = ({ petData, onSave, onCancel, mode = 'edit' }: Tra
           type: "state", 
           code: "", 
           dateVisited: "", 
-          photoUrl: "", 
           notes: "" 
         }]
       };
@@ -54,7 +53,6 @@ export const TravelEditForm = ({ petData, onSave, onCancel, mode = 'edit' }: Tra
               type: location.type || "state", 
               code: location.code || "", 
               dateVisited: location.date_visited || "", 
-              photoUrl: location.photo_url || "", 
               notes: location.notes || ""
             }))
           : [{ 
@@ -62,7 +60,6 @@ export const TravelEditForm = ({ petData, onSave, onCancel, mode = 'edit' }: Tra
               type: "state", 
               code: "", 
               dateVisited: "", 
-              photoUrl: "", 
               notes: "" 
             }]
       };
@@ -93,7 +90,6 @@ export const TravelEditForm = ({ petData, onSave, onCancel, mode = 'edit' }: Tra
           type: location.type,
           code: sanitizeText(location.code) || null,
           dateVisited: sanitizeText(location.dateVisited) || null,
-          photoUrl: sanitizeText(location.photoUrl) || null,
           notes: sanitizeText(location.notes) || null
         }));
 
@@ -107,7 +103,6 @@ export const TravelEditForm = ({ petData, onSave, onCancel, mode = 'edit' }: Tra
           type: loc.type,
           code: sanitizeText(loc.code) || null,
           dateVisited: sanitizeText(loc.date_visited) || null,
-          photoUrl: sanitizeText(loc.photo_url) || null,
           notes: sanitizeText(loc.notes) || null
         })), ...formattedLocations];
         
@@ -207,23 +202,13 @@ export const TravelEditForm = ({ petData, onSave, onCancel, mode = 'edit' }: Tra
                   </div>
                 </div>
                 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <div>
-                    <Label htmlFor={`locations.${index}.dateVisited`} className="text-sm">Date Visited</Label>
-                    <Input
-                      {...register(`locations.${index}.dateVisited`)}
-                      placeholder="e.g., March 2024"
-                      className="text-sm"
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor={`locations.${index}.photoUrl`} className="text-sm">Photo URL</Label>
-                    <Input
-                      {...register(`locations.${index}.photoUrl`)}
-                      placeholder="https://example.com/photo.jpg"
-                      className="text-sm"
-                    />
-                  </div>
+                <div>
+                  <Label htmlFor={`locations.${index}.dateVisited`} className="text-sm">Date Visited</Label>
+                  <Input
+                    {...register(`locations.${index}.dateVisited`)}
+                    placeholder="e.g., March 2024"
+                    className="text-sm"
+                  />
                 </div>
                 
                 <div>
@@ -246,7 +231,6 @@ export const TravelEditForm = ({ petData, onSave, onCancel, mode = 'edit' }: Tra
                 type: "state", 
                 code: "", 
                 dateVisited: "", 
-                photoUrl: "", 
                 notes: "" 
               })}
               className="w-full sm:w-auto text-sm"

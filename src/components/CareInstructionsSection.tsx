@@ -825,6 +825,14 @@ export const CareInstructionsSection = ({ petData, onUpdate, handlePetUpdate }: 
               )}
             </p>
           </div>
+          {careData?.caretaker_notes && (
+            <div className="p-3 rounded border border-blue-200 bg-blue-50">
+              <h4 className="font-medium text-blue-800 mb-1">Notes for Sitter</h4>
+              <p className="text-sm text-blue-900 whitespace-pre-wrap">
+                {careData.caretaker_notes}
+              </p>
+            </div>
+          )}
         </CardContent>
       </Card>
 

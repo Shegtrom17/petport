@@ -85,7 +85,8 @@ export function transformPetData(pet: PetWithDetails): any {
       eveningRoutine: pet.care_instructions.evening_routine,
       allergies: pet.care_instructions.allergies,
       behavioralNotes: pet.care_instructions.behavioral_notes,
-      favoriteActivities: pet.care_instructions.favorite_activities
+      favoriteActivities: pet.care_instructions.favorite_activities,
+      caretakerNotes: pet.care_instructions.caretaker_notes
     } : null,
     // Transform other arrays
     experiences: pet.experiences || [],

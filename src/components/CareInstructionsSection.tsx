@@ -236,7 +236,8 @@ export const CareInstructionsSection = ({ petData, onUpdate, handlePetUpdate }: 
             eveningRoutine: careData.evening_routine,
             allergies: careData.allergies,
             behavioralNotes: careData.behavioral_notes,
-            favoriteActivities: careData.favorite_activities
+            favoriteActivities: careData.favorite_activities,
+            caretakerNotes: careData.caretaker_notes
           } : {}
         }}
         onSave={handleSave}

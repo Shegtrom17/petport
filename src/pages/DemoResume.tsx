@@ -266,6 +266,44 @@ export default function DemoResume() {
           </Card>
         )}
 
+        {/* Travel History */}
+        {data.travel_locations && data.travel_locations.length > 0 && (
+          <Card className="mb-6">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-navy-900">
+                <MapPin className="w-5 h-5 text-primary" />
+                Travel History
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              {data.travel_locations.map((location, idx) => (
+                <div key={idx} className="p-3 rounded border">
+                  <div className="flex items-start justify-between">
+                    <div className="flex-grow">
+                      <div className="font-medium">{location.name}</div>
+                      <div className="text-sm text-muted-foreground">
+                        <Badge variant="outline" className="mr-2">{location.type}</Badge>
+                        {location.code && <span className="mr-2">Code: {location.code}</span>}
+                        {location.date_visited && <span>Visited: {location.date_visited}</span>}
+                      </div>
+                      {location.notes && (
+                        <p className="text-sm text-muted-foreground mt-1">{location.notes}</p>
+                      )}
+                    </div>
+                    {location.photo_url && (
+                      <img 
+                        src={location.photo_url} 
+                        alt={location.name}
+                        className="w-16 h-16 rounded object-cover ml-3"
+                      />
+                    )}
+                  </div>
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+        )}
+
         {/* Footer CTA */}
         <div className="bg-gradient-to-r from-brand-primary to-brand-secondary rounded-lg p-8 text-center text-white mb-6">
           <h2 className="text-2xl font-bold mb-3">Ready to Create Your Pet's Professional Whiteboard?</h2>

@@ -160,14 +160,15 @@ export default function DemoMissingPet() {
         <div className="max-w-4xl mx-auto flex items-center justify-center gap-2 flex-wrap">
           <Sparkles className="h-5 w-5" />
           <span className="font-semibold">✨ Live Demo – Real PetPort Whiteboard</span>
-          <Button 
-            onClick={() => navigate('/auth')}
-            variant="outline" 
-            size="sm"
-            className="ml-4 bg-white text-brand-primary hover:bg-brand-cream border-white"
-          >
-            Create Your Pet's Emergency Page Free
-          </Button>
+          <a href="/#pricing">
+            <Button 
+              variant="outline" 
+              size="sm"
+              className="ml-4 bg-white text-brand-primary hover:bg-brand-cream border-white"
+            >
+              Get Started Today
+            </Button>
+          </a>
         </div>
       </div>
 

@@ -437,6 +437,33 @@ export default function PublicMissingPet() {
           </Card>
         )}
 
+        {/* QR Code and Share Section */}
+        <Card className="mb-6">
+          <CardHeader>
+            <CardTitle className="text-center">Share This Missing Pet Alert</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex justify-center">
+              <div className="bg-white p-4 rounded-lg shadow-inner border-2 border-gray-200">
+                <QRCode value={pageUrl} size={200} />
+              </div>
+            </div>
+            <p className="text-center text-sm text-muted-foreground">
+              Scan this QR code to view and share this missing pet alert on any device
+            </p>
+            <div className="flex justify-center gap-2">
+              <Button
+                onClick={handleShare}
+                variant="outline"
+                className="gap-2"
+              >
+                <Share2 className="h-4 w-4" />
+                Share Alert
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+
         {/* Finder Instructions */}
         {petData.finderInstructions && (
           <Card className="mb-6 border-amber-300 bg-amber-50">

@@ -35,9 +35,13 @@ interface MissingPetData {
     contact_phone: string;
     contact_type: string;
   }>;
+  galleryPhotos: Array<{
+    id: string;
+    url: string;
+    caption?: string;
+  }>;
   updatedAt: string;
   isPublic?: boolean;
-  galleryPhotoCount?: number;
   medicalAlert?: boolean;
   medicalConditions?: string;
 }
@@ -114,18 +118,13 @@ export default function PublicMissingPet() {
         .select('medical_alert, medical_conditions')
         .eq('pet_id', id)
         .single();
-      
-      console.log('[PublicMissingPet] Fetched medical data:', medicalData);
 
-      // Fetch gallery photo count if pet is public
-      let galleryPhotoCount = 0;
-      if (petInfo.is_public) {
-        const { count } = await supabase
-          .from('gallery_photos')
-          .select('*', { count: 'exact', head: true })
-          .eq('pet_id', id);
-        galleryPhotoCount = count || 0;
-      }
+      // Fetch gallery photos
+      const { data: galleryPhotos } = await supabase
+        .from('gallery_photos')
+        .select('id, url, caption')
+        .eq('pet_id', id)
+        .order('position', { ascending: true });
 
       // Sanitize and prepare data
       const sanitizedData: MissingPetData = {
@@ -148,9 +147,13 @@ export default function PublicMissingPet() {
         rewardAmount: sanitizeText(lostData.reward_amount || ''),
         finderInstructions: sanitizeText(lostData.finder_instructions || ''),
         contacts: petContacts || [],
+        galleryPhotos: (galleryPhotos || []).map(photo => ({
+          id: photo.id,
+          url: photo.url,
+          caption: sanitizeText(photo.caption || '')
+        })),
         updatedAt: lostData.updated_at,
         isPublic: petInfo.is_public,
-        galleryPhotoCount,
         medicalAlert: medicalData?.medical_alert || false,
         medicalConditions: sanitizeText(medicalData?.medical_conditions || '')
       };
@@ -399,16 +402,26 @@ export default function PublicMissingPet() {
               </div>
             )}
 
-            {/* View More Photos Link */}
-            {petData.isPublic && petData.galleryPhotoCount && petData.galleryPhotoCount > 0 && (
-              <div className="text-center mb-6">
-                <Button 
-                  variant="outline"
-                  onClick={() => window.open(`/gallery/${petData.id}`, '_blank')}
-                  className="border-brand-primary text-brand-primary hover:bg-brand-primary hover:text-white"
-                >
-                  View More Photos ({petData.galleryPhotoCount} total)
-                </Button>
+            {/* Gallery Photos */}
+            {petData.galleryPhotos && petData.galleryPhotos.length > 0 && (
+              <div className="mb-8">
+                <h3 className="font-semibold text-brand-primary mb-4 text-lg">Additional Photos ({petData.galleryPhotos.length})</h3>
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                  {petData.galleryPhotos.map((photo) => (
+                    <div key={photo.id} className="group relative aspect-square overflow-hidden rounded-lg border shadow-sm hover:shadow-lg transition-all">
+                      <img 
+                        src={photo.url} 
+                        alt={photo.caption || `${petData.name} photo`}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      />
+                      {photo.caption && (
+                        <div className="absolute bottom-0 left-0 right-0 bg-black/60 text-white text-xs p-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                          {photo.caption}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
               </div>
             )}
 

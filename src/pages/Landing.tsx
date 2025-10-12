@@ -48,6 +48,20 @@ export default function Landing() {
     // Users manually navigate to /app via "Open App" button
   }, [location.search]);
 
+  // Scroll to section if hash present (e.g., /#pricing)
+  useEffect(() => {
+    if (location.hash) {
+      const id = location.hash.replace('#', '');
+      // Delay to ensure DOM is ready after navigation
+      setTimeout(() => {
+        const el = document.getElementById(id);
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }, 0);
+    }
+  }, [location.hash]);
+
   // Load public pets for development navigation
   useEffect(() => {
     if (isPreview && user) {

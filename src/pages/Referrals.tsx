@@ -387,7 +387,7 @@ export default function Referrals() {
               {/* Message 1 */}
               <div className="bg-muted/50 rounded-lg p-4 border border-border">
                 <p className="text-sm mb-3">
-                  "Just found the perfect pet management app! 🐾 Get organized with PetPort - track health, travel, and more. Use my link to try it:{" "}
+                  "Just found the perfect pet management app! Get organized with PetPort - track health, travel, and more. Use my link to try it:{" "}
                   <span className="font-mono text-[#5691af]">
                     {referralCode ? `https://petport.app?ref=${referralCode}` : "[Your link will appear here]"}
                   </span>
@@ -397,7 +397,7 @@ export default function Referrals() {
                   size="sm"
                   variant="outline"
                   onClick={() => {
-                    const message = `Just found the perfect pet management app! 🐾 Get organized with PetPort - track health, travel, and more. Use my link to try it: https://petport.app?ref=${referralCode}`;
+                    const message = `Just found the perfect pet management app! Get organized with PetPort - track health, travel, and more. Use my link to try it: https://petport.app?ref=${referralCode}`;
                     navigator.clipboard.writeText(message);
                     toast({ title: "Copied!", description: "Message copied to clipboard" });
                   }}
@@ -412,7 +412,7 @@ export default function Referrals() {
               {/* Message 2 */}
               <div className="bg-muted/50 rounded-lg p-4 border border-border">
                 <p className="text-sm mb-3">
-                  "Fellow pet parents! 🐶🐱🐴🦜 Check out PetPort - it's the ALL-IN-ONE digital information sharing platform for pets, horses, birds, and more! Medical records & all documents, one-tap links, QR codes & PDFs for care and handling instructions, ask for reviews from groomers & trainers, build a pet resume, certificates, one-tap LOST PET FLYER (no design needed), and so much more! Use my referral code:{" "}
+                  "Fellow pet parents! Check out PetPort - it's the ALL-IN-ONE digital information sharing platform for pets, horses, birds, and more! Medical records & all documents, one-tap links, QR codes & PDFs for care and handling instructions, ask for reviews from groomers & trainers, build a pet resume, certificates, one-tap LOST PET FLYER (no design needed), and so much more! Use my referral code:{" "}
                   <span className="font-mono text-[#5691af]">
                     {referralCode ? `https://petport.app?ref=${referralCode}` : "[Your link will appear here]"}
                   </span>
@@ -422,7 +422,7 @@ export default function Referrals() {
                   size="sm"
                   variant="outline"
                   onClick={() => {
-                    const message = `Fellow pet parents! 🐶🐱🐴🦜 Check out PetPort - it's the ALL-IN-ONE digital information sharing platform for pets, horses, birds, and more! Medical records & all documents, one-tap links, QR codes & PDFs for care and handling instructions, ask for reviews from groomers & trainers, build a pet resume, certificates, one-tap LOST PET FLYER (no design needed), and so much more! Use my referral code: https://petport.app?ref=${referralCode}`;
+                    const message = `Fellow pet parents! Check out PetPort - it's the ALL-IN-ONE digital information sharing platform for pets, horses, birds, and more! Medical records & all documents, one-tap links, QR codes & PDFs for care and handling instructions, ask for reviews from groomers & trainers, build a pet resume, certificates, one-tap LOST PET FLYER (no design needed), and so much more! Use my referral code: https://petport.app?ref=${referralCode}`;
                     navigator.clipboard.writeText(message);
                     toast({ title: "Copied!", description: "Message copied to clipboard" });
                   }}
@@ -437,7 +437,7 @@ export default function Referrals() {
               {/* Message 3 - Foster to Adopter Transfer */}
               <div className="bg-gradient-to-br from-[#5691af]/10 to-purple-50 rounded-lg p-4 border-2 border-[#5691af]/30">
                 <p className="text-sm mb-3 leading-relaxed">
-                  "🏡❤️ Foster to Forever - Give your foster friend a story for life! 
+                  "Foster to Forever - Give your foster friend a story for life! 
                   PetPort's full account transfer seamlessly passes everything to the adopter - 
                   complete bio, resume, medical alerts, documents, care instructions, and so much more. 
                   Their entire journey transfers with them. Start their story today:{" "}
@@ -450,7 +450,7 @@ export default function Referrals() {
                   size="sm"
                   variant="outline"
                   onClick={() => {
-                    const message = `🏡❤️ Foster to Forever - Give your foster friend a story for life! PetPort's full account transfer seamlessly passes everything to the adopter - complete bio, resume, medical alerts, documents, care instructions, and so much more. Their entire journey transfers with them. Start their story today: https://petport.app?ref=${referralCode}`;
+                    const message = `Foster to Forever - Give your foster friend a story for life! PetPort's full account transfer seamlessly passes everything to the adopter - complete bio, resume, medical alerts, documents, care instructions, and so much more. Their entire journey transfers with them. Start their story today: https://petport.app?ref=${referralCode}`;
                     navigator.clipboard.writeText(message);
                     toast({ title: "Copied!", description: "Message copied to clipboard" });
                   }}
@@ -465,39 +465,59 @@ export default function Referrals() {
           </CardContent>
         </Card>
 
-        {/* Info Section */}
-        <Card className="bg-muted/50">
-          <CardContent className="pt-6">
-            <h3 className="font-semibold mb-3 flex items-center gap-2">
-              <Clock className="h-4 w-4 text-[#5691af]" />
+        {/* How It Works Section */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-xl font-bold flex items-center gap-2">
+              <Clock className="h-5 w-5 text-[#5691af]" />
               How It Works
-            </h3>
-            <ul className="space-y-2 text-sm text-muted-foreground">
-              <li className="flex gap-2">
-                <span className="text-[#5691af] font-bold">1.</span>
-                <span>
-                  Share your unique referral link with friends and family
-                </span>
-              </li>
-              <li className="flex gap-2">
-                <span className="text-[#5691af] font-bold">2.</span>
-                <span>
-                  When they subscribe to a yearly plan, you earn $2.00
-                </span>
-              </li>
-              <li className="flex gap-2">
-                <span className="text-[#5691af] font-bold">3.</span>
-                <span>
-                  Payouts are issued 45 days after their trial ends (via Stripe)
-                </span>
-              </li>
-              <li className="flex gap-2">
-                <span className="text-[#5691af] font-bold">4.</span>
-                <span>
-                  Connect your Stripe account to start receiving payments
-                </span>
-              </li>
-            </ul>
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="grid gap-4">
+              <div className="flex gap-3">
+                <div className="flex-shrink-0 w-8 h-8 rounded-full bg-[#5691af]/10 flex items-center justify-center text-[#5691af] font-bold">
+                  1
+                </div>
+                <div>
+                  <h3 className="font-semibold mb-1">Share Your Link</h3>
+                  <p className="text-sm text-muted-foreground">
+                    Copy your unique referral link and share it with friends, family, or on social media.
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex gap-3">
+                <div className="flex-shrink-0 w-8 h-8 rounded-full bg-[#5691af]/10 flex items-center justify-center text-[#5691af] font-bold">
+                  2
+                </div>
+                <div>
+                  <h3 className="font-semibold mb-1">They Subscribe</h3>
+                  <p className="text-sm text-muted-foreground">
+                    When someone signs up using your link and subscribes to a yearly plan, you earn $2.
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex gap-3">
+                <div className="flex-shrink-0 w-8 h-8 rounded-full bg-[#5691af]/10 flex items-center justify-center text-[#5691af] font-bold">
+                  3
+                </div>
+                <div>
+                  <h3 className="font-semibold mb-1">Get Paid</h3>
+                  <p className="text-sm text-muted-foreground">
+                    Connect your Stripe account to receive payouts. Commissions are approved after the 30-day refund window.
+                  </p>
+                </div>
+              </div>
+
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mt-2">
+                <p className="text-sm text-blue-900">
+                  <strong>Note:</strong> Only yearly plan subscriptions are eligible for referral commissions. 
+                  Monthly subscriptions do not qualify for the $2 commission.
+                </p>
+              </div>
+            </div>
           </CardContent>
         </Card>
       </div>

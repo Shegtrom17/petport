@@ -1462,26 +1462,16 @@ export type Database = {
         Returns: number
       }
       handle_care_instructions_upsert: {
-        Args:
-          | {
-              _allergies?: string
-              _behavioral_notes?: string
-              _caretaker_notes?: string
-              _evening_routine?: string
-              _favorite_activities?: string
-              _feeding_schedule?: string
-              _morning_routine?: string
-              _pet_id: string
-            }
-          | {
-              _allergies?: string
-              _behavioral_notes?: string
-              _evening_routine?: string
-              _favorite_activities?: string
-              _feeding_schedule?: string
-              _morning_routine?: string
-              _pet_id: string
-            }
+        Args: {
+          _allergies?: string
+          _behavioral_notes?: string
+          _caretaker_notes?: string
+          _evening_routine?: string
+          _favorite_activities?: string
+          _feeding_schedule?: string
+          _morning_routine?: string
+          _pet_id: string
+        }
         Returns: string
       }
       handle_document_upload: {

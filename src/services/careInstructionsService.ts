@@ -8,6 +8,7 @@ export interface CareInstructionsData {
   allergies?: string;
   behavioralNotes?: string;
   favoriteActivities?: string;
+  caretakerNotes?: string;
   medications?: string;
 }
 

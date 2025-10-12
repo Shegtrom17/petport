@@ -118,6 +118,7 @@ export type Database = {
         Row: {
           allergies: string | null
           behavioral_notes: string | null
+          caretaker_notes: string | null
           created_at: string
           evening_routine: string | null
           favorite_activities: string | null
@@ -130,6 +131,7 @@ export type Database = {
         Insert: {
           allergies?: string | null
           behavioral_notes?: string | null
+          caretaker_notes?: string | null
           created_at?: string
           evening_routine?: string | null
           favorite_activities?: string | null
@@ -142,6 +144,7 @@ export type Database = {
         Update: {
           allergies?: string | null
           behavioral_notes?: string | null
+          caretaker_notes?: string | null
           created_at?: string
           evening_routine?: string | null
           favorite_activities?: string | null

@@ -50,6 +50,8 @@ import EmailTest from "./pages/EmailTest";
 import SetupStripe from "./pages/SetupStripe";
 import Referrals from "./pages/Referrals";
 import ReferralProgram from "./pages/ReferralProgram";
+import DemoResume from "./pages/DemoResume";
+import DemoMissingPet from "./pages/DemoMissingPet";
 
 // Redirect component for credentials -> resume consolidation
 const CredentialsRedirect = () => {
@@ -87,6 +89,10 @@ const App = () => {
                   <Route path="/landing" element={<Landing />} />
                   <Route path="/learn" element={<Learn />} />
                   <Route path="/referral-program" element={<ReferralProgram />} />
+                  
+                  {/* Demo Pages - Static versions using Finn's real data */}
+                  <Route path="/demo/resume" element={<DemoResume />} />
+                  <Route path="/demo/missing-pet" element={<DemoMissingPet />} />
                   <Route path="/app" element={
                     <ProtectedRoute>
                       <Index />

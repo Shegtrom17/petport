@@ -176,6 +176,102 @@ export default function Landing() {
         </section>
 
 
+        {/* Demo Preview Section */}
+        <section className="bg-gradient-to-br from-brand-cream via-white to-brand-cream py-20">
+          <div className="max-w-7xl mx-auto px-4">
+            <div className="text-center mb-12">
+              <h2 className="text-4xl font-bold text-brand-primary mb-4">Experience a Live PetPort Whiteboard</h2>
+              <p className="text-xl text-brand-primary-dark mb-8">See real examples using Finn's actual profile data - fully interactive & scrollable</p>
+            </div>
+            
+            <div className="grid md:grid-cols-2 gap-8 mb-12">
+              {/* Resume Demo Card */}
+              <div className="bg-white rounded-xl shadow-xl overflow-hidden border-2 border-brand-primary/20 hover:border-brand-primary transition-all hover:shadow-2xl">
+                <div className="bg-gradient-to-r from-brand-primary to-brand-secondary p-6 text-white">
+                  <h3 className="text-2xl font-bold mb-2">Professional Pet Resume</h3>
+                  <p className="text-white/90">Certifications, training, achievements & reviews</p>
+                </div>
+                <div className="p-6">
+                  <ul className="space-y-2 mb-6 text-brand-primary-dark">
+                    <li className="flex items-start gap-2">
+                      <span className="text-brand-primary">✓</span>
+                      <span>Professional certifications & credentials</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-brand-primary">✓</span>
+                      <span>Training history & achievements</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-brand-primary">✓</span>
+                      <span>References & verified reviews</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-brand-primary">✓</span>
+                      <span>Experience & activities timeline</span>
+                    </li>
+                  </ul>
+                  <Button 
+                    onClick={() => navigate('/demo/resume')}
+                    className="w-full bg-brand-primary hover:bg-brand-secondary text-white"
+                    size="lg"
+                  >
+                    View Live Resume Demo
+                  </Button>
+                </div>
+              </div>
+
+              {/* Missing Pet Demo Card */}
+              <div className="bg-white rounded-xl shadow-xl overflow-hidden border-2 border-red-200 hover:border-red-500 transition-all hover:shadow-2xl">
+                <div className="bg-gradient-to-r from-red-600 to-orange-600 p-6 text-white">
+                  <h3 className="text-2xl font-bold mb-2">Missing Pet Emergency Page</h3>
+                  <p className="text-white/90">Instant shareable alert with QR code</p>
+                </div>
+                <div className="p-6">
+                  <ul className="space-y-2 mb-6 text-brand-primary-dark">
+                    <li className="flex items-start gap-2">
+                      <span className="text-red-600">✓</span>
+                      <span>Last seen location & time details</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-red-600">✓</span>
+                      <span>Emergency contacts & instructions</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-red-600">✓</span>
+                      <span>Shareable QR code for flyers</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-red-600">✓</span>
+                      <span>Photo gallery & distinctive features</span>
+                    </li>
+                  </ul>
+                  <Button 
+                    onClick={() => navigate('/demo/missing-pet')}
+                    className="w-full bg-red-600 hover:bg-red-700 text-white"
+                    size="lg"
+                  >
+                    View Missing Pet Demo
+                  </Button>
+                </div>
+              </div>
+            </div>
+
+            <div className="text-center">
+              <p className="text-sm text-muted-foreground mb-4">
+                These demos use real data from Finn's actual PetPort profile - everything updates in real-time
+              </p>
+              <Button 
+                onClick={() => navigate('/auth')}
+                variant="outline"
+                size="lg"
+                className="border-brand-primary text-brand-primary hover:bg-brand-primary hover:text-white"
+              >
+                Create Your Pet's Whiteboard Free
+              </Button>
+            </div>
+          </div>
+        </section>
+
         {/* Feature Showcase */}
         <section className="bg-white py-20">
           <div className="max-w-7xl mx-auto px-4">

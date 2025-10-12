@@ -1,15 +1,16 @@
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { MapPin, Phone, Calendar, Clock, Share2, AlertTriangle, Stethoscope } from 'lucide-react';
+import { MapPin, Phone, Calendar, Clock, Share2, AlertTriangle, Stethoscope, Camera, AlertCircle, Heart, ArrowLeft } from 'lucide-react';
 import { SocialShareButtons } from '@/components/SocialShareButtons';
 import { MetaTags } from '@/components/MetaTags';
 import { sanitizeText, truncateText } from '@/utils/inputSanitizer';
 import { toast } from 'sonner';
+import QRCode from 'react-qr-code';
 
 interface MissingPetData {
   id: string;
@@ -48,9 +49,11 @@ interface MissingPetData {
 
 export default function PublicMissingPet() {
   const { petId } = useParams<{ petId: string }>();
+  const navigate = useNavigate();
   const [petData, setPetData] = useState<MissingPetData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const pageUrl = window.location.href;
   
   // Validate petId format
   const isValidPetId = petId && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(petId);
@@ -216,243 +219,271 @@ export default function PublicMissingPet() {
     return new Date(dateString).toLocaleDateString();
   };
 
-  const pageUrl = window.location.href;
   const metaTitle = `Missing Pet: ${petData.name} (${petData.breed || petData.species})`;
   const metaDescription = `Help find ${petData.name}. Last seen ${petData.lastSeenLocation || 'unknown'} on ${formatDate(petData.lastSeenDate)}. Contact info on page.`;
   const metaImage = petData.photoUrl || petData.fullBodyPhotoUrl;
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-gradient-to-br from-red-50 via-white to-orange-50">
       <MetaTags title={metaTitle} description={metaDescription} url={pageUrl} image={metaImage} type="article" />
-      {/* Header Alert */}
-      <div className="bg-brand-primary text-white py-4">
-        <div className="container mx-auto px-4 text-center">
-          <h1 className="text-2xl font-bold mb-2">⚠️ LOST PET ALERT ⚠️</h1>
-          <p className="text-white/80">Please help us find {petData.name}</p>
-        </div>
-      </div>
-
+      
       <div className="container mx-auto px-4 py-8 max-w-4xl">
-        {/* Medical Alert Banner - Only shows when toggle is TRUE */}
-        {petData.medicalAlert && (
-          <Alert className="mb-6 border-red-600 bg-red-50">
-            <AlertTriangle className="h-4 w-4 text-red-600" />
-            <AlertDescription className="ml-2 text-sm">
-              <strong className="text-red-900">MEDICAL ALERT:</strong>{' '}
-              <span className="text-red-800">
-                {petData.medicalConditions || 'This pet has active medical alerts requiring immediate attention.'}
-              </span>
+        {/* Back Button */}
+        <Button
+          variant="ghost"
+          onClick={() => navigate('/')}
+          className="mb-6"
+        >
+          <ArrowLeft className="mr-2 h-4 w-4" />
+          Back
+        </Button>
+
+        {/* Urgent Missing Pet Alert Banner */}
+        <Alert className="mb-6 border-red-600 bg-red-50">
+          <AlertTriangle className="h-6 w-6 text-red-600" />
+          <AlertDescription className="text-red-900 font-semibold text-lg">
+            🚨 MISSING PET ALERT - PLEASE HELP BRING {petData.name.toUpperCase()} HOME SAFELY
+          </AlertDescription>
+        </Alert>
+
+        {/* Medical Alert Banner */}
+        {petData.medicalAlert && petData.medicalConditions && (
+          <Alert variant="destructive" className="mb-6">
+            <AlertCircle className="h-5 w-5" />
+            <AlertDescription className="font-semibold">
+              ⚠️ MEDICAL ALERT: {petData.medicalConditions}
             </AlertDescription>
           </Alert>
         )}
 
-        {/* Pet Info Card */}
-        <Card className="mb-6">
-          <CardHeader className="bg-brand-primary text-white">
-            <CardTitle className="flex flex-col md:flex-row items-start md:items-center gap-4">
-              <div className="flex-shrink-0">
-                <img 
-                  src={petData.photoUrl || "/placeholder.svg"} 
-                  alt={petData.name}
-                  className="w-24 h-24 rounded-full border-2 border-white/20 object-cover"
-                />
-              </div>
-              <div className="flex-grow">
-                <h2 className="text-3xl font-bold">{petData.name}</h2>
-                <p className="text-white/80 text-lg">{petData.breed} • {petData.species} • {petData.age}</p>
-                <Badge variant="destructive" className="mt-2">
-                  LOST
-                </Badge>
-              </div>
+        {/* Main Profile Card with Red Border */}
+        <Card className="mb-6 border-2 border-red-500 shadow-xl">
+          <CardHeader className="bg-gradient-to-r from-red-600 to-orange-600 text-white">
+            <CardTitle className="text-3xl font-bold text-center">
+              MISSING: {petData.name}
             </CardTitle>
           </CardHeader>
           <CardContent className="p-6">
-            {petData.fullBodyPhotoUrl && (
-              <div className="mb-6 text-center">
-                <img 
-                  src={petData.fullBodyPhotoUrl} 
-                  alt={`${petData.name} full body`}
-                  className="max-w-full h-auto max-h-96 mx-auto rounded-2xl border shadow-sm"
-                />
+            {/* Profile Photo with Red Border */}
+            {petData.photoUrl && (
+              <div className="flex justify-center mb-6">
+                <div className="w-full max-w-md">
+                  <img 
+                    src={petData.photoUrl} 
+                    alt={`${petData.name}'s profile photo`}
+                    className="w-full h-auto max-h-96 object-contain rounded-lg shadow-lg border-4 border-red-500"
+                  />
+                  <p className="text-center text-sm text-muted-foreground mt-2">
+                    Last seen photo of {petData.name}
+                  </p>
+                </div>
               </div>
             )}
 
-            {/* Profile Information */}
-            <div className="p-4 rounded-lg border shadow-sm mb-6">
-              <div className="flex items-center space-x-2 mb-3">
-                <Stethoscope className="w-5 h-5 text-brand-primary" />
-                <h3 className="font-semibold text-brand-primary">Profile Information</h3>
+            {/* Full Body Photo with Red Border */}
+            {petData.fullBodyPhotoUrl && (
+              <div className="flex justify-center mb-6">
+                <div className="w-full max-w-md">
+                  <h3 className="font-semibold text-red-600 mb-2 text-center">Full Body Photo</h3>
+                  <img 
+                    src={petData.fullBodyPhotoUrl} 
+                    alt={`${petData.name}'s full body photo`}
+                    className="w-full h-auto max-h-[500px] object-contain rounded-lg shadow-lg border-4 border-red-500"
+                  />
+                </div>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {petData.sex && (
-                  <div><strong>Sex/Gender:</strong> {petData.sex}</div>
+            )}
+
+            {/* Pet Details Grid */}
+            <div className="mb-6">
+              <h3 className="font-semibold text-lg text-brand-primary mb-4">Pet Details</h3>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                <div>
+                  <p className="text-sm text-muted-foreground">Species</p>
+                  <p className="font-semibold capitalize">{petData.species}</p>
+                </div>
+                {petData.breed && (
+                  <div>
+                    <p className="text-sm text-muted-foreground">Breed</p>
+                    <p className="font-semibold">{petData.breed}</p>
+                  </div>
                 )}
+                <div>
+                  <p className="text-sm text-muted-foreground">Age</p>
+                  <p className="font-semibold">{petData.age}</p>
+                </div>
                 {petData.weight && (
-                  <div><strong>Weight:</strong> {petData.weight}</div>
+                  <div>
+                    <p className="text-sm text-muted-foreground">Weight</p>
+                    <p className="font-semibold">{petData.weight}</p>
+                  </div>
                 )}
-                {petData.height && (
-                  <div><strong>Height:</strong> {petData.height}</div>
+                {petData.sex && (
+                  <div>
+                    <p className="text-sm text-muted-foreground">Sex</p>
+                    <p className="font-semibold capitalize">{petData.sex.replace('_', ' ')}</p>
+                  </div>
                 )}
                 {petData.microchip_id && (
-                  <div><strong>Microchip ID:</strong> <span className="text-red-600 font-medium">{petData.microchip_id}</span></div>
+                  <div>
+                    <p className="text-sm text-muted-foreground">Microchip ID</p>
+                    <p className="font-semibold font-mono text-xs">{petData.microchip_id}</p>
+                  </div>
                 )}
-                {petData.registration_number && (
-                  <div><strong>Registration #:</strong> <span className="text-red-600 font-medium">{petData.registration_number}</span></div>
-                )}
-                <div><strong>Age:</strong> {petData.age}</div>
               </div>
             </div>
 
-            {/* Last Seen Information */}
-            {(petData.lastSeenLocation || petData.lastSeenDate) && (
-              <div className="p-4 rounded-lg border shadow-sm mb-6">
-                <div className="flex items-center space-x-2 mb-3">
-                  <MapPin className="w-5 h-5 text-brand-primary" />
-                  <h3 className="font-semibold text-brand-primary">Last Seen</h3>
-                </div>
-                {petData.lastSeenLocation && (
-                  <p className="mb-2"><strong>Location:</strong> {petData.lastSeenLocation}</p>
-                )}
-                <div className="flex flex-wrap gap-4">
-                  {petData.lastSeenDate && (
-                    <div className="flex items-center space-x-1">
-                      <Calendar className="w-4 h-4 text-brand-primary" />
-                      <span>{formatDate(petData.lastSeenDate)}</span>
-                    </div>
-                  )}
-                  {petData.lastSeenTime && (
-                    <div className="flex items-center space-x-1">
-                      <Clock className="w-4 h-4 text-brand-primary" />
-                      <span>{petData.lastSeenTime}</span>
-                    </div>
-                  )}
-                </div>
-              </div>
-            )}
-
-            {/* Distinctive Features */}
-            {petData.distinctiveFeatures && (
-              <div className="p-4 rounded-lg border shadow-sm mb-6">
-                <h3 className="font-semibold text-brand-primary mb-2">Distinctive Features</h3>
-                <p className="text-foreground">{truncateText(petData.distinctiveFeatures, 300)}</p>
-              </div>
-            )}
-
-            {/* Reward */}
+            {/* Reward Section with Green Alert */}
             {petData.rewardAmount && (
-              <div className="p-4 rounded-lg border shadow-sm mb-6">
-                <h3 className="font-semibold text-brand-primary mb-2">Reward Offered</h3>
-                <p className="text-foreground text-lg font-medium">{petData.rewardAmount}</p>
-              </div>
+              <Alert className="bg-green-50 border-green-600 mb-6">
+                <Heart className="h-5 w-5 text-green-600" />
+                <AlertDescription className="text-green-900 font-bold text-xl">
+                  {petData.rewardAmount} REWARD
+                </AlertDescription>
+              </Alert>
             )}
-
-            {/* Contact Information */}
-            {petData.contacts && petData.contacts.length > 0 && (
-              <div className="space-y-3 mb-6">
-                <h3 className="font-semibold text-lg" style={{ color: '#5691af' }}>Emergency Contacts</h3>
-                {petData.contacts.map((contact, index) => {
-                  const hasPhone = contact.contact_phone && /\d{3}/.test(contact.contact_phone);
-                  const phoneNumber = hasPhone ? contact.contact_phone.replace(/\D/g, '') : '';
-                  
-                  return (
-                    <div key={index} className="p-3 rounded-lg border shadow-sm">
-                      {hasPhone ? (
-                        <a 
-                          href={`tel:${phoneNumber}`}
-                          className="block w-full"
-                          aria-label={`Call ${contact.contact_name}`}
-                        >
-                          <div className="flex items-center space-x-2">
-                             <Phone className={`w-4 h-4 ${contact.contact_type === 'emergency' ? 'text-primary' : 'text-primary'}`} />
-                             <strong className={`${contact.contact_type === 'emergency' ? 'text-primary' : 'text-primary'} hover:opacity-80`}>
-                              {contact.contact_name}:
-                            </strong>
-                          </div>
-                          <div className="ml-6">
-                            <span className={`font-medium hover:opacity-80 ${contact.contact_type === 'emergency' ? 'text-primary' : 'text-primary'}`}>
-                              {contact.contact_phone}
-                            </span>
-                            <p className={`text-xs ${contact.contact_type === 'emergency' ? 'text-primary/70' : 'text-primary/80'}`}>Tap to call</p>
-                          </div>
-                        </a>
-                      ) : (
-                        <div>
-                          <div className="flex items-center space-x-2">
-                             <Phone className={`w-4 h-4 ${contact.contact_type === 'emergency' ? 'text-primary' : 'text-primary'}`} />
-                             <strong className={contact.contact_type === 'emergency' ? 'text-primary' : 'text-primary'}>
-                              {contact.contact_name}:
-                            </strong>
-                          </div>
-                          <p className={`ml-6 font-medium ${contact.contact_type === 'emergency' ? 'text-primary' : 'text-primary'}`}>
-                            {contact.contact_phone || 'No phone number'}
-                          </p>
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-            )}
-
-            {/* Finder Instructions */}
-            {petData.finderInstructions && (
-              <div className="p-4 rounded-lg border shadow-sm mb-6">
-                <h3 className="font-semibold text-brand-primary mb-2">If Found - Instructions</h3>
-                <p className="text-foreground">{truncateText(petData.finderInstructions, 200)}</p>
-              </div>
-            )}
-
-            {/* Gallery Photos */}
-            {petData.galleryPhotos && petData.galleryPhotos.length > 0 && (
-              <div className="mb-8">
-                <h3 className="font-semibold text-brand-primary mb-4 text-lg">Additional Photos ({petData.galleryPhotos.length})</h3>
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                  {petData.galleryPhotos.map((photo) => (
-                    <div key={photo.id} className="group relative aspect-square overflow-hidden rounded-lg border shadow-sm hover:shadow-lg transition-all">
-                      <img 
-                        src={photo.url} 
-                        alt={photo.caption || `${petData.name} photo`}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                      />
-                      {photo.caption && (
-                        <div className="absolute bottom-0 left-0 right-0 bg-black/60 text-white text-xs p-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                          {photo.caption}
-                        </div>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Share Buttons */}
-            <div className="flex flex-col sm:flex-row gap-4 items-center justify-center mt-8">
-              <Button 
-                onClick={handleShare} 
-                size="lg"
-                className="bg-brand-primary hover:bg-brand-primary/90 text-white h-12 px-6 font-semibold text-base shadow-lg"
-              >
-                <Share2 className="w-5 h-5 mr-2" />
-                Share This Alert
-              </Button>
-              <div className="w-full sm:w-auto">
-                <SocialShareButtons 
-                  petName={petData.name}
-                  petId={petData.id}
-                  isMissingPet={true}
-                  context="missing"
-                  shareUrlOverride={window.location.href}
-                  compact={false}
-                />
-              </div>
-            </div>
-
-            {/* Last Updated */}
-            <div className="text-center text-muted-foreground text-sm mt-6">
-              Last updated: {formatDate(petData.updatedAt)}
-            </div>
           </CardContent>
         </Card>
+
+        {/* Last Seen Information as Card */}
+        <Card className="mb-6">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-red-600">
+              <MapPin className="h-5 w-5" />
+              Last Seen Details
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {petData.lastSeenLocation && (
+              <div className="mb-4">
+                <div className="flex items-start gap-3 p-3 bg-red-50 rounded-lg border border-red-200">
+                  <MapPin className="h-5 w-5 text-red-600 mt-0.5 flex-shrink-0" />
+                  <div>
+                    <p className="font-semibold text-red-900">Last Seen Location</p>
+                    <p className="text-red-700 text-lg">{petData.lastSeenLocation}</p>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+              {petData.lastSeenDate && (
+                <div className="flex items-start gap-3 p-3 bg-muted rounded-lg">
+                  <Calendar className="h-5 w-5 text-red-600 mt-0.5 flex-shrink-0" />
+                  <div>
+                    <p className="font-medium text-foreground">Date</p>
+                    <p className="text-muted-foreground">{formatDate(petData.lastSeenDate)}</p>
+                  </div>
+                </div>
+              )}
+              {petData.lastSeenTime && (
+                <div className="flex items-start gap-3 p-3 bg-muted rounded-lg">
+                  <Clock className="h-5 w-5 text-red-600 mt-0.5 flex-shrink-0" />
+                  <div>
+                    <p className="font-medium text-foreground">Time</p>
+                    <p className="text-muted-foreground">{petData.lastSeenTime}</p>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {petData.distinctiveFeatures && (
+              <Alert className="bg-yellow-50 border-yellow-600">
+                <AlertCircle className="h-5 w-5 text-yellow-600" />
+                <AlertDescription>
+                  <p className="font-semibold text-yellow-900 mb-1">Distinctive Features</p>
+                  <p className="text-yellow-800">{petData.distinctiveFeatures}</p>
+                </AlertDescription>
+              </Alert>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Contact Information with Improved Styling */}
+        {petData.contacts && petData.contacts.length > 0 && (
+          <Card className="mb-6">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Phone className="h-5 w-5 text-brand-primary" />
+                Emergency Contact Information
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {petData.contacts.map((contact, index) => (
+                  <div 
+                    key={index}
+                    className="p-4 rounded-lg bg-blue-50 border border-blue-200 hover:shadow-md transition-shadow"
+                  >
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between">
+                        <p className="font-semibold text-foreground">{contact.contact_name}</p>
+                        <span className="text-xs px-2 py-1 bg-blue-100 text-blue-700 rounded-full capitalize">
+                          {contact.contact_type.replace('_', ' ')}
+                        </span>
+                      </div>
+                      <a 
+                        href={`tel:${contact.contact_phone}`}
+                        className="flex items-center gap-2 text-brand-primary hover:text-brand-primary/80 font-medium text-lg"
+                      >
+                        <Phone className="h-5 w-5 flex-shrink-0" />
+                        {contact.contact_phone}
+                      </a>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Finder Instructions */}
+        {petData.finderInstructions && (
+          <Card className="mb-6 border-amber-300 bg-amber-50">
+            <CardHeader>
+              <CardTitle className="text-amber-900">Instructions for Finder</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-amber-900 whitespace-pre-wrap">{petData.finderInstructions}</p>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Gallery Photos with Enhanced Card Layout */}
+        {petData.galleryPhotos && petData.galleryPhotos.length > 0 && (
+          <Card className="mb-6">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Camera className="h-6 w-6 text-brand-primary" />
+                Additional Photos of {petData.name}
+              </CardTitle>
+              <p className="text-sm text-muted-foreground mt-2">
+                These photos can help identify {petData.name} from different angles and in various situations
+              </p>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                {petData.galleryPhotos.map((photo) => (
+                  <div key={photo.id} className="group relative aspect-square overflow-hidden rounded-lg border-2 border-red-200 shadow-sm hover:shadow-lg hover:border-red-400 transition-all">
+                    <img 
+                      src={photo.url} 
+                      alt={photo.caption || `${petData.name} photo`}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
+                    {photo.caption && (
+                      <div className="absolute bottom-0 left-0 right-0 bg-black/70 text-white text-xs p-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                        {photo.caption}
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+              <p className="text-sm text-center text-muted-foreground mt-4">
+                Showing all {petData.galleryPhotos.length} photos • Tap to view larger
+              </p>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Footer */}
         <div className="mt-12 text-center text-gray-500 text-sm pb-8">

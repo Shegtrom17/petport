@@ -152,6 +152,14 @@ export const CareInstructionsEditForm = ({ petData, onSave, onCancel }: CareInst
           <CardContent className="space-y-4">
             <div>
               <Label htmlFor="medications">Current Medication & Supplements</Label>
+              <div className="mt-2 mb-2 p-2 bg-blue-50 border border-blue-200 rounded-md">
+                <p className="text-sm font-semibold text-blue-800">
+                  💡 Use commas to create separate medication & supplement entries
+                </p>
+                <p className="text-xs text-blue-600 mt-1">
+                  Example: "Heartgard, Fish Oil, Gabapentin 100mg" will create individual cards
+                </p>
+              </div>
               <div className="text-xs text-amber-600 bg-amber-50 p-2 rounded-md mb-2 border border-amber-200">
                 ⚠️ Providing accurate medical details is highly recommended for emergencies.
               </div>
@@ -167,14 +175,6 @@ export const CareInstructionsEditForm = ({ petData, onSave, onCancel }: CareInst
                   onTranscript={(text) => setValue("medications", text)}
                   disabled={isLoading}
                 />
-              </div>
-              <div className="mt-2 p-2 bg-blue-50 border border-blue-200 rounded-md">
-                <p className="text-sm font-semibold text-blue-800">
-                  💡 Use commas to create separate medication & supplement entries
-                </p>
-                <p className="text-xs text-blue-600 mt-1">
-                  Example: "Heartgard, Fish Oil, Gabapentin 100mg" will create individual cards
-                </p>
               </div>
             </div>
             <div>

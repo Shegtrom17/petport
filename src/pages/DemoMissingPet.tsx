@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -15,18 +16,134 @@ import {
 } from "lucide-react";
 import { MetaTags } from "@/components/MetaTags";
 import { SocialShareButtons } from "@/components/SocialShareButtons";
-import { FINN_LOST_PET_DATA } from "@/data/finnDemoData";
 import { useNavigate } from "react-router-dom";
 import QRCode from "react-qr-code";
+import { supabase } from "@/integrations/supabase/client";
+import { sanitizeText, truncateText } from "@/utils/inputSanitizer";
+
+const FINNEGAN_ID = "297d1397-c876-4075-bf24-41ee1862853a";
 
 export default function DemoMissingPet() {
   const navigate = useNavigate();
-  const data = FINN_LOST_PET_DATA;
+  const [data, setData] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const load = async () => {
+      try {
+        // Fetch Finnegan's live data from the database
+        const { data: petData, error: petError } = await supabase
+          .from('pets')
+          .select('*')
+          .eq('id', FINNEGAN_ID)
+          .single();
+
+        if (petError) throw petError;
+
+        // Fetch lost pet data
+        const { data: lostData, error: lostError } = await supabase
+          .from('lost_pet_data')
+          .select('*')
+          .eq('pet_id', FINNEGAN_ID)
+          .single();
+
+        // Fetch photos
+        const { data: photosData, error: photosError } = await supabase
+          .from('pet_photos')
+          .select('*')
+          .eq('pet_id', FINNEGAN_ID)
+          .single();
+
+        // Fetch contacts
+        const { data: contactsData, error: contactsError } = await supabase
+          .from('pet_contacts')
+          .select('*')
+          .eq('pet_id', FINNEGAN_ID);
+
+        // Fetch medical data
+        const { data: medicalData, error: medicalError } = await supabase
+          .from('medical')
+          .select('*')
+          .eq('pet_id', FINNEGAN_ID)
+          .single();
+
+        // Fetch gallery photos
+        const { data: galleryData, error: galleryError } = await supabase
+          .from('gallery_photos')
+          .select('*')
+          .eq('pet_id', FINNEGAN_ID)
+          .order('position', { ascending: true });
+
+        // Sanitize and build the data object
+        const combinedData = {
+          id: petData.id,
+          name: sanitizeText(petData.name),
+          species: sanitizeText(petData.species),
+          breed: sanitizeText(petData.breed),
+          age: sanitizeText(petData.age),
+          weight: sanitizeText(petData.weight),
+          sex: petData.sex,
+          microchip_id: sanitizeText(petData.microchip_id),
+          photo_url: photosData?.photo_url || '',
+          full_body_photo_url: photosData?.full_body_photo_url || '',
+          lost_pet_data: lostData ? {
+            is_missing: lostData.is_missing,
+            last_seen_location: sanitizeText(lostData.last_seen_location),
+            last_seen_date: lostData.last_seen_date ? new Date(lostData.last_seen_date).toLocaleDateString() : '',
+            last_seen_time: sanitizeText(lostData.last_seen_time),
+            distinctive_features: sanitizeText(lostData.distinctive_features),
+            reward_amount: sanitizeText(lostData.reward_amount),
+            finder_instructions: sanitizeText(lostData.finder_instructions),
+            contact_priority: sanitizeText(lostData.contact_priority),
+            emergency_notes: sanitizeText(lostData.emergency_notes),
+          } : null,
+          pet_contacts: contactsData?.map(c => ({
+            id: c.id,
+            contact_name: sanitizeText(c.contact_name),
+            contact_phone: sanitizeText(c.contact_phone),
+            contact_type: sanitizeText(c.contact_type),
+          })) || [],
+          medical: medicalData ? {
+            medical_alert: medicalData.medical_alert,
+            medical_conditions: sanitizeText(medicalData.medical_conditions),
+          } : null,
+          gallery_photos: galleryData?.map(g => ({
+            id: g.id,
+            url: g.url,
+            caption: sanitizeText(g.caption),
+          })) || [],
+        };
+
+        setData(combinedData);
+      } catch (error) {
+        console.error('Error loading demo data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    load();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-2 border-primary border-t-transparent" />
+      </div>
+    );
+  }
+
+  if (!data) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p>Unable to load demo data</p>
+      </div>
+    );
+  }
+
   const lostData = data.lost_pet_data;
-  
   const shareUrl = "https://petport.app/demo/missing-pet";
   const shareTitle = `LOST PET: ${data.name} - ${data.breed || data.species}`;
-  const shareText = `Please help find ${data.name}! Last seen: ${lostData.last_seen_location}. ${lostData.reward_amount} REWARD!`;
+  const shareText = `Please help find ${data.name}! Last seen: ${lostData?.last_seen_location}. ${lostData?.reward_amount} REWARD!`;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-red-50 via-white to-orange-50">
@@ -38,11 +155,11 @@ export default function DemoMissingPet() {
         type="article"
       />
 
-      {/* Demo Banner */}
+      {/* Live Demo Banner */}
       <div className="bg-gradient-to-r from-brand-primary via-brand-secondary to-brand-primary text-white py-3 px-4 text-center sticky top-0 z-50 shadow-lg">
         <div className="max-w-4xl mx-auto flex items-center justify-center gap-2 flex-wrap">
           <Sparkles className="h-5 w-5" />
-          <span className="font-semibold">✨ Demo - This is NOT a real missing pet alert</span>
+          <span className="font-semibold">✨ Live Demo – Real PetPort Whiteboard</span>
           <Button 
             onClick={() => navigate('/auth')}
             variant="outline" 

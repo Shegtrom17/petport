@@ -9,7 +9,7 @@ export const FINN_DEMO_DATA = {
   petport_id: 'PP-2025-001',
   name: 'Finnegan',
   species: 'dog',
-  breed: 'Labradoodle',
+  breed: 'Wheaten Terrier',
   age: '3',
   sex: 'neutered_male',
   weight: '62',

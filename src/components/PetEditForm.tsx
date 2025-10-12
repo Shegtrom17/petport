@@ -417,9 +417,9 @@ export const PetEditForm = ({ petData, onSave, onCancel, togglePetPublicVisibili
             </div>
             
             <div className="mt-4">
-              <Label htmlFor="notes">Notes</Label>
+              <Label htmlFor="notes">Description & Unique Traits</Label>
               <div className="relative">
-                <Textarea id="notes" name="notes" value={formData.notes} onChange={handleChange} className="min-h-20" />
+                <Textarea id="notes" name="notes" value={formData.notes} onChange={handleChange} className="min-h-20" placeholder="Additional notes, unique traits, special needs, or distinctive characteristics" />
                 <VoiceRecorder
                   onTranscript={(text) => setFormData(prev => ({ ...prev, notes: text }))}
                   disabled={isSaving}

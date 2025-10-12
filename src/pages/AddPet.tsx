@@ -431,14 +431,14 @@ export default function AddPet() {
 
                 {/* Notes */}
                 <div className="space-y-2">
-                  <Label htmlFor="notes">Notes</Label>
+                  <Label htmlFor="notes">Description & Unique Traits</Label>
                   <div className="relative">
                     <Textarea
                       id="notes"
                       name="notes"
                       value={petData.notes}
                       onChange={handleChange}
-                      placeholder="Additional notes (e.g., special needs, behavior)"
+                      placeholder="Additional notes, unique traits, special needs, or distinctive characteristics"
                       rows={3}
                       className="pr-12"
                     />

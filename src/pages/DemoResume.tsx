@@ -308,13 +308,14 @@ export default function DemoResume() {
         <div className="bg-gradient-to-r from-brand-primary to-brand-secondary rounded-lg p-8 text-center text-white mb-6">
           <h2 className="text-2xl font-bold mb-3">Ready to Create Your Pet's Professional Whiteboard?</h2>
           <p className="mb-4 text-white/90">Join thousands of pet owners showcasing their pets' achievements</p>
-          <Button 
-            onClick={() => navigate('/auth')}
-            size="lg"
-            className="bg-white text-brand-primary hover:bg-brand-cream"
-          >
-            Create Your Free Whiteboard
-          </Button>
+          <a href="/#pricing">
+            <Button 
+              size="lg"
+              className="bg-white text-brand-primary hover:bg-brand-cream"
+            >
+              Get Started Today
+            </Button>
+          </a>
         </div>
 
         {/* Footer */}

@@ -260,14 +260,20 @@ export default function Landing() {
               <p className="text-sm text-muted-foreground mb-4">
                 These demos use real data from Finn's actual PetPort profile - everything updates in real-time
               </p>
-              <Button 
-                onClick={() => navigate('/auth')}
-                variant="outline"
-                size="lg"
-                className="border-brand-primary text-brand-primary hover:bg-brand-primary hover:text-white"
-              >
-                Create Your Pet's Whiteboard Free
-              </Button>
+              <div className="flex flex-col items-center gap-2">
+                <a href="#pricing">
+                  <Button 
+                    variant="outline"
+                    size="lg"
+                    className="border-brand-primary text-brand-primary hover:bg-brand-primary hover:text-white"
+                  >
+                    Create Whiteboards for Your Pet
+                  </Button>
+                </a>
+                <p className="text-sm text-muted-foreground">
+                  7-day free trial included
+                </p>
+              </div>
             </div>
           </div>
         </section>

@@ -90,6 +90,7 @@ function normalizePetData(raw: any): any {
       exerciseRequirements: pet.careInstructions?.exerciseRequirements,
       behavioralNotes: pet.careInstructions?.behavioralNotes || pet.behavioral_notes,
       favoriteActivities: pet.careInstructions?.favoriteActivities || pet.favorite_activities,
+      caretakerNotes: pet.careInstructions?.caretakerNotes || pet.caretaker_notes,
     },
     feeding_schedule: pet.feeding_schedule || pet.careInstructions?.feedingSchedule,
     morning_routine: pet.morning_routine || pet.careInstructions?.morningRoutine,
@@ -97,6 +98,7 @@ function normalizePetData(raw: any): any {
     allergies: pet.allergies || pet.careInstructions?.allergies,
     behavioral_notes: pet.behavioral_notes || pet.careInstructions?.behavioralNotes,
     favorite_activities: pet.favorite_activities || pet.careInstructions?.favoriteActivities,
+    caretaker_notes: pet.caretaker_notes || pet.careInstructions?.caretakerNotes,
 
     // Contacts (both camel and snake)
     emergencyContact: pet.emergencyContact || pet.emergency_contact || pet.contacts?.emergency_contact,
@@ -1042,7 +1044,7 @@ const generateFullPDF = async (doc: jsPDF, pageManager: PDFPageManager, petData:
   });
 
   // Care Instructions
-  if (petData.feeding_schedule || petData.morning_routine || petData.evening_routine || petData.behavioral_notes || petData.favorite_activities) {
+  if (petData.feeding_schedule || petData.morning_routine || petData.evening_routine || petData.behavioral_notes || petData.favorite_activities || petData.caretaker_notes) {
     addSection(doc, pageManager, 'CARE INSTRUCTIONS', () => {
       if (petData.feeding_schedule) {
         addText(doc, pageManager, `Feeding Schedule: ${safeText(petData.feeding_schedule)}`);
@@ -1058,6 +1060,9 @@ const generateFullPDF = async (doc: jsPDF, pageManager: PDFPageManager, petData:
       }
       if (petData.favorite_activities) {
         addText(doc, pageManager, `Favorite Activities: ${safeText(petData.favorite_activities)}`);
+      }
+      if (petData.caretaker_notes) {
+        addText(doc, pageManager, `Notes for Sitter: ${safeText(petData.caretaker_notes)}`);
       }
       
       // Health Monitoring section
@@ -1635,6 +1640,12 @@ const generateCarePDF = async (doc: jsPDF, pageManager: PDFPageManager, petData:
     if (petData.careInstructions.favoriteActivities) {
       addSection(doc, pageManager, 'FAVORITE ACTIVITIES', () => {
         addText(doc, pageManager, petData.careInstructions.favoriteActivities);
+      });
+    }
+    
+    if (petData.careInstructions.caretakerNotes) {
+      addSection(doc, pageManager, 'NOTES FOR SITTER', () => {
+        addText(doc, pageManager, petData.careInstructions.caretakerNotes);
       });
     }
     

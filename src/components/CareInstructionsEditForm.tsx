@@ -30,6 +30,7 @@ export const CareInstructionsEditForm = ({ petData, onSave, onCancel }: CareInst
       allergies: petData.careInstructions?.allergies || "",
       behavioralNotes: petData.careInstructions?.behavioralNotes || "",
       favoriteActivities: petData.careInstructions?.favoriteActivities || "",
+      caretakerNotes: petData.careInstructions?.caretakerNotes || "",
       medications: Array.isArray(petData.medications) ? petData.medications.join(", ") : (petData.medications || ""),
     }
   });
@@ -52,6 +53,7 @@ export const CareInstructionsEditForm = ({ petData, onSave, onCancel }: CareInst
         allergies: sanitizeText(data.allergies),
         behavioralNotes: sanitizeText(data.behavioralNotes),
         favoriteActivities: sanitizeText(data.favoriteActivities),
+        caretakerNotes: sanitizeText(data.caretakerNotes),
         medications: sanitizeText(data.medications),
       });
 
@@ -236,6 +238,22 @@ export const CareInstructionsEditForm = ({ petData, onSave, onCancel }: CareInst
                 />
                 <VoiceRecorder
                   onTranscript={(text) => setValue("favoriteActivities", text)}
+                  disabled={isLoading}
+                />
+              </div>
+            </div>
+            <div>
+              <Label htmlFor="caretakerNotes">Notes for Sitter</Label>
+              <div className="relative">
+                <Textarea
+                  id="caretakerNotes"
+                  {...register("caretakerNotes")}
+                  placeholder="Additional instructions or important notes for the pet sitter..."
+                  rows={3}
+                  disabled={isLoading}
+                />
+                <VoiceRecorder
+                  onTranscript={(text) => setValue("caretakerNotes", text)}
                   disabled={isLoading}
                 />
               </div>

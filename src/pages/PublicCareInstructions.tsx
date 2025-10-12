@@ -40,6 +40,7 @@ interface CareData {
   allergies?: string;
   behavioral_notes?: string;
   favorite_activities?: string;
+  caretaker_notes?: string;
 }
 
 interface MedicalData {
@@ -462,7 +463,7 @@ const PublicCareInstructions = () => {
           </Card>
 
           {/* Important Notes */}
-          {(careData?.allergies || careData?.behavioral_notes || careData?.favorite_activities) && (
+          {(careData?.allergies || careData?.behavioral_notes || careData?.favorite_activities || careData?.caretaker_notes) && (
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-navy-900">
@@ -497,6 +498,17 @@ const PublicCareInstructions = () => {
                     <p className="text-navy-600 leading-relaxed whitespace-pre-wrap">
                       {careData.favorite_activities}
                     </p>
+                  </div>
+                )}
+
+                {careData.caretaker_notes && (
+                  <div>
+                    <h4 className="font-medium text-navy-800 mb-2">Notes for Sitter</h4>
+                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                      <p className="text-blue-800 leading-relaxed whitespace-pre-wrap">
+                        {careData.caretaker_notes}
+                      </p>
+                    </div>
                   </div>
                 )}
               </CardContent>

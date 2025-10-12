@@ -28,6 +28,7 @@ export async function updateCareInstructions(
       _allergies: data.allergies || null,
       _behavioral_notes: data.behavioralNotes || null,
       _favorite_activities: data.favoriteActivities || null,
+      _caretaker_notes: data.caretakerNotes || null,
     });
 
     if (careError) {

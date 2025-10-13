@@ -19,7 +19,7 @@ import { GuidanceHint } from "@/components/ui/guidance-hint";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { generatePublicProfileUrl, generatePublicMissingUrl, generateQRCodeUrl } from "@/services/pdfService";
 import { Link } from "react-router-dom";
-import { QuickShareHub } from "@/components/QuickShareHub";
+
 import { VoiceRecorder } from "@/components/VoiceRecorder";
 
 interface PetData {
@@ -666,16 +666,6 @@ export const QuickIDSection = ({ petData, onUpdate }: QuickIDSectionProps) => {
         </Card>
       )}
 
-      {/* Quick Share Hub */}
-      {petData.id && (
-        <QuickShareHub 
-          petData={{
-            id: petData.id,
-            name: petData.name
-          }}
-          isLost={lostPetData.is_missing}
-        />
-      )}
 
       {/* QR Code Section */}
       <Card className="bg-white shadow-sm border border-gray-200">

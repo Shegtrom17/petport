@@ -100,11 +100,12 @@ function normalizePetData(raw: any): any {
     favorite_activities: pet.favorite_activities || pet.careInstructions?.favoriteActivities,
     caretaker_notes: pet.caretaker_notes || pet.careInstructions?.caretakerNotes,
 
-    // Contacts (both camel and snake)
-    emergencyContact: pet.emergencyContact || pet.emergency_contact || pet.contacts?.emergency_contact,
-    secondEmergencyContact: pet.secondEmergencyContact || pet.second_emergency_contact || pet.contacts?.second_emergency_contact,
-    vetContact: pet.vetContact || pet.vet_contact || pet.contacts?.vet_contact,
-    petCaretaker: pet.petCaretaker || pet.pet_caretaker || pet.contacts?.pet_caretaker,
+    // Contacts - now pulled from petService which transforms pet_contacts table
+    // The petService already converts pet_contacts array to these legacy fields
+    emergencyContact: pet.emergencyContact || pet.emergency_contact,
+    secondEmergencyContact: pet.secondEmergencyContact || pet.second_emergency_contact,
+    vetContact: pet.vetContact || pet.vet_contact,
+    petCaretaker: pet.petCaretaker || pet.pet_caretaker,
     emergency_contact: pet.emergency_contact || pet.emergencyContact,
     second_emergency_contact: pet.second_emergency_contact || pet.secondEmergencyContact,
     vet_contact: pet.vet_contact || pet.vetContact,

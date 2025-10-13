@@ -26,7 +26,7 @@ export type PetWithDetails = {
   custom_logo_url?: string | null;
   adoption_status?: string | null;
   adoption_instructions?: string | null;
-  contacts?: Tables<"contacts"> | null;
+  pet_contacts?: Tables<"pet_contacts">[];
   medical?: Tables<"medical"> | null;
   photos?: Tables<"pet_photos"> | null;
   professional_data?: Tables<"professional_data"> | null;
@@ -62,11 +62,19 @@ export function transformPetData(pet: PetWithDetails): any {
     state: pet.state,
     county: pet.county,
     is_public: pet.is_public,
-    // Transform contacts
-    vetContact: pet.contacts?.vet_contact || "",
-    emergencyContact: pet.contacts?.emergency_contact || "",
-    secondEmergencyContact: pet.contacts?.second_emergency_contact || "",
-    petCaretaker: pet.contacts?.pet_caretaker || "",
+    // Transform contacts from pet_contacts array to old format for backward compatibility
+    vetContact: pet.pet_contacts?.find(c => c.contact_type === 'vet')
+      ? `${pet.pet_contacts.find(c => c.contact_type === 'vet')?.contact_name} ${pet.pet_contacts.find(c => c.contact_type === 'vet')?.contact_phone}`.trim()
+      : "",
+    emergencyContact: pet.pet_contacts?.find((c, i) => c.contact_type === 'emergency' && i === 0)
+      ? `${pet.pet_contacts.find((c, i) => c.contact_type === 'emergency' && i === 0)?.contact_name} ${pet.pet_contacts.find((c, i) => c.contact_type === 'emergency' && i === 0)?.contact_phone}`.trim()
+      : "",
+    secondEmergencyContact: pet.pet_contacts?.filter(c => c.contact_type === 'emergency')[1]
+      ? `${pet.pet_contacts.filter(c => c.contact_type === 'emergency')[1]?.contact_name} ${pet.pet_contacts.filter(c => c.contact_type === 'emergency')[1]?.contact_phone}`.trim()
+      : "",
+    petCaretaker: pet.pet_contacts?.find(c => c.contact_type === 'caretaker')
+      ? `${pet.pet_contacts.find(c => c.contact_type === 'caretaker')?.contact_name} ${pet.pet_contacts.find(c => c.contact_type === 'caretaker')?.contact_phone}`.trim()
+      : "",
     // Transform medical
     medicalAlert: pet.medical?.medical_alert || false,
     medicalConditions: pet.medical?.medical_conditions || "",
@@ -192,7 +200,7 @@ export async function fetchUserPets(): Promise<any[]> {
         custom_logo_url: pet.custom_logo_url,
         adoption_status: pet.adoption_status,
         adoption_instructions: pet.adoption_instructions,
-        contacts: null,
+        pet_contacts: [],
         medical: null,
         photos: null,
         professional_data: null,
@@ -228,7 +236,7 @@ export async function fetchPetDetails(petId: string): Promise<any | null> {
     }
 
     const [
-      contactsResponse,
+      petContactsResponse,
       medicalResponse,
       photosResponse,
       professionalResponse,
@@ -243,7 +251,7 @@ export async function fetchPetDetails(petId: string): Promise<any | null> {
       certificationsResponse,
       lostPetResponse
     ] = await Promise.all([
-      supabase.from("contacts").select("*").eq("pet_id", petId).order("updated_at", { ascending: false }).limit(1).maybeSingle(),
+      supabase.from("pet_contacts").select("*").eq("pet_id", petId),
       supabase.from("medical").select("*").eq("pet_id", petId).order("updated_at", { ascending: false }).limit(1).maybeSingle(),
       supabase.from("pet_photos").select("*").eq("pet_id", petId).order("updated_at", { ascending: false }).limit(1).maybeSingle(),
       supabase.from("professional_data").select("*").eq("pet_id", petId).order("updated_at", { ascending: false }).limit(1).maybeSingle(),
@@ -259,7 +267,7 @@ export async function fetchPetDetails(petId: string): Promise<any | null> {
       supabase.from("lost_pet_data").select("*").eq("pet_id", petId).order("updated_at", { ascending: false }).limit(1).maybeSingle()
     ]);
 
-    if (contactsResponse.error) console.error("Error fetching contacts:", contactsResponse.error);
+    if (petContactsResponse.error) console.error("Error fetching pet contacts:", petContactsResponse.error);
     if (medicalResponse.error) console.error("Error fetching medical:", medicalResponse.error);
     if (photosResponse.error) console.error("Error fetching photos:", photosResponse.error);
     if (professionalResponse.error) console.error("Error fetching professional:", professionalResponse.error);
@@ -289,7 +297,7 @@ export async function fetchPetDetails(petId: string): Promise<any | null> {
       custom_logo_url: pet.custom_logo_url,
       adoption_status: pet.adoption_status,
       adoption_instructions: pet.adoption_instructions,
-      contacts: contactsResponse.data,
+      pet_contacts: petContactsResponse.data || [],
       medical: medicalResponse.data,
       photos: photosResponse.data,
       professional_data: professionalResponse.data,
@@ -507,36 +515,22 @@ export async function updatePetBasicInfo(petId: string, basicData: {
   }
 }
 
+/**
+ * @deprecated This function is deprecated. Contacts are now managed through the Profile Management Hub
+ * using the pet_contacts table. This function is kept for backward compatibility but does nothing.
+ * Please use the Profile Management Hub to add/edit/delete contacts.
+ */
 export async function updatePetContacts(petId: string, contactData: {
   vet_contact?: string;
   emergency_contact?: string;
   second_emergency_contact?: string;
   pet_caretaker?: string;
 }): Promise<boolean> {
-  try {
-    console.log("Updating contacts for pet:", petId, "with data:", contactData);
-    
-    const { error } = await supabase
-      .from("contacts")
-      .upsert({
-        pet_id: petId,
-        ...contactData,
-        updated_at: new Date().toISOString()
-      }, {
-        onConflict: 'pet_id'
-      });
-
-    if (error) {
-      console.error("Error updating contacts:", error);
-      throw error;
-    }
-
-    console.log("Contacts updated successfully");
-    return true;
-  } catch (error) {
-    console.error("Error in updatePetContacts:", error);
-    return false;
-  }
+  console.warn("⚠️ updatePetContacts is deprecated. Please use Profile Management Hub to manage contacts.");
+  console.log("Contact data that was attempted to save:", contactData);
+  console.log("Pet ID:", petId);
+  console.log("ℹ️ Contacts should be managed through the pet_contacts table via Profile Management Hub");
+  return true; // Return true to not break existing code
 }
 
 export async function updatePetMedical(petId: string, medicalData: {

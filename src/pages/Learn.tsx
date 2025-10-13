@@ -1,13 +1,16 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { MetaTags } from "@/components/MetaTags";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { PricingSection } from "@/components/PricingSection";
+import { FINN_DEMO_PET_ID } from '@/data/finnDemoData';
 import createProfileScreenshot from "@/assets/create-profile-screenshot.png";
 import documentUploadScreenshot from "@/assets/document-upload-screenshot.png";
 import resumeDetailsScreenshot from "@/assets/resume-details-screenshot.png";
 import shareInstructionsScreenshot from "@/assets/share-instructions-screenshot.png";
+
 export default function Learn() {
+  const navigate = useNavigate();
   return <div className="min-h-screen bg-white">
       <MetaTags title="Complete Pet Care Guide: Digital Documentation & Reviews | PetPort" description="Learn how to organize pet documents, request reviews from trainers, groomers & sitters, and create emergency profiles. Complete guide to digital pet management." url={window.location.origin + "/learn"} />
 
@@ -56,6 +59,143 @@ export default function Learn() {
               <a href="#foster-care" className="block text-brand-primary hover:text-blue-600 font-medium">🤝 Foster Care Best Practices</a>
               <a href="#frequently-asked-questions" className="block text-brand-primary hover:text-blue-600 font-medium">❓ Frequently Asked Questions</a>
               <a href="#getting-started" className="block text-brand-primary hover:text-blue-600 font-medium">🚀 Getting Started with PetPort</a>
+            </div>
+          </div>
+        </section>
+
+        {/* Experience PetPort Whiteboards Section */}
+        <section className="mb-16">
+          <div className="text-center mb-8">
+            <h2 className="text-3xl font-bold text-brand-primary mb-4">Experience PetPort Whiteboards in Action</h2>
+            <p className="text-lg text-brand-primary-dark max-w-3xl mx-auto">
+              See real PetPort whiteboards in action. These are live examples using Finnegan's actual profile data - everything updates in real-time. Click any card to explore the full interactive experience.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8 mb-8">
+            {/* Pet Resume Demo Card */}
+            <div className="bg-white rounded-xl shadow-xl overflow-hidden border-2 border-brand-primary/20 hover:border-brand-primary transition-all hover:shadow-2xl">
+              <div className="bg-gradient-to-r from-brand-primary to-brand-secondary p-6 text-white">
+                <h3 className="text-2xl font-bold mb-2">Professional Pet Resume</h3>
+                <p className="text-white/90">Certifications, training, achievements & reviews</p>
+              </div>
+              <div className="p-6">
+                <ul className="space-y-2 mb-6 text-brand-primary-dark">
+                  <li className="flex items-start gap-2">
+                    <span className="text-brand-primary">✓</span>
+                    <span>Professional certifications & credentials</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-brand-primary">✓</span>
+                    <span>Training history & achievements</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-brand-primary">✓</span>
+                    <span>References & verified reviews</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-brand-primary">✓</span>
+                    <span>Experience & activities timeline</span>
+                  </li>
+                </ul>
+                <Button 
+                  onClick={() => navigate('/demo/resume')}
+                  className="w-full bg-brand-primary hover:bg-brand-secondary text-white"
+                  size="lg"
+                >
+                  View Live Resume Demo
+                </Button>
+              </div>
+            </div>
+
+            {/* Care & Handling Demo Card */}
+            <div className="bg-white rounded-xl shadow-xl overflow-hidden border-2 border-emerald-200 hover:border-emerald-500 transition-all hover:shadow-2xl">
+              <div className="bg-gradient-to-r from-sage-600 to-emerald-600 p-6 text-white">
+                <h3 className="text-2xl font-bold mb-2">Daily Care & Handling Instructions</h3>
+                <p className="text-white/90">Feeding, routines, medications & health monitoring</p>
+              </div>
+              <div className="p-6">
+                <ul className="space-y-2 mb-6 text-brand-primary-dark">
+                  <li className="flex items-start gap-2">
+                    <span className="text-emerald-600">✓</span>
+                    <span>Feeding schedules & dietary preferences</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-emerald-600">✓</span>
+                    <span>Morning & evening routines</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-emerald-600">✓</span>
+                    <span>Medication & supplement tracking</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-emerald-600">✓</span>
+                    <span>Health monitoring guidelines</span>
+                  </li>
+                </ul>
+                <Button 
+                  onClick={() => navigate(`/care/${FINN_DEMO_PET_ID}`)}
+                  className="w-full bg-emerald-600 hover:bg-emerald-700 text-white"
+                  size="lg"
+                >
+                  View Live Care Instructions
+                </Button>
+              </div>
+            </div>
+
+            {/* Missing Pet Demo Card */}
+            <div className="bg-white rounded-xl shadow-xl overflow-hidden border-2 border-red-200 hover:border-red-500 transition-all hover:shadow-2xl">
+              <div className="bg-gradient-to-r from-red-600 to-orange-600 p-6 text-white">
+                <h3 className="text-2xl font-bold mb-2">Missing Pet Emergency Page</h3>
+                <p className="text-white/90">Instant shareable alert with QR code</p>
+              </div>
+              <div className="p-6">
+                <ul className="space-y-2 mb-6 text-brand-primary-dark">
+                  <li className="flex items-start gap-2">
+                    <span className="text-red-600">✓</span>
+                    <span>Last seen location & time details</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-red-600">✓</span>
+                    <span>Emergency contacts & instructions</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-red-600">✓</span>
+                    <span>Shareable QR code for flyers</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-red-600">✓</span>
+                    <span>Photo gallery & distinctive features</span>
+                  </li>
+                </ul>
+                <Button 
+                  onClick={() => navigate('/demo/missing-pet')}
+                  className="w-full bg-red-600 hover:bg-red-700 text-white"
+                  size="lg"
+                >
+                  View Missing Pet Demo
+                </Button>
+              </div>
+            </div>
+          </div>
+
+          <div className="text-center">
+            <p className="text-sm text-muted-foreground mb-4">
+              These demos use real data from Finn's actual PetPort profile - everything updates in real-time
+            </p>
+            <div className="flex flex-col items-center gap-2">
+              <a href="#pricing">
+                <Button 
+                  variant="outline"
+                  size="lg"
+                  className="border-brand-primary text-brand-primary hover:bg-brand-primary hover:text-white"
+                >
+                  Create Whiteboards for Your Pet
+                </Button>
+              </a>
+              <p className="text-sm text-muted-foreground">
+                7-day free trial included
+              </p>
             </div>
           </div>
         </section>

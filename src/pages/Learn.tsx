@@ -109,33 +109,33 @@ export default function Learn() {
             </div>
 
             {/* Care & Handling Demo Card */}
-            <div className="bg-white rounded-xl shadow-xl overflow-hidden border-2 border-emerald-200 hover:border-emerald-500 transition-all hover:shadow-2xl">
-              <div className="bg-gradient-to-r from-sage-600 to-emerald-600 p-6 text-white">
-                <h3 className="text-2xl font-bold mb-2">Daily Care & Handling Instructions</h3>
+            <div className="bg-white rounded-xl shadow-xl overflow-hidden border-2 border-[#5691af]/20 hover:border-[#5691af] transition-all hover:shadow-2xl">
+              <div className="bg-gradient-to-r from-[#5691af] to-[#4a7d99] p-6 text-white">
+                <h3 className="text-2xl font-bold mb-2">Care Instructions</h3>
                 <p className="text-white/90">Feeding, routines, medications & health monitoring</p>
               </div>
               <div className="p-6">
                 <ul className="space-y-2 mb-6 text-brand-primary-dark">
                   <li className="flex items-start gap-2">
-                    <span className="text-emerald-600">✓</span>
+                    <span className="text-[#5691af]">✓</span>
                     <span>Feeding schedules & dietary preferences</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <span className="text-emerald-600">✓</span>
+                    <span className="text-[#5691af]">✓</span>
                     <span>Morning & evening routines</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <span className="text-emerald-600">✓</span>
+                    <span className="text-[#5691af]">✓</span>
                     <span>Medication & supplement tracking</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <span className="text-emerald-600">✓</span>
+                    <span className="text-[#5691af]">✓</span>
                     <span>Health monitoring guidelines</span>
                   </li>
                 </ul>
                 <Link to={`/care/${FINN_DEMO_PET_ID}`} className="block w-full">
                   <Button 
-                    className="w-full bg-emerald-600 hover:bg-emerald-700 text-white"
+                    className="w-full bg-[#5691af] hover:bg-[#4a7d99] text-white"
                     size="lg"
                   >
                     View Live Care Instructions

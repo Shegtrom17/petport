@@ -296,8 +296,7 @@ export default function Landing() {
         <section className="bg-white py-20">
           <div className="max-w-7xl mx-auto px-4">
             <div className="text-center mb-16">
-              <h2 className="text-4xl font-bold text-brand-primary mb-4">The First Whiteboard for Pet Profiles</h2>
-              <p className="text-xl text-brand-primary-dark">Pet passport app vs pet profile app? PetPort is both! The all-in-one digital solution that gives your pet the very best app that is sharable for their  lifetime.</p>
+              <h2 className="text-4xl font-bold text-brand-primary mb-4">PetPort.app Gives Them a Voice For a Lifetime.</h2>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">

@@ -235,8 +235,13 @@ const PublicCareInstructions = () => {
       {/* Live Demo Banner */}
       <div className="bg-gradient-to-r from-[#5691af] via-[#4a7d99] to-[#5691af] text-white py-3 px-4 text-center sticky top-0 z-50 shadow-lg">
         <div className="max-w-4xl mx-auto flex items-center justify-center gap-2 flex-wrap">
-          <Sparkles className="h-5 w-5" />
-          <span className="font-semibold">✨ Live Demo – Real PetPort Whiteboard</span>
+          <div className="flex flex-col items-center gap-0.5">
+            <div className="flex items-center gap-2">
+              <Sparkles className="h-5 w-5" />
+              <span className="font-semibold">✨ Live Demo – Real PetPort Whiteboard</span>
+            </div>
+            <span className="text-xs opacity-90">Instantly update from any device</span>
+          </div>
           <a href="/#pricing">
             <Button 
               variant="outline" 

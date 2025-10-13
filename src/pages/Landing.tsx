@@ -126,7 +126,7 @@ export default function Landing() {
                 Digital Pet Passport
               </h1>
               <p className="mt-6 text-xl text-brand-primary-dark leading-relaxed">
-                PetPort is your all-in-one digital information platform for pets and horses. Securely organize essential data: vaccines, insurance, medical records, and travel documents. Our innovative PetPort Whiteboards allow anyone with your unique link to view all your pet's shareable information instantly - groomers, sitters, or emergencies.  Share a professional pet résumé and care instructions in real-time. For a quick snapshot, the Whiteboard can also generate instant PDFs and lost-pet flyers in seconds.  Update your pet's data from anywhere, to anyone., Instantly.
+                PetPort is your all-in-one digital information platform for pets and horses. Securely organize essential data: vaccines, insurance, medical records, and travel documents. Our innovative PetPort Whiteboards allow anyone with your unique link to view all your pet's shareable information instantly - groomers, sitters, or emergencies.  Share a professional pet résumé and care instructions in real-time. For a quick snapshot, the Whiteboard can also generate instant PDFs and lost-pet flyers in seconds.  Update your pet's data from anywhere, to anyone, Instantly.
               </p>
 
               {/* AI Features Callout */}

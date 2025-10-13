@@ -126,7 +126,7 @@ export default function Landing() {
                 Digital Pet Passport
               </h1>
               <p className="mt-6 text-xl text-brand-primary-dark leading-relaxed">
-                PetPort is the ultimate all-in-one app for pets and horses. Securely organize everything you need—from vaccines, insurance, and medical records to travel documents—all in one place. Instantly generate lost-pet flyers, PDFs, and QR codes in seconds. You can also add essential care instructions, build a professional pet résumé, and showcase achievements and photos. Our innovative PetPort Whiteboards allow anyone with your unique link to view your pet's data in real-time—update your pet's information from anywhere, to anyone. They do not need the app to view the data.
+                PetPort is your all-in-one digital information platform for pets and horses. Securely organize essential data: vaccines, insurance, medical records, and travel documents. Our innovative PetPort Whiteboards allow anyone with your unique link to view all your pet's shareable information instantly - groomers, sitters, or emergencies.  Share a professional pet résumé and care instructions in real-time. For a quick snapshot, the Whiteboard can also generate instant PDFs and lost-pet flyers in seconds.  Update your pet's data from anywhere, to anyone., Instantly.
               </p>
 
               {/* AI Features Callout */}

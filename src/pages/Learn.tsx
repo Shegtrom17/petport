@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { MetaTags } from "@/components/MetaTags";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
@@ -10,7 +10,6 @@ import resumeDetailsScreenshot from "@/assets/resume-details-screenshot.png";
 import shareInstructionsScreenshot from "@/assets/share-instructions-screenshot.png";
 
 export default function Learn() {
-  const navigate = useNavigate();
   return <div className="min-h-screen bg-white">
       <MetaTags title="Complete Pet Care Guide: Digital Documentation & Reviews | PetPort" description="Learn how to organize pet documents, request reviews from trainers, groomers & sitters, and create emergency profiles. Complete guide to digital pet management." url={window.location.origin + "/learn"} />
 
@@ -98,13 +97,14 @@ export default function Learn() {
                     <span>Experience & activities timeline</span>
                   </li>
                 </ul>
-                <Button 
-                  onClick={() => navigate('/demo/resume')}
-                  className="w-full bg-brand-primary hover:bg-brand-secondary text-white"
-                  size="lg"
-                >
-                  View Live Resume Demo
-                </Button>
+                <Link to="/demo/resume" className="block w-full">
+                  <Button 
+                    className="w-full bg-brand-primary hover:bg-brand-secondary text-white"
+                    size="lg"
+                  >
+                    View Live Resume Demo
+                  </Button>
+                </Link>
               </div>
             </div>
 
@@ -133,13 +133,14 @@ export default function Learn() {
                     <span>Health monitoring guidelines</span>
                   </li>
                 </ul>
-                <Button 
-                  onClick={() => navigate(`/care/${FINN_DEMO_PET_ID}`)}
-                  className="w-full bg-emerald-600 hover:bg-emerald-700 text-white"
-                  size="lg"
-                >
-                  View Live Care Instructions
-                </Button>
+                <Link to={`/care/${FINN_DEMO_PET_ID}`} className="block w-full">
+                  <Button 
+                    className="w-full bg-emerald-600 hover:bg-emerald-700 text-white"
+                    size="lg"
+                  >
+                    View Live Care Instructions
+                  </Button>
+                </Link>
               </div>
             </div>
 
@@ -168,13 +169,14 @@ export default function Learn() {
                     <span>Photo gallery & distinctive features</span>
                   </li>
                 </ul>
-                <Button 
-                  onClick={() => navigate('/demo/missing-pet')}
-                  className="w-full bg-red-600 hover:bg-red-700 text-white"
-                  size="lg"
-                >
-                  View Missing Pet Demo
-                </Button>
+                <Link to="/demo/missing-pet" className="block w-full">
+                  <Button 
+                    className="w-full bg-red-600 hover:bg-red-700 text-white"
+                    size="lg"
+                  >
+                    View Missing Pet Demo
+                  </Button>
+                </Link>
               </div>
             </div>
           </div>

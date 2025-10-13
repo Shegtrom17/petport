@@ -4,11 +4,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
-import { Clock, Heart, AlertTriangle, Phone, MapPin, Pill } from "lucide-react";
+import { Clock, Heart, AlertTriangle, Phone, MapPin, Pill, Sparkles } from "lucide-react";
 import { fetchPetDetails } from '@/services/petService';
 import { fetchCareInstructions } from '@/services/careInstructionsService';
 import { supabase } from "@/integrations/supabase/client";
 import { MetaTags } from "@/components/MetaTags";
+import { Button } from "@/components/ui/button";
 
 interface Pet {
   id: string;
@@ -230,6 +231,24 @@ const PublicCareInstructions = () => {
         description={`Live care plan for ${pet.name}: feeding, routines, and important notes.`}
         url={`${window.location.origin}/care/${pet.id}`}
       />
+
+      {/* Live Demo Banner */}
+      <div className="bg-gradient-to-r from-[#5691af] via-[#4a7d99] to-[#5691af] text-white py-3 px-4 text-center sticky top-0 z-50 shadow-lg">
+        <div className="max-w-4xl mx-auto flex items-center justify-center gap-2 flex-wrap">
+          <Sparkles className="h-5 w-5" />
+          <span className="font-semibold">✨ Live Demo – Real PetPort Whiteboard</span>
+          <a href="/#pricing">
+            <Button 
+              variant="outline" 
+              size="sm"
+              className="ml-4 bg-white text-[#5691af] hover:bg-brand-cream border-white"
+            >
+              Get Started Today
+            </Button>
+          </a>
+        </div>
+      </div>
+
       <div className="container mx-auto px-4 py-8 max-w-4xl">
         {/* Header */}
         <div className="text-center mb-8">

@@ -244,8 +244,9 @@ const PublicCareInstructions = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-sage-50 to-cream-50">
       <MetaTags 
-        title={`${pet.name} Care Instructions | PetPort`}
+        title={`${pet.name}'s Care Instructions | PetPort`}
         description={`Live care plan for ${pet.name}: feeding, routines, and important notes.`}
+        image="https://pub-a7c2c18b8d6143b9a256105ef44f2da0.r2.dev/carehandling-og.png"
         url={`${window.location.origin}/care/${pet.id}`}
       />
 

@@ -270,7 +270,7 @@ export default function PublicMissingPet() {
 
   const metaTitle = `Missing Pet: ${petData.name} (${petData.breed || petData.species})`;
   const metaDescription = `Help find ${petData.name}. Last seen ${petData.lastSeenLocation || 'unknown'} on ${formatDate(petData.lastSeenDate)}. Contact info on page.`;
-  const metaImage = petData.photoUrl || petData.fullBodyPhotoUrl;
+  const metaImage = petData.photoUrl || petData.fullBodyPhotoUrl || "https://pub-a7c2c18b8d6143b9a256105ef44f2da0.r2.dev/og-lostpet.png";
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-red-50 via-white to-orange-50">

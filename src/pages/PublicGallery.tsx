@@ -120,7 +120,7 @@ export const PublicGallery = () => {
       <MetaTags 
         title={pageTitle}
         description={`View ${petData.name}'s photo gallery - ${photosToShow.length} beautiful photos`}
-        image={photosToShow[0]?.url}
+        image={photosToShow[0]?.url || "https://pub-a7c2c18b8d6143b9a256105ef44f2da0.r2.dev/Photo-og%20(1).png"}
         url={window.location.href}
       />
       

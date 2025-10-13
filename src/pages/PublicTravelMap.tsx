@@ -162,7 +162,7 @@ const PublicTravelMap = () => {
       <MetaTags
         title={travelTitle}
         description={travelDescription}
-        image={heroImage}
+        image={heroImage || "https://pub-a7c2c18b8d6143b9a256105ef44f2da0.r2.dev/travel-og.png"}
         url={travelUrl}
         type="website"
       />

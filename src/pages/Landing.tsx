@@ -81,7 +81,12 @@ export default function Landing() {
     }
   }, [isPreview, user]);
   return <div className="min-h-screen bg-white">
-      <MetaTags title="PetPort: Digital Pet Portfolio" description="Create a digital pet portfolio for pet owners and foster caregivers." url={window.location.origin + "/"} />
+      <MetaTags 
+        title="PetPort: Digital Pet Portfolio" 
+        description="PetPort is your all-in-one digital information platform for pets and horses. Securely organize essential data: vaccines, insurance, medical records, and travel documents." 
+        image="https://pub-a7c2c18b8d6143b9a256105ef44f2da0.r2.dev/OG%20General.png"
+        url={window.location.origin + "/"} 
+      />
       
       {/* Referral Banner */}
       {hasReferralCode && <div className="bg-brand-primary text-white py-2 text-center text-sm">

@@ -114,8 +114,9 @@ export default function PublicResume() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-sage-50 to-cream-50">
       <MetaTags 
-        title={`${data.name} Resume | PetPort`}
+        title={`See ${data.name}'s Resume | PetPort`}
         description={`Professional resume for ${data.name}: certifications, training, achievements, and experience.`}
+        image="https://pub-a7c2c18b8d6143b9a256105ef44f2da0.r2.dev/og-resume.png"
         url={`${window.location.origin}/resume/${data.id}`}
       />
       <main className="container mx-auto px-4 py-8 max-w-4xl">

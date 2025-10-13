@@ -5,12 +5,14 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { MapPin, Phone, Calendar, Clock, Share2, AlertTriangle, Stethoscope, Camera, AlertCircle, Heart, ArrowLeft } from 'lucide-react';
+import { MapPin, Phone, Calendar, Clock, Share2, AlertTriangle, Stethoscope, Camera, AlertCircle, Heart, ArrowLeft, FileDown, Eye, Download, Printer, Loader2 } from 'lucide-react';
 import { SocialShareButtons } from '@/components/SocialShareButtons';
 import { MetaTags } from '@/components/MetaTags';
 import { sanitizeText, truncateText } from '@/utils/inputSanitizer';
 import { toast } from 'sonner';
 import QRCode from 'react-qr-code';
+import { generateClientPetPDF, viewPDFBlob, downloadPDFBlob } from '@/services/clientPdfService';
+import { sharePDFBlob } from '@/services/pdfService';
 
 interface MissingPetData {
   id: string;
@@ -54,6 +56,10 @@ export default function PublicMissingPet() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const pageUrl = window.location.href;
+  
+  // Lost Pet PDF State (same as QuickShareHub)
+  const [lostPetPdfBlob, setLostPetPdfBlob] = useState<Blob | null>(null);
+  const [isGeneratingLostPetPdf, setIsGeneratingLostPetPdf] = useState(false);
   
   // Validate petId format
   const isValidPetId = petId && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(petId);
@@ -183,6 +189,49 @@ export default function PublicMissingPet() {
     } else {
       navigator.clipboard.writeText(currentUrl);
       toast.success('Link copied to clipboard');
+    }
+  };
+
+  // Lost Pet PDF Handler (same as QuickShareHub)
+  const handleGenerateLostPetPDF = async () => {
+    if (!petData?.id) {
+      toast.error("Pet data not available");
+      return;
+    }
+    
+    setIsGeneratingLostPetPdf(true);
+    toast.info("Generating Lost Pet Flyer...", { description: "Creating your missing pet alert." });
+    
+    try {
+      const result = await generateClientPetPDF(petData, 'lost_pet');
+      
+      if (result.success && result.blob) {
+        setLostPetPdfBlob(result.blob);
+        toast.success("Lost Pet Flyer Ready!", { description: "Your flyer has been generated." });
+      } else {
+        throw new Error(result.error || "Failed to generate PDF");
+      }
+    } catch (error: any) {
+      console.error('[Lost Pet PDF] Generation failed:', error);
+      toast.error("Generation Failed", { description: "Could not generate flyer." });
+    } finally {
+      setIsGeneratingLostPetPdf(false);
+    }
+  };
+
+  const handleSharePdf = async () => {
+    if (!lostPetPdfBlob || !petData) return;
+    
+    try {
+      const result = await sharePDFBlob(lostPetPdfBlob, `${petData.name}_Missing_Flyer.pdf`, petData.name, 'profile');
+      if (result.success) {
+        toast.success(result.shared ? "PDF Shared!" : "Link Copied!", { description: result.message });
+      } else {
+        throw new Error(result.error || 'Share failed');
+      }
+    } catch (error) {
+      console.error('Lost Pet PDF share error:', error);
+      toast.error("Share Failed", { description: "Unable to share PDF. Please try download instead." });
     }
   };
 
@@ -451,14 +500,84 @@ export default function PublicMissingPet() {
             <p className="text-center text-sm text-muted-foreground">
               Scan this QR code to view and share this missing pet alert on any device
             </p>
-            <div className="flex justify-center gap-2">
+            
+            {/* PDF Generation and Actions (same as QuickShareHub) */}
+            <div className="space-y-3">
+              {!lostPetPdfBlob ? (
+                <Button
+                  onClick={handleGenerateLostPetPDF}
+                  disabled={isGeneratingLostPetPdf}
+                  className="w-full"
+                  variant="default"
+                >
+                  {isGeneratingLostPetPdf ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Generating Flyer...
+                    </>
+                  ) : (
+                    <>
+                      <FileDown className="mr-2 h-4 w-4" />
+                      Generate Missing Pet Flyer PDF
+                    </>
+                  )}
+                </Button>
+              ) : (
+                <div className="space-y-2">
+                  <div className="grid grid-cols-3 gap-2">
+                    <Button
+                      onClick={() => viewPDFBlob(lostPetPdfBlob, `${petData?.name || 'pet'}-lost-flyer.pdf`)}
+                      variant="outline"
+                      size="sm"
+                    >
+                      <Eye className="mr-1 h-4 w-4" />
+                      View
+                    </Button>
+                    <Button
+                      onClick={() => downloadPDFBlob(lostPetPdfBlob, `${petData?.name || 'pet'}-lost-flyer.pdf`)}
+                      variant="outline"
+                      size="sm"
+                    >
+                      <Download className="mr-1 h-4 w-4" />
+                      Download
+                    </Button>
+                    <Button
+                      onClick={() => {
+                        const url = URL.createObjectURL(lostPetPdfBlob);
+                        const printWindow = window.open(url, '_blank');
+                        if (printWindow) {
+                          printWindow.onload = () => {
+                            printWindow.print();
+                            URL.revokeObjectURL(url);
+                          };
+                        }
+                      }}
+                      variant="outline"
+                      size="sm"
+                    >
+                      <Printer className="mr-1 h-4 w-4" />
+                      Print
+                    </Button>
+                  </div>
+                  <Button
+                    onClick={handleSharePdf}
+                    className="w-full"
+                    variant="default"
+                  >
+                    <Share2 className="mr-2 h-4 w-4" />
+                    Share PDF Flyer
+                  </Button>
+                </div>
+              )}
+              
+              {/* URL Share Option */}
               <Button
                 onClick={handleShare}
                 variant="outline"
-                className="gap-2"
+                className="w-full gap-2"
               >
                 <Share2 className="h-4 w-4" />
-                Share Alert
+                Share Alert Link
               </Button>
             </div>
           </CardContent>

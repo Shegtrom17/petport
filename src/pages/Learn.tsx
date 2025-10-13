@@ -11,7 +11,12 @@ import shareInstructionsScreenshot from "@/assets/share-instructions-screenshot.
 
 export default function Learn() {
   return <div className="min-h-screen bg-white">
-      <MetaTags title="Complete Pet Care Guide: Digital Documentation & Reviews | PetPort" description="Learn how to organize pet documents, request reviews from trainers, groomers & sitters, and create emergency profiles. Complete guide to digital pet management." url={window.location.origin + "/learn"} />
+      <MetaTags 
+        title="Learn About PetPort | Digital Pet Profiles" 
+        description="Explore how PetPort keeps your pet's info, photos, and care instructions in one sharable hub." 
+        image="https://pub-a7c2c18b8d6143b9a256105ef44f2da0.r2.dev/OG%20General.png"
+        url={window.location.origin + "/learn"} 
+      />
 
       {/* Header Navigation */}
       <header className="max-w-7xl mx-auto px-4 py-6 flex items-center justify-between border-b border-gray-200">

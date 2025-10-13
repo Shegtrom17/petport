@@ -7,7 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { QrCode, Download, Share, Phone, Pill, Shield, Heart, Award, AlertTriangle, MapPin, Clock, DollarSign, CalendarIcon, Stethoscope, Users } from "lucide-react";
+import { QrCode, Download, Share, Share2, Phone, Pill, Shield, Heart, Award, AlertTriangle, MapPin, Clock, DollarSign, CalendarIcon, Stethoscope, Users } from "lucide-react";
 import { format } from "date-fns";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -17,7 +17,7 @@ import { PrivacyHint } from "@/components/PrivacyHint";
 import { LostPetButton } from "@/components/LostPetButton";
 import { GuidanceHint } from "@/components/ui/guidance-hint";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { generatePublicProfileUrl, generatePublicMissingUrl, generateQRCodeUrl } from "@/services/pdfService";
+import { generatePublicProfileUrl, generatePublicMissingUrl, generateQRCodeUrl, shareProfileOptimized } from "@/services/pdfService";
 import { Link } from "react-router-dom";
 
 import { VoiceRecorder } from "@/components/VoiceRecorder";
@@ -713,6 +713,30 @@ export const QuickIDSection = ({ petData, onUpdate }: QuickIDSectionProps) => {
                 </div>
               </DialogContent>
             </Dialog>
+            {lostPetData.is_missing && (
+              <Button 
+                onClick={async () => {
+                  const publicUrl = generatePublicMissingUrl(petData.id);
+                  const result = await shareProfileOptimized(publicUrl, petData.name, 'profile', true);
+                  if (result.success) {
+                    toast({
+                      title: result.shared ? "Shared Successfully!" : "Link Copied!",
+                      description: result.message,
+                    });
+                  } else {
+                    toast({
+                      title: "Share Failed",
+                      description: result.error || "Unable to share link",
+                      variant: "destructive"
+                    });
+                  }
+                }}
+                className="w-full sm:w-auto bg-red-600 text-white hover:bg-red-700"
+              >
+                <Share2 className="w-4 h-4 mr-2" />
+                Share Missing Alert
+              </Button>
+            )}
           </div>
         </CardContent>
       </Card>

@@ -25,13 +25,16 @@ interface Pet {
   state: string;
   county: string;
   is_public: boolean;
-  emergencyContact?: string;
-  secondEmergencyContact?: string;
-  vetContact?: string;
-  petCaretaker?: string;
   medications?: string[];
   daily_routine?: string;
   photoUrl?: string;
+}
+
+interface PetContact {
+  id: string;
+  contact_name: string;
+  contact_phone: string;
+  contact_type: string;
 }
 
 interface CareData {
@@ -55,6 +58,7 @@ const PublicCareInstructions = () => {
   const { petId } = useParams();
   const navigate = useNavigate();
   const [pet, setPet] = useState<Pet | null>(null);
+  const [petContacts, setPetContacts] = useState<PetContact[]>([]);
   const [careData, setCareData] = useState<CareData | null>(null);
   const [medicalData, setMedicalData] = useState<MedicalData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -126,6 +130,16 @@ const PublicCareInstructions = () => {
           ...petDetails,
           photoUrl: photoData?.photo_url
         });
+
+        // Fetch pet contacts from pet_contacts table
+        const { data: contactsData } = await supabase
+          .from('pet_contacts')
+          .select('*')
+          .eq('pet_id', petId);
+        
+        if (contactsData) {
+          setPetContacts(contactsData);
+        }
 
         // Fetch care instructions
         const careInstructions = await fetchCareInstructions(petId);
@@ -214,15 +228,18 @@ const PublicCareInstructions = () => {
     );
   }
 
-  const extractPhoneNumber = (contactString: string): string | null => {
-    if (!contactString) return null;
-    const phoneMatch = contactString.match(/\(?\d{3}\)?\s?-?\d{3}-?\d{4}/);
-    return phoneMatch ? phoneMatch[0] : null;
-  };
-
   const formatPhoneForTel = (phone: string): string => {
     return phone.replace(/\D/g, '');
   };
+
+  // Get contacts by type
+  const getContactsByType = (type: string) => {
+    return petContacts.filter(contact => contact.contact_type === type);
+  };
+
+  const emergencyContacts = getContactsByType('emergency');
+  const vetContacts = getContactsByType('vet');
+  const caretakerContacts = getContactsByType('caretaker');
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-sage-50 to-cream-50">
@@ -541,7 +558,7 @@ const PublicCareInstructions = () => {
         </div>
 
         {/* Emergency Contacts */}
-        {(pet.emergencyContact || pet.secondEmergencyContact || pet.vetContact || pet.petCaretaker) && (
+        {petContacts.length > 0 && (
           <Card className="mt-6">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-navy-900">
@@ -550,85 +567,52 @@ const PublicCareInstructions = () => {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              {pet.emergencyContact && (
-                 <div className="bg-primary/10 border border-primary/20 rounded-lg p-4">
-                   <h4 className="font-medium text-primary mb-2">Primary Emergency Contact</h4>
-                   {extractPhoneNumber(pet.emergencyContact) ? (
-                     <div>
-                       <a 
-                         href={`tel:${formatPhoneForTel(extractPhoneNumber(pet.emergencyContact)!)}`}
-                         className="text-primary hover:text-primary/80 font-medium"
-                         aria-label="Call primary emergency contact"
-                       >
-                         {pet.emergencyContact}
-                       </a>
-                       <p className="text-xs text-primary/70 mt-1">Tap to call</p>
-                     </div>
-                   ) : (
-                     <p className="text-primary">{pet.emergencyContact}</p>
-                   )}
+              {emergencyContacts.map((contact, index) => (
+                <div key={contact.id} className={index === 0 ? "bg-primary/10 border border-primary/20 rounded-lg p-4" : "bg-amber-50 border border-amber-200 rounded-lg p-4"}>
+                  <h4 className={`font-medium mb-2 ${index === 0 ? 'text-primary' : 'text-amber-800'}`}>
+                    {index === 0 ? 'Primary Emergency Contact' : 'Secondary Emergency Contact'}
+                  </h4>
+                  <p className={`font-medium ${index === 0 ? 'text-primary/90' : 'text-amber-700'}`}>{contact.contact_name}</p>
+                  <a 
+                    href={`tel:${formatPhoneForTel(contact.contact_phone)}`}
+                    className={`font-medium ${index === 0 ? 'text-primary hover:text-primary/80' : 'text-amber-700 hover:text-amber-900'}`}
+                    aria-label={`Call ${contact.contact_name}`}
+                  >
+                    {contact.contact_phone}
+                  </a>
+                  <p className={`text-xs mt-1 ${index === 0 ? 'text-primary/70' : 'text-amber-600'}`}>Tap to call</p>
                 </div>
-              )}
-              
-              {pet.secondEmergencyContact && (
-                <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
-                  <h4 className="font-medium text-amber-800 mb-2">Secondary Emergency Contact</h4>
-                  {extractPhoneNumber(pet.secondEmergencyContact) ? (
-                    <div>
-                      <a 
-                        href={`tel:${formatPhoneForTel(extractPhoneNumber(pet.secondEmergencyContact)!)}`}
-                        className="text-amber-700 hover:text-amber-900 font-medium"
-                        aria-label="Call secondary emergency contact"
-                      >
-                        {pet.secondEmergencyContact}
-                      </a>
-                      <p className="text-xs text-amber-600 mt-1">Tap to call</p>
-                    </div>
-                  ) : (
-                    <p className="text-amber-700">{pet.secondEmergencyContact}</p>
-                  )}
-                </div>
-              )}
+              ))}
 
-              {pet.vetContact && (
-                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+              {vetContacts.map((contact) => (
+                <div key={contact.id} className="bg-blue-50 border border-blue-200 rounded-lg p-4">
                   <h4 className="font-medium text-blue-800 mb-2">Veterinarian</h4>
-                  {extractPhoneNumber(pet.vetContact) ? (
-                    <div>
-                      <a 
-                        href={`tel:${formatPhoneForTel(extractPhoneNumber(pet.vetContact)!)}`}
-                        className="text-blue-700 hover:text-blue-900 font-medium"
-                        aria-label="Call veterinarian"
-                      >
-                        {pet.vetContact}
-                      </a>
-                      <p className="text-xs text-blue-600 mt-1">Tap to call</p>
-                    </div>
-                  ) : (
-                    <p className="text-blue-700">{pet.vetContact}</p>
-                  )}
+                  <p className="font-medium text-blue-700">{contact.contact_name}</p>
+                  <a 
+                    href={`tel:${formatPhoneForTel(contact.contact_phone)}`}
+                    className="text-blue-700 hover:text-blue-900 font-medium"
+                    aria-label={`Call ${contact.contact_name}`}
+                  >
+                    {contact.contact_phone}
+                  </a>
+                  <p className="text-xs text-blue-600 mt-1">Tap to call</p>
                 </div>
-              )}
+              ))}
 
-              {pet.petCaretaker && (
-                <div className="bg-sage-50 border border-sage-200 rounded-lg p-4">
+              {caretakerContacts.map((contact) => (
+                <div key={contact.id} className="bg-sage-50 border border-sage-200 rounded-lg p-4">
                   <h4 className="font-medium text-sage-800 mb-2">Pet Caretaker</h4>
-                  {extractPhoneNumber(pet.petCaretaker) ? (
-                    <div>
-                      <a 
-                        href={`tel:${formatPhoneForTel(extractPhoneNumber(pet.petCaretaker)!)}`}
-                        className="text-sage-700 hover:text-sage-900 font-medium"
-                        aria-label="Call pet caretaker"
-                      >
-                        {pet.petCaretaker}
-                      </a>
-                      <p className="text-xs text-sage-600 mt-1">Tap to call</p>
-                    </div>
-                  ) : (
-                    <p className="text-sage-700">{pet.petCaretaker}</p>
-                  )}
+                  <p className="font-medium text-sage-700">{contact.contact_name}</p>
+                  <a 
+                    href={`tel:${formatPhoneForTel(contact.contact_phone)}`}
+                    className="text-sage-700 hover:text-sage-900 font-medium"
+                    aria-label={`Call ${contact.contact_name}`}
+                  >
+                    {contact.contact_phone}
+                  </a>
+                  <p className="text-xs text-sage-600 mt-1">Tap to call</p>
                 </div>
-              )}
+              ))}
             </CardContent>
           </Card>
         )}

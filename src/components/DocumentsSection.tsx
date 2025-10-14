@@ -231,19 +231,34 @@ export const DocumentsSection = ({ petId, petName, documents, onDocumentDeleted 
     }
   };
 
-  // Helper function to resolve Android Drive URIs
+  // Helper function to resolve Android Drive URIs using FileReader
   const resolveFileForUpload = async (file: File): Promise<Blob> => {
     // On Android, check if this is a content:// URI that needs conversion
     if (isAndroid && file.size === 0) {
-      console.log('[Android] Zero-size file detected, attempting Drive URI fetch');
+      console.log('[Android] Zero-size file detected, attempting Drive URI read with FileReader');
       try {
-        // Fetch the actual file content from the URI
-        const response = await fetch(URL.createObjectURL(file));
-        const blob = await response.blob();
-        console.log('[Android] Successfully converted Drive URI to blob:', blob.size, 'bytes');
-        return blob;
+        return await new Promise<Blob>((resolve, reject) => {
+          const reader = new FileReader();
+          
+          reader.onload = (e) => {
+            if (e.target?.result) {
+              const blob = new Blob([e.target.result], { type: file.type });
+              console.log('[Android] Successfully converted Drive URI to blob:', blob.size, 'bytes');
+              resolve(blob);
+            } else {
+              reject(new Error('FileReader result is empty'));
+            }
+          };
+          
+          reader.onerror = (e) => {
+            console.error('[Android] FileReader error:', e);
+            reject(new Error('Failed to read file'));
+          };
+          
+          reader.readAsArrayBuffer(file);
+        });
       } catch (error) {
-        console.error('[Android] Failed to fetch Drive URI:', error);
+        console.error('[Android] Failed to read Drive URI with FileReader:', error);
         // Fall back to original file
         return file;
       }
@@ -401,6 +416,7 @@ export const DocumentsSection = ({ petId, petName, documents, onDocumentDeleted 
               accept="image/jpeg,image/png"
               capture="environment"
               onChange={handleDocumentCapture}
+              onClick={(e) => e.stopPropagation()}
               className="hidden"
               data-touch-safe
             />
@@ -409,6 +425,7 @@ export const DocumentsSection = ({ petId, petName, documents, onDocumentDeleted 
               type="file"
               accept="application/pdf,image/jpeg,image/png,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
               onChange={handleFileSelect}
+              onClick={(e) => e.stopPropagation()}
               className="hidden"
               data-touch-safe
             />
@@ -421,7 +438,7 @@ export const DocumentsSection = ({ petId, petName, documents, onDocumentDeleted 
                 data-touch-safe
               >
                 <Camera className="w-4 h-4 mr-2" />
-                {isUploading ? "Uploading..." : "Capture Photo"}
+                {isUploading ? "Uploading..." : "Capture Document Photo"}
               </Button>
               <Button 
                 onClick={(e) => handleFileUpload(e)}

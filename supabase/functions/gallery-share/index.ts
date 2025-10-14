@@ -84,7 +84,7 @@ serve(async (req) => {
     // Generate meta tags for social sharing
     const title = `${pet.name}'s Photo Gallery - PetPort`;
     const description = `Check out ${pet.name}'s photo gallery on PetPort.`;
-    const ogImage = 'https://petport.app/og/gallery-og.png';
+    const ogImageUrl = "https://pub-a7c2c18b8d6143b9a256105ef44f2da0.r2.dev/gallery-og.png";
     const canonicalUrl = `https://petport.app/gallery/${petId}`;
     
     const html = `
@@ -102,7 +102,7 @@ serve(async (req) => {
     <meta property="og:url" content="${canonicalUrl}">
     <meta property="og:title" content="${title}">
     <meta property="og:description" content="${description}">
-    <meta property="og:image" content="${ogImage}">
+    <meta property="og:image" content="${ogImageUrl}">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
     <meta property="og:image:type" content="image/png">
@@ -112,7 +112,7 @@ serve(async (req) => {
     <meta property="twitter:url" content="${canonicalUrl}">
     <meta property="twitter:title" content="${title}">
     <meta property="twitter:description" content="${description}">
-    <meta property="twitter:image" content="${ogImage}">
+    <meta property="twitter:image" content="${ogImageUrl}">
     
     <!-- Canonical URL -->
     <link rel="canonical" href="${canonicalUrl}">

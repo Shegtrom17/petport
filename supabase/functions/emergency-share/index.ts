@@ -84,7 +84,7 @@ serve(async (req) => {
     // Generate meta tags for social sharing
     const title = `🚨 ${pet.name}'s Emergency Information - PetPort`;
     const description = `Quick access to ${pet.name}'s emergency contact details and important information.`;
-    const ogImage = 'https://pub-a7c2c18b8d6143b9a256105ef44f2da0.r2.dev/general-og.png';
+    const ogImage = 'https://petport.app/og/general-og.png';
     const canonicalUrl = `https://petport.app/emergency/${petId}`;
     
     // Sanitize strings to prevent XSS

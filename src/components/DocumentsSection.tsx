@@ -423,7 +423,7 @@ export const DocumentsSection = ({ petId, petName, documents, onDocumentDeleted 
             <input
               ref={fileInputRef}
               type="file"
-              accept="application/pdf,image/jpeg,image/png,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+              accept="application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
               onChange={handleFileSelect}
               onClick={(e) => e.stopPropagation()}
               className="hidden"
@@ -438,7 +438,7 @@ export const DocumentsSection = ({ petId, petName, documents, onDocumentDeleted 
                 data-touch-safe
               >
                 <Camera className="w-4 h-4 mr-2" />
-                {isUploading ? "Uploading..." : "Capture Document Photo"}
+                {isUploading ? "Uploading..." : "Capture Photo"}
               </Button>
               <Button 
                 onClick={(e) => handleFileUpload(e)}
@@ -448,9 +448,13 @@ export const DocumentsSection = ({ petId, petName, documents, onDocumentDeleted 
                 data-touch-safe
               >
                 <Upload className="w-4 h-4 mr-2" />
-                {isUploading ? "Uploading..." : "Choose Files"}
+                {isUploading ? "Uploading..." : "Upload Document (PDF or File)"}
               </Button>
             </div>
+            
+            <p className="text-xs text-gray-500 mt-2">
+              Tip: Use "Upload Document" for PDFs or files from Drive, and "Capture Photo" for pictures of receipts or records.
+            </p>
             
             {isUploading && (
               <div className="mt-4 flex items-center justify-center">

@@ -173,12 +173,18 @@ const Index = () => {
     };
   }, []);
 
-  useEffect(() => {
-    if (user?.id && settings.rememberLastTab) {
-      const saved = localStorage.getItem(`pp_last_tab_${user.id}`);
-      if (saved) setActiveTab(saved === 'vaccination' ? 'profile' : saved);
+useEffect(() => {
+  // Skip restoring tab while an upload is happening
+  const isUploading = document.body.getAttribute('data-uploading') === 'true';
+  if (isUploading) return;
+
+  if (user?.id && settings.rememberLastTab) {
+    const saved = localStorage.getItem(`pp_last_tab_${user.id}`);
+    if (saved) {
+      setActiveTab(saved === 'vaccination' ? 'profile' : saved);
     }
-  }, [user?.id, settings.rememberLastTab]);
+  }
+}, [user?.id, settings.rememberLastTab]);
 
   // Enhanced petData with proper user_id from selectedPet or current user
   const petData = selectedPet ? {

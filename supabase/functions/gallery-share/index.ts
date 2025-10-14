@@ -95,6 +95,7 @@ serve(async (req) => {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>${title}</title>
     <meta name="description" content="${description}">
+    ${Deno.env.get("FACEBOOK_APP_ID") ? `<meta property="fb:app_id" content="${Deno.env.get("FACEBOOK_APP_ID")}" />` : ""}
     
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">

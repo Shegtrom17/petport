@@ -85,7 +85,7 @@ serve(async (req) => {
     const title = `🚨 ${pet.name}'s Emergency Information - PetPort`;
     const description = `Quick access to ${pet.name}'s emergency contact details and important information.`;
     const ogImage = 'https://pub-a7c2c18b8d6143b9a256105ef44f2da0.r2.dev/carehandling-og.png';
-    const canonicalUrl = `https://petport.app/profile/${petId}`;
+    const canonicalUrl = `https://petport.app/emergency/${petId}`;
     
     // Sanitize strings to prevent XSS
     const sanitizeString = (str: string) => {
@@ -112,6 +112,7 @@ serve(async (req) => {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>${safeTitle}</title>
     <meta name="description" content="${safeDescription}">
+    ${Deno.env.get("FACEBOOK_APP_ID") ? `<meta property="fb:app_id" content="${Deno.env.get("FACEBOOK_APP_ID")}" />` : ""}
     
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">

@@ -107,6 +107,7 @@ serve(async (req) => {
     <meta name="title" content="${safePetName}'s Travel Map - PetPort">
     <meta name="description" content="Check out ${safePetName}'s travels, with PetPort's interactive map.">
     <link rel="canonical" href="${canonicalUrl}">
+    ${Deno.env.get("FACEBOOK_APP_ID") ? `<meta property="fb:app_id" content="${Deno.env.get("FACEBOOK_APP_ID")}" />` : ""}
     
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">

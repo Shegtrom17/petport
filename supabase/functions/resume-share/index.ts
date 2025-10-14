@@ -100,6 +100,7 @@ serve(async (req) => {
   <meta name="description" content="${description}" />
   <meta name="robots" content="index, follow" />
   <link rel="canonical" href="${brandedUrl}" />
+  ${Deno.env.get("FACEBOOK_APP_ID") ? `<meta property="fb:app_id" content="${Deno.env.get("FACEBOOK_APP_ID")}" />` : ""}
 
   <!-- Open Graph -->
   <meta property="og:type" content="website" />

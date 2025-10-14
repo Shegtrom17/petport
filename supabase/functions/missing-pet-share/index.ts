@@ -93,7 +93,7 @@ serve(async (req) => {
     const safe = (s: string | null | undefined) => (s || "").toString().replace(/</g, "&lt;").replace(/>/g, "&gt;").trim();
 
     // Generate branded URL for OG tags
-    const brandedUrl = `https://petport.app/missing/${petId}`;
+    const brandedUrl = `https://petport.app/missing-pet/${petId}`;
 
     const lastSeenDate = lost?.last_seen_date ? new Date(lost.last_seen_date).toLocaleDateString() : "";
     const lastSeenStr = [safe(lost?.last_seen_location), lastSeenDate].filter(Boolean).join(" • ");
@@ -116,6 +116,7 @@ serve(async (req) => {
   <meta name="description" content="${description}" />
   <meta name="robots" content="index, follow" />
   <link rel="canonical" href="${brandedUrl}" />
+  ${Deno.env.get("FACEBOOK_APP_ID") ? `<meta property="fb:app_id" content="${Deno.env.get("FACEBOOK_APP_ID")}" />` : ""}
 
   <!-- Open Graph -->
   <meta property="og:type" content="website" />

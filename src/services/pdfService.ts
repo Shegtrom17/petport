@@ -6,6 +6,7 @@
 
 import { supabase } from "@/integrations/supabase/client";
 import { resolvePdfType, PDFType } from "@/utils/pdfType";
+import { toast } from "@/hooks/use-toast";
 
 export interface PDFGenerationResult {
   success: boolean;
@@ -260,30 +261,41 @@ export async function sharePDFBlob(
 ): Promise<ShareResult> {
   console.log('📤 Starting PDF share process...', { fileName, petName, contentType });
   
-  // Try Web Share API first (mobile browsers that support file sharing)
-  if (navigator.share) {
+  const file = new File([pdfBlob], fileName, { type: 'application/pdf' });
+  
+  // iOS detection (iOS doesn't support file sharing via Web Share API)
+  const isIOSDevice = /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream;
+  
+  if (isIOSDevice) {
+    // iOS fallback: Open PDF in new tab (users can then share from browser)
+    console.log('📱 iOS detected - using download fallback');
+    const url = URL.createObjectURL(pdfBlob);
+    window.open(url, '_blank');
+    
+    toast({
+      title: "PDF Ready",
+      description: "PDF opened in new tab. Use Safari's share button to send it.",
+      duration: 5000,
+    });
+    
+    return { success: true, shared: false, message: 'PDF opened for iOS sharing' };
+  }
+  
+  // Non-iOS: Try native file share
+  if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
     try {
-      const file = new File([pdfBlob], fileName, { type: 'application/pdf' });
-      const shareData = {
-        title: `${petName}'s ${contentType} PDF`,
+      console.log('📱 Using native file sharing...');
+      await navigator.share({
+        title: `PetPort ${contentType} - ${petName}`,
         text: `${petName}'s ${contentType} information`,
-        files: [file]
-      };
-      
-      // Check if file sharing is supported
-      if (navigator.canShare && navigator.canShare(shareData)) {
-        console.log('📱 Using native file sharing...');
-        await navigator.share(shareData);
-        return { success: true, shared: true, message: 'PDF shared successfully' };
-      } else {
-        console.log('📱 File sharing not supported, trying text sharing...');
-        // Fallback to storage + text sharing
-      }
+        files: [file],
+      });
+      return { success: true, shared: true, message: 'PDF shared successfully' };
     } catch (error: any) {
-      console.error('Native PDF sharing failed:', error);
       if (error?.name === 'AbortError' || error?.message?.toLowerCase?.().includes('cancel')) {
         return { success: false, shared: false, error: 'Share cancelled' };
       }
+      console.error('Native PDF sharing failed:', error);
       // Continue to fallback
     }
   }

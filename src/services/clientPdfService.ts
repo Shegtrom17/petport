@@ -4,6 +4,7 @@ import { generatePublicMissingUrl, generateQRCodeUrl } from '@/services/pdfServi
 import { optimizeImageForPDF, optimizeBase64ForPDF } from '@/utils/pdfImageOptimization';
 import { GALLERY_CONFIG } from '@/config/featureFlags';
 import { resolvePdfType, PDFType } from '@/utils/pdfType';
+import { toast } from '@/hooks/use-toast';
 export interface ClientPDFGenerationResult {
   success: boolean;
   blob?: Blob;
@@ -1898,45 +1899,58 @@ export const downloadPDFBlob = async (blob: Blob, fileName: string): Promise<voi
   });
 
   try {
-    // iOS/PWA: Try file sharing first, then fallback to viewer
-    if (isIOS() || isStandalonePWA()) {
-      console.log('📱 iOS/PWA detected - attempting file share');
+    // iOS detection (iOS doesn't support file sharing via Web Share API)
+    const isIOSDevice = /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream;
+    
+    if (isIOSDevice) {
+      // iOS fallback: Open PDF in new tab (users can then share from browser)
+      console.log('📱 iOS detected - opening PDF in new tab for manual sharing');
+      const url = URL.createObjectURL(blob);
+      window.open(url, '_blank');
       
-      if (supportsFileSharing()) {
-        try {
-          const file = new File([blob], fileName, { type: 'application/pdf' });
-          const canShareFiles = (navigator as any).canShare({ files: [file] });
-          
-          if (canShareFiles) {
-            await (navigator as any).share({
-              title: fileName,
-              files: [file]
-            });
-            console.log('✅ PDF shared via native file sharing');
-            return;
-          }
-        } catch (shareError) {
-          console.log('⚠️ File sharing failed, falling back to viewer:', shareError);
-        }
-      }
-      
-      // Fallback: Open in viewer with instructions
-      console.log('📱 iOS fallback: Opening PDF in viewer for manual save');
-      await viewPDFBlob(blob, fileName);
-      
-      // Show helpful toast for iOS users
-      if (typeof window !== 'undefined' && (window as any).toast) {
-        (window as any).toast({
-          title: "PDF Ready to Save",
-          description: "Use the Share button in the PDF viewer to save or share the file.",
-        });
-      }
-      
+      toast({
+        title: "PDF Ready",
+        description: "PDF opened in new tab. Use Safari's share button to send it.",
+        duration: 5000,
+      });
       return;
     }
-
-    // Desktop/Android: Standard download
-    console.log('🖥️ Desktop/Android - using standard download');
+    
+    // Non-iOS: Try native file share
+    if (isStandalonePWA() && supportsFileSharing()) {
+      try {
+        const file = new File([blob], fileName, { type: 'application/pdf' });
+        const canShareFiles = (navigator as any).canShare({ files: [file] });
+        
+        if (canShareFiles) {
+          await (navigator as any).share({
+            title: fileName,
+            files: [file]
+          });
+          console.log('✅ PDF shared via native file sharing');
+          return;
+        }
+      } catch (shareError) {
+        console.log('⚠️ File sharing failed, falling back to viewer:', shareError);
+      }
+    }
+    
+    // Fallback: Open in viewer with instructions
+    console.log('📱 Fallback: Opening PDF in viewer for manual save');
+    await viewPDFBlob(blob, fileName);
+    
+    // Show helpful toast
+    if (typeof window !== 'undefined' && (window as any).toast) {
+      (window as any).toast({
+        title: "PDF Ready to Save",
+        description: "Use the Share button in the PDF viewer to save or share the file.",
+      });
+    }
+  } catch (error) {
+    console.error('❌ Share/download failed:', error);
+    
+    // Final fallback: Standard download
+    console.log('🖥️ Final fallback - using standard download');
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
@@ -1954,9 +1968,5 @@ export const downloadPDFBlob = async (blob: Blob, fileName: string): Promise<voi
     }, 1000);
     
     console.log('✅ PDF Download: Standard download completed');
-    
-  } catch (error) {
-    console.error('❌ PDF Download: Error downloading PDF:', error);
-    throw new Error(`Failed to download PDF: ${error instanceof Error ? error.message : 'Unknown error'}`);
   }
 };

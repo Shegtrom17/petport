@@ -153,6 +153,24 @@ const handleQuickFlyer = async () => {
       const missingUrl = generatePublicMissingUrl(petId);
       const title = `🚨 MISSING PET ALERT - ${petName}`;
       const text = `Help us find ${petName}! Last seen details and contacts inside.`;
+      
+      // iOS detection (iOS doesn't support file sharing via Web Share API)
+      const isIOSDevice = /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream;
+      
+      if (isIOSDevice) {
+        // iOS fallback: Open PDF in new tab
+        const url = URL.createObjectURL(result.blob);
+        window.open(url, '_blank');
+        toast({ 
+          title: "PDF Ready", 
+          description: "PDF opened in new tab. Use Safari's share button to send it.",
+          duration: 5000
+        });
+        setShowDialog(true);
+        return;
+      }
+      
+      // Non-iOS: Try native file share
       const file = new File([result.blob], `${petName.replace(/[^a-zA-Z0-9]/g, '_')}_Missing_Pet_Flyer.pdf`, { type: 'application/pdf' });
       const canShareFiles = typeof (navigator as any).canShare === 'function' && (navigator as any).canShare({ files: [file] });
       if (navigator.share && canShareFiles) {

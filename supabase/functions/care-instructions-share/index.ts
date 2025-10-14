@@ -1,3 +1,9 @@
+// 🚨 DO NOT MODIFY WITHOUT OWNER APPROVAL (Oct 2025)
+// This file contains verified production logic for sharing, OG metadata, and PDF generation.
+// Any refactor or change may break share previews, OG image rendering, or PDF attachments.
+// Cloudflare R2 hosts all OG images. Supabase OG fallbacks must never be re-enabled.
+// Changes require explicit confirmation from Susan Hegstrom.
+
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.50.3";
 

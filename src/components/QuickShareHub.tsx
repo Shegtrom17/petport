@@ -1,3 +1,9 @@
+// 🚨 DO NOT MODIFY WITHOUT OWNER APPROVAL (Oct 2025)
+// This file contains verified production logic for sharing, OG metadata, and PDF generation.
+// Any refactor or change may break share previews, OG image rendering, or PDF attachments.
+// Cloudflare R2 hosts all OG images. Supabase OG fallbacks must never be re-enabled.
+// Changes require explicit confirmation from Susan Hegstrom.
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";

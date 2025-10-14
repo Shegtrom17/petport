@@ -312,6 +312,12 @@ export const DocumentsSection = ({ petId, petName, documents, onDocumentDeleted 
         description: `Document "${file.name}" uploaded to ${categoryLabel} successfully!`,
       });
       
+      // Save current tab before refresh to prevent redirect
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user?.id) {
+        localStorage.setItem(`pp_last_tab_${user.id}`, 'documents');
+      }
+      
       onDocumentDeleted(); // Refresh the document list
       
     } catch (error: any) {

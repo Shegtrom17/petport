@@ -13,6 +13,7 @@ import { toast } from 'sonner';
 import QRCode from 'react-qr-code';
 import { generateClientPetPDF, viewPDFBlob, downloadPDFBlob } from '@/services/clientPdfService';
 import { sharePDFBlob } from '@/services/pdfService';
+import { generateShareURL } from '@/utils/domainUtils';
 
 interface MissingPetData {
   id: string;
@@ -176,18 +177,32 @@ export default function PublicMissingPet() {
     }
   };
 
-  const handleShare = () => {
-    const currentUrl = window.location.href;
+  const handleShare = async () => {
+    const directUrl = window.location.href;
+    
+    // Generate edge function URL for OG tags
+    const shareUrl = generateShareURL('missing-pet-share', petData?.id!, directUrl);
+    
     const shareData = {
       title: `MISSING: ${petData?.name} - ${petData?.breed}`,
       text: `Help find ${petData?.name}! Last seen: ${petData?.lastSeenLocation || 'location unknown'}`,
-      url: currentUrl
+      url: shareUrl  // ✅ Now uses edge function
     };
 
     if (navigator.share) {
-      navigator.share(shareData).catch(console.error);
+      try {
+        await navigator.share(shareData);
+        toast.success('Missing alert shared!');
+      } catch (err) {
+        if ((err as Error).name !== 'AbortError') {
+          console.error('Share failed:', err);
+          // Fallback to clipboard
+          navigator.clipboard.writeText(shareUrl);
+          toast.success('Link copied to clipboard');
+        }
+      }
     } else {
-      navigator.clipboard.writeText(currentUrl);
+      navigator.clipboard.writeText(shareUrl);
       toast.success('Link copied to clipboard');
     }
   };

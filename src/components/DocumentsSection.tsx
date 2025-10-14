@@ -7,6 +7,7 @@ import { FileText, Upload, Download, Eye, Trash2, Loader2, Camera, Shield, Syrin
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { DocumentShareDialog } from "@/components/DocumentShareDialog";
+import { useOverlayStore } from "@/stores/overlayStore";
 
 
 interface Document {
@@ -51,12 +52,22 @@ export const DocumentsSection = ({ petId, petName, documents, onDocumentDeleted 
   const [selectedCategory, setSelectedCategory] = useState<string>('misc');
   const [filterCategory, setFilterCategory] = useState<string>('all');
   const { toast } = useToast();
+  const overlayStore = useOverlayStore();
   
   // Refs for the hidden file inputs
   const cameraInputRef = useRef<HTMLInputElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  
+  // Detect Android for special handling
+  const isAndroid = /Android/i.test(navigator.userAgent);
 
-  const handleViewDocument = async (doc: Document) => {
+  const handleViewDocument = async (doc: Document, e?: React.MouseEvent) => {
+    // Prevent event propagation to avoid swipe navigation
+    if (e) {
+      e.stopPropagation();
+      e.preventDefault();
+    }
+    
     setViewingDocId(doc.id);
     
     try {
@@ -84,7 +95,13 @@ export const DocumentsSection = ({ petId, petName, documents, onDocumentDeleted 
     }
   };
 
-  const handleDeleteDocument = async (doc: Document) => {
+  const handleDeleteDocument = async (doc: Document, e?: React.MouseEvent) => {
+    // Prevent event propagation to avoid swipe navigation
+    if (e) {
+      e.stopPropagation();
+      e.preventDefault();
+    }
+    
     setDeletingDocId(doc.id);
     
     try {
@@ -134,18 +151,36 @@ export const DocumentsSection = ({ petId, petName, documents, onDocumentDeleted 
     }
   };
 
-  const handleShareDocument = (doc: Document) => {
+  const handleShareDocument = (doc: Document, e?: React.MouseEvent) => {
+    // Prevent event propagation to avoid swipe navigation
+    if (e) {
+      e.stopPropagation();
+      e.preventDefault();
+    }
+    
     console.log("Opening share dialog for document:", doc.name);
     setShareDialogDoc(doc);
   };
 
-  const handleCameraCapture = () => {
+  const handleCameraCapture = (e?: React.MouseEvent) => {
+    // Prevent event propagation to avoid swipe navigation
+    if (e) {
+      e.stopPropagation();
+      e.preventDefault();
+    }
+    
     if (cameraInputRef.current) {
       cameraInputRef.current.click();
     }
   };
 
-  const handleFileUpload = () => {
+  const handleFileUpload = (e?: React.MouseEvent) => {
+    // Prevent event propagation to avoid swipe navigation
+    if (e) {
+      e.stopPropagation();
+      e.preventDefault();
+    }
+    
     if (fileInputRef.current) {
       fileInputRef.current.click();
     }
@@ -156,9 +191,15 @@ export const DocumentsSection = ({ petId, petName, documents, onDocumentDeleted 
     if (file) {
       await uploadDocument(file, 'camera-capture');
     }
-    // Reset the input
+    // Reset the input - longer delay on Android
     if (cameraInputRef.current) {
-      cameraInputRef.current.value = '';
+      if (isAndroid) {
+        setTimeout(() => {
+          if (cameraInputRef.current) cameraInputRef.current.value = '';
+        }, 300);
+      } else {
+        cameraInputRef.current.value = '';
+      }
     }
   };
 
@@ -167,9 +208,15 @@ export const DocumentsSection = ({ petId, petName, documents, onDocumentDeleted 
     if (file) {
       await uploadDocument(file, 'file-upload');
     }
-    // Reset the input
+    // Reset the input - longer delay on Android
     if (fileInputRef.current) {
-      fileInputRef.current.value = '';
+      if (isAndroid) {
+        setTimeout(() => {
+          if (fileInputRef.current) fileInputRef.current.value = '';
+        }, 300);
+      } else {
+        fileInputRef.current.value = '';
+      }
     }
   };
 
@@ -271,15 +318,22 @@ export const DocumentsSection = ({ petId, petName, documents, onDocumentDeleted 
             </p>
             
             {/* Category Selection */}
-            <div className="mb-6 max-w-xs mx-auto">
+            <div className="mb-6 max-w-xs mx-auto" data-touch-safe>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Document Category
               </label>
-              <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-                <SelectTrigger className="w-full bg-white border-border">
+              <Select 
+                value={selectedCategory} 
+                onValueChange={setSelectedCategory}
+                onOpenChange={(open) => {
+                  if (open) overlayStore.open();
+                  else overlayStore.close();
+                }}
+              >
+                <SelectTrigger className="w-full bg-white border-border" data-touch-safe>
                   <SelectValue placeholder="Select category" />
                 </SelectTrigger>
-                <SelectContent className="bg-white border-border z-50">
+                <SelectContent className="bg-white border-border z-50" data-touch-safe>
                   {DOCUMENT_CATEGORIES.map((category) => {
                     const IconComponent = category.icon;
                     return (
@@ -303,29 +357,33 @@ export const DocumentsSection = ({ petId, petName, documents, onDocumentDeleted 
               capture="environment"
               onChange={handleDocumentCapture}
               className="hidden"
+              data-touch-safe
             />
             <input
               ref={fileInputRef}
               type="file"
-              accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
+              accept="application/pdf,image/jpeg,image/png,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
               onChange={handleFileSelect}
               className="hidden"
+              data-touch-safe
             />
             
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <Button 
-                onClick={handleCameraCapture}
+                onClick={(e) => handleCameraCapture(e)}
                 disabled={isUploading}
                 className="bg-brand-primary hover:bg-brand-primary-dark text-white border border-white/20"
+                data-touch-safe
               >
                 <Camera className="w-4 h-4 mr-2" />
                 {isUploading ? "Uploading..." : "📸 Capture Photo"}
               </Button>
               <Button 
-                onClick={handleFileUpload}
+                onClick={(e) => handleFileUpload(e)}
                 disabled={isUploading}
                 variant="outline"
                 className="border-border text-foreground hover:bg-muted"
+                data-touch-safe
               >
                 <Upload className="w-4 h-4 mr-2" />
                 {isUploading ? "Uploading..." : "Choose Files"}
@@ -347,13 +405,20 @@ export const DocumentsSection = ({ petId, petName, documents, onDocumentDeleted 
         <CardHeader>
           <CardTitle className="flex flex-col space-y-3 sm:flex-row sm:items-center sm:justify-between sm:space-y-0">
             <span>Stored Documents</span>
-            <div className="flex items-center gap-2 w-full sm:w-auto">
+            <div className="flex items-center gap-2 w-full sm:w-auto" data-touch-safe>
               <label className="text-sm font-medium text-gray-700">Filter:</label>
-              <Select value={filterCategory} onValueChange={setFilterCategory}>
-                <SelectTrigger className="flex-1 sm:w-40 bg-white border-border">
+              <Select 
+                value={filterCategory} 
+                onValueChange={setFilterCategory}
+                onOpenChange={(open) => {
+                  if (open) overlayStore.open();
+                  else overlayStore.close();
+                }}
+              >
+                <SelectTrigger className="flex-1 sm:w-40 bg-white border-border" data-touch-safe>
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent className="bg-white border-border z-50">
+                <SelectContent className="bg-white border-border z-50" data-touch-safe>
                   <SelectItem value="all">
                     <div className="flex items-center gap-2">
                       <FileArchive className="w-4 h-4" />
@@ -421,14 +486,15 @@ export const DocumentsSection = ({ petId, petName, documents, onDocumentDeleted 
                       </p>
                     </div>
                   </div>
-                   <div className="flex items-center space-x-1 sm:space-x-2 flex-shrink-0">
+                   <div className="flex items-center space-x-1 sm:space-x-2 flex-shrink-0" data-touch-safe>
                     <Button 
                       variant="ghost" 
                       size="sm" 
                       className="hover:bg-muted text-foreground px-1 sm:px-2 text-xs sm:text-sm"
-                      onClick={() => handleViewDocument(doc)}
+                      onClick={(e) => handleViewDocument(doc, e)}
                       disabled={viewingDocId === doc.id}
                       title="View document"
+                      data-touch-safe
                     >
                       {viewingDocId === doc.id ? (
                         <Loader2 className="w-3 h-3 sm:w-4 sm:h-4 animate-spin" />
@@ -440,13 +506,16 @@ export const DocumentsSection = ({ petId, petName, documents, onDocumentDeleted 
                       variant="ghost" 
                       size="sm" 
                       className="hover:bg-muted text-foreground px-1 sm:px-2 text-xs sm:text-sm"
-                      onClick={() => {
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        e.preventDefault();
                         const link = document.createElement('a');
                         link.href = doc.file_url;
                         link.download = doc.name;
                         link.click();
                       }}
                       title="Download document"
+                      data-touch-safe
                     >
                       <Download className="w-3 h-3 sm:w-4 sm:h-4" />
                     </Button>
@@ -454,22 +523,24 @@ export const DocumentsSection = ({ petId, petName, documents, onDocumentDeleted 
                       variant="ghost" 
                       size="sm" 
                       className="hover:bg-muted text-foreground px-1 sm:px-2 text-xs sm:text-sm"
-                      onClick={() => handleShareDocument(doc)}
+                      onClick={(e) => handleShareDocument(doc, e)}
                       title="Share document"
+                      data-touch-safe
                     >
                       <Share2 className="w-3 h-3 sm:w-4 sm:h-4" />
                     </Button>
                     <Button 
                       variant="ghost" 
                       size="sm" 
-                      className="hover:bg-red-50 text-red-600"
-                      onClick={() => handleDeleteDocument(doc)}
+                      className="hover:bg-red-50 text-red-600 px-1 sm:px-2 text-xs sm:text-sm"
+                      onClick={(e) => handleDeleteDocument(doc, e)}
                       disabled={deletingDocId === doc.id}
+                      data-touch-safe
                     >
                       {deletingDocId === doc.id ? (
-                        <Loader2 className="w-4 h-4 animate-spin" />
+                        <Loader2 className="w-3 h-3 sm:w-4 sm:h-4 animate-spin" />
                       ) : (
-                        <Trash2 className="w-4 h-4" />
+                        <Trash2 className="w-3 h-3 sm:w-4 sm:h-4" />
                       )}
                     </Button>
                   </div>

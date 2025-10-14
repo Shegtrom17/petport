@@ -204,8 +204,19 @@ export const DocumentsSection = ({ petId, petName, documents, onDocumentDeleted 
   };
 
   const handleFileSelect = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    // Stop event propagation to prevent swipe navigation
+    event.stopPropagation();
+    event.preventDefault();
+    
     const file = event.target.files?.[0];
     if (file) {
+      console.log('[File Select] Selected file:', {
+        name: file.name,
+        size: file.size,
+        type: file.type,
+        isAndroid,
+        possibleDriveUri: isAndroid && file.size === 0
+      });
       await uploadDocument(file, 'file-upload');
     }
     // Reset the input - longer delay on Android
@@ -220,11 +231,39 @@ export const DocumentsSection = ({ petId, petName, documents, onDocumentDeleted 
     }
   };
 
+  // Helper function to resolve Android Drive URIs
+  const resolveFileForUpload = async (file: File): Promise<Blob> => {
+    // On Android, check if this is a content:// URI that needs conversion
+    if (isAndroid && file.size === 0) {
+      console.log('[Android] Zero-size file detected, attempting Drive URI fetch');
+      try {
+        // Fetch the actual file content from the URI
+        const response = await fetch(URL.createObjectURL(file));
+        const blob = await response.blob();
+        console.log('[Android] Successfully converted Drive URI to blob:', blob.size, 'bytes');
+        return blob;
+      } catch (error) {
+        console.error('[Android] Failed to fetch Drive URI:', error);
+        // Fall back to original file
+        return file;
+      }
+    }
+    return file;
+  };
+
   const uploadDocument = async (file: File, source: string) => {
     setIsUploading(true);
     
     try {
       console.log(`Uploading document from ${source}:`, file.name, 'Category:', selectedCategory);
+      
+      // Resolve file content (handles Android Drive URIs)
+      const fileToUpload = await resolveFileForUpload(file);
+      
+      // Check if file is empty after resolution
+      if (fileToUpload.size === 0) {
+        throw new Error('File is empty or could not be read');
+      }
       
       // Generate unique filename
       const fileExt = file.name.split('.').pop();
@@ -233,7 +272,7 @@ export const DocumentsSection = ({ petId, petName, documents, onDocumentDeleted 
       // Upload to Supabase storage
       const { error: uploadError } = await supabase.storage
         .from('pet_documents')
-        .upload(fileName, file);
+        .upload(fileName, fileToUpload);
       
       if (uploadError) {
         console.error("Upload error:", uploadError);
@@ -270,12 +309,18 @@ export const DocumentsSection = ({ petId, petName, documents, onDocumentDeleted 
       
       onDocumentDeleted(); // Refresh the document list
       
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error uploading document:", error);
+      
+      // More helpful error message for Android Drive issues
+      const errorMessage = isAndroid && error.message?.includes('empty')
+        ? "Unable to access file from Google Drive. Try downloading the file to your device first."
+        : "Failed to upload document. Please try again.";
+      
       toast({
         variant: "destructive",
         title: "Upload Error",
-        description: "Failed to upload document. Please try again.",
+        description: errorMessage,
       });
     } finally {
       setIsUploading(false);
@@ -353,7 +398,7 @@ export const DocumentsSection = ({ petId, petName, documents, onDocumentDeleted 
             <input
               ref={cameraInputRef}
               type="file"
-              accept="image/*"
+              accept="image/jpeg,image/png"
               capture="environment"
               onChange={handleDocumentCapture}
               className="hidden"
@@ -376,7 +421,7 @@ export const DocumentsSection = ({ petId, petName, documents, onDocumentDeleted 
                 data-touch-safe
               >
                 <Camera className="w-4 h-4 mr-2" />
-                {isUploading ? "Uploading..." : "📸 Capture Photo"}
+                {isUploading ? "Uploading..." : "Capture Photo"}
               </Button>
               <Button 
                 onClick={(e) => handleFileUpload(e)}

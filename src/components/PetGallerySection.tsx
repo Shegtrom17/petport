@@ -185,6 +185,7 @@ export const PetGallerySection = ({ petData, onUpdate, handlePetUpdate }: PetGal
       }
 
       setUploading(true);
+      document.body.setAttribute('data-uploading', 'true');
       try {
         const compressionResults = await compressMultipleImages(filesToUpload, {
           maxWidth: 1200,
@@ -218,6 +219,7 @@ export const PetGallerySection = ({ petData, onUpdate, handlePetUpdate }: PetGal
         });
       } finally {
         setUploading(false);
+        document.body.removeAttribute('data-uploading');
       }
     };
     
@@ -243,6 +245,7 @@ export const PetGallerySection = ({ petData, onUpdate, handlePetUpdate }: PetGal
       if (!file) return;
 
       setUploading(true);
+      document.body.setAttribute('data-uploading', 'true');
       try {
         const compressionResults = await compressMultipleImages([file], {
           maxWidth: 1200,
@@ -275,6 +278,7 @@ export const PetGallerySection = ({ petData, onUpdate, handlePetUpdate }: PetGal
         });
       } finally {
         setUploading(false);
+        document.body.removeAttribute('data-uploading');
       }
     };
     

@@ -50,6 +50,7 @@ const Index = () => {
   const [activeTab, setActiveTab] = useState("profile");
   const [isInAppSharingOpen, setIsInAppSharingOpen] = useState(false);
   const [petLimit, setPetLimit] = useState<number>(0);
+  const [recentUpdate, setRecentUpdate] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -69,11 +70,22 @@ const Index = () => {
     isLoading,
     documents,
     handleSelectPet,
-    handlePetUpdate,
+    handlePetUpdate: originalHandlePetUpdate,
     handleDocumentUpdate,
     handleReorderPets,
     togglePetPublicVisibility
   } = usePetData();
+
+  // Wrap handlePetUpdate with debounce guard
+  const handlePetUpdate = async () => {
+    setRecentUpdate(true);
+    await originalHandlePetUpdate();
+    
+    // Clear the flag after 2 seconds
+    setTimeout(() => {
+      setRecentUpdate(false);
+    }, 2000);
+  };
 
   const handleTabChange = (tab: string) => {
     setActiveTab(tab);
@@ -174,17 +186,20 @@ const Index = () => {
   }, []);
 
 useEffect(() => {
+  // Skip if user just performed an action
+  if (recentUpdate) return;
+  
   // Skip restoring tab while an upload is happening
   const isUploading = document.body.getAttribute('data-uploading') === 'true';
   if (isUploading) return;
 
   if (user?.id && settings.rememberLastTab) {
     const saved = localStorage.getItem(`pp_last_tab_${user.id}`);
-    if (saved) {
+    if (saved && saved !== activeTab) {
       setActiveTab(saved === 'vaccination' ? 'profile' : saved);
     }
   }
-}, [user?.id, settings.rememberLastTab]);
+}, [user?.id, settings.rememberLastTab, recentUpdate, activeTab]);
 
   // Enhanced petData with proper user_id from selectedPet or current user
   const petData = selectedPet ? {

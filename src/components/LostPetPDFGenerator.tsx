@@ -1,3 +1,13 @@
+// ⚠️ WARNING: FROZEN MODULE — DO NOT MODIFY WITHOUT OWNER APPROVAL
+// This file contains verified lost pet PDF generation logic with iOS compatibility.
+// Last verified: October 2025
+// Changes require explicit approval from Susan Hegstrom after:
+//   1. Regression testing on iOS Safari, Android Chrome, Desktop
+//   2. Verification that lost pet PDF generation and sharing work correctly
+//   3. Confirmation that iOS fallback (open in new tab) functions properly
+// Any refactor proposals must be discussed in chat-and-plan mode first.
+// @lovable:protect begin
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
@@ -136,6 +146,7 @@ export const LostPetPDFGenerator = ({ petId, petName, isActive, petData }: LostP
     }
   };
 
+// @lovable:protect-function - Quick flyer generation with iOS-safe sharing (Oct 2025 Fix #2)
 const handleQuickFlyer = async () => {
   if (!user) {
     setAuthError(true);
@@ -337,3 +348,5 @@ const ButtonIcon = buttonIcon;
     </>
   );
 };
+
+// @lovable:protect end

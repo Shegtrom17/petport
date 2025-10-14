@@ -1,8 +1,12 @@
-// 🚨 DO NOT MODIFY WITHOUT OWNER APPROVAL (Oct 2025)
-// This file contains verified production logic for sharing, OG metadata, and PDF generation.
-// Any refactor or change may break share previews, OG image rendering, or PDF attachments.
-// Cloudflare R2 hosts all OG images. Supabase OG fallbacks must never be re-enabled.
-// Changes require explicit confirmation from Susan Hegstrom.
+// ⚠️ WARNING: FROZEN MODULE — DO NOT MODIFY WITHOUT OWNER APPROVAL
+// This file contains verified production logic for OG metadata and social sharing tags.
+// Last verified: October 2025
+// Changes require explicit approval from Susan Hegstrom after:
+//   1. Regression testing on iOS Safari, Android Chrome, Desktop
+//   2. Verification that OG images still load from Cloudflare R2
+//   3. Confirmation that Facebook/Twitter sharing previews work correctly
+// Any refactor proposals must be discussed in chat-and-plan mode first.
+// @lovable:protect begin
 
 import { useEffect } from 'react';
 import { getSafeBaseURL } from '@/utils/domainGuard';
@@ -15,6 +19,7 @@ interface MetaTagsProps {
   type?: string;
 }
 
+// @lovable:protect-function - OG tag injection for social media (Oct 2025)
 export const MetaTags = ({ title, description, image, url, type = "website" }: MetaTagsProps) => {
   const ogImage = image || "https://pub-a7c2c18b8d6143b9a256105ef44f2da0.r2.dev/OG%20General.png";
   const canonicalUrl = url.includes('petport.app') ? url : getSafeBaseURL() + new URL(url).pathname;
@@ -101,3 +106,5 @@ export const MetaTags = ({ title, description, image, url, type = "website" }: M
 
   return null; // This component doesn't render anything
 };
+
+// @lovable:protect end

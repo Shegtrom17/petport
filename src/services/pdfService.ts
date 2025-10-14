@@ -1,8 +1,12 @@
-// 🚨 DO NOT MODIFY WITHOUT OWNER APPROVAL (Oct 2025)
-// This file contains verified production logic for sharing, OG metadata, and PDF generation.
-// Any refactor or change may break share previews, OG image rendering, or PDF attachments.
-// Cloudflare R2 hosts all OG images. Supabase OG fallbacks must never be re-enabled.
-// Changes require explicit confirmation from Susan Hegstrom.
+// ⚠️ WARNING: FROZEN MODULE — DO NOT MODIFY WITHOUT OWNER APPROVAL
+// This file contains verified iOS-safe PDF sharing and fallback logic.
+// Last verified: October 2025
+// Changes require explicit approval from Susan Hegstrom after:
+//   1. Regression testing on iOS Safari, Android Chrome, Desktop
+//   2. Verification that PDF sharing works correctly across all platforms
+//   3. Confirmation that iOS fallback (open in new tab) functions properly
+// Any refactor proposals must be discussed in chat-and-plan mode first.
+// @lovable:protect begin
 
 import { supabase } from "@/integrations/supabase/client";
 import { resolvePdfType, PDFType } from "@/utils/pdfType";
@@ -251,6 +255,7 @@ async function fallbackToClipboard(url: string): Promise<ShareResult> {
   }
 }
 
+// @lovable:protect-function - iOS-safe PDF sharing with fallback (Oct 2025 Fix #2)
 // Enhanced sharing with better mobile experience
 // PDF Sharing functionality with Web Share API and storage fallback
 export async function sharePDFBlob(
@@ -438,3 +443,5 @@ export async function shareProfileOptimized(
   }
   return await shareProfile(url, title, description);
 }
+
+// @lovable:protect end

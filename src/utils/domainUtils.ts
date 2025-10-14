@@ -1,5 +1,16 @@
+// ⚠️ WARNING: FROZEN MODULE — DO NOT MODIFY WITHOUT OWNER APPROVAL
+// This file contains verified production logic for domain routing, edge function URLs, and share URL generation.
+// Last verified: October 2025
+// Changes require explicit approval from Susan Hegstrom after:
+//   1. Regression testing on iOS Safari, Android Chrome, Desktop
+//   2. Verification that OG images still load from Cloudflare R2
+//   3. Confirmation that share URLs route correctly through edge functions
+// Any refactor proposals must be discussed in chat-and-plan mode first.
+// @lovable:protect begin
+
 import { featureFlags } from '@/config/featureFlags';
 
+// @lovable:protect-function - Base URL generation for test/prod environments (Oct 2025)
 /**
  * Get the base URL for the application based on the current environment
  * @returns The appropriate base URL for the current environment
@@ -17,6 +28,7 @@ export const getBaseURL = (): string => {
   return 'https://petport.app';
 };
 
+// @lovable:protect-function - Edge function base URL (Oct 2025)
 /**
  * Get the edge function base URL for the current environment
  * @returns The appropriate edge function base URL
@@ -26,6 +38,7 @@ export const getEdgeFunctionBaseURL = (): string => {
   return 'https://dxghbhujugsfmaecilrq.supabase.co/functions/v1';
 };
 
+// @lovable:protect-function - Share URL generation for OG bypass (Oct 2025 Fix #1)
 /**
  * Generate a share URL using the appropriate edge function
  * @param functionName The edge function name (e.g., 'profile-share', 'missing-pet-share')
@@ -44,3 +57,5 @@ export const generateShareURL = (
   
   return `${edgeBaseURL}/${functionName}?petId=${encodeURIComponent(petId)}&redirect=${redirectParam}&${cacheBuster}`;
 };
+
+// @lovable:protect end

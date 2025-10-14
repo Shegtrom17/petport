@@ -1,3 +1,13 @@
+// ⚠️ WARNING: FROZEN MODULE — DO NOT MODIFY WITHOUT OWNER APPROVAL
+// This file contains verified client-side PDF generation logic with iOS compatibility.
+// Last verified: October 2025
+// Changes require explicit approval from Susan Hegstrom after:
+//   1. Regression testing on iOS Safari, Android Chrome, Desktop
+//   2. Verification that client-side PDF generation works correctly for all types
+//   3. Confirmation that iOS PDF sharing fallback functions properly
+// Any refactor proposals must be discussed in chat-and-plan mode first.
+// @lovable:protect begin
+
 import jsPDF from 'jspdf';
 import { sanitizeText } from '@/utils/inputSanitizer';
 import { generatePublicMissingUrl, generateQRCodeUrl } from '@/services/pdfService';
@@ -13,6 +23,7 @@ export interface ClientPDFGenerationResult {
   type?: string;
 }
 
+// @lovable:protect-function - iOS detection for platform-specific PDF handling (Oct 2025)
 // Platform detection utilities
 export const isIOS = (): boolean => {
   return /iPad|iPhone|iPod/.test(navigator.userAgent);
@@ -1888,6 +1899,7 @@ export async function viewPDFBlob(blob: Blob, filename: string): Promise<void> {
   }
 }
 
+// @lovable:protect-function - iOS-safe PDF download with fallback (Oct 2025 Fix #2)
 // Environment-aware download function
 export const downloadPDFBlob = async (blob: Blob, fileName: string): Promise<void> => {
   console.log('📥 PDF Download: Starting download for', fileName);
@@ -1970,3 +1982,5 @@ export const downloadPDFBlob = async (blob: Blob, fileName: string): Promise<voi
     console.log('✅ PDF Download: Standard download completed');
   }
 };
+
+// @lovable:protect end

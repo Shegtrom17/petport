@@ -1,8 +1,12 @@
-// 🚨 DO NOT MODIFY WITHOUT OWNER APPROVAL (Oct 2025)
-// This file contains verified production logic for sharing, OG metadata, and PDF generation.
-// Any refactor or change may break share previews, OG image rendering, or PDF attachments.
-// Cloudflare R2 hosts all OG images. Supabase OG fallbacks must never be re-enabled.
-// Changes require explicit confirmation from Susan Hegstrom.
+// ⚠️ WARNING: FROZEN MODULE — DO NOT MODIFY WITHOUT OWNER APPROVAL
+// This file contains verified sharing and PDF generation logic for all public and private pages.
+// Last verified: October 2025
+// Changes require explicit approval from Susan Hegstrom after:
+//   1. Regression testing on iOS Safari, Android Chrome, Desktop
+//   2. Verification that QuickShareHub routing, PDF buttons, and OG metadata work correctly
+//   3. Confirmation that all sharing methods (Native, Copy, SMS, Email, Facebook, Messenger) function properly
+// Any refactor proposals must be discussed in chat-and-plan mode first.
+// @lovable:protect begin
 
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -200,6 +204,7 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
     }
   ];
 
+  // @lovable:protect-function - Edge URL routing for OG metadata (Oct 2025 Fix #1)
   // Generate edge function URLs for social media (OG tags)
   const getEdgeFunctionUrl = (page: SharePage): string => {
     const directUrl = `${baseUrl}${page.path}`;
@@ -393,6 +398,7 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
     window.open(directUrl, '_blank');
   };
 
+  // @lovable:protect-function - PDF generation for Care Instructions (Oct 2025)
   const handleGenerateCarePdf = async () => {
     if (!petData.id) {
       toast({ description: "Pet ID is required", variant: "destructive" });
@@ -2607,3 +2613,5 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
     </Card>
   );
 };
+
+// @lovable:protect end

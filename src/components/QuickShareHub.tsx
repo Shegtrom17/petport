@@ -228,8 +228,8 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
     setCopyingId(page.id);
     try {
       // Use direct URL for copy (better UX for humans)
-      const directUrl = `${baseUrl}${page.path}`;
-      await navigator.clipboard.writeText(directUrl);
+      const urlToCopy = page.id === 'missing' ? getEdgeFunctionUrl(page) : `${baseUrl}${page.path}`;
+      await navigator.clipboard.writeText(urlToCopy);
       toast({
         title: "Link Copied!",
         description: `${page.title} link copied to clipboard`,
@@ -282,32 +282,44 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
     const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
     
     if (isMobile) {
-      // For mobile, use direct URL to avoid API errors with Facebook dialog
-      const directUrl = `${baseUrl}${page.path}`;
+      // On mobile, share the edge-function URL so Facebook/Messenger see OG tags
+      const edgeUrl = getEdgeFunctionUrl(page);
       
       if (navigator.share) {
-        // Use native sharing first
+        // Use native sharing first with the edge URL
         navigator.share({
           title: `${petData.name}'s ${page.title}`,
           text: page.description,
-          url: directUrl,
-        }).catch(() => {
-          // Fallback to copying link with instructions
-          handleCopyLink(page);
-          toast({
-            title: "Facebook Mobile Limitation",
-            description: "Link copied! Open Facebook app and paste the link in a post or story.",
-            duration: 5000,
-          });
+          url: edgeUrl,
+        }).catch(async () => {
+          try {
+            await navigator.clipboard.writeText(edgeUrl);
+            toast({
+              title: "Facebook Mobile",
+              description: "Link with preview copied! Open Facebook and paste to post.",
+              duration: 5000,
+            });
+          } catch {
+            // Last resort: open Facebook sharer with edge URL
+            const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(edgeUrl)}`;
+            window.open(facebookUrl, '_blank');
+          }
         });
       } else {
-        // Fallback: copy link and show instructions
-        handleCopyLink(page);
-        toast({
-          title: "Facebook Mobile Limitation", 
-          description: "Link copied! Open Facebook app and paste the link in a post or story.",
-          duration: 5000,
-        });
+        // Fallback: copy edge URL and show instructions
+        (async () => {
+          try {
+            await navigator.clipboard.writeText(edgeUrl);
+            toast({
+              title: "Facebook Mobile",
+              description: "Link with preview copied! Open Facebook and paste to post.",
+              duration: 5000,
+            });
+          } catch {
+            const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(edgeUrl)}`;
+            window.open(facebookUrl, '_blank');
+          }
+        })();
       }
     } else {
       // Desktop - use edge function URL for better OG tags

@@ -74,8 +74,8 @@ const directUrl = `${window.location.origin}/${path}`;
 const edgeFunctionName = isMissing ? 'missing-pet-share' : isResume ? 'resume-share' : isCare ? 'care-instructions-share' : isGallery ? 'gallery-share' : isTravel ? 'travel-share' : 'profile-share';
 const socialShareUrl = generateShareURL(edgeFunctionName, petId, directUrl);
 
-// Use direct URL for human sharing (copy, email, SMS), social URL for Facebook/Twitter
-const shareUrl = shareUrlOverride ?? directUrl;
+// Prefer edge URL for missing-pet so Facebook/Messenger see OG tags; otherwise use direct URL
+const shareUrl = shareUrlOverride ?? (isMissing ? socialShareUrl : directUrl);
 const shareText = isMissing 
   ? `🚨 MISSING PET ALERT 🚨 Help us bring ${petName} home!`
   : (isCare 

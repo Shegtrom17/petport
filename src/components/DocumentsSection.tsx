@@ -234,32 +234,24 @@ export const DocumentsSection = ({ petId, petName, documents, onDocumentDeleted 
     }
   };
 
-  // Helper function to resolve Android Drive URIs using blob-fetch
+  // Helper function to detect Android Drive URIs and guide user
   const resolveFileForUpload = async (file: File): Promise<Blob> => {
-    // On Android, check if this is a content:// URI that needs conversion
+    // On Android, detect Drive/cloud files immediately
     if (isAndroid && file.size === 0) {
-      console.log('[Android] Zero-size file detected, attempting Drive URI fetch');
-      try {
-        // Create object URL from the file handle
-        const objectUrl = URL.createObjectURL(file);
-        
-        // Fetch the actual blob data
-        const response = await fetch(objectUrl);
-        const blob = await response.blob();
-        
-        // Clean up the object URL
-        URL.revokeObjectURL(objectUrl);
-        
-        console.log('[Android] Successfully converted Drive URI to blob:', blob.size, 'bytes');
-        
-        // Return blob with correct type
-        return new Blob([blob], { type: file.type || 'application/octet-stream' });
-      } catch (error) {
-        console.error('[Android] Failed to fetch Drive URI:', error);
-        // Fall back to original file
-        return file;
-      }
+      console.log('[Android] Cloud storage file detected - cannot access directly');
+      
+      // Show helpful guidance immediately
+      toast({
+        title: "Cloud File Detected",
+        description: "This file is stored in Google Drive. Please download it to your device first, then upload from your Downloads folder.",
+        variant: "destructive",
+        duration: 8000,
+      });
+      
+      // Throw specific error to stop upload process
+      throw new Error('CLOUD_FILE_DETECTED');
     }
+    
     return file;
   };
 
@@ -325,15 +317,15 @@ export const DocumentsSection = ({ petId, petName, documents, onDocumentDeleted 
     } catch (error: any) {
       console.error("Error uploading document:", error);
       
-      // More helpful error message for Android Drive issues
-      const errorMessage = isAndroid && error.message?.includes('empty')
-        ? "Unable to access file from Google Drive. Try downloading the file to your device first."
-        : "Failed to upload document. Please try again.";
+      // Don't show generic error for cloud files - specific toast already shown
+      if (error instanceof Error && error.message === 'CLOUD_FILE_DETECTED') {
+        return;
+      }
       
       toast({
         variant: "destructive",
         title: "Upload Error",
-        description: errorMessage,
+        description: error instanceof Error ? error.message : "Failed to upload document. Please try again.",
       });
     } finally {
       setIsUploading(false);
@@ -451,9 +443,14 @@ export const DocumentsSection = ({ petId, petName, documents, onDocumentDeleted 
               </Button>
             </div>
             
-            <p className="text-xs text-gray-500 mt-2">
-              Tip: Use "Upload Document" for PDFs or files from Drive, and "Capture Photo" for pictures of receipts or records.
-            </p>
+            <div className="text-xs mt-3 px-4 text-center space-y-1">
+              <p className="text-gray-500">
+                Tip: Use "Upload Document" for PDFs or files from Drive, and "Capture Photo" for pictures of receipts or records.
+              </p>
+              <p className="text-amber-600 dark:text-amber-400 font-medium">
+                📱 Android users: Files from Google Drive must be downloaded to your device first, then uploaded from Downloads.
+              </p>
+            </div>
             
             {isUploading && (
               <div className="mt-4 flex items-center justify-center">

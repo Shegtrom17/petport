@@ -32,6 +32,12 @@ export function useSwipeNavigation({
       onSwiping: (e: any) => {
         if (!enabled || isOverlayOpen || isPtrActive) return;
         
+        // Block swipes during file uploads
+        if (document.body.hasAttribute('data-uploading')) {
+          if (debug) console.log("[swipe] ignoring - upload in progress");
+          return;
+        }
+        
         // Ignore multi-touch (pinch gestures)
         if (e.event?.touches && e.event.touches.length > 1) return;
         

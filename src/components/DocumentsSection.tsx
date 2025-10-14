@@ -137,7 +137,10 @@ export const DocumentsSection = ({ petId, petName, documents, onDocumentDeleted 
         description: `${doc.name} has been deleted successfully.`,
       });
       
-      onDocumentDeleted();
+      // Allow UI to refresh before triggering parent re-render
+      setTimeout(() => {
+        onDocumentDeleted();
+      }, 300);
       
     } catch (error) {
       console.error("Error deleting document:", error);
@@ -231,34 +234,28 @@ export const DocumentsSection = ({ petId, petName, documents, onDocumentDeleted 
     }
   };
 
-  // Helper function to resolve Android Drive URIs using FileReader
+  // Helper function to resolve Android Drive URIs using blob-fetch
   const resolveFileForUpload = async (file: File): Promise<Blob> => {
     // On Android, check if this is a content:// URI that needs conversion
     if (isAndroid && file.size === 0) {
-      console.log('[Android] Zero-size file detected, attempting Drive URI read with FileReader');
+      console.log('[Android] Zero-size file detected, attempting Drive URI fetch');
       try {
-        return await new Promise<Blob>((resolve, reject) => {
-          const reader = new FileReader();
-          
-          reader.onload = (e) => {
-            if (e.target?.result) {
-              const blob = new Blob([e.target.result], { type: file.type });
-              console.log('[Android] Successfully converted Drive URI to blob:', blob.size, 'bytes');
-              resolve(blob);
-            } else {
-              reject(new Error('FileReader result is empty'));
-            }
-          };
-          
-          reader.onerror = (e) => {
-            console.error('[Android] FileReader error:', e);
-            reject(new Error('Failed to read file'));
-          };
-          
-          reader.readAsArrayBuffer(file);
-        });
+        // Create object URL from the file handle
+        const objectUrl = URL.createObjectURL(file);
+        
+        // Fetch the actual blob data
+        const response = await fetch(objectUrl);
+        const blob = await response.blob();
+        
+        // Clean up the object URL
+        URL.revokeObjectURL(objectUrl);
+        
+        console.log('[Android] Successfully converted Drive URI to blob:', blob.size, 'bytes');
+        
+        // Return blob with correct type
+        return new Blob([blob], { type: file.type || 'application/octet-stream' });
       } catch (error) {
-        console.error('[Android] Failed to read Drive URI with FileReader:', error);
+        console.error('[Android] Failed to fetch Drive URI:', error);
         // Fall back to original file
         return file;
       }
@@ -268,6 +265,7 @@ export const DocumentsSection = ({ petId, petName, documents, onDocumentDeleted 
 
   const uploadDocument = async (file: File, source: string) => {
     setIsUploading(true);
+    document.body.setAttribute("data-uploading", "true");
     
     try {
       console.log(`Uploading document from ${source}:`, file.name, 'Category:', selectedCategory);
@@ -339,6 +337,7 @@ export const DocumentsSection = ({ petId, petName, documents, onDocumentDeleted 
       });
     } finally {
       setIsUploading(false);
+      document.body.removeAttribute("data-uploading");
     }
   };
 

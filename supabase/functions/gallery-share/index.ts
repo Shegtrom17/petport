@@ -84,7 +84,7 @@ serve(async (req) => {
     // Generate meta tags for social sharing
     const title = `${pet.name}'s Photo Gallery - PetPort`;
     const description = `Check out ${pet.name}'s photo gallery on PetPort.`;
-    const ogImage = 'https://petport.app/og/general-og.png';
+    const ogImage = 'https://petport.app/og/gallery-og.png';
     const canonicalUrl = `https://petport.app/gallery/${petId}`;
     
     const html = `

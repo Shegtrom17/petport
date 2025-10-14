@@ -440,12 +440,11 @@ export const DocumentsSection = ({ petId, petName, documents, onDocumentDeleted 
               <Button 
                 onClick={(e) => handleFileUpload(e)}
                 disabled={isUploading}
-                variant="outline"
-                className="border-border text-foreground hover:bg-muted"
+                className="bg-[#5691af] hover:bg-[#4a7d99] text-white border-0 text-sm"
                 data-touch-safe
               >
                 <Upload className="w-4 h-4 mr-2" />
-                {isUploading ? "Uploading..." : "Upload Document (PDF or File)"}
+                {isUploading ? "Uploading..." : "Upload Document"}
               </Button>
             </div>
             

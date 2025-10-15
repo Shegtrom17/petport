@@ -36,6 +36,11 @@ interface PetData {
   emergencyContact?: string;
   secondEmergencyContact?: string;
   petCaretaker?: string;
+  // Medical information
+  medicalAlert?: boolean;
+  medicalConditions?: string;
+  medical_alert?: boolean;
+  medical_conditions?: string;
 }
 
 interface PetProfileCardProps {
@@ -160,7 +165,10 @@ const handleEditSave = () => {
     vetContact: petData?.vetContact || "",
     emergencyContact: petData?.emergencyContact || "",
     secondEmergencyContact: petData?.secondEmergencyContact || "",
-    petCaretaker: petData?.petCaretaker || ""
+    petCaretaker: petData?.petCaretaker || "",
+    // Medical information
+    medicalAlert: petData?.medicalAlert ?? petData?.medical_alert ?? false,
+    medicalConditions: petData?.medicalConditions ?? petData?.medical_conditions ?? ""
   };
 
   if (isEditing) {

@@ -138,10 +138,19 @@ export const PetEditForm = ({ petData, onSave, onCancel, togglePetPublicVisibili
 
   // Sync medical alert data from petData to formData (supports snake_case from DB)
   useEffect(() => {
+    const incomingAlert = petData.medicalAlert ?? petData.medical_alert;
+    const incomingConditions = petData.medicalConditions ?? petData.medical_conditions;
+
     setFormData(prev => ({
       ...prev,
-      medicalAlert: petData.medicalAlert ?? petData.medical_alert ?? false,
-      medicalConditions: petData.medicalConditions ?? petData.medical_conditions ?? ''
+      medicalAlert:
+        typeof incomingAlert === 'boolean'
+          ? incomingAlert
+          : (prev.medicalAlert ?? false),
+      medicalConditions:
+        typeof incomingConditions === 'string'
+          ? incomingConditions
+          : (prev.medicalConditions ?? '')
     }));
   }, [petData.medicalAlert, petData.medical_alert, petData.medicalConditions, petData.medical_conditions]);
 

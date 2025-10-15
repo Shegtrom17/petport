@@ -36,11 +36,15 @@ export const MobileNavigationMenu = ({ isOpen, onClose }: MobileNavigationMenuPr
   return (
     <>
       <EnhancedSheet open={isOpen} onOpenChange={onClose}>
-        <SheetContent side="left" className="w-72 sm:w-80 p-0">
+        <SheetContent
+  side="left"
+  className="w-72 sm:w-80 p-0 flex flex-col min-h-0 h-[100svh]"
+>
+
           <SheetHeader className="p-4 sm:p-6 border-b border-border">
             <SheetTitle>Navigation Menu</SheetTitle>
           </SheetHeader>
-          <div className="py-4">
+         <div className="flex-1 min-h-0 overflow-y-auto native-scroll hide-scrollbar with-keyboard-padding py-4">
             <div className="px-2 space-y-2">
               {pages.map((page) => (
                 <Button

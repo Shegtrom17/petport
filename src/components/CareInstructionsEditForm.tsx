@@ -266,7 +266,7 @@ export const CareInstructionsEditForm = ({ petData, onSave, onCancel }: CareInst
         {/* Form Actions - Keyboard-aware sticky positioning */}
         <div 
           id="form-actions"
-          className="sticky bottom-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 p-4 -mx-4 -mb-4 border-t pb-[max(1rem,env(safe-area-inset-bottom))]"
+          className="sticky bottom-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 p-4 -mx-4 -mb-4 border-t pb-0"
         >
           <div
             className="keyboard-aware-transform flex justify-end space-x-4"

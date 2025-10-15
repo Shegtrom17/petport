@@ -8,6 +8,30 @@ html, body, input, textarea, button {
   font-size: 16px;
 }
 
+/* === Mobile Keyboard: Sticky Button Fallback === */
+@layer utilities {
+  /* Ensure sticky works on older Android browsers */
+  .sticky {
+    position: sticky;
+    position: -webkit-sticky; /* Safari fallback */
+  }
+  
+  /* Fallback for browsers without sticky support */
+  @supports not (position: sticky) {
+    .sticky {
+      position: fixed;
+      z-index: 50;
+    }
+  }
+  
+  /* Ensure transform works smoothly */
+  .keyboard-aware-transform {
+    will-change: transform;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+  }
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;

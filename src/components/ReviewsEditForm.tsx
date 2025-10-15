@@ -244,10 +244,10 @@ export const ReviewsEditForm = ({ petData, onSave, onCancel }: ReviewsEditFormPr
 
         {/* Form Actions - Keyboard-aware sticky positioning */}
         <div 
-          className="sticky bottom-0 flex justify-end space-x-4 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 p-4 -mx-4 -mb-4 border-t"
+          className="sticky bottom-0 keyboard-aware-transform flex justify-end space-x-4 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 p-4 -mx-4 -mb-4 border-t"
           style={{ 
             transform: bottomOffset > 0 ? `translateY(-${bottomOffset}px)` : 'none',
-            transition: 'transform 0.2s ease-out'
+            transition: 'transform 0.15s ease-out'
           }}
         >
           <Button type="button" variant="outline" onClick={onCancel} disabled={isLoading}>

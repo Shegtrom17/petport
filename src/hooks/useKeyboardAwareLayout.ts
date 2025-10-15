@@ -43,10 +43,24 @@ export const useKeyboardAwareLayout = () => {
          activeElement.tagName === 'TEXTAREA' ||
          activeElement.contentEditable === 'true');
       
+      // More accurate keyboard height estimation based on screen size
+      const estimateKeyboardHeight = () => {
+        if (!isInputFocused) return 0;
+        const screenHeight = window.innerHeight;
+        // Tablets have larger keyboards
+        if (screenHeight > 1024) return 380;
+        // Large phones
+        if (screenHeight > 800) return 320;
+        // Standard phones
+        return 280;
+      };
+      
+      const estimatedHeight = estimateKeyboardHeight();
+      
       setKeyboardState({
-        isVisible: isInputFocused || false,
-        height: isInputFocused ? 300 : 0, // Approximate keyboard height
-        bottomOffset: isInputFocused ? 300 : 0,
+        isVisible: isInputFocused,
+        height: estimatedHeight,
+        bottomOffset: estimatedHeight,
       });
     }
   }, []);

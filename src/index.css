@@ -459,3 +459,11 @@ textarea {
   }
 }
   
+/* === Android: eliminate gap between keyboard and sticky save bar === */
+/* If a parent uses .with-keyboard-padding (adds bottom padding via --kb-offset),
+   cancel that padding for the sticky footer so it sits flush with the keyboard. */
+@supports not (-webkit-touch-callout: none) {
+  .with-keyboard-padding #form-actions {
+    margin-bottom: calc(-1 * var(--kb-offset, 0px));
+  }
+}

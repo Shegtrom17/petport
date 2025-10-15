@@ -113,7 +113,7 @@ export const PetEditForm = ({ petData, onSave, onCancel, togglePetPublicVisibili
     }
   }, [formData, user]);
 
-  // Restore form data on mount (e.g., after mic permission prompt)
+  // Restore form data ONLY on initial mount (not when petData updates)
   useEffect(() => {
     if (!user || !petData.id) return;
     
@@ -131,7 +131,8 @@ export const PetEditForm = ({ petData, onSave, onCancel, togglePetPublicVisibili
         console.error('Error restoring form data:', error);
       }
     }
-  }, [user, petData.id]); // Only run on mount
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // ONLY run once on mount, never again
 
   const speciesConfig = useMemo(() => {
     return getSpeciesConfig(formData.species);

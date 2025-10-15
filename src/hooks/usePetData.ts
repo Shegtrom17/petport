@@ -141,30 +141,40 @@ export const usePetData = (initialPetId?: string) => {
     setIsLoading(false);
   };
 
-  const handlePetUpdate = async () => {
-    if (selectedPet?.id) {
-      try {
-        console.log("usePetData - Updating pet:", selectedPet.id);
-        const updatedPetDetails = await fetchPetDetails(selectedPet.id);
-        setSelectedPet(updatedPetDetails);
-        
-        const userPets = await fetchUserPets();
-        setPets(userPets);
-        
-        toast({
-          title: "Success",
-          description: "Pet profile updated successfully!",
-        });
-      } catch (error) {
-        console.error("Error refreshing pet data:", error);
-        toast({
-          variant: "destructive",
-          title: "Error",
-          description: "Could not refresh pet data. Please try again."
-        });
-      }
-    }
-  };
+const handlePetUpdate = async () => {
+  if (!selectedPet?.id) return;
+  try {
+    console.log("usePetData - Updating pet (safe merge):", selectedPet.id);
+
+    // Fetch updated details quietly
+    const updatedPetDetails = await fetchPetDetails(selectedPet.id);
+
+    // Update only changed fields instead of replacing the object
+    setSelectedPet(prev =>
+      prev ? { ...prev, ...updatedPetDetails } : updatedPetDetails
+    );
+
+    // Update just this pet in list (no full array replacement)
+    setPets(prev =>
+      prev.map(p =>
+        p.id === selectedPet.id ? { ...p, ...updatedPetDetails } : p
+      )
+    );
+
+    toast({
+      title: "Success",
+      description: "Pet profile updated successfully!",
+    });
+  } catch (error) {
+    console.error("Error refreshing pet data:", error);
+    toast({
+      variant: "destructive",
+      title: "Error",
+      description: "Could not refresh pet data. Please try again.",
+    });
+  }
+};
+
 
   const handleReorderPets = (reorderedPets: any[]) => {
     setPets(reorderedPets);

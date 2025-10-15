@@ -3,6 +3,14 @@ import { createRoot } from 'react-dom/client'
 import App from './App.tsx'
 import './index.css'
 import { StaticFallback } from './components/StaticFallback'
+import { isIOSDevice } from './utils/iosDetection'
+
+// Add platform class to html element for CSS targeting
+if (isIOSDevice()) {
+  document.documentElement.classList.add('platform-ios');
+} else {
+  document.documentElement.classList.add('platform-android');
+}
 
 // Global error handler for unhandled errors
 window.addEventListener('error', (event) => {

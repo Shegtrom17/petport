@@ -143,7 +143,7 @@ export const InAppSharingModal = ({ isOpen, onClose, petId, petName }: InAppShar
 
   return (
     <EnhancedDialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl max-h-[80vh] overflow-hidden flex flex-col">
+      <DialogContent className="max-w-2xl max-h-[80vh] overflow-hidden flex flex-col min-h-0">
         <DialogHeader>
           <DialogTitle className="flex items-center space-x-2">
             <Users className="w-5 h-5" />

@@ -220,7 +220,7 @@ export const DocumentShareDialog = ({
 
   return (
     <EnhancedDialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="w-[96vw] sm:max-w-[400px] max-h-[90svh] overflow-hidden flex flex-col native-scroll hide-scrollbar">
+      <DialogContent className="w-[96vw] sm:max-w-[400px] max-h-[90svh] overflow-hidden flex flex-col min-h-0 native-scroll hide-scrollbar">
         <DialogHeader>
           <DialogTitle className="flex items-center space-x-2">
             <Share2 className="w-5 h-5 text-blue-600" />

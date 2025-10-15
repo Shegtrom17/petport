@@ -134,6 +134,15 @@ export const PetEditForm = ({ petData, onSave, onCancel, togglePetPublicVisibili
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // ONLY run once on mount, never again
 
+  // Sync medical alert data from petData to formData
+  useEffect(() => {
+    setFormData(prev => ({
+      ...prev,
+      medicalAlert: petData.medicalAlert || false,
+      medicalConditions: petData.medicalConditions || ''
+    }));
+  }, [petData.medicalAlert, petData.medicalConditions]);
+
   const speciesConfig = useMemo(() => {
     return getSpeciesConfig(formData.species);
   }, [formData.species]);

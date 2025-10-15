@@ -55,11 +55,7 @@ textarea {
   -webkit-overflow-scrolling: touch;
 }
 
-/* Content padding when keyboard is open (Android) */
-.with-keyboard-padding {
-  padding-bottom: var(--kb-offset, 0px);
-  transition: padding-bottom 0.15s ease-out;
-}
+/* Content padding when keyboard is open (Android) - removed, now handled per-component */
 
 @layer base {
   :root {
@@ -459,9 +455,15 @@ textarea {
   }
 }
   
-/* === Android: eliminate gap between keyboard and sticky save bar === */
-/* If a parent uses .with-keyboard-padding (adds bottom padding via --kb-offset),
-   cancel that padding for the sticky footer so it sits flush with the keyboard. */
-.platform-android .with-keyboard-padding #form-actions {
-  margin-bottom: calc(-1 * var(--kb-offset, 0px));
+/* === Android: Keyboard gap fix === */
+/* When Android keyboard opens, ensure sticky footer sits flush with keyboard */
+.platform-android #form-actions {
+  position: sticky;
+  bottom: 0;
+  /* No padding/margin adjustments needed - footer naturally sits at bottom:0 */
+}
+
+/* Add scroll padding to content containers so content doesn't get hidden behind keyboard */
+.platform-android .with-keyboard-padding {
+  scroll-padding-bottom: var(--kb-offset, 0px);
 }

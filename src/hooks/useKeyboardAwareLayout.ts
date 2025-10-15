@@ -46,10 +46,15 @@ export const useKeyboardAwareLayout = () => {
       const isKeyboardVisible = keyboardHeight > 100;
 
       // Expose height to CSS so the scroll container can pad itself
-      document.documentElement.style.setProperty(
-        '--kb-offset',
-        isKeyboardVisible ? `${keyboardHeight}px` : '0px'
-      );
+      const offsetValue = isKeyboardVisible ? `${keyboardHeight}px` : '0px';
+      document.documentElement.style.setProperty('--kb-offset', offsetValue);
+      
+      console.log('[Android Keyboard Debug]', {
+        keyboardHeight,
+        isKeyboardVisible,
+        offsetValue,
+        appliedToRoot: document.documentElement.style.getPropertyValue('--kb-offset')
+      });
 
       setKeyboardState({
         isVisible: isKeyboardVisible,

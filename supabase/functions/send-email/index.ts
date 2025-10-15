@@ -8,7 +8,7 @@ const corsHeaders = {
 };
 
 interface EmailRequest {
-  type: 'profile' | 'care' | 'credentials' | 'resume' | 'reviews' | 'review_request' | 'missing_pet' | 'app_share' | 'welcome_trial' | 'transfer_invite_new' | 'transfer_invite_existing' | 'transfer_success' | 'transfer_limit_reached';
+  type: 'profile' | 'care' | 'credentials' | 'resume' | 'reviews' | 'review_request' | 'missing_pet' | 'app_share' | 'welcome' | 'welcome_trial' | 'transfer_invite_new' | 'transfer_invite_existing' | 'transfer_success' | 'transfer_limit_reached';
   recipientEmail: string;
   recipientName?: string;
   petName: string;
@@ -142,6 +142,58 @@ const generateEmailTemplate = (data: EmailRequest) => {
         ${customMessage ? `<blockquote style="border-left: 4px solid #3b82f6; padding-left: 16px; margin: 16px 0; font-style: italic; background-color: #f8fafc;">"${customMessage}"</blockquote>` : ''}
         
         <p>Join thousands of pet owners who trust PetPort to keep their pets safe and organized.</p>
+      `
+    },
+    welcome: {
+      subject: `🐾 Welcome to PetPort - Your Pet's Digital Home`,
+      content: `
+        <h2 style="color: #5691af;">🐾 Welcome to PetPort!</h2>
+        <p>Hi ${data.recipientName || 'there'},</p>
+        <p>We're thrilled to have you join the PetPort family! You've just taken the first step in giving your pets a secure, accessible digital home.</p>
+        
+        <div style="background: linear-gradient(135deg, #5691af 0%, #4a7c95 100%); color: white; padding: 25px; border-radius: 12px; margin: 25px 0;">
+          <h3 style="margin-top: 0; color: white; font-size: 20px;">📱 Access PetPort Anywhere, Anytime</h3>
+          <p style="margin: 12px 0; color: rgba(255,255,255,0.95); font-size: 15px;">
+            PetPort works seamlessly on all your devices - phone, tablet, or computer. All you need is your email and password to access your pets' profiles from anywhere.
+          </p>
+          <div style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px; margin-top: 15px;">
+            <p style="margin: 0; font-size: 14px; color: rgba(255,255,255,0.9);">
+              <strong>💡 Pro Tip:</strong> Save PetPort to your phone's home screen for instant access, just like a native app!
+            </p>
+          </div>
+        </div>
+        
+        <div style="background: #f0f9ff; padding: 22px; border-radius: 10px; margin: 25px 0; border-left: 4px solid #5691af;">
+          <h3 style="margin-top: 0; color: #1e3a8a; font-size: 18px;">🚀 Get Started in 3 Easy Steps</h3>
+          <ol style="color: #334155; margin: 15px 0; padding-left: 20px; line-height: 1.8;">
+            <li><strong>Create your first pet profile</strong> - Add photos, basic info, and personality traits</li>
+            <li><strong>Add important documents</strong> - Upload vaccination records, medical info, and insurance documents</li>
+            <li><strong>Share with confidence</strong> - Send profiles to vets, boarders, sitters, and family members</li>
+          </ol>
+        </div>
+        
+        <div style="background: #fefce8; border: 2px solid #fbbf24; border-radius: 10px; padding: 20px; margin: 25px 0;">
+          <h3 style="margin-top: 0; color: #92400e; font-size: 18px;">💰 Earn $2 for Every Friend!</h3>
+          <p style="margin: 10px 0; color: #78350f;">
+            Love PetPort? Share it with fellow pet parents and <strong>earn $2 for every friend who subscribes</strong> to a yearly plan. Find your unique referral link in your account settings.
+          </p>
+        </div>
+        
+        <div style="background: #f8fafc; padding: 20px; border-radius: 10px; margin: 25px 0;">
+          <h3 style="margin-top: 0; color: #475569; font-size: 17px;">✨ What Makes PetPort Special</h3>
+          <ul style="color: #475569; margin: 15px 0; padding-left: 20px; line-height: 1.8;">
+            <li><strong>Emergency-ready</strong> - QR codes and public profiles for lost pet situations</li>
+            <li><strong>Vet-approved</strong> - Share complete medical histories instantly</li>
+            <li><strong>Travel companion</strong> - All vaccination records and documents in one place</li>
+            <li><strong>Peace of mind</strong> - Never lose important pet documents again</li>
+          </ul>
+        </div>
+        
+        <p style="margin-top: 25px; color: #64748b;">Questions? Just reply to this email - we're here to help!</p>
+        <p style="color: #5691af; font-weight: 600;">Welcome aboard! 🎉</p>
+        <p style="color: #94a3b8; font-size: 14px; margin-top: 20px;">
+          The PetPort Team
+        </p>
       `
     },
     welcome_trial: {

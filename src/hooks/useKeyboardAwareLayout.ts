@@ -30,10 +30,13 @@ export const useKeyboardAwareLayout = () => {
       const viewportHeight = viewport.height;
       const keyboardHeight = windowHeight - viewportHeight - viewport.offsetTop;
       
+      // Only apply offset if keyboard is actually visible (> 100px threshold)
+      const isKeyboardVisible = keyboardHeight > 100;
+      
       setKeyboardState({
-        isVisible: keyboardHeight > 100, // Threshold to detect keyboard
-        height: Math.max(0, keyboardHeight),
-        bottomOffset: Math.max(0, keyboardHeight),
+        isVisible: isKeyboardVisible,
+        height: isKeyboardVisible ? Math.max(0, keyboardHeight) : 0,
+        bottomOffset: isKeyboardVisible ? Math.max(0, keyboardHeight) : 0,
       });
     } else {
       // Fallback for Android and other platforms
@@ -57,10 +60,11 @@ export const useKeyboardAwareLayout = () => {
       
       const estimatedHeight = estimateKeyboardHeight();
       
+      // Only apply offset if keyboard should be visible
       setKeyboardState({
-        isVisible: isInputFocused,
+        isVisible: isInputFocused && estimatedHeight > 100,
         height: estimatedHeight,
-        bottomOffset: estimatedHeight,
+        bottomOffset: estimatedHeight > 100 ? estimatedHeight : 0,
       });
     }
   }, []);

@@ -8,15 +8,14 @@ html, body, input, textarea, button {
   font-size: 16px;
 }
 
-/* === Mobile Keyboard: Sticky Button Fallback === */
+/* === Mobile Keyboard: Unified Layout Stability === */
 @layer utilities {
-  /* Ensure sticky works on older Android browsers */
+  /* Sticky positioning fallbacks */
   .sticky {
     position: sticky;
-    position: -webkit-sticky; /* Safari fallback */
+    position: -webkit-sticky;
   }
   
-  /* Fallback for browsers without sticky support */
   @supports not (position: sticky) {
     .sticky {
       position: fixed;
@@ -24,42 +23,35 @@ html, body, input, textarea, button {
     }
   }
   
-  /* Ensure transform works smoothly */
+  /* Keyboard-aware transform layer (NO padding here) */
   .keyboard-aware-transform {
     will-change: transform;
     backface-visibility: hidden;
     -webkit-backface-visibility: hidden;
-    /* Give breathing room for iOS bottom bar */
-    padding-bottom: env(safe-area-inset-bottom);
-    /* Improve hit-testing stability on iOS */
     -webkit-transform: translateZ(0);
             transform: translateZ(0);
   }
 }
 
-/* === iOS Safe Area & Keyboard Fix (Footer) === */
+/* iOS-only: Safe-area padding on form-actions container */
 @supports (-webkit-touch-callout: none) {
-  /* Extra padding on sticky container to keep above iOS bottom bar */
   #form-actions {
     padding-bottom: calc(env(safe-area-inset-bottom) + 8px);
   }
-}
-
-/* === Disable iOS auto scroll when keyboard opens === */
-input,
-textarea {
-  overscroll-behavior: contain;
-  scroll-margin-bottom: 200px; /* Reserve space for Save bar */
-  -webkit-overflow-scrolling: touch;
-}
-
-/* Prevent iOS from scrolling focused inputs out of view */
-@supports (-webkit-touch-callout: none) {
+  
+  /* Prevent iOS from scrolling focused inputs out of view */
   input:focus,
   textarea:focus {
     position: relative;
     z-index: 10;
   }
+}
+
+/* Android-friendly scroll behavior (NO overscroll-behavior) */
+input,
+textarea {
+  scroll-margin-bottom: 200px;
+  -webkit-overflow-scrolling: touch;
 }
 
 @layer base {

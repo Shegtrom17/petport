@@ -29,6 +29,19 @@ html, body, input, textarea, button {
     will-change: transform;
     backface-visibility: hidden;
     -webkit-backface-visibility: hidden;
+    /* Give breathing room for iOS bottom bar */
+    padding-bottom: env(safe-area-inset-bottom);
+    /* Improve hit-testing stability on iOS */
+    -webkit-transform: translateZ(0);
+            transform: translateZ(0);
+  }
+}
+
+/* === iOS Safe Area & Keyboard Fix (Footer) === */
+@supports (-webkit-touch-callout: none) {
+  /* Extra padding on sticky container to keep above iOS bottom bar */
+  #form-actions {
+    padding-bottom: calc(env(safe-area-inset-bottom) + 8px);
   }
 }
 

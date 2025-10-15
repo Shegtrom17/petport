@@ -632,22 +632,26 @@ export const PetEditForm = ({ petData, onSave, onCancel, togglePetPublicVisibili
           {/* Action Buttons - Keyboard-aware sticky positioning */}
           <div 
             id="form-actions"
-            className="sticky bottom-0 keyboard-aware-transform flex gap-4 pt-6 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 p-4 -mx-4 -mb-4 border-t"
-            style={{ 
-              transform: bottomOffset > 0 ? `translateY(-${bottomOffset}px)` : 'none',
-              transition: 'transform 0.15s ease-out'
-            }}
+            className="sticky bottom-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 p-4 -mx-4 -mb-4 border-t pb-[max(1rem,env(safe-area-inset-bottom))]"
           >
-            <Button type="submit" disabled={isSaving} className="text-white">
-              {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Save Changes
-            </Button>
-            <Button type="button" variant="outline" onClick={onCancel}>
-              Cancel
-            </Button>
+            <div
+              className="keyboard-aware-transform flex gap-4 pt-2"
+              style={{ 
+                transform: bottomOffset > 0 ? `translateY(-${bottomOffset}px)` : 'none',
+                transition: 'transform 0.15s ease-out'
+              }}
+            >
+              <Button type="submit" disabled={isSaving} className="text-white">
+                {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                Save Changes
+              </Button>
+              <Button type="button" variant="outline" onClick={onCancel}>
+                Cancel
+              </Button>
+            </div>
           </div>
         </form>
-      </CardContent>
+    </CardContent>
     </Card>
   );
 };

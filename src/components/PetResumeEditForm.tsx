@@ -343,12 +343,15 @@ export const PetResumeEditForm = ({ petData, onSave, onCancel }: PetResumeEditFo
         {/* Form Actions - Keyboard-aware sticky positioning */}
         <div 
           id="form-actions"
-          className="sticky bottom-0 keyboard-aware-transform flex justify-end space-x-4 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 p-4 -mx-4 -mb-4 border-t"
-          style={{ 
-            transform: bottomOffset > 0 ? `translateY(-${bottomOffset}px)` : 'none',
-            transition: 'transform 0.15s ease-out'
-          }}
+          className="sticky bottom-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 p-4 -mx-4 -mb-4 border-t pb-[max(1rem,env(safe-area-inset-bottom))]"
         >
+          <div
+            className="keyboard-aware-transform flex justify-end space-x-4"
+            style={{ 
+              transform: bottomOffset > 0 ? `translateY(-${bottomOffset}px)` : 'none',
+              transition: 'transform 0.15s ease-out'
+            }}
+          >
           <Button type="button" variant="outline" onClick={onCancel} disabled={isLoading}>
             Cancel
           </Button>
@@ -362,6 +365,7 @@ export const PetResumeEditForm = ({ petData, onSave, onCancel }: PetResumeEditFo
               "Save Changes"
             )}
           </Button>
+          </div>
         </div>
       </form>
     </div>

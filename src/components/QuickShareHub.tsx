@@ -2295,7 +2295,7 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
               <DrawerTitle>Share via Email</DrawerTitle>
             </DrawerHeader>
             <div 
-              className="max-h-[70vh] overflow-y-auto overscroll-contain"
+              className="max-h-[70vh] overflow-y-auto overscroll-contain with-keyboard-padding"
               style={{
                 WebkitOverflowScrolling: 'touch',
                 overscrollBehavior: 'contain',

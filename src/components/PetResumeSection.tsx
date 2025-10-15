@@ -252,7 +252,7 @@ export const PetResumeSection = ({ petData, onUpdate, handlePetUpdate }: PetResu
 
       {/* Edit Modal */}
       <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto with-keyboard-padding">
           <DialogHeader>
             <DialogTitle>Edit Pet Resume</DialogTitle>
           </DialogHeader>
@@ -363,7 +363,7 @@ export const PetResumeSection = ({ petData, onUpdate, handlePetUpdate }: PetResu
 
       {/* Share Dialog - All sharing options consolidated */}
       <Dialog open={isShareDialogOpen} onOpenChange={setIsShareDialogOpen}>
-        <DialogContent className="max-w-[100vw] sm:max-w-md w-full min-w-0 max-h-[90vh] overflow-y-auto overflow-x-hidden bg-[#f8f8f8] px-4">
+        <DialogContent className="max-w-[100vw] sm:max-w-md w-full min-w-0 max-h-[90vh] overflow-y-auto overflow-x-hidden bg-[#f8f8f8] px-4 with-keyboard-padding">
           <DialogHeader>
             <DialogTitle className="font-bold text-navy-900 border-b-2 border-gold-500 pb-2">
               🔗 Share {petData.name}'s Resume

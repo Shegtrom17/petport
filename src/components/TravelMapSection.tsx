@@ -257,7 +257,7 @@ export const TravelMapSection = ({ petData, onUpdate }: TravelMapSectionProps) =
 
       {/* Edit Modal */}
       <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto mx-4">
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto mx-4 with-keyboard-padding">
           <DialogHeader>
             <DialogTitle className="text-base sm:text-lg">Edit Travel Locations</DialogTitle>
           </DialogHeader>

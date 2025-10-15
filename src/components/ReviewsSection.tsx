@@ -253,7 +253,7 @@ export const ReviewsSection = ({ petData, onUpdate }: ReviewsSectionProps) => {
 
       {/* Edit Modal */}
       <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto with-keyboard-padding">
           <DialogHeader>
             <DialogTitle>Edit Reviews & References</DialogTitle>
           </DialogHeader>

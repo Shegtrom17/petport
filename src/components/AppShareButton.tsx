@@ -197,7 +197,7 @@ export const AppShareButton = ({ variant = "icon", className = "" }: AppShareBut
               <DrawerHeader>
                 <DrawerTitle>Share PetPort via Email</DrawerTitle>
               </DrawerHeader>
-              <div className="space-y-4 max-h-[60vh] overflow-y-auto">
+              <div className="space-y-4 max-h-[60vh] overflow-y-auto with-keyboard-padding">
                 <div>
                   <label htmlFor="email" className="text-sm font-medium">
                     Email address

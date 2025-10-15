@@ -354,7 +354,7 @@ export const CareInstructionsSection = ({ petData, onUpdate, handlePetUpdate }: 
                         Share your pet's care instructions with pet sitters and caregivers
                       </DrawerDescription>
                     </DrawerHeader>
-                    <div ref={dialogContentRef} className="max-h-[75vh] overflow-y-auto space-y-6">
+                    <div ref={dialogContentRef} className="max-h-[75vh] overflow-y-auto space-y-6 with-keyboard-padding">
                       <ScrollControls targetRef={dialogContentRef} />
                       {/* Public Care Instructions Link */}
                       <div className="bg-white p-4 rounded-lg border border-gold-500/30 shadow-sm">
@@ -472,7 +472,7 @@ export const CareInstructionsSection = ({ petData, onUpdate, handlePetUpdate }: 
                   </DialogTrigger>
                   <DialogContent 
                     ref={dialogContentRef}
-                    className="max-w-[100vw] sm:max-w-md w-full min-w-0 max-h-[90vh] overflow-y-auto bg-[#f8f8f8] px-4"
+                    className="max-w-[100vw] sm:max-w-md w-full min-w-0 max-h-[90vh] overflow-y-auto bg-[#f8f8f8] px-4 with-keyboard-padding"
                   >
                     <ScrollControls targetRef={dialogContentRef} />
                     <DialogHeader>

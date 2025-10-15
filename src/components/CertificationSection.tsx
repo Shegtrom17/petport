@@ -251,7 +251,7 @@ export const CertificationSection = ({ petData, onUpdate }: CertificationSection
 
       {/* Edit Modal */}
       <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto with-keyboard-padding">
           <DialogHeader>
             <DialogTitle>Manage Professional Certification</DialogTitle>
           </DialogHeader>

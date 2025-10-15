@@ -23,6 +23,7 @@ import { useEmailSharing } from "@/hooks/useEmailSharing";
 import { useAuth } from "@/context/AuthContext";
 import { shareViaMessenger, copyToClipboard } from "@/utils/messengerShare";
 import { viewPDFBlob, downloadPDFBlob, isIOS } from '@/services/clientPdfService';
+import jsPDF from 'jspdf';
 
 interface Document {
   id: string;
@@ -187,6 +188,71 @@ export const DocumentShareDialog = ({
     }
   };
 
+  // Convert image to PDF
+  const convertImageToPdf = async (imageBlob: Blob, fileName: string): Promise<Blob> => {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      const url = URL.createObjectURL(imageBlob);
+      
+      img.onload = () => {
+        try {
+          // Create PDF with appropriate size for the image
+          const pdf = new jsPDF({
+            orientation: img.width > img.height ? 'landscape' : 'portrait',
+            unit: 'px'
+          });
+
+          // Calculate dimensions to fit image on page while maintaining aspect ratio
+          const pageWidth = pdf.internal.pageSize.getWidth();
+          const pageHeight = pdf.internal.pageSize.getHeight();
+          const margin = 20;
+          const maxWidth = pageWidth - (margin * 2);
+          const maxHeight = pageHeight - (margin * 2);
+          
+          let imgWidth = img.width;
+          let imgHeight = img.height;
+          
+          // Scale down if image is larger than page
+          if (imgWidth > maxWidth || imgHeight > maxHeight) {
+            const widthRatio = maxWidth / imgWidth;
+            const heightRatio = maxHeight / imgHeight;
+            const ratio = Math.min(widthRatio, heightRatio);
+            
+            imgWidth = imgWidth * ratio;
+            imgHeight = imgHeight * ratio;
+          }
+          
+          // Center the image on the page
+          const x = (pageWidth - imgWidth) / 2;
+          const y = (pageHeight - imgHeight) / 2;
+          
+          // Add title at top
+          pdf.setFontSize(12);
+          pdf.setTextColor(60, 60, 60);
+          pdf.text(`${petName} - ${fileName}`, margin, margin);
+          
+          // Add the image
+          pdf.addImage(url, 'JPEG', x, y, imgWidth, imgHeight);
+          
+          // Convert to blob
+          const pdfBlob = pdf.output('blob');
+          URL.revokeObjectURL(url);
+          resolve(pdfBlob);
+        } catch (error) {
+          URL.revokeObjectURL(url);
+          reject(error);
+        }
+      };
+      
+      img.onerror = () => {
+        URL.revokeObjectURL(url);
+        reject(new Error('Failed to load image'));
+      };
+      
+      img.src = url;
+    });
+  };
+
   const handleGeneratePdf = async () => {
     setIsGeneratingPdf(true);
     toast({ title: "Generating PDF...", description: "Creating a shareable PDF version of this document." });
@@ -197,16 +263,31 @@ export const DocumentShareDialog = ({
       if (!response.ok) throw new Error('Failed to fetch document');
       
       const blob = await response.blob();
-      setPdfBlob(blob);
-      setShowPdfOptions(true);
+      const fileType = blob.type.toLowerCase();
       
+      // Check if it's already a PDF
+      if (fileType === 'application/pdf') {
+        console.log('[Document PDF] Already PDF format, using as-is');
+        setPdfBlob(blob);
+      } 
+      // Check if it's an image that needs to be converted to PDF
+      else if (fileType.startsWith('image/')) {
+        console.log('[Document PDF] Image detected, converting to PDF');
+        const pdfBlob = await convertImageToPdf(blob, document.name);
+        setPdfBlob(pdfBlob);
+      }
+      else {
+        throw new Error('Unsupported file type. Only PDF and image files can be shared as PDFs.');
+      }
+      
+      setShowPdfOptions(true);
       toast({ title: "PDF Ready!", description: "Your document PDF is ready to share." });
     } catch (error: any) {
       console.error('[Document PDF] Generation failed:', error);
       toast({ 
         title: "Generation Failed", 
-        description: "Could not generate PDF. Please try sharing the document link instead.", 
-        variant: "destructive" 
+        description: error.message || "Could not generate PDF. Please try sharing the document link instead.", 
+        variant: "destructive"
       });
     } finally {
       setIsGeneratingPdf(false);

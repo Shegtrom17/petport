@@ -49,6 +49,8 @@ interface PetData {
   // Medical information
   medicalAlert?: boolean;
   medicalConditions?: string;
+  medical_alert?: boolean;
+  medical_conditions?: string;
   // Organization information
   organizationName?: string;
   organizationEmail?: string;
@@ -134,14 +136,14 @@ export const PetEditForm = ({ petData, onSave, onCancel, togglePetPublicVisibili
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // ONLY run once on mount, never again
 
-  // Sync medical alert data from petData to formData
+  // Sync medical alert data from petData to formData (supports snake_case from DB)
   useEffect(() => {
     setFormData(prev => ({
       ...prev,
-      medicalAlert: petData.medicalAlert || false,
-      medicalConditions: petData.medicalConditions || ''
+      medicalAlert: petData.medicalAlert ?? petData.medical_alert ?? false,
+      medicalConditions: petData.medicalConditions ?? petData.medical_conditions ?? ''
     }));
-  }, [petData.medicalAlert, petData.medicalConditions]);
+  }, [petData.medicalAlert, petData.medical_alert, petData.medicalConditions, petData.medical_conditions]);
 
   const speciesConfig = useMemo(() => {
     return getSpeciesConfig(formData.species);

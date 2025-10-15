@@ -228,7 +228,7 @@ export const DocumentShareDialog = ({
           </DialogTitle>
         </DialogHeader>
         
-        <div className="flex-1 overflow-y-auto space-y-3 p-1">
+        <div className="flex-1 overflow-y-auto space-y-3 p-1 with-keyboard-padding">
           {/* Document Info */}
           <div className="bg-gray-50 p-2 rounded-lg">
             <p className="font-medium text-gray-900 text-sm truncate">{document.name}</p>

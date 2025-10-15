@@ -37,7 +37,7 @@ export const NativeModal = ({
       </div>
 
       {/* Content */}
-      <div className="flex-1 overflow-y-auto">
+      <div className="flex-1 overflow-y-auto with-keyboard-padding">
         <div className={`${fullScreen ? 'min-h-full' : 'p-4'} pb-8`}>
           {children}
         </div>

@@ -190,7 +190,7 @@ export const InAppSharingModal = ({ isOpen, onClose, petId, petName }: InAppShar
           )}
 
           {/* User List */}
-          <div className="flex-1 overflow-y-auto space-y-2">
+          <div className="flex-1 overflow-y-auto space-y-2 with-keyboard-padding">
             {isLoading ? (
               <div className="text-center py-8">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-2"></div>

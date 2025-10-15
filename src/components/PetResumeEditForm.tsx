@@ -342,6 +342,7 @@ export const PetResumeEditForm = ({ petData, onSave, onCancel }: PetResumeEditFo
 
         {/* Form Actions - Keyboard-aware sticky positioning */}
         <div 
+          id="form-actions"
           className="sticky bottom-0 keyboard-aware-transform flex justify-end space-x-4 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 p-4 -mx-4 -mb-4 border-t"
           style={{ 
             transform: bottomOffset > 0 ? `translateY(-${bottomOffset}px)` : 'none',

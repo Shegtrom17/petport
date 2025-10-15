@@ -245,6 +245,7 @@ export const TravelEditForm = ({ petData, onSave, onCancel, mode = 'edit' }: Tra
 
         {/* Form Actions - Keyboard-aware sticky positioning */}
         <div 
+          id="form-actions"
           className="sticky bottom-0 keyboard-aware-transform flex flex-col sm:flex-row justify-end space-y-2 sm:space-y-0 sm:space-x-4 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 p-4 -mx-4 -mb-4 border-t"
           style={{ 
             transform: bottomOffset > 0 ? `translateY(-${bottomOffset}px)` : 'none',

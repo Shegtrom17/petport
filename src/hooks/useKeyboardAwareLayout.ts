@@ -65,6 +65,21 @@ export const useKeyboardAwareLayout = () => {
     }
   }, []);
 
+  // Helper to ensure Save button stays visible after iOS keyboard animation
+  const ensureSaveButtonVisible = useCallback(() => {
+    const saveBar = document.getElementById('form-actions');
+    if (!saveBar) return;
+    
+    // Wait for iOS keyboard animation to complete (typically 300ms)
+    setTimeout(() => {
+      saveBar.scrollIntoView({ 
+        behavior: 'smooth', 
+        block: 'nearest',
+        inline: 'nearest'
+      });
+    }, 300);
+  }, []);
+
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
@@ -76,9 +91,19 @@ export const useKeyboardAwareLayout = () => {
       window.visualViewport.addEventListener('scroll', updateKeyboardState);
     }
 
+    // Create event handlers
+    const handleFocusIn = () => {
+      updateKeyboardState();
+      ensureSaveButtonVisible();
+    };
+
+    const handleFocusOut = () => {
+      updateKeyboardState();
+    };
+
     // Listen to focus events for all platforms
-    window.addEventListener('focusin', updateKeyboardState);
-    window.addEventListener('focusout', updateKeyboardState);
+    window.addEventListener('focusin', handleFocusIn);
+    window.addEventListener('focusout', handleFocusOut);
     
     // Initial check
     updateKeyboardState();
@@ -88,10 +113,10 @@ export const useKeyboardAwareLayout = () => {
         window.visualViewport.removeEventListener('resize', updateKeyboardState);
         window.visualViewport.removeEventListener('scroll', updateKeyboardState);
       }
-      window.removeEventListener('focusin', updateKeyboardState);
-      window.removeEventListener('focusout', updateKeyboardState);
+      window.removeEventListener('focusin', handleFocusIn);
+      window.removeEventListener('focusout', handleFocusOut);
     };
-  }, [updateKeyboardState]);
+  }, [updateKeyboardState, ensureSaveButtonVisible]);
 
   return keyboardState;
 };

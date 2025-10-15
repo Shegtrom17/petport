@@ -32,6 +32,23 @@ html, body, input, textarea, button {
   }
 }
 
+/* === Disable iOS auto scroll when keyboard opens === */
+input,
+textarea {
+  overscroll-behavior: contain;
+  scroll-margin-bottom: 200px; /* Reserve space for Save bar */
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Prevent iOS from scrolling focused inputs out of view */
+@supports (-webkit-touch-callout: none) {
+  input:focus,
+  textarea:focus {
+    position: relative;
+    z-index: 10;
+  }
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;

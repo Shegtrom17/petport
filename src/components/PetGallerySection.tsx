@@ -56,6 +56,9 @@ export const PetGallerySection = ({ petData, onUpdate, handlePetUpdate }: PetGal
   const { toast } = useToast();
   const isMobile = useIsMobile();
 
+  // Detect Android for special handling
+  const isAndroid = /Android/i.test(navigator.userAgent);
+
   const galleryPhotos = (petData.gallery_photos || []).sort((a, b) => (a.position || 0) - (b.position || 0));
   const remainingSlots = MAX_GALLERY_PHOTOS - galleryPhotos.length;
   const isLimitReached = galleryPhotos.length >= MAX_GALLERY_PHOTOS;
@@ -147,6 +150,10 @@ export const PetGallerySection = ({ petData, onUpdate, handlePetUpdate }: PetGal
           title: "Photos reordered",
           description: "Photo order saved successfully. First four photos will appear in lost pet flyers.",
         });
+      if (isAndroid) {
+        console.log('Android detected — skipping onUpdate to prevent jump');
+        return;
+      }
       onUpdate();
     } catch (error) {
       toast({
@@ -202,14 +209,24 @@ export const PetGallerySection = ({ petData, onUpdate, handlePetUpdate }: PetGal
             title: "Photos uploaded successfully",
             description: `${result.uploaded} photo(s) added to gallery`,
           });
-          onUpdate();
+          if (isAndroid) {
+            console.log('Android detected — skipping onUpdate to prevent jump');
+          } else {
+            onUpdate();
+          }
         } else {
           toast({
             title: "Some photos failed to upload",
             description: `${result.uploaded} uploaded, ${result.failed} failed`,
             variant: "destructive",
           });
-          if (result.uploaded > 0) onUpdate();
+          if (result.uploaded > 0) {
+            if (isAndroid) {
+              console.log('Android detected — skipping onUpdate to prevent jump');
+            } else {
+              onUpdate();
+            }
+          }
         }
       } catch (error) {
         toast({
@@ -262,7 +279,11 @@ export const PetGallerySection = ({ petData, onUpdate, handlePetUpdate }: PetGal
             title: "Photo captured",
             description: "Photo added to gallery",
           });
-          onUpdate();
+          if (isAndroid) {
+            console.log('Android detected — skipping onUpdate to prevent jump');
+          } else {
+            onUpdate();
+          }
         } else {
           toast({
             title: "Capture failed",
@@ -294,7 +315,11 @@ export const PetGallerySection = ({ petData, onUpdate, handlePetUpdate }: PetGal
           title: "Photo deleted",
           description: "Photo removed from gallery",
         });
-        onUpdate();
+        if (isAndroid) {
+          console.log('Android detected — skipping onUpdate to prevent jump');
+        } else {
+          onUpdate();
+        }
       } else {
         toast({
           title: "Delete failed",
@@ -322,7 +347,11 @@ export const PetGallerySection = ({ petData, onUpdate, handlePetUpdate }: PetGal
         });
         setEditingCaption(null);
         setEditCaptionValue("");
-        onUpdate();
+        if (isAndroid) {
+          console.log('Android detected — skipping onUpdate to prevent jump');
+        } else {
+          onUpdate();
+        }
       } else {
         toast({
           title: "Update failed",
@@ -469,7 +498,11 @@ export const PetGallerySection = ({ petData, onUpdate, handlePetUpdate }: PetGal
         title: "Cover photo updated",
         description: "Photo moved to the first position for lost pet flyers.",
       });
-      onUpdate();
+      if (isAndroid) {
+        console.log('Android detected — skipping onUpdate to prevent jump');
+      } else {
+        onUpdate();
+      }
     } catch (error) {
       toast({
         title: "Failed to set cover",

@@ -139,6 +139,10 @@ export const DocumentsSection = ({ petId, petName, documents, onDocumentDeleted 
       
       // Allow UI to refresh before triggering parent re-render
       setTimeout(() => {
+        if (isAndroid) {
+          console.log('Android detected — skipping onDocumentDeleted to prevent jump');
+          return;
+        }
         onDocumentDeleted();
       }, 300);
       
@@ -318,6 +322,10 @@ export const DocumentsSection = ({ petId, petName, documents, onDocumentDeleted 
         localStorage.setItem(`pp_last_tab_${user.id}`, 'documents');
       }
       
+      if (isAndroid) {
+        console.log('Android detected — skipping onDocumentDeleted to prevent jump');
+        return;
+      }
       onDocumentDeleted(); // Refresh the document list
       
     } catch (error: any) {

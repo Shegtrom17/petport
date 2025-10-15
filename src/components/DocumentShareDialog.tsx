@@ -13,13 +13,16 @@ import {
   Check, 
   Facebook, 
   Smartphone,
-  X
+  X,
+  FileDown,
+  Loader2
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { shareProfile } from "@/services/pdfService";
+import { shareProfile, sharePDFBlob } from "@/services/pdfService";
 import { useEmailSharing } from "@/hooks/useEmailSharing";
 import { useAuth } from "@/context/AuthContext";
 import { shareViaMessenger, copyToClipboard } from "@/utils/messengerShare";
+import { viewPDFBlob, downloadPDFBlob, isIOS } from '@/services/clientPdfService';
 
 interface Document {
   id: string;
@@ -64,6 +67,9 @@ export const DocumentShareDialog = ({
     recipientName: '',
     customMessage: ''
   });
+  const [pdfBlob, setPdfBlob] = useState<Blob | null>(null);
+  const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
+  const [showPdfOptions, setShowPdfOptions] = useState(false);
   
   const { toast } = useToast();
   const { sendEmail, isLoading: emailLoading } = useEmailSharing();
@@ -181,6 +187,111 @@ export const DocumentShareDialog = ({
     }
   };
 
+  const handleGeneratePdf = async () => {
+    setIsGeneratingPdf(true);
+    toast({ title: "Generating PDF...", description: "Creating a shareable PDF version of this document." });
+
+    try {
+      // Fetch the document file
+      const response = await fetch(document.file_url);
+      if (!response.ok) throw new Error('Failed to fetch document');
+      
+      const blob = await response.blob();
+      setPdfBlob(blob);
+      setShowPdfOptions(true);
+      
+      toast({ title: "PDF Ready!", description: "Your document PDF is ready to share." });
+    } catch (error: any) {
+      console.error('[Document PDF] Generation failed:', error);
+      toast({ 
+        title: "Generation Failed", 
+        description: "Could not generate PDF. Please try sharing the document link instead.", 
+        variant: "destructive" 
+      });
+    } finally {
+      setIsGeneratingPdf(false);
+    }
+  };
+
+  const handleViewPdf = async () => {
+    if (!pdfBlob) return;
+    try {
+      await viewPDFBlob(pdfBlob, `${petName}-${document.name}.pdf`);
+    } catch (error) {
+      console.error('Error viewing PDF:', error);
+      toast({ description: "Could not open PDF. Try downloading instead.", variant: "destructive" });
+    }
+  };
+
+  const handleDownloadPdf = async () => {
+    if (!pdfBlob) return;
+    try {
+      await downloadPDFBlob(pdfBlob, `${petName}-${document.name}.pdf`);
+      toast({ description: "PDF downloaded successfully!" });
+    } catch (error) {
+      console.error('Error downloading PDF:', error);
+      toast({ description: "Could not download PDF", variant: "destructive" });
+    }
+  };
+
+  const handleSharePdf = async () => {
+    if (!pdfBlob) return;
+    try {
+      await sharePDFBlob(pdfBlob, `${petName}-${document.name}.pdf`, petName, 'profile');
+      toast({ description: "PDF shared successfully!" });
+    } catch (error) {
+      console.error('Error sharing PDF:', error);
+      toast({ description: "Could not share PDF", variant: "destructive" });
+    }
+  };
+
+  const handleEmailPdf = async () => {
+    if (!pdfBlob || !emailData.recipientEmail.trim()) {
+      toast({
+        title: "Email required",
+        description: "Please enter a recipient email address",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Convert blob to base64
+    const reader = new FileReader();
+    reader.readAsDataURL(pdfBlob);
+    reader.onloadend = async () => {
+      const base64data = reader.result as string;
+      const base64Content = base64data.split(',')[1];
+
+      const documentMessage = `I'm sharing ${petName}'s ${categoryLabel.toLowerCase()} document with you: ${document.name}`;
+      const fullMessage = emailData.customMessage.trim() 
+        ? `${emailData.customMessage}\n\n${documentMessage}`
+        : documentMessage;
+
+      const success = await sendEmail({
+        type: 'profile',
+        recipientEmail: emailData.recipientEmail.trim(),
+        recipientName: emailData.recipientName.trim() || undefined,
+        petName,
+        petId,
+        shareUrl,
+        customMessage: fullMessage,
+        senderName: user?.user_metadata?.full_name || 'PetPort User',
+        pdfAttachment: base64Content,
+        pdfFileName: `${petName}-${document.name}.pdf`
+      });
+
+      if (success) {
+        setShowEmailForm(false);
+        setShowPdfOptions(false);
+        setEmailData({ recipientEmail: '', recipientName: '', customMessage: '' });
+        toast({
+          title: "Email Sent! ✉️",
+          description: `Document PDF shared with ${emailData.recipientEmail}`,
+        });
+      }
+    };
+  };
+
   const handleSendEmail = async () => {
     if (!emailData.recipientEmail.trim()) {
       toast({
@@ -191,14 +302,20 @@ export const DocumentShareDialog = ({
       return;
     }
 
-    // Create a custom message for document sharing
+    // If PDF is available, send with PDF attachment
+    if (pdfBlob) {
+      await handleEmailPdf();
+      return;
+    }
+
+    // Otherwise send link only
     const documentMessage = `I'm sharing ${petName}'s ${categoryLabel.toLowerCase()} document with you: ${document.name}`;
     const fullMessage = emailData.customMessage.trim() 
       ? `${emailData.customMessage}\n\n${documentMessage}`
       : documentMessage;
 
     const success = await sendEmail({
-      type: 'profile', // Use profile type as base for document sharing
+      type: 'profile',
       recipientEmail: emailData.recipientEmail.trim(),
       recipientName: emailData.recipientName.trim() || undefined,
       petName,
@@ -235,8 +352,84 @@ export const DocumentShareDialog = ({
             <p className="text-xs text-gray-500">{categoryLabel} • {document.size}</p>
           </div>
 
-          {!showEmailForm ? (
+          {showPdfOptions ? (
+            /* PDF Options */
+            <div className="space-y-3">
+              <div className="bg-green-50 p-3 rounded-lg border border-green-200">
+                <p className="text-sm font-medium text-green-800">✅ PDF Ready!</p>
+                <p className="text-xs text-green-600 mt-1">
+                  {pdfBlob ? `${(pdfBlob.size / 1024 / 1024).toFixed(2)} MB` : 'Ready to share'}
+                </p>
+              </div>
+
+              <Button
+                onClick={handleViewPdf}
+                variant="outline"
+                className="w-full"
+              >
+                <FileDown className="w-4 h-4 mr-2" />
+                View PDF
+              </Button>
+
+              <Button
+                onClick={handleDownloadPdf}
+                variant="outline"
+                className="w-full"
+              >
+                <FileDown className="w-4 h-4 mr-2" />
+                Download PDF
+              </Button>
+
+              {!isIOS() && (
+                <Button
+                  onClick={handleSharePdf}
+                  className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+                >
+                  <Share2 className="w-4 h-4 mr-2" />
+                  Share PDF
+                </Button>
+              )}
+
+              <Button
+                onClick={() => setShowEmailForm(true)}
+                className="w-full bg-green-600 hover:bg-green-700 text-white"
+              >
+                <Mail className="w-4 h-4 mr-2" />
+                📎 Email PDF
+              </Button>
+
+              <Button
+                variant="ghost"
+                onClick={() => {
+                  setShowPdfOptions(false);
+                  setPdfBlob(null);
+                }}
+                className="w-full"
+              >
+                Back to Share Options
+              </Button>
+            </div>
+          ) : !showEmailForm ? (
           <div className="space-y-2">
+              {/* PDF Generation Button */}
+              <Button
+                onClick={handleGeneratePdf}
+                disabled={isGeneratingPdf}
+                className="w-full h-10 text-sm bg-purple-600 hover:bg-purple-700 text-white"
+              >
+                {isGeneratingPdf ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    Creating PDF...
+                  </>
+                ) : (
+                  <>
+                    <FileDown className="w-4 h-4 mr-2" />
+                    📄 Generate & Share PDF
+                  </>
+                )}
+              </Button>
+
               {/* Quick Share (Native) */}
               <Button
                 onClick={handleNativeShare}
@@ -251,7 +444,7 @@ export const DocumentShareDialog = ({
                 ) : (
                   <>
                     <Smartphone className="w-5 h-5 mr-2" />
-                    Quick Share
+                    Quick Share Link
                   </>
                 )}
               </Button>
@@ -263,7 +456,7 @@ export const DocumentShareDialog = ({
                 className="w-full h-9 text-sm border-2 border-green-500 text-green-700 hover:bg-green-50"
               >
                 <Mail className="w-4 h-4 mr-2" />
-                📧 Share via Email
+                📧 Share Link via Email
               </Button>
 
               {/* Other sharing options */}
@@ -370,6 +563,14 @@ export const DocumentShareDialog = ({
                   rows={3}
                 />
               </div>
+
+              {pdfBlob && (
+                <div className="bg-purple-50 p-2 rounded border border-purple-200">
+                  <p className="text-xs text-purple-700">
+                    📎 PDF will be attached to email ({(pdfBlob.size / 1024 / 1024).toFixed(2)} MB)
+                  </p>
+                </div>
+              )}
               
               <div className="flex gap-2">
                 <Button
@@ -377,11 +578,17 @@ export const DocumentShareDialog = ({
                   disabled={emailLoading}
                   className="flex-1 bg-green-600 hover:bg-green-700 text-white"
                 >
-                  {emailLoading ? 'Sending...' : 'Send Email'}
+                  {emailLoading ? 'Sending...' : pdfBlob ? 'Send with PDF' : 'Send Email'}
                 </Button>
                 <Button
                   variant="outline"
-                  onClick={() => setShowEmailForm(false)}
+                  onClick={() => {
+                    setShowEmailForm(false);
+                    if (!pdfBlob) {
+                      // If no PDF, go back to main options
+                      setShowPdfOptions(false);
+                    }
+                  }}
                   disabled={emailLoading}
                 >
                   Back

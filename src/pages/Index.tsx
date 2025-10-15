@@ -76,15 +76,23 @@ const Index = () => {
     togglePetPublicVisibility
   } = usePetData();
 
-  // Wrap handlePetUpdate with debounce guard
+  // Wrap handlePetUpdate with debounce guard + global flag to persist across remounts
   const handlePetUpdate = async () => {
     setRecentUpdate(true);
-    await originalHandlePetUpdate();
-    
-    // Clear the flag after 2 seconds
-    setTimeout(() => {
-      setRecentUpdate(false);
-    }, 2000);
+    // Global guard survives component remounts
+    (window as any).__recentUpdate = true;
+    console.log('handlePetUpdate: set recentUpdate + window.__recentUpdate = true');
+
+    try {
+      await originalHandlePetUpdate();
+    } finally {
+      // Clear flags after 2 seconds
+      setTimeout(() => {
+        setRecentUpdate(false);
+        (window as any).__recentUpdate = false;
+        console.log('handlePetUpdate: cleared recentUpdate + window.__recentUpdate');
+      }, 2000);
+    }
   };
 
   const handleTabChange = (tab: string) => {
@@ -186,16 +194,29 @@ const Index = () => {
   }, []);
 
 useEffect(() => {
-  // Skip if user just performed an action
-  if (recentUpdate) return;
+  // Skip if user just performed an action (local state)
+  if (recentUpdate) {
+    console.log('Tab restore skipped: recentUpdate state');
+    return;
+  }
+
+  // Skip if a recent update was triggered elsewhere (global flag survives remounts)
+  if ((window as any).__recentUpdate) {
+    console.log('Tab restore skipped: window.__recentUpdate');
+    return;
+  }
   
   // Skip restoring tab while an upload is happening
   const isUploading = document.body.getAttribute('data-uploading') === 'true';
-  if (isUploading) return;
+  if (isUploading) {
+    console.log('Tab restore skipped: data-uploading in progress');
+    return;
+  }
 
   if (user?.id && settings.rememberLastTab) {
     const saved = localStorage.getItem(`pp_last_tab_${user.id}`);
     if (saved && saved !== activeTab) {
+      console.log('Restoring last tab from storage:', saved);
       setActiveTab(saved === 'vaccination' ? 'profile' : saved);
     }
   }

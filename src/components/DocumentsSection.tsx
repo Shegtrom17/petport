@@ -9,6 +9,17 @@ import { supabase } from "@/integrations/supabase/client";
 import { DocumentShareDialog } from "@/components/DocumentShareDialog";
 import { useOverlayStore } from "@/stores/overlayStore";
 
+// Helper to save current tab before risky actions
+const saveLastTab = async () => {
+  localStorage.setItem('pp_last_tab_last', 'documents');
+  try {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user?.id) {
+      localStorage.setItem(`pp_last_tab_${user.id}`, 'documents');
+    }
+  } catch {}
+};
+
 
 interface Document {
   id: string;
@@ -68,6 +79,8 @@ export const DocumentsSection = ({ petId, petName, documents, onDocumentDeleted 
       e.preventDefault();
     }
     
+    await saveLastTab(); // Save tab before opening document
+    
     setViewingDocId(doc.id);
     
     try {
@@ -101,6 +114,8 @@ export const DocumentsSection = ({ petId, petName, documents, onDocumentDeleted 
       e.stopPropagation();
       e.preventDefault();
     }
+    
+    await saveLastTab(); // Save tab before deletion
     
     setDeletingDocId(doc.id);
     
@@ -196,6 +211,7 @@ export const DocumentsSection = ({ petId, petName, documents, onDocumentDeleted 
   const handleDocumentCapture = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
+      await saveLastTab(); // Save tab before upload
       await uploadDocument(file, 'camera-capture');
     }
     // Reset the input - longer delay on Android
@@ -224,6 +240,7 @@ export const DocumentsSection = ({ petId, petName, documents, onDocumentDeleted 
         isAndroid,
         possibleDriveUri: isAndroid && file.size === 0
       });
+      await saveLastTab(); // Save tab before upload
       await uploadDocument(file, 'file-upload');
     }
     // Reset the input - longer delay on Android
@@ -260,6 +277,7 @@ export const DocumentsSection = ({ petId, petName, documents, onDocumentDeleted 
   };
 
   const uploadDocument = async (file: File, source: string) => {
+    await saveLastTab(); // Save tab before upload
     setIsUploading(true);
     document.body.setAttribute("data-uploading", "true");
     
@@ -579,15 +597,18 @@ export const DocumentsSection = ({ petId, petName, documents, onDocumentDeleted 
                     </Button>
                     <Button 
                       variant="ghost" 
-                      size="sm" 
+                      size="sm"
                       className="hover:bg-muted text-foreground px-1 sm:px-2 text-xs sm:text-sm"
-                      onClick={(e) => {
+                      onClick={async (e) => {
                         e.stopPropagation();
                         e.preventDefault();
+                        await saveLastTab(); // Save tab before download
                         const link = document.createElement('a');
                         link.href = doc.file_url;
                         link.download = doc.name;
+                        document.body.appendChild(link);
                         link.click();
+                        document.body.removeChild(link);
                       }}
                       title="Download document"
                       data-touch-safe

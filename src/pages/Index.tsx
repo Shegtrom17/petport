@@ -44,10 +44,16 @@ import { PullToRefresh } from "@/components/PullToRefresh";
 import { useQueryClient } from "@tanstack/react-query";
 import { featureFlags } from "@/config/featureFlags";
 
+// Helper to get initial tab from localStorage synchronously
+const getInitialTab = () => {
+  const saved = localStorage.getItem('pp_last_tab_last');
+  return saved && saved !== 'vaccination' ? saved : 'profile';
+};
+
 const Index = () => {
   console.log("Index component is rendering");
   
-  const [activeTab, setActiveTab] = useState("profile");
+  const [activeTab, setActiveTab] = useState(getInitialTab);
   const [isInAppSharingOpen, setIsInAppSharingOpen] = useState(false);
   const [petLimit, setPetLimit] = useState<number>(0);
   const restoredRef = useRef(false);
@@ -78,6 +84,7 @@ const Index = () => {
 
   const handleTabChange = (tab: string) => {
     setActiveTab(tab);
+    localStorage.setItem('pp_last_tab_last', tab); // General sticky key for Android remounts
     if (user?.id && settings.rememberLastTab && tab !== 'vaccination') {
       localStorage.setItem(`pp_last_tab_${user.id}`, tab);
     }

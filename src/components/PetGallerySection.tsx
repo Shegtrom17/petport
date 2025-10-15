@@ -19,6 +19,18 @@ import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 import { GalleryLightbox } from "@/components/GalleryLightbox";
 import { useLongPress } from "@/hooks/useLongPress";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
+import { supabase } from "@/integrations/supabase/client";
+
+// Helper to save current tab before risky actions
+const saveLastTab = async () => {
+  localStorage.setItem('pp_last_tab_last', 'gallery');
+  try {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user?.id) {
+      localStorage.setItem(`pp_last_tab_${user.id}`, 'gallery');
+    }
+  } catch {}
+};
 
 const MAX_GALLERY_PHOTOS = GALLERY_CONFIG.MAX_PHOTOS;
 
@@ -145,6 +157,7 @@ export const PetGallerySection = ({ petData, onUpdate, handlePetUpdate }: PetGal
     }));
 
     try {
+      await saveLastTab(); // Save tab before reordering
       await reorderGalleryPhotos(petData.id, updatedPhotos.map(p => ({ id: p.id, position: p.position! })));
         toast({
           title: "Photos reordered",
@@ -165,7 +178,7 @@ export const PetGallerySection = ({ petData, onUpdate, handlePetUpdate }: PetGal
   };
 
   // Upload functions
-  const handleUploadPhotos = () => {
+  const handleUploadPhotos = async () => {
     if (isLimitReached) {
       toast({
         title: "Photo limit reached",
@@ -174,6 +187,7 @@ export const PetGallerySection = ({ petData, onUpdate, handlePetUpdate }: PetGal
       });
       return;
     }
+    await saveLastTab(); // Save tab before upload
     const input = document.createElement('input');
     input.type = 'file';
     input.accept = 'image/*';
@@ -243,7 +257,7 @@ export const PetGallerySection = ({ petData, onUpdate, handlePetUpdate }: PetGal
     input.click();
   };
 
-  const handleCapturePhoto = () => {
+  const handleCapturePhoto = async () => {
     if (isLimitReached) {
       toast({
         title: "Photo limit reached",
@@ -252,6 +266,7 @@ export const PetGallerySection = ({ petData, onUpdate, handlePetUpdate }: PetGal
       });
       return;
     }
+    await saveLastTab(); // Save tab before capture
     const input = document.createElement('input');
     input.type = 'file';
     input.accept = 'image/*';
@@ -308,6 +323,7 @@ export const PetGallerySection = ({ petData, onUpdate, handlePetUpdate }: PetGal
 
   const handleDeletePhoto = async (photoId: string, photoUrl: string) => {
     try {
+      await saveLastTab(); // Save tab before deletion
       const success = await deleteGalleryPhoto(photoId, photoUrl);
       
       if (success) {
@@ -338,6 +354,7 @@ export const PetGallerySection = ({ petData, onUpdate, handlePetUpdate }: PetGal
 
   const handleSaveCaption = async (photoId: string) => {
     try {
+      await saveLastTab(); // Save tab before caption update
       const success = await updateGalleryPhotoCaption(photoId, editCaptionValue);
       
       if (success) {
@@ -378,7 +395,7 @@ export const PetGallerySection = ({ petData, onUpdate, handlePetUpdate }: PetGal
     setEditCaptionValue("");
   };
 
-  const showGalleryPDFOptions = () => {
+  const showGalleryPDFOptions = async () => {
     if (!galleryPhotos || galleryPhotos.length === 0) {
       toast({
         title: "No Photos Available",
@@ -387,11 +404,13 @@ export const PetGallerySection = ({ petData, onUpdate, handlePetUpdate }: PetGal
       });
       return;
     }
+    await saveLastTab(); // Save tab before PDF generation
     setIsGalleryPDFDialogOpen(true);
     setGeneratedGalleryPdfBlob(null);
   };
 
   const handleGalleryPDFAction = async (action: 'view' | 'download') => {
+    await saveLastTab(); // Save tab before PDF action
     setIsGeneratingPDF(true);
     
     // For view action, open window immediately to avoid popup blockers
@@ -493,6 +512,7 @@ export const PetGallerySection = ({ petData, onUpdate, handlePetUpdate }: PetGal
     }));
 
     try {
+      await saveLastTab(); // Save tab before setting cover
       await reorderGalleryPhotos(petData.id, updatedPhotos.map(p => ({ id: p.id, position: p.position! })));
       toast({
         title: "Cover photo updated",

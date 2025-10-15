@@ -39,7 +39,7 @@ export const useKeyboardAwareLayout = () => {
         bottomOffset: isKeyboardVisible ? Math.max(0, keyboardHeight) : 0,
       });
     } else {
-      // Fallback for Android and other platforms
+      // Android & others - use CSS var for content padding, not transform
       const activeElement = document.activeElement as HTMLElement;
       const isInputFocused = activeElement && 
         (activeElement.tagName === 'INPUT' || 
@@ -59,12 +59,19 @@ export const useKeyboardAwareLayout = () => {
       };
       
       const estimatedHeight = estimateKeyboardHeight();
+      const isKeyboardVisible = estimatedHeight > 100;
       
-      // Only apply offset if keyboard should be visible
+      // Set CSS variable for Android padding approach
+      document.documentElement.style.setProperty(
+        '--kb-offset',
+        isKeyboardVisible ? `${estimatedHeight}px` : '0px'
+      );
+      
+      // Don't use bottomOffset on Android (prevents overlay bug)
       setKeyboardState({
-        isVisible: isInputFocused && estimatedHeight > 100,
+        isVisible: isKeyboardVisible,
         height: estimatedHeight,
-        bottomOffset: estimatedHeight > 100 ? estimatedHeight : 0,
+        bottomOffset: 0, // Critical: no transform on Android
       });
     }
   }, []);
@@ -113,6 +120,7 @@ export const useKeyboardAwareLayout = () => {
     updateKeyboardState();
 
     return () => {
+      document.documentElement.style.setProperty('--kb-offset', '0px');
       if (window.visualViewport) {
         window.visualViewport.removeEventListener('resize', updateKeyboardState);
         window.visualViewport.removeEventListener('scroll', updateKeyboardState);

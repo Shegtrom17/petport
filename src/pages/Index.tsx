@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import worldMapOutline from "@/assets/world-map-outline.png";
 import { NavigationTabs } from "@/components/NavigationTabs";
 import { QuickIDSection } from "@/components/QuickIDSection";
@@ -50,6 +50,7 @@ const Index = () => {
   const [activeTab, setActiveTab] = useState("profile");
   const [isInAppSharingOpen, setIsInAppSharingOpen] = useState(false);
   const [petLimit, setPetLimit] = useState<number>(0);
+  const restoredRef = useRef(false);
   const navigate = useNavigate();
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -174,27 +175,18 @@ const Index = () => {
   }, []);
 
   useEffect(() => {
-    // Skip if a recent update was triggered (global flag survives remounts)
-    if ((window as any).__recentUpdate) {
-      console.log('Tab restore skipped: window.__recentUpdate');
-      return;
-    }
-    
-    // Skip restoring tab while an upload is happening
-    const isUploading = document.body.getAttribute('data-uploading') === 'true';
-    if (isUploading) {
-      console.log('Tab restore skipped: data-uploading in progress');
-      return;
-    }
+    if (restoredRef.current) return;
+    if (!user?.id || !settings.rememberLastTab) return;
 
-    if (user?.id && settings.rememberLastTab) {
-      const saved = localStorage.getItem(`pp_last_tab_${user.id}`);
-      if (saved && saved !== activeTab) {
-        console.log('Restoring last tab from storage:', saved);
-        setActiveTab(saved === 'vaccination' ? 'profile' : saved);
-      }
+    const isUploading = document.body.getAttribute('data-uploading') === 'true';
+    if (isUploading) return;
+
+    const saved = localStorage.getItem(`pp_last_tab_${user.id}`);
+    if (saved) {
+      setActiveTab(saved === 'vaccination' ? 'profile' : saved);
     }
-  }, [user?.id, settings.rememberLastTab, activeTab]);
+    restoredRef.current = true;
+  }, [user?.id, settings.rememberLastTab]);
 
   // Enhanced petData with proper user_id from selectedPet or current user
   const petData = selectedPet ? {

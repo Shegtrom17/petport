@@ -30,6 +30,7 @@ html, body, input, textarea, button {
     -webkit-backface-visibility: hidden;
     -webkit-transform: translateZ(0);
             transform: translateZ(0);
+    padding-bottom: 0; /* Important: footer shouldn't double-pad */
   }
 }
 

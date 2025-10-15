@@ -39,39 +39,22 @@ export const useKeyboardAwareLayout = () => {
         bottomOffset: isKeyboardVisible ? Math.max(0, keyboardHeight) : 0,
       });
     } else {
-      // Android & others - use CSS var for content padding, not transform
-      const activeElement = document.activeElement as HTMLElement;
-      const isInputFocused = activeElement && 
-        (activeElement.tagName === 'INPUT' || 
-         activeElement.tagName === 'TEXTAREA' ||
-         activeElement.contentEditable === 'true');
-      
-      // More accurate keyboard height estimation based on screen size
-      const estimateKeyboardHeight = () => {
-        if (!isInputFocused) return 0;
-        const screenHeight = window.innerHeight;
-        // Tablets have larger keyboards
-        if (screenHeight > 1024) return 380;
-        // Large phones
-        if (screenHeight > 800) return 320;
-        // Standard phones
-        return 280;
-      };
-      
-      const estimatedHeight = estimateKeyboardHeight();
-      const isKeyboardVisible = estimatedHeight > 100;
-      
-      // Set CSS variable for Android padding approach
+      // ANDROID & others — do NOT translate the footer.
+      // Use visualViewport to compute keyboard height, push padding to content via CSS var.
+      const vv = (window as any).visualViewport;
+      const keyboardHeight = vv ? Math.max(0, window.innerHeight - vv.height - vv.offsetTop) : 0;
+      const isKeyboardVisible = keyboardHeight > 100;
+
+      // Expose height to CSS so the scroll container can pad itself
       document.documentElement.style.setProperty(
         '--kb-offset',
-        isKeyboardVisible ? `${estimatedHeight}px` : '0px'
+        isKeyboardVisible ? `${keyboardHeight}px` : '0px'
       );
-      
-      // Don't use bottomOffset on Android (prevents overlay bug)
+
       setKeyboardState({
         isVisible: isKeyboardVisible,
-        height: estimatedHeight,
-        bottomOffset: 0, // Critical: no transform on Android
+        height: isKeyboardVisible ? keyboardHeight : 0,
+        bottomOffset: 0, // Critical: never transform footer on Android
       });
     }
   }, []);
@@ -96,8 +79,8 @@ export const useKeyboardAwareLayout = () => {
 
     const isIOS = isIOSDevice();
 
-    if (isIOS && window.visualViewport) {
-      // Listen to visual viewport changes (iOS)
+    // Listen to visual viewport changes on all platforms (iOS and Android)
+    if (window.visualViewport) {
       window.visualViewport.addEventListener('resize', updateKeyboardState);
       window.visualViewport.addEventListener('scroll', updateKeyboardState);
     }

@@ -57,7 +57,7 @@ textarea {
 
 /* Content padding when keyboard is open (Android) */
 .with-keyboard-padding {
-  padding-bottom: calc(env(safe-area-inset-bottom) + var(--kb-offset, 0px));
+  padding-bottom: var(--kb-offset, 0px);
   transition: padding-bottom 0.15s ease-out;
 }
 

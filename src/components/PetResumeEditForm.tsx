@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
+import { useKeyboardAwareLayout } from "@/hooks/useKeyboardAwareLayout";
 import { 
   updatePetExperience, 
   updatePetAchievements, 
@@ -65,6 +66,7 @@ export const PetResumeEditForm = ({ petData, onSave, onCancel }: PetResumeEditFo
 
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
+  const { bottomOffset } = useKeyboardAwareLayout();
 
   const onSubmit = async (data: any) => {
     setIsLoading(true);
@@ -338,8 +340,14 @@ export const PetResumeEditForm = ({ petData, onSave, onCancel }: PetResumeEditFo
           </CardContent>
         </Card>
 
-        {/* Form Actions */}
-        <div className="flex justify-end space-x-4">
+        {/* Form Actions - Keyboard-aware sticky positioning */}
+        <div 
+          className="sticky bottom-0 flex justify-end space-x-4 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 p-4 -mx-4 -mb-4 border-t"
+          style={{ 
+            transform: bottomOffset > 0 ? `translateY(-${bottomOffset}px)` : 'none',
+            transition: 'transform 0.2s ease-out'
+          }}
+        >
           <Button type="button" variant="outline" onClick={onCancel} disabled={isLoading}>
             Cancel
           </Button>

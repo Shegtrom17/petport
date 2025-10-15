@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
+import { useKeyboardAwareLayout } from "@/hooks/useKeyboardAwareLayout";
 import { updateTravelLocations } from "@/services/petService";
 import { Plus, Trash2, MapPin } from "lucide-react";
 import { sanitizeText } from "@/utils/inputSanitizer";
@@ -77,6 +78,7 @@ export const TravelEditForm = ({ petData, onSave, onCancel, mode = 'edit' }: Tra
 
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
+  const { bottomOffset } = useKeyboardAwareLayout();
 
   const onSubmit = async (data: any) => {
     setIsLoading(true);
@@ -241,8 +243,14 @@ export const TravelEditForm = ({ petData, onSave, onCancel, mode = 'edit' }: Tra
           </CardContent>
         </Card>
 
-        {/* Form Actions */}
-        <div className="flex flex-col sm:flex-row justify-end space-y-2 sm:space-y-0 sm:space-x-4">
+        {/* Form Actions - Keyboard-aware sticky positioning */}
+        <div 
+          className="sticky bottom-0 flex flex-col sm:flex-row justify-end space-y-2 sm:space-y-0 sm:space-x-4 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 p-4 -mx-4 -mb-4 border-t"
+          style={{ 
+            transform: bottomOffset > 0 ? `translateY(-${bottomOffset}px)` : 'none',
+            transition: 'transform 0.2s ease-out'
+          }}
+        >
           <Button type="button" variant="outline" onClick={onCancel} className="px-3 sm:px-4 py-1 sm:py-2 text-xs sm:text-sm">
             Cancel
           </Button>

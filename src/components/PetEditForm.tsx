@@ -8,6 +8,7 @@ import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/context/AuthContext";
+import { useKeyboardAwareLayout } from "@/hooks/useKeyboardAwareLayout";
 import { updatePetBasicInfo, updatePetMedical } from "@/services/petService";
 import { Loader2 } from "lucide-react";
 import { sanitizeText, validateTextLength, containsSuspiciousContent } from "@/utils/inputSanitizer";
@@ -70,6 +71,7 @@ interface PetEditFormProps {
 export const PetEditForm = ({ petData, onSave, onCancel, togglePetPublicVisibility }: PetEditFormProps) => {
   const { user } = useAuth();
   const { toast } = useToast();
+  const { bottomOffset } = useKeyboardAwareLayout();
   const [formData, setFormData] = useState<PetData>(petData);
   const [isSaving, setIsSaving] = useState(false);
   const [isOrgUser, setIsOrgUser] = useState(false);
@@ -627,8 +629,14 @@ export const PetEditForm = ({ petData, onSave, onCancel, togglePetPublicVisibili
             </div>
           </div>
 
-          {/* Action Buttons */}
-          <div className="flex gap-4 pt-6">
+          {/* Action Buttons - Keyboard-aware sticky positioning */}
+          <div 
+            className="sticky bottom-0 flex gap-4 pt-6 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 p-4 -mx-4 -mb-4 border-t"
+            style={{ 
+              transform: bottomOffset > 0 ? `translateY(-${bottomOffset}px)` : 'none',
+              transition: 'transform 0.2s ease-out'
+            }}
+          >
             <Button type="submit" disabled={isSaving} className="text-white">
               {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Save Changes

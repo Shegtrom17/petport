@@ -682,7 +682,7 @@ export const QuickIDSection = ({ petData, onUpdate }: QuickIDSectionProps) => {
             variant="banner" 
             showToggle={true}
           />
-          <div className="flex flex-col sm:flex-row gap-3 mt-4">
+          <div className="space-y-3 mt-4">
             <LostPetButton 
               petId={petData.id || ""}
               petName={petData.name}
@@ -691,52 +691,14 @@ export const QuickIDSection = ({ petData, onUpdate }: QuickIDSectionProps) => {
               lostPetData={lostPetData}
               className="w-full sm:w-auto"
             />
-            <Button 
-              onClick={async () => {
-                const publicUrl = lostPetData.is_missing ? generatePublicMissingUrl(petData.id) : generatePublicProfileUrl(petData.id);
-                const result = await shareProfileOptimized(publicUrl, petData.name, 'profile', lostPetData.is_missing);
-                if (result.success) {
-                  toast({
-                    title: result.shared ? "Shared Successfully!" : "Link Copied!",
-                    description: result.message,
-                  });
-                } else {
-                  toast({
-                    title: "Share Failed",
-                    description: result.error || "Unable to share link",
-                    variant: "destructive"
-                  });
-                }
-              }}
-              className="w-full sm:w-auto bg-brand-primary text-white hover:bg-brand-primary/90"
-            >
-              <QrCode className="w-4 h-4 mr-2" />
-              Share QR Code
-            </Button>
-            {lostPetData.is_missing && (
-              <Button 
-                onClick={async () => {
-                  const publicUrl = generatePublicMissingUrl(petData.id);
-                  const result = await shareProfileOptimized(publicUrl, petData.name, 'profile', true);
-                  if (result.success) {
-                    toast({
-                      title: result.shared ? "Shared Successfully!" : "Link Copied!",
-                      description: result.message,
-                    });
-                  } else {
-                    toast({
-                      title: "Share Failed",
-                      description: result.error || "Unable to share link",
-                      variant: "destructive"
-                    });
-                  }
-                }}
-                className="w-full sm:w-auto bg-red-600 text-white hover:bg-red-700"
-              >
-                <Share2 className="w-4 h-4 mr-2" />
-                Share Missing Alert
-              </Button>
-            )}
+
+            <SocialShareButtons
+              petName={petData.name}
+              petId={petData.id || ""}
+              isMissingPet={lostPetData.is_missing}
+              context={lostPetData.is_missing ? 'missing' : 'profile'}
+              defaultOpenOptions={true}
+            />
           </div>
         </CardContent>
       </Card>

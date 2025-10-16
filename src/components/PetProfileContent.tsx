@@ -111,11 +111,7 @@ export const PetProfileContent = ({
 
   const handleProfileEdit = () => {
     console.log("Edit Profile button clicked - starting edit process");
-    
-    // Trigger parent handler if provided and dispatch global fallback
     onEditClick?.();
-    window.dispatchEvent(new CustomEvent('trigger-pet-edit'));
-    console.log("Dispatched trigger-pet-edit event");
   };
 
   const handleDeletePet = async () => {

@@ -295,7 +295,6 @@ const Index = () => {
               handlePetUpdate={handlePetUpdate}
               onEditClick={() => {
                 setStartEditSignal((s) => s + 1);
-                window.dispatchEvent(new CustomEvent('trigger-pet-edit'));
               }}
             />
             <PetProfileCard 

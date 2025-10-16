@@ -76,16 +76,6 @@ export const PetProfileCard = ({ petData, onUpdate, togglePetPublicVisibility, s
   const { toast } = useToast();
   const navigate = useNavigate();
 
-  // Listen for edit event from PetProfileContent
-  useEffect(() => {
-    const handleEditEvent = () => {
-      console.log("Edit event received, setting isEditing to true");
-      setIsEditing(true);
-    };
-
-    window.addEventListener('trigger-pet-edit', handleEditEvent);
-    return () => window.removeEventListener('trigger-pet-edit', handleEditEvent);
-  }, []);
 
   // Also react to direct parent signal to ensure reliability
   useEffect(() => {

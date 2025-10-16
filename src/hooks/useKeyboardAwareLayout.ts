@@ -98,7 +98,9 @@ export const useKeyboardAwareLayout = () => {
     // Create event handlers
     const handleFocusIn = () => {
       updateKeyboardState();
-      ensureSaveButtonVisible();
+      if (isIOS) {
+        ensureSaveButtonVisible();
+      }
     };
 
     const handleFocusOut = () => {

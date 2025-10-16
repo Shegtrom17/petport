@@ -69,14 +69,19 @@ export const useKeyboardAwareLayout = () => {
     const saveBar = document.getElementById('form-actions');
     if (!saveBar) return;
     
-    // Wait for iOS keyboard animation to complete (typically 300ms)
-    setTimeout(() => {
-      saveBar.scrollIntoView({ 
-        behavior: 'smooth', 
-        block: 'nearest',
-        inline: 'nearest'
-      });
-    }, 300);
+    // Only scroll if save bar is NOT already visible in viewport
+    const rect = saveBar.getBoundingClientRect();
+    const isVisible = rect.top >= 0 && rect.bottom <= window.innerHeight;
+    
+    if (!isVisible) {
+      setTimeout(() => {
+        saveBar.scrollIntoView({ 
+          behavior: 'smooth', 
+          block: 'nearest',
+          inline: 'nearest'
+        });
+      }, 300);
+    }
   }, []);
 
   useEffect(() => {

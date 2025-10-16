@@ -57,13 +57,17 @@ export const useKeyboardHandler = () => {
       // Store the focused element
       activeElement.current = target;
       
-      // Add a small delay to ensure keyboard animation starts
+      // Only scroll if element is not fully visible
       setTimeout(() => {
-        // Scroll the element into view more aggressively on iOS
-        target.scrollIntoView({
-          behavior: 'smooth',
-          block: 'center'
-        });
+        const rect = target.getBoundingClientRect();
+        const isVisible = rect.top >= 0 && rect.bottom <= window.innerHeight;
+        
+        if (!isVisible) {
+          target.scrollIntoView({
+            behavior: 'smooth',
+            block: 'center'
+          });
+        }
       }, 100);
     }
   }, [isIOSDevice]);

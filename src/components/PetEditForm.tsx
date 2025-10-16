@@ -431,7 +431,7 @@ export const PetEditForm = ({ petData, onSave, onCancel, togglePetPublicVisibili
             <div className="mt-4">
               <Label htmlFor="bio">Bio</Label>
               <div className="relative">
-                <Textarea id="bio" name="bio" value={formData.bio} onChange={handleChange} className="min-h-20" />
+                <Textarea id="bio" name="bio" value={formData.bio} onChange={handleChange} className="min-h-32 resize-none" />
                 <VoiceRecorder
                   onTranscript={(text) => setFormData(prev => ({ ...prev, bio: text }))}
                   disabled={isSaving}
@@ -442,7 +442,7 @@ export const PetEditForm = ({ petData, onSave, onCancel, togglePetPublicVisibili
             <div className="mt-4">
               <Label htmlFor="notes">Description & Unique Traits</Label>
               <div className="relative">
-                <Textarea id="notes" name="notes" value={formData.notes} onChange={handleChange} className="min-h-20" placeholder="Additional notes, unique traits, special needs, or distinctive characteristics" />
+                <Textarea id="notes" name="notes" value={formData.notes} onChange={handleChange} className="min-h-32 resize-none" placeholder="Additional notes, unique traits, special needs, or distinctive characteristics" />
                 <VoiceRecorder
                   onTranscript={(text) => setFormData(prev => ({ ...prev, notes: text }))}
                   disabled={isSaving}

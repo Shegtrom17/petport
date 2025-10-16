@@ -276,7 +276,8 @@ serve(async (req) => {
         }
 
         // Send the appropriate email
-        await admin.functions.invoke("send-email", {
+        const transferUrl = `${APP_ORIGIN}/transfer/accept/${inserted.token}`;
+        const emailResult = await admin.functions.invoke("send-email", {
           body: {
             type: emailType,
             recipientEmail: to_email,
@@ -284,16 +285,23 @@ serve(async (req) => {
             petId: pet_id,
             senderName: senderProfile?.full_name || "A PetPort user",
             transferToken: inserted.token,
-            transferUrl: `${APP_ORIGIN}/transfer/accept/${inserted.token}`,
+            transferUrl: transferUrl,
+            shareUrl: transferUrl, // Required by send-email interface
             recipientStatus,
             customMessage: json.message
           }
         });
 
-        console.log(`Transfer invite email sent: ${emailType} to ${to_email}`);
+        if (emailResult.error) {
+          console.error("Error sending transfer invite email:", emailResult.error);
+          throw new Error(`Failed to send transfer email: ${JSON.stringify(emailResult.error)}`);
+        }
+
+        console.log(`Transfer invite email sent successfully: ${emailType} to ${to_email}`);
       } catch (emailError) {
-        console.error("Error sending transfer invite email:", emailError);
-        // Don't fail the transfer creation for email issues
+        console.error("CRITICAL: Failed to send transfer invite email:", emailError);
+        // Don't fail the transfer creation, but log the error prominently
+        throw emailError;
       }
 
       return new Response(JSON.stringify({ ok: true, token: inserted.token }), {

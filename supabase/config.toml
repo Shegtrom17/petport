@@ -53,7 +53,7 @@ verify_jwt = true
 verify_jwt = false
 
 [functions.send-email]
-verify_jwt = true
+verify_jwt = false
 
 [functions.setup-stripe-products]
 verify_jwt = false

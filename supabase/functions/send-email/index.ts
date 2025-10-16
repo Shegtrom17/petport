@@ -268,14 +268,14 @@ const generateEmailTemplate = (data: EmailRequest) => {
           <p style="margin: 0; color: #92400e; font-weight: bold;">⏰ This transfer link expires in 7 days</p>
         </div>
         
-        <div style="background: #ecfdf5; border: 2px solid #10b981; border-radius: 8px; padding: 20px; margin: 20px 0;">
-          <h3 style="margin-top: 0; color: #047857;">🎉 ${petName} is now in your account</h3>
-          <p style="margin: 10px 0; color: #047857;">You can now access all of ${petName}'s information, photos, and documents in your PetPort dashboard.</p>
+        <div style="background: #f0f9ff; padding: 20px; border-radius: 8px; margin: 20px 0;">
+          <h3 style="margin-top: 0; color: #0c4a6e;">📦 Click below to accept and claim ${petName}'s profile</h3>
+          <p style="margin: 10px 0; color: #0c4a6e;">Once you accept, ${petName} and all their information will be transferred to your account.</p>
         </div>
         
         ${customMessage ? `<blockquote style="border-left: 4px solid #5691af; padding-left: 16px; margin: 16px 0; font-style: italic; background-color: #f8fafc;">"${customMessage}"</blockquote>` : ''}
         
-        <p>Click the button below to view ${petName}'s profile and start managing their information.</p>
+        <p>Click the button below to accept this transfer and add ${petName} to your account.</p>
       `
     },
     transfer_success: {
@@ -469,7 +469,7 @@ const handler = async (req: Request): Promise<Response> => {
         subject: `🐾 ${emailData.petName}'s pet profile is waiting for you - Start your free trial`
       },
       transfer_invite_existing: {
-        subject: `✅ ${emailData.petName}'s pet profile has been transferred to your PetPort`
+        subject: `🐾 ${emailData.petName} is being transferred to you - Accept to claim`
       },
       transfer_success: {
         subject: `🎉 ${emailData.petName}'s profile transfer completed successfully`

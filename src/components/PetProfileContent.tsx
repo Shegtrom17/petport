@@ -417,21 +417,6 @@ export const PetProfileContent = ({
                     Manage your pet's profile specific info, bio, contacts, medical alerts, privacy settings, and <span className="text-orange-700 font-semibold">foster-to-adopter transfer options</span>.
                   </p>
 
-                  {/* Guidance hint for incomplete profiles */}
-                  {isOwner && (
-                    !enhancedPetData?.name || 
-                    !enhancedPetData?.breed || 
-                    !enhancedPetData?.age || 
-                    !enhancedPetData?.weight
-                  ) && (
-                    <GuidanceHint
-                      message="Complete your pet's profile for professional PDFs and comprehensive sharing"
-                      actionLabel="Edit Pet Profile"
-                      onAction={handleProfileEdit}
-                      variant="gentle"
-                    />
-                  )}
-
                   {/* Action Buttons */}
                   <div className="space-y-3 mb-4">
                     {/* Edit Profile Button */}

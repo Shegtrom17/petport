@@ -1,5 +1,4 @@
-
-import { ArrowLeft, LogIn, Gift } from "lucide-react";
+import { ArrowLeft, LogIn, MoreVertical, Gift, Settings, CreditCard, HelpCircle, Flag, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
@@ -7,7 +6,16 @@ import { CompactPrivacyToggle } from "@/components/CompactPrivacyToggle";
 import { AppShareButton } from "@/components/AppShareButton";
 import worldMapOutline from "@/assets/world-map-outline.png";
 import { QuickReferralModal } from "@/components/QuickReferralModal";
+import { ReportIssueModal } from "@/components/ReportIssueModal";
 import { useState } from "react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 interface PetHeaderProps {
   activeTab: string;
@@ -21,9 +29,10 @@ interface PetHeaderProps {
 export const PetHeader = ({ activeTab, onTabChange, selectedPetId, selectedPetName, selectedPet, onPrivacyToggle }: PetHeaderProps) => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { user } = useAuth();
+  const { user, signOut } = useAuth();
   const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
   const [showReferralModal, setShowReferralModal] = useState(false);
+  const [showReportModal, setShowReportModal] = useState(false);
 
   const handleBack = () => {
     // Use browser history when available, fallback to dashboard
@@ -76,17 +85,6 @@ export const PetHeader = ({ activeTab, onTabChange, selectedPetId, selectedPetNa
           
           {/* Right: Action Buttons */}
           <div className="flex items-center space-x-2 flex-shrink-0">
-            {user && (
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => setShowReferralModal(true)}
-                className="text-[#5691af] hover:text-[#4a7d99] hover:bg-[#5691af]/10 h-8 w-8"
-                title="Refer & Earn"
-              >
-                <Gift className="h-4 w-4" />
-              </Button>
-            )}
             {user && selectedPet && onPrivacyToggle && (
               <div className="scale-75 origin-center">
                 <CompactPrivacyToggle
@@ -94,6 +92,55 @@ export const PetHeader = ({ activeTab, onTabChange, selectedPetId, selectedPetNa
                   onToggle={onPrivacyToggle}
                 />
               </div>
+            )}
+            {user && (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="touch-feedback h-8 w-8"
+                  >
+                    <MoreVertical className="h-4 w-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-56 bg-background">
+                  <DropdownMenuLabel className="font-normal">
+                    <div className="flex flex-col space-y-1">
+                      <p className="text-sm font-medium leading-none">Account</p>
+                      <p className="text-xs leading-none text-muted-foreground">
+                        {user.email}
+                      </p>
+                    </div>
+                  </DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={() => setShowReferralModal(true)}>
+                    <Gift className="mr-2 h-4 w-4" />
+                    <span>Refer & Earn</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => navigate('/profile')}>
+                    <Settings className="mr-2 h-4 w-4" />
+                    <span>Settings</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => navigate('/billing')}>
+                    <CreditCard className="mr-2 h-4 w-4" />
+                    <span>Billing & Add-ons</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => navigate('/help')}>
+                    <HelpCircle className="mr-2 h-4 w-4" />
+                    <span>Help</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setShowReportModal(true)}>
+                    <Flag className="mr-2 h-4 w-4" />
+                    <span>Report an Issue</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={signOut} className="text-destructive focus:text-destructive">
+                    <LogOut className="mr-2 h-4 w-4" />
+                    <span>Sign Out</span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             )}
             {!user && (
               <Button 
@@ -140,17 +187,6 @@ export const PetHeader = ({ activeTab, onTabChange, selectedPetId, selectedPetNa
           </div>
           
           <div className="flex items-center space-x-2 flex-shrink-0">
-            {user && (
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => setShowReferralModal(true)}
-                className="text-[#5691af] hover:text-[#4a7d99] hover:bg-[#5691af]/10"
-                title="Refer & Earn"
-              >
-                <Gift className="h-5 w-5" />
-              </Button>
-            )}
             {user && selectedPet && onPrivacyToggle && (
               <div className="scale-90 origin-center">
                 <CompactPrivacyToggle
@@ -158,6 +194,55 @@ export const PetHeader = ({ activeTab, onTabChange, selectedPetId, selectedPetNa
                   onToggle={onPrivacyToggle}
                 />
               </div>
+            )}
+            {user && (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="touch-feedback"
+                  >
+                    <MoreVertical className="h-5 w-5" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-56 bg-background">
+                  <DropdownMenuLabel className="font-normal">
+                    <div className="flex flex-col space-y-1">
+                      <p className="text-sm font-medium leading-none">Account</p>
+                      <p className="text-xs leading-none text-muted-foreground">
+                        {user.email}
+                      </p>
+                    </div>
+                  </DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={() => setShowReferralModal(true)}>
+                    <Gift className="mr-2 h-4 w-4" />
+                    <span>Refer & Earn</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => navigate('/profile')}>
+                    <Settings className="mr-2 h-4 w-4" />
+                    <span>Settings</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => navigate('/billing')}>
+                    <CreditCard className="mr-2 h-4 w-4" />
+                    <span>Billing & Add-ons</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => navigate('/help')}>
+                    <HelpCircle className="mr-2 h-4 w-4" />
+                    <span>Help</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setShowReportModal(true)}>
+                    <Flag className="mr-2 h-4 w-4" />
+                    <span>Report an Issue</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={signOut} className="text-destructive focus:text-destructive">
+                    <LogOut className="mr-2 h-4 w-4" />
+                    <span>Sign Out</span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             )}
             {!user && (
               <Button 
@@ -175,6 +260,10 @@ export const PetHeader = ({ activeTab, onTabChange, selectedPetId, selectedPetNa
       <QuickReferralModal
         isOpen={showReferralModal}
         onClose={() => setShowReferralModal(false)}
+      />
+      <ReportIssueModal
+        isOpen={showReportModal}
+        onClose={() => setShowReportModal(false)}
       />
     </header>
   );

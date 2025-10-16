@@ -981,7 +981,7 @@ export const CareInstructionsSection = ({ petData, onUpdate, handlePetUpdate }: 
             <Button
               onClick={() => setIsAICareModalOpen(true)}
               size="lg"
-              className="h-14 w-14 rounded-full shadow-lg hover:shadow-xl transition-all bg-[#5691af] hover:bg-[#4a7d99] hover:scale-110"
+              className="h-14 w-14 rounded-full shadow-lg hover:shadow-xl transition-all bg-[#5691af]/60 hover:bg-[#5691af]/90 hover:scale-110 backdrop-blur-sm"
               aria-label="AI Care Assistant"
             >
               <Sparkles className="h-6 w-6" />
@@ -1000,7 +1000,7 @@ export const CareInstructionsSection = ({ petData, onUpdate, handlePetUpdate }: 
             <Button
               onClick={() => setIsAIMedicalModalOpen(true)}
               size="lg"
-              className="h-14 w-14 rounded-full shadow-lg hover:shadow-xl transition-all bg-red-500/90 hover:bg-red-600 hover:scale-110"
+              className="h-14 w-14 rounded-full shadow-lg hover:shadow-xl transition-all bg-red-500/60 hover:bg-red-500/90 hover:scale-110 backdrop-blur-sm"
               aria-label="AI Medical Advisor"
             >
               <Sparkles className="h-6 w-6" />

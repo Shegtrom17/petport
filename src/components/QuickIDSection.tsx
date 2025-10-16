@@ -450,7 +450,7 @@ export const QuickIDSection = ({ petData, onUpdate }: QuickIDSectionProps) => {
                     : 'bg-red-600 hover:bg-red-700 text-white'
                 }`}
               >
-                {lostPetData.is_missing ? '✓ Found' : 'Report Missing'}
+                {lostPetData.is_missing ? 'Found' : 'Report Missing'}
               </Button>
             </div>
           </div>

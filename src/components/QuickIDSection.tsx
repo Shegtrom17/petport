@@ -443,13 +443,14 @@ export const QuickIDSection = ({ petData, onUpdate }: QuickIDSectionProps) => {
               </Button>
               <Button
                 onClick={toggleMissingStatus}
-                className={`px-4 py-2 font-bold w-full sm:w-auto ${
+                size="sm"
+                className={`w-full sm:w-auto ${
                   lostPetData.is_missing 
                     ? 'bg-green-600 hover:bg-green-700 text-white' 
                     : 'bg-red-600 hover:bg-red-700 text-white'
                 }`}
               >
-                {lostPetData.is_missing ? '✓ FOUND!' : '⚠️ REPORT MISSING'}
+                {lostPetData.is_missing ? '✓ Found' : 'Report Missing'}
               </Button>
             </div>
           </div>

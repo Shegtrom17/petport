@@ -75,22 +75,15 @@ export const PetProfileCard = ({ petData, onUpdate, togglePetPublicVisibility, s
   const { user } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
-  const editSignalPrevRef = useRef<number | null>(null);
+  const editSignalPrevRef = useRef<number>(startEditSignal ?? 0);
 
 
-  // Also react to direct parent signal to ensure reliability
+  // React to parent edit signal reliably (handles quick first clicks)
   useEffect(() => {
-    if (typeof startEditSignal === 'number') {
-      // Only open when the signal actually increments (avoid opening on initial mount)
-      if (editSignalPrevRef.current === null) {
-        editSignalPrevRef.current = startEditSignal;
-        return;
-      }
-      if (startEditSignal !== editSignalPrevRef.current) {
-        editSignalPrevRef.current = startEditSignal;
-        console.log('Start edit signal changed, opening edit form');
-        setIsEditing(true);
-      }
+    if (typeof startEditSignal === 'number' && startEditSignal !== editSignalPrevRef.current) {
+      editSignalPrevRef.current = startEditSignal;
+      console.log('Start edit signal changed, opening edit form');
+      setIsEditing(true);
     }
   }, [startEditSignal]);
 

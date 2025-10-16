@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/context/AuthContext";
 import { useKeyboardAwareLayout } from "@/hooks/useKeyboardAwareLayout";
+import { useIsMobile } from "@/hooks/useIsMobile";
 import { updatePetBasicInfo, updatePetMedical } from "@/services/petService";
 import { Loader2 } from "lucide-react";
 import { sanitizeText, validateTextLength, containsSuspiciousContent } from "@/utils/inputSanitizer";
@@ -72,6 +73,7 @@ export const PetEditForm = ({ petData, onSave, onCancel, togglePetPublicVisibili
   const { user } = useAuth();
   const { toast } = useToast();
   const { bottomOffset } = useKeyboardAwareLayout();
+  const isMobile = useIsMobile();
   const [formData, setFormData] = useState<PetData>(petData);
   const [isSaving, setIsSaving] = useState(false);
   const [isOrgUser, setIsOrgUser] = useState(false);
@@ -637,7 +639,7 @@ export const PetEditForm = ({ petData, onSave, onCancel, togglePetPublicVisibili
             <div
               className="keyboard-aware-transform flex gap-4 pt-2"
               style={{ 
-                transform: bottomOffset > 0 ? `translateY(-${bottomOffset}px)` : 'none',
+                transform: (isMobile && bottomOffset > 0) ? `translateY(-${bottomOffset}px)` : 'none',
                 transition: 'transform 0.15s ease-out'
               }}
             >

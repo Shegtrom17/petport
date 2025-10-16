@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { MapPin, Phone, Calendar, Clock, Share2, AlertTriangle, Stethoscope, Camera, AlertCircle, Heart, ArrowLeft, FileDown, Eye, Download, Printer, Loader2 } from 'lucide-react';
+import { MapPin, Phone, Calendar, Clock, Share2, AlertTriangle, Stethoscope, Camera, AlertCircle, Heart, ArrowLeft, FileDown, Eye, Download, Printer, Loader2, Copy, Check, MessageCircle, Mail, Facebook, MessageSquare, Smartphone } from 'lucide-react';
 import { SocialShareButtons } from '@/components/SocialShareButtons';
 import { MetaTags } from '@/components/MetaTags';
 import { sanitizeText, truncateText } from '@/utils/inputSanitizer';
@@ -14,6 +14,7 @@ import QRCode from 'react-qr-code';
 import { generateClientPetPDF, viewPDFBlob, downloadPDFBlob } from '@/services/clientPdfService';
 import { sharePDFBlob } from '@/services/pdfService';
 import { generateShareURL } from '@/utils/domainUtils';
+import { shareViaMessenger, copyToClipboard } from '@/utils/messengerShare';
 
 interface MissingPetData {
   id: string;
@@ -61,6 +62,10 @@ export default function PublicMissingPet() {
   // Lost Pet PDF State (same as QuickShareHub)
   const [lostPetPdfBlob, setLostPetPdfBlob] = useState<Blob | null>(null);
   const [isGeneratingLostPetPdf, setIsGeneratingLostPetPdf] = useState(false);
+  
+  // Share Options State
+  const [showShareOptions, setShowShareOptions] = useState(false);
+  const [copyingLink, setCopyingLink] = useState(false);
   
   // Validate petId format
   const isValidPetId = petId && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(petId);
@@ -248,6 +253,67 @@ export default function PublicMissingPet() {
       console.error('Lost Pet PDF share error:', error);
       toast.error("Share Failed", { description: "Unable to share PDF. Please try download instead." });
     }
+  };
+
+  // Share handlers matching QuickShareHub
+  const handleCopyLink = async () => {
+    if (!petData) return;
+    setCopyingLink(true);
+    const directUrl = window.location.href;
+    const shareUrl = generateShareURL('missing-pet-share', petData.id, directUrl);
+    try {
+      await navigator.clipboard.writeText(shareUrl);
+      toast.success('Link Copied!', { description: 'Missing pet alert link copied to clipboard' });
+    } catch (error) {
+      toast.error('Copy Failed', { description: 'Please try again' });
+    } finally {
+      setCopyingLink(false);
+    }
+  };
+
+  const handleSMSShare = () => {
+    if (!petData) return;
+    const directUrl = window.location.href;
+    const shareUrl = generateShareURL('missing-pet-share', petData.id, directUrl);
+    const message = `🚨 MISSING: ${petData.name}! Last seen: ${petData.lastSeenLocation || 'location unknown'}. Help bring them home: ${shareUrl}`;
+    window.location.href = `sms:?body=${encodeURIComponent(message)}`;
+  };
+
+  const handleFacebookShare = () => {
+    if (!petData) return;
+    const directUrl = window.location.href;
+    const shareUrl = generateShareURL('missing-pet-share', petData.id, directUrl);
+    const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`;
+    window.open(facebookUrl, '_blank');
+  };
+
+  const handleMessengerShare = async () => {
+    if (!petData) return;
+    const directUrl = window.location.href;
+    const shareUrl = generateShareURL('missing-pet-share', petData.id, directUrl);
+    const needsFallback = await shareViaMessenger({
+      url: shareUrl,
+      title: `Help find ${petData.name}!`,
+      text: `${petData.name} is missing! Please help share their alert.`
+    });
+    
+    if (needsFallback) {
+      const copySuccess = await copyToClipboard(shareUrl);
+      if (copySuccess) {
+        toast.info("🐾 Link copied! Now paste it in Messenger.", {
+          duration: 3000,
+        });
+      }
+    }
+  };
+
+  const handleEmailShare = () => {
+    if (!petData) return;
+    const directUrl = window.location.href;
+    const shareUrl = generateShareURL('missing-pet-share', petData.id, directUrl);
+    const subject = `🚨 MISSING PET ALERT: ${petData.name}`;
+    const body = `Please help us find ${petData.name}!\n\nLast seen: ${petData.lastSeenLocation || 'location unknown'}\n\nView the full missing pet alert:\n${shareUrl}\n\nEvery share helps bring ${petData.name} home safely. Thank you!`;
+    window.location.href = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
   };
 
   if (isLoading) {
@@ -585,15 +651,128 @@ export default function PublicMissingPet() {
                 </div>
               )}
               
-              {/* URL Share Option */}
-              <Button
-                onClick={handleShare}
-                variant="outline"
-                className="w-full gap-2"
-              >
-                <Share2 className="h-4 w-4" />
-                Share Alert Link
-              </Button>
+              {/* URL Share Options - Matches QuickShareHub */}
+              <div className="space-y-3" data-touch-safe="true">
+                {!showShareOptions ? (
+                  <Button
+                    onClick={() => setShowShareOptions(true)}
+                    onTouchEnd={(e) => e.stopPropagation()}
+                    className="w-full bg-red-600 hover:bg-red-700 text-white h-12 font-semibold"
+                    style={{ touchAction: 'none' }}
+                  >
+                    <Share2 className="w-5 h-5 mr-2" />
+                    Share Missing Alert
+                  </Button>
+                ) : (
+                  <>
+                    {/* Quick Share Button */}
+                    <Button
+                      onClick={handleShare}
+                      onTouchEnd={(e) => e.stopPropagation()}
+                      className="w-full bg-red-600 hover:bg-red-700 text-white h-12 font-semibold"
+                      style={{ touchAction: 'none' }}
+                    >
+                      <Smartphone className="w-5 h-5 mr-2" />
+                      Quick Share
+                    </Button>
+                    
+                    {/* Top Row - 3 Buttons */}
+                    <div className="grid grid-cols-3 gap-2" data-touch-safe="true">
+                      <Button
+                        onClick={handleCopyLink}
+                        onTouchEnd={(e) => e.stopPropagation()}
+                        variant="outline"
+                        size="sm"
+                        style={{ touchAction: 'none' }}
+                        className="flex flex-col items-center py-3 px-2 h-16 border-red-600 text-red-700 hover:bg-red-50"
+                      >
+                        {copyingLink ? <Check className="w-4 h-4 mb-1" /> : <Copy className="w-4 h-4 mb-1" />}
+                        <span className="text-xs font-medium">
+                          {copyingLink ? 'Copied!' : 'Copy Link'}
+                        </span>
+                      </Button>
+                      
+                      <Button
+                        onClick={handleSMSShare}
+                        onTouchEnd={(e) => e.stopPropagation()}
+                        variant="outline"
+                        size="sm"
+                        style={{ touchAction: 'none' }}
+                        className="flex flex-col items-center py-3 px-2 h-16 border-red-600 text-red-700 hover:bg-red-50"
+                      >
+                        <MessageCircle className="w-4 h-4 mb-1" />
+                        <span className="text-xs font-medium">Text/SMS</span>
+                      </Button>
+                      
+                      <Button
+                        onClick={handleEmailShare}
+                        onTouchEnd={(e) => e.stopPropagation()}
+                        variant="outline"
+                        size="sm"
+                        style={{ touchAction: 'none' }}
+                        className="flex flex-col items-center py-3 px-2 h-16 border-red-600 text-red-700 hover:bg-red-50"
+                      >
+                        <Mail className="w-4 h-4 mb-1" />
+                        <span className="text-xs font-medium">Email</span>
+                      </Button>
+                    </div>
+                    
+                    {/* Bottom Row - 3 Buttons */}
+                    <div className="grid grid-cols-3 gap-2" data-touch-safe="true">
+                      <Button
+                        onClick={handleFacebookShare}
+                        onTouchEnd={(e) => e.stopPropagation()}
+                        variant="outline"
+                        size="sm"
+                        style={{ touchAction: 'none' }}
+                        className="flex flex-col items-center py-3 px-2 h-16 border-red-600 text-red-700 hover:bg-red-50"
+                      >
+                        <Facebook className="w-4 h-4 mb-1" />
+                        <span className="text-xs font-medium">Facebook</span>
+                      </Button>
+                      
+                      <Button
+                        onClick={handleMessengerShare}
+                        onTouchEnd={(e) => e.stopPropagation()}
+                        variant="outline"
+                        size="sm"
+                        style={{ touchAction: 'none' }}
+                        className="flex flex-col items-center py-3 px-2 h-16 border-red-600 text-red-700 hover:bg-red-50"
+                      >
+                        <MessageSquare className="w-4 h-4 mb-1" />
+                        <span className="text-xs font-medium">Messenger</span>
+                      </Button>
+                      
+                      <Button
+                        onClick={() => {
+                          handleCopyLink();
+                          toast.info("Instagram doesn't support direct sharing. Link copied - paste it in Instagram Stories or posts.", {
+                            duration: 4000,
+                          });
+                        }}
+                        onTouchEnd={(e) => e.stopPropagation()}
+                        variant="outline"
+                        size="sm"
+                        style={{ touchAction: 'none' }}
+                        className="flex flex-col items-center py-3 px-2 h-16 border-red-600 text-red-700 hover:bg-red-50"
+                      >
+                        <Camera className="w-4 h-4 mb-1" />
+                        <span className="text-xs font-medium">Instagram</span>
+                      </Button>
+                    </div>
+
+                    {/* Close Button */}
+                    <Button
+                      onClick={() => setShowShareOptions(false)}
+                      variant="ghost"
+                      size="sm"
+                      className="w-full text-xs mt-2"
+                    >
+                      Close
+                    </Button>
+                  </>
+                )}
+              </div>
             </div>
           </CardContent>
         </Card>

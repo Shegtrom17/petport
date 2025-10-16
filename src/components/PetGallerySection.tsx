@@ -163,10 +163,6 @@ export const PetGallerySection = ({ petData, onUpdate, handlePetUpdate }: PetGal
           title: "Photos reordered",
           description: "Photo order saved successfully. First four photos will appear in lost pet flyers.",
         });
-      if (isAndroid) {
-        console.log('Android detected — skipping onUpdate to prevent jump');
-        return;
-      }
       onUpdate();
     } catch (error) {
       toast({
@@ -223,11 +219,7 @@ export const PetGallerySection = ({ petData, onUpdate, handlePetUpdate }: PetGal
             title: "Photos uploaded successfully",
             description: `${result.uploaded} photo(s) added to gallery`,
           });
-          if (isAndroid) {
-            console.log('Android detected — skipping onUpdate to prevent jump');
-          } else {
-            onUpdate();
-          }
+          onUpdate();
         } else {
           toast({
             title: "Some photos failed to upload",
@@ -235,11 +227,7 @@ export const PetGallerySection = ({ petData, onUpdate, handlePetUpdate }: PetGal
             variant: "destructive",
           });
           if (result.uploaded > 0) {
-            if (isAndroid) {
-              console.log('Android detected — skipping onUpdate to prevent jump');
-            } else {
-              onUpdate();
-            }
+            onUpdate();
           }
         }
       } catch (error) {
@@ -294,11 +282,7 @@ export const PetGallerySection = ({ petData, onUpdate, handlePetUpdate }: PetGal
             title: "Photo captured",
             description: "Photo added to gallery",
           });
-          if (isAndroid) {
-            console.log('Android detected — skipping onUpdate to prevent jump');
-          } else {
-            onUpdate();
-          }
+          onUpdate();
         } else {
           toast({
             title: "Capture failed",
@@ -331,11 +315,7 @@ export const PetGallerySection = ({ petData, onUpdate, handlePetUpdate }: PetGal
           title: "Photo deleted",
           description: "Photo removed from gallery",
         });
-        if (isAndroid) {
-          console.log('Android detected — skipping onUpdate to prevent jump');
-        } else {
-          onUpdate();
-        }
+        onUpdate();
       } else {
         toast({
           title: "Delete failed",

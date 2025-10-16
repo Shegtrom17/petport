@@ -188,12 +188,16 @@ const Index = () => {
     const isUploading = document.body.getAttribute('data-uploading') === 'true';
     if (isUploading) return;
 
+    // Don't restore if user is actively working in upload tabs
+    const uploadTabs = ['documents', 'gallery'];
+    if (uploadTabs.includes(activeTab)) return;
+
     const saved = localStorage.getItem(`pp_last_tab_${user.id}`);
     if (saved) {
       setActiveTab(saved === 'vaccination' ? 'profile' : saved);
     }
     restoredRef.current = true;
-  }, [user?.id, settings.rememberLastTab]);
+  }, [user?.id, settings.rememberLastTab, activeTab]);
 
   // Enhanced petData with proper user_id from selectedPet or current user
   const petData = selectedPet ? {

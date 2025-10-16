@@ -340,11 +340,7 @@ export const DocumentsSection = ({ petId, petName, documents, onDocumentDeleted 
         localStorage.setItem(`pp_last_tab_${user.id}`, 'documents');
       }
       
-      if (isAndroid) {
-        console.log('Android detected — skipping onDocumentDeleted to prevent jump');
-        return;
-      }
-      onDocumentDeleted(); // Refresh the document list
+      onDocumentDeleted(); // Refresh the document list on all platforms
       
     } catch (error: any) {
       console.error("Error uploading document:", error);

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -75,13 +75,22 @@ export const PetProfileCard = ({ petData, onUpdate, togglePetPublicVisibility, s
   const { user } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
+  const editSignalPrevRef = useRef<number | null>(null);
 
 
   // Also react to direct parent signal to ensure reliability
   useEffect(() => {
     if (typeof startEditSignal === 'number') {
-      console.log('Start edit signal received, opening edit form');
-      setIsEditing(true);
+      // Only open when the signal actually increments (avoid opening on initial mount)
+      if (editSignalPrevRef.current === null) {
+        editSignalPrevRef.current = startEditSignal;
+        return;
+      }
+      if (startEditSignal !== editSignalPrevRef.current) {
+        editSignalPrevRef.current = startEditSignal;
+        console.log('Start edit signal changed, opening edit form');
+        setIsEditing(true);
+      }
     }
   }, [startEditSignal]);
 

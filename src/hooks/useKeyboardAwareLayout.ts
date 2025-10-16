@@ -64,24 +64,9 @@ export const useKeyboardAwareLayout = () => {
     }
   }, []);
 
-  // Helper to ensure Save button stays visible after iOS keyboard animation
+  // Helper disabled to prevent forced scroll-to-bottom on focus
   const ensureSaveButtonVisible = useCallback(() => {
-    const saveBar = document.getElementById('form-actions');
-    if (!saveBar) return;
-    
-    // Only scroll if save bar is NOT already visible in viewport
-    const rect = saveBar.getBoundingClientRect();
-    const isVisible = rect.top >= 0 && rect.bottom <= window.innerHeight;
-    
-    if (!isVisible) {
-      setTimeout(() => {
-        saveBar.scrollIntoView({ 
-          behavior: 'smooth', 
-          block: 'nearest',
-          inline: 'nearest'
-        });
-      }, 300);
-    }
+    /* no-op */
   }, []);
 
   useEffect(() => {
@@ -98,9 +83,8 @@ export const useKeyboardAwareLayout = () => {
     // Create event handlers
     const handleFocusIn = () => {
       updateKeyboardState();
-      if (isIOS) {
-        ensureSaveButtonVisible();
-      }
+      // Disabled auto-scrolling the Save bar to prevent jump-to-bottom on focus
+      // iOS will still lift the bar above keyboard via bottomOffset transform in form
     };
 
     const handleFocusOut = () => {

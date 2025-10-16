@@ -136,6 +136,12 @@ export const QuickIDSection = ({ petData, onUpdate }: QuickIDSectionProps) => {
     console.log("QuickIDSection: showing Missing Pet help card");
   }, []);
 
+  // Debug: confirm SocialShareButtons rendering with correct context
+  useEffect(() => {
+    if (!petData?.id) return;
+    console.log("QuickIDSection: share card props", { petId: petData.id, isMissing: lostPetData.is_missing });
+  }, [petData?.id, lostPetData.is_missing]);
+
   const saveLostPetData = async () => {
     if (!petData?.id) return;
 
@@ -691,7 +697,7 @@ export const QuickIDSection = ({ petData, onUpdate }: QuickIDSectionProps) => {
               lostPetData={lostPetData}
               className="w-full sm:w-auto"
             />
-
+            
             <SocialShareButtons
               petName={petData.name}
               petId={petData.id || ""}

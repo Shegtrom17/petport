@@ -45,6 +45,9 @@ export const SocialShareButtons = ({ petName, petId, isMissingPet = false, conte
   const { user } = useAuth();
   const isMobile = useIsMobile();
   
+  // Debug: ensure correct component variant renders
+  console.log("SocialShareButtons", { context, isMissingPet, petId, petName, defaultOpenOptions, compact, horizontalScroll });
+  
 // Add cache-busting parameter to ensure fresh loads
 const isCare = context === 'care';
 const isResume = context === 'resume' || context === 'credentials'; // Consolidate credentials to resume

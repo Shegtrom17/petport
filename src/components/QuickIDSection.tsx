@@ -691,28 +691,28 @@ export const QuickIDSection = ({ petData, onUpdate }: QuickIDSectionProps) => {
               lostPetData={lostPetData}
               className="w-full sm:w-auto"
             />
-            <Dialog>
-              <DialogTrigger asChild>
-                <Button className="w-full sm:w-auto bg-brand-primary text-white hover:bg-brand-primary/90">
-                  <QrCode className="w-4 h-4 mr-2" />
-                  Show QR Code
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="max-w-md bg-white">
-                <DialogHeader>
-                  <DialogTitle className="font-bold text-brand-primary border-b-2 border-brand-primary pb-2">
-                    QR Code for {petData.name}
-                  </DialogTitle>
-                </DialogHeader>
-                <div className="flex justify-center p-4 bg-white rounded-lg border border-gray-200">
-                  <img
-                    src={generateQRCodeUrl(lostPetData.is_missing ? generatePublicMissingUrl(petData.id) : generatePublicProfileUrl(petData.id), 200)}
-                    alt={lostPetData.is_missing ? `QR Code for ${petData.name}'s missing alert` : `QR Code for ${petData.name}'s profile`}
-                    className="w-48 h-48"
-                  />
-                </div>
-              </DialogContent>
-            </Dialog>
+            <Button 
+              onClick={async () => {
+                const publicUrl = lostPetData.is_missing ? generatePublicMissingUrl(petData.id) : generatePublicProfileUrl(petData.id);
+                const result = await shareProfileOptimized(publicUrl, petData.name, 'profile', lostPetData.is_missing);
+                if (result.success) {
+                  toast({
+                    title: result.shared ? "Shared Successfully!" : "Link Copied!",
+                    description: result.message,
+                  });
+                } else {
+                  toast({
+                    title: "Share Failed",
+                    description: result.error || "Unable to share link",
+                    variant: "destructive"
+                  });
+                }
+              }}
+              className="w-full sm:w-auto bg-brand-primary text-white hover:bg-brand-primary/90"
+            >
+              <QrCode className="w-4 h-4 mr-2" />
+              Share QR Code
+            </Button>
             {lostPetData.is_missing && (
               <Button 
                 onClick={async () => {

@@ -1,4 +1,4 @@
-const CACHE_NAME = 'petport-v15'; // iOS optimized cache management - Fixed SW syntax
+const CACHE_NAME = 'petport-v16'; // iOS optimized cache management - Fixed SW syntax
 const urlsToCache = [
   '/',
   '/lovable-uploads/213ccabc-3918-406d-b844-9c2730b7637d.png', // PetPort logo

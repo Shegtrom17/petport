@@ -193,10 +193,5 @@ const handleEditSave = () => {
     );
   }
 
-  return (
-    <div id="pet-profile-edit-section" className="space-y-6">
-      {/* Basic Information section has been moved to PetProfileContent.tsx */}
-      {/* This component now only handles the edit form */}
-    </div>
-  );
+  return null;
 };

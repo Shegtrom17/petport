@@ -16,7 +16,7 @@ import { SocialShareButtons } from "@/components/SocialShareButtons";
 import { PrivacyHint } from "@/components/PrivacyHint";
 import { LostPetButton } from "@/components/LostPetButton";
 import { GuidanceHint } from "@/components/ui/guidance-hint";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { generatePublicProfileUrl, generatePublicMissingUrl, generateQRCodeUrl, shareProfileOptimized } from "@/services/pdfService";
 import { Link } from "react-router-dom";
 
@@ -83,6 +83,7 @@ interface QuickIDSectionProps {
 export const QuickIDSection = ({ petData, onUpdate }: QuickIDSectionProps) => {
   const { toast } = useToast();
   const [isEditing, setIsEditing] = useState(false);
+  const [isShareDialogOpen, setIsShareDialogOpen] = useState(false);
   const [lostPetData, setLostPetData] = useState<LostPetData>({
     is_missing: false,
     last_seen_location: "",
@@ -673,41 +674,137 @@ export const QuickIDSection = ({ petData, onUpdate }: QuickIDSectionProps) => {
       )}
 
 
-      {/* QR Code Section */}
+      {/* QR Code & Sharing Section */}
       <Card className="bg-white shadow-sm border border-gray-200">
         <CardHeader>
           <CardTitle className="text-xl flex items-center justify-between text-brand-primary">
-            <span>QR Code</span>
+            <span>Quick Actions</span>
             <PrivacyHint isPublic={true} feature="" variant="badge" />
           </CardTitle>
         </CardHeader>
         <CardContent>
           <PrivacyHint 
             isPublic={true} 
-            feature="QR code generation" 
+            feature="QR code and sharing" 
             variant="banner" 
             showToggle={true}
           />
-          <div className="space-y-3 mt-4">
+          <div className="flex flex-col sm:flex-row gap-3 mt-4">
+            {/* PDF Button (existing LostPetButton) */}
             <LostPetButton 
               petId={petData.id || ""}
               petName={petData.name}
               isMissing={lostPetData.is_missing}
               petData={petData}
               lostPetData={lostPetData}
-              className="w-full sm:w-auto"
+              className="flex-1"
             />
             
-            <SocialShareButtons
-              petName={petData.name}
-              petId={petData.id || ""}
-              isMissingPet={lostPetData.is_missing}
-              context={lostPetData.is_missing ? 'missing' : 'profile'}
-              defaultOpenOptions={true}
-            />
+            {/* New Share Button */}
+            <Button
+              onClick={() => setIsShareDialogOpen(true)}
+              className={`flex-1 ${
+                lostPetData.is_missing
+                  ? 'bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 border-2 border-red-500'
+                  : 'bg-gradient-to-r from-brand-primary to-blue-700 hover:from-blue-700 hover:to-blue-800'
+              } text-white shadow-lg hover:shadow-xl transition-all`}
+            >
+              <Share2 className="w-4 h-4 mr-2" />
+              {lostPetData.is_missing ? 'Share Missing Alert' : 'Share QR Code'}
+            </Button>
           </div>
         </CardContent>
       </Card>
+
+      {/* Share Dialog - Matches Resume Pattern */}
+      <Dialog open={isShareDialogOpen} onOpenChange={setIsShareDialogOpen}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto bg-[#f8f8f8]">
+          <DialogHeader>
+            <DialogTitle className={`text-xl font-bold border-b-2 pb-2 ${
+              lostPetData.is_missing ? 'border-red-500 text-red-900' : 'border-gold-500 text-navy-900'
+            }`}>
+              {lostPetData.is_missing ? '🚨 Share Missing Alert' : '🔗 Share QR Code'}
+            </DialogTitle>
+            <DialogDescription>
+              {lostPetData.is_missing 
+                ? `Help us bring ${petData.name} home! Share their live missing alert page with last-seen details and contacts.`
+                : `Share ${petData.name}'s QR code and public profile link.`
+              }
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-6">
+            {/* Social Share Section */}
+            <div className="space-y-4">
+              <SocialShareButtons 
+                petName={petData.name}
+                petId={petData.id || ""}
+                isMissingPet={lostPetData.is_missing}
+                context={lostPetData.is_missing ? 'missing' : 'profile'}
+                defaultOpenOptions={true}
+              />
+            </div>
+
+            {/* QR Code Section */}
+            <div className="space-y-4 border-t pt-4">
+              <h4 className="font-semibold text-navy-900">
+                {lostPetData.is_missing ? 'Missing Pet QR Code' : 'Profile QR Code'}
+              </h4>
+              <div className="space-y-3 text-center">
+                <p className="text-sm text-navy-600">
+                  {lostPetData.is_missing 
+                    ? 'Scan to view live missing pet alert' 
+                    : 'Scan to view profile'}
+                </p>
+                <div className={`flex justify-center p-4 bg-white rounded-lg border-2 ${
+                  lostPetData.is_missing ? 'border-red-500/30' : 'border-gold-500/30'
+                }`}>
+                  <img 
+                    src={generateQRCodeUrl(
+                      lostPetData.is_missing 
+                        ? `${window.location.origin}/missing-pet/${petData.id}`
+                        : generatePublicProfileUrl(petData.id),
+                      200
+                    )}
+                    alt={`QR Code for ${petData.name}'s ${lostPetData.is_missing ? 'missing alert' : 'profile'}`}
+                    className="w-48 h-48"
+                  />
+                </div>
+                
+                <div className="bg-white p-3 rounded border border-gray-200">
+                  <p className="text-xs text-gray-600 break-all">
+                    📱 Share link: {lostPetData.is_missing 
+                      ? `${window.location.origin}/missing-pet/${petData.id}`
+                      : generatePublicProfileUrl(petData.id)
+                    }
+                  </p>
+                </div>
+                
+                <Button
+                  onClick={async () => {
+                    const url = lostPetData.is_missing 
+                      ? `${window.location.origin}/missing-pet/${petData.id}`
+                      : generatePublicProfileUrl(petData.id);
+                    try {
+                      await navigator.clipboard.writeText(url);
+                      toast({ title: "Link copied to clipboard!" });
+                    } catch (error) {
+                      toast({ title: "Failed to copy link", variant: "destructive" });
+                    }
+                  }}
+                  variant="outline"
+                  className={lostPetData.is_missing 
+                    ? 'border-red-500 text-red-600 hover:bg-red-50'
+                    : 'border-gold-500 text-gold-600 hover:bg-gold-50'
+                  }
+                >
+                  Copy Link
+                </Button>
+              </div>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

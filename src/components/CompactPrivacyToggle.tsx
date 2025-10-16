@@ -46,12 +46,8 @@ export const CompactPrivacyToggle: React.FC<CompactPrivacyToggleProps> = ({
   return (
     <div className="flex items-center space-x-2" title={isPublic ? "Public profile - all sections can be shared" : "Private profile - set to public to enable sharing"}>
       <div className="flex items-center space-x-1">
-        {isToggling ? (
+        {isToggling && (
           <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
-        ) : isPublic ? (
-          <Globe className="h-4 w-4 text-gold-500" />
-        ) : (
-          <Lock className="h-4 w-4 text-muted-foreground" />
         )}
         <span className="text-sm font-medium">
           {isPublic ? 'Public' : 'Private'}

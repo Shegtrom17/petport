@@ -499,32 +499,6 @@ export default function Learn() {
               or through links to interested adopters.
             </p>
 
-            <div className="bg-gradient-to-r from-green-50 to-blue-50 rounded-xl p-6 mb-8">
-              <h3 className="text-xl font-semibold text-brand-primary mb-4">📝 Essential Foster Documentation</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <h4 className="font-semibold text-brand-primary mb-3">Behavioral Progress</h4>
-                  <ul className="text-brand-primary-dark space-y-1 text-sm">
-                    <li>• Socialization improvements</li>
-                    <li>• Training milestones</li>
-                    <li>• Interaction with other pets</li>
-                    <li>• Response to humans</li>
-                    <li>• Anxiety or fear reductions</li>
-                  </ul>
-                </div>
-                <div>
-                  <h4 className="font-semibold text-brand-primary mb-3">Health & Care Notes</h4>
-                  <ul className="text-brand-primary-dark space-y-1 text-sm">
-                    <li>• Medical treatments given</li>
-                    <li>• Weight gain/loss tracking</li>
-                    <li>• Dietary preferences and restrictions</li>
-                    <li>• Exercise routines</li>
-                    <li>• Behavioral quirks and preferences</li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-
             <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 mb-8">
               <h3 className="text-xl font-semibold text-brand-primary mb-4">🔄 Seamless Adoption Transfer</h3>
               <p className="text-brand-primary-dark mb-4">

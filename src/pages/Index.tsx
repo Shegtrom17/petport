@@ -294,7 +294,9 @@ const Index = () => {
               togglePetPublicVisibility={togglePetPublicVisibility}
               handlePetUpdate={handlePetUpdate}
               onEditClick={() => {
-                setStartEditSignal((s) => s + 1);
+                const newSignal = startEditSignal + 1;
+                console.log('startEditSignal ->', newSignal);
+                setStartEditSignal(newSignal);
               }}
             />
             <PetProfileCard 

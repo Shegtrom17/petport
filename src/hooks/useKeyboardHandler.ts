@@ -32,7 +32,9 @@ export const useKeyboardHandler = () => {
         document.body.classList.add('keyboard-open');
         
         // Prevent viewport scaling by ensuring the focused element stays visible
-        if (activeElement.current && 'scrollIntoView' in activeElement.current) {
+        // Skip if we're in edit mode on desktop
+        const isEditing = document.body.getAttribute('data-editing') === 'true';
+        if (activeElement.current && 'scrollIntoView' in activeElement.current && !isEditing) {
           setTimeout(() => {
             (activeElement.current as Element).scrollIntoView({
               behavior: 'smooth',
@@ -58,11 +60,13 @@ export const useKeyboardHandler = () => {
       activeElement.current = target;
       
       // Only scroll if element is not fully visible
+      // Skip if we're in edit mode on desktop
+      const isEditing = document.body.getAttribute('data-editing') === 'true';
       setTimeout(() => {
         const rect = target.getBoundingClientRect();
         const isVisible = rect.top >= 0 && rect.bottom <= window.innerHeight;
         
-        if (!isVisible) {
+        if (!isVisible && !isEditing) {
           target.scrollIntoView({
             behavior: 'smooth',
             block: 'center'

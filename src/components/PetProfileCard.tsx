@@ -72,20 +72,31 @@ export const PetProfileCard = ({ petData, onUpdate, togglePetPublicVisibility, s
 
   const [isEditing, setIsEditing] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [lastHandledSignal, setLastHandledSignal] = useState(-1);
   const { user } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
-  const editSignalPrevRef = useRef<number>(startEditSignal ?? 0);
-
 
   // React to parent edit signal reliably (handles quick first clicks)
   useEffect(() => {
-    if (typeof startEditSignal === 'number' && startEditSignal !== editSignalPrevRef.current) {
-      editSignalPrevRef.current = startEditSignal;
-      console.log('Start edit signal changed, opening edit form');
+    if (typeof startEditSignal === 'number' && startEditSignal > lastHandledSignal) {
+      setLastHandledSignal(startEditSignal);
+      console.log('Edit signal handled:', startEditSignal);
       setIsEditing(true);
     }
-  }, [startEditSignal]);
+  }, [startEditSignal, lastHandledSignal]);
+
+  // Add/remove data-editing attribute to prevent desktop scroll jumps
+  useEffect(() => {
+    if (isEditing) {
+      document.body.setAttribute('data-editing', 'true');
+    } else {
+      document.body.removeAttribute('data-editing');
+    }
+    return () => {
+      document.body.removeAttribute('data-editing');
+    };
+  }, [isEditing]);
 
   const handleUploadMedicalDoc = () => {
     console.log("Opening medical document upload...");

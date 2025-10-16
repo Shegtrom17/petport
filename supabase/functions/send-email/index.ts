@@ -26,6 +26,132 @@ interface EmailRequest {
   recipientStatus?: string;
 }
 
+const generateTextBody = (data: EmailRequest): string => {
+  const { type, petName, shareUrl, senderName, recipientName, customMessage, transferUrl, transferToken } = data;
+  const greeting = recipientName ? `Hi ${recipientName},` : 'Hello,';
+  const sender = senderName || 'A PetPort user';
+  const baseUrl = Deno.env.get("APP_ORIGIN") || "https://petport.app";
+
+  const textTemplates = {
+    profile: `${greeting}
+
+${sender} has shared ${petName}'s PetPort profile with you.
+${customMessage ? `\nMessage: "${customMessage}"\n` : ''}
+View the profile here: ${shareUrl}
+
+---
+Sent via PetPort - Digital Pet Passport
+https://petport.app`,
+
+    care: `${greeting}
+
+${sender} has shared detailed care instructions for ${petName} with you.
+This includes feeding schedules, routines, allergies, and behavioral notes.
+${customMessage ? `\nMessage: "${customMessage}"\n` : ''}
+View care instructions: ${shareUrl}
+
+---
+Sent via PetPort - Digital Pet Passport
+https://petport.app`,
+
+    resume: `${greeting}
+
+${sender} has shared ${petName}'s professional resume with you.
+View training, achievements, experience, and professional credentials.
+${customMessage ? `\nMessage: "${customMessage}"\n` : ''}
+View resume: ${shareUrl}
+
+---
+Sent via PetPort - Digital Pet Passport
+https://petport.app`,
+
+    missing_pet: `${greeting}
+
+🚨 MISSING PET ALERT - ${petName} needs your help!
+
+${sender} has reported ${petName} as missing.
+${customMessage ? `\nMessage: "${customMessage}"\n` : ''}
+Please check this link for all details including photos, last known location, and contact information:
+${shareUrl}
+
+If you see ${petName}, please contact the owner immediately using the information provided.
+Time is critical - please share this alert with others!
+
+---
+Sent via PetPort - Digital Pet Passport
+https://petport.app`,
+
+    transfer_invite_new: `${greeting}
+
+${sender} is transferring ${petName}'s complete pet profile to you on PetPort.
+
+⏰ This transfer link expires in 7 days.
+
+Create your PetPort account and start your free 7-day trial to complete the transfer.
+${customMessage ? `\nMessage: "${customMessage}"\n` : ''}
+What you'll receive:
+- Full ownership transfer of ${petName}'s complete profile
+- 7-day free trial with all premium features
+- All medical records and information
+- Emergency contact details and care instructions
+- Photo galleries and vaccination records
+
+Accept transfer: ${transferUrl || `${baseUrl}/transfer/accept/${transferToken}`}
+
+---
+Sent via PetPort - Digital Pet Passport
+https://petport.app`,
+
+    transfer_invite_existing: `${greeting}
+
+${sender} wants to transfer ${petName}'s complete pet profile to your PetPort account.
+
+⏰ This transfer link expires in 7 days.
+${customMessage ? `\nMessage: "${customMessage}"\n` : ''}
+Click below to accept and claim ${petName}'s profile. Once you accept, ${petName} and all their information will be transferred to your account.
+
+Accept transfer: ${transferUrl || `${baseUrl}/transfer/accept/${transferToken}`}
+
+---
+Sent via PetPort - Digital Pet Passport
+https://petport.app`,
+
+    transfer_success: `${greeting}
+
+${petName}'s profile has been successfully transferred to your PetPort account!
+
+What happens next:
+- ${petName} now appears in your PetPort dashboard
+- You have full access to edit and manage their profile
+- All photos, documents, and information are preserved
+- You can share ${petName}'s profile with others anytime
+
+View ${petName}'s profile: ${baseUrl}/profile/${data.petId}
+
+Thank you for using PetPort!
+
+---
+PetPort - Digital Pet Passport
+https://petport.app`,
+
+    transfer_limit_reached: `${greeting}
+
+${sender} wants to transfer ${petName}'s profile to your PetPort account.
+
+📋 Additional Pet Slot Needed
+
+You've reached your current pet limit. Add an additional pet slot to accept this transfer and bring ${petName} into your account.
+
+Add pet slot and accept transfer: ${transferUrl || `${baseUrl}/transfer/accept/${transferToken}`}
+
+---
+Sent via PetPort - Digital Pet Passport
+https://petport.app`
+  };
+
+  return textTemplates[type as keyof typeof textTemplates] || `${greeting}\n\nView ${petName}'s information: ${shareUrl}\n\n---\nSent via PetPort\nhttps://petport.app`;
+};
+
 const generateEmailTemplate = (data: EmailRequest) => {
   const { type, petName, shareUrl, petPhoto, customMessage, senderName, recipientName } = data;
   
@@ -480,6 +606,7 @@ const handler = async (req: Request): Promise<Response> => {
     };
 
     const emailTemplate = generateEmailTemplate(emailData);
+    const textBody = generateTextBody(emailData);
     const subject = templates[emailData.type]?.subject || `PetPort - ${emailData.petName}`;
 
     // Send email via Postmark API
@@ -498,6 +625,7 @@ const handler = async (req: Request): Promise<Response> => {
         To: emailData.recipientEmail,
         Subject: subject,
         HtmlBody: emailTemplate,
+        TextBody: textBody,
         MessageStream: "outbound",
         ...(emailData.pdfAttachment && emailData.pdfFileName ? {
           Attachments: [{

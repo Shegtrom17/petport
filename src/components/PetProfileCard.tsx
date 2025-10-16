@@ -47,9 +47,10 @@ interface PetProfileCardProps {
   petData: PetData;
   onUpdate?: () => void;
   togglePetPublicVisibility?: (petId: string, isPublic: boolean) => Promise<boolean>;
+  startEditSignal?: number;
 }
 
-export const PetProfileCard = ({ petData, onUpdate, togglePetPublicVisibility }: PetProfileCardProps) => {
+export const PetProfileCard = ({ petData, onUpdate, togglePetPublicVisibility, startEditSignal }: PetProfileCardProps) => {
   console.log("PetProfileCard - Received petData:", petData);
   
   // Safety check for missing or invalid petData
@@ -85,6 +86,14 @@ export const PetProfileCard = ({ petData, onUpdate, togglePetPublicVisibility }:
     window.addEventListener('trigger-pet-edit', handleEditEvent);
     return () => window.removeEventListener('trigger-pet-edit', handleEditEvent);
   }, []);
+
+  // Also react to direct parent signal to ensure reliability
+  useEffect(() => {
+    if (typeof startEditSignal === 'number') {
+      console.log('Start edit signal received, opening edit form');
+      setIsEditing(true);
+    }
+  }, [startEditSignal]);
 
   const handleUploadMedicalDoc = () => {
     console.log("Opening medical document upload...");

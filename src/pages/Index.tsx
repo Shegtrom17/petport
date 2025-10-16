@@ -57,6 +57,7 @@ const Index = () => {
   const [isInAppSharingOpen, setIsInAppSharingOpen] = useState(false);
   const [petLimit, setPetLimit] = useState<number>(0);
   const restoredRef = useRef(false);
+  const [startEditSignal, setStartEditSignal] = useState(0);
   const navigate = useNavigate();
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -293,7 +294,7 @@ const Index = () => {
               togglePetPublicVisibility={togglePetPublicVisibility}
               handlePetUpdate={handlePetUpdate}
               onEditClick={() => {
-                // Trigger the PetProfileCard to enter edit mode
+                setStartEditSignal((s) => s + 1);
                 window.dispatchEvent(new CustomEvent('trigger-pet-edit'));
               }}
             />
@@ -301,6 +302,7 @@ const Index = () => {
               petData={petData} 
               onUpdate={handlePetUpdate}
               togglePetPublicVisibility={togglePetPublicVisibility}
+              startEditSignal={startEditSignal}
             />
           </div>
         );

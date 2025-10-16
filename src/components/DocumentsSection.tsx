@@ -154,11 +154,7 @@ export const DocumentsSection = ({ petId, petName, documents, onDocumentDeleted 
       
       // Allow UI to refresh before triggering parent re-render
       setTimeout(() => {
-        if (isAndroid) {
-          console.log('Android detected — skipping onDocumentDeleted to prevent jump');
-          return;
-        }
-        onDocumentDeleted();
+        onDocumentDeleted(); // Call on all platforms
       }, 300);
       
     } catch (error) {

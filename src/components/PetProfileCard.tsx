@@ -98,6 +98,16 @@ export const PetProfileCard = ({ petData, onUpdate, togglePetPublicVisibility, s
     };
   }, [isEditing]);
 
+  // When entering edit mode, scroll the edit form into view
+  useEffect(() => {
+    if (isEditing) {
+      const el = document.getElementById('pet-profile-edit-section');
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
+  }, [isEditing]);
+
   const handleUploadMedicalDoc = () => {
     console.log("Opening medical document upload...");
   };

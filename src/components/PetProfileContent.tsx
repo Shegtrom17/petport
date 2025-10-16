@@ -112,12 +112,9 @@ export const PetProfileContent = ({
   const handleProfileEdit = () => {
     console.log("Edit Profile button clicked - starting edit process");
     
-    // Trigger parent component to switch to edit mode
-    if (onEditClick) {
-      console.log("Calling onEditClick to trigger edit mode");
-      onEditClick(); // This should trigger the parent to handle edit mode
-    }
-    // No scroll needed - keyboard handler manages field visibility
+    // Trigger parent component to switch to edit mode via event
+    window.dispatchEvent(new CustomEvent('trigger-pet-edit'));
+    console.log("Dispatched trigger-pet-edit event");
   };
 
   const handleDeletePet = async () => {

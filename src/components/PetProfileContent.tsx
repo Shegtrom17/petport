@@ -117,35 +117,7 @@ export const PetProfileContent = ({
       console.log("Calling onEditClick to trigger edit mode");
       onEditClick(); // This should trigger the parent to handle edit mode
     }
-    
-    // Smooth scroll to the edit section after a brief delay to ensure form renders
-    setTimeout(() => {
-      const editSection = document.getElementById('pet-profile-edit-section');
-      console.log("Looking for edit section element:", editSection);
-      
-      if (editSection) {
-        const rect = editSection.getBoundingClientRect();
-        const header = document.querySelector('header.sticky') as HTMLElement | null;
-        const headerHeight = header?.getBoundingClientRect().height ?? 0;
-
-        const topVisibleThreshold = headerHeight + 8;
-        const bottomVisibleThreshold = window.innerHeight - 8;
-
-        const isTopVisible = rect.top >= topVisibleThreshold;
-        const isBottomVisible = rect.bottom <= bottomVisibleThreshold;
-
-        if (!isTopVisible || !isBottomVisible) {
-          console.log("Edit section is off-screen, performing smooth scroll");
-          import('@/utils/smoothScroll').then(({ smoothScrollIntoViewIfNeeded }) => {
-            smoothScrollIntoViewIfNeeded(editSection, { topOffset: headerHeight, margin: 8 });
-          });
-        } else {
-          console.log("Edit section already visible, no scroll needed");
-        }
-      } else {
-        console.error("Edit section not found! ID 'pet-profile-edit-section' does not exist in DOM");
-      }
-    }, 200);
+    // No scroll needed - keyboard handler manages field visibility
   };
 
   const handleDeletePet = async () => {

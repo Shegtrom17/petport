@@ -78,6 +78,9 @@ export const PetEditForm = ({ petData, onSave, onCancel, togglePetPublicVisibili
   const [isSaving, setIsSaving] = useState(false);
   const [isOrgUser, setIsOrgUser] = useState(false);
   const [contacts, setContacts] = useState<Contact[]>([]);
+  const [lastSaved, setLastSaved] = useState<Date | null>(null);
+  const [hasDraft, setHasDraft] = useState(false);
+  const [showDraftBanner, setShowDraftBanner] = useState(false);
 
   // Check organization membership and fetch contacts
   useEffect(() => {
@@ -116,6 +119,7 @@ export const PetEditForm = ({ petData, onSave, onCancel, togglePetPublicVisibili
   useEffect(() => {
     if (user && formData && formData.id) {
       localStorage.setItem(`petDraft-edit-${formData.id}-${user.id}`, JSON.stringify(formData));
+      setLastSaved(new Date());
     }
   }, [formData, user]);
 
@@ -129,9 +133,13 @@ export const PetEditForm = ({ petData, onSave, onCancel, togglePetPublicVisibili
     if (savedData) {
       try {
         const parsedData = JSON.parse(savedData);
-        // Only restore if it's newer than the original petData
-        if (new Date(parsedData.updated_at || 0) >= new Date(petData.updated_at || 0)) {
-          setFormData(parsedData);
+        const draftTime = new Date(parsedData.updated_at || 0);
+        const serverTime = new Date(petData.updated_at || 0);
+        
+        // Check if draft is newer
+        if (draftTime >= serverTime) {
+          setHasDraft(true);
+          setShowDraftBanner(true);
         }
       } catch (error) {
         console.error('Error restoring form data:', error);
@@ -277,21 +285,33 @@ export const PetEditForm = ({ petData, onSave, onCancel, togglePetPublicVisibili
     setIsSaving(true);
     
     try {
-      // Update basic pet information
+      // Check session validity before save
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        toast({
+          variant: "destructive",
+          title: "Session Expired",
+          description: "Your changes are saved locally. Please log in again to submit.",
+        });
+        setIsSaving(false);
+        return;
+      }
+
+      // Update basic pet information with null-safe field handling
       const updateData = {
-        name: sanitizeText(formData.name.trim()),
-        breed: sanitizeText(formData.breed.trim()),
-        species: sanitizeText(formData.species.trim()),
-        age: sanitizeText(formData.age.trim()),
-        weight: sanitizeText(formData.weight.trim()),
-        height: sanitizeText(formData.height?.trim() || ''),
-        sex: sanitizeText(formData.sex.trim()),
-        microchip_id: sanitizeText(formData.microchipId.trim()),
-        registration_number: sanitizeText(formData.registrationNumber?.trim() || ''),
-        bio: sanitizeText(formData.bio.trim()),
-        notes: sanitizeText(formData.notes.trim()),
-        state: sanitizeText(formData.state.trim()),
-        county: sanitizeText(formData.county.trim()),
+        name: sanitizeText(formData.name?.trim() ?? ''),
+        breed: sanitizeText(formData.breed?.trim() ?? ''),
+        species: sanitizeText(formData.species?.trim() ?? ''),
+        age: sanitizeText(formData.age?.trim() ?? ''),
+        weight: sanitizeText(formData.weight?.trim() ?? ''),
+        height: sanitizeText(formData.height?.trim() ?? ''),
+        sex: sanitizeText(formData.sex?.trim() ?? ''),
+        microchip_id: sanitizeText(formData.microchipId?.trim() ?? ''),
+        registration_number: sanitizeText(formData.registrationNumber?.trim() ?? ''),
+        bio: sanitizeText(formData.bio?.trim() ?? ''),
+        notes: sanitizeText(formData.notes?.trim() ?? ''),
+        state: sanitizeText(formData.state?.trim() ?? ''),
+        county: sanitizeText(formData.county?.trim() ?? ''),
         organization_name: sanitizeText(formData.organizationName?.trim() || ''),
         organization_email: sanitizeText(formData.organizationEmail?.trim() || ''),
         organization_phone: sanitizeText(formData.organizationPhone?.trim() || ''),
@@ -331,21 +351,88 @@ export const PetEditForm = ({ petData, onSave, onCancel, togglePetPublicVisibili
       toast({
         variant: "destructive",
         title: "Error",
-        description: "Failed to update pet profile. Please try again.",
+        description: "Failed to update pet profile. Your changes are saved locally. Please try again.",
+        action: (
+          <Button variant="outline" size="sm" onClick={handleSubmit}>
+            Retry
+          </Button>
+        ),
       });
     } finally {
       setIsSaving(false);
     }
   };
 
+  const handleRestoreDraft = () => {
+    if (!user || !petData.id) return;
+    const savedKey = `petDraft-edit-${petData.id}-${user.id}`;
+    const savedData = localStorage.getItem(savedKey);
+    
+    if (savedData) {
+      try {
+        const parsedData = JSON.parse(savedData);
+        setFormData(parsedData);
+        setShowDraftBanner(false);
+        toast({
+          title: "Draft Restored",
+          description: "Your unsaved changes have been restored.",
+        });
+      } catch (error) {
+        console.error('Error restoring draft:', error);
+      }
+    }
+  };
+
+  const handleDiscardDraft = () => {
+    if (user && petData.id) {
+      localStorage.removeItem(`petDraft-edit-${petData.id}-${user.id}`);
+      setHasDraft(false);
+      setShowDraftBanner(false);
+      toast({
+        title: "Draft Discarded",
+        description: "Your unsaved changes have been removed.",
+      });
+    }
+  };
+
+  const handleCancelWithDraft = () => {
+    if (hasDraft || lastSaved) {
+      const keepDraft = window.confirm("You have unsaved changes. Keep them for later?");
+      if (!keepDraft && user && petData.id) {
+        localStorage.removeItem(`petDraft-edit-${petData.id}-${user.id}`);
+      }
+    }
+    onCancel();
+  };
+
   return (
     <Card className="bg-[#f8f8f8] shadow-md">
       <CardHeader>
-        <CardTitle className="text-xl font-sans text-foreground border-b-2 border-gold-500 pb-2">
-          ⚙️ Profile Management Hub
+        <CardTitle className="text-xl font-sans text-foreground border-b-2 border-gold-500 pb-2 flex items-center justify-between">
+          <span>⚙️ Profile Management Hub</span>
+          {lastSaved && (
+            <span className="text-xs font-normal text-muted-foreground">
+              Last saved: {lastSaved.toLocaleTimeString()}
+            </span>
+          )}
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
+        {showDraftBanner && (
+          <div className="bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800 rounded-lg p-4 flex items-center justify-between">
+            <p className="text-sm text-blue-900 dark:text-blue-100">
+              We found unsaved changes. Would you like to restore them?
+            </p>
+            <div className="flex gap-2">
+              <Button variant="outline" size="sm" onClick={handleDiscardDraft}>
+                Discard
+              </Button>
+              <Button size="sm" onClick={handleRestoreDraft}>
+                Restore Draft
+              </Button>
+            </div>
+          </div>
+        )}
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Pet Profile */}
           <div>
@@ -647,7 +734,7 @@ export const PetEditForm = ({ petData, onSave, onCancel, togglePetPublicVisibili
                 {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 Save Changes
               </Button>
-              <Button type="button" variant="outline" onClick={onCancel}>
+              <Button type="button" variant="outline" onClick={handleCancelWithDraft}>
                 Cancel
               </Button>
             </div>

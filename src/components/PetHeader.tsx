@@ -30,7 +30,16 @@ export const PetHeader = ({ activeTab, onTabChange, selectedPetId, selectedPetNa
   const navigate = useNavigate();
   const location = useLocation();
   const { user, signOut } = useAuth();
-  const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+  // iOS version + PWA detection to control back arrow visibility
+  const ua = navigator.userAgent;
+  const isiOS = /iPhone|iPad|iPod/i.test(ua);
+  const match = ua.match(/OS (\d+)_/);
+  const iosVersion = match ? parseInt(match[1], 10) : 0;
+  const isStandalone = (navigator as any).standalone === true || window.matchMedia("(display-mode: standalone)").matches;
+  // Show back button ONLY for older iOS PWAs (below iOS 15) and when there is history
+  const showForOldIOS = isiOS && iosVersion < 15 && isStandalone;
+  const hasHistory = window.history.length > 1;
+  const shouldShowBack = showForOldIOS && hasHistory;
   const [showReferralModal, setShowReferralModal] = useState(false);
   const [showReportModal, setShowReportModal] = useState(false);
 
@@ -68,7 +77,7 @@ export const PetHeader = ({ activeTab, onTabChange, selectedPetId, selectedPetNa
         <div className="flex sm:hidden items-center justify-between">
           {/* Left: Back Button + Title */}
           <div className="flex items-center space-x-2 flex-1 min-w-0">
-            {isIOS && (
+            {shouldShowBack && (
               <Button
                 variant="ghost"
                 size="sm"
@@ -157,7 +166,7 @@ export const PetHeader = ({ activeTab, onTabChange, selectedPetId, selectedPetNa
         {/* Desktop Layout */}
         <div className="hidden sm:flex items-center justify-between">
           <div className="flex items-center space-x-2 sm:space-x-3 md:space-x-4 flex-1 min-w-0">
-            {isIOS && (
+            {shouldShowBack && (
               <Button
                 variant="ghost"
                 size="sm"

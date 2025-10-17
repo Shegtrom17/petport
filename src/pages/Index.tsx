@@ -23,7 +23,6 @@ import { PetSelector } from "@/components/PetSelector";
 import { AuthenticationPrompt } from "@/components/AuthenticationPrompt";
 import { CompactPrivacyToggle } from "@/components/CompactPrivacyToggle";
 import { PetProfileContent } from "@/components/PetProfileContent";
-import { PetProfileCard } from "@/components/PetProfileCard";
 import { usePetData } from "@/hooks/usePetData";
 import { ReportIssueModal } from "@/components/ReportIssueModal";
 import { AlertTriangle } from "lucide-react";
@@ -57,7 +56,6 @@ const Index = () => {
   const [isInAppSharingOpen, setIsInAppSharingOpen] = useState(false);
   const [petLimit, setPetLimit] = useState<number>(0);
   const restoredRef = useRef(false);
-  const [startEditSignal, setStartEditSignal] = useState(0);
   const navigate = useNavigate();
   const { toast } = useToast();
   const queryClient = useQueryClient();

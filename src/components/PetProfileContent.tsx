@@ -399,14 +399,14 @@ export const PetProfileContent = ({
 
             {/* Profile Management Hub */}
             <div>
-              <Card className="bg-white shadow-xl">
+              <Card className="bg-white shadow-xl transition-all duration-300 ease-in-out">
                 <CardHeader>
                   <CardTitle className="text-xl flex items-center gap-2">
                     <Edit className="w-6 h-6 text-[#5691af]" />
                     Profile Management Hub
                   </CardTitle>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="transition-all duration-300 ease-in-out">
                   {!isEditing ? (
                     <>
                       <p className="text-xs text-muted-foreground mb-4">

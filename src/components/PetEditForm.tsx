@@ -560,6 +560,9 @@ export const PetEditForm = ({ petData, onSave, onCancel, togglePetPublicVisibili
                       <div className="relative">
                         <Input
                           id={`${type}_name`}
+                          name={`${type}_contact_name`}
+                          type="text"
+                          autoComplete="name"
                           value={contact?.contact_name || ''}
                           onChange={(e) => handleContactChange(type, 'contact_name', e.target.value)}
                           placeholder="Enter contact name"
@@ -579,6 +582,9 @@ export const PetEditForm = ({ petData, onSave, onCancel, togglePetPublicVisibili
                       <div className="relative">
                         <Input
                           id={`${type}_phone`}
+                          name={`${type}_contact_phone`}
+                          type="tel"
+                          autoComplete="tel"
                           value={contact?.contact_phone || ''}
                           onChange={(e) => handleContactChange(type, 'contact_phone', e.target.value)}
                           placeholder="Enter phone number"

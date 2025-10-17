@@ -284,28 +284,15 @@ const Index = () => {
       case "profile":
         console.log("Rendering profile tab");
         return (
-          <div className="space-y-6">
-            <PetProfileContent 
-              petData={petData}
-              selectedPet={selectedPet}
-              setActiveTab={handleTabChange}
-              setIsInAppSharingOpen={setIsInAppSharingOpen}
-              onPhotoUpdate={handlePetUpdate}
-              togglePetPublicVisibility={togglePetPublicVisibility}
-              handlePetUpdate={handlePetUpdate}
-              onEditClick={() => {
-                const newSignal = startEditSignal + 1;
-                console.log('startEditSignal ->', newSignal);
-                setStartEditSignal(newSignal);
-              }}
-            />
-            <PetProfileCard 
-              petData={petData} 
-              onUpdate={handlePetUpdate}
-              togglePetPublicVisibility={togglePetPublicVisibility}
-              startEditSignal={startEditSignal}
-            />
-          </div>
+          <PetProfileContent 
+            petData={petData}
+            selectedPet={selectedPet}
+            setActiveTab={handleTabChange}
+            setIsInAppSharingOpen={setIsInAppSharingOpen}
+            onPhotoUpdate={handlePetUpdate}
+            togglePetPublicVisibility={togglePetPublicVisibility}
+            handlePetUpdate={handlePetUpdate}
+          />
         );
       case "care":
         console.log("Rendering CareInstructionsSection");

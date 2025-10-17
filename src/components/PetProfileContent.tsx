@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { PetEditForm } from "@/components/PetEditForm";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
@@ -74,6 +75,7 @@ export const PetProfileContent = ({
     fullBody: false
   });
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
   const { toast } = useToast();
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -111,7 +113,20 @@ export const PetProfileContent = ({
 
   const handleProfileEdit = () => {
     console.log("Edit Profile button clicked - starting edit process");
-    onEditClick?.();
+    setIsEditing(true);
+  };
+
+  const handleEditSave = async () => {
+    await handlePetUpdate?.();
+    setIsEditing(false);
+    toast({
+      title: "Success",
+      description: "Pet profile updated successfully!",
+    });
+  };
+
+  const handleEditCancel = () => {
+    setIsEditing(false);
   };
 
   const handleDeletePet = async () => {
@@ -384,7 +399,7 @@ export const PetProfileContent = ({
 
             {/* Profile Management Hub */}
             <div>
-              <Card className="bg-white shadow-xl h-full">
+              <Card className="bg-white shadow-xl">
                 <CardHeader>
                   <CardTitle className="text-xl flex items-center gap-2">
                     <Edit className="w-6 h-6 text-[#5691af]" />
@@ -392,23 +407,36 @@ export const PetProfileContent = ({
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-xs text-muted-foreground mb-4">
-                    Manage your pet's profile specific info, bio, contacts, medical alerts, privacy settings, and <span className="text-orange-700 font-semibold">foster-to-adopter transfer options</span>.
-                  </p>
+                  {!isEditing ? (
+                    <>
+                      <p className="text-xs text-muted-foreground mb-4">
+                        Manage your pet's profile specific info, bio, contacts, medical alerts, privacy settings, and <span className="text-orange-700 font-semibold">foster-to-adopter transfer options</span>.
+                      </p>
 
-                  {/* Action Buttons */}
-                  <div className="space-y-3 mb-4">
-                    {/* Edit Profile Button */}
-                    {isOwner && (
-                      <Button
-                        onClick={handleProfileEdit}
-                        className="bg-[#5691af] hover:bg-[#4a7d99] text-white w-full flex items-center justify-center gap-2 h-12"
-                      >
-                        <Edit className="w-4 h-4" />
-                        <span>Edit Pet Profile</span>
-                      </Button>
-                    )}
-                  </div>
+                      {/* Action Buttons */}
+                      <div className="space-y-3 mb-4">
+                        {/* Edit Profile Button */}
+                        {isOwner && (
+                          <Button
+                            onClick={handleProfileEdit}
+                            className="bg-[#5691af] hover:bg-[#4a7d99] text-white w-full flex items-center justify-center gap-2 h-12"
+                          >
+                            <Edit className="w-4 h-4" />
+                            <span>Edit Pet Profile</span>
+                          </Button>
+                        )}
+                      </div>
+                    </>
+                  ) : (
+                    <div className="mt-4">
+                      <PetEditForm
+                        petData={enhancedPetData}
+                        onSave={handleEditSave}
+                        onCancel={handleEditCancel}
+                        togglePetPublicVisibility={togglePetPublicVisibility}
+                      />
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             </div>

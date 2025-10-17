@@ -45,8 +45,39 @@ export const supportsFileSharing = (): boolean => {
 };
 
 // Data normalization helper to unify snake_case and camelCase coming from various sources
-function normalizePetData(raw: any): any {
+async function normalizePetData(raw: any): Promise<any> {
   const pet = raw || {};
+  
+  // Fetch contacts from pet_contacts table
+  let contactData: any = {};
+  if (pet.id) {
+    try {
+      const orderedContacts = await getOrderedContacts(pet.id, pet);
+      // Map to legacy field names for PDF compatibility
+      orderedContacts.forEach(contact => {
+        if (!contact.isEmpty) {
+          const displayValue = `${contact.name}${contact.phone ? ' (' + contact.phone + ')' : ''}`;
+          switch (contact.type) {
+            case 'emergency':
+              contactData.emergencyContact = displayValue;
+              break;
+            case 'emergency_secondary':
+              contactData.secondEmergencyContact = displayValue;
+              break;
+            case 'veterinary':
+              contactData.vetContact = displayValue;
+              break;
+            case 'caretaker':
+              contactData.petCaretaker = displayValue;
+              break;
+          }
+        }
+      });
+    } catch (error) {
+      console.error('Error fetching contacts for PDF:', error);
+    }
+  }
+  
   const normalized: any = {
     // Basic identity
     id: pet.id,
@@ -113,16 +144,15 @@ function normalizePetData(raw: any): any {
     favorite_activities: pet.favorite_activities || pet.careInstructions?.favoriteActivities,
     caretaker_notes: pet.caretaker_notes || pet.careInstructions?.caretakerNotes,
 
-    // Contacts - now pulled from petService which transforms pet_contacts table
-    // The petService already converts pet_contacts array to these legacy fields
-    emergencyContact: pet.emergencyContact || pet.emergency_contact,
-    secondEmergencyContact: pet.secondEmergencyContact || pet.second_emergency_contact,
-    vetContact: pet.vetContact || pet.vet_contact,
-    petCaretaker: pet.petCaretaker || pet.pet_caretaker,
-    emergency_contact: pet.emergency_contact || pet.emergencyContact,
-    second_emergency_contact: pet.second_emergency_contact || pet.secondEmergencyContact,
-    vet_contact: pet.vet_contact || pet.vetContact,
-    pet_caretaker: pet.pet_caretaker || pet.petCaretaker,
+    // Contacts - fetched from pet_contacts table
+    emergencyContact: contactData.emergencyContact || pet.emergencyContact || pet.emergency_contact,
+    secondEmergencyContact: contactData.secondEmergencyContact || pet.secondEmergencyContact || pet.second_emergency_contact,
+    vetContact: contactData.vetContact || pet.vetContact || pet.vet_contact,
+    petCaretaker: contactData.petCaretaker || pet.petCaretaker || pet.pet_caretaker,
+    emergency_contact: contactData.emergencyContact || pet.emergency_contact || pet.emergencyContact,
+    second_emergency_contact: contactData.secondEmergencyContact || pet.second_emergency_contact || pet.secondEmergencyContact,
+    vet_contact: contactData.vetContact || pet.vet_contact || pet.vetContact,
+    pet_caretaker: contactData.petCaretaker || pet.pet_caretaker || pet.petCaretaker,
 
     // Lost pet data
     is_missing: pet.is_missing ?? pet.lost_pet_data?.is_missing ?? false,

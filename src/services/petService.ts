@@ -63,15 +63,17 @@ export function transformPetData(pet: PetWithDetails): any {
     county: pet.county,
     is_public: pet.is_public,
     // Transform contacts from pet_contacts array to old format for backward compatibility
-    vetContact: pet.pet_contacts?.find(c => c.contact_type === 'vet')
-      ? `${pet.pet_contacts.find(c => c.contact_type === 'vet')?.contact_name} ${pet.pet_contacts.find(c => c.contact_type === 'vet')?.contact_phone}`.trim()
+    vetContact: pet.pet_contacts?.find(c => c.contact_type === 'veterinary' || c.contact_type === 'vet')
+      ? `${pet.pet_contacts.find(c => c.contact_type === 'veterinary' || c.contact_type === 'vet')?.contact_name} ${pet.pet_contacts.find(c => c.contact_type === 'veterinary' || c.contact_type === 'vet')?.contact_phone}`.trim()
       : "",
-    emergencyContact: pet.pet_contacts?.find((c, i) => c.contact_type === 'emergency' && i === 0)
-      ? `${pet.pet_contacts.find((c, i) => c.contact_type === 'emergency' && i === 0)?.contact_name} ${pet.pet_contacts.find((c, i) => c.contact_type === 'emergency' && i === 0)?.contact_phone}`.trim()
-      : "",
-    secondEmergencyContact: pet.pet_contacts?.filter(c => c.contact_type === 'emergency')[1]
-      ? `${pet.pet_contacts.filter(c => c.contact_type === 'emergency')[1]?.contact_name} ${pet.pet_contacts.filter(c => c.contact_type === 'emergency')[1]?.contact_phone}`.trim()
-      : "",
+    emergencyContact: (pet.pet_contacts?.filter(c => c.contact_type === 'emergency')[0]
+      ? `${pet.pet_contacts.filter(c => c.contact_type === 'emergency')[0]?.contact_name} ${pet.pet_contacts.filter(c => c.contact_type === 'emergency')[0]?.contact_phone}`.trim()
+      : ""),
+    secondEmergencyContact: (pet.pet_contacts?.find(c => c.contact_type === 'emergency_secondary')
+      ? `${pet.pet_contacts.find(c => c.contact_type === 'emergency_secondary')?.contact_name} ${pet.pet_contacts.find(c => c.contact_type === 'emergency_secondary')?.contact_phone}`.trim()
+      : (pet.pet_contacts?.filter(c => c.contact_type === 'emergency')[1]
+        ? `${pet.pet_contacts.filter(c => c.contact_type === 'emergency')[1]?.contact_name} ${pet.pet_contacts.filter(c => c.contact_type === 'emergency')[1]?.contact_phone}`.trim()
+        : "")),
     petCaretaker: pet.pet_contacts?.find(c => c.contact_type === 'caretaker')
       ? `${pet.pet_contacts.find(c => c.contact_type === 'caretaker')?.contact_name} ${pet.pet_contacts.find(c => c.contact_type === 'caretaker')?.contact_phone}`.trim()
       : "",

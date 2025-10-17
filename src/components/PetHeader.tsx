@@ -30,16 +30,6 @@ export const PetHeader = ({ activeTab, onTabChange, selectedPetId, selectedPetNa
   const navigate = useNavigate();
   const location = useLocation();
   const { user, signOut } = useAuth();
-  // iOS version + PWA detection to control back arrow visibility
-  const ua = navigator.userAgent;
-  const isiOS = /iPhone|iPad|iPod/i.test(ua);
-  const match = ua.match(/OS (\d+)_/);
-  const iosVersion = match ? parseInt(match[1], 10) : 0;
-  const isStandalone = (navigator as any).standalone === true || window.matchMedia("(display-mode: standalone)").matches;
-  // Show back button ONLY for older iOS PWAs (below iOS 15) and when there is history
-  const showForOldIOS = isiOS && iosVersion < 15 && isStandalone;
-  const hasHistory = window.history.length > 1;
-  const shouldShowBack = showForOldIOS && hasHistory;
   const [showReferralModal, setShowReferralModal] = useState(false);
   const [showReportModal, setShowReportModal] = useState(false);
 
@@ -77,16 +67,6 @@ export const PetHeader = ({ activeTab, onTabChange, selectedPetId, selectedPetNa
         <div className="flex sm:hidden items-center justify-between">
           {/* Left: Back Button + Title */}
           <div className="flex items-center space-x-2 flex-1 min-w-0">
-            {shouldShowBack && (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={handleBack}
-                className="p-2 touch-feedback h-8 w-8"
-              >
-                <ArrowLeft className="w-4 h-4" />
-              </Button>
-            )}
             <h1 className="text-base font-bold text-foreground tracking-wide truncate">
               {selectedPetName || 'PetPort'}
             </h1>
@@ -166,16 +146,6 @@ export const PetHeader = ({ activeTab, onTabChange, selectedPetId, selectedPetNa
         {/* Desktop Layout */}
         <div className="hidden sm:flex items-center justify-between">
           <div className="flex items-center space-x-2 sm:space-x-3 md:space-x-4 flex-1 min-w-0">
-            {shouldShowBack && (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={handleBack}
-                className="p-2 touch-feedback"
-              >
-                <ArrowLeft className="w-5 h-5" />
-              </Button>
-            )}
             <div className="w-12 h-12 md:w-16 md:h-16 lg:w-18 lg:h-18 flex-shrink-0">
               <img 
                 src="/lovable-uploads/22b5b776-467c-4cee-be36-887346e71205.png" 

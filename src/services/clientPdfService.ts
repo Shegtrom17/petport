@@ -144,15 +144,15 @@ async function normalizePetData(raw: any): Promise<any> {
     favorite_activities: pet.favorite_activities || pet.careInstructions?.favoriteActivities,
     caretaker_notes: pet.caretaker_notes || pet.careInstructions?.caretakerNotes,
 
-    // Contacts - fetched from pet_contacts table
-    emergencyContact: contactData.emergencyContact || pet.emergencyContact || pet.emergency_contact,
-    secondEmergencyContact: contactData.secondEmergencyContact || pet.secondEmergencyContact || pet.second_emergency_contact,
-    vetContact: contactData.vetContact || pet.vetContact || pet.vet_contact,
-    petCaretaker: contactData.petCaretaker || pet.petCaretaker || pet.pet_caretaker,
-    emergency_contact: contactData.emergencyContact || pet.emergency_contact || pet.emergencyContact,
-    second_emergency_contact: contactData.secondEmergencyContact || pet.second_emergency_contact || pet.secondEmergencyContact,
-    vet_contact: contactData.vetContact || pet.vet_contact || pet.vetContact,
-    pet_caretaker: contactData.petCaretaker || pet.pet_caretaker || pet.petCaretaker,
+    // Contacts - from pet_contacts table only
+    emergencyContact: contactData.emergencyContact,
+    secondEmergencyContact: contactData.secondEmergencyContact,
+    vetContact: contactData.vetContact,
+    petCaretaker: contactData.petCaretaker,
+    emergency_contact: contactData.emergencyContact,
+    second_emergency_contact: contactData.secondEmergencyContact,
+    vet_contact: contactData.vetContact,
+    pet_caretaker: contactData.petCaretaker,
 
     // Lost pet data
     is_missing: pet.is_missing ?? pet.lost_pet_data?.is_missing ?? false,

@@ -41,23 +41,7 @@ interface PetProfileContentProps {
   handlePetUpdate?: () => Promise<void>;
 }
 
-// Helper function to extract phone number and create tel link
-const extractPhoneNumber = (contactString: string) => {
-  if (!contactString) return null;
-  
-  // More flexible regex to match various phone formats
-  const phoneMatch = contactString.match(/(\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}|\d{3}[-.\s]?\d{3}[-.\s]?\d{4})/);
-  if (phoneMatch) {
-    return phoneMatch[0].replace(/[^\d]/g, ''); // Remove non-digit characters
-  }
-  return null;
-};
-
-const formatPhoneForTel = (phone: string) => {
-  return `+1${phone}`; // Assuming US numbers, adjust as needed
-};
-
-export const PetProfileContent = ({ 
+export const PetProfileContent = ({
   petData, 
   selectedPet, 
   setActiveTab, 

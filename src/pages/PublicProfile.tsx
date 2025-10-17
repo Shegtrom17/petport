@@ -9,6 +9,7 @@ import { Heart, MapPin, Phone, Star, Award, GraduationCap, Plane, Trophy, Briefc
 
 import { MetaTags } from "@/components/MetaTags";
 import { AddReviewForm } from "@/components/AddReviewForm";
+import { ContactsDisplay } from "@/components/ContactsDisplay";
 import { sanitizeText, sanitizeHtml } from "@/utils/inputSanitizer";
 
 const PublicProfile = () => {
@@ -404,13 +405,12 @@ const PublicProfile = () => {
                   Emergency Summary
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-2">
-                {petData.contacts?.[0]?.emergency_contact && (
-                  <p className="text-red-800"><strong>Emergency Contact:</strong> {petData.contacts[0].emergency_contact}</p>
-                )}
-                {petData.contacts?.[0]?.vet_contact && (
-                  <p className="text-red-800"><strong>Veterinarian:</strong> {petData.contacts[0].vet_contact}</p>
-                )}
+              <CardContent className="space-y-4">
+                <ContactsDisplay 
+                  petId={petData.id} 
+                  hideHeader={true}
+                  fallbackPetData={petData}
+                />
                 {petData.medical?.medical_alert && (
                   <p className="text-red-800"><strong>MEDICAL ALERT:</strong> See medical section for details</p>
                 )}

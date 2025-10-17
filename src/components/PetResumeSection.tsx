@@ -15,22 +15,6 @@ import { SocialShareButtons } from "@/components/SocialShareButtons";
 import { FloatingAIButton } from "@/components/FloatingAIButton";
 import { AIBioAssistantModal } from "@/components/AIBioAssistantModal";
 
-// Helper function to extract phone number and create tel link
-const extractPhoneNumber = (contactString: string) => {
-  if (!contactString) return null;
-  
-  // Extract phone number using regex - supports various formats
-  const phoneMatch = contactString.match(/\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}/);
-  if (phoneMatch) {
-    return phoneMatch[0].replace(/[^\d]/g, ''); // Remove non-digit characters
-  }
-  return null;
-};
-
-const formatPhoneForTel = (phone: string) => {
-  return `+1${phone}`; // Assuming US numbers, adjust as needed
-};
-
 interface PetResumeSectionProps {
   petData: {
     id: string;
@@ -43,10 +27,6 @@ interface PetResumeSectionProps {
     petPassId: string;
     photoUrl: string;
     fullBodyPhotoUrl: string;
-    vetContact: string;
-    emergencyContact: string;
-    secondEmergencyContact: string;
-    petCaretaker: string;
     badges: string[];
     bio?: string;
     supportAnimalStatus?: string | null;

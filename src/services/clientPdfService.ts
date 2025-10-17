@@ -15,6 +15,7 @@ import { optimizeImageForPDF, optimizeBase64ForPDF } from '@/utils/pdfImageOptim
 import { GALLERY_CONFIG } from '@/config/featureFlags';
 import { resolvePdfType, PDFType } from '@/utils/pdfType';
 import { toast } from '@/hooks/use-toast';
+import { getOrderedContacts } from '@/utils/contactUtils';
 export interface ClientPDFGenerationResult {
   success: boolean;
   blob?: Blob;
@@ -1766,7 +1767,7 @@ export async function generateClientPetPDF(
     const pageManager = new PDFPageManager(doc);
 
     // Normalize pet data (handles camelCase/snake_case and nested tables)
-    const normalizedPet = normalizePetData(petData);
+    const normalizedPet = await normalizePetData(petData);
     console.log('📎 PDF identifiers', { microchipId: normalizedPet.microchipId, registrationNumber: normalizedPet.registrationNumber });
 
     // Generate content based on type (centralized resolver)

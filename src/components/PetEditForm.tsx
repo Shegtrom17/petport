@@ -338,9 +338,10 @@ export const PetEditForm = ({ petData, onSave, onCancel, togglePetPublicVisibili
         if (user) {
           localStorage.removeItem(`petDraft-edit-${petData.id}-${user.id}`);
         }
+        const savedContactsCount = contacts.filter(c => c.contact_name.trim() || c.contact_phone.trim()).length;
         toast({
           title: "Success",
-          description: "Pet profile updated successfully!",
+          description: `Pet profile updated successfully! ${savedContactsCount} contact(s) saved.`,
         });
         onSave();
       } else {
@@ -549,33 +550,43 @@ export const PetEditForm = ({ petData, onSave, onCancel, togglePetPublicVisibili
                 const isEmergency = type.includes('emergency');
                 return (
                   <div key={type} className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
+                    <div className="relative">
                       <Label htmlFor={`${type}_name`} className={isEmergency ? "text-red-600" : "text-[#5691af]"}>
                         {type === 'emergency' ? 'Emergency Contact Name' :
                          type === 'emergency_secondary' ? 'Secondary Emergency Contact Name' :
                          type === 'veterinary' ? 'Veterinary Contact Name' :
                          'Pet Caretaker Name'}
                       </Label>
-                      <Input
-                        id={`${type}_name`}
-                        value={contact?.contact_name || ''}
-                        onChange={(e) => handleContactChange(type, 'contact_name', e.target.value)}
-                        placeholder="Enter contact name"
-                      />
+                      <div className="relative">
+                        <Input
+                          id={`${type}_name`}
+                          value={contact?.contact_name || ''}
+                          onChange={(e) => handleContactChange(type, 'contact_name', e.target.value)}
+                          placeholder="Enter contact name"
+                        />
+                        {contact?.contact_name?.trim() && (
+                          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-green-600">✓</span>
+                        )}
+                      </div>
                     </div>
-                    <div>
+                    <div className="relative">
                       <Label htmlFor={`${type}_phone`} className={isEmergency ? "text-red-600" : "text-[#5691af]"}>
                         {type === 'emergency' ? 'Emergency Contact Phone (tap to call)' :
                          type === 'emergency_secondary' ? 'Secondary Emergency Contact Phone (tap to call)' :
                          type === 'veterinary' ? 'Veterinary Contact Phone (tap to call)' :
                          'Pet Caretaker Phone (tap to call)'}
                       </Label>
-                      <Input
-                        id={`${type}_phone`}
-                        value={contact?.contact_phone || ''}
-                        onChange={(e) => handleContactChange(type, 'contact_phone', e.target.value)}
-                        placeholder="Enter phone number"
-                      />
+                      <div className="relative">
+                        <Input
+                          id={`${type}_phone`}
+                          value={contact?.contact_phone || ''}
+                          onChange={(e) => handleContactChange(type, 'contact_phone', e.target.value)}
+                          placeholder="Enter phone number"
+                        />
+                        {contact?.contact_phone?.trim() && (
+                          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-green-600">✓</span>
+                        )}
+                      </div>
                     </div>
                   </div>
                 );

@@ -60,10 +60,10 @@ export const PetProfileContent = ({
   });
   const [isDeleting, setIsDeleting] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
+  const [contactsRefreshKey, setContactsRefreshKey] = useState(0);
   const { toast } = useToast();
   const { user } = useAuth();
   const navigate = useNavigate();
-
   
   // Safety check for missing data
   if (!petData) {
@@ -103,12 +103,12 @@ export const PetProfileContent = ({
   const handleEditSave = async () => {
     await handlePetUpdate?.();
     setIsEditing(false);
+    setContactsRefreshKey((k) => k + 1);
     toast({
       title: "Success",
       description: "Pet profile updated successfully!",
     });
   };
-
   const handleEditCancel = () => {
     setIsEditing(false);
   };
@@ -432,7 +432,7 @@ export const PetProfileContent = ({
       {/* Contacts Display Section */}
       <div className="mb-8">
         <div className="bg-white/50 backdrop-blur-sm rounded-2xl p-6">
-          <ContactsDisplay petId={enhancedPetData?.id} />
+          <ContactsDisplay petId={enhancedPetData?.id} fallbackPetData={enhancedPetData} refreshKey={contactsRefreshKey} />
         </div>
       </div>
 

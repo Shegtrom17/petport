@@ -6,9 +6,10 @@ interface ContactsDisplayProps {
   petId: string;
   hideHeader?: boolean;
   fallbackPetData?: any;
+  refreshKey?: number;
 }
 
-export const ContactsDisplay = ({ petId, hideHeader = false, fallbackPetData }: ContactsDisplayProps) => {
+export const ContactsDisplay = ({ petId, hideHeader = false, fallbackPetData, refreshKey }: ContactsDisplayProps) => {
   const [contacts, setContacts] = useState<ContactInfo[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -27,7 +28,7 @@ export const ContactsDisplay = ({ petId, hideHeader = false, fallbackPetData }: 
     };
 
     fetchContacts();
-  }, [petId, fallbackPetData]);
+  }, [petId, fallbackPetData, refreshKey]);
 
   if (loading) {
     return (

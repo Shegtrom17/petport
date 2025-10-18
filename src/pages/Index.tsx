@@ -66,9 +66,8 @@ const Index = () => {
   
   
   // Feature flag and touch capability detection
-  const ENABLE_SWIPE_NAV = (import.meta.env.VITE_ENABLE_SWIPE_NAV ?? "true") === "true";
   const touchCapable = isTouchDevice();
-  const swipeEnabled = ENABLE_SWIPE_NAV && touchCapable;
+  const swipeEnabled = featureFlags.enableSwipeNavigation && touchCapable;
   const {
     pets,
     selectedPet,

@@ -9,7 +9,7 @@ export type FeatureFlags = {
 
 export const featureFlags: FeatureFlags = {
   showBillingTroubleshooting: false,
-  enableSwipeNavigation: true,
+  enableSwipeNavigation: false,
   enableSelectPhotos: true,
   useHostedCheckout: true,
   testMode: false, // Set to true for development, false for production

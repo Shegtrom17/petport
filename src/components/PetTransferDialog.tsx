@@ -7,6 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { UserX, Send } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { isIOSDevice } from "@/utils/iosDetection";
 
 interface PetTransferDialogProps {
   petId: string;
@@ -19,6 +20,7 @@ export const PetTransferDialog = ({ petId, petName }: PetTransferDialogProps) =>
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
+  const isIOS = isIOSDevice();
 
   const handleTransfer = async () => {
     if (!recipientEmail.trim()) {
@@ -68,7 +70,10 @@ export const PetTransferDialog = ({ petId, petName }: PetTransferDialogProps) =>
           <span className="text-responsive-xs whitespace-nowrap">Transfer Pet</span>
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className={isIOS 
+        ? "sm:max-w-md max-h-[75vh] !bottom-[5%] !top-auto !translate-y-0 pb-[calc(env(safe-area-inset-bottom)+1rem)]" 
+        : "sm:max-w-md"
+      }>
         <DialogHeader>
           <DialogTitle>Transfer {petName}'s account to another petport user</DialogTitle>
         </DialogHeader>

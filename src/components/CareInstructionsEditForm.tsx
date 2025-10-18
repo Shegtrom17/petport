@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -11,6 +11,8 @@ import { useKeyboardAwareLayout } from "@/hooks/useKeyboardAwareLayout";
 import { updateCareInstructions } from "@/services/careInstructionsService";
 import { Clock, Heart, AlertTriangle, Activity, Pill, Loader2 } from "lucide-react";
 import { sanitizeText } from "@/utils/inputSanitizer";
+import { isOldIOS } from "@/utils/iosDetection";
+import { smoothScrollIntoViewIfNeeded } from "@/utils/smoothScroll";
 
 
 interface CareInstructionsEditFormProps {
@@ -39,8 +41,17 @@ export const CareInstructionsEditForm = ({ petData, onSave, onCancel }: CareInst
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
   const { bottomOffset, useNativePositioning } = useKeyboardAwareLayout();
+  const isOldiOS = isOldIOS();
 
   console.log("CareInstructionsEditForm initial data:", petData);
+  
+  const handleFieldFocus = (e: React.FocusEvent<HTMLTextAreaElement | HTMLInputElement>) => {
+    if (isOldiOS) {
+      setTimeout(() => {
+        smoothScrollIntoViewIfNeeded(e.target as HTMLElement, { margin: 20 });
+      }, 300);
+    }
+  };
 
   const onSubmit = async (data: any) => {
     setIsLoading(true);
@@ -207,6 +218,7 @@ export const CareInstructionsEditForm = ({ petData, onSave, onCancel }: CareInst
               <Textarea
                 id="caretakerNotes"
                 {...register("caretakerNotes")}
+                onFocus={handleFieldFocus}
                 placeholder="Additional instructions or important notes for the pet sitter..."
                 rows={3}
                 disabled={isLoading}
@@ -215,14 +227,20 @@ export const CareInstructionsEditForm = ({ petData, onSave, onCancel }: CareInst
           </CardContent>
         </Card>
 
-        {/* Form Actions - Keyboard-aware sticky positioning */}
+        {/* Extra padding for iOS to ensure last field is scrollable above keyboard */}
+        {isOldiOS && <div className="pb-[60vh]" />}
+
+        {/* Form Actions - iOS-aware positioning */}
         <div 
           id="form-actions"
-          className={`${useNativePositioning ? 'keyboard-native-positioning' : 'sticky bottom-0'} z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 p-4 -mx-4 -mb-4 border-t pb-0`}
+          className={isOldiOS 
+            ? 'relative bg-background border-t p-4 -mx-4 mt-6' 
+            : `${useNativePositioning ? 'keyboard-native-positioning' : 'sticky bottom-0'} z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 p-4 -mx-4 -mb-4 border-t pb-0`
+          }
         >
           <div
-            className={useNativePositioning ? 'flex justify-end space-x-4' : 'keyboard-aware-transform flex justify-end space-x-4'}
-            style={useNativePositioning ? {} : { 
+            className={isOldiOS ? 'flex justify-end space-x-4' : (useNativePositioning ? 'flex justify-end space-x-4' : 'keyboard-aware-transform flex justify-end space-x-4')}
+            style={isOldiOS || useNativePositioning ? {} : { 
               transform: bottomOffset > 0 ? `translateY(-${bottomOffset}px)` : 'none',
               transition: 'transform 0.15s ease-out'
             }}

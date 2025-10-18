@@ -497,3 +497,20 @@ body.keyboard-open .keyboard-native-positioning {
     transform: translateY(100%);
   }
 }
+
+/* ============================================
+   iOS-SPECIFIC DIALOG POSITIONING FIXES
+   ============================================ */
+@supports (-webkit-touch-callout: none) {
+  /* Prevent dialogs from being positioned too high on iOS */
+  [data-radix-dialog-content] {
+    max-height: 85vh !important;
+  }
+  
+  /* Disable complex transforms on older iOS for better stability */
+  @media (max-width: 768px) {
+    body.keyboard-open [data-radix-dialog-content] {
+      will-change: auto !important;
+    }
+  }
+}

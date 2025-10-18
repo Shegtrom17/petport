@@ -33,6 +33,11 @@ export const isIOSPWA = (): boolean => {
   return isIOS && isStandalone;
 };
 
+export const isOldIOS = (): boolean => {
+  const version = getIOSVersion();
+  return version !== null && version < 15;
+};
+
 export interface IOSContext {
   userAgent: string;
   memory: any;

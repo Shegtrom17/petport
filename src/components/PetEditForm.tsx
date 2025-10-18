@@ -78,9 +78,6 @@ export const PetEditForm = ({ petData, onSave, onCancel, togglePetPublicVisibili
   const [isSaving, setIsSaving] = useState(false);
   const [isOrgUser, setIsOrgUser] = useState(false);
   const [contacts, setContacts] = useState<Contact[]>([]);
-  const [lastSaved, setLastSaved] = useState<Date | null>(null);
-  const [hasDraft, setHasDraft] = useState(false);
-  const [showDraftBanner, setShowDraftBanner] = useState(false);
 
   // Check organization membership and fetch contacts
   useEffect(() => {
@@ -115,15 +112,14 @@ export const PetEditForm = ({ petData, onSave, onCancel, togglePetPublicVisibili
     fetchData();
   }, [user?.id, petData.id]);
 
-  // Auto-save form data to localStorage as user types
+  // Auto-save form data to localStorage as user types (silent background save)
   useEffect(() => {
     if (user && formData && formData.id) {
       localStorage.setItem(`petDraft-edit-${formData.id}-${user.id}`, JSON.stringify(formData));
-      setLastSaved(new Date());
     }
   }, [formData, user]);
 
-  // Restore form data ONLY on initial mount (not when petData updates)
+  // Auto-restore draft on mount (silent, automatic)
   useEffect(() => {
     if (!user || !petData.id) return;
     
@@ -136,13 +132,21 @@ export const PetEditForm = ({ petData, onSave, onCancel, togglePetPublicVisibili
         const draftTime = new Date(parsedData.updated_at || 0);
         const serverTime = new Date(petData.updated_at || 0);
         
-        // Check if draft is newer
-        if (draftTime >= serverTime) {
-          setHasDraft(true);
-          setShowDraftBanner(true);
+        // If draft is newer than server, silently restore it
+        if (draftTime > serverTime) {
+          setFormData(parsedData);
+          toast({
+            title: "Draft restored",
+            description: "Your unsaved changes were recovered.",
+            duration: 3000,
+          });
+        } else {
+          // Draft is stale, remove it
+          localStorage.removeItem(savedKey);
         }
       } catch (error) {
         console.error('Error restoring form data:', error);
+        localStorage.removeItem(savedKey);
       }
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -356,8 +360,8 @@ export const PetEditForm = ({ petData, onSave, onCancel, togglePetPublicVisibili
       const contactsUpdateSuccess = await updateContacts();
 
       if (basicUpdateSuccess && medicalUpdateSuccess && contactsUpdateSuccess) {
-        // Clear localStorage after successful save
-        if (user) {
+        // Clear localStorage draft after successful save
+        if (user && petData.id) {
           localStorage.removeItem(`petDraft-edit-${petData.id}-${user.id}`);
         }
         const savedContactsCount = contacts.filter(c => c.contact_name.trim() || c.contact_phone.trim()).length;
@@ -386,76 +390,19 @@ export const PetEditForm = ({ petData, onSave, onCancel, togglePetPublicVisibili
     }
   };
 
-  const handleRestoreDraft = () => {
-    if (!user || !petData.id) return;
-    const savedKey = `petDraft-edit-${petData.id}-${user.id}`;
-    const savedData = localStorage.getItem(savedKey);
-    
-    if (savedData) {
-      try {
-        const parsedData = JSON.parse(savedData);
-        setFormData(parsedData);
-        setShowDraftBanner(false);
-        toast({
-          title: "Draft Restored",
-          description: "Your unsaved changes have been restored.",
-        });
-      } catch (error) {
-        console.error('Error restoring draft:', error);
-      }
-    }
-  };
-
-  const handleDiscardDraft = () => {
-    if (user && petData.id) {
-      localStorage.removeItem(`petDraft-edit-${petData.id}-${user.id}`);
-      setHasDraft(false);
-      setShowDraftBanner(false);
-      toast({
-        title: "Draft Discarded",
-        description: "Your unsaved changes have been removed.",
-      });
-    }
-  };
-
   const handleCancelWithDraft = () => {
-    if (hasDraft || lastSaved) {
-      const keepDraft = window.confirm("You have unsaved changes. Keep them for later?");
-      if (!keepDraft && user && petData.id) {
-        localStorage.removeItem(`petDraft-edit-${petData.id}-${user.id}`);
-      }
-    }
+    // Draft is preserved silently in localStorage for next time
     onCancel();
   };
 
   return (
     <Card className="bg-[#f8f8f8] shadow-md">
       <CardHeader>
-        <CardTitle className="text-xl font-sans text-foreground border-b-2 border-gold-500 pb-2 flex items-center justify-between">
-          <span>⚙️ Profile Management Hub</span>
-          {lastSaved && (
-            <span className="text-xs font-normal text-muted-foreground">
-              Last saved: {lastSaved.toLocaleTimeString()}
-            </span>
-          )}
+        <CardTitle className="text-xl font-sans text-foreground border-b-2 border-gold-500 pb-2">
+          ⚙️ Profile Management Hub
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
-        {showDraftBanner && (
-          <div className="bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800 rounded-lg p-4 flex items-center justify-between">
-            <p className="text-sm text-blue-900 dark:text-blue-100">
-              We found unsaved changes. Would you like to restore them?
-            </p>
-            <div className="flex gap-2">
-              <Button variant="outline" size="sm" onClick={handleDiscardDraft}>
-                Discard
-              </Button>
-              <Button size="sm" onClick={handleRestoreDraft}>
-                Restore Draft
-              </Button>
-            </div>
-          </div>
-        )}
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Pet Profile */}
           <div>

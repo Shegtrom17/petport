@@ -4,12 +4,13 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
-import { Clock, Heart, AlertTriangle, Phone, MapPin, Pill, Sparkles } from "lucide-react";
+import { Clock, Heart, AlertTriangle, MapPin, Pill, Sparkles } from "lucide-react";
 import { fetchPetDetails } from '@/services/petService';
 import { fetchCareInstructions } from '@/services/careInstructionsService';
 import { supabase } from "@/integrations/supabase/client";
 import { MetaTags } from "@/components/MetaTags";
 import { Button } from "@/components/ui/button";
+import { ContactsDisplay } from "@/components/ContactsDisplay";
 
 interface Pet {
   id: string;
@@ -30,12 +31,6 @@ interface Pet {
   photoUrl?: string;
 }
 
-interface PetContact {
-  id: string;
-  contact_name: string;
-  contact_phone: string;
-  contact_type: string;
-}
 
 interface CareData {
   feeding_schedule?: string;
@@ -58,7 +53,6 @@ const PublicCareInstructions = () => {
   const { petId } = useParams();
   const navigate = useNavigate();
   const [pet, setPet] = useState<Pet | null>(null);
-  const [petContacts, setPetContacts] = useState<PetContact[]>([]);
   const [careData, setCareData] = useState<CareData | null>(null);
   const [medicalData, setMedicalData] = useState<MedicalData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -130,16 +124,6 @@ const PublicCareInstructions = () => {
           ...petDetails,
           photoUrl: photoData?.photo_url
         });
-
-        // Fetch pet contacts from pet_contacts table
-        const { data: contactsData } = await supabase
-          .from('pet_contacts')
-          .select('*')
-          .eq('pet_id', petId);
-        
-        if (contactsData) {
-          setPetContacts(contactsData);
-        }
 
         // Fetch care instructions
         const careInstructions = await fetchCareInstructions(petId);
@@ -228,18 +212,6 @@ const PublicCareInstructions = () => {
     );
   }
 
-  const formatPhoneForTel = (phone: string): string => {
-    return phone.replace(/\D/g, '');
-  };
-
-  // Get contacts by type
-  const getContactsByType = (type: string) => {
-    return petContacts.filter(contact => contact.contact_type === type);
-  };
-
-  const emergencyContacts = getContactsByType('emergency');
-  const vetContacts = getContactsByType('vet');
-  const caretakerContacts = getContactsByType('caretaker');
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-sage-50 to-cream-50">
@@ -559,64 +531,13 @@ const PublicCareInstructions = () => {
         </div>
 
         {/* Emergency Contacts */}
-        {petContacts.length > 0 && (
-          <Card className="mt-6">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-navy-900">
-                <Phone className="w-5 h-5 text-primary" />
-                Emergency Contacts
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {emergencyContacts.map((contact, index) => (
-                <div key={contact.id} className={index === 0 ? "bg-primary/10 border border-primary/20 rounded-lg p-4" : "bg-amber-50 border border-amber-200 rounded-lg p-4"}>
-                  <h4 className={`font-medium mb-2 ${index === 0 ? 'text-primary' : 'text-amber-800'}`}>
-                    {index === 0 ? 'Primary Emergency Contact' : 'Secondary Emergency Contact'}
-                  </h4>
-                  <p className={`font-medium ${index === 0 ? 'text-primary/90' : 'text-amber-700'}`}>{contact.contact_name}</p>
-                  <a 
-                    href={`tel:${formatPhoneForTel(contact.contact_phone)}`}
-                    className={`font-medium ${index === 0 ? 'text-primary hover:text-primary/80' : 'text-amber-700 hover:text-amber-900'}`}
-                    aria-label={`Call ${contact.contact_name}`}
-                  >
-                    {contact.contact_phone}
-                  </a>
-                  <p className={`text-xs mt-1 ${index === 0 ? 'text-primary/70' : 'text-amber-600'}`}>Tap to call</p>
-                </div>
-              ))}
-
-              {vetContacts.map((contact) => (
-                <div key={contact.id} className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                  <h4 className="font-medium text-blue-800 mb-2">Veterinarian</h4>
-                  <p className="font-medium text-blue-700">{contact.contact_name}</p>
-                  <a 
-                    href={`tel:${formatPhoneForTel(contact.contact_phone)}`}
-                    className="text-blue-700 hover:text-blue-900 font-medium"
-                    aria-label={`Call ${contact.contact_name}`}
-                  >
-                    {contact.contact_phone}
-                  </a>
-                  <p className="text-xs text-blue-600 mt-1">Tap to call</p>
-                </div>
-              ))}
-
-              {caretakerContacts.map((contact) => (
-                <div key={contact.id} className="bg-sage-50 border border-sage-200 rounded-lg p-4">
-                  <h4 className="font-medium text-sage-800 mb-2">Pet Caretaker</h4>
-                  <p className="font-medium text-sage-700">{contact.contact_name}</p>
-                  <a 
-                    href={`tel:${formatPhoneForTel(contact.contact_phone)}`}
-                    className="text-sage-700 hover:text-sage-900 font-medium"
-                    aria-label={`Call ${contact.contact_name}`}
-                  >
-                    {contact.contact_phone}
-                  </a>
-                  <p className="text-xs text-sage-600 mt-1">Tap to call</p>
-                </div>
-              ))}
-            </CardContent>
-          </Card>
-        )}
+        <div className="mt-6">
+          <ContactsDisplay 
+            petId={petId || ''} 
+            hideHeader={false} 
+            fallbackPetData={pet} 
+          />
+        </div>
 
         {/* Footer */}
         <div className="mt-12 text-center">

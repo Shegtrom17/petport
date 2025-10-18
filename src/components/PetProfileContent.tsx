@@ -292,96 +292,60 @@ export const PetProfileContent = ({
     <div className="passport-map-container">
       <div className="passport-map-bg" />
       
-      {/* Profile Photo Section */}
+      {/* Profile Management Hub */}
       <div className="mb-8">
         <div className="bg-white/50 backdrop-blur-sm rounded-2xl p-6">
-          <SectionHeader
-            title="Profile Photo"
-            icon={<Camera className="w-5 h-5" />}
-          />
-          
-          {/* Profile Photo + Management Hub - Side by Side on Desktop */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Profile Photo Section */}
-            <div className="flex justify-center">
-              <div className="text-center">
-                <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-4">PROFILE PHOTO</p>
-                <div className="relative w-48 h-48 mx-auto">
-                  {enhancedPetData?.photoUrl ? (
-                    <img
-                      src={enhancedPetData.photoUrl}
-                      alt={`${enhancedPetData.name} profile photo`}
-                      className="w-full h-full object-cover rounded-lg border-2 border-brand-primary"
-                    />
-                  ) : (
-                    <div className="w-full h-full bg-gray-100 rounded-lg border-2 border-brand-primary flex items-center justify-center">
-                      <Camera className="w-12 h-12 text-gray-400" />
-                    </div>
-                  )}
-                  {photoLoading.profile && (
-                    <div className="absolute inset-0 bg-white/80 rounded-lg flex items-center justify-center">
-                      <Loader2 className="w-8 h-8 animate-spin text-brand-primary" />
-                    </div>
-                  )}
+          <Card className="bg-white shadow-xl transition-all duration-300 ease-in-out">
+            <CardHeader>
+              <CardTitle className="text-xl flex items-center gap-2">
+                <Edit className="w-6 h-6 text-[#5691af]" />
+                Profile Management Hub
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="transition-all duration-300 ease-in-out">
+              {!isEditing ? (
+                <>
+                  <p className="text-xs text-muted-foreground mb-4">
+                    Manage your pet's profile specific info, bio, contacts, medical alerts, privacy settings, and <span className="text-orange-700 font-semibold">foster-to-adopter transfer options</span>.
+                  </p>
+
+                  {/* Action Buttons */}
+                  <div className="space-y-3 mb-4">
+                    {/* Update Profile Photo Button */}
+                    {isOwner && (
+                      <Button
+                        onClick={() => setIsPhotoModalOpen(true)}
+                        className="bg-[#5691af] hover:bg-[#4a7d99] text-white w-full flex items-center justify-center gap-2 h-12"
+                      >
+                        <Camera className="w-4 h-4" />
+                        <span>Update Profile Photo</span>
+                      </Button>
+                    )}
+                    
+                    {/* Edit Profile Button */}
+                    {isOwner && (
+                      <Button
+                        onClick={handleProfileEdit}
+                        className="bg-[#5691af] hover:bg-[#4a7d99] text-white w-full flex items-center justify-center gap-2 h-12"
+                      >
+                        <Edit className="w-4 h-4" />
+                        <span>Edit Pet Profile</span>
+                      </Button>
+                    )}
+                  </div>
+                </>
+              ) : (
+                <div className="mt-4">
+                  <PetEditForm
+                    petData={enhancedPetData}
+                    onSave={handleEditSave}
+                    onCancel={handleEditCancel}
+                    togglePetPublicVisibility={togglePetPublicVisibility}
+                  />
                 </div>
-              </div>
-            </div>
-
-            {/* Profile Management Hub */}
-            <div>
-              <Card className="bg-white shadow-xl transition-all duration-300 ease-in-out">
-                <CardHeader>
-                  <CardTitle className="text-xl flex items-center gap-2">
-                    <Edit className="w-6 h-6 text-[#5691af]" />
-                    Profile Management Hub
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="transition-all duration-300 ease-in-out">
-                  {!isEditing ? (
-                    <>
-                      <p className="text-xs text-muted-foreground mb-4">
-                        Manage your pet's profile specific info, bio, contacts, medical alerts, privacy settings, and <span className="text-orange-700 font-semibold">foster-to-adopter transfer options</span>.
-                      </p>
-
-                      {/* Action Buttons */}
-                      <div className="space-y-3 mb-4">
-                        {/* Edit Profile Button */}
-                        {isOwner && (
-                          <Button
-                            onClick={handleProfileEdit}
-                            className="bg-[#5691af] hover:bg-[#4a7d99] text-white w-full flex items-center justify-center gap-2 h-12"
-                          >
-                            <Edit className="w-4 h-4" />
-                            <span>Edit Pet Profile</span>
-                          </Button>
-                        )}
-                        
-                        {/* Update Profile Photo Button */}
-                        {isOwner && (
-                          <Button
-                            onClick={() => setIsPhotoModalOpen(true)}
-                            className="bg-[#5691af] hover:bg-[#4a7d99] text-white w-full flex items-center justify-center gap-2 h-12"
-                          >
-                            <Camera className="w-4 h-4" />
-                            <span>Update Profile Photo</span>
-                          </Button>
-                        )}
-                      </div>
-                    </>
-                  ) : (
-                    <div className="mt-4">
-                      <PetEditForm
-                        petData={enhancedPetData}
-                        onSave={handleEditSave}
-                        onCancel={handleEditCancel}
-                        togglePetPublicVisibility={togglePetPublicVisibility}
-                      />
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-            </div>
-          </div>
+              )}
+            </CardContent>
+          </Card>
         </div>
       </div>
 
@@ -446,10 +410,39 @@ export const PetProfileContent = ({
 
       {/* Photo Update Modal */}
       <Sheet open={isPhotoModalOpen} onOpenChange={setIsPhotoModalOpen}>
-        <SheetContent>
+        <SheetContent side="bottom" className="max-h-[85vh] overflow-y-auto">
           <SheetHeader>
             <SheetTitle>Update Profile Photo</SheetTitle>
           </SheetHeader>
+          
+          {/* Photo Preview Section */}
+          <div className="flex flex-col items-center justify-center py-6 space-y-3">
+            <div className="relative w-32 h-32 rounded-full overflow-hidden border-4 border-primary/20 bg-muted">
+              {enhancedPetData?.photoUrl ? (
+                <img 
+                  src={enhancedPetData.photoUrl} 
+                  alt={enhancedPetData.name}
+                  className="w-full h-full object-cover"
+                  onError={(e) => {
+                    e.currentTarget.src = '/placeholder.svg';
+                  }}
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center">
+                  <Camera className="w-16 h-16 text-muted-foreground" />
+                </div>
+              )}
+              {photoLoading.profile && (
+                <div className="absolute inset-0 bg-white/80 rounded-full flex items-center justify-center">
+                  <Loader2 className="w-8 h-8 animate-spin text-brand-primary" />
+                </div>
+              )}
+            </div>
+            <p className="text-sm text-muted-foreground">
+              {enhancedPetData?.photoUrl ? 'Current profile photo' : 'No photo uploaded'}
+            </p>
+          </div>
+          
           <div className="space-y-3 mt-6">
             {/* Upload from Gallery */}
             <Button

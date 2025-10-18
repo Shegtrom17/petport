@@ -303,29 +303,6 @@ const Index = () => {
             <CertificationSection petData={petData} onUpdate={handlePetUpdate} />
             <ReviewsSection petData={petData} onUpdate={handlePetUpdate} />
             
-            {/* Contact Information Section - NOW TRULY at the bottom */}
-            <Card className="border-0 shadow-xl bg-white/90 backdrop-blur-sm">
-              <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
-                  <Phone className="w-5 h-5 text-blue-600" />
-                  <span>Contact Information</span>
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <ContactsDisplay petId={petData.id} hideHeader={true} />
-                  
-                  <div className="flex items-center space-x-2 mt-6 pt-4 border-t border-gray-200">
-                    <Shield className="w-4 h-4 text-blue-600" />
-                    <div>
-                      <p className="text-sm font-semibold text-blue-900">PetPort ID</p>
-                      <p className="text-sm text-blue-700 font-mono">{petData.petPassId}</p>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-            
             {/* Documentation Note - Placed after contact info */}
             <Card className="border-0 shadow-sm bg-brand-primary/5 border-l-4 border-brand-primary">
               <CardContent className="p-4">

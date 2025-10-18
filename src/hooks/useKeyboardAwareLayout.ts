@@ -109,7 +109,27 @@ export const useKeyboardAwareLayout = () => {
     };
 
     const handleFocusOut = () => {
-      updateKeyboardState();
+      // Add delay to allow iOS viewport to settle after "Done" button
+      setTimeout(() => {
+        updateKeyboardState();
+        
+        // Force reset if no active input elements
+        const activeElement = document.activeElement;
+        const isInputActive = activeElement?.tagName === 'INPUT' || 
+                             activeElement?.tagName === 'TEXTAREA';
+        
+        if (!isInputActive) {
+          // Force reset CSS variables
+          document.documentElement.style.setProperty('--kb-offset', '0px');
+          document.documentElement.style.setProperty('--keyboard-height', '0px');
+          setKeyboardState({
+            isVisible: false,
+            height: 0,
+            bottomOffset: 0,
+            useNativePositioning,
+          });
+        }
+      }, 150);
     };
 
     // Listen to focus events for all platforms

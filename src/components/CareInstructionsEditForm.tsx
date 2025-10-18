@@ -228,23 +228,17 @@ export const CareInstructionsEditForm = ({ petData, onSave, onCancel }: CareInst
         </Card>
 
         {/* Extra padding for iOS to ensure last field is scrollable above keyboard */}
-        {isOldiOS && <div className="pb-[60vh]" />}
+        {isOldiOS && <div className="pb-[25vh]" />}
 
         {/* Form Actions - iOS-aware positioning */}
         <div 
           id="form-actions"
           className={isOldiOS 
-            ? 'relative bg-background border-t p-4 -mx-4 mt-6' 
+            ? 'sticky bottom-0 bg-background border-t p-4 -mx-4 mt-6 z-50' 
             : `${useNativePositioning ? 'keyboard-native-positioning' : 'sticky bottom-0'} z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 p-4 -mx-4 -mb-4 border-t pb-0`
           }
         >
-          <div
-            className={isOldiOS ? 'flex justify-end space-x-4' : (useNativePositioning ? 'flex justify-end space-x-4' : 'keyboard-aware-transform flex justify-end space-x-4')}
-            style={isOldiOS || useNativePositioning ? {} : { 
-              transform: bottomOffset > 0 ? `translateY(-${bottomOffset}px)` : 'none',
-              transition: 'transform 0.15s ease-out'
-            }}
-          >
+          <div className="flex justify-end space-x-4">
           <Button type="button" variant="outline" onClick={onCancel} disabled={isLoading}>
             Cancel
           </Button>

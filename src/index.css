@@ -513,4 +513,11 @@ body.keyboard-open .keyboard-native-positioning {
       will-change: auto !important;
     }
   }
+  
+  /* Old iOS: Ensure sticky buttons stay at bottom after keyboard closes */
+  .platform-ios #form-actions {
+    position: sticky !important;
+    bottom: 0 !important;
+    transform: none !important;
+  }
 }

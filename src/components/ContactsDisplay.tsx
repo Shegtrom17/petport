@@ -7,9 +7,10 @@ interface ContactsDisplayProps {
   hideHeader?: boolean;
   fallbackPetData?: any;
   refreshKey?: number;
+  pageContext?: 'resume' | 'care' | 'profile' | 'emergency' | 'missing';
 }
 
-export const ContactsDisplay = ({ petId, hideHeader = false, fallbackPetData, refreshKey }: ContactsDisplayProps) => {
+export const ContactsDisplay = ({ petId, hideHeader = false, fallbackPetData, refreshKey, pageContext }: ContactsDisplayProps) => {
   const [contacts, setContacts] = useState<ContactInfo[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -20,7 +21,7 @@ export const ContactsDisplay = ({ petId, hideHeader = false, fallbackPetData, re
       try {
         // Add cache-busting timestamp for iOS Safari
         const timestamp = Date.now();
-        const contactsData = await getOrderedContacts(petId, fallbackPetData, timestamp);
+        const contactsData = await getOrderedContacts(petId, fallbackPetData, timestamp, pageContext);
         setContacts(contactsData);
       } catch (error) {
         console.error('Error fetching contacts:', error);
@@ -30,7 +31,7 @@ export const ContactsDisplay = ({ petId, hideHeader = false, fallbackPetData, re
     };
 
     fetchContacts();
-  }, [petId, fallbackPetData, refreshKey]);
+  }, [petId, fallbackPetData, refreshKey, pageContext]);
 
   if (loading) {
     return (

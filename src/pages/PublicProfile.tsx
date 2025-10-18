@@ -396,8 +396,8 @@ const PublicProfile = () => {
              </Alert>
            )}
 
-          {/* Emergency Summary Section */}
-          {(petData.contacts?.[0]?.emergency_contact || petData.contacts?.[0]?.vet_contact || petData.medical?.medical_alert) && (
+          {/* Emergency Summary Section - No Contacts shown per requirements */}
+          {petData.medical?.medical_alert && (
             <Card className="mb-6 border-red-200 bg-red-50">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-navy-900">
@@ -406,11 +406,6 @@ const PublicProfile = () => {
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <ContactsDisplay 
-                  petId={petData.id} 
-                  hideHeader={true}
-                  fallbackPetData={petData}
-                />
                 {petData.medical?.medical_alert && (
                   <p className="text-red-800"><strong>MEDICAL ALERT:</strong> See medical section for details</p>
                 )}
@@ -471,31 +466,6 @@ const PublicProfile = () => {
             </Card>
           )}
 
-          {/* Contact Information */}
-          {petData.contacts?.[0] && (petData.contacts[0].emergency_contact || petData.contacts[0].second_emergency_contact || petData.contacts[0].vet_contact || petData.contacts[0].pet_caretaker) && (
-            <Card className="mb-6">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-navy-900">
-                  <Phone className="w-5 h-5 text-primary" />
-                  Contact Information
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-2">
-                {petData.contacts[0].emergency_contact && (
-                  <p><strong>Primary Emergency Contact:</strong> {petData.contacts[0].emergency_contact}</p>
-                )}
-                {petData.contacts[0].second_emergency_contact && (
-                  <p><strong>Secondary Emergency Contact:</strong> {petData.contacts[0].second_emergency_contact}</p>
-                )}
-                {petData.contacts[0].vet_contact && (
-                  <p><strong>Veterinarian:</strong> {petData.contacts[0].vet_contact}</p>
-                )}
-                {petData.contacts[0].pet_caretaker && (
-                  <p><strong>Pet Caretaker:</strong> {petData.contacts[0].pet_caretaker}</p>
-                )}
-              </CardContent>
-            </Card>
-          )}
 
           {/* Documents on File */}
           {petData.documents && petData.documents.length > 0 && (

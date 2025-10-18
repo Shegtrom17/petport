@@ -535,7 +535,8 @@ const PublicCareInstructions = () => {
           <ContactsDisplay 
             petId={petId || ''} 
             hideHeader={false} 
-            fallbackPetData={pet} 
+            fallbackPetData={pet}
+            pageContext="care"
           />
         </div>
 

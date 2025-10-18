@@ -6,6 +6,7 @@ import { Shield, Award, GraduationCap, Trophy, Activity, Star, MapPin, Heart, Ph
 import { MetaTags } from "@/components/MetaTags";
 import { SupportAnimalBanner } from "@/components/SupportAnimalBanner";
 import { CertificationBanner } from "@/components/CertificationBanner";
+import { ContactsDisplay } from "@/components/ContactsDisplay";
 
 import { fetchPetDetails } from "@/services/petService";
 
@@ -156,6 +157,16 @@ export default function PublicResume() {
 
         {/* Support Animal Status */}
         <SupportAnimalBanner status={data.supportAnimalStatus || null} />
+
+        {/* Veterinary Contact Only */}
+        <div className="mb-6">
+          <ContactsDisplay 
+            petId={data.id} 
+            hideHeader={false} 
+            fallbackPetData={data}
+            pageContext="resume"
+          />
+        </div>
 
         {/* About Section */}
         <Card className="mb-6">

@@ -89,7 +89,7 @@ const PublicEmergencyProfile = () => {
         
         // Fetch emergency contacts separately
         try {
-          const emergencyContacts = await getOrderedContacts(petId);
+          const emergencyContacts = await getOrderedContacts(petId, undefined, undefined, 'emergency');
           setContacts(emergencyContacts.filter(contact => !contact.isEmpty));
         } catch (contactError) {
           console.warn('Could not load emergency contacts:', contactError);

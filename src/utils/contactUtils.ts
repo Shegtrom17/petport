@@ -15,7 +15,12 @@ const contactTypeLabels = {
   caretaker: "Pet Caretaker"
 };
 
-export const getOrderedContacts = async (petId: string, fallbackPetData?: any, cacheTimestamp?: number): Promise<ContactInfo[]> => {
+export const getOrderedContacts = async (
+  petId: string, 
+  fallbackPetData?: any, 
+  cacheTimestamp?: number,
+  pageContext?: 'resume' | 'care' | 'profile' | 'emergency' | 'missing'
+): Promise<ContactInfo[]> => {
   try {
     // Fetch from pet_contacts table with cache-busting for iOS Safari
     const { data: contacts, error } = await supabase
@@ -37,7 +42,24 @@ export const getOrderedContacts = async (petId: string, fallbackPetData?: any, c
     }
 
     // Define the fixed order of contact types
-    const orderedTypes = ['emergency', 'emergency_secondary', 'veterinary', 'caretaker'];
+    let orderedTypes = ['emergency', 'emergency_secondary', 'veterinary', 'caretaker'];
+    
+    // Filter contact types based on page context (Public Links only)
+    // Missing pet page always shows all contacts (safety override)
+    if (pageContext && pageContext !== 'missing') {
+      switch (pageContext) {
+        case 'resume':
+          // Resume: Only Vet contact
+          orderedTypes = ['veterinary'];
+          break;
+        case 'profile':
+          // Public Profile: No contacts at all
+          orderedTypes = [];
+          break;
+        // 'care' and 'emergency' show all 4 contacts (default)
+        // 'missing' shows all 4 contacts (handled above)
+      }
+    }
     
     const result: ContactInfo[] = orderedTypes.map(type => {
       const contact = contactMap.get(type);

@@ -11,7 +11,7 @@ import { useKeyboardAwareLayout } from "@/hooks/useKeyboardAwareLayout";
 import { updateCareInstructions } from "@/services/careInstructionsService";
 import { Clock, Heart, AlertTriangle, Activity, Pill, Loader2 } from "lucide-react";
 import { sanitizeText } from "@/utils/inputSanitizer";
-import { VoiceRecorder } from "@/components/VoiceRecorder";
+
 
 interface CareInstructionsEditFormProps {
   petData: any;
@@ -94,52 +94,34 @@ export const CareInstructionsEditForm = ({ petData, onSave, onCancel }: CareInst
           <CardContent className="space-y-4">
             <div>
               <Label htmlFor="feedingSchedule">Feeding Schedule</Label>
-              <div className="relative">
-                <Textarea
-                  id="feedingSchedule"
-                  {...register("feedingSchedule")}
-                  placeholder="e.g., 7 AM - 1 cup dry food, 6 PM - 1 cup dry food"
-                  rows={3}
-                  disabled={isLoading}
-                />
-                <VoiceRecorder
-                  onTranscript={(text) => setValue("feedingSchedule", text)}
-                  disabled={isLoading}
-                />
-              </div>
+              <Textarea
+                id="feedingSchedule"
+                {...register("feedingSchedule")}
+                placeholder="e.g., 7 AM - 1 cup dry food, 6 PM - 1 cup dry food"
+                rows={3}
+                disabled={isLoading}
+              />
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <Label htmlFor="morningRoutine">Morning Routine</Label>
-                <div className="relative">
-                  <Textarea
-                    id="morningRoutine"
-                    {...register("morningRoutine")}
-                    placeholder="Morning walk, breakfast, medications..."
-                    rows={3}
-                    disabled={isLoading}
-                  />
-                  <VoiceRecorder
-                    onTranscript={(text) => setValue("morningRoutine", text)}
-                    disabled={isLoading}
-                  />
-                </div>
+                <Textarea
+                  id="morningRoutine"
+                  {...register("morningRoutine")}
+                  placeholder="Morning walk, breakfast, medications..."
+                  rows={3}
+                  disabled={isLoading}
+                />
               </div>
               <div>
                 <Label htmlFor="eveningRoutine">Evening Routine</Label>
-                <div className="relative">
-                  <Textarea
-                    id="eveningRoutine"
-                    {...register("eveningRoutine")}
-                    placeholder="Evening walk, dinner, bedtime..."
-                    rows={3}
-                    disabled={isLoading}
-                  />
-                  <VoiceRecorder
-                    onTranscript={(text) => setValue("eveningRoutine", text)}
-                    disabled={isLoading}
-                  />
-                </div>
+                <Textarea
+                  id="eveningRoutine"
+                  {...register("eveningRoutine")}
+                  placeholder="Evening walk, dinner, bedtime..."
+                  rows={3}
+                  disabled={isLoading}
+                />
               </div>
             </div>
           </CardContent>
@@ -167,38 +149,26 @@ export const CareInstructionsEditForm = ({ petData, onSave, onCancel }: CareInst
               <div className="text-xs text-amber-600 bg-amber-50 p-2 rounded-md mb-2 border border-amber-200">
                 ⚠️ Providing accurate medical details is highly recommended for emergencies.
               </div>
-              <div className="relative">
-                <Textarea
-                  id="medications"
-                  {...register("medications")}
-                  placeholder="Medication/Supplement 1, Medication/Supplement 2, ..."
-                  rows={3}
-                  disabled={isLoading}
-                />
-                <VoiceRecorder
-                  onTranscript={(text) => setValue("medications", text)}
-                  disabled={isLoading}
-                />
-              </div>
+              <Textarea
+                id="medications"
+                {...register("medications")}
+                placeholder="Medication/Supplement 1, Medication/Supplement 2, ..."
+                rows={3}
+                disabled={isLoading}
+              />
             </div>
             <div>
               <Label htmlFor="allergies">Allergies & Dietary Restrictions</Label>
               <div className="text-xs text-amber-600 bg-amber-50 p-2 rounded-md mb-2 border border-amber-200">
                 ⚠️ Allergy information is crucial for emergency responders. Even "None" is helpful.
               </div>
-              <div className="relative">
-                <Textarea
-                  id="allergies"
-                  {...register("allergies")}
-                  placeholder="Food allergies, environmental allergies, restrictions..."
-                  rows={3}
-                  disabled={isLoading}
-                />
-                <VoiceRecorder
-                  onTranscript={(text) => setValue("allergies", text)}
-                  disabled={isLoading}
-                />
-              </div>
+              <Textarea
+                id="allergies"
+                {...register("allergies")}
+                placeholder="Food allergies, environmental allergies, restrictions..."
+                rows={3}
+                disabled={isLoading}
+              />
             </div>
           </CardContent>
         </Card>
@@ -214,51 +184,33 @@ export const CareInstructionsEditForm = ({ petData, onSave, onCancel }: CareInst
           <CardContent className="space-y-4">
             <div>
               <Label htmlFor="behavioralNotes">Behavioral Notes</Label>
-              <div className="relative">
-                <Textarea
-                  id="behavioralNotes"
-                  {...register("behavioralNotes")}
-                  placeholder="Personality traits, quirks, things to watch for..."
-                  rows={3}
-                  disabled={isLoading}
-                />
-                <VoiceRecorder
-                  onTranscript={(text) => setValue("behavioralNotes", text)}
-                  disabled={isLoading}
-                />
-              </div>
+              <Textarea
+                id="behavioralNotes"
+                {...register("behavioralNotes")}
+                placeholder="Personality traits, quirks, things to watch for..."
+                rows={3}
+                disabled={isLoading}
+              />
             </div>
             <div>
               <Label htmlFor="favoriteActivities">Favorite Activities</Label>
-              <div className="relative">
-                <Textarea
-                  id="favoriteActivities"
-                  {...register("favoriteActivities")}
-                  placeholder="Playing fetch, going to the park, swimming..."
-                  rows={3}
-                  disabled={isLoading}
-                />
-                <VoiceRecorder
-                  onTranscript={(text) => setValue("favoriteActivities", text)}
-                  disabled={isLoading}
-                />
-              </div>
+              <Textarea
+                id="favoriteActivities"
+                {...register("favoriteActivities")}
+                placeholder="Playing fetch, going to the park, swimming..."
+                rows={3}
+                disabled={isLoading}
+              />
             </div>
             <div>
               <Label htmlFor="caretakerNotes">Notes for Sitter</Label>
-              <div className="relative">
-                <Textarea
-                  id="caretakerNotes"
-                  {...register("caretakerNotes")}
-                  placeholder="Additional instructions or important notes for the pet sitter..."
-                  rows={3}
-                  disabled={isLoading}
-                />
-                <VoiceRecorder
-                  onTranscript={(text) => setValue("caretakerNotes", text)}
-                  disabled={isLoading}
-                />
-              </div>
+              <Textarea
+                id="caretakerNotes"
+                {...register("caretakerNotes")}
+                placeholder="Additional instructions or important notes for the pet sitter..."
+                rows={3}
+                disabled={isLoading}
+              />
             </div>
           </CardContent>
         </Card>

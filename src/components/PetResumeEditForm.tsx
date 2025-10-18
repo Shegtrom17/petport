@@ -14,7 +14,7 @@ import {
   updatePetTraining 
 } from "@/services/petService";
 import { Plus, Trash2, Activity, Trophy, GraduationCap, Loader2 } from "lucide-react";
-import { VoiceRecorder } from "@/components/VoiceRecorder";
+
 
 interface PetResumeEditFormProps {
   petData: {
@@ -172,18 +172,12 @@ export const PetResumeEditForm = ({ petData, onSave, onCancel }: PetResumeEditFo
                 
                 <div>
                   <Label htmlFor={`experiences.${index}.description`}>Description</Label>
-                  <div className="relative">
-                    <Textarea
-                      {...register(`experiences.${index}.description`)}
-                      placeholder="Describe the experience..."
-                      rows={3}
-                      disabled={isLoading}
-                    />
-                    <VoiceRecorder
-                      onTranscript={(text) => setValue(`experiences.${index}.description`, text)}
-                      disabled={isLoading}
-                    />
-                  </div>
+                  <Textarea
+                    {...register(`experiences.${index}.description`)}
+                    placeholder="Describe the experience..."
+                    rows={3}
+                    disabled={isLoading}
+                  />
                 </div>
               </div>
             ))}
@@ -237,18 +231,12 @@ export const PetResumeEditForm = ({ petData, onSave, onCancel }: PetResumeEditFo
                 
                 <div>
                   <Label htmlFor={`achievements.${index}.description`}>Description</Label>
-                  <div className="relative">
-                    <Textarea
-                      {...register(`achievements.${index}.description`)}
-                      placeholder="Describe the achievement..."
-                      rows={3}
-                      disabled={isLoading}
-                    />
-                    <VoiceRecorder
-                      onTranscript={(text) => setValue(`achievements.${index}.description`, text)}
-                      disabled={isLoading}
-                    />
-                  </div>
+                  <Textarea
+                    {...register(`achievements.${index}.description`)}
+                    placeholder="Describe the achievement..."
+                    rows={3}
+                    disabled={isLoading}
+                  />
                 </div>
               </div>
             ))}

@@ -21,7 +21,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { generatePublicProfileUrl, generatePublicMissingUrl, generateQRCodeUrl, shareProfileOptimized } from "@/services/pdfService";
 import { Link } from "react-router-dom";
 
-import { VoiceRecorder } from "@/components/VoiceRecorder";
+
 
 interface PetData {
   name: string;
@@ -401,18 +401,13 @@ export const QuickIDSection = ({ petData, onUpdate }: QuickIDSectionProps) => {
               {/* Distinctive Features */}
               <div className="space-y-2">
                 <Label htmlFor="features">Distinctive Features</Label>
-                <div className="relative">
-                  <Textarea
-                    id="features"
-                    value={lostPetData.distinctive_features}
-                    onChange={(e) => setLostPetData(prev => ({ ...prev, distinctive_features: e.target.value }))}
-                    placeholder="Describe unique markings, scars, collar, tags, or any identifying features"
-                    rows={3}
-                  />
-                  <VoiceRecorder
-                    onTranscript={(text) => setLostPetData(prev => ({ ...prev, distinctive_features: text }))}
-                  />
-                </div>
+                <Textarea
+                  id="features"
+                  value={lostPetData.distinctive_features}
+                  onChange={(e) => setLostPetData(prev => ({ ...prev, distinctive_features: e.target.value }))}
+                  placeholder="Describe unique markings, scars, collar, tags, or any identifying features"
+                  rows={3}
+                />
               </div>
 
               {/* Reward Amount */}
@@ -432,18 +427,13 @@ export const QuickIDSection = ({ petData, onUpdate }: QuickIDSectionProps) => {
               {/* Finder Instructions */}
               <div className="space-y-2">
                 <Label htmlFor="instructions">Instructions for Finder</Label>
-                <div className="relative">
-                  <Textarea
-                    id="instructions"
-                    value={lostPetData.finder_instructions}
-                    onChange={(e) => setLostPetData(prev => ({ ...prev, finder_instructions: e.target.value }))}
-                    placeholder="What should someone do if they find your pet? Include approach instructions, safety notes, etc."
-                    rows={3}
-                  />
-                  <VoiceRecorder
-                    onTranscript={(text) => setLostPetData(prev => ({ ...prev, finder_instructions: text }))}
-                  />
-                </div>
+                <Textarea
+                  id="instructions"
+                  value={lostPetData.finder_instructions}
+                  onChange={(e) => setLostPetData(prev => ({ ...prev, finder_instructions: e.target.value }))}
+                  placeholder="What should someone do if they find your pet? Include approach instructions, safety notes, etc."
+                  rows={3}
+                />
               </div>
 
               {/* Emergency Notes */}

@@ -194,6 +194,8 @@ textarea {
   --safe-area-inset-right: env(safe-area-inset-right, 0px);
   --safe-area-inset-bottom: env(safe-area-inset-bottom, 0px);
   --safe-area-inset-left: env(safe-area-inset-left, 0px);
+  --keyboard-height: 0px;
+  --kb-offset: 0px;
 }
 
 @supports (padding-bottom: env(safe-area-inset-bottom)) {
@@ -466,4 +468,32 @@ textarea {
 /* Add scroll padding to content containers so content doesn't get hidden behind keyboard */
 .platform-android .with-keyboard-padding {
   scroll-padding-bottom: var(--kb-offset, 0px);
+}
+
+/* === iOS 18+ Native Keyboard Positioning === */
+/* Modern positioning using CSS variables instead of transform */
+.keyboard-native-positioning {
+  position: fixed !important;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 50;
+  transition: bottom 0.2s ease-out;
+}
+
+/* When keyboard is open on iOS 18+, position above keyboard */
+body.keyboard-open .keyboard-native-positioning {
+  bottom: calc(var(--keyboard-height) + env(safe-area-inset-bottom, 0px)) !important;
+}
+
+/* Bottom tab navigation keyboard awareness */
+.bottom-tab-nav {
+  transition: transform 0.2s ease-out;
+}
+
+/* Hide bottom tabs when keyboard is open on iOS */
+@supports (-webkit-touch-callout: none) {
+  body.keyboard-open .bottom-tab-nav {
+    transform: translateY(100%);
+  }
 }

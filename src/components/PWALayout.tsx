@@ -15,7 +15,7 @@ export const PWALayout = ({ children, showBottomNav = true }: PWALayoutProps) =>
   useAndroidBackButton();
   
   // Track keyboard visibility
-  const { isVisible: keyboardVisible } = useKeyboardAwareLayout();
+  const { isVisible: keyboardVisible, useNativePositioning } = useKeyboardAwareLayout();
   const isIOS = isIOSDevice();
   
   // Always show bottom nav; adjust content padding only when Android keyboard is open
@@ -27,7 +27,7 @@ export const PWALayout = ({ children, showBottomNav = true }: PWALayoutProps) =>
       <PWAInstallPrompt />
       
       {/* Main content with bottom padding for tab navigation */}
-      <main className={`${showBottomNav && !(keyboardVisible && !isIOS) ? "pb-20" : ""} flex-1 overflow-y-auto with-keyboard-padding`}>
+      <main className={`${showBottomNav && !(keyboardVisible && !isIOS && !useNativePositioning) ? "pb-20" : ""} flex-1 overflow-y-auto with-keyboard-padding`}>
         {children}
       </main>
       

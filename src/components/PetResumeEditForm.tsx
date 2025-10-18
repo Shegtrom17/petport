@@ -66,7 +66,7 @@ export const PetResumeEditForm = ({ petData, onSave, onCancel }: PetResumeEditFo
 
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
-  const { bottomOffset } = useKeyboardAwareLayout();
+  const { bottomOffset, useNativePositioning } = useKeyboardAwareLayout();
 
   const onSubmit = async (data: any) => {
     setIsLoading(true);
@@ -343,11 +343,11 @@ export const PetResumeEditForm = ({ petData, onSave, onCancel }: PetResumeEditFo
         {/* Form Actions - Keyboard-aware sticky positioning */}
         <div 
           id="form-actions"
-          className="sticky bottom-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 p-4 -mx-4 -mb-4 border-t pb-0"
+          className={`${useNativePositioning ? 'keyboard-native-positioning' : 'sticky bottom-0'} z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 p-4 -mx-4 -mb-4 border-t pb-0`}
         >
           <div
-            className="keyboard-aware-transform flex justify-end space-x-4"
-            style={{ 
+            className={useNativePositioning ? 'flex justify-end space-x-4' : 'keyboard-aware-transform flex justify-end space-x-4'}
+            style={useNativePositioning ? {} : { 
               transform: bottomOffset > 0 ? `translateY(-${bottomOffset}px)` : 'none',
               transition: 'transform 0.15s ease-out'
             }}

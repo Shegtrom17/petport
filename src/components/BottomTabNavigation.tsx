@@ -3,12 +3,14 @@ import { Home, PlusCircle, Settings, AlertTriangle, Menu } from "lucide-react";
 import { ReportIssueModal } from "./ReportIssueModal";
 import { MobileNavigationMenu } from "./MobileNavigationMenu";
 import { useState } from "react";
+import { useKeyboardAwareLayout } from "@/hooks/useKeyboardAwareLayout";
 
 export const BottomTabNavigation = () => {
   const location = useLocation();
   const [showReportModal, setShowReportModal] = useState(false);
-
   const [showMenuSheet, setShowMenuSheet] = useState(false);
+  const { isVisible: keyboardVisible } = useKeyboardAwareLayout();
+  
   const homePath = '/app';
   const tabs = [
     { id: 'home', path: homePath, icon: Home, label: 'Home' },
@@ -20,7 +22,7 @@ export const BottomTabNavigation = () => {
 
   return (
     <>
-      <nav className="fixed bottom-0 left-0 right-0 bg-background border-t border-border z-40">
+      <nav className="fixed bottom-0 left-0 right-0 bg-background border-t border-border z-40 bottom-tab-nav">
         <div className="flex items-center justify-around h-16 px-2 pb-safe-area-inset-bottom">
           {tabs.map((tab) => {
             const isActive = location.pathname === tab.path;

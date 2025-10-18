@@ -1,10 +1,11 @@
 import { useEffect, useState, useCallback } from 'react';
-import { isIOSDevice } from '@/utils/iosDetection';
+import { isIOSDevice, isIOS18Plus } from '@/utils/iosDetection';
 
 interface KeyboardState {
   isVisible: boolean;
   height: number;
   bottomOffset: number;
+  useNativePositioning: boolean;
 }
 
 /**
@@ -12,57 +13,77 @@ interface KeyboardState {
  * Uses Visual Viewport API on iOS, fallback to resize events on other platforms
  */
 export const useKeyboardAwareLayout = () => {
+  const isIOS = isIOSDevice();
+  const useNativePositioning = isIOS18Plus();
+  
   const [keyboardState, setKeyboardState] = useState<KeyboardState>({
     isVisible: false,
     height: 0,
     bottomOffset: 0,
+    useNativePositioning,
   });
 
   const updateKeyboardState = useCallback(() => {
     if (typeof window === 'undefined') return;
-
-    const isIOS = isIOSDevice();
     
     if (isIOS && window.visualViewport) {
-      // Use Visual Viewport API for iOS (more reliable)
       const viewport = window.visualViewport;
       const windowHeight = window.innerHeight;
       const viewportHeight = viewport.height;
-      const keyboardHeight = windowHeight - viewportHeight - viewport.offsetTop;
       
-      // Only apply offset if keyboard is actually visible (> 100px threshold)
+      // iOS 18+ uses different keyboard height calculation
+      const keyboardHeight = useNativePositioning
+        ? Math.max(0, windowHeight - viewportHeight)
+        : windowHeight - viewportHeight - viewport.offsetTop;
+      
       const isKeyboardVisible = keyboardHeight > 100;
       
-      setKeyboardState({
-        isVisible: isKeyboardVisible,
-        height: isKeyboardVisible ? Math.max(0, keyboardHeight) : 0,
-        bottomOffset: isKeyboardVisible ? Math.max(0, keyboardHeight) : 0,
-      });
+      if (useNativePositioning) {
+        // iOS 18+: Set CSS variable for native positioning
+        const heightValue = isKeyboardVisible ? `${keyboardHeight}px` : '0px';
+        document.documentElement.style.setProperty('--keyboard-height', heightValue);
+        
+        // Add/remove class for iOS 18+ native positioning
+        if (isKeyboardVisible) {
+          document.body.classList.add('keyboard-open');
+        } else {
+          document.body.classList.remove('keyboard-open');
+        }
+        
+        setKeyboardState({
+          isVisible: isKeyboardVisible,
+          height: isKeyboardVisible ? keyboardHeight : 0,
+          bottomOffset: 0, // No transform offset for iOS 18+
+          useNativePositioning: true,
+        });
+      } else {
+        // iOS 17 and earlier: Use transform offset
+        setKeyboardState({
+          isVisible: isKeyboardVisible,
+          height: isKeyboardVisible ? Math.max(0, keyboardHeight) : 0,
+          bottomOffset: isKeyboardVisible ? Math.max(0, keyboardHeight) : 0,
+          useNativePositioning: false,
+        });
+      }
     } else {
-      // ANDROID & others — do NOT translate the footer.
-      // Use visualViewport to compute keyboard height, push padding to content via CSS var.
+      // ANDROID & others
       const vv = (window as any).visualViewport;
       const keyboardHeight = vv ? Math.max(0, window.innerHeight - vv.height - vv.offsetTop) : 0;
       const isKeyboardVisible = keyboardHeight > 100;
 
-      // Expose height to CSS so the scroll container can pad itself
+      // Expose height to CSS for scroll container padding
       const offsetValue = isKeyboardVisible ? `${keyboardHeight}px` : '0px';
       document.documentElement.style.setProperty('--kb-offset', offsetValue);
-      
-      console.log('[Android Keyboard Debug]', {
-        keyboardHeight,
-        isKeyboardVisible,
-        offsetValue,
-        appliedToRoot: document.documentElement.style.getPropertyValue('--kb-offset')
-      });
+      document.documentElement.style.setProperty('--keyboard-height', offsetValue);
 
       setKeyboardState({
         isVisible: isKeyboardVisible,
         height: isKeyboardVisible ? keyboardHeight : 0,
-        bottomOffset: 0, // Critical: never transform footer on Android
+        bottomOffset: 0, // Never transform footer on Android
+        useNativePositioning: false,
       });
     }
-  }, []);
+  }, [isIOS, useNativePositioning]);
 
   // Helper disabled to prevent forced scroll-to-bottom on focus
   const ensureSaveButtonVisible = useCallback(() => {
@@ -100,6 +121,8 @@ export const useKeyboardAwareLayout = () => {
 
     return () => {
       document.documentElement.style.setProperty('--kb-offset', '0px');
+      document.documentElement.style.setProperty('--keyboard-height', '0px');
+      document.body.classList.remove('keyboard-open');
       if (window.visualViewport) {
         window.visualViewport.removeEventListener('resize', updateKeyboardState);
         window.visualViewport.removeEventListener('scroll', updateKeyboardState);

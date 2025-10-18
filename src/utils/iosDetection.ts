@@ -7,6 +7,18 @@ export const isIOSDevice = (): boolean => {
          (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
 };
 
+export const getIOSVersion = (): number | null => {
+  if (!isIOSDevice()) return null;
+  
+  const match = navigator.userAgent.match(/OS (\d+)_/);
+  return match ? parseInt(match[1], 10) : null;
+};
+
+export const isIOS18Plus = (): boolean => {
+  const version = getIOSVersion();
+  return version !== null && version >= 18;
+};
+
 export const isIOSSafari = (): boolean => {
   const isIOS = isIOSDevice();
   const isSafari = /Safari/.test(navigator.userAgent) && !/Chrome/.test(navigator.userAgent);

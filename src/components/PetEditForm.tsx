@@ -72,7 +72,7 @@ interface PetEditFormProps {
 export const PetEditForm = ({ petData, onSave, onCancel, togglePetPublicVisibility }: PetEditFormProps) => {
   const { user } = useAuth();
   const { toast } = useToast();
-  const { bottomOffset } = useKeyboardAwareLayout();
+  const { bottomOffset, useNativePositioning } = useKeyboardAwareLayout();
   const isMobile = useIsMobile();
   const [formData, setFormData] = useState<PetData>(petData);
   const [isSaving, setIsSaving] = useState(false);
@@ -761,11 +761,11 @@ export const PetEditForm = ({ petData, onSave, onCancel, togglePetPublicVisibili
           {/* Action Buttons - Keyboard-aware sticky positioning */}
         <div 
           id="form-actions"
-          className="sticky bottom-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 p-4 -mx-4 -mb-4 border-t pb-0"
+          className={`${useNativePositioning ? 'keyboard-native-positioning' : 'sticky bottom-0'} z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 p-4 -mx-4 -mb-4 border-t pb-0`}
         >
             <div
-              className="keyboard-aware-transform flex gap-4 pt-2"
-              style={{ 
+              className={useNativePositioning ? 'flex gap-4 pt-2' : 'keyboard-aware-transform flex gap-4 pt-2'}
+              style={useNativePositioning ? {} : { 
                 transform: (isMobile && bottomOffset > 0) ? `translateY(-${bottomOffset}px)` : 'none',
                 transition: 'transform 0.15s ease-out'
               }}

@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { AlertTriangle, Phone, Trash2, Upload, Loader2, Edit, Share2, Facebook, MessageCircle, Mail, Camera, Info } from "lucide-react";
 import { PetDeleteDialog } from "@/components/PetDeleteDialog";
 import { PetPDFGenerator } from "@/components/PetPDFGenerator";
@@ -61,6 +62,7 @@ export const PetProfileContent = ({
   const [isDeleting, setIsDeleting] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [contactsRefreshKey, setContactsRefreshKey] = useState(0);
+  const [isPhotoModalOpen, setIsPhotoModalOpen] = useState(false);
   const { toast } = useToast();
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -296,31 +298,6 @@ export const PetProfileContent = ({
           <SectionHeader
             title="Profile Photo"
             icon={<Camera className="w-5 h-5" />}
-            action={isOwner && (
-              <div className="flex items-center space-x-2">
-                {/* Upload from gallery */}
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => openProfileFilePicker('profile', false)}
-                  className="flex items-center space-x-2 p-3 text-primary hover:text-primary/80 hover:scale-110 transition-all"
-                >
-                  <Upload className="w-5 h-5" />
-                  <span className="text-sm hidden sm:inline">Upload</span>
-                </Button>
-                
-                {/* Take photo with camera */}
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => openProfileFilePicker('profile', true)}
-                  className="flex items-center space-x-2 p-3 text-primary hover:text-primary/80 hover:scale-110 transition-all"
-                >
-                  <Camera className="w-5 h-5" />
-                  <span className="text-sm hidden sm:inline">Camera</span>
-                </Button>
-              </div>
-            )}
           />
           
           {/* Profile Photo + Management Hub - Side by Side on Desktop */}
@@ -347,42 +324,6 @@ export const PetProfileContent = ({
                     </div>
                   )}
                 </div>
-                {isOwner && (
-                  <div className="mt-3 flex justify-center space-x-2">
-                    {/* Upload from gallery */}
-                    <Button
-                      onClick={() => openProfileFilePicker('profile', false)}
-                      className="flex items-center space-x-1 px-3 py-2 text-sm bg-brand-primary text-white rounded-lg hover:bg-brand-primary-dark transition-colors"
-                    >
-                      <Upload className="w-4 h-4" />
-                      <span>Upload</span>
-                    </Button>
-                    
-                    {/* Take photo with camera */}
-                    <Button
-                      onClick={() => openProfileFilePicker('profile', true)}
-                      className="flex items-center space-x-1 px-3 py-2 text-sm bg-brand-primary text-white rounded-lg hover:bg-brand-primary-dark transition-colors"
-                    >
-                      <Camera className="w-4 h-4" />
-                      <span>Camera</span>
-                    </Button>
-                    
-                    {enhancedPetData?.photoUrl && (
-                      <Button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          e.preventDefault();
-                          handlePhotoDelete('profile');
-                        }}
-                        variant="outline"
-                        size="sm"
-                        className="text-red-600 border-red-300 hover:border-red-500 hover:text-red-700 hover:scale-105 transition-all touch-manipulation"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
-                    )}
-                  </div>
-                )}
               </div>
             </div>
 
@@ -412,6 +353,17 @@ export const PetProfileContent = ({
                           >
                             <Edit className="w-4 h-4" />
                             <span>Edit Pet Profile</span>
+                          </Button>
+                        )}
+                        
+                        {/* Update Profile Photo Button */}
+                        {isOwner && (
+                          <Button
+                            onClick={() => setIsPhotoModalOpen(true)}
+                            className="bg-[#5691af] hover:bg-[#4a7d99] text-white w-full flex items-center justify-center gap-2 h-12"
+                          >
+                            <Camera className="w-4 h-4" />
+                            <span>Update Profile Photo</span>
                           </Button>
                         )}
                       </div>
@@ -492,6 +444,54 @@ export const PetProfileContent = ({
         </div>
       )}
 
+      {/* Photo Update Modal */}
+      <Sheet open={isPhotoModalOpen} onOpenChange={setIsPhotoModalOpen}>
+        <SheetContent>
+          <SheetHeader>
+            <SheetTitle>Update Profile Photo</SheetTitle>
+          </SheetHeader>
+          <div className="space-y-3 mt-6">
+            {/* Upload from Gallery */}
+            <Button
+              onClick={() => {
+                openProfileFilePicker('profile', false);
+                setIsPhotoModalOpen(false);
+              }}
+              className="w-full flex items-center justify-center gap-2 h-12 bg-[#5691af] hover:bg-[#4a7d99] text-white"
+            >
+              <Upload className="w-5 h-5" />
+              <span>Upload from Gallery</span>
+            </Button>
+            
+            {/* Take Photo */}
+            <Button
+              onClick={() => {
+                openProfileFilePicker('profile', true);
+                setIsPhotoModalOpen(false);
+              }}
+              className="w-full flex items-center justify-center gap-2 h-12 bg-[#5691af] hover:bg-[#4a7d99] text-white"
+            >
+              <Camera className="w-5 h-5" />
+              <span>Take Photo</span>
+            </Button>
+            
+            {/* Delete Photo (only if photo exists) */}
+            {enhancedPetData?.photoUrl && (
+              <Button
+                onClick={() => {
+                  handlePhotoDelete('profile');
+                  setIsPhotoModalOpen(false);
+                }}
+                variant="outline"
+                className="w-full flex items-center justify-center gap-2 h-12 text-red-600 border-red-300 hover:border-red-500"
+              >
+                <Trash2 className="w-5 h-5" />
+                <span>Delete Photo</span>
+              </Button>
+            )}
+          </div>
+        </SheetContent>
+      </Sheet>
 
     </div>
   );

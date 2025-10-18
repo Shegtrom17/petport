@@ -18,7 +18,9 @@ export const ContactsDisplay = ({ petId, hideHeader = false, fallbackPetData, re
       if (!petId) return;
       
       try {
-        const contactsData = await getOrderedContacts(petId, fallbackPetData);
+        // Add cache-busting timestamp for iOS Safari
+        const timestamp = Date.now();
+        const contactsData = await getOrderedContacts(petId, fallbackPetData, timestamp);
         setContacts(contactsData);
       } catch (error) {
         console.error('Error fetching contacts:', error);

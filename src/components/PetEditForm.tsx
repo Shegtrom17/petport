@@ -191,22 +191,44 @@ export const PetEditForm = ({ petData, onSave, onCancel, togglePetPublicVisibili
     setContacts(prev => {
       const existingIndex = prev.findIndex(c => c.contact_type === contactType);
       
+      // Extract phone number if iOS autofill dumped full contact into phone field
+      let processedValue = value;
+      if (field === 'contact_phone') {
+        // If the phone field contains letters or multiple spaces, extract only the phone number
+        if (/[a-zA-Z]/.test(value) || /\s{2,}/.test(value)) {
+          // Extract phone number pattern
+          const phoneMatch = value.match(/\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}/);
+          processedValue = phoneMatch ? phoneMatch[0] : value.replace(/[^\d\s\-\(\)\.]/g, '');
+          
+          // If we extracted a phone, try to extract the name for the name field
+          if (phoneMatch && existingIndex >= 0) {
+            const nameFromValue = value.replace(phoneMatch[0], '').trim();
+            if (nameFromValue && !prev[existingIndex].contact_name) {
+              // Auto-populate name field if it's empty
+              setTimeout(() => {
+                handleContactChange(contactType, 'contact_name', nameFromValue);
+              }, 0);
+            }
+          }
+        }
+      }
+      
       if (existingIndex >= 0) {
         // Update existing contact
         const updated = [...prev];
         updated[existingIndex] = { 
           ...updated[existingIndex], 
-          [field]: value,
+          [field]: processedValue,
           // Ensure both fields exist
-          contact_name: field === 'contact_name' ? value : (updated[existingIndex].contact_name || ''),
-          contact_phone: field === 'contact_phone' ? value : (updated[existingIndex].contact_phone || '')
+          contact_name: field === 'contact_name' ? processedValue : (updated[existingIndex].contact_name || ''),
+          contact_phone: field === 'contact_phone' ? processedValue : (updated[existingIndex].contact_phone || '')
         };
         return updated;
       } else {
         // Create new contact with both fields initialized
         const newContact: Contact = {
-          contact_name: field === 'contact_name' ? value : '',
-          contact_phone: field === 'contact_phone' ? value : '',
+          contact_name: field === 'contact_name' ? processedValue : '',
+          contact_phone: field === 'contact_phone' ? processedValue : '',
           contact_type: contactType
         };
         return [...prev, newContact];
@@ -559,10 +581,10 @@ export const PetEditForm = ({ petData, onSave, onCancel, togglePetPublicVisibili
                       </Label>
                       <div className="relative">
                         <Input
-                          id={`${type}_name`}
-                          name={`${type}_contact_name`}
+                          id={`pet_${type}_contact_name_${petData.id}`}
+                          name={`pet_${type}_contact_name`}
                           type="text"
-                          autoComplete="name"
+                          autoComplete="given-name"
                           value={contact?.contact_name || ''}
                           onChange={(e) => handleContactChange(type, 'contact_name', e.target.value)}
                           placeholder="Enter contact name"
@@ -581,10 +603,11 @@ export const PetEditForm = ({ petData, onSave, onCancel, togglePetPublicVisibili
                       </Label>
                       <div className="relative">
                         <Input
-                          id={`${type}_phone`}
-                          name={`${type}_contact_phone`}
+                          id={`pet_${type}_contact_phone_${petData.id}`}
+                          name={`pet_${type}_contact_phone`}
                           type="tel"
-                          autoComplete="tel"
+                          inputMode="tel"
+                          autoComplete="tel-national"
                           value={contact?.contact_phone || ''}
                           onChange={(e) => handleContactChange(type, 'contact_phone', e.target.value)}
                           placeholder="Enter phone number"

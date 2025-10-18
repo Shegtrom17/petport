@@ -103,7 +103,12 @@ export const PetProfileContent = ({
   const handleEditSave = async () => {
     await handlePetUpdate?.();
     setIsEditing(false);
-    setContactsRefreshKey((k) => k + 1);
+    
+    // Add delay to ensure database write completes before refresh (iOS Safari timing issue)
+    setTimeout(() => {
+      setContactsRefreshKey((k) => k + 1);
+    }, 300);
+    
     toast({
       title: "Success",
       description: "Pet profile updated successfully!",

@@ -15,9 +15,9 @@ const contactTypeLabels = {
   caretaker: "Pet Caretaker"
 };
 
-export const getOrderedContacts = async (petId: string, fallbackPetData?: any): Promise<ContactInfo[]> => {
+export const getOrderedContacts = async (petId: string, fallbackPetData?: any, cacheTimestamp?: number): Promise<ContactInfo[]> => {
   try {
-    // Fetch from pet_contacts table
+    // Fetch from pet_contacts table with cache-busting for iOS Safari
     const { data: contacts, error } = await supabase
       .from('pet_contacts')
       .select('*')
@@ -42,14 +42,26 @@ export const getOrderedContacts = async (petId: string, fallbackPetData?: any): 
     const result: ContactInfo[] = orderedTypes.map(type => {
       const contact = contactMap.get(type);
       
+      // Validate contact data and filter out corrupted entries
       if (contact && contact.contact_name && contact.contact_phone) {
-        return {
-          label: contactTypeLabels[type as keyof typeof contactTypeLabels],
-          name: contact.contact_name,
-          phone: contact.contact_phone,
-          type,
-          isEmpty: false
-        };
+        const name = contact.contact_name.trim();
+        const phone = contact.contact_phone.trim();
+        
+        // Check if this is corrupted data (iOS autofill dumped full string into both fields)
+        const isCorrupted = name === phone || 
+                           (name.includes(phone) && name !== phone) ||
+                           (phone.includes(name) && phone !== name) ||
+                           /[a-zA-Z]/.test(phone.replace(/[a-z]{2,}\s/i, '')); // Phone contains letters (except area codes like "NY")
+        
+        if (!isCorrupted) {
+          return {
+            label: contactTypeLabels[type as keyof typeof contactTypeLabels],
+            name: contact.contact_name,
+            phone: contact.contact_phone,
+            type,
+            isEmpty: false
+          };
+        }
       }
       
       // Fallback to legacy data if available

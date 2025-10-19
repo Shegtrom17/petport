@@ -82,6 +82,7 @@ const Index = () => {
 
   const handleTabChange = (tab: string) => {
     setActiveTab(tab);
+    window.scrollTo(0, 0);
     localStorage.setItem('pp_last_tab_last', tab); // General sticky key for Android remounts
     if (user?.id && settings.rememberLastTab && tab !== 'vaccination') {
       localStorage.setItem(`pp_last_tab_${user.id}`, tab);

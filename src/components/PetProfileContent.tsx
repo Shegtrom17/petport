@@ -358,34 +358,6 @@ export const PetProfileContent = ({
             isLost={enhancedPetData.is_lost || enhancedPetData.lost_pet_data?.is_missing || false}
             handlePetUpdate={handlePetUpdate}
           />
-          <div className="mt-6 p-4 bg-primary/5 rounded-lg border border-primary/10">
-            <div className="flex items-start space-x-3">
-              <Info className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
-              <div className="space-y-2">
-                <p className="text-sm font-medium text-foreground">
-                  Share different views of profile
-                </p>
-                <div className="text-xs text-muted-foreground space-y-1">
-                  <div className="flex items-center space-x-2">
-                    <div className="w-1.5 h-1.5 bg-primary rounded-full"></div>
-                    <span><strong>General Profile:</strong> Complete profile with all sections</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <div className="w-1.5 h-1.5 bg-primary rounded-full"></div>
-                    <span><strong>Emergency Profile:</strong> Critical info for urgent situations</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <div className="w-1.5 h-1.5 bg-primary rounded-full"></div>
-                    <span><strong>Missing Pet Alert:</strong> Specialized format for lost pet reports</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <div className="w-1.5 h-1.5 bg-primary rounded-full"></div>
-                    <span><strong>Photo Gallery:</strong> Just the photos for easy viewing</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
 

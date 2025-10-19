@@ -547,12 +547,6 @@ export const PetGallerySection = ({ petData, onUpdate, handlePetUpdate }: PetGal
         isLost={false}
       />
 
-      {/* Quick Share Hub */}
-      <QuickShareHub 
-        petData={petData} 
-        isLost={false}
-      />
-
       {/* Upload Area with Camera Capture */}
       <Card className="border-0 shadow-lg bg-passport-section-bg backdrop-blur-sm">
         <CardHeader>

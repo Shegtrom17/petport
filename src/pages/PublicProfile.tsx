@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
-import { Heart, MapPin, Phone, Star, Award, GraduationCap, Plane, Trophy, Briefcase, Shield, Building, Mail, Globe, Camera, AlertTriangle, FileText, Eye } from "lucide-react";
+import { Heart, MapPin, Phone, Star, Award, GraduationCap, Plane, Trophy, Briefcase, Shield, Building, Mail, Globe, Camera, AlertTriangle, FileText, Eye, Stethoscope } from "lucide-react";
 
 import { MetaTags } from "@/components/MetaTags";
 import { AddReviewForm } from "@/components/AddReviewForm";
@@ -76,6 +76,10 @@ const PublicProfile = () => {
             professional_data (*),
             medical (*),
             contacts (*),
+            pet_contacts (*),
+            care_instructions (*),
+            certifications (*),
+            documents (*),
             reviews (*),
             training (*),
             travel_locations (*),
@@ -133,8 +137,32 @@ const PublicProfile = () => {
           } : null,
           medical: data.medical ? {
             ...data.medical,
-            medical_conditions: sanitizeText(data.medical.medical_conditions || '')
+            medical_conditions: sanitizeText(data.medical.medical_conditions || ''),
+            last_vaccination: sanitizeText(data.medical.last_vaccination || ''),
+            medical_emergency_document: sanitizeText(data.medical.medical_emergency_document || '')
           } : null,
+          care_instructions: data.care_instructions ? {
+            ...data.care_instructions,
+            feeding_schedule: sanitizeText(data.care_instructions.feeding_schedule || ''),
+            morning_routine: sanitizeText(data.care_instructions.morning_routine || ''),
+            evening_routine: sanitizeText(data.care_instructions.evening_routine || ''),
+            behavioral_notes: sanitizeText(data.care_instructions.behavioral_notes || ''),
+            favorite_activities: sanitizeText(data.care_instructions.favorite_activities || ''),
+            caretaker_notes: sanitizeText(data.care_instructions.caretaker_notes || ''),
+            allergies: sanitizeText(data.care_instructions.allergies || '')
+          } : null,
+          certifications: data.certifications?.map((cert: any) => ({
+            ...cert,
+            type: sanitizeText(cert.type || ''),
+            issuer: sanitizeText(cert.issuer || ''),
+            certification_number: sanitizeText(cert.certification_number || ''),
+            notes: sanitizeText(cert.notes || '')
+          })) || [],
+          documents: data.documents?.map((doc: any) => ({
+            ...doc,
+            name: sanitizeText(doc.name || ''),
+            type: sanitizeText(doc.type || '')
+          })) || [],
           reviews: data.reviews?.map((review: any) => ({
             ...review,
             reviewer_name: sanitizeText(review.reviewer_name || ''),
@@ -396,28 +424,69 @@ const PublicProfile = () => {
              </Alert>
            )}
 
-          {/* Emergency Summary Section - No Contacts shown per requirements */}
-          {petData.medical?.medical_alert && (
-            <Card className="mb-6 border-red-200 bg-red-50">
+          {/* Medical & Health Information - Full Section */}
+          {(petData.medical?.medical_conditions || 
+            petData.medical?.medications?.length > 0 || 
+            petData.medical?.last_vaccination ||
+            petData.care_instructions?.allergies ||
+            petData.medical?.medical_emergency_document) && (
+            <Card className="mb-6">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-navy-900">
-                  <AlertTriangle className="w-5 h-5 text-red-600" />
-                  Emergency Summary
+                  <Stethoscope className="w-5 h-5 text-primary" />
+                  Medical & Health Information
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
+              <CardContent className="space-y-3">
                 {petData.medical?.medical_alert && (
-                  <p className="text-red-800"><strong>MEDICAL ALERT:</strong> See medical section for details</p>
+                  <Alert className="border-red-600 bg-red-50">
+                    <AlertTriangle className="h-5 w-5 text-red-600" />
+                    <AlertDescription className="ml-2 text-red-900 font-semibold">
+                      MEDICAL ALERT
+                    </AlertDescription>
+                  </Alert>
                 )}
+                
+                {petData.medical?.medical_conditions && (
+                  <div>
+                    <h4 className="font-medium text-navy-800">Medical Conditions</h4>
+                    <p className="text-gray-700">{petData.medical.medical_conditions}</p>
+                  </div>
+                )}
+                
                 {petData.medical?.medications && petData.medical.medications.length > 0 && (
-                  <p className="text-red-800"><strong>Current Medications:</strong> {petData.medical.medications.join(', ')}</p>
+                  <div>
+                    <h4 className="font-medium text-navy-800">Current Medications</h4>
+                    <p className="text-gray-700">{petData.medical.medications.join(', ')}</p>
+                  </div>
+                )}
+                
+                {petData.medical?.last_vaccination && (
+                  <div>
+                    <h4 className="font-medium text-navy-800">Last Vaccination</h4>
+                    <p className="text-gray-700">{petData.medical.last_vaccination}</p>
+                  </div>
+                )}
+                
+                {petData.care_instructions?.allergies && (
+                  <div>
+                    <h4 className="font-medium text-navy-800">Allergies</h4>
+                    <p className="text-gray-700">{petData.care_instructions.allergies}</p>
+                  </div>
+                )}
+                
+                {petData.medical?.medical_emergency_document && (
+                  <div>
+                    <h4 className="font-medium text-navy-800">Medical Emergency Document</h4>
+                    <p className="text-gray-700">{petData.medical.medical_emergency_document}</p>
+                  </div>
                 )}
               </CardContent>
             </Card>
           )}
 
           {/* Care Instructions */}
-          {petData.care_instructions && (petData.care_instructions.feeding_schedule || petData.care_instructions.morning_routine || petData.care_instructions.evening_routine || petData.care_instructions.behavioral_notes || petData.care_instructions.favorite_activities || petData.care_instructions.allergies) && (
+          {petData.care_instructions && (petData.care_instructions.feeding_schedule || petData.care_instructions.morning_routine || petData.care_instructions.evening_routine || petData.care_instructions.behavioral_notes || petData.care_instructions.favorite_activities || petData.care_instructions.caretaker_notes) && (
             <Card className="mb-6">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-navy-900">
@@ -456,12 +525,23 @@ const PublicProfile = () => {
                     <p className="text-gray-700">{petData.care_instructions.favorite_activities}</p>
                   </div>
                 )}
-                {petData.care_instructions.allergies && (
+                {petData.care_instructions.caretaker_notes && (
                   <div>
-                    <h4 className="font-medium text-navy-800">Allergies</h4>
-                    <p className="text-gray-700">{petData.care_instructions.allergies}</p>
+                    <h4 className="font-medium text-navy-800">Notes for Sitter/Caretaker</h4>
+                    <p className="text-gray-700">{petData.care_instructions.caretaker_notes}</p>
                   </div>
                 )}
+
+                {/* Health Monitoring Guidelines */}
+                <div className="border-t pt-3 mt-3">
+                  <h4 className="font-medium text-navy-800 mb-2">Health Monitoring</h4>
+                  <ul className="text-gray-700 space-y-1 text-sm">
+                    <li>• Monitor appetite and water intake daily</li>
+                    <li>• Watch for any behavioral changes</li>
+                    <li>• Check for signs of distress or discomfort</li>
+                    <li>• Contact vet immediately if concerns arise</li>
+                  </ul>
+                </div>
               </CardContent>
             </Card>
           )}

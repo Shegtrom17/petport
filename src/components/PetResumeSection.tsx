@@ -1,19 +1,15 @@
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Download, Share2, Star, Shield, Heart, Phone, Mail, Award, AlertTriangle, MapPin, GraduationCap, Trophy, Activity, Edit, Eye, Users } from "lucide-react";
+import { Star, Shield, Heart, Phone, Mail, Award, AlertTriangle, MapPin, GraduationCap, Trophy, Activity, Edit, Users } from "lucide-react";
 import { SupportAnimalBanner } from "@/components/SupportAnimalBanner";
 import { PetResumeEditForm } from "@/components/PetResumeEditForm";
-import { generatePublicProfileUrl, shareProfileOptimized, generateQRCodeUrl } from "@/services/pdfService";
-import { generateClientPetPDF, downloadPDFBlob, viewPDFBlob, isIOS, isStandalonePWA } from "@/services/clientPdfService";
 import { ContactsDisplay } from "@/components/ContactsDisplay";
 import { PrivacyHint } from "@/components/PrivacyHint";
-import { toast } from "sonner";
-import { SocialShareButtons } from "@/components/SocialShareButtons";
 import { FloatingAIButton } from "@/components/FloatingAIButton";
 import { AIBioAssistantModal } from "@/components/AIBioAssistantModal";
+import { QuickShareHub } from "@/components/QuickShareHub";
 
 interface PetResumeSectionProps {
   petData: {
@@ -63,99 +59,11 @@ interface PetResumeSectionProps {
 
 export const PetResumeSection = ({ petData, onUpdate, handlePetUpdate }: PetResumeSectionProps) => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [isPdfDialogOpen, setIsPdfDialogOpen] = useState(false);
-  const [generatedPdfBlob, setGeneratedPdfBlob] = useState<Blob | null>(null);
-  const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
-  const [isShareDialogOpen, setIsShareDialogOpen] = useState(false);
-  const [isSharing, setIsSharing] = useState(false);
   const [isAIBioModalOpen, setIsAIBioModalOpen] = useState(false);
 
   const averageRating = petData.reviews?.length 
     ? petData.reviews.reduce((sum, review) => sum + review.rating, 0) / petData.reviews.length 
     : 0;
-
-  const showPdfOptions = () => {
-    setIsPdfDialogOpen(true);
-  };
-
-  const handlePdfAction = async (action: 'view' | 'download') => {
-    setIsGeneratingPDF(true);
-    
-    try {
-      // Refresh pet data to get latest reviews before generating PDF
-      if (handlePetUpdate) {
-        await handlePetUpdate();
-      }
-      const result = await generateClientPetPDF(petData, 'resume');
-      
-      if (result.success && result.blob) {
-        setGeneratedPdfBlob(result.blob);
-        
-        if (action === 'download') {
-          const filename = `${petData.name}_Resume.pdf`;
-          try {
-            await downloadPDFBlob(result.blob, filename);
-            toast.success("PDF downloaded successfully!");
-            setIsPdfDialogOpen(false);
-          } catch (downloadError) {
-            console.error('Download failed:', downloadError);
-            toast.error("Download failed. Please try using Preview and save from there.");
-          }
-        } else if (action === 'view') {
-          const filename = `${petData.name}_Resume.pdf`;
-          await viewPDFBlob(result.blob, filename);
-        }
-      } else {
-        toast.error(result.error || "Failed to generate PDF");
-      }
-    } catch (error) {
-      console.error("Error generating PDF:", error);
-      toast.error("Failed to generate PDF");
-    } finally {
-      setIsGeneratingPDF(false);
-    }
-  };
-
-  const handleViewPDF = async () => {
-    if (generatedPdfBlob) {
-      const filename = `${petData.name}_Resume.pdf`;
-      await viewPDFBlob(generatedPdfBlob, filename);
-    }
-  };
-
-  const handleDownloadGeneratedPDF = async () => {
-    if (generatedPdfBlob) {
-      const filename = `${petData.name}_Resume.pdf`;
-      // Create a fresh blob for download to avoid security issues
-      const freshBlob = new Blob([await generatedPdfBlob.arrayBuffer()], { type: 'application/pdf' });
-      await downloadPDFBlob(freshBlob, filename);
-      toast.success("PDF downloaded successfully!");
-    }
-  };
-
-  const handleShare = async () => {
-    if (!petData.is_public) {
-      toast.error("Pet profile must be public to share. Please enable public visibility in quick actions on the profile page.");
-      return;
-    }
-
-    setIsSharing(true);
-    try {
-      const profileUrl = generatePublicProfileUrl(petData.id);
-      const result = await shareProfileOptimized(profileUrl, petData.name, 'profile');
-      
-      if (result.success) {
-        toast.success(result.message || "Profile shared successfully!");
-      } else {
-        toast.error(result.message || "Failed to share profile");
-      }
-    } catch (error) {
-      console.error("Error sharing profile:", error);
-      toast.error("Failed to share profile");
-    } finally {
-      setIsSharing(false);
-    }
-  };
 
 
   const handleEditSave = () => {
@@ -171,7 +79,7 @@ export const PetResumeSection = ({ petData, onUpdate, handlePetUpdate }: PetResu
       {/* Support Animal Status Banner */}
       <SupportAnimalBanner status={petData.supportAnimalStatus || null} />
 
-      {/* Header Actions - Moved to top */}
+      {/* Header Section */}
       <Card className="border-0 shadow-xl bg-brand-primary text-white">
         <CardContent className="p-6">
           <div className="flex justify-between items-start">
@@ -181,10 +89,9 @@ export const PetResumeSection = ({ petData, onUpdate, handlePetUpdate }: PetResu
                 <h2 className="text-2xl font-bold">Pet Resume</h2>
                 <p className="text-blue-100">Pet credentials & references</p>
                 <p className="text-xs text-blue-200 mt-1">Click "Edit" to add training, achievements, certifications, and work experience</p>
-                <p className="text-xs text-blue-200 mt-1"><strong>Profile must be public to share.</strong></p>
               </div>
             </div>
-            <div className="flex flex-col space-y-2 sm:flex-row sm:space-y-0 sm:space-x-4 ml-6">
+            <div className="flex items-center ml-6">
               <div
                 onClick={() => setIsEditModalOpen(true)}
                 className="flex items-center space-x-2 p-2 text-white hover:text-blue-200 hover:scale-110 transition-all cursor-pointer"
@@ -196,37 +103,8 @@ export const PetResumeSection = ({ petData, onUpdate, handlePetUpdate }: PetResu
                 <Edit className="w-4 h-4" />
                 <span className="text-sm">Edit</span>
               </div>
-              <div
-                onClick={showPdfOptions}
-                className="flex items-center space-x-2 p-2 text-white hover:text-blue-200 hover:scale-110 transition-all cursor-pointer"
-                role="button"
-                tabIndex={0}
-                aria-label="Generate PDF"
-                onKeyDown={(e) => e.key === 'Enter' && showPdfOptions()}
-              >
-                <Download className="w-4 h-4" />
-                <span className="text-sm">PDF</span>
-              </div>
-              <div
-                onClick={() => setIsShareDialogOpen(true)}
-                className="flex items-center space-x-2 p-2 text-white hover:text-blue-200 hover:scale-110 transition-all cursor-pointer"
-                role="button"
-                tabIndex={0}
-                aria-label="Share resume"
-                onKeyDown={(e) => e.key === 'Enter' && setIsShareDialogOpen(true)}
-              >
-                <Share2 className="w-4 h-4" />
-                <span className="text-sm">Share</span>
-              </div>
             </div>
           </div>
-          {!petData.is_public && (
-            <div className="mt-4 pt-4 border-t border-blue-400/30">
-              <p className="text-sm text-blue-200 text-center">
-                📝 Make your profile public in the privacy settings above to enable sharing & QR codes
-              </p>
-            </div>
-          )}
         </CardContent>
       </Card>
 
@@ -244,162 +122,11 @@ export const PetResumeSection = ({ petData, onUpdate, handlePetUpdate }: PetResu
         </DialogContent>
       </Dialog>
 
-      {/* PDF Options Dialog */}
-      <Dialog open={isPdfDialogOpen} onOpenChange={setIsPdfDialogOpen}>
-        <DialogContent className="max-w-md bg-[#f8f8f8]">
-          <DialogHeader>
-            <DialogTitle className="font-bold text-navy-900 border-b-2 border-gold-500 pb-2">
-              📋 Pet Resume PDF Options
-            </DialogTitle>
-          </DialogHeader>
-          
-          <div className="space-y-6">
-            {/* PDF Actions */}
-            {!generatedPdfBlob && !isGeneratingPDF && (
-              <div className="space-y-3">
-                <p className="text-sm text-navy-600 text-center">
-                  Choose how you'd like to use {petData.name}'s resume:
-                </p>
-                
-                <div className="grid grid-cols-2 gap-3">
-                  <Button
-                    onClick={() => handlePdfAction('view')}
-                    variant="outline"
-                    className="border-gold-500 text-gold-600 hover:bg-gold-50"
-                  >
-                    <Eye className="w-4 h-4 mr-2" />
-                    View PDF
-                  </Button>
-                  <Button
-                    onClick={() => handlePdfAction('download')}
-                    className="bg-gradient-to-r from-gold-500 to-gold-400 text-navy-900 hover:from-gold-400 hover:to-gold-300"
-                  >
-                    <Download className="w-4 h-4 mr-2" />
-                    Download PDF
-                  </Button>
-                </div>
-              </div>
-            )}
-            
-            {/* Loading State */}
-            {isGeneratingPDF && (
-              <div className="text-center py-6">
-                <div className="w-8 h-8 animate-spin mx-auto mb-3 text-gold-500">⏳</div>
-                <p className="text-navy-600">Generating pet resume PDF...</p>
-              </div>
-            )}
-            
-            {/* Generated PDF Actions */}
-            {generatedPdfBlob && !isGeneratingPDF && (
-              <div className="space-y-4">
-                <div className="bg-white p-4 rounded-lg border border-gold-500/30 shadow-sm">
-                  <h4 className="font-bold text-navy-900 mb-3">Pet Resume PDF</h4>
-                  <div className="flex flex-col sm:flex-row gap-2 justify-center mb-3">
-                    <Button
-                      onClick={() => {
-                        const url = URL.createObjectURL(generatedPdfBlob);
-                        window.open(url, '_blank')?.focus();
-                        URL.revokeObjectURL(url);
-                      }}
-                      variant="outline"
-                      className="border-gold-500 text-gold-600 hover:bg-gold-50"
-                    >
-                      <Eye className="w-4 h-4 mr-2" />
-                      View PDF
-                    </Button>
-                    <Button
-                      onClick={async () => {
-                        if (!generatedPdfBlob) return;
-                        const fileName = `${petData.name}_Resume.pdf`;
-                        try {
-                          // Create a fresh blob for download to avoid security issues
-                          const freshBlob = new Blob([await generatedPdfBlob.arrayBuffer()], { type: 'application/pdf' });
-                          await downloadPDFBlob(freshBlob, fileName);
-                          toast.success("PDF downloaded successfully!");
-                        } catch (downloadError) {
-                          console.error('Download failed:', downloadError);
-                          toast.error("Download failed. Please try using Preview and save from there.");
-                        }
-                      }}
-                      className="bg-gradient-to-r from-gold-500 to-gold-400 text-navy-900 hover:from-gold-400 hover:to-gold-300"
-                    >
-                      <Download className="w-4 h-4 mr-2" />
-                      Download PDF
-                    </Button>
-                  </div>
-                  {(isIOS() || isStandalonePWA()) && (
-                    <div className="text-xs text-blue-600 bg-blue-50 p-2 rounded border border-blue-200 mt-2">
-                      💡 On iPhone: Use Preview then Share → Save to Files
-                    </div>
-                  )}
-                </div>
-              </div>
-            )}
-          </div>
-        </DialogContent>
-      </Dialog>
-      
-
-
-      {/* Share Dialog - All sharing options consolidated */}
-      <Dialog open={isShareDialogOpen} onOpenChange={setIsShareDialogOpen}>
-        <DialogContent className="max-w-[100vw] sm:max-w-md w-full min-w-0 max-h-[90vh] overflow-y-auto overflow-x-hidden bg-[#f8f8f8] px-4 with-keyboard-padding">
-          <DialogHeader>
-            <DialogTitle className="font-bold text-navy-900 border-b-2 border-gold-500 pb-2">
-              🔗 Share {petData.name}'s Resume
-            </DialogTitle>
-          </DialogHeader>
-
-          <div className="space-y-6">
-            {/* Resume Share Section */}
-            <div className="space-y-4">
-              <SocialShareButtons 
-                petName={petData.name}
-                petId={petData.id}
-                context="resume"
-                defaultOpenOptions={true}
-              />
-            </div>
-
-            {/* General Profile QR Section */}
-            <div className="space-y-4 border-t pt-4">
-              <h4 className="font-semibold text-navy-900">General Profile</h4>
-              <div className="space-y-3 text-center">
-                <p className="text-sm text-navy-600">Scan to view main profile</p>
-                <div className="flex justify-center p-4 bg-white rounded-lg border-2 border-gold-500/30">
-                  <img 
-                    src={generateQRCodeUrl(generatePublicProfileUrl(petData.id), 200)}
-                    alt={`QR Code for ${petData.name}'s profile`}
-                    className="w-48 h-48"
-                  />
-                </div>
-                
-                <div className="bg-white p-3 rounded border border-gray-200">
-                  <p className="text-xs text-gray-600 break-all">
-                    {generatePublicProfileUrl(petData.id)}
-                  </p>
-                </div>
-                
-                <Button
-                  onClick={async () => {
-                    const profileUrl = generatePublicProfileUrl(petData.id);
-                    try {
-                      await navigator.clipboard.writeText(profileUrl);
-                      toast.success("Profile URL copied to clipboard!");
-                    } catch (error) {
-                      toast.error("Failed to copy URL to clipboard");
-                    }
-                  }}
-                  variant="outline"
-                  className="border-gold-500 text-gold-600 hover:bg-gold-50"
-                >
-                  Copy Profile URL
-                </Button>
-              </div>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
+      {/* Quick Share Hub */}
+      <QuickShareHub 
+        petData={petData} 
+        isLost={false}
+      />
 
       {/* Photos Section */}
       <Card className="border-0 shadow-xl bg-white/90 backdrop-blur-sm">

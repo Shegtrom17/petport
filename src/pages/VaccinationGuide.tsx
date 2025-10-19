@@ -39,9 +39,6 @@ export default function VaccinationGuide() {
             <h1 className="text-3xl font-extrabold tracking-tight text-navy-900">
               Vaccination Guide
             </h1>
-            <p className="mt-2 text-navy-600">
-              Comprehensive vaccination requirements for travel, boarding, and age-based schedules
-            </p>
           </header>
 
           {/* Render the vaccination guide component in page mode */}

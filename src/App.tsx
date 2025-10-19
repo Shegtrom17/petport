@@ -9,7 +9,7 @@ import { ThemeProvider } from "@/context/ThemeContext";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { SafeErrorBoundary } from "@/components/SafeErrorBoundary";
-import { IOSRefreshPrompt } from "@/components/IOSRefreshPrompt";
+
 import { AuthKeepAliveWrapper } from "@/components/AuthKeepAliveWrapper";
 import { initializeDomainGuard } from "@/utils/domainGuard";
 import { ScrollToTop } from "@/components/ScrollToTop";
@@ -173,7 +173,7 @@ const App = () => {
                      } />
                    <Route path="*" element={<NotFound />} />
                   </Routes>
-                  <IOSRefreshPrompt />
+                  
                   </BrowserRouter>
                  </ErrorBoundary>
               </SafeErrorBoundary>

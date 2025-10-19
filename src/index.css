@@ -499,22 +499,31 @@ body.keyboard-open .keyboard-native-positioning {
 }
 
 /* === Android: Prevent modal height recalculation on keyboard open === */
-.platform-android [data-radix-dialog-content],
-.platform-android [data-radix-drawer-content] {
-  /* Use fixed pixel height instead of vh when keyboard is open */
-  max-height: calc(100vh - var(--kb-offset, 0px)) !important;
-  /* Prevent layout shift */
+.platform-android [data-radix-dialog-content] {
   position: fixed !important;
+  height: auto !important;
+  max-height: calc(100vh - var(--kb-offset, 0px)) !important;
   will-change: max-height;
   transition: max-height 0.2s ease-out;
   
-  /* Disable Radix's default centering transforms on Android */
-  transform: none !important;
-  
-  /* Manual centering that won't recalculate on viewport change */
+  /* Only center horizontally, anchor near top to prevent jump */
   left: 50% !important;
-  top: 50% !important;
-  translate: -50% -50% !important;
+  transform: translateX(-50%) !important;
+  top: clamp(12px, 8vh, 72px) !important;
+}
+
+/* Android: Vaul drawer - anchor to bottom, no vertical centering */
+.platform-android [data-vaul-drawer-content] {
+  position: fixed !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  top: auto !important;
+  transform: none !important;
+  height: auto !important;
+  max-height: calc(100vh - var(--kb-offset, 0px)) !important;
+  will-change: max-height;
+  transition: max-height 0.2s ease-out;
 }
 
 /* Ensure scroll containers inside modals account for keyboard */

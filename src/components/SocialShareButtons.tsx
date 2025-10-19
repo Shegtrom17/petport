@@ -408,7 +408,7 @@ title: "Link Copied! 📋",
                         <DrawerHeader>
                           <DrawerTitle>Share via Email</DrawerTitle>
                         </DrawerHeader>
-                        <div className="space-y-4 with-keyboard-padding">
+                        <div className="space-y-4 max-h-[60vh] overflow-y-auto with-keyboard-padding">
                           <div>
                             <Label htmlFor="recipientEmail">Recipient Email *</Label>
                             <Input

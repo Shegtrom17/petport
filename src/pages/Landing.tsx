@@ -134,33 +134,6 @@ export default function Landing() {
                 PetPort is your all-in-one digital information platform for pets and horses. Securely organize essential data: vaccines, insurance, medical records, and travel documents. Our innovative PetPort Whiteboards allow anyone with your unique link to view all your pet's shareable information instantly - groomers, sitters, or emergencies.  Share a professional pet résumé and care instructions in real-time. For a quick snapshot, the Whiteboard can also generate instant PDFs and lost-pet flyers in seconds.  Update your pet's data from anywhere, to anyone, Instantly.
               </p>
 
-              {/* AI Features Callout */}
-              <div className="mt-6 bg-white border-2 border-[#5691af] rounded-lg p-5 shadow-sm">
-                <div className="flex items-start gap-3">
-                  <div className="flex-shrink-0 w-8 h-8 bg-[#5691af] rounded flex items-center justify-center">
-                    <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                    </svg>
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-[#5691af] mb-3 text-base">NEW: AI-Powered Features</h3>
-                    <ul className="space-y-2.5 text-sm text-brand-primary-dark">
-                      <li className="flex items-start gap-2.5">
-                        <div className="w-1.5 h-1.5 bg-[#5691af] rounded-full mt-1.5 flex-shrink-0"></div>
-                        <span>Voice-to-text for quick notes and care instructions</span>
-                      </li>
-                      <li className="flex items-start gap-2.5">
-                        <div className="w-1.5 h-1.5 bg-[#5691af] rounded-full mt-1.5 flex-shrink-0"></div>
-                        <span>Smart bio builder that writes compelling pet profiles</span>
-                      </li>
-                      <li className="flex items-start gap-2.5">
-                        <div className="w-1.5 h-1.5 bg-[#5691af] rounded-full mt-1.5 flex-shrink-0"></div>
-                        <span>AI assistant to help fill out pet information effortlessly</span>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
               
               {/* Free Trial Badge */}
               <div className="mt-4 inline-flex items-center gap-2 bg-transparent border border-[#5691af]/30 rounded-full px-4 py-2">

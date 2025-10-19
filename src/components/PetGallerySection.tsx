@@ -20,6 +20,7 @@ import { GalleryLightbox } from "@/components/GalleryLightbox";
 import { useLongPress } from "@/hooks/useLongPress";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { supabase } from "@/integrations/supabase/client";
+import { QuickShareHub } from "@/components/QuickShareHub";
 
 // Helper to save current tab before risky actions
 const saveLastTab = async () => {
@@ -527,46 +528,30 @@ export const PetGallerySection = ({ petData, onUpdate, handlePetUpdate }: PetGal
       {/* Header with guidance */}
       <Card className="border-0 shadow-xl bg-brand-primary text-white">
         <CardContent className="p-6">
-          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4">
-            <div className="flex-1">
-              <div className="flex items-center space-x-3">
-                <Camera className="w-8 h-8 text-yellow-400" />
-                <h2 className="text-2xl font-bold">Pet Photo Gallery</h2>
-              </div>
+          <div className="flex items-center space-x-3">
+            <Camera className="w-8 h-8 text-yellow-400" />
+            <div>
+              <h2 className="text-2xl font-bold">Pet Photo Gallery</h2>
               <p className="text-blue-100 text-sm leading-relaxed mt-2">
                 Upload clear photos that show your pet's unique markings, size, or special features. 
                 The first four photos will be used for lost pet flyers. Drag to reorder.
               </p>
             </div>
-            <div className="flex flex-wrap gap-2 sm:gap-4 sm:justify-end">
-              <div 
-                onClick={handleUploadPhotos}
-                className={`cursor-pointer flex items-center justify-center text-white hover:text-yellow-300 hover:scale-110 transition-all duration-200 text-xs sm:text-base px-2 sm:px-4 py-2 ${(uploading || isLimitReached) ? 'opacity-50 cursor-not-allowed' : ''}`}
-              >
-                <Plus className="w-3 h-3 sm:w-5 sm:h-5 mr-1 sm:mr-2" />
-                <span className="hidden sm:inline">{uploading ? "Uploading..." : "Add Photos"}</span>
-                <span className="sm:hidden">{uploading ? "..." : "Add"}</span>
-              </div>
-              <div 
-                onClick={showGalleryPDFOptions}
-                className="cursor-pointer flex items-center justify-center text-white hover:text-yellow-300 hover:scale-110 transition-all duration-200 text-xs sm:text-base px-2 sm:px-4 py-2"
-              >
-                <Download className="w-3 h-3 sm:w-5 sm:h-5 mr-1 sm:mr-2" />
-                <span className="hidden sm:inline">Download PDF</span>
-                <span className="sm:hidden">PDF</span>
-              </div>
-              <div 
-                onClick={handleShareAction}
-                className={`cursor-pointer flex items-center justify-center text-white hover:text-yellow-300 hover:scale-110 transition-all duration-200 text-xs sm:text-base px-2 sm:px-4 py-2 ${galleryPhotos.length === 0 ? 'opacity-50 cursor-not-allowed' : ''}`}
-              >
-                <Share2 className="w-3 h-3 sm:w-5 sm:h-5 mr-1 sm:mr-2" />
-                <span className="hidden sm:inline">Share Gallery</span>
-                <span className="sm:hidden">Share</span>
-              </div>
-            </div>
           </div>
         </CardContent>
       </Card>
+
+      {/* Quick Share Hub */}
+      <QuickShareHub 
+        petData={petData} 
+        isLost={false}
+      />
+
+      {/* Quick Share Hub */}
+      <QuickShareHub 
+        petData={petData} 
+        isLost={false}
+      />
 
       {/* Upload Area with Camera Capture */}
       <Card className="border-0 shadow-lg bg-passport-section-bg backdrop-blur-sm">

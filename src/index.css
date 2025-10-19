@@ -498,6 +498,25 @@ body.keyboard-open .keyboard-native-positioning {
   }
 }
 
+/* === Android: Prevent modal height recalculation on keyboard open === */
+.platform-android [data-radix-dialog-content],
+.platform-android [data-radix-drawer-content] {
+  /* Use fixed pixel height instead of vh when keyboard is open */
+  max-height: calc(100vh - var(--kb-offset, 0px)) !important;
+  /* Prevent layout shift */
+  position: fixed !important;
+  will-change: max-height;
+  transition: max-height 0.2s ease-out;
+}
+
+/* Ensure scroll containers inside modals account for keyboard */
+.platform-android [data-radix-dialog-content] .with-keyboard-padding,
+.platform-android [data-radix-drawer-content] .with-keyboard-padding {
+  max-height: calc(100% - 120px); /* Account for header/footer */
+  padding-bottom: var(--kb-offset, 0px);
+  overscroll-behavior: contain;
+}
+
 /* ============================================
    iOS-SPECIFIC DIALOG POSITIONING FIXES
    ============================================ */

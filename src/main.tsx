@@ -12,6 +12,12 @@ if (isIOSDevice()) {
   document.documentElement.classList.add('platform-android');
 }
 
+// Add platform detection to body for CSS targeting
+const isAndroid = /android/i.test(navigator.userAgent);
+if (isAndroid) {
+  document.body.classList.add('platform-android');
+}
+
 // Global error handler for unhandled errors
 window.addEventListener('error', (event) => {
   console.error('Global error caught:', event.error);

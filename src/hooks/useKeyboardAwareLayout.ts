@@ -66,12 +66,30 @@ export const useKeyboardAwareLayout = () => {
         });
       }
     } else {
-      // ANDROID & others
+      // ANDROID & others - Enhanced viewport handling
       const vv = (window as any).visualViewport;
-      const keyboardHeight = vv ? Math.max(0, window.innerHeight - vv.height - vv.offsetTop) : 0;
+      if (!vv) {
+        // Fallback for browsers without Visual Viewport API
+        setKeyboardState({
+          isVisible: false,
+          height: 0,
+          bottomOffset: 0,
+          useNativePositioning: false,
+        });
+        return;
+      }
+      
+      const keyboardHeight = Math.max(0, window.innerHeight - vv.height - vv.offsetTop);
       const isKeyboardVisible = keyboardHeight > 100;
 
-      // Expose height to CSS for scroll container padding
+      // Add body class for CSS targeting
+      if (isKeyboardVisible) {
+        document.body.classList.add('keyboard-open', 'platform-android');
+      } else {
+        document.body.classList.remove('keyboard-open', 'platform-android');
+      }
+
+      // Expose height to CSS for all containers
       const offsetValue = isKeyboardVisible ? `${keyboardHeight}px` : '0px';
       document.documentElement.style.setProperty('--kb-offset', offsetValue);
       document.documentElement.style.setProperty('--keyboard-height', offsetValue);
@@ -79,7 +97,7 @@ export const useKeyboardAwareLayout = () => {
       setKeyboardState({
         isVisible: isKeyboardVisible,
         height: isKeyboardVisible ? keyboardHeight : 0,
-        bottomOffset: 0, // Never transform footer on Android
+        bottomOffset: 0,
         useNativePositioning: false,
       });
     }

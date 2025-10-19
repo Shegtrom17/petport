@@ -405,10 +405,10 @@ title: "Link Copied! 📋",
                         </Button>
                       </DrawerTrigger>
                       <DrawerContent className="px-4 pb-4">
-                        <DrawerHeader>
+                        <DrawerHeader className="flex-shrink-0">
                           <DrawerTitle>Share via Email</DrawerTitle>
                         </DrawerHeader>
-                        <div className="space-y-4 max-h-[60vh] overflow-y-auto with-keyboard-padding">
+                        <div className="space-y-4 overflow-y-auto with-keyboard-padding overscroll-contain" style={{ maxHeight: '60vh' }}>
                           <div>
                             <Label htmlFor="recipientEmail">Recipient Email *</Label>
                             <Input

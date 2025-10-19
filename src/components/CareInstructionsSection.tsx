@@ -1,27 +1,19 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from "@/components/ui/dialog";
-import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerTrigger, DrawerDescription } from "@/components/ui/drawer";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { Input } from "@/components/ui/input";
-import { Heart, Clock, Pill, Coffee, Moon, AlertTriangle, Edit, Loader2, FileText, Download, Share2, ExternalLink, Eye, Phone, Copy, Stethoscope, Sparkles } from "lucide-react";
+import { Heart, Clock, Pill, Coffee, Moon, AlertTriangle, Edit, Loader2, Sparkles } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import { ScrollControls } from "@/components/ui/scroll-controls";
-import { ContactsDisplay } from "@/components/ContactsDisplay";
-import { extractPhoneNumber, formatPhoneForTel } from "@/utils/contactUtils";
 import { CareInstructionsEditForm } from "@/components/CareInstructionsEditForm";
 import { fetchCareInstructions } from "@/services/careInstructionsService";
-import { generateQRCodeUrl, shareProfile, shareProfileOptimized, sharePDFBlob, generatePublicCareUrl } from "@/services/pdfService";
-import { generateClientPetPDF, downloadPDFBlob } from "@/services/clientPdfService";
 import { useToast } from "@/hooks/use-toast";
-import { useIsMobile } from "@/hooks/useIsMobile";
-import { SocialShareButtons } from "@/components/SocialShareButtons";
 import { supabase } from "@/integrations/supabase/client";
 import { FloatingAIButton } from "@/components/FloatingAIButton";
 import { AICareAssistantModal } from "@/components/AICareAssistantModal";
 import { AIMedicalAssistantModal } from "@/components/AIMedicalAssistantModal";
+import { QuickShareHub } from "@/components/QuickShareHub";
+import { Button } from "@/components/ui/button";
 
 interface CareInstructionsSectionProps {
   petData: any;
@@ -34,17 +26,10 @@ export const CareInstructionsSection = ({ petData, onUpdate, handlePetUpdate }: 
   const [isEditing, setIsEditing] = useState(false);
   const [careData, setCareData] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [isPdfDialogOpen, setIsPdfDialogOpen] = useState(false);
-  const [generatedPdfBlob, setGeneratedPdfBlob] = useState<Blob | null>(null);
-  const dialogContentRef = useRef<HTMLDivElement>(null);
-  const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
-  const [careShareDialogOpen, setCareShareDialogOpen] = useState(false);
   const [isAICareModalOpen, setIsAICareModalOpen] = useState(false);
   const [isAIMedicalModalOpen, setIsAIMedicalModalOpen] = useState(false);
-  const [isSharing, setIsSharing] = useState(false);
   const { toast } = useToast();
   const isHorse = petData.species?.toLowerCase() === 'horse';
-  const isMobile = useIsMobile();
 
 
   // Load care instructions from database
@@ -87,140 +72,6 @@ export const CareInstructionsSection = ({ petData, onUpdate, handlePetUpdate }: 
       console.error("Error reloading care instructions:", error);
     } finally {
       setIsLoading(false);
-    }
-  };
-
-  const showPdfOptions = () => {
-    setIsPdfDialogOpen(true);
-  };
-
-  const handlePdfAction = async (action: 'view' | 'download') => {
-    setIsGeneratingPDF(true);
-    
-    try {
-      // Refresh pet data to get latest care data before generating PDF
-      if (handlePetUpdate) {
-        await handlePetUpdate();
-      }
-      
-      console.log('Starting care instructions PDF generation for pet:', petData.id);
-      
-      // Fetch medical data to include in PDF
-      const { data: medicalData } = await supabase
-        .from('medical')
-        .select('medical_conditions, medical_alert, last_vaccination, medical_emergency_document')
-        .eq('pet_id', petData.id)
-        .single();
-      
-      // Combine pet data with medical data for PDF generation
-      const enhancedPetData = {
-        ...petData,
-        medical_conditions: medicalData?.medical_conditions,
-        medical_alert: medicalData?.medical_alert,
-        last_vaccination: medicalData?.last_vaccination,
-        medical_emergency_document: medicalData?.medical_emergency_document
-      };
-      
-      const result = await generateClientPetPDF(enhancedPetData, 'care');
-      
-      if (result.success && result.blob) {
-        setGeneratedPdfBlob(result.blob);
-        
-        if (action === 'download') {
-          const filename = `${petData.name}_Care_Instructions.pdf`;
-          try {
-            await downloadPDFBlob(result.blob, filename);
-            toast({
-              title: "PDF downloaded successfully!",
-              description: `${petData.name}'s care instructions PDF has been downloaded.`,
-            });
-            setIsPdfDialogOpen(false);
-          } catch (downloadError) {
-            console.error('Download failed:', downloadError);
-            toast({
-              title: "Download failed",
-              description: "Please try using Preview and save from there.",
-              variant: "destructive",
-            });
-          }
-        } else if (action === 'view') {
-          const filename = `${petData.name}_Care_Instructions.pdf`;
-          const { viewPDFBlob } = await import('@/services/clientPdfService');
-          await viewPDFBlob(result.blob, filename);
-        }
-      } else {
-        toast({
-          title: "PDF Generation Failed",
-          description: result.error || "Failed to generate PDF",
-          variant: "destructive",
-        });
-      }
-    } catch (error) {
-      console.error("Error generating PDF:", error);
-      toast({
-        title: "PDF Generation Failed",
-        description: "Failed to generate PDF",
-        variant: "destructive",
-      });
-    } finally {
-      setIsGeneratingPDF(false);
-    }
-  };
-
-  const handleViewPDF = async () => {
-    if (generatedPdfBlob) {
-      const filename = `${petData.name}_Care_Instructions.pdf`;
-      const { viewPDFBlob } = await import('@/services/clientPdfService');
-      await viewPDFBlob(generatedPdfBlob, filename);
-    }
-  };
-
-  const handleDownloadGeneratedPDF = async () => {
-    if (generatedPdfBlob) {
-      const filename = `${petData.name}_Care_Instructions.pdf`;
-      // Create a fresh blob for download to avoid security issues
-      const freshBlob = new Blob([await generatedPdfBlob.arrayBuffer()], { type: 'application/pdf' });
-      await downloadPDFBlob(freshBlob, filename);
-      toast({
-        title: "PDF downloaded successfully!",
-        description: `${petData.name}'s care instructions PDF has been downloaded.`,
-      });
-    }
-  };
-
-  const handleShareCareLink = async () => {
-    const careUrl = generatePublicCareUrl(petData.id);
-    setIsSharing(true);
-    try {
-      const result = await shareProfileOptimized(careUrl, petData.name, 'care');
-      
-      if (result.success) {
-        if (result.shared) {
-          toast({
-            title: "Care Instructions Shared! 📱",
-            description: `${petData.name}'s care instructions shared successfully.`,
-          });
-        } else {
-          toast({
-            title: "Link Copied! 📋",
-            description: "Care instructions link copied - share with caretakers!",
-          });
-        }
-      } else {
-        if (result.error === 'Share cancelled') {
-          return; // Don't show error for user cancellation
-        }
-        throw new Error(result.error || 'Sharing failed');
-      }
-    } catch (error) {
-      console.error('Failed to share care instructions:', error);
-      toast({
-        title: "Unable to Share",
-        description: "Please try again or copy the link manually.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsSharing(false);
     }
   };
 
@@ -301,7 +152,6 @@ export const CareInstructionsSection = ({ petData, onUpdate, handlePetUpdate }: 
               <div>
                 <h2 className="text-2xl font-bold">Care Instructions</h2>
                 <p className="text-blue-100">Complete care guide for {petData.name}</p>
-                <p className="text-xs text-blue-200 mt-2"><strong>Profile must be public to share.</strong></p>
               </div>
             </div>
             <div className="flex flex-col space-y-2 sm:flex-row sm:space-y-0 sm:space-x-4 ml-6">
@@ -316,368 +166,13 @@ export const CareInstructionsSection = ({ petData, onUpdate, handlePetUpdate }: 
                 <Edit className="w-4 h-4" />
                 <span className="text-sm">Edit</span>
               </div>
-              <div
-                onClick={showPdfOptions}
-                className="flex items-center space-x-2 p-2 text-white hover:text-blue-200 hover:scale-110 transition-all cursor-pointer"
-                role="button"
-                tabIndex={0}
-                aria-label="Generate PDF"
-                onKeyDown={(e) => e.key === 'Enter' && showPdfOptions()}
-              >
-                <Download className="w-4 h-4" />
-                <span className="text-sm">PDF</span>
-              </div>
-              {isMobile ? (
-                <Drawer open={careShareDialogOpen} onOpenChange={setCareShareDialogOpen}>
-                  <DrawerTrigger asChild>
-                    <div
-                      className={`flex items-center space-x-2 p-2 text-white hover:text-blue-200 hover:scale-110 transition-all cursor-pointer ${isSharing ? 'opacity-50 cursor-not-allowed' : ''}`}
-                      role="button"
-                      tabIndex={0}
-                      aria-label="Share care instructions"
-                      onKeyDown={(e) => e.key === 'Enter' && !isSharing && setCareShareDialogOpen(true)}
-                    >
-                      {isSharing ? (
-                        <Loader2 className="w-4 h-4 animate-spin" />
-                      ) : (
-                        <Share2 className="w-4 h-4" />
-                      )}
-                      <span className="text-sm">Share</span>
-                    </div>
-                  </DrawerTrigger>
-                  <DrawerContent className="px-4 bg-[#f8f8f8]">
-                    <DrawerHeader>
-                      <DrawerTitle className="text-navy-900 border-b-2 border-gold-500 pb-2">
-                        🌿 Share {petData.name}'s Care Instructions
-                      </DrawerTitle>
-                      <DrawerDescription className="text-navy-600 text-sm">
-                        Share your pet's care instructions with pet sitters and caregivers
-                      </DrawerDescription>
-                    </DrawerHeader>
-                    <div ref={dialogContentRef} className="max-h-[75vh] overflow-y-auto space-y-6 with-keyboard-padding">
-                      <ScrollControls targetRef={dialogContentRef} />
-                      {/* Public Care Instructions Link */}
-                      <div className="bg-white p-4 rounded-lg border border-gold-500/30 shadow-sm">
-                        <h4 className="font-bold text-foreground mb-2 flex items-center gap-2">
-                          <div className="w-6 h-6 bg-gold-500/20 rounded-full flex items-center justify-center">
-                            <ExternalLink className="w-3 h-3 text-gold-600" />
-                          </div>
-                          Public Care Instructions
-                        </h4>
-                        <p className="text-sm text-muted-foreground mb-3">Share detailed daily care info with pet sitters and caregivers. <strong>Profile must be public to share.</strong></p>
-
-                        <Button
-                          onClick={handleShareCareLink}
-                          disabled={isSharing || !petData.is_public}
-                          variant="outline"
-                          className="w-full border-border text-foreground hover:bg-muted"
-                        >
-                          {isSharing ? (
-                            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                          ) : (
-                            <Share2 className="w-4 h-4 mr-2" />
-                          )}
-                          Get Shareable Link
-                        </Button>
-                        {!petData.is_public && (
-                          <p className="text-xs text-red-700 mt-2">Make your pet profile public to enable sharing.</p>
-                        )}
-                      </div>
-
-                      {/* Social sharing options */}
-                      {petData.is_public ? (
-                        <div className="w-full min-w-0">
-                          <ErrorBoundary>
-                            <SocialShareButtons 
-                              petName={petData.name} 
-                              petId={petData.id} 
-                              context="care" 
-                              shareUrlOverride={generatePublicCareUrl(petData.id)} 
-                              defaultOpenOptions={true}
-                            />
-                          </ErrorBoundary>
-                        </div>
-                      ) : null}
-
-                      {/* QR Code Section */}
-                      {petData.is_public ? (
-                        <div className="border-t pt-6">
-                          <h4 className="font-semibold mb-3 text-center">Care Instructions QR Code</h4>
-                          <p className="text-sm text-muted-foreground mb-4 text-center">
-                            Scan to view care instructions
-                          </p>
-                          <div className="flex flex-col items-center space-y-4">
-                            <ErrorBoundary>
-                              <img 
-                                src={generateQRCodeUrl(generatePublicCareUrl(petData.id), 200)} 
-                                alt="QR Code for Care Instructions"
-                                className="border rounded-lg"
-                                onError={(e) => {
-                                  console.error('QR Code failed to load');
-                                  e.currentTarget.style.display = 'none';
-                                }}
-                              />
-                            </ErrorBoundary>
-                            <div className="w-full">
-                              <div className="flex items-center space-x-2">
-                                <Input
-                                  value={generatePublicCareUrl(petData.id)}
-                                  readOnly
-                                  className="text-xs"
-                                />
-                                <Button
-                                  size="sm"
-                                  onClick={() => {
-                                    navigator.clipboard.writeText(generatePublicCareUrl(petData.id));
-                                    toast({
-                                      title: "URL copied!",
-                                      description: "Care instructions URL copied to clipboard",
-                                    });
-                                  }}
-                                >
-                                  <Copy className="w-4 h-4" />
-                                </Button>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      ) : null}
-
-                      {/* Direct Links */}
-                      <div className="text-xs text-muted-foreground space-y-1 bg-muted p-3 rounded-lg">
-                        <p className="font-medium">Direct Links:</p>
-                        <p className="break-all">Care: {generatePublicCareUrl(petData.id)}</p>
-                        {generatedPdfBlob && <p className="break-all">PDF: Available after generation</p>}
-                      </div>
-                    </div>
-                  </DrawerContent>
-                </Drawer>
-              ) : (
-                <Dialog open={careShareDialogOpen} onOpenChange={setCareShareDialogOpen}>
-                  <DialogTrigger asChild>
-                    <div
-                      className={`flex items-center space-x-2 p-2 text-white hover:text-blue-200 hover:scale-110 transition-all cursor-pointer ${isSharing ? 'opacity-50 cursor-not-allowed' : ''}`}
-                      role="button"
-                      tabIndex={0}
-                      aria-label="Share care instructions"
-                      onKeyDown={(e) => e.key === 'Enter' && !isSharing && setCareShareDialogOpen(true)}
-                    >
-                      {isSharing ? (
-                        <Loader2 className="w-4 h-4 animate-spin" />
-                      ) : (
-                        <Share2 className="w-4 h-4" />
-                      )}
-                      <span className="text-sm">Share</span>
-                    </div>
-                  </DialogTrigger>
-                  <DialogContent 
-                    ref={dialogContentRef}
-                    className="max-w-[100vw] sm:max-w-md w-full min-w-0 max-h-[90vh] overflow-y-auto bg-[#f8f8f8] px-4 with-keyboard-padding"
-                  >
-                    <ScrollControls targetRef={dialogContentRef} />
-                    <DialogHeader>
-                      <DialogTitle className="text-navy-900 border-b-2 border-gold-500 pb-2">
-                        🌿 Share {petData.name}'s Care Instructions
-                      </DialogTitle>
-                      <DialogDescription className="text-navy-600 text-sm">
-                        Share your pet's care instructions with pet sitters and caregivers
-                      </DialogDescription>
-                    </DialogHeader>
-                    
-                    <div className="space-y-6">
-                      {/* Public Care Instructions Link */}
-                      <div className="bg-white p-4 rounded-lg border border-gold-500/30 shadow-sm">
-                        <h4 className="font-bold text-foreground mb-2 flex items-center gap-2">
-                          <div className="w-6 h-6 bg-gold-500/20 rounded-full flex items-center justify-center">
-                            <ExternalLink className="w-3 h-3 text-gold-600" />
-                          </div>
-                          Public Care Instructions
-                        </h4>
-                        <p className="text-sm text-muted-foreground mb-3">Share detailed daily care info with pet sitters and caregivers. <strong>Profile must be public to share.</strong></p>
-
-                        <Button
-                          onClick={handleShareCareLink}
-                          disabled={isSharing || !petData.is_public}
-                          variant="outline"
-                          className="w-full border-border text-foreground hover:bg-muted"
-                        >
-                          {isSharing ? (
-                            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                          ) : (
-                            <Share2 className="w-4 h-4 mr-2" />
-                          )}
-                          Get Shareable Link
-                        </Button>
-                        {!petData.is_public && (
-                          <p className="text-xs text-red-700 mt-2">Make your pet profile public to enable sharing.</p>
-                        )}
-                      </div>
-
-                      {/* Social sharing options */}
-                      {petData.is_public ? (
-                        <div className="w-full min-w-0">
-                          <ErrorBoundary>
-                            <SocialShareButtons 
-                              petName={petData.name} 
-                              petId={petData.id} 
-                              context="care" 
-                              shareUrlOverride={generatePublicCareUrl(petData.id)} 
-                              defaultOpenOptions={true}
-                            />
-                          </ErrorBoundary>
-                        </div>
-                      ) : null}
-
-                      {/* QR Code Section */}
-                      {petData.is_public ? (
-                        <div className="border-t pt-6">
-                          <h4 className="font-semibold mb-3 text-center">Care Instructions QR Code</h4>
-                          <p className="text-sm text-muted-foreground mb-4 text-center">
-                            Scan to view care instructions
-                          </p>
-                          <div className="flex flex-col items-center space-y-4">
-                            <ErrorBoundary>
-                              <img 
-                                src={generateQRCodeUrl(generatePublicCareUrl(petData.id), 200)} 
-                                alt="QR Code for Care Instructions"
-                                className="border rounded-lg"
-                                onError={(e) => {
-                                  console.error('QR Code failed to load');
-                                  e.currentTarget.style.display = 'none';
-                                }}
-                              />
-                            </ErrorBoundary>
-                            <div className="w-full">
-                              <div className="flex items-center space-x-2">
-                                <Input
-                                  value={generatePublicCareUrl(petData.id)}
-                                  readOnly
-                                  className="text-xs"
-                                />
-                                <Button
-                                  size="sm"
-                                  onClick={() => {
-                                    navigator.clipboard.writeText(generatePublicCareUrl(petData.id));
-                                    toast({
-                                      title: "URL copied!",
-                                      description: "Care instructions URL copied to clipboard",
-                                    });
-                                  }}
-                                >
-                                  <Copy className="w-4 h-4" />
-                                </Button>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      ) : null}
-
-                      {/* Direct Links */}
-                      <div className="text-xs text-muted-foreground space-y-1 bg-muted p-3 rounded-lg">
-                        <p className="font-medium">Direct Links:</p>
-                        <p className="break-all">Care: {generatePublicCareUrl(petData.id)}</p>
-                        {generatedPdfBlob && <p className="break-all">PDF: Available after generation</p>}
-                      </div>
-                    </div>
-                  </DialogContent>
-                </Dialog>
-              )}
-
             </div>
           </div>
-
-          {/* PDF Options Dialog */}
-          <Dialog open={isPdfDialogOpen} onOpenChange={setIsPdfDialogOpen}>
-            <DialogContent className="max-w-md bg-[#f8f8f8]">
-              <DialogHeader>
-                <DialogTitle className="font-bold text-navy-900 border-b-2 border-gold-500 pb-2">
-                  🌿 Care Instructions PDF Options
-                </DialogTitle>
-              </DialogHeader>
-              
-              <div className="space-y-6">
-                {/* PDF Actions */}
-                {!generatedPdfBlob && !isGeneratingPDF && (
-                  <div className="space-y-3">
-                    <p className="text-sm text-navy-600 text-center">
-                      Choose how you'd like to use {petData.name}'s care instructions:
-                    </p>
-                    
-                    <div className="grid grid-cols-2 gap-3">
-                      <Button
-                        onClick={() => handlePdfAction('view')}
-                        variant="outline"
-                        className="border-gold-500 text-gold-600 hover:bg-gold-50"
-                      >
-                        <Eye className="w-4 h-4 mr-2" />
-                        View PDF
-                      </Button>
-                      <Button
-                        onClick={() => handlePdfAction('download')}
-                        className="bg-gradient-to-r from-gold-500 to-gold-400 text-navy-900 hover:from-gold-400 hover:to-gold-300"
-                      >
-                        <Download className="w-4 h-4 mr-2" />
-                        Download PDF
-                      </Button>
-                    </div>
-                  </div>
-                )}
-
-                {/* Loading State */}
-                {isGeneratingPDF && (
-                  <div className="text-center space-y-3">
-                    <div className="inline-flex items-center justify-center w-16 h-16 bg-gold-100 rounded-full">
-                      <Loader2 className="w-8 h-8 text-gold-600 animate-spin" />
-                    </div>
-                    <p className="text-sm text-navy-600">
-                      Generating {petData.name}'s care instructions PDF...
-                    </p>
-                  </div>
-                )}
-
-                {/* Success State - PDF Generated */}
-                {generatedPdfBlob && !isGeneratingPDF && (
-                  <div className="space-y-4">
-                    <div className="text-center">
-                      <div className="inline-flex items-center justify-center w-16 h-16 bg-gold-100 rounded-full mb-3">
-                        <FileText className="w-8 h-8 text-gold-600" />
-                      </div>
-                      <p className="text-sm text-navy-600 mb-4">
-                        PDF ready! Choose an action:
-                      </p>
-                    </div>
-                    
-                    <div className="grid grid-cols-2 gap-3">
-                      <Button
-                        onClick={handleViewPDF}
-                        variant="outline"
-                        className="border-gold-500 text-gold-600 hover:bg-gold-50"
-                      >
-                        <Eye className="w-4 h-4 mr-2" />
-                        View PDF
-                      </Button>
-                      <Button
-                        onClick={handleDownloadGeneratedPDF}
-                        className="bg-gradient-to-r from-gold-500 to-gold-400 text-navy-900 hover:from-gold-400 hover:to-gold-300"
-                      >
-                        <Download className="w-4 h-4 mr-2" />
-                        Download
-                      </Button>
-                    </div>
-                  </div>
-                )}
-              </div>
-            </DialogContent>
-          </Dialog>
-          {!petData.is_public && (
-            <div className="mt-4 pt-4 border-t border-blue-400/30">
-              <p className="text-sm text-blue-200 text-center">
-                📝 Make your profile public in the privacy settings above to enable sharing & QR codes
-              </p>
-            </div>
-          )}
         </CardContent>
       </Card>
+      
+      {/* Quick Share Hub for Care */}
+      <QuickShareHub petData={petData} isLost={false} handlePetUpdate={handlePetUpdate} />
 
       {/* Feeding Schedule */}
       <Card className="border-0 shadow-lg border-l-4 border-l-[#5691af]">

@@ -364,6 +364,13 @@ export const PetProfileContent = ({
       {/* Contacts Display Section */}
       <div className="mb-8">
         <div className="bg-white/50 backdrop-blur-sm rounded-2xl p-6">
+          {/* Privacy Note for Contact Information */}
+          <div className="mb-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
+            <p className="text-xs text-blue-700">
+              🔒 <strong>Privacy Note:</strong> All PDFs include contact numbers. For social media safety, when sharing Whiteboards (public links), your Photo Gallery & Complete Profile hides contacts, Resume shows only Vet contact, while Care Instructions, Emergency Profile, and Missing Pet alerts display all contacts.
+            </p>
+          </div>
+          
           <ContactsDisplay petId={enhancedPetData?.id} fallbackPetData={enhancedPetData} refreshKey={contactsRefreshKey} />
         </div>
       </div>

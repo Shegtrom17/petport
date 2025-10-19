@@ -25,8 +25,8 @@ export const MobileNavigationMenu = ({ isOpen, onClose }: MobileNavigationMenuPr
   const pages = [
     { id: "profile", label: "Profile", icon: FileText },
     { id: "care", label: "Care & Handling", icon: Heart },
-    { id: "documents", label: "Documents", icon: FileText },
     { id: "resume", label: "Resume", icon: Badge },
+    { id: "documents", label: "Documents", icon: FileText },
     { id: "travel", label: "Global Journeys", icon: MapPin },
     { id: "gallery", label: "Portrait Gallery", icon: Camera },
     { id: "quickid", label: "Lost Pet", icon: Search },

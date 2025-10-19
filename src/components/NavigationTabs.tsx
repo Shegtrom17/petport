@@ -12,8 +12,8 @@ export const NavigationTabs = ({ activeTab, onTabChange, isMobile = false }: Nav
   const tabs = [
     { id: "profile", label: "PROFILE", icon: FileText },
     { id: "care", label: "CARE & HANDLING", icon: Heart },
-    { id: "documents", label: "DOCUMENTS", icon: FileText },
     { id: "resume", label: "RESUME", icon: Badge },
+    { id: "documents", label: "DOCUMENTS", icon: FileText },
     { id: "travel", label: "GLOBAL JOURNEYS", icon: MapPin },
     { id: "gallery", label: "PORTRAIT GALLERY", icon: Camera },
     { id: "quickid", label: "LOST PET", icon: Search, coachId: "quick-id" },

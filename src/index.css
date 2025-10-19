@@ -507,6 +507,14 @@ body.keyboard-open .keyboard-native-positioning {
   position: fixed !important;
   will-change: max-height;
   transition: max-height 0.2s ease-out;
+  
+  /* Disable Radix's default centering transforms on Android */
+  transform: none !important;
+  
+  /* Manual centering that won't recalculate on viewport change */
+  left: 50% !important;
+  top: 50% !important;
+  translate: -50% -50% !important;
 }
 
 /* Ensure scroll containers inside modals account for keyboard */

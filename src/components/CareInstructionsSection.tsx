@@ -143,31 +143,35 @@ export const CareInstructionsSection = ({ petData, onUpdate, handlePetUpdate }: 
     <div className="space-y-6">
 
 
-      {/* Care Summary */}
-      <Card className="border-0 shadow-xl bg-brand-primary text-white">
-        <CardContent className="p-6">
-          <div className="flex justify-between items-start">
-            <div className="flex items-center space-x-3 flex-1">
-              <Heart className="w-8 h-8 text-yellow-400" />
-              <div>
-                <h2 className="text-2xl font-bold">Care Instructions</h2>
-                <p className="text-blue-100">Complete care guide for {petData.name}</p>
-              </div>
-            </div>
-            <div className="flex flex-col space-y-2 sm:flex-row sm:space-y-0 sm:space-x-4 ml-6">
-              <div
-                onClick={() => setIsEditing(true)}
-                className="flex items-center space-x-2 p-2 text-white hover:text-blue-200 hover:scale-110 transition-all cursor-pointer"
-                role="button"
-                tabIndex={0}
-                aria-label="Edit care instructions"
-                onKeyDown={(e) => e.key === 'Enter' && setIsEditing(true)}
-              >
-                <Edit className="w-4 h-4" />
-                <span className="text-sm">Edit</span>
-              </div>
+      {/* Care & Handling Management Hub */}
+      <Card className="border-0 shadow-lg">
+        <CardContent className="p-6 space-y-4">
+          {/* Hub Title */}
+          <div className="flex items-center space-x-3">
+            <Heart className="w-8 h-8 text-[#5691af]" />
+            <div>
+              <h2 className="text-2xl font-bold text-foreground">Care & Handling</h2>
+              <p className="text-muted-foreground">Manage {petData.name}'s care instructions</p>
             </div>
           </div>
+
+          {/* Guidance Section */}
+          <div className="p-4 bg-blue-50 dark:bg-blue-950/30 border-l-4 border-l-blue-500 rounded-lg">
+            <p className="text-sm text-blue-900 dark:text-blue-100">
+              <strong>Care Management Hub:</strong> Add and manage feeding schedules, daily routines, 
+              medications, and important care notes. All information displays below for easy review and sharing.
+            </p>
+          </div>
+
+          {/* Wide Edit Button */}
+          <Button 
+            onClick={() => setIsEditing(true)}
+            className="w-full h-14 text-lg"
+            size="lg"
+          >
+            <Edit className="w-5 h-5 mr-2" />
+            Edit Care & Handling
+          </Button>
         </CardContent>
       </Card>
       

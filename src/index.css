@@ -267,6 +267,23 @@ textarea {
   scroll-behavior: smooth;
 }
 
+/* iOS-specific drawer scrolling fix */
+.ios-drawer-scroll {
+  -webkit-overflow-scrolling: touch;
+  overflow-y: auto;
+  overscroll-behavior-y: contain;
+}
+
+/* Ensure iOS drawer content container is properly sized */
+@supports (-webkit-touch-callout: none) {
+  .ios-drawer-scroll > div:first-of-type {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0; /* Critical for flex scrolling */
+  }
+}
+
 /* Hide scrollbar for cleaner mobile experience */
 .hide-scrollbar {
   -ms-overflow-style: none;
@@ -445,15 +462,24 @@ textarea {
   }
   }
 
-/* iOS DrawerContent patch - keeps drawer in visual viewport when keyboard opens */
+/* iOS DrawerContent patch - enables scrolling with proper positioning */
 @supports (-webkit-touch-callout: none) {
   .drawer-content {
     position: absolute !important;
     inset: auto 0 0 0 !important;
     height: auto !important;
-    max-height: 90vh;
-    overflow: visible !important;
+    max-height: 85vh; /* Reduced from 90vh for better iOS compatibility */
+    overflow-y: auto !important; /* Changed from 'visible' to 'auto' */
+    overflow-x: hidden !important;
     -webkit-overflow-scrolling: touch !important;
+    overscroll-behavior: contain;
+  }
+  
+  /* Ensure drawer inner content is scrollable */
+  [data-vaul-drawer-content] {
+    display: flex;
+    flex-direction: column;
+    max-height: 85vh;
   }
 }
   

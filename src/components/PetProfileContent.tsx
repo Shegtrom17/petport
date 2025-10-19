@@ -350,13 +350,6 @@ export const PetProfileContent = ({
       </div>
 
 
-      {/* Contacts Display Section */}
-      <div className="mb-8">
-        <div className="bg-white/50 backdrop-blur-sm rounded-2xl p-6">
-          <ContactsDisplay petId={enhancedPetData?.id} fallbackPetData={enhancedPetData} refreshKey={contactsRefreshKey} />
-        </div>
-      </div>
-
       {/* Quick Share Hub Section */}
       <div className="mb-8">
         <div className="bg-white/50 backdrop-blur-sm rounded-2xl p-6">
@@ -393,6 +386,13 @@ export const PetProfileContent = ({
               </div>
             </div>
           </div>
+        </div>
+      </div>
+
+      {/* Contacts Display Section */}
+      <div className="mb-8">
+        <div className="bg-white/50 backdrop-blur-sm rounded-2xl p-6">
+          <ContactsDisplay petId={enhancedPetData?.id} fallbackPetData={enhancedPetData} refreshKey={contactsRefreshKey} />
         </div>
       </div>
 

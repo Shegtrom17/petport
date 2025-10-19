@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Star, Shield, Heart, Phone, Mail, Award, AlertTriangle, MapPin, GraduationCap, Trophy, Activity, Edit, Users } from "lucide-react";
@@ -79,32 +80,36 @@ export const PetResumeSection = ({ petData, onUpdate, handlePetUpdate }: PetResu
       {/* Support Animal Status Banner */}
       <SupportAnimalBanner status={petData.supportAnimalStatus || null} />
 
-      {/* Header Section */}
-      <Card className="border-0 shadow-xl bg-brand-primary text-white">
-        <CardContent className="p-6">
-          <div className="flex justify-between items-start">
-            <div className="flex items-center space-x-3 flex-1">
-              <Shield className="w-8 h-8 text-yellow-400" />
-              <div>
-                <h2 className="text-2xl font-bold">Pet Resume</h2>
-                <p className="text-blue-100">Pet credentials & references</p>
-                <p className="text-xs text-blue-200 mt-1">Click "Edit" to add training, achievements, certifications, and work experience</p>
-              </div>
-            </div>
-            <div className="flex items-center ml-6">
-              <div
-                onClick={() => setIsEditModalOpen(true)}
-                className="flex items-center space-x-2 p-2 text-white hover:text-blue-200 hover:scale-110 transition-all cursor-pointer"
-                role="button"
-                tabIndex={0}
-                aria-label="Edit pet resume"
-                onKeyDown={(e) => e.key === 'Enter' && setIsEditModalOpen(true)}
-              >
-                <Edit className="w-4 h-4" />
-                <span className="text-sm">Edit</span>
-              </div>
+      {/* Pet Resume Management Hub */}
+      <Card className="border-0 shadow-lg">
+        <CardContent className="p-6 space-y-4">
+          {/* Hub Title */}
+          <div className="flex items-center space-x-3">
+            <Shield className="w-8 h-8 text-[#5691af]" />
+            <div>
+              <h2 className="text-2xl font-bold text-foreground">Pet Resume</h2>
+              <p className="text-muted-foreground">Manage {petData.name}'s professional credentials</p>
             </div>
           </div>
+
+          {/* Guidance Section */}
+          <div className="p-4 bg-blue-50 border-l-4 border-l-blue-500 rounded-lg">
+            <p className="text-sm text-blue-900">
+              <strong>Resume Management Hub:</strong> Add training courses, achievements, certifications, 
+              and work experience. Request references from veterinarians, trainers, or caretakers. 
+              Edit existing reviews and references. All information displays below for easy review and sharing.
+            </p>
+          </div>
+
+          {/* Wide Edit Button */}
+          <Button 
+            onClick={() => setIsEditModalOpen(true)}
+            className="w-full h-14 text-lg text-white"
+            size="lg"
+          >
+            <Edit className="w-5 h-5 mr-2" />
+            Edit Resume
+          </Button>
         </CardContent>
       </Card>
 

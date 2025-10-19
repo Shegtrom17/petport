@@ -79,7 +79,7 @@ export const DocumentsSection = ({ petId, petName, documents, onDocumentDeleted 
       e.preventDefault();
     }
     
-    await saveLastTab(); // Save tab before opening document
+    saveLastTab(); // Fire-and-forget to preserve iOS popup chain
     
     setViewingDocId(doc.id);
     

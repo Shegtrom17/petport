@@ -34,7 +34,7 @@ export default function ReferralProgram() {
             </h1>
             <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
               Share PetPort.app and earn money for every subscribing yearly plan.
-              Your Invite Helps a Dog Be Seen and Heard.
+              <em>"You're not just sharing an app — you're giving every pet a voice that lasts a lifetime."</em>
             </p>
             <a href="#pricing">
               <AzureButton size="lg" className="text-lg px-8 py-6">

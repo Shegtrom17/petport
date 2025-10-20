@@ -30,11 +30,11 @@ export default function ReferralProgram() {
         <section className="py-20 px-4">
           <div className="container max-w-4xl mx-auto text-center">
             <h1 className="text-5xl md:text-6xl font-bold mb-6 text-[#5691af]">
-              Earn $2 for Every Friend
+              Earn $2 for Every Referral
             </h1>
             <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
-              Share PetPort with friends and earn money when they subscribe to a yearly plan. 
-              Simple, transparent, and paid directly to your Stripe account.
+              Share PetPort.app and earn money for every subscribing yearly plan.
+              Your Invite Helps a Dog Be Seen and Heard.
             </p>
             <a href="#pricing">
               <AzureButton size="lg" className="text-lg px-8 py-6">

@@ -259,7 +259,7 @@ export default function Landing() {
                     size="lg"
                     className="border-brand-primary text-brand-primary hover:bg-brand-primary hover:text-white"
                   >
-                    Create Whiteboards for Your Pet
+                    Create LiveLinks for Your Pet
                   </Button>
                 </a>
                 <p className="text-sm text-muted-foreground">
@@ -292,7 +292,7 @@ export default function Landing() {
                     <div className="w-2 h-2 bg-brand-primary rounded-full flex-shrink-0 mt-2"></div>
                     <div>
                       <strong className="text-brand-primary">One‑Tap Missing Pet Flyer</strong>
-                      <p className="text-brand-primary-dark text-sm">with photos, last-seen details, and a shareable QR code, Instant PDF Flyer for printing (no designing needed). All can be updated instantly on your Lost Pet Whiteboard- share on social media, text and email.</p>
+                      <p className="text-brand-primary-dark text-sm">with photos, last-seen details, and a shareable QR code, Instant PDF Flyer for printing (no designing needed). All can be updated instantly on your Lost Pet LiveLink- share on social media, text and email.</p>
                     </div>
                   </div>
                   

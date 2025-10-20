@@ -228,7 +228,7 @@ const PublicCareInstructions = () => {
           <div className="flex flex-col items-center gap-0.5">
             <div className="flex items-center gap-2">
               <Sparkles className="h-5 w-5" />
-              <span className="font-semibold">✨ Live Demo – Real PetPort Whiteboard</span>
+              <span className="font-semibold">✨ Demo – PetPort LiveLink</span>
             </div>
             <span className="text-xs opacity-90">Instantly update from any device</span>
           </div>

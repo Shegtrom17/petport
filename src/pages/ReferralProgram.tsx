@@ -109,6 +109,13 @@ export default function ReferralProgram() {
               </div>
               
               <div className="border-l-4 border-[#5691af] pl-6 py-2">
+                <h3 className="font-semibold text-lg mb-2 text-gray-900">Referral Discount</h3>
+                <p className="text-gray-600">
+                  Friends who use your referral link get 10% off their yearly subscription. Monthly subscriptions do not qualify for the discount.
+                </p>
+              </div>
+              
+              <div className="border-l-4 border-[#5691af] pl-6 py-2">
                 <h3 className="font-semibold text-lg mb-2 text-gray-900">Payout Timeline</h3>
                 <p className="text-gray-600">
                   Commissions are approved 45 days after paid membership begins.

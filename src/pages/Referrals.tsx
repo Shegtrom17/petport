@@ -274,7 +274,7 @@ export default function Referrals() {
           <div>
             <h1 className="text-3xl font-bold">Referral Program</h1>
             <p className="text-muted-foreground mt-1">
-              Earn $2 for every friend who subscribes to a yearly plan
+              Earn $2 for every friend who subscribes to a yearly plan. Your friends get 10% off!
             </p>
           </div>
         </div>

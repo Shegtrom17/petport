@@ -36,6 +36,11 @@ serve(async (req) => {
 
     const origin = req.headers.get("origin") || "https://petport.app";
 
+    // Apply 10% discount for yearly plans with referral code
+    const discounts = referral_code && plan === "yearly" 
+      ? [{ coupon: "REFERRAL10" }] 
+      : undefined;
+
     const session = await stripe.checkout.sessions.create({
       mode: "subscription",
       line_items: [
@@ -54,6 +59,7 @@ serve(async (req) => {
         trial_period_days: 7,
         metadata: referral_code ? { referral_code } : {},
       },
+      discounts,
       success_url: `${origin}/post-checkout?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${origin}/subscribe`,
       allow_promotion_codes: true,

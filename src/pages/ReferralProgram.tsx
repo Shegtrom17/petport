@@ -111,7 +111,9 @@ export default function ReferralProgram() {
               <div className="border-l-4 border-[#5691af] pl-6 py-2">
                 <h3 className="font-semibold text-lg mb-2 text-gray-900">Referral Discount</h3>
                 <p className="text-gray-600">
-                  Friends who use your referral link get 10% off their yearly subscription. Monthly subscriptions do not qualify for the discount.
+                  Subscribers who use your referral link receive <strong>10% off their yearly subscription forever</strong>. 
+                  This discount applies to every renewal payment for as long as they stay subscribed. 
+                  Monthly subscriptions do not qualify for the discount or referral commission.
                 </p>
               </div>
               
@@ -193,6 +195,15 @@ export default function ReferralProgram() {
                 </h3>
                 <p className="text-gray-600">
                   Yes! Once you sign up, you'll have access to a referral dashboard where you can track all your referrals, pending commissions, and earnings history.
+                </p>
+              </div>
+              
+              <div>
+                <h3 className="font-semibold text-lg mb-2 text-gray-900">
+                  Is the $2 commission a one-time payment or recurring?
+                </h3>
+                <p className="text-gray-600">
+                  The $2 commission is a <strong>one-time payment</strong> per referred subscriber. You earn $2 when someone subscribes to a yearly plan using your link. However, the 10% discount your friend receives applies to every renewal for as long as they remain subscribed.
                 </p>
               </div>
             </div>

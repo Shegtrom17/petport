@@ -431,7 +431,7 @@ export default function DemoMissingPet() {
             size="lg"
             className="bg-white text-brand-primary hover:bg-brand-cream"
           >
-            Create Free Emergency Page
+            Create Emergency Page
           </Button>
         </div>
 

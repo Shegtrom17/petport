@@ -70,9 +70,9 @@ export default function Learn() {
         {/* Experience PetPort Whiteboards Section */}
         <section className="mb-16">
           <div className="text-center mb-8">
-            <h2 className="text-3xl font-bold text-brand-primary mb-4">Experience PetPort Whiteboards in Action</h2>
+            <h2 className="text-3xl font-bold text-brand-primary mb-4">Experience PetPort LiveLinks in Action</h2>
             <p className="text-lg text-brand-primary-dark max-w-3xl mx-auto">
-              See real PetPort whiteboards in action. These are live examples using Finnegan's actual profile data - everything updates in real-time. Click any card to explore the full interactive experience.
+              See how we give your pet a digital voice — fully interactive and easy to update from any device, to anyone, with your link.
             </p>
           </div>
 

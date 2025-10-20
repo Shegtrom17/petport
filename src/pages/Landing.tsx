@@ -172,8 +172,8 @@ export default function Landing() {
         <section className="bg-gradient-to-br from-brand-cream via-white to-brand-cream py-20">
           <div className="max-w-7xl mx-auto px-4">
             <div className="text-center mb-12">
-              <h2 className="text-4xl font-bold text-brand-primary mb-4">Experience a Live PetPort Whiteboard</h2>
-              <p className="text-xl text-brand-primary-dark mb-8">See real examples using Finnegan's actual profile data - Fully Interactive & update from any device to anyone with your whiteboard link</p>
+              <h2 className="text-4xl font-bold text-brand-primary mb-4">Experience PetPort LiveLinks</h2>
+              <p className="text-xl text-brand-primary-dark mb-8">See how we give your pet a digital voice — fully interactive and easy to update from any device, to anyone, with your link.</p>
             </div>
             
             <div className="grid md:grid-cols-2 gap-8 mb-12">

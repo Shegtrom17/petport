@@ -105,6 +105,23 @@ export default function Landing() {
         </div>
       </header>
 
+      {/* Referral Program Banner */}
+      <div className="bg-gradient-to-r from-[#5691af]/10 to-[#5691af]/5 border-b border-[#5691af]/20">
+        <div className="max-w-7xl mx-auto px-4 py-3">
+          <div className="flex items-center justify-center gap-3 flex-wrap">
+            <span className="text-[#5691af] font-semibold">💰 Earn $2 for Every Referral</span>
+            <Button 
+              onClick={() => navigate('/referral-program')}
+              variant="outline"
+              size="sm"
+              className="border-[#5691af] text-[#5691af] hover:bg-[#5691af] hover:text-white"
+            >
+              Learn More
+            </Button>
+          </div>
+        </div>
+      </div>
+
       {/* Development Navigation Helper - Preview Only */}
       {isPreview && user && publicPets.length > 0 && <div className="bg-blue-50 border-b border-blue-200">
           <div className="max-w-7xl mx-auto px-4 py-3">

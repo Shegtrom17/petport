@@ -32,9 +32,11 @@ export default function ReferralProgram() {
             <h1 className="text-5xl md:text-6xl font-bold mb-6 text-[#5691af]">
               Earn $2 for Every Referral
             </h1>
-            <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
+            <p className="text-xl text-gray-600 mb-4 max-w-2xl mx-auto">
               Share PetPort.app and earn money for every subscribing yearly plan.
-              <em>"You're not just sharing an app — you're giving every pet a voice that lasts a lifetime."</em>
+            </p>
+            <p className="text-lg text-gray-600 italic mb-8 max-w-2xl mx-auto">
+              "You're not just sharing an app — you're giving every pet a voice that lasts a lifetime."
             </p>
             <a href="#pricing">
               <AzureButton size="lg" className="text-lg px-8 py-6">

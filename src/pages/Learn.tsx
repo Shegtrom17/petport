@@ -8,6 +8,7 @@ import createProfileScreenshot from "@/assets/create-profile-screenshot.png";
 import documentUploadScreenshot from "@/assets/document-upload-screenshot.png";
 import resumeDetailsScreenshot from "@/assets/resume-details-screenshot.png";
 import shareInstructionsScreenshot from "@/assets/share-instructions-screenshot.png";
+import referralProgramHero from "@/assets/referral-program-hero.png";
 
 export default function Learn() {
   return <div className="min-h-screen bg-white">
@@ -49,6 +50,18 @@ export default function Learn() {
             </Link>
           </div>
         </div>
+      </div>
+
+      {/* Referral Program Image */}
+      <div className="max-w-4xl mx-auto px-4 pt-8">
+        <Link to="/referral-program" className="block">
+          <img 
+            src={referralProgramHero} 
+            alt="PetPort referral program - Give every pet a voice that lasts a lifetime. Earn rewards by sharing PetPort with fellow pet owners."
+            className="w-full h-auto rounded-lg shadow-md hover:shadow-lg transition-shadow cursor-pointer"
+            loading="lazy"
+          />
+        </Link>
       </div>
 
       <main className="max-w-4xl mx-auto px-4 py-12">

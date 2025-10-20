@@ -75,7 +75,7 @@ export const ReferralCard = ({
             </AzureButton>
           </div>
           <p className="text-xs text-muted-foreground">
-            Earn $2.00 for every friend who subscribes to a yearly plan
+            Earn $2.00 for every Yearly Subscriber. Subscribers receive 10% discount.
           </p>
         </div>
 

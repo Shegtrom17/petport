@@ -42,11 +42,13 @@ import {
   Eye,
   Loader2,
   X,
-  Download
+  Download,
+  QrCode
 } from "lucide-react";
 import { generateShareURL } from "@/utils/domainUtils";
 import { generateClientPetPDF, viewPDFBlob, downloadPDFBlob, isIOS } from '@/services/clientPdfService';
 import { sharePDFBlob } from '@/services/pdfService';
+import { shareQRCode } from "@/utils/qrShare";
 
 interface QuickShareHubProps {
   petData: any; // Accept full pet object with all fields
@@ -1072,7 +1074,7 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
                       </Button>
 
                       {/* Sharing Options */}
-                      <div className="grid grid-cols-3 gap-1" data-touch-safe="true">
+                      <div className="grid grid-cols-4 gap-1" data-touch-safe="true">
                         <Button
                           onClick={() => page.available ? handleCopyLink(page) : null}
                           onTouchEnd={(e) => e.stopPropagation()}
@@ -1090,6 +1092,19 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
                           <span className="text-xs font-medium leading-tight">
                             {copyingId === page.id ? 'Copied' : 'Copy'}
                           </span>
+                        </Button>
+                        
+                        <Button
+                          onClick={() => page.available ? shareQRCode(`${baseUrl}${page.path}`, petData.name, page.title) : null}
+                          onTouchEnd={(e) => e.stopPropagation()}
+                          variant="outline"
+                          size="sm"
+                          disabled={!page.available}
+                          style={{ touchAction: 'none' }}
+                          className="text-sm flex flex-col items-center py-3 px-2 h-16 min-h-16 bg-white border-primary text-primary hover:bg-primary/10 hover:text-primary"
+                        >
+                          <QrCode className="w-4 h-4 mb-1" />
+                          <span className="text-xs font-medium leading-tight">QR</span>
                         </Button>
                         
                         <Button
@@ -1283,7 +1298,7 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
                         )}
                       </Button>
                       
-                      <div className="grid grid-cols-3 gap-1" data-touch-safe="true">
+                      <div className="grid grid-cols-4 gap-1" data-touch-safe="true">
                         <Button
                           onClick={() => page.available ? handleCopyLink(page) : null}
                           onTouchEnd={(e) => e.stopPropagation()}
@@ -1301,6 +1316,19 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
                           <span className="text-xs font-medium leading-tight">
                             {copyingId === page.id ? 'Copied' : 'Copy'}
                           </span>
+                        </Button>
+                        
+                        <Button
+                          onClick={() => page.available ? shareQRCode(`${baseUrl}${page.path}`, petData.name, page.title) : null}
+                          onTouchEnd={(e) => e.stopPropagation()}
+                          variant="outline"
+                          size="sm"
+                          disabled={!page.available}
+                          style={{ touchAction: 'none' }}
+                          className="text-sm flex flex-col items-center py-3 px-2 h-16 min-h-16 bg-white border-primary text-primary hover:bg-primary/10 hover:text-primary"
+                        >
+                          <QrCode className="w-4 h-4 mb-1" />
+                          <span className="text-xs font-medium leading-tight">QR</span>
                         </Button>
                         
                         <Button
@@ -1485,7 +1513,7 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
                       </Button>
 
                       {/* Sharing Options */}
-                      <div className="grid grid-cols-3 gap-1" data-touch-safe="true">
+                      <div className="grid grid-cols-4 gap-1" data-touch-safe="true">
                         <Button
                           onClick={() => page.available ? handleCopyLink(page) : null}
                           onTouchEnd={(e) => e.stopPropagation()}
@@ -1503,6 +1531,19 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
                           <span className="text-xs font-medium leading-tight">
                             {copyingId === page.id ? 'Copied' : 'Copy'}
                           </span>
+                        </Button>
+                        
+                        <Button
+                          onClick={() => page.available ? shareQRCode(`${baseUrl}${page.path}`, petData.name, page.title) : null}
+                          onTouchEnd={(e) => e.stopPropagation()}
+                          variant="outline"
+                          size="sm"
+                          disabled={!page.available}
+                          style={{ touchAction: 'none' }}
+                          className="text-sm flex flex-col items-center py-3 px-2 h-16 min-h-16 bg-white border-primary text-primary hover:bg-primary/10 hover:text-primary"
+                        >
+                          <QrCode className="w-4 h-4 mb-1" />
+                          <span className="text-xs font-medium leading-tight">QR</span>
                         </Button>
                         
                         <Button
@@ -1697,7 +1738,7 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
                       </Button>
 
                       {/* Sharing Options */}
-                      <div className="grid grid-cols-3 gap-1" data-touch-safe="true">
+                      <div className="grid grid-cols-4 gap-1" data-touch-safe="true">
                         <Button
                           onClick={() => page.available ? handleCopyLink(page) : null}
                           onTouchEnd={(e) => e.stopPropagation()}
@@ -1715,6 +1756,19 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
                           <span className="text-xs font-medium leading-tight">
                             {copyingId === page.id ? 'Copied' : 'Copy'}
                           </span>
+                        </Button>
+                        
+                        <Button
+                          onClick={() => page.available ? shareQRCode(`${baseUrl}${page.path}`, petData.name, page.title) : null}
+                          onTouchEnd={(e) => e.stopPropagation()}
+                          variant="outline"
+                          size="sm"
+                          disabled={!page.available}
+                          style={{ touchAction: 'none' }}
+                          className="text-sm flex flex-col items-center py-3 px-2 h-16 min-h-16 bg-white border-primary text-primary hover:bg-primary/10 hover:text-primary"
+                        >
+                          <QrCode className="w-4 h-4 mb-1" />
+                          <span className="text-xs font-medium leading-tight">QR</span>
                         </Button>
                         
                         <Button
@@ -1910,7 +1964,7 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
                       </Button>
 
                       {/* Sharing Options - Row 1 */}
-                      <div className="grid grid-cols-3 gap-1" data-touch-safe="true">
+                      <div className="grid grid-cols-4 gap-1" data-touch-safe="true">
                         <Button
                           onClick={() => page.available ? handleCopyLink(page) : null}
                           onTouchEnd={(e) => e.stopPropagation()}
@@ -1928,6 +1982,19 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
                           <span className="text-xs font-medium leading-tight">
                             {copyingId === page.id ? 'Copied' : 'Copy'}
                           </span>
+                        </Button>
+                        
+                        <Button
+                          onClick={() => page.available ? shareQRCode(`${baseUrl}${page.path}`, petData.name, page.title) : null}
+                          onTouchEnd={(e) => e.stopPropagation()}
+                          variant="outline"
+                          size="sm"
+                          disabled={!page.available}
+                          style={{ touchAction: 'none' }}
+                          className="text-sm flex flex-col items-center py-3 px-2 h-16 min-h-16 bg-white border-primary text-primary hover:bg-primary/10 hover:text-primary"
+                        >
+                          <QrCode className="w-4 h-4 mb-1" />
+                          <span className="text-xs font-medium leading-tight">QR</span>
                         </Button>
                         
                         <Button
@@ -2140,7 +2207,7 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
                       </Button>
                       
                       {/* Secondary Options */}
-                      <div className="grid grid-cols-3 gap-1" data-touch-safe="true">
+                      <div className="grid grid-cols-4 gap-1" data-touch-safe="true">
                         <Button
                           onClick={() => page.available ? handleCopyLink(page) : null}
                           onTouchEnd={(e) => e.stopPropagation()}
@@ -2164,6 +2231,25 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
                           <span className="text-xs font-medium leading-tight">
                             {copyingId === page.id ? 'Copied' : 'Copy'}
                           </span>
+                        </Button>
+                        
+                        <Button
+                          onClick={() => page.available ? shareQRCode(`${baseUrl}${page.path}`, petData.name, page.title) : null}
+                          onTouchEnd={(e) => e.stopPropagation()}
+                          variant="outline"
+                          size="sm"
+                          disabled={!page.available}
+                          style={{ touchAction: 'none' }}
+                          className={`text-sm flex flex-col items-center py-3 px-2 h-16 min-h-16 ${
+                            page.variant === 'missing' 
+                              ? page.available
+                                ? 'border-red-600 text-red-700 hover:bg-red-50' 
+                                : 'border-gray-300 text-gray-400 cursor-not-allowed'
+                              : 'bg-white border-primary text-primary hover:bg-primary/10 hover:text-primary'
+                          }`}
+                        >
+                          <QrCode className="w-4 h-4 mb-1" />
+                          <span className="text-xs font-medium leading-tight">QR</span>
                         </Button>
                         
                         <Button

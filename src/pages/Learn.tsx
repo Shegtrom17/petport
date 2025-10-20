@@ -38,7 +38,7 @@ export default function Learn() {
       <div className="bg-gradient-to-r from-[#5691af]/10 to-[#5691af]/5 border-b border-[#5691af]/20">
         <div className="max-w-7xl mx-auto px-4 py-3">
           <div className="flex items-center justify-center gap-3 flex-wrap">
-            <span className="text-[#5691af] font-semibold">💰 Earn $2 for Every Referral</span>
+            <span className="text-[#5691af] font-semibold">💰 Help another pet find their voice and earn $2 as a thank you</span>
             <Link to="/referral-program">
               <Button 
                 variant="outline"

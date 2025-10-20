@@ -219,7 +219,7 @@ export default function Learn() {
 
           <div className="text-center">
             <p className="text-sm text-muted-foreground mb-4">
-              These demos use real data from Finn's actual PetPort profile - everything updates in real-time
+              Demos use real data from Finnegan's PetPort Profile Information - all entries updated in real time.
             </p>
             <div className="flex flex-col items-center gap-2">
               <a href="#pricing">

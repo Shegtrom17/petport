@@ -197,7 +197,7 @@ export default function Learn() {
                   size="lg"
                   className="border-brand-primary text-brand-primary hover:bg-brand-primary hover:text-white"
                 >
-                  Create Whiteboards for Your Pet
+                  Create LiveLinks for Your Pet
                 </Button>
               </a>
               <p className="text-sm text-muted-foreground">

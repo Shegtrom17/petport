@@ -43,7 +43,7 @@ export default function Demos() {
       borderColor: "border-red-200 hover:border-red-500",
       features: [
         "Last seen location & time details",
-        "Emergency contacts & instructions",
+        "Interactive public sighting board",
         "Shareable QR code for flyers",
         "Photo gallery & distinctive features"
       ],

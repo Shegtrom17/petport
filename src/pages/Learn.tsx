@@ -3,7 +3,6 @@ import { Button } from "@/components/ui/button";
 import { MetaTags } from "@/components/MetaTags";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { PricingSection } from "@/components/PricingSection";
-import { FINN_DEMO_PET_ID } from '@/data/finnDemoData';
 import createProfileScreenshot from "@/assets/create-profile-screenshot.png";
 import documentUploadScreenshot from "@/assets/document-upload-screenshot.png";
 import resumeDetailsScreenshot from "@/assets/resume-details-screenshot.png";
@@ -169,7 +168,7 @@ export default function Learn() {
                     <span>Health monitoring guidelines</span>
                   </li>
                 </ul>
-                <Link to={`/care/${FINN_DEMO_PET_ID}`} className="block w-full">
+                <Link to="/demo/care" className="block w-full">
                   <Button 
                     className="w-full bg-[#5691af] hover:bg-[#4a7d99] text-white"
                     size="lg"

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { AzureButton } from "@/components/ui/azure-button";
 import { Shield, Award, GraduationCap, Trophy, Activity, Star, MapPin, Heart, Phone, Mail } from "lucide-react";
 import { MetaTags } from "@/components/MetaTags";
 import { SupportAnimalBanner } from "@/components/SupportAnimalBanner";
@@ -163,13 +163,13 @@ export default function PublicResume() {
             <p className="text-sm text-navy-600 mb-3">
               Interested in working with {data.name}? Send a message to the owner.
             </p>
-            <Button 
+            <AzureButton 
               onClick={() => setIsContactModalOpen(true)}
               className="gap-2"
             >
               <Mail className="w-4 h-4" />
               Contact Owner
-            </Button>
+            </AzureButton>
           </CardContent>
         </Card>
 

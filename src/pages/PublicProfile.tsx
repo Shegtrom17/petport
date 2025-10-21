@@ -11,6 +11,7 @@ import { MetaTags } from "@/components/MetaTags";
 import { AddReviewForm } from "@/components/AddReviewForm";
 import { ContactsDisplay } from "@/components/ContactsDisplay";
 import { ContactOwnerModal } from "@/components/ContactOwnerModal";
+import { AzureButton } from "@/components/ui/azure-button";
 import { sanitizeText, sanitizeHtml } from "@/utils/inputSanitizer";
 
 const PublicProfile = () => {
@@ -358,13 +359,13 @@ const PublicProfile = () => {
               <p className="text-sm text-navy-600 mb-3">
                 Have questions about {petData.name}? Send a message to the owner.
               </p>
-              <Button 
+              <AzureButton 
                 onClick={() => setIsContactModalOpen(true)}
                 className="gap-2"
               >
                 <Mail className="w-4 h-4" />
                 Contact Owner
-              </Button>
+              </AzureButton>
             </CardContent>
           </Card>
 

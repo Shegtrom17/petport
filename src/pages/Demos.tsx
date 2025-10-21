@@ -69,15 +69,15 @@ export default function Demos() {
     {
       id: "gallery",
       title: "Photo Gallery",
-      description: "Beautiful photo gallery to share your pet's best moments. Perfect for social sharing and memories.",
+      description: "Secure your pet's best moments. No more searching for your favorite pet moment. Perfect for social sharing and Lost Pet Identifiers",
       icon: ImageIcon,
       color: "from-[#d4c5b0] to-[#bfb09b]",
       borderColor: "border-[#d4c5b0]/40 hover:border-[#d4c5b0]",
       features: [
-        "Unlimited photo uploads",
-        "Organized by date & event",
+        "36 photo upload sleaves",
+        "Organized by drag & drop",
         "Social media ready sharing",
-        "High-resolution image support"
+        "Caption and title each photo"
       ],
       demoLink: null,
       hasLiveDemo: false

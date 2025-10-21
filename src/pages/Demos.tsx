@@ -58,10 +58,10 @@ export default function Demos() {
       color: "from-[#6ba3c1] to-[#5691af]",
       borderColor: "border-[#6ba3c1]/30 hover:border-[#6ba3c1]",
       features: [
+        "Interactive live care update board",
         "Daily routines & feeding schedule",
         "Medication & allergy information",
-        "Behavioral notes & preferences",
-        "Emergency protocols & vet contacts"
+        "Behavioral notes & preferences"
       ],
       demoLink: "/demo/care",
       hasLiveDemo: true

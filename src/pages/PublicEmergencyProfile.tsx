@@ -8,6 +8,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { Heart, MapPin, Phone, Shield, Building, Mail, Globe, AlertTriangle } from "lucide-react";
 import { SocialShareButtons } from "@/components/SocialShareButtons";
 import { MetaTags } from "@/components/MetaTags";
+import { AzureButton } from "@/components/ui/azure-button";
+import { ContactOwnerModal } from "@/components/ContactOwnerModal";
 import { sanitizeText } from "@/utils/inputSanitizer";
 import { getOrderedContacts } from "@/utils/contactUtils";
 
@@ -18,6 +20,7 @@ const PublicEmergencyProfile = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [retryCount, setRetryCount] = useState(0);
+  const [isContactModalOpen, setIsContactModalOpen] = useState(false);
 
   useEffect(() => {
     const loadPetData = async () => {
@@ -239,6 +242,22 @@ const PublicEmergencyProfile = () => {
             </CardContent>
           </Card>
 
+          {/* Contact Owner Button */}
+          <Card className="mb-6 bg-red-50/50 border-red-200">
+            <CardContent className="pt-6 text-center">
+              <p className="text-sm text-red-700 mb-3">
+                Need to reach {petData.name}'s owner? Send a secure message.
+              </p>
+              <AzureButton 
+                onClick={() => setIsContactModalOpen(true)}
+                className="gap-2"
+              >
+                <Mail className="w-4 h-4" />
+                Contact Owner
+              </AzureButton>
+            </CardContent>
+          </Card>
+
           {/* Medical Alert Banner */}
           {petData.medical?.medical_alert && (
             <Alert className="mb-6 border-red-600 bg-red-50">
@@ -371,6 +390,14 @@ const PublicEmergencyProfile = () => {
             </p>
           </div>
         </div>
+
+        <ContactOwnerModal
+          isOpen={isContactModalOpen}
+          onClose={() => setIsContactModalOpen(false)}
+          petId={petId || ""}
+          petName={petData.name}
+          pageType="profile"
+        />
       </div>
     </>
   );

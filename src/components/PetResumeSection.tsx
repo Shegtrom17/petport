@@ -118,7 +118,7 @@ export const PetResumeSection = ({ petData, onUpdate, handlePetUpdate }: PetResu
               className="w-full h-14 text-lg bg-[#5691af] text-white hover:bg-[#4a7d99] hover:text-white border-[#5691af] focus-visible:ring-[#5691af]"
             >
               <Eye className="w-5 h-5 mr-2" />
-              Preview Public Resume
+              Preview Resume LiveLink
             </Button>
           </div>
         </CardContent>

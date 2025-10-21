@@ -550,7 +550,7 @@ export const PetGallerySection = ({ petData, onUpdate, handlePetUpdate }: PetGal
             className="w-full bg-[#5691af] text-white hover:bg-[#4a7d99] hover:text-white border-[#5691af] focus-visible:ring-[#5691af]"
           >
             <Eye className="w-4 h-4 mr-2" />
-            Preview Public Gallery
+            Preview Gallery LiveLink
           </Button>
         </CardContent>
       </Card>

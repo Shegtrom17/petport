@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.39.3";
+import { ServerClient } from "npm:postmark@4.0.2";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -71,20 +72,25 @@ const handler = async (req: Request): Promise<Response> => {
     const carePageUrl = `https://petport.app/care/${petId}`;
 
     // Send email using Postmark
-    const POSTMARK_API_KEY = Deno.env.get('POSTMARK_API_KEY');
-    if (!POSTMARK_API_KEY) {
-      console.error('POSTMARK_API_KEY not configured');
+    const postmarkApiKey = Deno.env.get('POSTMARK_API_KEY');
+    const messageStream = Deno.env.get('POSTMARK_BROADCAST_STREAM') || 'broadcast';
+    
+    if (!postmarkApiKey) {
+      console.error('[NOTIFY-CARE-UPDATE] POSTMARK_API_KEY not configured');
       return new Response(
         JSON.stringify({ error: 'Email service not configured' }),
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
-    const emailPayload = {
-      From: 'care@petport.app',
-      To: profileData.email,
-      Subject: `💚 New Care Update for ${petData.name}`,
-      HtmlBody: `
+    const postmark = new ServerClient(postmarkApiKey);
+
+    try {
+      const emailResponse = await postmark.sendEmail({
+        From: 'care@petport.app',
+        To: profileData.email,
+        Subject: `💚 New Care Update for ${petData.name}`,
+        HtmlBody: `
         <!DOCTYPE html>
         <html>
         <head>
@@ -125,7 +131,7 @@ const handler = async (req: Request): Promise<Response> => {
         </body>
         </html>
       `,
-      TextBody: `
+        TextBody: `
 💚 New Care Update for ${petData.name}
 
 Hi${profileData.full_name ? ` ${profileData.full_name}` : ''},
@@ -146,35 +152,22 @@ This is an automated notification from PetPort. Stay connected with ${petData.na
 PetPort - Your Pet's Digital Companion
 https://petport.app
       `,
-      MessageStream: 'outbound'
-    };
+        MessageStream: messageStream,
+      });
 
-    const emailResponse = await fetch('https://api.postmarkapp.com/email', {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'X-Postmark-Server-Token': POSTMARK_API_KEY,
-      },
-      body: JSON.stringify(emailPayload),
-    });
+      console.log('[NOTIFY-CARE-UPDATE] Email sent successfully:', emailResponse.MessageID);
 
-    if (!emailResponse.ok) {
-      const errorText = await emailResponse.text();
-      console.error('Postmark error:', errorText);
       return new Response(
-        JSON.stringify({ error: 'Failed to send email', details: errorText }),
+        JSON.stringify({ success: true, messageId: emailResponse.MessageID }),
+        { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    } catch (emailError: any) {
+      console.error('[NOTIFY-CARE-UPDATE] Failed to send email:', emailError);
+      return new Response(
+        JSON.stringify({ error: 'Failed to send email', details: emailError.message }),
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
-
-    const emailResult = await emailResponse.json();
-    console.log('Email sent successfully:', emailResult);
-
-    return new Response(
-      JSON.stringify({ success: true, messageId: emailResult.MessageID }),
-      { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-    );
 
   } catch (error: any) {
     console.error('Error in notify-care-update function:', error);

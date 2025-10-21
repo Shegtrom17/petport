@@ -395,6 +395,15 @@ export default function PublicMissingPet() {
       
       if (error) throw error;
       
+      // Send notification email to owner (fire and forget)
+      supabase.functions.invoke('notify-sighting', {
+        body: {
+          petId,
+          sightingText: sightingText.trim().slice(0, 200),
+          reportedAt: new Date().toISOString()
+        }
+      }).catch(err => console.error('Failed to send sighting notification:', err));
+      
       setSightingText('');
       toast.success('Sighting reported!', {
         description: 'Thank you for helping find this pet'

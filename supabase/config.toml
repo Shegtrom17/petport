@@ -114,3 +114,6 @@ verify_jwt = false
 
 [functions.create-referral]
 verify_jwt = false
+
+[functions.notify-sighting]
+verify_jwt = false

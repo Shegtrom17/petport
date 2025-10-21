@@ -1,6 +1,6 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.39.3";
-import { ServerClient } from "https://deno.land/x/postmark@v1.2.0/mod.ts";
+import { ServerClient } from "npm:postmark@4.0.2";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',

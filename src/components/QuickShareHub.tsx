@@ -942,7 +942,7 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
           Quick Share Hub
         </CardTitle>
         <p className="text-sm text-muted-foreground">
-          Share live links that update in real time for viewers
+          Share PDFs via email and LiveLinks that update in real time
         </p>
       </CardHeader>
       <CardContent>

@@ -28,8 +28,8 @@ export default function Demos() {
       features: [
         "Professional certifications & credentials",
         "Training history & achievements",
-        "References & verified reviews",
-        "Experience & activities timeline"
+        "Interactive references & verified reviews",
+        "Travel experience timeline"
       ],
       demoLink: "/demo/resume",
       hasLiveDemo: true

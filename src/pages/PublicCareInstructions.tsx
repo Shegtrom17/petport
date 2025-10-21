@@ -4,13 +4,15 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
-import { Clock, Heart, AlertTriangle, MapPin, Pill, Sparkles } from "lucide-react";
+import { Clock, Heart, AlertTriangle, MapPin, Pill, Sparkles, Mail } from "lucide-react";
 import { fetchPetDetails } from '@/services/petService';
 import { fetchCareInstructions } from '@/services/careInstructionsService';
 import { supabase } from "@/integrations/supabase/client";
 import { MetaTags } from "@/components/MetaTags";
 import { Button } from "@/components/ui/button";
+import { AzureButton } from "@/components/ui/azure-button";
 import { ContactsDisplay } from "@/components/ContactsDisplay";
+import { ContactOwnerModal } from "@/components/ContactOwnerModal";
 
 interface Pet {
   id: string;
@@ -57,6 +59,7 @@ const PublicCareInstructions = () => {
   const [medicalData, setMedicalData] = useState<MedicalData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isContactModalOpen, setIsContactModalOpen] = useState(false);
 
   const isValidUUID = (id: string) => /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(id);
 
@@ -278,6 +281,22 @@ const PublicCareInstructions = () => {
             </div>
           )}
         </div>
+
+        {/* Contact Owner Button */}
+        <Card className="mb-6 bg-sage-50/50 border-sage-200">
+          <CardContent className="pt-6 text-center">
+            <p className="text-sm text-navy-600 mb-3">
+              Questions about {pet.name}'s care? Send a message to the owner.
+            </p>
+            <AzureButton 
+              onClick={() => setIsContactModalOpen(true)}
+              className="gap-2"
+            >
+              <Mail className="w-4 h-4" />
+              Contact Owner
+            </AzureButton>
+          </CardContent>
+        </Card>
 
         {/* Medical Alert Banner - At top of page */}
         {medicalData?.medical_alert && (
@@ -560,6 +579,14 @@ const PublicCareInstructions = () => {
           </p>
         </div>
       </div>
+
+      <ContactOwnerModal
+        isOpen={isContactModalOpen}
+        onClose={() => setIsContactModalOpen(false)}
+        petId={pet.id}
+        petName={pet.name}
+        pageType="care"
+      />
     </div>
   );
 };

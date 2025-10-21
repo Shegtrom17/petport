@@ -196,7 +196,7 @@ const handler = async (req: Request): Promise<Response> => {
           .content { background: #f9fafb; padding: 30px; border: 1px solid #e5e7eb; }
           .message-box { background: white; padding: 20px; border-left: 4px solid #5691af; margin: 20px 0; }
           .footer { background: #f3f4f6; padding: 20px; border-radius: 0 0 8px 8px; font-size: 12px; color: #6b7280; }
-          .button { display: inline-block; background: #5691af; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; margin: 10px 0; }
+          .button { display: inline-block; background: #5691af; color: white !important; padding: 12px 24px; text-decoration: none; border-radius: 6px; margin: 10px 0; }
         </style>
       </head>
       <body>

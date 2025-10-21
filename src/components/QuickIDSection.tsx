@@ -306,17 +306,17 @@ export const QuickIDSection = ({ petData, onUpdate }: QuickIDSectionProps) => {
             </div>
           </div>
           
-          {/* Preview Emergency Profile Button */}
-          <div className="mt-4">
-            <Button
-              onClick={() => window.open(`/emergency/${petData.id}`, '_blank')}
-              variant="outline"
-              className="w-full bg-[#5691af] text-white hover:bg-[#4a7d99] hover:text-white border-[#5691af] focus-visible:ring-[#5691af]"
-            >
-              <Eye className="w-4 h-4 mr-2" />
-              Preview Emergency Profile
-            </Button>
-          </div>
+{/* Preview Lost Pet LiveLink Button */}
+<div className="mt-4">
+  <Button
+    onClick={() => window.open(`/missing-pet/${petData.id}`, '_blank')}
+    variant="outline"
+    className="w-full bg-[#5691af] text-white hover:bg-[#4a7d99] hover:text-white border-[#5691af] focus-visible:ring-[#5691af]"
+  >
+    <Eye className="w-4 h-4 mr-2" />
+    Preview Lost Pet LiveLink
+  </Button>
+</div>
         </CardContent>
       </Card>
 

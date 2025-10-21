@@ -314,28 +314,6 @@ const PublicCareInstructions = () => {
         url={`${window.location.origin}/care/${pet.id}`}
       />
 
-      {/* Live Demo Banner */}
-      <div className="bg-gradient-to-r from-[#5691af] via-[#4a7d99] to-[#5691af] text-white py-3 px-4 text-center sticky top-0 z-50 shadow-lg">
-        <div className="max-w-4xl mx-auto flex items-center justify-center gap-2 flex-wrap">
-          <div className="flex flex-col items-center gap-0.5">
-            <div className="flex items-center gap-2">
-              <Sparkles className="h-5 w-5" />
-              <span className="font-semibold">✨ Demo – PetPort LiveLink</span>
-            </div>
-            <span className="text-xs opacity-90">Instantly update from any device</span>
-          </div>
-          <a href="/#pricing">
-            <Button 
-              variant="outline" 
-              size="sm"
-              className="ml-4 bg-white text-[#5691af] hover:bg-brand-cream border-white"
-            >
-              Get Started Today
-            </Button>
-          </a>
-        </div>
-      </div>
-
       <div className="container mx-auto px-4 py-8 max-w-4xl">
         {/* Header */}
         <div className="text-center mb-8">

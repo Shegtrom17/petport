@@ -39,8 +39,8 @@ export default function Demos() {
       title: "Missing Pet Emergency Page",
       description: "Instant shareable alert with QR code for flyers. Update in real-time as your search progresses.",
       icon: AlertCircle,
-      color: "from-[#8b9dad] to-[#6b7d8d]",
-      borderColor: "border-[#8b9dad]/30 hover:border-[#8b9dad]",
+      color: "from-red-600 to-orange-600",
+      borderColor: "border-red-200 hover:border-red-500",
       features: [
         "Last seen location & time details",
         "Emergency contacts & instructions",

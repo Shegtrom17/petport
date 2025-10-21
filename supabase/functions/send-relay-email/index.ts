@@ -330,7 +330,7 @@ Thank you for using PetPort! 🐾
       `;
 
       await postmark.sendEmail({
-        From: "noreply@petport.app",
+        From: "relay@petport.app",
         To: senderEmail,
         Subject: `✅ Your message about ${petName} has been sent`,
         HtmlBody: confirmEmailHtml,

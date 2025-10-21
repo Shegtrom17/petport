@@ -79,8 +79,8 @@ export default function Demos() {
         "Social media ready sharing",
         "Caption and title each photo"
       ],
-      demoLink: null,
-      hasLiveDemo: false
+      demoLink: "/demo/gallery",
+      hasLiveDemo: true
     },
     {
       id: "travel",
@@ -188,7 +188,7 @@ export default function Demos() {
           <div className="flex items-center justify-center gap-3 flex-wrap text-center">
             <Sparkles className="h-6 w-6 text-brand-primary" />
             <p className="text-brand-primary font-semibold text-lg">
-              3 Live Demos Available Below • Using Real PetPort Data from Finnegan
+              4 Live Demos Available Below • Using Real PetPort Data from Finnegan
             </p>
           </div>
         </div>

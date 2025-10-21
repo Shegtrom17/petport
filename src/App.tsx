@@ -53,6 +53,7 @@ import ReferralProgram from "./pages/ReferralProgram";
 import DemoResume from "./pages/DemoResume";
 import DemoMissingPet from "./pages/DemoMissingPet";
 import DemoCare from "./pages/DemoCare";
+import DemoGallery from "./pages/DemoGallery";
 import Demos from "./pages/Demos";
 
 // Redirect component for credentials -> resume consolidation
@@ -92,11 +93,12 @@ const App = () => {
                   <Route path="/learn" element={<Learn />} />
                   <Route path="/referral-program" element={<ReferralProgram />} />
                   
-                  {/* Demo Pages - Static versions using Finn's real data */}
+          {/* Demo Pages - Static versions using Finn's real data */}
           <Route path="/demos" element={<Demos />} />
           <Route path="/demo/resume" element={<DemoResume />} />
           <Route path="/demo/missing-pet" element={<DemoMissingPet />} />
           <Route path="/demo/care" element={<DemoCare />} />
+          <Route path="/demo/gallery" element={<DemoGallery />} />
                   <Route path="/app" element={
                     <ProtectedRoute>
                       <Index />

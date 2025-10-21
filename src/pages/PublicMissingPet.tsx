@@ -15,6 +15,7 @@ import { generateClientPetPDF, viewPDFBlob, downloadPDFBlob } from '@/services/c
 import { sharePDFBlob } from '@/services/pdfService';
 import { generateShareURL } from '@/utils/domainUtils';
 import { shareViaMessenger, copyToClipboard } from '@/utils/messengerShare';
+import { ContactOwnerModal } from '@/components/ContactOwnerModal';
 
 interface MissingPetData {
   id: string;
@@ -66,6 +67,9 @@ export default function PublicMissingPet() {
   // Share Options State
   const [showShareOptions, setShowShareOptions] = useState(false);
   const [copyingLink, setCopyingLink] = useState(false);
+  
+  // Contact Owner Modal State
+  const [showContactModal, setShowContactModal] = useState(false);
   
   // Validate petId format
   const isValidPetId = petId && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(petId);
@@ -567,6 +571,20 @@ export default function PublicMissingPet() {
           </Card>
         )}
 
+        {/* Contact Owner via Email Button */}
+        <div className="mb-6">
+          <Button
+            onClick={() => setShowContactModal(true)}
+            className="w-full bg-[#5691af] hover:bg-[#4a7c95] text-white py-6 text-lg"
+          >
+            <Mail className="w-5 h-5 mr-2" />
+            Contact Owner via Email
+          </Button>
+          <p className="text-center text-sm text-muted-foreground mt-2">
+            🔒 Messages are sent through PetPort's secure relay system
+          </p>
+        </div>
+
         {/* QR Code and Share Section */}
         <Card className="mb-6">
           <CardHeader>
@@ -824,6 +842,15 @@ export default function PublicMissingPet() {
             </CardContent>
           </Card>
         )}
+
+        {/* Contact Owner Modal */}
+        <ContactOwnerModal
+          isOpen={showContactModal}
+          onClose={() => setShowContactModal(false)}
+          petId={petId!}
+          petName={petData?.name || 'this pet'}
+          pageType="missing"
+        />
 
         {/* Footer */}
         <div className="mt-12 text-center text-gray-500 text-sm pb-8">

@@ -333,14 +333,14 @@ export const PetProfileContent = ({
                       </Button>
                     )}
                     
-                    {/* Preview Public Profile Button */}
+                    {/* Preview Complete Profile LiveLink Button */}
                     <Button
                       onClick={() => window.open(`/profile/${enhancedPetData.id}`, '_blank')}
                       variant="outline"
                       className="w-full bg-[#5691af] text-white hover:bg-[#4a7d99] hover:text-white border-[#5691af] focus-visible:ring-[#5691af] flex items-center justify-center gap-2 h-12"
                     >
                       <Eye className="w-4 h-4" />
-                      <span>Preview Public Profile</span>
+                      <span>Preview Complete Profile LiveLink</span>
                     </Button>
                   </div>
                 </>

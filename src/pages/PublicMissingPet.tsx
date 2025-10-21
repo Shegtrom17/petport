@@ -743,7 +743,7 @@ export default function PublicMissingPet() {
                 <Button
                   onClick={handleGenerateLostPetPDF}
                   disabled={isGeneratingLostPetPdf}
-                  className="w-full"
+                  className="w-full text-white"
                   variant="default"
                 >
                   {isGeneratingLostPetPdf ? (

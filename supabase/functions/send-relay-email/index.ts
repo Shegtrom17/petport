@@ -1,6 +1,6 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.39.3";
-import { Resend } from "npm:resend@2.0.0";
+import { ServerClient } from "https://deno.land/x/postmark@v1.2.0/mod.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -51,7 +51,18 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
-    const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
+    const postmarkApiKey = Deno.env.get("POSTMARK_API_KEY");
+    const messageStream = Deno.env.get("POSTMARK_BROADCAST_STREAM") || "broadcast";
+    
+    if (!postmarkApiKey) {
+      console.error('[RELAY-EMAIL] POSTMARK_API_KEY not configured');
+      return new Response(
+        JSON.stringify({ error: 'Email service not configured' }),
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    const postmark = new ServerClient(postmarkApiKey);
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, supabaseKey);
@@ -171,60 +182,56 @@ const handler = async (req: Request): Promise<Response> => {
     };
     const pageContext = pageContextMap[pageType] || 'PetPort';
 
-    console.log('[RELAY-EMAIL] Sending email to owner:', ownerEmail);
+    console.log('[RELAY-EMAIL] Sending email to owner via Postmark:', ownerEmail);
 
-    // Send email via Resend from relay@petport.app
-    const emailResponse = await resend.emails.send({
-      from: "PetPort Relay <relay@petport.app>",
-      replyTo: senderEmail,
-      to: [ownerEmail],
-      subject: `🐾 [PetPort] Message about ${petName}`,
-      html: `
-        <!DOCTYPE html>
-        <html>
-        <head>
-          <style>
-            body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
-            .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-            .header { background: #5691af; color: white; padding: 20px; border-radius: 8px 8px 0 0; }
-            .content { background: #f9fafb; padding: 30px; border: 1px solid #e5e7eb; }
-            .message-box { background: white; padding: 20px; border-left: 4px solid #5691af; margin: 20px 0; }
-            .footer { background: #f3f4f6; padding: 20px; border-radius: 0 0 8px 8px; font-size: 12px; color: #6b7280; }
-            .button { display: inline-block; background: #5691af; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; margin: 10px 0; }
-          </style>
-        </head>
-        <body>
-          <div class="container">
-            <div class="header">
-              <h1 style="margin: 0; font-size: 24px;">🐾 PetPort Message</h1>
-            </div>
-            
-            <div class="content">
-              <p style="font-size: 16px; margin-bottom: 20px;">Hi ${ownerName},</p>
-              
-              <p>Someone has contacted you about <strong>${petName}</strong> through PetPort.</p>
-              
-              <p><strong>From:</strong> ${cleanName} (${senderEmail})<br>
-              <strong>Page:</strong> ${pageContext}</p>
-              
-              <div class="message-box">
-                <p style="margin: 0; white-space: pre-wrap;">${cleanMessage}</p>
-              </div>
-              
-              <p style="margin-top: 30px;">
-                <a href="mailto:${senderEmail}" class="button">Reply to ${cleanName}</a>
-              </p>
-            </div>
-            
-            <div class="footer">
-              <p style="margin: 0;">This message was sent via PetPort's secure relay system.</p>
-              <p style="margin: 5px 0 0 0;">🔒 Your email address is never shared publicly. Reply directly to this email to respond to the sender.</p>
-            </div>
+    // Send email via Postmark from relay@petport.app
+    const ownerEmailHtml = `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <style>
+          body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+          .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+          .header { background: #5691af; color: white; padding: 20px; border-radius: 8px 8px 0 0; }
+          .content { background: #f9fafb; padding: 30px; border: 1px solid #e5e7eb; }
+          .message-box { background: white; padding: 20px; border-left: 4px solid #5691af; margin: 20px 0; }
+          .footer { background: #f3f4f6; padding: 20px; border-radius: 0 0 8px 8px; font-size: 12px; color: #6b7280; }
+          .button { display: inline-block; background: #5691af; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; margin: 10px 0; }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <div class="header">
+            <h1 style="margin: 0; font-size: 24px;">🐾 PetPort Message</h1>
           </div>
-        </body>
-        </html>
-      `,
-      text: `
+          
+          <div class="content">
+            <p style="font-size: 16px; margin-bottom: 20px;">Hi ${ownerName},</p>
+            
+            <p>Someone has contacted you about <strong>${petName}</strong> through PetPort.</p>
+            
+            <p><strong>From:</strong> ${cleanName} (${senderEmail})<br>
+            <strong>Page:</strong> ${pageContext}</p>
+            
+            <div class="message-box">
+              <p style="margin: 0; white-space: pre-wrap;">${cleanMessage}</p>
+            </div>
+            
+            <p style="margin-top: 30px;">
+              <a href="mailto:${senderEmail}" class="button">Reply to ${cleanName}</a>
+            </p>
+          </div>
+          
+          <div class="footer">
+            <p style="margin: 0;">This message was sent via PetPort's secure relay system.</p>
+            <p style="margin: 5px 0 0 0;">🔒 Your email address is never shared publicly. Reply directly to this email to respond to the sender.</p>
+          </div>
+        </div>
+      </body>
+      </html>
+    `;
+
+    const ownerEmailText = `
 Hi ${ownerName},
 
 Someone has contacted you about ${petName} through PetPort.
@@ -240,10 +247,30 @@ This message was sent via PetPort's secure relay system.
 Reply directly to this email to respond to the sender.
 
 🔒 Your email address is never shared publicly.
-      `
-    });
+    `;
 
-    console.log('[RELAY-EMAIL] Email sent successfully:', emailResponse);
+    try {
+      const ownerEmailResponse = await postmark.sendEmail({
+        From: "relay@petport.app",
+        To: ownerEmail,
+        ReplyTo: senderEmail,
+        Subject: `🐾 [PetPort] Message about ${petName}`,
+        HtmlBody: ownerEmailHtml,
+        TextBody: ownerEmailText,
+        MessageStream: messageStream,
+      });
+
+      console.log('[RELAY-EMAIL] Owner email sent successfully:', ownerEmailResponse.MessageID);
+    } catch (emailError: any) {
+      console.error('[RELAY-EMAIL] Failed to send owner email:', emailError);
+      return new Response(
+        JSON.stringify({ 
+          error: 'Failed to send message to owner',
+          details: emailError.message 
+        }),
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
 
     // Log the message to contact_messages table for audit trail
     const { error: logError } = await supabase
@@ -262,38 +289,35 @@ Reply directly to this email to respond to the sender.
       // Don't fail the request if logging fails
     }
 
-    // Optional: Send confirmation to sender
+    // Send confirmation to sender
     try {
-      await resend.emails.send({
-        from: "PetPort <noreply@petport.app>",
-        to: [senderEmail],
-        subject: `✅ Your message about ${petName} has been sent`,
-        html: `
-          <!DOCTYPE html>
-          <html>
-          <head>
-            <style>
-              body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
-              .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-              .content { background: #f9fafb; padding: 30px; border: 1px solid #e5e7eb; border-radius: 8px; }
-            </style>
-          </head>
-          <body>
-            <div class="container">
-              <div class="content">
-                <h2 style="color: #5691af; margin-top: 0;">✅ Message Delivered</h2>
-                <p>Hi ${cleanName},</p>
-                <p>Your message about <strong>${petName}</strong> has been successfully delivered to the owner via PetPort's secure relay system.</p>
-                <p>The owner will receive your message at their private email and can reply directly to you at <strong>${senderEmail}</strong>.</p>
-                <p style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #e5e7eb; font-size: 14px; color: #6b7280;">
-                  Thank you for using PetPort! 🐾
-                </p>
-              </div>
+      const confirmEmailHtml = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <style>
+            body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+            .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+            .content { background: #f9fafb; padding: 30px; border: 1px solid #e5e7eb; border-radius: 8px; }
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <div class="content">
+              <h2 style="color: #5691af; margin-top: 0;">✅ Message Delivered</h2>
+              <p>Hi ${cleanName},</p>
+              <p>Your message about <strong>${petName}</strong> has been successfully delivered to the owner via PetPort's secure relay system.</p>
+              <p>The owner will receive your message at their private email and can reply directly to you at <strong>${senderEmail}</strong>.</p>
+              <p style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #e5e7eb; font-size: 14px; color: #6b7280;">
+                Thank you for using PetPort! 🐾
+              </p>
             </div>
-          </body>
-          </html>
-        `,
-        text: `
+          </div>
+        </body>
+        </html>
+      `;
+
+      const confirmEmailText = `
 ✅ Message Delivered
 
 Hi ${cleanName},
@@ -303,9 +327,19 @@ Your message about ${petName} has been successfully delivered to the owner via P
 The owner will receive your message at their private email and can reply directly to you at ${senderEmail}.
 
 Thank you for using PetPort! 🐾
-        `
+      `;
+
+      await postmark.sendEmail({
+        From: "noreply@petport.app",
+        To: senderEmail,
+        Subject: `✅ Your message about ${petName} has been sent`,
+        HtmlBody: confirmEmailHtml,
+        TextBody: confirmEmailText,
+        MessageStream: messageStream,
       });
-    } catch (confirmError) {
+
+      console.log('[RELAY-EMAIL] Confirmation email sent to sender');
+    } catch (confirmError: any) {
       console.error('[RELAY-EMAIL] Failed to send confirmation:', confirmError);
       // Don't fail the request if confirmation fails
     }

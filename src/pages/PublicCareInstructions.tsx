@@ -644,9 +644,9 @@ const PublicCareInstructions = () => {
                 <MessageCircle className="h-5 w-5 text-[#5691af]" />
                 Care Update Board
               </CardTitle>
-              <p className="text-sm text-navy-600 mt-2">
-                Pet sitters & caretakers: Share quick updates about {pet.name}'s care!
-              </p>
+               <p className="text-sm text-navy-600 mt-2">
+                 Pet sitters & caretakers: Share quick updates about {pet.name}'s care! No PetPort account needed - just use this link.
+               </p>
             </CardHeader>
             <CardContent className="space-y-4">
               {/* Post Update Form */}

@@ -506,9 +506,9 @@ export const PetEditForm = ({ petData, onSave, onCancel, togglePetPublicVisibili
             <Alert className="mb-4 bg-blue-50/80 border-blue-200">
               <Mail className="h-4 w-4 text-blue-600" />
               <AlertDescription className="text-xs text-blue-700">
-                <strong>Note:</strong> When someone uses "Contact Owner" on your pet's public pages, 
-                messages are sent to your account email (found in Profile → Account Information). 
-                You don't need to add your email here. <a href="/profile" className="underline">View your account email</a>
+                <strong>Your Privacy Is Protected:</strong><br />
+                When someone uses "Contact Owner" on your pet's public pages, PetPort delivers their message to your account email—the one you signed up with—without ever showing it publicly.
+                The sender provides their own email so you can reply directly and safely.
               </AlertDescription>
             </Alert>
             

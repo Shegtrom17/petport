@@ -2,11 +2,13 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Shield, Award, GraduationCap, Trophy, Activity, Star, MapPin, Heart, Phone } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Shield, Award, GraduationCap, Trophy, Activity, Star, MapPin, Heart, Phone, Mail } from "lucide-react";
 import { MetaTags } from "@/components/MetaTags";
 import { SupportAnimalBanner } from "@/components/SupportAnimalBanner";
 import { CertificationBanner } from "@/components/CertificationBanner";
 import { ContactsDisplay } from "@/components/ContactsDisplay";
+import { ContactOwnerModal } from "@/components/ContactOwnerModal";
 
 import { fetchPetDetails } from "@/services/petService";
 
@@ -76,6 +78,7 @@ export default function PublicResume() {
   const { petId } = useParams();
   const [data, setData] = useState<PublicResumeData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isContactModalOpen, setIsContactModalOpen] = useState(false);
 
   useEffect(() => {
     const load = async () => {
@@ -154,6 +157,21 @@ export default function PublicResume() {
           )}
         </header>
 
+        {/* Contact Owner Button */}
+        <Card className="mb-6 bg-sage-50/50 border-sage-200">
+          <CardContent className="pt-6 text-center">
+            <p className="text-sm text-navy-600 mb-3">
+              Interested in working with {data.name}? Send a message to the owner.
+            </p>
+            <Button 
+              onClick={() => setIsContactModalOpen(true)}
+              className="gap-2"
+            >
+              <Mail className="w-4 h-4" />
+              Contact Owner
+            </Button>
+          </CardContent>
+        </Card>
 
         {/* Support Animal Status */}
         <SupportAnimalBanner status={data.supportAnimalStatus || null} />
@@ -388,6 +406,14 @@ export default function PublicResume() {
         </div>
 
       </main>
+
+      <ContactOwnerModal
+        isOpen={isContactModalOpen}
+        onClose={() => setIsContactModalOpen(false)}
+        petId={data.id}
+        petName={data.name}
+        pageType="resume"
+      />
     </div>
   );
 }

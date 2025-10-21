@@ -10,6 +10,7 @@ import { Heart, MapPin, Phone, Star, Award, GraduationCap, Plane, Trophy, Briefc
 import { MetaTags } from "@/components/MetaTags";
 import { AddReviewForm } from "@/components/AddReviewForm";
 import { ContactsDisplay } from "@/components/ContactsDisplay";
+import { ContactOwnerModal } from "@/components/ContactOwnerModal";
 import { sanitizeText, sanitizeHtml } from "@/utils/inputSanitizer";
 
 const PublicProfile = () => {
@@ -21,6 +22,7 @@ const PublicProfile = () => {
   const [retryCount, setRetryCount] = useState(0);
   const [debugInfo, setDebugInfo] = useState<string[]>([]);
   const [showAddReview, setShowAddReview] = useState(false);
+  const [isContactModalOpen, setIsContactModalOpen] = useState(false);
 
   useEffect(() => {
     const loadPetData = async () => {
@@ -349,6 +351,22 @@ const PublicProfile = () => {
               </div>
             )}
           </header>
+
+          {/* Contact Owner Button */}
+          <Card className="mb-6 bg-sage-50/50 border-sage-200">
+            <CardContent className="pt-6 text-center">
+              <p className="text-sm text-navy-600 mb-3">
+                Have questions about {petData.name}? Send a message to the owner.
+              </p>
+              <Button 
+                onClick={() => setIsContactModalOpen(true)}
+                className="gap-2"
+              >
+                <Mail className="w-4 h-4" />
+                Contact Owner
+              </Button>
+            </CardContent>
+          </Card>
 
           {/* Show adoption banner if available for adoption */}
           {petData.adoption_status === 'available' && (
@@ -887,6 +905,14 @@ const PublicProfile = () => {
           </div>
         </main>
       </div>
+
+      <ContactOwnerModal
+        isOpen={isContactModalOpen}
+        onClose={() => setIsContactModalOpen(false)}
+        petId={petData.id}
+        petName={petData.name}
+        pageType="profile"
+      />
     </>
   );
 };

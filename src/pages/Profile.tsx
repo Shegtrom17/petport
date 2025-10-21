@@ -8,9 +8,10 @@ import { useNavigate } from "react-router-dom";
 
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 import { useUserSettings } from "@/hooks/useUserSettings";
-import { User, LogOut } from "lucide-react";
+import { User, LogOut, Mail } from "lucide-react";
 
 export default function Profile() {
   const { user, signOut } = useAuth();
@@ -69,6 +70,16 @@ export default function Profile() {
               <div>
                 <label className="text-sm font-medium text-muted-foreground">Email</label>
                 <p className="text-foreground">{user.email}</p>
+                
+                <Alert className="mt-3 bg-blue-50/80 border-blue-200">
+                  <Mail className="h-4 w-4 text-blue-600" />
+                  <AlertDescription className="text-xs text-blue-700">
+                    <strong>Relay Messages:</strong> When someone uses "Contact Owner" 
+                    on your pet's public pages (Lost Pet, Profile, etc.), their messages 
+                    are securely delivered to this email. Your email address is never 
+                    exposed publicly. <a href="/help" className="underline">Learn more</a>
+                  </AlertDescription>
+                </Alert>
               </div>
             )}
             

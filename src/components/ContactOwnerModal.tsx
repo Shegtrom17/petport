@@ -157,8 +157,9 @@ export const ContactOwnerModal = ({
             <Alert className="bg-blue-50 border-blue-200">
               <AlertCircle className="h-4 w-4 text-blue-600" />
               <AlertDescription className="text-sm text-blue-900">
-                🔒 Your message will be sent through PetPort's secure relay system. 
-                The owner's email address is never exposed publicly.
+                🔒 Your message will be sent through PetPort's secure relay system 
+                to the owner's registered email address. The owner's email is never 
+                exposed publicly, and they can reply directly to you at {formData.senderEmail || 'your email'}.
               </AlertDescription>
             </Alert>
 

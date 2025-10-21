@@ -122,6 +122,11 @@ const Help = () => {
       id: "transfer-process",
       question: "What happens during the transfer process?",
       answer: "When you initiate a transfer (ideal for foster organizations and adopters): 1) The recipient (new foster family or adopter) receives an email with a secure link, 2) They have 7 days to accept the transfer, 3) Upon acceptance, ownership immediately transfers to them, 4) You lose all access to the pet's profile, photos, documents, and data, 5) The transfer cannot be reversed. Foster organizations should ensure all necessary records are shared before transferring. Make sure you've downloaded any important documents or photos before transferring."
+    },
+    {
+      id: "contact-relay",
+      question: "Where do Contact Owner messages go?",
+      answer: "When someone uses the 'Contact Owner' button on your public pages (Lost Pet, Profile, Resume, etc.), their message is securely relayed to the email address associated with your PetPort account (visible in Profile → Account Information). Your email is never exposed publicly. You can reply directly to the sender from your email inbox, and they will receive your response at the email address they provided."
     }
   ];
 

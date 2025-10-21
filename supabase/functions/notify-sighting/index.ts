@@ -98,8 +98,8 @@ const handler = async (req: Request): Promise<Response> => {
           <meta name="viewport" content="width=device-width, initial-scale=1.0">
         </head>
         <body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
-          <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px; border-radius: 10px 10px 0 0; text-align: center;">
-            <h1 style="color: white; margin: 0; font-size: 24px;">🚨 New Sighting Reported!</h1>
+          <div style="background: linear-gradient(135deg, #5691af 0%, #4a7c95 100%); padding: 30px; border-radius: 10px 10px 0 0; text-align: center;">
+            <h1 style="color: white; margin: 0; font-size: 24px;">🔔 Missing Pet Sighting Alert</h1>
           </div>
           
           <div style="background: white; padding: 30px; border: 1px solid #e5e7eb; border-top: none; border-radius: 0 0 10px 10px;">
@@ -107,7 +107,7 @@ const handler = async (req: Request): Promise<Response> => {
             
             <p style="font-size: 16px; margin-bottom: 20px;"><strong>Great news!</strong> Someone has reported seeing <strong>${petData.name}</strong>.</p>
             
-            <div style="background: #f9fafb; border-left: 4px solid #667eea; padding: 20px; margin: 25px 0; border-radius: 4px;">
+            <div style="background: #f0f9ff; border-left: 4px solid #5691af; padding: 20px; margin: 25px 0; border-radius: 4px;">
               <p style="margin: 0 0 10px 0; font-weight: 600; color: #374151;">Sighting Report:</p>
               <p style="margin: 0; color: #1f2937; font-style: italic;">"${sightingText}"</p>
               <p style="margin: 15px 0 0 0; font-size: 14px; color: #6b7280;">Reported: ${formattedTime}</p>
@@ -116,7 +116,7 @@ const handler = async (req: Request): Promise<Response> => {
             <p style="font-size: 16px; margin: 25px 0;">View all sightings and manage your missing pet alert:</p>
             
             <div style="text-align: center; margin: 30px 0;">
-              <a href="${missingPetUrl}" style="display: inline-block; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 14px 32px; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 16px;">View Missing Pet Page</a>
+              <a href="${missingPetUrl}" style="display: inline-block; background: linear-gradient(135deg, #5691af 0%, #4a7c95 100%); color: white; padding: 14px 32px; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 16px;">View Missing Pet Page</a>
             </div>
             
             <div style="border-top: 1px solid #e5e7eb; padding-top: 20px; margin-top: 30px;">
@@ -126,7 +126,7 @@ const handler = async (req: Request): Promise<Response> => {
           
           <div style="text-align: center; padding: 20px; color: #9ca3af; font-size: 12px;">
             <p style="margin: 5px 0;">PetPort - Your Pet's Digital Companion</p>
-            <p style="margin: 5px 0;"><a href="https://petport.app" style="color: #667eea; text-decoration: none;">petport.app</a></p>
+            <p style="margin: 5px 0;"><a href="https://petport.app" style="color: #5691af; text-decoration: none;">petport.app</a></p>
           </div>
         </body>
         </html>

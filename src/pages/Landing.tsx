@@ -269,19 +269,29 @@ export default function Landing() {
               <p className="text-sm text-muted-foreground mb-4">
                 Demos use real data from Finnegan's PetPort Profile Information - all entries updated in real time.
               </p>
-              <div className="flex flex-col items-center gap-2">
-                <a href="#pricing">
-                  <Button 
-                    variant="outline"
-                    size="lg"
-                    className="border-brand-primary text-brand-primary hover:bg-brand-primary hover:text-white"
-                  >
-                    Create LiveLinks for Your Pet
-                  </Button>
-                </a>
-                <p className="text-sm text-muted-foreground">
-                  7-day free trial included
-                </p>
+              <div className="flex flex-col items-center gap-4">
+                <Button 
+                  onClick={() => navigate('/demos')}
+                  variant="outline"
+                  size="lg"
+                  className="border-brand-secondary text-brand-secondary hover:bg-brand-secondary hover:text-white"
+                >
+                  See More LiveLink Demos
+                </Button>
+                <div className="flex flex-col items-center gap-2">
+                  <a href="#pricing">
+                    <Button 
+                      variant="outline"
+                      size="lg"
+                      className="border-brand-primary text-brand-primary hover:bg-brand-primary hover:text-white"
+                    >
+                      Create LiveLinks for Your Pet
+                    </Button>
+                  </a>
+                  <p className="text-sm text-muted-foreground">
+                    7-day free trial included
+                  </p>
+                </div>
               </div>
             </div>
           </div>

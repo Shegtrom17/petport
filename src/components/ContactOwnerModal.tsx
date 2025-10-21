@@ -240,7 +240,7 @@ export const ContactOwnerModal = ({
               <Button
                 type="submit"
                 disabled={isSubmitting}
-                className="flex-1 bg-[#5691af] hover:bg-[#4a7c95]"
+                className="flex-1 bg-[#5691af] hover:bg-[#4a7c95] text-white"
               >
                 {isSubmitting ? (
                   <>

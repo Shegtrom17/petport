@@ -123,6 +123,15 @@ const PublicCareInstructions = () => {
       
       if (error) throw error;
       
+      // Send notification email to owner (fire and forget)
+      supabase.functions.invoke('notify-care-update', {
+        body: {
+          petId,
+          updateText: updateText.trim().slice(0, 200),
+          reportedAt: new Date().toISOString()
+        }
+      }).catch(err => console.error('Failed to send care update notification:', err));
+      
       setUpdateText('');
       toast.success('Care update posted!');
     } catch (error) {

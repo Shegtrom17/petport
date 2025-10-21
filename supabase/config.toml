@@ -117,3 +117,6 @@ verify_jwt = false
 
 [functions.notify-sighting]
 verify_jwt = false
+
+[functions.notify-care-update]
+verify_jwt = false

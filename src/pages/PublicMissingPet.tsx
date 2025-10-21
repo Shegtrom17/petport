@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { MapPin, Phone, Calendar, Clock, Share2, AlertTriangle, Stethoscope, Camera, AlertCircle, Heart, ArrowLeft, FileDown, Eye, Download, Printer, Loader2, Copy, Check, MessageCircle, Mail, Facebook, MessageSquare, Smartphone } from 'lucide-react';
+import { MapPin, Phone, Calendar, Clock, Share2, AlertTriangle, Stethoscope, Camera, AlertCircle, Heart, ArrowLeft, FileDown, Eye, Download, Printer, Loader2, Copy, Check, MessageCircle, Mail, Facebook, MessageSquare, Smartphone, Send } from 'lucide-react';
 import { SocialShareButtons } from '@/components/SocialShareButtons';
 import { MetaTags } from '@/components/MetaTags';
 import { sanitizeText, truncateText } from '@/utils/inputSanitizer';
@@ -16,6 +16,7 @@ import { sharePDFBlob } from '@/services/pdfService';
 import { generateShareURL } from '@/utils/domainUtils';
 import { shareViaMessenger, copyToClipboard } from '@/utils/messengerShare';
 import { ContactOwnerModal } from '@/components/ContactOwnerModal';
+import { Textarea } from '@/components/ui/textarea';
 
 interface MissingPetData {
   id: string;
@@ -52,6 +53,14 @@ interface MissingPetData {
   medicalConditions?: string;
 }
 
+interface PetSighting {
+  id: string;
+  pet_id: string;
+  sighting_text: string;
+  reported_at: string;
+  is_visible: boolean;
+}
+
 export default function PublicMissingPet() {
   const { petId } = useParams<{ petId: string }>();
   const navigate = useNavigate();
@@ -71,12 +80,45 @@ export default function PublicMissingPet() {
   // Contact Owner Modal State
   const [showContactModal, setShowContactModal] = useState(false);
   
+  // Sighting Board State
+  const [sightings, setSightings] = useState<PetSighting[]>([]);
+  const [sightingText, setSightingText] = useState('');
+  const [isSubmittingSighting, setIsSubmittingSighting] = useState(false);
+  
   // Validate petId format
   const isValidPetId = petId && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(petId);
 
   useEffect(() => {
     if (petId && isValidPetId) {
       fetchMissingPetData(petId);
+      fetchSightings(petId);
+      
+      // Subscribe to real-time sighting updates
+      const channel = supabase
+        .channel('sighting-updates')
+        .on(
+          'postgres_changes',
+          {
+            event: 'INSERT',
+            schema: 'public',
+            table: 'pet_sightings',
+            filter: `pet_id=eq.${petId}`
+          },
+          (payload) => {
+            const newSighting = payload.new as PetSighting;
+            if (newSighting.is_visible) {
+              setSightings(prev => [newSighting, ...prev]);
+              toast.success('New sighting reported!', {
+                description: 'Someone just reported seeing your pet'
+              });
+            }
+          }
+        )
+        .subscribe();
+      
+      return () => {
+        supabase.removeChannel(channel);
+      };
     } else if (petId && !isValidPetId) {
       setError('Invalid pet ID format');
       setIsLoading(false);
@@ -318,6 +360,68 @@ export default function PublicMissingPet() {
     const subject = `🚨 MISSING PET ALERT: ${petData.name}`;
     const body = `Please help us find ${petData.name}!\n\nLast seen: ${petData.lastSeenLocation || 'location unknown'}\n\nView the full missing pet alert:\n${shareUrl}\n\nEvery share helps bring ${petData.name} home safely. Thank you!`;
     window.location.href = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  };
+
+  // Sighting Board Functions
+  const fetchSightings = async (id: string) => {
+    try {
+      const { data, error } = await supabase
+        .from('pet_sightings')
+        .select('*')
+        .eq('pet_id', id)
+        .eq('is_visible', true)
+        .order('reported_at', { ascending: false })
+        .limit(20);
+      
+      if (error) throw error;
+      setSightings(data || []);
+    } catch (error) {
+      console.error('Error fetching sightings:', error);
+    }
+  };
+
+  const handleReportSighting = async () => {
+    if (!sightingText.trim() || !petId) return;
+    
+    setIsSubmittingSighting(true);
+    try {
+      const { error } = await supabase
+        .from('pet_sightings')
+        .insert({
+          pet_id: petId,
+          sighting_text: sightingText.trim().slice(0, 200),
+          is_visible: true
+        });
+      
+      if (error) throw error;
+      
+      setSightingText('');
+      toast.success('Sighting reported!', {
+        description: 'Thank you for helping find this pet'
+      });
+    } catch (error) {
+      console.error('Error reporting sighting:', error);
+      toast.error('Failed to report sighting', {
+        description: 'Please try again'
+      });
+    } finally {
+      setIsSubmittingSighting(false);
+    }
+  };
+
+  const formatTimeAgo = (dateString: string) => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffMs = now.getTime() - date.getTime();
+    const diffMins = Math.floor(diffMs / 60000);
+    const diffHours = Math.floor(diffMs / 3600000);
+    const diffDays = Math.floor(diffMs / 86400000);
+    
+    if (diffMins < 1) return 'Just now';
+    if (diffMins < 60) return `${diffMins} minute${diffMins === 1 ? '' : 's'} ago`;
+    if (diffHours < 24) return `${diffHours} hour${diffHours === 1 ? '' : 's'} ago`;
+    if (diffDays < 7) return `${diffDays} day${diffDays === 1 ? '' : 's'} ago`;
+    return date.toLocaleDateString();
   };
 
   if (isLoading) {
@@ -791,6 +895,86 @@ export default function PublicMissingPet() {
                   </>
                 )}
               </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Community Sighting Board */}
+        <Card className="mb-6 border-blue-300 bg-blue-50/50">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-blue-900">
+              <MapPin className="h-5 w-5" />
+              Community Sighting Updates
+            </CardTitle>
+            <p className="text-sm text-blue-700 mt-2">
+              Help bring {petData.name} home! Report any sightings or check recent community reports.
+            </p>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {/* Report Sighting Form */}
+            <div className="bg-white p-4 rounded-lg border border-blue-200 shadow-sm">
+              <label className="font-semibold text-blue-900 mb-2 block">
+                Have you seen {petData.name}?
+              </label>
+              <Textarea
+                value={sightingText}
+                onChange={(e) => setSightingText(e.target.value.slice(0, 200))}
+                placeholder={`e.g., Spotted near Main St around 5pm today`}
+                className="mb-2 resize-none"
+                rows={3}
+                maxLength={200}
+              />
+              <div className="flex justify-between items-center">
+                <span className="text-xs text-muted-foreground">
+                  {sightingText.length}/200 characters
+                </span>
+                <Button 
+                  onClick={handleReportSighting} 
+                  disabled={!sightingText.trim() || isSubmittingSighting}
+                  className="bg-blue-600 hover:bg-blue-700 text-white"
+                  size="sm"
+                >
+                  {isSubmittingSighting ? (
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  ) : (
+                    <Send className="w-4 h-4 mr-2" />
+                  )}
+                  Report Sighting
+                </Button>
+              </div>
+              <p className="text-xs text-muted-foreground mt-2">
+                Please only report confirmed sightings. Your help could bring {petData.name} home!
+              </p>
+            </div>
+
+            {/* Recent Sightings List */}
+            <div>
+              <h4 className="font-semibold text-blue-900 mb-3">
+                Recent Reports ({sightings.length})
+              </h4>
+              {sightings.length === 0 ? (
+                <div className="bg-white p-6 rounded-lg border border-blue-200 text-center">
+                  <MapPin className="w-8 h-8 text-blue-300 mx-auto mb-2" />
+                  <p className="text-muted-foreground text-sm">
+                    No sightings reported yet. Be the first to help!
+                  </p>
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  {sightings.map((sighting) => (
+                    <div 
+                      key={sighting.id} 
+                      className="bg-white p-3 rounded-lg border border-blue-200 shadow-sm hover:border-blue-400 transition-colors"
+                    >
+                      <p className="text-sm text-gray-900">{sighting.sighting_text}</p>
+                      <p className="text-xs text-muted-foreground mt-1 flex items-center gap-1">
+                        <Clock className="w-3 h-3" />
+                        {formatTimeAgo(sighting.reported_at)}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           </CardContent>
         </Card>

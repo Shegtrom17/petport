@@ -882,6 +882,44 @@ export type Database = {
           },
         ]
       }
+      pet_sightings: {
+        Row: {
+          created_at: string
+          id: string
+          ip_address: string | null
+          is_visible: boolean
+          pet_id: string
+          reported_at: string
+          sighting_text: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          ip_address?: string | null
+          is_visible?: boolean
+          pet_id: string
+          reported_at?: string
+          sighting_text: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          ip_address?: string | null
+          is_visible?: boolean
+          pet_id?: string
+          reported_at?: string
+          sighting_text?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pet_sightings_pet_id_fkey"
+            columns: ["pet_id"]
+            isOneToOne: false
+            referencedRelation: "pets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       pets: {
         Row: {
           adoption_instructions: string | null

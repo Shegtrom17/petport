@@ -11,7 +11,8 @@ import { useAuth } from "@/context/AuthContext";
 import { useKeyboardAwareLayout } from "@/hooks/useKeyboardAwareLayout";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import { updatePetBasicInfo, updatePetMedical } from "@/services/petService";
-import { Loader2 } from "lucide-react";
+import { Loader2, Mail } from "lucide-react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { sanitizeText, validateTextLength, containsSuspiciousContent } from "@/utils/inputSanitizer";
 import { PrivacyToggle } from "@/components/PrivacyToggle";
 import { PetTransferDialog } from "@/components/PetTransferDialog";
@@ -501,6 +502,16 @@ export const PetEditForm = ({ petData, onSave, onCancel, togglePetPublicVisibili
           {/* Contact Information */}
           <div className="border-t pt-6">
             <h3 className="text-lg font-inter text-foreground mb-4">Contact Information</h3>
+            
+            <Alert className="mb-4 bg-blue-50/80 border-blue-200">
+              <Mail className="h-4 w-4 text-blue-600" />
+              <AlertDescription className="text-xs text-blue-700">
+                <strong>Note:</strong> When someone uses "Contact Owner" on your pet's public pages, 
+                messages are sent to your account email (found in Profile → Account Information). 
+                You don't need to add your email here. <a href="/profile" className="underline">View your account email</a>
+              </AlertDescription>
+            </Alert>
+            
             <div className="space-y-4">
               {['emergency', 'emergency_secondary', 'veterinary', 'caretaker'].map((type) => {
                 const contact = contacts.find(c => c.contact_type === type);

@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
-import { Clock, Heart, AlertTriangle, MapPin, Pill, Sparkles, Mail } from "lucide-react";
+import { Clock, Heart, AlertTriangle, MapPin, Pill, Sparkles, Mail, MessageCircle, Send, Loader2 } from "lucide-react";
 import { fetchPetDetails } from '@/services/petService';
 import { fetchCareInstructions } from '@/services/careInstructionsService';
 import { supabase } from "@/integrations/supabase/client";
@@ -13,6 +13,8 @@ import { Button } from "@/components/ui/button";
 import { AzureButton } from "@/components/ui/azure-button";
 import { ContactsDisplay } from "@/components/ContactsDisplay";
 import { ContactOwnerModal } from "@/components/ContactOwnerModal";
+import { Textarea } from "@/components/ui/textarea";
+import { toast } from "sonner";
 
 interface Pet {
   id: string;
@@ -51,6 +53,14 @@ interface MedicalData {
   medical_emergency_document?: string;
 }
 
+interface CareUpdate {
+  id: string;
+  pet_id: string;
+  update_text: string;
+  reported_at: string;
+  is_visible: boolean;
+}
+
 const PublicCareInstructions = () => {
   const { petId } = useParams();
   const navigate = useNavigate();
@@ -60,8 +70,68 @@ const PublicCareInstructions = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isContactModalOpen, setIsContactModalOpen] = useState(false);
+  const [careUpdates, setCareUpdates] = useState<CareUpdate[]>([]);
+  const [updateText, setUpdateText] = useState('');
+  const [isSubmittingUpdate, setIsSubmittingUpdate] = useState(false);
 
   const isValidUUID = (id: string) => /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(id);
+
+  const formatTimeAgo = (timestamp: string) => {
+    const now = new Date();
+    const past = new Date(timestamp);
+    const diffMs = now.getTime() - past.getTime();
+    const diffMins = Math.floor(diffMs / 60000);
+    const diffHours = Math.floor(diffMins / 60);
+    const diffDays = Math.floor(diffHours / 24);
+
+    if (diffMins < 1) return 'Just now';
+    if (diffMins < 60) return `${diffMins}m ago`;
+    if (diffHours < 24) return `${diffHours}h ago`;
+    if (diffDays < 7) return `${diffDays}d ago`;
+    return past.toLocaleDateString();
+  };
+
+  const fetchCareUpdates = async (id: string) => {
+    try {
+      const { data, error } = await supabase
+        .from('care_updates')
+        .select('*')
+        .eq('pet_id', id)
+        .eq('is_visible', true)
+        .order('reported_at', { ascending: false })
+        .limit(20);
+      
+      if (error) throw error;
+      setCareUpdates(data || []);
+    } catch (error) {
+      console.error('Error fetching care updates:', error);
+    }
+  };
+
+  const handleReportUpdate = async () => {
+    if (!updateText.trim() || !petId) return;
+    
+    setIsSubmittingUpdate(true);
+    try {
+      const { error } = await supabase
+        .from('care_updates')
+        .insert({
+          pet_id: petId,
+          update_text: updateText.trim().slice(0, 200),
+          is_visible: true
+        });
+      
+      if (error) throw error;
+      
+      setUpdateText('');
+      toast.success('Care update posted!');
+    } catch (error) {
+      console.error('Error posting care update:', error);
+      toast.error('Failed to post update');
+    } finally {
+      setIsSubmittingUpdate(false);
+    }
+  };
 
   // Redirect logged-in owners if invalid petId is used (e.g., '/care/:petId')
   useEffect(() => {
@@ -145,6 +215,9 @@ const PublicCareInstructions = () => {
           setMedicalData(medical);
         }
 
+        // Fetch care updates
+        fetchCareUpdates(petId);
+
       } catch (err) {
         console.error('Error fetching data:', err);
         setError('Failed to load care instructions');
@@ -156,7 +229,7 @@ const PublicCareInstructions = () => {
     fetchData();
   }, [petId]);
 
-  // Realtime updates for care instructions
+  // Realtime updates for care instructions and care updates
   useEffect(() => {
     if (!petId || petId.startsWith(':') || !isValidUUID(petId)) return;
 
@@ -177,8 +250,24 @@ const PublicCareInstructions = () => {
       })
       .subscribe();
 
+    const careUpdatesChannel = supabase
+      .channel('care-updates-realtime')
+      .on('postgres_changes', {
+        event: 'INSERT',
+        schema: 'public',
+        table: 'care_updates',
+        filter: `pet_id=eq.${petId}`,
+      }, (payload) => {
+        const newUpdate = payload.new as CareUpdate;
+        if (newUpdate.is_visible) {
+          setCareUpdates(prev => [newUpdate, ...prev]);
+        }
+      })
+      .subscribe();
+
     return () => {
       supabase.removeChannel(channel);
+      supabase.removeChannel(careUpdatesChannel);
     };
   }, [petId]);
 
@@ -547,6 +636,95 @@ const PublicCareInstructions = () => {
               </CardContent>
             </Card>
           )}
+
+          {/* Care Update Board */}
+          <Card className="border-sage-200 shadow-sm">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-navy-900">
+                <MessageCircle className="h-5 w-5 text-[#5691af]" />
+                Care Update Board
+              </CardTitle>
+              <p className="text-sm text-navy-600 mt-2">
+                Pet sitters & caretakers: Share quick updates about {pet.name}'s care!
+              </p>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {/* Post Update Form */}
+              <div className="bg-slate-50 p-4 rounded-lg border border-slate-200">
+                <h4 className="font-medium text-navy-800 mb-2">Post a Care Update</h4>
+                <Textarea
+                  value={updateText}
+                  onChange={(e) => setUpdateText(e.target.value.slice(0, 200))}
+                  placeholder={`e.g., "Fed breakfast at 8am - ate everything!" or "Walked at noon - all good!"`}
+                  className="mb-2 resize-none bg-white border-slate-200"
+                  rows={3}
+                  maxLength={200}
+                />
+                <div className="flex justify-between items-center">
+                  <span className="text-xs text-navy-600">
+                    {updateText.length}/200 characters
+                  </span>
+                  <Button 
+                    onClick={handleReportUpdate} 
+                    disabled={!updateText.trim() || isSubmittingUpdate}
+                    className="bg-[#5691af] hover:bg-[#4a7d99] text-white"
+                    size="sm"
+                  >
+                    {isSubmittingUpdate ? (
+                      <>
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                        Posting...
+                      </>
+                    ) : (
+                      <>
+                        <Send className="w-4 h-4 mr-2" />
+                        Post Update
+                      </>
+                    )}
+                  </Button>
+                </div>
+                <p className="text-xs text-muted-foreground mt-2">
+                  Share feeding, medication, walks, or wellness updates
+                </p>
+              </div>
+
+              {/* Recent Updates List */}
+              <div>
+                <h4 className="font-medium text-navy-800 mb-3 flex items-center gap-2">
+                  <Clock className="w-4 h-4 text-sage-600" />
+                  Recent Updates ({careUpdates.length})
+                </h4>
+                {careUpdates.length === 0 ? (
+                  <div className="bg-slate-50/50 p-6 rounded-lg border border-slate-200 text-center">
+                    <MessageCircle className="w-8 h-8 text-slate-400 mx-auto mb-2" />
+                    <p className="text-navy-600 text-sm font-medium">
+                      No updates yet
+                    </p>
+                    <p className="text-muted-foreground text-xs mt-1">
+                      Be the first to post a care update!
+                    </p>
+                  </div>
+                ) : (
+                  <div className="space-y-2 max-h-96 overflow-y-auto">
+                    {careUpdates.map((update) => (
+                      <div 
+                        key={update.id} 
+                        className="bg-white p-3 rounded-lg border border-slate-200 hover:border-[#5691af] transition-colors shadow-sm"
+                      >
+                        <p className="text-sm text-navy-800 leading-relaxed">
+                          {update.update_text}
+                        </p>
+                        <p className="text-xs text-muted-foreground mt-1 flex items-center gap-1">
+                          <Clock className="w-3 h-3" />
+                          {formatTimeAgo(update.reported_at)}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </CardContent>
+          </Card>
         </div>
 
         {/* Emergency Contacts */}

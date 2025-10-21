@@ -164,6 +164,44 @@ export type Database = {
           },
         ]
       }
+      care_updates: {
+        Row: {
+          created_at: string | null
+          id: string
+          ip_address: string | null
+          is_visible: boolean | null
+          pet_id: string
+          reported_at: string | null
+          update_text: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          ip_address?: string | null
+          is_visible?: boolean | null
+          pet_id: string
+          reported_at?: string | null
+          update_text: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          ip_address?: string | null
+          is_visible?: boolean | null
+          pet_id?: string
+          reported_at?: string | null
+          update_text?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "care_updates_pet_id_fkey"
+            columns: ["pet_id"]
+            isOneToOne: false
+            referencedRelation: "pets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       certifications: {
         Row: {
           certification_number: string | null

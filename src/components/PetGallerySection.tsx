@@ -541,26 +541,6 @@ export const PetGallerySection = ({ petData, onUpdate, handlePetUpdate }: PetGal
         </CardContent>
       </Card>
       
-      {/* Preview Public Gallery Button */}
-      <Card className="border-0 shadow-lg bg-white">
-        <CardContent className="p-4">
-          <Button
-            onClick={() => window.open(`/gallery/${petData.id}`, '_blank')}
-            variant="outline"
-            className="w-full bg-[#5691af] text-white hover:bg-[#4a7d99] hover:text-white border-[#5691af] focus-visible:ring-[#5691af]"
-          >
-            <Eye className="w-4 h-4 mr-2" />
-            Preview Gallery LiveLink
-          </Button>
-        </CardContent>
-      </Card>
-
-      {/* Quick Share Hub */}
-      <QuickShareHub 
-        petData={petData} 
-        isLost={false}
-      />
-
       {/* Upload Area with Camera Capture */}
       <Card className="border-0 shadow-lg bg-passport-section-bg backdrop-blur-sm">
         <CardHeader>
@@ -809,6 +789,26 @@ export const PetGallerySection = ({ petData, onUpdate, handlePetUpdate }: PetGal
           )}
         </CardContent>
       </Card>
+
+      {/* Preview Public Gallery Button */}
+      <Card className="border-0 shadow-lg bg-white">
+        <CardContent className="p-4">
+          <Button
+            onClick={() => window.open(`/gallery/${petData.id}`, '_blank')}
+            variant="outline"
+            className="w-full bg-[#5691af] text-white hover:bg-[#4a7d99] hover:text-white border-[#5691af] focus-visible:ring-[#5691af]"
+          >
+            <Eye className="w-4 h-4 mr-2" />
+            Preview Gallery LiveLink
+          </Button>
+        </CardContent>
+      </Card>
+
+      {/* Quick Share Hub */}
+      <QuickShareHub 
+        petData={petData} 
+        isLost={false}
+      />
 
       {/* Gallery PDF Dialog */}
       <Dialog open={isGalleryPDFDialogOpen} onOpenChange={setIsGalleryPDFDialogOpen}>

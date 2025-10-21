@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Star, Shield, Heart, Phone, Mail, Award, AlertTriangle, MapPin, GraduationCap, Trophy, Activity, Edit, Users } from "lucide-react";
+import { Star, Shield, Heart, Phone, Mail, Award, AlertTriangle, MapPin, GraduationCap, Trophy, Activity, Edit, Users, Eye } from "lucide-react";
 import { SupportAnimalBanner } from "@/components/SupportAnimalBanner";
 import { PetResumeEditForm } from "@/components/PetResumeEditForm";
 import { ContactsDisplay } from "@/components/ContactsDisplay";
@@ -101,15 +101,26 @@ export const PetResumeSection = ({ petData, onUpdate, handlePetUpdate }: PetResu
             </p>
           </div>
 
-          {/* Wide Edit Button */}
-          <Button 
-            onClick={() => setIsEditModalOpen(true)}
-            className="w-full h-14 text-lg text-white"
-            size="lg"
-          >
-            <Edit className="w-5 h-5 mr-2" />
-            Edit Resume
-          </Button>
+          {/* Action Buttons */}
+          <div className="space-y-3">
+            <Button 
+              onClick={() => setIsEditModalOpen(true)}
+              className="w-full h-14 text-lg text-white"
+              size="lg"
+            >
+              <Edit className="w-5 h-5 mr-2" />
+              Edit Resume
+            </Button>
+            
+            <Button
+              onClick={() => window.open(`/resume/${petData.id}`, '_blank')}
+              variant="outline"
+              className="w-full h-14 text-lg bg-[#5691af] text-white hover:bg-[#4a7d99] hover:text-white border-[#5691af] focus-visible:ring-[#5691af]"
+            >
+              <Eye className="w-5 h-5 mr-2" />
+              Preview Public Resume
+            </Button>
+          </div>
         </CardContent>
       </Card>
 

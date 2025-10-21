@@ -7,7 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { QrCode, Download, Share, Share2, Phone, Pill, Shield, Heart, Award, AlertTriangle, MapPin, Clock, DollarSign, CalendarIcon, Stethoscope, Users } from "lucide-react";
+import { QrCode, Download, Share, Share2, Phone, Pill, Shield, Heart, Award, AlertTriangle, MapPin, Clock, DollarSign, CalendarIcon, Stethoscope, Users, Eye } from "lucide-react";
 import { ContactsDisplay } from "@/components/ContactsDisplay";
 import { format } from "date-fns";
 import { useState, useEffect } from "react";
@@ -304,6 +304,18 @@ export const QuickIDSection = ({ petData, onUpdate }: QuickIDSectionProps) => {
             <div className="space-y-4">
               <ContactsDisplay petId={petData.id!} fallbackPetData={petData} />
             </div>
+          </div>
+          
+          {/* Preview Emergency Profile Button */}
+          <div className="mt-4">
+            <Button
+              onClick={() => window.open(`/emergency/${petData.id}`, '_blank')}
+              variant="outline"
+              className="w-full bg-[#5691af] text-white hover:bg-[#4a7d99] hover:text-white border-[#5691af] focus-visible:ring-[#5691af]"
+            >
+              <Eye className="w-4 h-4 mr-2" />
+              Preview Emergency Profile
+            </Button>
           </div>
         </CardContent>
       </Card>

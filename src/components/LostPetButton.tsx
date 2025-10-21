@@ -353,22 +353,33 @@ export const LostPetButton = ({ petId, petName = "Pet", isMissing = false, class
                   }
                 </p>
                 
-                <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-3">
                   <Button
-                    onClick={() => handlePdfAction('view')}
+                    onClick={() => window.open(`/missing/${petId}`, '_blank')}
                     variant="outline"
-                    className="border-red-500 text-red-600 hover:bg-red-50"
+                    className="w-full bg-[#5691af] text-white hover:bg-[#4a7d99] hover:text-white border-[#5691af] focus-visible:ring-[#5691af]"
                   >
                     <Eye className="w-4 h-4 mr-2" />
-                    View PDF
+                    Preview Lost Pet Page
                   </Button>
-                  <Button
-                    onClick={() => handlePdfAction('download')}
-                    className="bg-gradient-to-r from-red-500 to-red-600 text-white hover:from-red-600 hover:to-red-700"
-                  >
-                    <Download className="w-4 h-4 mr-2" />
-                    Download PDF
-                  </Button>
+                  
+                  <div className="grid grid-cols-2 gap-3">
+                    <Button
+                      onClick={() => handlePdfAction('view')}
+                      variant="outline"
+                      className="border-red-500 text-red-600 hover:bg-red-50"
+                    >
+                      <Eye className="w-4 h-4 mr-2" />
+                      View PDF
+                    </Button>
+                    <Button
+                      onClick={() => handlePdfAction('download')}
+                      className="bg-gradient-to-r from-red-500 to-red-600 text-white hover:from-red-600 hover:to-red-700"
+                    >
+                      <Download className="w-4 h-4 mr-2" />
+                      Download PDF
+                    </Button>
+                  </div>
                 </div>
               </div>
             )}

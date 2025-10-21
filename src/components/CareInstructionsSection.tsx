@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { Input } from "@/components/ui/input";
-import { Heart, Clock, Pill, Coffee, Moon, AlertTriangle, Edit, Loader2, Sparkles } from "lucide-react";
+import { Heart, Clock, Pill, Coffee, Moon, AlertTriangle, Edit, Loader2, Sparkles, Eye } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { CareInstructionsEditForm } from "@/components/CareInstructionsEditForm";
 import { fetchCareInstructions } from "@/services/careInstructionsService";
@@ -163,15 +163,26 @@ export const CareInstructionsSection = ({ petData, onUpdate, handlePetUpdate }: 
             </p>
           </div>
 
-          {/* Wide Edit Button */}
-          <Button 
-            onClick={() => setIsEditing(true)}
-            className="w-full h-14 text-lg text-white"
-            size="lg"
-          >
-            <Edit className="w-5 h-5 mr-2" />
-            Edit Care & Handling
-          </Button>
+          {/* Action Buttons */}
+          <div className="space-y-3">
+            <Button 
+              onClick={() => setIsEditing(true)}
+              className="w-full h-14 text-lg text-white"
+              size="lg"
+            >
+              <Edit className="w-5 h-5 mr-2" />
+              Edit Care & Handling
+            </Button>
+            
+            <Button
+              onClick={() => window.open(`/care/${petData.id}`, '_blank')}
+              variant="outline"
+              className="w-full h-14 text-lg bg-[#5691af] text-white hover:bg-[#4a7d99] hover:text-white border-[#5691af] focus-visible:ring-[#5691af]"
+            >
+              <Eye className="w-5 h-5 mr-2" />
+              Preview Public Care Instructions
+            </Button>
+          </div>
         </CardContent>
       </Card>
       

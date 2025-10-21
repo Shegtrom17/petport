@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
-import { AlertTriangle, Phone, Trash2, Upload, Loader2, Edit, Share2, Facebook, MessageCircle, Mail, Camera, Info } from "lucide-react";
+import { AlertTriangle, Phone, Trash2, Upload, Loader2, Edit, Share2, Facebook, MessageCircle, Mail, Camera, Info, Eye } from "lucide-react";
 import { PetDeleteDialog } from "@/components/PetDeleteDialog";
 import { PetPDFGenerator } from "@/components/PetPDFGenerator";
 import { SupportAnimalBanner } from "@/components/SupportAnimalBanner";
@@ -332,6 +332,16 @@ export const PetProfileContent = ({
                         <span>Edit Pet Profile</span>
                       </Button>
                     )}
+                    
+                    {/* Preview Public Profile Button */}
+                    <Button
+                      onClick={() => window.open(`/profile/${enhancedPetData.id}`, '_blank')}
+                      variant="outline"
+                      className="w-full bg-[#5691af] text-white hover:bg-[#4a7d99] hover:text-white border-[#5691af] focus-visible:ring-[#5691af] flex items-center justify-center gap-2 h-12"
+                    >
+                      <Eye className="w-4 h-4" />
+                      <span>Preview Public Profile</span>
+                    </Button>
                   </div>
                 </>
               ) : (

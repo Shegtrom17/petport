@@ -15,6 +15,7 @@ import { generateClientPetPDF, viewPDFBlob, downloadPDFBlob } from '@/services/c
 import { sharePDFBlob } from '@/services/pdfService';
 import { generateShareURL } from '@/utils/domainUtils';
 import { shareViaMessenger, copyToClipboard } from '@/utils/messengerShare';
+import { shareQRCode } from '@/utils/qrShare';
 import { ContactOwnerModal } from '@/components/ContactOwnerModal';
 import { Textarea } from '@/components/ui/textarea';
 
@@ -362,6 +363,17 @@ export default function PublicMissingPet() {
     window.location.href = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
   };
 
+  const handleShareQRCode = async () => {
+    if (!petData) return;
+    await shareQRCode(
+      pageUrl, 
+      petData.name, 
+      'LOST PET',
+      'dc2626',
+      `🚨 LOST PET: ${petData.name} - Scan this QR code to help find them!`
+    );
+  };
+
   // Sighting Board Functions
   const fetchSightings = async (id: string) => {
     try {
@@ -706,9 +718,21 @@ export default function PublicMissingPet() {
           <CardContent className="space-y-4">
             <div className="flex justify-center">
               <div className="bg-white p-4 rounded-lg shadow-inner border-2 border-gray-200">
-                <QRCode value={pageUrl} size={200} />
+                <QRCode 
+                  value={pageUrl} 
+                  size={200}
+                  fgColor="#dc2626"
+                  bgColor="#ffffff"
+                />
               </div>
             </div>
+            <Button
+              onClick={handleShareQRCode}
+              className="w-full bg-red-600 hover:bg-red-700 text-white font-semibold"
+            >
+              <Share2 className="mr-2 h-4 w-4" />
+              Share LOST PET QR Code
+            </Button>
             <p className="text-center text-sm text-muted-foreground">
               Scan this QR code to view and share this missing pet alert on any device
             </p>

@@ -4,10 +4,18 @@ import { toast } from 'sonner';
  * Share a QR code for a given URL using the QR Server API (same as pdfService)
  * Falls back to download if native sharing isn't available
  */
-export async function shareQRCode(url: string, petName: string, pageType: string): Promise<void> {
+export async function shareQRCode(
+  url: string, 
+  petName: string, 
+  pageType: string,
+  color: string = '000000',
+  customText?: string
+): Promise<void> {
   try {
     // Use the same QR API that's already working in pdfService
-    const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=512x512&data=${encodeURIComponent(url)}`;
+    // Support custom colors (remove # if present)
+    const colorCode = color.replace('#', '');
+    const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=512x512&color=${colorCode}&data=${encodeURIComponent(url)}`;
     
     // Fetch the QR code image
     const response = await fetch(qrUrl);
@@ -20,8 +28,8 @@ export async function shareQRCode(url: string, petName: string, pageType: string
     // Try native sharing first
     if (navigator.canShare && navigator.canShare({ files: [file] })) {
       await navigator.share({
-        title: `${petName} - ${pageType}`,
-        text: `Scan this QR code to view ${petName}'s ${pageType}`,
+        title: `${petName} - ${customText || pageType}`,
+        text: customText || `Scan this QR code to view ${petName}'s ${pageType}`,
         files: [file],
       });
       

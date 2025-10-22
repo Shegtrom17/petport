@@ -309,6 +309,76 @@ serve(async (req) => {
       // Start background email sending without blocking the response
       EdgeRuntime.waitUntil(sendEmailBackground());
       
+      // Send confirmation email to sender asynchronously
+      const sendSenderConfirmation = async () => {
+        try {
+          console.log(`[TRANSFER] Sending confirmation to sender: ${user.email}`);
+          
+          // Get sender profile
+          const { data: senderProfile } = await admin
+            .from("profiles")
+            .select("full_name")
+            .eq("id", user.id)
+            .maybeSingle();
+          
+          // Determine recipient status for the confirmation email
+          const { data: existingUsers } = await admin.auth.admin.listUsers();
+          const existingUser = existingUsers.users?.find(u => u.email?.toLowerCase() === to_email.toLowerCase());
+          
+          let recipientStatus = "new";
+          
+          if (existingUser) {
+            const { data: subscription } = await admin
+              .from("subscribers")
+              .select("status, pet_limit, additional_pets")
+              .eq("user_id", existingUser.id)
+              .maybeSingle();
+
+            const { count: petCount } = await admin
+              .from("pets")
+              .select("*", { count: "exact", head: true })
+              .eq("user_id", existingUser.id);
+
+            if (subscription && (subscription.status === 'active' || subscription.status === 'grace')) {
+              const totalLimit = (subscription.pet_limit || 1) + (subscription.additional_pets || 0);
+              const currentPets = petCount || 0;
+              
+              if (currentPets >= totalLimit) {
+                recipientStatus = "at_limit";
+              } else {
+                recipientStatus = "existing";
+              }
+            } else {
+              recipientStatus = "needs_subscription";
+            }
+          }
+          
+          const emailResult = await admin.functions.invoke("send-email", {
+            body: {
+              type: "transfer_sent_confirmation",
+              recipientEmail: user.email!,
+              recipientName: senderProfile?.full_name || user.user_metadata?.full_name,
+              petName: pet?.name || "Pet",
+              petId: pet_id,
+              shareUrl: `${APP_ORIGIN}/profile/${pet_id}`,
+              customMessage: json.message,
+              recipientStatus: recipientStatus,
+              transferToken: inserted.token
+            }
+          });
+          
+          if (emailResult.error) {
+            console.error("[TRANSFER] Sender confirmation email failed:", emailResult.error);
+          } else {
+            console.log(`[TRANSFER] Sender confirmation sent to ${user.email}`);
+          }
+        } catch (emailError) {
+          console.error("[TRANSFER] Sender confirmation error:", emailError);
+        }
+      };
+
+      EdgeRuntime.waitUntil(sendSenderConfirmation());
+      
       console.log(`[TRANSFER] Transfer request created, returning immediately (token: ${inserted.token})`);
 
       return new Response(JSON.stringify({ ok: true, token: inserted.token }), {
@@ -398,6 +468,7 @@ serve(async (req) => {
           .eq("id", reqRow.from_user_id)
           .maybeSingle();
 
+        // Send success email to recipient
         await admin.functions.invoke("send-email", {
           body: {
             type: "transfer_success",
@@ -409,8 +480,26 @@ serve(async (req) => {
             senderName: senderProfile?.full_name
           }
         });
+        
+        // Send completion notification to original sender
+        const { data: senderUser } = await admin.auth.admin.getUserById(reqRow.from_user_id);
+        
+        if (senderUser?.user?.email) {
+          await admin.functions.invoke("send-email", {
+            body: {
+              type: "transfer_completed_sender",
+              recipientEmail: senderUser.user.email,
+              recipientName: senderProfile?.full_name || senderUser.user.user_metadata?.full_name,
+              petName: pet?.name || "Pet",
+              petId: reqRow.pet_id,
+              shareUrl: `${APP_ORIGIN}/profile/${reqRow.pet_id}`,
+              senderName: user.user_metadata?.full_name
+            }
+          });
+          console.log(`[TRANSFER] Completion notification sent to sender: ${senderUser.user.email}`);
+        }
       } catch (emailError) {
-        console.error("Error sending success email:", emailError);
+        console.error("Error sending transfer emails:", emailError);
         // Don't fail the transfer for email issues
       }
 

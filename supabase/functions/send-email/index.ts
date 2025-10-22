@@ -8,7 +8,7 @@ const corsHeaders = {
 };
 
 interface EmailRequest {
-  type: 'profile' | 'care' | 'credentials' | 'resume' | 'reviews' | 'review_request' | 'missing_pet' | 'app_share' | 'welcome' | 'welcome_trial' | 'transfer_invite_new' | 'transfer_invite_existing' | 'transfer_success' | 'transfer_limit_reached';
+  type: 'profile' | 'care' | 'credentials' | 'resume' | 'reviews' | 'review_request' | 'missing_pet' | 'app_share' | 'welcome' | 'welcome_trial' | 'transfer_invite_new' | 'transfer_invite_existing' | 'transfer_success' | 'transfer_limit_reached' | 'transfer_sent_confirmation' | 'transfer_completed_sender';
   recipientEmail: string;
   recipientName?: string;
   petName: string;
@@ -146,6 +146,50 @@ Add pet slot and accept transfer: ${transferUrl || `${baseUrl}/transfer/accept/$
 
 ---
 Sent via PetPort - Digital Pet Passport
+https://petport.app`,
+
+    transfer_sent_confirmation: `${greeting}
+
+Your transfer request for ${petName} has been sent successfully!
+
+Transfer Details:
+- Pet: ${petName}
+- Recipient: ${data.recipientEmail}
+- Expiration: 7 days
+${customMessage ? `\nYour message: "${customMessage}"\n` : ''}
+
+What happens next:
+- The recipient will receive an email invitation to accept the transfer
+- They have 7 days to accept before the transfer link expires
+- You'll receive another email when they accept the transfer
+- If they don't accept within 7 days, you can send a new transfer request
+
+The recipient will need to:
+${data.recipientStatus === 'new' ? '- Create a PetPort account with a 7-day free trial' : 
+  data.recipientStatus === 'at_limit' ? '- Purchase an additional pet slot' : 
+  '- Accept the transfer in their account'}
+
+View ${petName}'s profile: ${baseUrl}/profile/${data.petId}
+
+---
+PetPort - Digital Pet Passport
+https://petport.app`,
+
+    transfer_completed_sender: `${greeting}
+
+Great news! ${data.senderName || 'The recipient'} has accepted the transfer of ${petName}.
+
+Transfer Completed:
+- Pet: ${petName}
+- New Owner: ${data.senderName || data.recipientEmail}
+- Completed: ${new Date().toLocaleDateString()}
+
+${petName} has been successfully transferred to their new account. The new owner now has full access to manage ${petName}'s profile, including all photos, documents, and information.
+
+Thank you for using PetPort's secure transfer system!
+
+---
+PetPort - Digital Pet Passport
 https://petport.app`
   };
 
@@ -449,6 +493,78 @@ const generateEmailTemplate = (data: EmailRequest) => {
         
         <p>Click the button below to add a pet slot and claim ${petName}'s profile.</p>
       `
+    },
+    transfer_sent_confirmation: {
+      subject: `✅ Transfer request sent for ${petName}`,
+      content: `
+        <h2 style="color: #5691af;">✅ Transfer Request Sent</h2>
+        <p>Your transfer request for <strong>${petName}</strong> has been sent successfully!</p>
+        
+        <div style="background: #f0f9ff; border-left: 4px solid #5691af; padding: 20px; border-radius: 8px; margin: 20px 0;">
+          <h3 style="margin-top: 0; color: #5691af;">📋 Transfer Details</h3>
+          <ul style="color: #475569; margin: 10px 0; padding-left: 20px; line-height: 1.8;">
+            <li><strong>Pet:</strong> ${petName}</li>
+            <li><strong>Recipient:</strong> ${data.recipientEmail}</li>
+            <li><strong>Expires:</strong> 7 days from now</li>
+          </ul>
+          ${customMessage ? `<p style="margin: 15px 0; padding: 12px; background: white; border-radius: 6px; font-style: italic; color: #64748b;">"${customMessage}"</p>` : ''}
+        </div>
+        
+        <div style="background: #fefce8; border: 2px solid #fbbf24; border-radius: 8px; padding: 18px; margin: 20px 0;">
+          <h3 style="margin-top: 0; color: #92400e;">⏰ What Happens Next</h3>
+          <ul style="color: #78350f; margin: 10px 0; padding-left: 20px; line-height: 1.8;">
+            <li>The recipient will receive an email invitation</li>
+            <li>They have <strong>7 days</strong> to accept the transfer</li>
+            <li>You'll receive another email when they accept</li>
+            <li>If they don't accept, you can send a new request</li>
+          </ul>
+        </div>
+        
+        <div style="background: linear-gradient(135deg, #5691af 0%, #4a7c95 100%); color: white; padding: 20px; border-radius: 10px; margin: 20px 0;">
+          <h3 style="margin-top: 0; color: white;">📬 Recipient Requirements</h3>
+          <p style="margin: 0; color: rgba(255,255,255,0.95); line-height: 1.7;">
+            ${data.recipientStatus === 'new' 
+              ? 'The recipient will need to <strong>create a PetPort account</strong> with a 7-day free trial to accept the transfer.' 
+              : data.recipientStatus === 'at_limit' 
+              ? 'The recipient has reached their pet limit and will need to <strong>purchase an additional pet slot</strong> to accept the transfer.' 
+              : 'The recipient will need to <strong>accept the transfer</strong> in their PetPort account.'}
+          </p>
+        </div>
+        
+        <p style="color: #64748b; margin-top: 25px;">The transfer is secure and can only be accepted by the email address you specified.</p>
+      `
+    },
+    transfer_completed_sender: {
+      subject: `🎉 ${petName}'s transfer is complete!`,
+      content: `
+        <h2 style="color: #5691af;">🎉 Transfer Complete!</h2>
+        <p>Great news! <strong>${data.senderName || 'The recipient'}</strong> has accepted the transfer of <strong>${petName}</strong>.</p>
+        
+        <div style="background: linear-gradient(135deg, #5691af 0%, #4a7c95 100%); color: white; padding: 25px; border-radius: 12px; margin: 25px 0; text-align: center;">
+          <div style="font-size: 48px; margin-bottom: 10px;">✓</div>
+          <h3 style="margin: 0; color: white; font-size: 20px;">Transfer Successful</h3>
+        </div>
+        
+        <div style="background: #f8fafc; border: 2px solid #5691af; border-radius: 10px; padding: 20px; margin: 20px 0;">
+          <h3 style="margin-top: 0; color: #5691af;">📋 Transfer Summary</h3>
+          <ul style="color: #475569; margin: 10px 0; padding-left: 20px; line-height: 1.8;">
+            <li><strong>Pet:</strong> ${petName}</li>
+            <li><strong>New Owner:</strong> ${data.senderName || data.recipientEmail}</li>
+            <li><strong>Completed:</strong> ${new Date().toLocaleDateString()}</li>
+          </ul>
+        </div>
+        
+        <div style="background: #f0f9ff; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #5691af;">
+          <h3 style="margin-top: 0; color: #5691af;">✨ What This Means</h3>
+          <p style="color: #475569; line-height: 1.7; margin: 0;">
+            ${petName} has been successfully transferred to their new account. The new owner now has full access to manage ${petName}'s profile, including all photos, documents, and information.
+          </p>
+        </div>
+        
+        <p style="color: #64748b; margin-top: 25px; line-height: 1.6;">
+          Thank you for using PetPort's secure transfer system. We hope ${petName} continues to thrive in their new home! 🐾
+        </p>
+      `
     }
   };
 
@@ -487,7 +603,9 @@ const generateEmailTemplate = (data: EmailRequest) => {
               // For transfer emails, use transferUrl instead of shareUrl
               if (type === 'transfer_invite_new' || type === 'transfer_invite_existing' || type === 'transfer_limit_reached') {
                 return data.transferUrl || `${baseUrl}/transfer/accept/${data.transferToken}`;
-              } else if (type === 'transfer_success') {
+              } else if (type === 'transfer_success' || type === 'transfer_completed_sender') {
+                return `${baseUrl}/profile/${data.petId}`;
+              } else if (type === 'transfer_sent_confirmation') {
                 return `${baseUrl}/profile/${data.petId}`;
               }
               
@@ -501,12 +619,14 @@ const generateEmailTemplate = (data: EmailRequest) => {
               }
             })()} " 
                style="display: inline-block; background: linear-gradient(135deg, #5691af 0%, #4a7c95 100%); color: white; text-decoration: none; padding: 15px 30px; border-radius: 8px; font-weight: bold; font-size: 16px;">
-                ${isDocumentShare ? '📄 View Document' : 
+               ${isDocumentShare ? '📄 View Document' : 
                   type === 'review_request' ? `📝 Leave a Review for ${petName}` :
                   type === 'transfer_invite_new' ? 'Create Account & Start Free Trial' :
                   type === 'transfer_invite_existing' ? `Accept ${petName}'s Transfer` :
                   type === 'transfer_success' ? `View ${petName}'s Profile` :
                   type === 'transfer_limit_reached' ? 'Add Pet Slot & Claim Profile' :
+                  type === 'transfer_sent_confirmation' ? `View ${petName}'s Profile` :
+                  type === 'transfer_completed_sender' ? `View ${petName}'s New Profile` :
                   `View ${petName}'s ${type === 'profile' ? 'Profile' : type === 'missing_pet' ? 'Missing Pet Alert' : type === 'resume' ? 'Resume' : type.charAt(0).toUpperCase() + type.slice(1)}`}
             </a>
           </div>

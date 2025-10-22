@@ -690,10 +690,7 @@ export const PetEditForm = ({ petData, onSave, onCancel, togglePetPublicVisibili
               <PetDeleteDialog
                 petId={petData.id}
                 petName={petData.name}
-                onPetDeleted={() => {
-                  // Handle pet deletion - navigate away or update parent
-                  window.location.href = '/';
-                }}
+                onPetDeleted={onSave}
               />
             </div>
           </div>

@@ -18,9 +18,10 @@ interface AppHeaderProps {
   title: string;
   showBack?: boolean;
   actions?: React.ReactNode;
+  showHelpIcon?: boolean;
 }
 
-export const AppHeader = ({ title, showBack = false, actions }: AppHeaderProps) => {
+export const AppHeader = ({ title, showBack = false, actions, showHelpIcon = false }: AppHeaderProps) => {
   const navigate = useNavigate();
   const { user, isLoading, signOut } = useAuth();
   const [showReferralModal, setShowReferralModal] = useState(false);
@@ -35,6 +36,17 @@ export const AppHeader = ({ title, showBack = false, actions }: AppHeaderProps) 
         </div>
 
         <div className="flex items-center space-x-2">
+          {showHelpIcon && user && (
+            <Button
+              variant="ghost"
+              size="icon"
+              className="touch-feedback"
+              onClick={() => navigate('/help')}
+              aria-label="Get help"
+            >
+              <HelpCircle className="h-5 w-5" />
+            </Button>
+          )}
           {user && (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>

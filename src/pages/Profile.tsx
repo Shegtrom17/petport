@@ -30,7 +30,7 @@ export default function Profile() {
 
   return (
     <PWALayout>
-      <AppHeader title="Profile" />
+      <AppHeader title="Profile" showHelpIcon />
       <div className="p-4 space-y-4">
         {/* PWA Install Card */}
         <PWAInstallCard />

@@ -4,10 +4,48 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { UserX, Send } from "lucide-react";
+import { UserX, Send, Wifi } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { isIOSDevice } from "@/utils/iosDetection";
+
+// Retry configuration
+const MAX_RETRIES = 2;
+const INITIAL_TIMEOUT = 45000; // 45 seconds
+const RETRY_DELAYS = [2000, 5000]; // 2s, 5s
+
+// Retry logic with exponential backoff and timeout
+async function invokeWithRetry<T>(
+  fn: () => Promise<T>,
+  timeout: number,
+  retries: number = MAX_RETRIES,
+  attempt: number = 0
+): Promise<T> {
+  const timeoutPromise = new Promise<never>((_, reject) =>
+    setTimeout(() => reject(new Error("Request timeout")), timeout)
+  );
+
+  try {
+    console.log(`[TRANSFER] Attempt ${attempt + 1}/${retries + 1}, timeout: ${timeout}ms`);
+    const startTime = Date.now();
+    const result = await Promise.race([fn(), timeoutPromise]);
+    const duration = Date.now() - startTime;
+    console.log(`[TRANSFER] Success in ${duration}ms`);
+    return result;
+  } catch (error) {
+    const isTimeout = error instanceof Error && error.message === "Request timeout";
+    console.error(`[TRANSFER] Attempt ${attempt + 1} failed:`, error);
+
+    if (attempt < retries) {
+      const delay = RETRY_DELAYS[attempt] || RETRY_DELAYS[RETRY_DELAYS.length - 1];
+      console.log(`[TRANSFER] Retrying in ${delay}ms...`);
+      await new Promise(resolve => setTimeout(resolve, delay));
+      return invokeWithRetry(fn, timeout, retries, attempt + 1);
+    }
+
+    throw error;
+  }
+}
 
 interface PetTransferDialogProps {
   petId: string;
@@ -19,6 +57,7 @@ export const PetTransferDialog = ({ petId, petName }: PetTransferDialogProps) =>
   const [recipientEmail, setRecipientEmail] = useState("");
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
+  const [loadingStage, setLoadingStage] = useState<string>("");
   const { toast } = useToast();
   const isIOS = isIOSDevice();
 
@@ -29,15 +68,34 @@ export const PetTransferDialog = ({ petId, petName }: PetTransferDialogProps) =>
     }
 
     setLoading(true);
+    setLoadingStage("Sending transfer request...");
+    
+    const startTime = Date.now();
+    console.log(`[TRANSFER-UI] Starting transfer for ${petName} (iOS: ${isIOS})`);
+
     try {
-      const { data, error } = await supabase.functions.invoke("transfer-pet", {
-        body: {
-          action: "create",
-          pet_id: petId,
-          to_email: recipientEmail.trim(),
-          message: message.trim() || undefined,
+      // Use retry logic with timeout
+      const { data, error } = await invokeWithRetry(
+        async () => {
+          // Update loading stage for longer waits
+          const elapsed = Date.now() - startTime;
+          if (elapsed > 10000) setLoadingStage("Still processing...");
+          if (elapsed > 25000) setLoadingStage("Almost done...");
+
+          return await supabase.functions.invoke("transfer-pet", {
+            body: {
+              action: "create",
+              pet_id: petId,
+              to_email: recipientEmail.trim(),
+              message: message.trim() || undefined,
+            },
+          });
         },
-      });
+        INITIAL_TIMEOUT
+      );
+
+      const duration = Date.now() - startTime;
+      console.log(`[TRANSFER-UI] Completed in ${duration}ms`);
 
       if (error || !data?.ok) {
         throw new Error(error?.message || "Transfer failed");
@@ -51,12 +109,36 @@ export const PetTransferDialog = ({ petId, petName }: PetTransferDialogProps) =>
       setIsOpen(false);
       setRecipientEmail("");
       setMessage("");
+      setLoadingStage("");
     } catch (error) {
+      const duration = Date.now() - startTime;
+      console.error(`[TRANSFER-UI] Failed after ${duration}ms (iOS: ${isIOS}):`, error);
+
+      // Provide detailed error feedback
+      let errorTitle = "Transfer failed";
+      let errorDescription = "An unexpected error occurred. Please try again.";
+
+      if (error instanceof Error) {
+        if (error.message === "Request timeout") {
+          errorTitle = isIOS ? "Connection timeout (iOS)" : "Connection timeout";
+          errorDescription = isIOS 
+            ? "The request took too long. This can happen on iOS with slower connections. Please check your internet connection and try again."
+            : "The request took too long. Please check your internet connection and try again.";
+        } else if (error.message.includes("Failed to fetch") || error.message.includes("NetworkError")) {
+          errorTitle = "Network error";
+          errorDescription = "Unable to connect. Please check your internet connection and try again.";
+        } else {
+          errorDescription = error.message;
+        }
+      }
+
       toast({
-        title: "Transfer failed",
-        description: error instanceof Error ? error.message : "An unexpected error occurred",
+        title: errorTitle,
+        description: errorDescription,
         variant: "destructive",
       });
+      
+      setLoadingStage("");
     } finally {
       setLoading(false);
     }
@@ -84,6 +166,15 @@ export const PetTransferDialog = ({ petId, petName }: PetTransferDialogProps) =>
               The recipient must have an active PetPort subscription to accept the transfer. You will lose access to this pet's profile.
             </p>
           </div>
+
+          {isIOS && (
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 flex gap-2">
+              <Wifi className="w-4 h-4 text-blue-600 flex-shrink-0 mt-0.5" />
+              <p className="text-xs text-blue-800">
+                <strong>iOS tip:</strong> Transfers may take a moment on iOS. Please keep this page open until the transfer completes.
+              </p>
+            </div>
+          )}
           
           <div className="space-y-2">
             <Label htmlFor="recipient-email">Recipient Email Address</Label>
@@ -121,7 +212,7 @@ export const PetTransferDialog = ({ petId, petName }: PetTransferDialogProps) =>
               className="flex-1 bg-primary hover:bg-primary/90 text-primary-foreground"
             >
               {loading ? (
-                <>Sending...</>
+                <>{loadingStage || "Sending..."}</>
               ) : (
                 <>
                   <Send className="w-4 h-4 mr-2" />

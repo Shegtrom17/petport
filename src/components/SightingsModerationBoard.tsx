@@ -107,6 +107,29 @@ export const SightingsModerationBoard = ({ petId, petName }: SightingsModeration
     }
   };
 
+  const deleteSighting = async (sightingId: string) => {
+    try {
+      const { error } = await supabase
+        .from('pet_sightings')
+        .delete()
+        .eq('id', sightingId);
+
+      if (error) throw error;
+
+      toast({
+        title: "Sighting deleted",
+        description: "The sighting has been permanently removed"
+      });
+    } catch (error) {
+      console.error('Error deleting sighting:', error);
+      toast({
+        title: "Error",
+        description: "Failed to delete sighting",
+        variant: "destructive"
+      });
+    }
+  };
+
   const formatTimeAgo = (timestamp: string) => {
     try {
       return formatDistanceToNow(new Date(timestamp), { addSuffix: true });
@@ -179,6 +202,34 @@ export const SightingsModerationBoard = ({ petId, petName }: SightingsModeration
                         <Eye className="w-4 h-4" />
                       )}
                     </Button>
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-8 px-2 text-red-600 hover:text-red-700 hover:bg-red-50"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>Delete Sighting?</AlertDialogTitle>
+                          <AlertDialogDescription>
+                            This will permanently delete this sighting. This action cannot be undone.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+                          <AlertDialogAction
+                            onClick={() => deleteSighting(sighting.id)}
+                            className="bg-red-600 hover:bg-red-700"
+                          >
+                            Delete
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
                   </div>
                 </div>
               </CardContent>
@@ -187,7 +238,7 @@ export const SightingsModerationBoard = ({ petId, petName }: SightingsModeration
         )}
         <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
           <p className="text-xs text-blue-800">
-            💡 <strong>Tip:</strong> Toggle visibility to hide inappropriate sightings without deleting them. Hidden sightings are only visible to you.
+            💡 <strong>Tip:</strong> Toggle visibility to hide inappropriate sightings, or use the delete button to permanently remove them. Hidden sightings are only visible to you.
           </p>
         </div>
       </CardContent>

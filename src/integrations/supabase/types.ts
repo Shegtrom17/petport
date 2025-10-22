@@ -1566,26 +1566,11 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      can_user_add_pet: {
-        Args: { user_uuid: string }
-        Returns: boolean
-      }
-      create_user_referral: {
-        Args: { _user_id: string }
-        Returns: string
-      }
-      generate_petport_id: {
-        Args: Record<PropertyKey, never>
-        Returns: string
-      }
-      generate_referral_code: {
-        Args: Record<PropertyKey, never>
-        Returns: string
-      }
-      get_user_pet_limit: {
-        Args: { user_uuid: string }
-        Returns: number
-      }
+      can_user_add_pet: { Args: { user_uuid: string }; Returns: boolean }
+      create_user_referral: { Args: { _user_id: string }; Returns: string }
+      generate_petport_id: { Args: never; Returns: string }
+      generate_referral_code: { Args: never; Returns: string }
+      get_user_pet_limit: { Args: { user_uuid: string }; Returns: number }
       handle_care_instructions_upsert: {
         Args: {
           _allergies?: string
@@ -1651,10 +1636,7 @@ export type Database = {
         Args: { _org_id: string; _user_id: string }
         Returns: boolean
       }
-      is_pet_missing: {
-        Args: { pet_uuid: string }
-        Returns: boolean
-      }
+      is_pet_missing: { Args: { pet_uuid: string }; Returns: boolean }
       is_user_subscription_active: {
         Args: { user_uuid: string }
         Returns: boolean

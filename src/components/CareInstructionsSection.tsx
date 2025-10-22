@@ -187,9 +187,6 @@ export const CareInstructionsSection = ({ petData, onUpdate, handlePetUpdate }: 
         </CardContent>
       </Card>
       
-      {/* Quick Share Hub for Care */}
-      <QuickShareHub petData={petData} isLost={false} handlePetUpdate={handlePetUpdate} />
-
       {/* Care Updates Moderation Board */}
       <CareUpdatesModerationBoard petId={petData.id} petName={petData.name} />
 
@@ -358,6 +355,9 @@ export const CareInstructionsSection = ({ petData, onUpdate, handlePetUpdate }: 
           </p>
         </CardContent>
       </Card>
+
+      {/* Quick Share Hub for Care */}
+      <QuickShareHub petData={petData} isLost={false} handlePetUpdate={handlePetUpdate} />
 
       {/* AI Care Assistant Modal */}
       <AICareAssistantModal

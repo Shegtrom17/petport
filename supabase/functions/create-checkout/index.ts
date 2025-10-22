@@ -46,6 +46,11 @@ serve(async (req) => {
     const customers = await stripe.customers.list({ email: user.email, limit: 1 });
     const customerId = customers.data[0]?.id;
 
+    // Apply 10% discount for yearly plan with referral code
+    const discounts = referral_code && plan === "yearly" 
+      ? [{ coupon: "REFERRAL10" }] 
+      : undefined;
+
     const session = await stripe.checkout.sessions.create({
       customer: customerId,
       customer_email: customerId ? undefined : user.email,
@@ -66,6 +71,7 @@ serve(async (req) => {
         trial_period_days: 7,
         metadata: referral_code ? { referral_code } : {},
       },
+      discounts,
       allow_promotion_codes: true,
       success_url: `${req.headers.get("origin")}/post-checkout?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${req.headers.get("origin")}/`,

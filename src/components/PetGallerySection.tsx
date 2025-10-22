@@ -572,8 +572,7 @@ export const PetGallerySection = ({ petData, onUpdate, handlePetUpdate }: PetGal
             </Button>
 
             <Button 
-              variant="outline"
-              className="w-full border-brand-primary text-brand-primary hover:bg-brand-primary/10"
+              className="w-full bg-brand-primary hover:bg-brand-primary-dark text-white"
               onClick={() => window.open(`/gallery/${petData.id}`, '_blank')}
             >
               <ExternalLink className="w-4 h-4 mr-2" />

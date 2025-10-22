@@ -200,10 +200,10 @@ async function handleSubscriptionEvent(
     email: customer.email 
   });
   
-  // Link referral if code exists in metadata
+  // Link referral if code exists in metadata AND plan is yearly
   const referralCode = subscription.metadata?.referral_code;
-  if (referralCode && status === 'active') {
-    logStep("Processing referral code", { referralCode });
+  if (referralCode && status === 'active' && planInterval === 'year') {
+    logStep("Processing referral code for yearly subscription", { referralCode, planInterval });
     
     try {
       const { data: referralData, error: referralError } = await supabaseClient

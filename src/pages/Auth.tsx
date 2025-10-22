@@ -89,6 +89,21 @@ export default function Auth() {
 
         console.log("Auth: Sign up completed, redirecting...");
         
+        // Send welcome email
+        try {
+          await supabase.functions.invoke('send-email', {
+            body: {
+              to: email,
+              subject: 'Welcome to PetPort!',
+              html: `<h1>Welcome to PetPort, ${fullName}!</h1><p>Thank you for signing up. We're excited to have you join our community of pet lovers.</p><p>Get started by creating your pet's profile and exploring all the features PetPort has to offer.</p>`
+            }
+          });
+          console.log("Auth: Welcome email sent");
+        } catch (emailError) {
+          console.error("Auth: Failed to send welcome email:", emailError);
+          // Don't block signup if email fails
+        }
+        
         // Check for referral code and append to subscribe redirect
         const referralCode = localStorage.getItem('petport_referral');
         const baseUrl = transferToken 

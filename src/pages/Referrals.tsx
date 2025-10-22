@@ -506,7 +506,7 @@ export default function Referrals() {
                 <div>
                   <h3 className="font-semibold mb-1">Get Paid</h3>
                   <p className="text-sm text-muted-foreground">
-                    Connect your Stripe account to receive payouts. Commissions are approved after the 30-day refund window.
+                    Connect your Stripe account to receive payouts. Commissions are approved after the 45-day paid membership period.
                   </p>
                 </div>
               </div>

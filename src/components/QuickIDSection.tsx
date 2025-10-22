@@ -17,6 +17,7 @@ import { PrivacyHint } from "@/components/PrivacyHint";
 import { GuidanceHint } from "@/components/ui/guidance-hint";
 import { Link } from "react-router-dom";
 import { QuickShareHub } from "@/components/QuickShareHub";
+import { SightingsModerationBoard } from "@/components/SightingsModerationBoard";
 
 
 
@@ -565,6 +566,11 @@ export const QuickIDSection = ({ petData, onUpdate }: QuickIDSectionProps) => {
         petData={petData} 
         isLost={lostPetData.is_missing}
       />
+
+      {/* Sightings Moderation Board - only show when pet is missing */}
+      {lostPetData.is_missing && (
+        <SightingsModerationBoard petId={petData.id!} petName={petData.name} />
+      )}
     </div>
   );
 };

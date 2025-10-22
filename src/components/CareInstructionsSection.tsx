@@ -14,6 +14,7 @@ import { AICareAssistantModal } from "@/components/AICareAssistantModal";
 import { AIMedicalAssistantModal } from "@/components/AIMedicalAssistantModal";
 import { QuickShareHub } from "@/components/QuickShareHub";
 import { Button } from "@/components/ui/button";
+import { CareUpdatesModerationBoard } from "@/components/CareUpdatesModerationBoard";
 
 interface CareInstructionsSectionProps {
   petData: any;
@@ -188,6 +189,9 @@ export const CareInstructionsSection = ({ petData, onUpdate, handlePetUpdate }: 
       
       {/* Quick Share Hub for Care */}
       <QuickShareHub petData={petData} isLost={false} handlePetUpdate={handlePetUpdate} />
+
+      {/* Care Updates Moderation Board */}
+      <CareUpdatesModerationBoard petId={petData.id} petName={petData.name} />
 
       {/* Feeding Schedule */}
       <Card className="border-0 shadow-lg border-l-4 border-l-[#5691af]">

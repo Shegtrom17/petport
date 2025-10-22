@@ -271,55 +271,60 @@ const generateEmailTemplate = (data: EmailRequest) => {
       `
     },
     welcome: {
-      subject: `🐾 Welcome to PetPort - Your Pet's Digital Home`,
+      subject: `Welcome to PetPort, ${data.recipientName || 'Friend'}! 🐾`,
       content: `
-        <h2 style="color: #5691af;">🐾 Welcome to PetPort!</h2>
-        <p>Hi ${data.recipientName || 'there'},</p>
-        <p>We're thrilled to have you join the PetPort family! You've just taken the first step in giving your pets a secure, accessible digital home.</p>
+        <h2 style="color: #5691af;">Welcome to PetPort!</h2>
+        <p style="font-size: 16px; line-height: 1.6; color: #334155;">Welcome aboard, ${data.recipientName || 'Friend'} – we're thrilled to have you and your pet with us!</p>
         
-        <div style="background: linear-gradient(135deg, #5691af 0%, #4a7c95 100%); color: white; padding: 25px; border-radius: 12px; margin: 25px 0;">
-          <h3 style="margin-top: 0; color: white; font-size: 20px;">📱 Access PetPort Anywhere, Anytime</h3>
-          <p style="margin: 12px 0; color: rgba(255,255,255,0.95); font-size: 15px;">
-            PetPort works seamlessly on all your devices - phone, tablet, or computer. All you need is your email and password to access your pets' profiles from anywhere.
+        <div style="background: #f8fafc; padding: 22px; border-radius: 10px; margin: 25px 0; border-left: 4px solid #5691af;">
+          <h3 style="margin-top: 0; color: #5691af; font-size: 18px;">📱 Access from Any Device</h3>
+          <p style="color: #475569; line-height: 1.7; margin: 12px 0;">
+            <strong>PetPort is accessible from any digital device</strong> – just head to <a href="https://petport.app" style="color: #5691af; text-decoration: none; font-weight: 600;">PetPort.app</a> and sign in.
           </p>
-          <div style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px; margin-top: 15px;">
-            <p style="margin: 0; font-size: 14px; color: rgba(255,255,255,0.9);">
-              <strong>💡 Pro Tip:</strong> Save PetPort to your phone's home screen for instant access, just like a native app!
-            </p>
-          </div>
+          <p style="color: #475569; line-height: 1.7; margin: 12px 0;">
+            Initially users find entering your pet's info is easiest from a desktop or tablet, and many use voice-to-text – it's up to you! Once the initial information is loaded, it's easy updated from any device.
+          </p>
+          <p style="color: #475569; line-height: 1.7; margin: 12px 0;">
+            <strong>Your info is securely saved in the cloud</strong>, so if you lose your device, your app and data are safe.
+          </p>
         </div>
         
         <div style="background: #f0f9ff; padding: 22px; border-radius: 10px; margin: 25px 0; border-left: 4px solid #5691af;">
-          <h3 style="margin-top: 0; color: #1e3a8a; font-size: 18px;">🚀 Get Started in 3 Easy Steps</h3>
-          <ol style="color: #334155; margin: 15px 0; padding-left: 20px; line-height: 1.8;">
-            <li><strong>Create your first pet profile</strong> - Add photos, basic info, and personality traits</li>
-            <li><strong>Add important documents</strong> - Upload vaccination records, medical info, and insurance documents</li>
-            <li><strong>Share with confidence</strong> - Send profiles to vets, boarders, sitters, and family members</li>
-          </ol>
-        </div>
-        
-        <div style="background: #fefce8; border: 2px solid #fbbf24; border-radius: 10px; padding: 20px; margin: 25px 0;">
-          <h3 style="margin-top: 0; color: #92400e; font-size: 18px;">💰 Earn $2 for Every Friend!</h3>
-          <p style="margin: 10px 0; color: #78350f;">
-            Love PetPort? Share it with fellow pet parents and <strong>earn $2 for every friend who subscribes</strong> to a yearly plan. Find your unique referral link in your account settings.
+          <h3 style="margin-top: 0; color: #5691af; font-size: 18px;">📬 Private Email Relay</h3>
+          <p style="color: #475569; line-height: 1.7; margin: 0;">
+            All emails through PetPort are handled via our private relay system – only after you receive an email will you be able to reply directly. <strong>Your contact info stays private until you decide otherwise.</strong>
           </p>
         </div>
         
-        <div style="background: #f8fafc; padding: 20px; border-radius: 10px; margin: 25px 0;">
-          <h3 style="margin-top: 0; color: #475569; font-size: 17px;">✨ What Makes PetPort Special</h3>
-          <ul style="color: #475569; margin: 15px 0; padding-left: 20px; line-height: 1.8;">
-            <li><strong>Emergency-ready</strong> - QR codes and public profiles for lost pet situations</li>
-            <li><strong>Vet-approved</strong> - Share complete medical histories instantly</li>
-            <li><strong>Travel companion</strong> - All vaccination records and documents in one place</li>
-            <li><strong>Peace of mind</strong> - Never lose important pet documents again</li>
-          </ul>
+        <div style="background: #f8fafc; padding: 22px; border-radius: 10px; margin: 25px 0; border-left: 4px solid #5691af;">
+          <h3 style="margin-top: 0; color: #5691af; font-size: 18px;">⚙️ Important Settings</h3>
+          <p style="color: #475569; line-height: 1.7; margin: 0;">
+            Be sure to check the Q&A section, review policies, and manage billing in your <strong>Settings</strong>.
+          </p>
         </div>
         
-        <p style="margin-top: 25px; color: #64748b;">Questions? Just reply to this email - we're here to help!</p>
-        <p style="color: #5691af; font-weight: 600;">Welcome aboard! 🎉</p>
-        <p style="color: #94a3b8; font-size: 14px; margin-top: 20px;">
-          The PetPort Team
+        <div style="background: linear-gradient(135deg, #5691af 0%, #4a7c95 100%); color: white; padding: 25px; border-radius: 12px; margin: 25px 0;">
+          <h3 style="margin-top: 0; color: white; font-size: 18px;">🐕‍🦺 Referral Program</h3>
+          <p style="margin: 0; color: rgba(255,255,255,0.95); line-height: 1.7;">
+            Don't forget to explore our <strong>Referral Program</strong> – help us give every dog a voice for their lifetime.
+          </p>
+        </div>
+        
+        <p style="font-size: 16px; line-height: 1.6; color: #334155; margin-top: 30px;">
+          Welcome to the pack,<br>
+          <strong style="color: #5691af;">– The PetPort Team</strong>
         </p>
+        
+        <div style="margin-top: 40px; padding-top: 25px; border-top: 2px solid #e2e8f0; text-align: center;">
+          <a href="https://petport.app" style="display: inline-block; text-decoration: none;">
+            <div style="background: #5691af; color: white; padding: 12px 30px; border-radius: 8px; font-weight: 600; font-size: 16px;">
+              PetPort.app
+            </div>
+          </a>
+          <p style="color: #94a3b8; font-size: 13px; margin-top: 15px;">
+            Digital Pet Passport | Secure Cloud Storage | Lifetime Records
+          </p>
+        </div>
       `
     },
     welcome_trial: {

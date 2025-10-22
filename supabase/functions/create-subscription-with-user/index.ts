@@ -250,20 +250,16 @@ const handler = async (req: Request): Promise<Response> => {
 
     console.log(`✅ [${corrId || 'no-id'}] Subscriber record created (${Date.now() - subscriberStartTime}ms):`, subscriberData);
 
-    // Send welcome email asynchronously
+    // Send welcome email asynchronously using the proper Postmark template
     console.log(`📧 [${corrId || 'no-id'}] Sending welcome email to ${email}...`);
     supabase.functions.invoke('send-email', {
       body: {
-        to: email,
-        subject: 'Welcome to PetPort! Your 7-day trial has started',
-        html: `
-          <h1>Welcome to PetPort, ${fullName}!</h1>
-          <p>Your ${plan} plan with ${1 + additionalPets} pet account${1 + additionalPets > 1 ? 's' : ''} is now active.</p>
-          <p><strong>Trial Period:</strong> Your 7-day free trial runs until ${trialEndDate.toLocaleDateString()}.</p>
-          <p>During your trial, you have full access to all PetPort features.</p>
-          <p>Questions? Reply to this email - we're here to help!</p>
-          <p>Best regards,<br>The PetPort Team</p>
-        `,
+        type: 'welcome',
+        recipientEmail: email,
+        recipientName: fullName,
+        petName: 'Your Pet',
+        shareUrl: 'https://petport.app/app',
+        customMessage: `Your ${plan} plan with ${1 + additionalPets} pet slot${1 + additionalPets > 1 ? 's' : ''} is now active. Your 7-day free trial runs until ${trialEndDate.toLocaleDateString()}. During your trial, you have full access to all PetPort features!`
       }
     }).then(result => {
       if (result.error) {

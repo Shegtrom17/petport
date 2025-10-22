@@ -36,7 +36,7 @@ export const AppHeader = ({ title, showBack = false, actions, showHelpIcon = tru
         </div>
 
         <div className="flex items-center space-x-2">
-          {showHelpIcon && user && (
+          {showHelpIcon && (
             <Button
               variant="ghost"
               size="icon"

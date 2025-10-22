@@ -19,10 +19,37 @@ interface MetaTagsProps {
   type?: string;
 }
 
+// Helper to resolve relative or absolute URLs safely
+const resolveToAbsolute = (u: string): string => {
+  if (!u) return getSafeBaseURL();
+  try {
+    return new URL(u).href; // absolute already
+  } catch {
+    try {
+      // relative; resolve against window origin
+      const base = typeof window !== "undefined" ? window.location.origin : getSafeBaseURL();
+      return new URL(u, base).href;
+    } catch {
+      return getSafeBaseURL();
+    }
+  }
+};
+
 // @lovable:protect-function - OG tag injection for social media (Oct 2025)
 export const MetaTags = ({ title, description, image, url, type = "website" }: MetaTagsProps) => {
   const ogImage = image || "https://pub-a7c2c18b8d6143b9a256105ef44f2da0.r2.dev/OG%20General.png";
-  const canonicalUrl = url.includes('petport.app') ? url : getSafeBaseURL() + new URL(url).pathname;
+  
+  // Safely resolve URL to absolute, then force production domain
+  const abs = resolveToAbsolute(url);
+  let canonicalUrl = abs;
+  try {
+    const parsed = new URL(abs);
+    // Force to safe prod domain, preserving path/search/hash
+    const safeBase = new URL(getSafeBaseURL());
+    canonicalUrl = `${safeBase.origin}${parsed.pathname}${parsed.search}${parsed.hash}`;
+  } catch {
+    canonicalUrl = getSafeBaseURL();
+  }
   
   useEffect(() => {
     // Update document title

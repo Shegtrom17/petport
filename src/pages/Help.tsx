@@ -141,7 +141,7 @@ const Help = () => {
       <MetaTags 
         title="Help Center - PetPort"
         description="Find answers to common questions about using PetPort. Get help with QR codes, lost pets, privacy settings, and more."
-        url="/help"
+        url={window.location.origin + "/help"}
       />
       
       <AppHeader title="Help Center" showBack={true} />

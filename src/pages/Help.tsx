@@ -166,6 +166,39 @@ const Help = () => {
             />
           </div>
 
+          {/* FAQs */}
+          <div className="mb-8">
+            <h2 className="text-xl font-semibold mb-4">Frequently Asked Questions</h2>
+            <Card>
+              <CardContent className="p-0">
+                <Accordion type="single" collapsible className="w-full">
+                  {filteredFAQs.map((faq) => (
+                    <AccordionItem key={faq.id} value={faq.id} className="border-b last:border-b-0">
+                      <AccordionTrigger className="px-6 py-4 hover:no-underline">
+                        <span className="text-left font-medium">{faq.question}</span>
+                      </AccordionTrigger>
+                      <AccordionContent className="px-6 pb-4">
+                        <p className="text-muted-foreground leading-relaxed">{faq.answer}</p>
+                      </AccordionContent>
+                    </AccordionItem>
+                  ))}
+                </Accordion>
+              </CardContent>
+            </Card>
+
+            {filteredFAQs.length === 0 && searchTerm && (
+              <div className="text-center py-8">
+                <FileText className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+                <h3 className="text-lg font-medium mb-2">No results found</h3>
+                <p className="text-muted-foreground mb-4">
+                  Try adjusting your search or browse all topics above.
+                </p>
+                <Button variant="outline" onClick={() => setSearchTerm("")}>
+                  Clear Search
+                </Button>
+              </div>
+            )}
+          </div>
 
           {/* Report Issue Button */}
           <div className="mb-8">
@@ -212,40 +245,6 @@ const Help = () => {
                 </Link>
               ))}
             </div>
-          </div>
-
-          {/* FAQs */}
-          <div>
-            <h2 className="text-xl font-semibold mb-4">Frequently Asked Questions</h2>
-            <Card>
-              <CardContent className="p-0">
-                <Accordion type="single" collapsible className="w-full">
-                  {filteredFAQs.map((faq) => (
-                    <AccordionItem key={faq.id} value={faq.id} className="border-b last:border-b-0">
-                      <AccordionTrigger className="px-6 py-4 hover:no-underline">
-                        <span className="text-left font-medium">{faq.question}</span>
-                      </AccordionTrigger>
-                      <AccordionContent className="px-6 pb-4">
-                        <p className="text-muted-foreground leading-relaxed">{faq.answer}</p>
-                      </AccordionContent>
-                    </AccordionItem>
-                  ))}
-                </Accordion>
-              </CardContent>
-            </Card>
-
-            {filteredFAQs.length === 0 && searchTerm && (
-              <div className="text-center py-8">
-                <FileText className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-                <h3 className="text-lg font-medium mb-2">No results found</h3>
-                <p className="text-muted-foreground mb-4">
-                  Try adjusting your search or browse all topics above.
-                </p>
-                <Button variant="outline" onClick={() => setSearchTerm("")}>
-                  Clear Search
-                </Button>
-              </div>
-            )}
           </div>
         </div>
       </div>

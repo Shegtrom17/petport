@@ -187,7 +187,7 @@ Transfer Completed:
 
 ${petName} has been successfully transferred to their new account. The new owner now has full access to manage ${petName}'s profile, including all photos, documents, and information.
 
-Thank you for using PetPort's secure transfer system!
+Thank you for keeping ${petName}'s voice with them wherever they go! 🐾
 
 ---
 PetPort - Digital Pet Passport
@@ -562,9 +562,11 @@ const generateEmailTemplate = (data: EmailRequest) => {
           </p>
         </div>
         
-        <p style="color: #64748b; margin-top: 25px; line-height: 1.6;">
-          Thank you for using PetPort's secure transfer system. We hope ${petName} continues to thrive in their new home! 🐾
-        </p>
+        <div style="background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); padding: 25px; border-radius: 10px; margin: 25px 0; text-align: center; border: 2px solid #5691af;">
+          <p style="color: #0c4a6e; font-size: 18px; margin: 0; font-weight: 600; line-height: 1.6;">
+            Thank you for keeping ${petName}'s voice with them wherever they go! 🐾
+          </p>
+        </div>
       `
     }
   };
@@ -596,6 +598,7 @@ const generateEmailTemplate = (data: EmailRequest) => {
           
           ${template.content}
           
+          ${type !== 'transfer_completed_sender' ? `
           <div style="text-align: center; margin: 30px 0;">
             <a href="${(() => {
               // Determine the correct button URL based on email type
@@ -604,7 +607,7 @@ const generateEmailTemplate = (data: EmailRequest) => {
               // For transfer emails, use transferUrl instead of shareUrl
               if (type === 'transfer_invite_new' || type === 'transfer_invite_existing' || type === 'transfer_limit_reached') {
                 return data.transferUrl || `${baseUrl}/transfer/accept/${data.transferToken}`;
-              } else if (type === 'transfer_success' || type === 'transfer_completed_sender') {
+              } else if (type === 'transfer_success') {
                 return `${baseUrl}/profile/${data.petId}`;
               } else if (type === 'transfer_sent_confirmation') {
                 return `${baseUrl}/profile/${data.petId}`;
@@ -627,10 +630,10 @@ const generateEmailTemplate = (data: EmailRequest) => {
                   type === 'transfer_success' ? `View ${petName}'s Profile` :
                   type === 'transfer_limit_reached' ? 'Add Pet Slot & Claim Profile' :
                   type === 'transfer_sent_confirmation' ? `View ${petName}'s Profile` :
-                  type === 'transfer_completed_sender' ? `View ${petName}'s New Profile` :
                   `View ${petName}'s ${type === 'profile' ? 'Profile' : type === 'missing_pet' ? 'Missing Pet Alert' : type === 'resume' ? 'Resume' : type.charAt(0).toUpperCase() + type.slice(1)}`}
             </a>
           </div>
+          ` : ''}
           
           ${isDocumentShare ? `
             <div style="background-color: #f0f9ff; border: 1px solid #0ea5e9; border-radius: 8px; padding: 15px; margin: 20px 0;">

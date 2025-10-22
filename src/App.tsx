@@ -157,11 +157,7 @@ const App = () => {
                          <Reactivate />
                        </ProtectedRoute>
                      } />
-                    <Route path="/help" element={
-                      <ProtectedRoute>
-                        <Help />
-                      </ProtectedRoute>
-                    } />
+                     <Route path="/help" element={<Help />} />
                      <Route path="/email-test" element={
                        <ProtectedRoute>
                          <EmailTest />

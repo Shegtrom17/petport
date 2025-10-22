@@ -375,14 +375,17 @@ const Index = () => {
 
   const content = (
     <div className="min-h-screen bg-white">
-      <PetHeader 
-        activeTab={activeTab} 
-        onTabChange={handleTabChange} 
-        selectedPetId={selectedPet?.id || petData.id}
-        selectedPetName={selectedPet?.name || petData.name}
-        selectedPet={selectedPet || petData}
-        onPrivacyToggle={handlePrivacyToggle}
-      />
+      {/* Only show PetHeader if user has pets or is unauthenticated */}
+      {(selectedPet || !user) && (
+        <PetHeader 
+          activeTab={activeTab} 
+          onTabChange={handleTabChange} 
+          selectedPetId={selectedPet?.id || petData.id}
+          selectedPetName={selectedPet?.name || petData.name}
+          selectedPet={selectedPet || petData}
+          onPrivacyToggle={handlePrivacyToggle}
+        />
+      )}
 
       <InAppSharingModal
         isOpen={isInAppSharingOpen}

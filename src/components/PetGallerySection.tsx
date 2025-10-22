@@ -525,80 +525,60 @@ export const PetGallerySection = ({ petData, onUpdate, handlePetUpdate }: PetGal
 
   return (
     <div className="space-y-6">
-      {/* Header with guidance */}
-      <Card className="border-0 shadow-xl bg-brand-primary text-white">
-        <CardContent className="p-6">
+      {/* Pet Photo Gallery Management Hub */}
+      <Card className="border-0 shadow-lg bg-passport-section-bg backdrop-blur-sm">
+        <CardContent className="p-6 space-y-4">
+          {/* Title Section */}
           <div className="flex items-center space-x-3">
-            <Camera className="w-8 h-8 text-yellow-400" />
+            <Camera className="w-8 h-8 text-brand-primary" />
             <div>
-              <h2 className="text-2xl font-bold">Pet Photo Gallery</h2>
-              <p className="text-blue-100 text-sm leading-relaxed mt-2">
-                Upload clear photos that show your pet's unique markings, size, or special features. 
-                The first four photos will be used for lost pet flyers. Drag to reorder.
-              </p>
+              <h2 className="text-2xl font-bold text-navy-900">Pet Photo Gallery</h2>
+              <p className="text-navy-600 text-sm">Manage {petData.name}'s photo gallery with captions, reordering, and sharing options.</p>
             </div>
           </div>
-        </CardContent>
-      </Card>
-      
-      {/* Upload Area with Camera Capture */}
-      <Card className="border-0 shadow-lg bg-passport-section-bg backdrop-blur-sm">
-        <CardHeader>
-          <CardTitle className="flex items-center space-x-2">
-            <Upload className="w-5 h-5 text-blue-600" />
-            <span>Upload New Photos</span>
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div 
-            className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-brand-primary transition-colors cursor-pointer"
-            onClick={handleUploadPhotos}
-          >
-            <Camera className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-            <p className="text-gray-600 mb-2">
-              {isLimitReached ? "Photo limit reached - delete photos to add new ones" : "Click to upload photos or drag and drop"}
+
+          {/* Guidance Section */}
+          <div className="border-l-4 border-brand-primary bg-blue-50 p-4 rounded-r-lg">
+            <p className="text-sm text-navy-700 leading-relaxed">
+              📸 <strong>Photo Tips:</strong> Upload clear photos that show your pet's unique markings, size, or special features. 
+              The first four photos will be used for lost pet flyers. You can drag photos to reorder them, and each photo can have its own caption.
             </p>
-            <p className="text-sm text-gray-500 mb-4">
+            <p className="text-xs text-gray-600 mt-2">
               {isLimitReached 
-                ? `Maximum ${MAX_GALLERY_PHOTOS} photos per pet` 
+                ? `Maximum ${MAX_GALLERY_PHOTOS} photos reached - delete photos to add new ones` 
                 : `${remainingSlots} slots remaining • Supports JPG, PNG, HEIC up to 10MB each`
               }
             </p>
-            <div className="flex justify-center space-x-2 sm:space-x-3">
-              <Button 
-                className="bg-brand-primary hover:bg-brand-primary-dark text-white border border-white/20 px-2 sm:px-4 py-1 sm:py-2 text-xs sm:text-sm"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleUploadPhotos();
-                }}
-                disabled={uploading || isLimitReached}
-              >
-                <Plus className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
-                <span className="hidden sm:inline">{uploading ? "Uploading..." : "Choose Files"}</span>
-                <span className="sm:hidden">{uploading ? "..." : "Upload"}</span>
-              </Button>
-              <Button 
-                className="bg-brand-primary hover:bg-brand-primary-dark text-white border-0 px-2 sm:px-4 py-1 sm:py-2 text-xs sm:text-sm"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleCapturePhoto();
-                }}
-                disabled={uploading || isLimitReached}
-              >
-               <Camera className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
-                <span className="hidden sm:inline">📸 Capture Moment</span>
-                <span className="sm:hidden">📸 Capture</span>
-              </Button>
-            </div>
-            
-            {/* Profile Completion Hint - moved outside flex container */}
-            <div className="mt-4">
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
-                <p className="text-sm text-blue-800">
-                  💡 <strong>Tip:</strong> Complete your pet's Pet Profile section (via Edit button) for professional PDFs and optimal sharing quality.
-                </p>
-              </div>
-            </div>
+          </div>
+
+          {/* Action Buttons */}
+          <div className="space-y-3">
+            <Button 
+              className="w-full bg-brand-primary hover:bg-brand-primary-dark text-white"
+              onClick={handleUploadPhotos}
+              disabled={uploading || isLimitReached}
+            >
+              <Upload className="w-4 h-4 mr-2" />
+              {uploading ? "Uploading..." : "Upload Photos"}
+            </Button>
+
+            <Button 
+              className="w-full bg-brand-primary hover:bg-brand-primary-dark text-white"
+              onClick={handleCapturePhoto}
+              disabled={uploading || isLimitReached}
+            >
+              <Camera className="w-4 h-4 mr-2" />
+              📸 Take Photo
+            </Button>
+
+            <Button 
+              variant="outline"
+              className="w-full border-brand-primary text-brand-primary hover:bg-brand-primary/10"
+              onClick={() => window.open(`/gallery/${petData.id}`, '_blank')}
+            >
+              <ExternalLink className="w-4 h-4 mr-2" />
+              Preview Gallery LiveLink
+            </Button>
           </div>
         </CardContent>
       </Card>

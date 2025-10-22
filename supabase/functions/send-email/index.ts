@@ -10,6 +10,7 @@ const corsHeaders = {
 interface EmailRequest {
   type: 'profile' | 'care' | 'credentials' | 'resume' | 'reviews' | 'review_request' | 'missing_pet' | 'app_share' | 'welcome' | 'welcome_trial' | 'transfer_invite_new' | 'transfer_invite_existing' | 'transfer_success' | 'transfer_limit_reached' | 'transfer_sent_confirmation' | 'transfer_completed_sender';
   recipientEmail: string;
+  transferRecipientEmail?: string;
   recipientName?: string;
   petName: string;
   petId: string;
@@ -154,7 +155,7 @@ Your transfer request for ${petName} has been sent successfully!
 
 Transfer Details:
 - Pet: ${petName}
-- Recipient: ${data.recipientEmail}
+- Recipient: ${data.transferRecipientEmail || data.recipientEmail}
 - Expiration: 7 days
 ${customMessage ? `\nYour message: "${customMessage}"\n` : ''}
 
@@ -504,7 +505,7 @@ const generateEmailTemplate = (data: EmailRequest) => {
           <h3 style="margin-top: 0; color: #5691af;">📋 Transfer Details</h3>
           <ul style="color: #475569; margin: 10px 0; padding-left: 20px; line-height: 1.8;">
             <li><strong>Pet:</strong> ${petName}</li>
-            <li><strong>Recipient:</strong> ${data.recipientEmail}</li>
+            <li><strong>Recipient:</strong> ${data.transferRecipientEmail || data.recipientEmail}</li>
             <li><strong>Expires:</strong> 7 days from now</li>
           </ul>
           ${customMessage ? `<p style="margin: 15px 0; padding: 12px; background: white; border-radius: 6px; font-style: italic; color: #64748b;">"${customMessage}"</p>` : ''}

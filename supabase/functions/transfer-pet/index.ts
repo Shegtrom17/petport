@@ -363,7 +363,8 @@ serve(async (req) => {
               shareUrl: `${APP_ORIGIN}/profile/${pet_id}`,
               customMessage: json.message,
               recipientStatus: recipientStatus,
-              transferToken: inserted.token
+              transferToken: inserted.token,
+              transferRecipientEmail: to_email
             }
           });
           

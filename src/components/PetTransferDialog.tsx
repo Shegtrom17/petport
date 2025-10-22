@@ -65,7 +65,7 @@ export const PetTransferDialog = ({ petId, petName }: PetTransferDialogProps) =>
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" size="sm" className="text-responsive-xs text-primary border-primary/20 hover:bg-primary/5">
+        <Button variant="outline" size="sm" className="text-responsive-xs text-orange-700 border-orange-700/20 hover:bg-orange-700/5">
           <UserX className="w-3 h-3 mr-1" />
           <span className="text-responsive-xs whitespace-nowrap">Transfer Pet</span>
         </Button>

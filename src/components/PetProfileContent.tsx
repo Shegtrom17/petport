@@ -305,9 +305,14 @@ export const PetProfileContent = ({
             <CardContent className="transition-all duration-300 ease-in-out">
               {!isEditing ? (
                 <>
-                  <p className="text-xs text-muted-foreground mb-4">
-                    Manage your pet's profile specific info, bio, contacts, medical alerts, privacy settings, and <span className="text-orange-700 font-semibold">foster-to-adopter transfer options</span>.
-                  </p>
+                  <div className="mb-4 space-y-2">
+                    <p className="text-base font-semibold text-foreground leading-relaxed">
+                      Manage your pet's profile specific info, bio, contacts, medical alerts, and privacy settings.
+                    </p>
+                    <p className="text-sm font-bold text-orange-700 uppercase tracking-wide">
+                      FOSTER-TO-ADOPTER OPTION
+                    </p>
+                  </div>
 
                   {/* Action Buttons */}
                   <div className="space-y-3 mb-4">

@@ -83,6 +83,17 @@ export const PetHeader = ({ activeTab, onTabChange, selectedPetId, selectedPetNa
               </div>
             )}
             {user && (
+              <Button
+                variant="ghost"
+                size="icon"
+                className="touch-feedback h-8 w-8"
+                onClick={() => navigate('/help')}
+                aria-label="Get help"
+              >
+                <HelpCircle className="h-4 w-4" />
+              </Button>
+            )}
+            {user && (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button
@@ -173,6 +184,17 @@ export const PetHeader = ({ activeTab, onTabChange, selectedPetId, selectedPetNa
                   onToggle={onPrivacyToggle}
                 />
               </div>
+            )}
+            {user && (
+              <Button
+                variant="ghost"
+                size="icon"
+                className="touch-feedback"
+                onClick={() => navigate('/help')}
+                aria-label="Get help"
+              >
+                <HelpCircle className="h-5 w-5" />
+              </Button>
             )}
             {user && (
               <DropdownMenu>

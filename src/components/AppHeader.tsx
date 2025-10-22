@@ -21,7 +21,7 @@ interface AppHeaderProps {
   showHelpIcon?: boolean;
 }
 
-export const AppHeader = ({ title, showBack = false, actions, showHelpIcon = false }: AppHeaderProps) => {
+export const AppHeader = ({ title, showBack = false, actions, showHelpIcon = true }: AppHeaderProps) => {
   const navigate = useNavigate();
   const { user, isLoading, signOut } = useAuth();
   const [showReferralModal, setShowReferralModal] = useState(false);

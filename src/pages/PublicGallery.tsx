@@ -160,9 +160,9 @@ export const PublicGallery = () => {
                 </Link>
               </div>
             ) : photosToShow.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {photosToShow.map((photo, index) => (
-                  <div key={photo.id} className="space-y-3">
+                  <div key={photo.id}>
                     <div className="relative aspect-square rounded-lg overflow-hidden border-2 border-gray-200 shadow-md hover:shadow-lg transition-shadow">
                       <img 
                         src={photo.url} 
@@ -171,14 +171,10 @@ export const PublicGallery = () => {
                         loading={GALLERY_CONFIG.ENABLE_LAZY_LOADING ? "lazy" : "eager"}
                         decoding="async"
                       />
-                    </div>
-                    
-                    <div className="bg-gray-50 p-3 rounded-lg">
-                      <p className="text-sm text-gray-700 font-medium mb-2">Photo {index + 1}</p>
-                      {photo.caption ? (
-                        <p className="text-sm text-gray-600">{photo.caption}</p>
-                      ) : (
-                        <p className="text-xs text-gray-400 italic">No description</p>
+                      {photo.caption && (
+                        <div className="absolute bottom-0 left-0 right-0 bg-black/70 text-white p-2 text-sm">
+                          {photo.caption}
+                        </div>
                       )}
                     </div>
                   </div>

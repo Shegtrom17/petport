@@ -151,12 +151,12 @@ export default function DemoGallery() {
                       <div className="absolute top-2 left-2 bg-white/90 backdrop-blur-sm rounded-full px-3 py-1 text-xs font-semibold text-navy-900">
                         #{index + 1}
                       </div>
+                      {photo.caption && (
+                        <div className="absolute bottom-0 left-0 right-0 bg-black/70 text-white p-2 text-sm">
+                          {photo.caption}
+                        </div>
+                      )}
                     </div>
-                    {photo.caption && (
-                      <div className="p-3 bg-white">
-                        <p className="text-sm text-navy-700">{photo.caption}</p>
-                      </div>
-                    )}
                   </CardContent>
                 </Card>
               ))}

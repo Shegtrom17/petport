@@ -169,7 +169,7 @@ export default function Auth() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-brand-primary/10 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
-        <div className="mb-8 text-center">
+        <Link to="/" className="mb-8 text-center block hover:opacity-80 transition-opacity">
           <div className="flex justify-center">
             <div className="w-20 h-20 rounded-full bg-white/90 shadow-lg flex items-center justify-center mb-4">
               <img 
@@ -183,7 +183,7 @@ export default function Auth() {
             PetPort
           </h1>
           <p className="text-gray-600">Digital Pet Passport</p>
-        </div>
+        </Link>
         
         <StorageWarningBanner />
         
@@ -245,7 +245,7 @@ export default function Auth() {
               </div>
             </form>
           </CardContent>
-          <CardFooter className="flex-col space-y-2">
+          <CardFooter className="flex-col space-y-4">
             <div className="text-center">
               {isSignIn ? (
                 <Button
@@ -267,6 +267,33 @@ export default function Auth() {
                 </Button>
               )}
             </div>
+            
+            <div className="w-full border-t pt-4 space-y-2">
+              <p className="text-xs text-muted-foreground text-center mb-2">
+                Want to learn more?
+              </p>
+              <div className="flex flex-wrap justify-center gap-3 text-xs">
+                <Link 
+                  to="/#pricing" 
+                  className="text-muted-foreground hover:text-primary underline underline-offset-4 transition-colors"
+                >
+                  💰 View Pricing
+                </Link>
+                <Link 
+                  to="/demos" 
+                  className="text-muted-foreground hover:text-primary underline underline-offset-4 transition-colors"
+                >
+                  🎬 See Demos
+                </Link>
+                <Link 
+                  to="/" 
+                  className="text-muted-foreground hover:text-primary underline underline-offset-4 transition-colors"
+                >
+                  🏠 Back to Home
+                </Link>
+              </div>
+            </div>
+            
             <p className="text-xs text-muted-foreground text-center">
               Read our <Link to="/privacy-policy" className="underline">Privacy Policy</Link>.
             </p>

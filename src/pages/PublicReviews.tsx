@@ -1,10 +1,12 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { MetaTags } from "@/components/MetaTags";
 import { fetchPetDetails } from "@/services/petService";
+import { AddReviewForm } from "@/components/AddReviewForm";
 import { Star, X } from "lucide-react";
+import { smoothScrollIntoViewIfNeeded } from "@/utils/smoothScroll";
 
 interface PublicReviewsData {
   id: string;
@@ -26,6 +28,8 @@ export default function PublicReviews() {
   const navigate = useNavigate();
   const [data, setData] = useState<PublicReviewsData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [showAddReview, setShowAddReview] = useState(false);
+  const reviewFormRef = useRef<HTMLDivElement>(null);
 
   const handleClose = () => {
     if (window.history.length > 1) {
@@ -35,15 +39,37 @@ export default function PublicReviews() {
     }
   };
 
+  const loadPetData = async () => {
+    if (!petId) return;
+    const pet = await fetchPetDetails(petId);
+    setData(pet);
+    setLoading(false);
+  };
+
+  const handleOpenReviewForm = () => {
+    setShowAddReview(true);
+    setTimeout(() => {
+      if (reviewFormRef.current) {
+        smoothScrollIntoViewIfNeeded(reviewFormRef.current);
+      }
+    }, 100);
+  };
+
+  const handleReviewSuccess = () => {
+    setShowAddReview(false);
+    loadPetData();
+  };
+
   useEffect(() => {
-    const load = async () => {
-      if (!petId) return;
-      const pet = await fetchPetDetails(petId);
-      setData(pet);
-      setLoading(false);
-    };
-    load();
+    loadPetData();
   }, [petId]);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('add_review') === 'true') {
+      setShowAddReview(true);
+    }
+  }, []);
 
   if (loading) {
     return (
@@ -116,6 +142,41 @@ export default function PublicReviews() {
           )}
         </header>
 
+        {/* Leave a Review Button */}
+        {!showAddReview && (
+          <div className="text-center mb-6">
+            <Button 
+              onClick={handleOpenReviewForm}
+              className="bg-gold-500 hover:bg-gold-600 text-white"
+            >
+              <Star className="w-4 h-4 mr-2" />
+              Leave a Review for {data.name}
+            </Button>
+          </div>
+        )}
+
+        {/* Review Form */}
+        {showAddReview && (
+          <div ref={reviewFormRef} className="mb-6">
+            <Card className="border-gold-500/30 bg-gold-50/50">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-navy-900">
+                  <Star className="w-5 h-5 text-gold-500" />
+                  Leave a Review for {data.name}
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <AddReviewForm 
+                  petId={data.id} 
+                  petName={data.name} 
+                  onClose={() => setShowAddReview(false)}
+                  onSuccess={handleReviewSuccess}
+                />
+              </CardContent>
+            </Card>
+          </div>
+        )}
+
         {data.reviews && data.reviews.length > 0 ? (
           <div className="space-y-4">
             {data.reviews.map((r, idx) => (
@@ -140,8 +201,20 @@ export default function PublicReviews() {
           </div>
         ) : (
           <Card>
-            <CardContent className="py-6 text-center text-muted-foreground">
-              No reviews yet.
+            <CardContent className="py-8 text-center">
+              <Star className="w-12 h-12 text-gold-400 mx-auto mb-3" />
+              <p className="text-muted-foreground mb-4">
+                No reviews yet. Be the first to share your experience with {data.name}!
+              </p>
+              {!showAddReview && (
+                <Button 
+                  onClick={handleOpenReviewForm}
+                  className="bg-gold-500 hover:bg-gold-600 text-white"
+                >
+                  <Star className="w-4 h-4 mr-2" />
+                  Write First Review
+                </Button>
+              )}
             </CardContent>
           </Card>
         )}

@@ -45,10 +45,9 @@ import { featureFlags } from "@/config/featureFlags";
 import { OnboardingTour } from "@/components/OnboardingTour";
 import { useOnboardingTour } from "@/hooks/useOnboardingTour";
 
-// Helper to get initial tab from localStorage synchronously
+// Always start on profile tab (home screen) for returning users
 const getInitialTab = () => {
-  const saved = localStorage.getItem('pp_last_tab_last');
-  return saved && saved !== 'vaccination' ? saved : 'profile';
+  return 'profile';
 };
 
 const Index = () => {

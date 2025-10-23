@@ -160,13 +160,6 @@ export const PetTransferDialog = ({ petId, petName }: PetTransferDialogProps) =>
           <DialogTitle>Transfer {petName}'s account to another petport user</DialogTitle>
         </DialogHeader>
         <div className="space-y-4">
-          <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
-            <p className="text-sm text-amber-800">
-              <strong>Important:</strong> This will permanently transfer ownership of {petName} to another registered PetPort user. 
-              The recipient must have an active PetPort subscription to accept the transfer. You will lose access to this pet's profile.
-            </p>
-          </div>
-
           {isIOS && (
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 flex gap-2">
               <Wifi className="w-4 h-4 text-blue-600 flex-shrink-0 mt-0.5" />
@@ -196,6 +189,13 @@ export const PetTransferDialog = ({ petId, petName }: PetTransferDialogProps) =>
               onChange={(e) => setMessage(e.target.value)}
               rows={3}
             />
+          </div>
+
+          <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
+            <p className="text-sm text-amber-800">
+              <strong>Important:</strong> This will permanently transfer ownership of {petName} to another registered PetPort user. 
+              The recipient must have an active PetPort subscription to accept the transfer. You will lose access to this pet's profile.
+            </p>
           </div>
 
           <div className="flex gap-2 pt-4">

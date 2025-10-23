@@ -49,6 +49,7 @@ import { generateShareURL } from "@/utils/domainUtils";
 import { generateClientPetPDF, viewPDFBlob, downloadPDFBlob, isIOS } from '@/services/clientPdfService';
 import { sharePDFBlob } from '@/services/pdfService';
 import { shareQRCode } from "@/utils/qrShare";
+import { Hotspot } from "@/components/Hotspot";
 
 interface QuickShareHubProps {
   petData: any; // Accept full pet object with all fields
@@ -940,6 +941,12 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
         <CardTitle className="text-xl flex items-center gap-2">
           <Share2 className="w-6 h-6 text-brand-primary" />
           Quick Share Hub
+          <Hotspot
+            id="share-hub"
+            title="Share Specific Pages"
+            description="Send emergency contacts, care instructions, or resumes directly to vets, sitters, or adopters without sharing your whole profile!"
+            position="bottom"
+          />
         </CardTitle>
         <p className="text-sm text-muted-foreground">
           Share PDFs via email and LiveLinks that update in real time

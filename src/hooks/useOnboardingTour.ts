@@ -16,11 +16,10 @@ export const useOnboardingTour = ({ hasPets }: UseOnboardingTourProps) => {
   const [tourKey, setTourKey] = useState(0);
   const [targetsReady, setTargetsReady] = useState(false);
 
-  // Wait for all DOM targets to exist
+  // Wait for essential DOM targets (Pet Selector is optional for single-pet users)
   const waitForTargets = (): Promise<boolean> => {
     return new Promise((resolve) => {
-      const targetIds = [
-        'pet-selector-cards',
+      const essentialTargetIds = [
         'profile-management-hub',
         'quick-share-hub',
         'bottom-nav-menu',
@@ -31,17 +30,17 @@ export const useOnboardingTour = ({ hasPets }: UseOnboardingTourProps) => {
       const maxAttempts = 30; // 3 seconds max (100ms intervals)
 
       const checkTargets = () => {
-        const allExist = targetIds.every(id => document.getElementById(id));
+        const allEssentialExist = essentialTargetIds.every(id => document.getElementById(id));
         
-        if (allExist) {
-          console.log('✅ All tour targets found');
+        if (allEssentialExist) {
+          console.log('✅ Essential tour targets found');
           resolve(true);
           return;
         }
 
         attempts++;
         if (attempts >= maxAttempts) {
-          console.warn('⚠️ Tour targets not found after 3 seconds, skipping tour');
+          console.warn('⚠️ Essential tour targets not found after 3 seconds, skipping tour');
           resolve(false);
           return;
         }

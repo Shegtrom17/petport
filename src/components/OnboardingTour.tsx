@@ -67,11 +67,14 @@ export const OnboardingTour: React.FC<OnboardingTourProps> = ({
     }
   };
 
-  // Validate steps before rendering
+  // Validate steps before rendering (Pet Selector is optional for single-pet users)
   const validSteps = ONBOARDING_STEPS.filter((step) => {
     const target = document.querySelector(step.target as string);
     if (!target) {
-      console.warn(`⚠️ Tour target not found: ${step.target}`);
+      // Only warn for essential targets, skip optional ones silently
+      if (step.target !== '#pet-selector-cards') {
+        console.warn(`⚠️ Tour target not found: ${step.target}`);
+      }
       return false;
     }
     return true;

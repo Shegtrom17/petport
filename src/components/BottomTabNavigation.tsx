@@ -4,6 +4,7 @@ import { ReportIssueModal } from "./ReportIssueModal";
 import { MobileNavigationMenu } from "./MobileNavigationMenu";
 import { useState } from "react";
 import { useKeyboardAwareLayout } from "@/hooks/useKeyboardAwareLayout";
+import { Hotspot } from "./Hotspot";
 
 export const BottomTabNavigation = () => {
   const location = useLocation();
@@ -45,7 +46,7 @@ export const BottomTabNavigation = () => {
                     window.dispatchEvent(new Event(tab.event));
                   }
                 }}
-                className={`flex flex-col items-center justify-center min-w-0 flex-1 py-1 px-2 transition-colors duration-200 ${
+                className={`flex flex-col items-center justify-center min-w-0 flex-1 py-1 px-2 transition-colors duration-200 relative ${
                   isActive 
                     ? "text-primary" 
                     : "text-muted-foreground hover:text-foreground"
@@ -59,6 +60,16 @@ export const BottomTabNavigation = () => {
                 <span className="text-responsive-xs font-medium text-ellipsis-2 max-w-full text-center leading-tight">
                   {tab.label}
                 </span>
+                {tab.id === 'menu' && (
+                  <div className="absolute -top-2 -right-0">
+                    <Hotspot
+                      id="bottom-nav-menu"
+                      title="All Sections Here"
+                      description="Tap Menu to access Care & Handling, Resume, Documents, Travel Map, Gallery, and more!"
+                      position="top"
+                    />
+                  </div>
+                )}
               </NavLink>
             );
           })}

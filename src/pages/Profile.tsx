@@ -37,24 +37,6 @@ export default function Profile() {
         {/* PWA Install Card */}
         <PWAInstallCard />
 
-        {/* Onboarding Tour Card */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-xl font-semibold flex items-center gap-2">
-              <RotateCw className="w-5 h-5" />
-              Getting Started Tour
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-sm text-muted-foreground mb-4">
-              Need a refresher? Restart the guided tour to learn about key features like editing profiles, sharing pages, and navigating the app.
-            </p>
-            <Button onClick={restartTour} variant="outline" className="w-full sm:w-auto">
-              🔄 Restart Onboarding Tour
-            </Button>
-          </CardContent>
-        </Card>
-
         {user && (
           <div>
             <Button 
@@ -113,11 +95,24 @@ export default function Profile() {
             </Button>
           </CardContent>
         </Card>
+
         <Card>
           <CardHeader>
             <CardTitle>Settings</CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
+            <div className="pb-4 border-b">
+              <div className="flex items-center gap-2 mb-2">
+                <RotateCw className="w-4 h-4 text-muted-foreground" />
+                <Label className="text-sm font-medium">Getting Started Tour</Label>
+              </div>
+              <p className="text-xs text-muted-foreground mb-3">
+                Restart the guided tour to learn about key features
+              </p>
+              <Button onClick={restartTour} variant="outline" size="sm">
+                🔄 Restart Tour
+              </Button>
+            </div>
 
             <div className="flex items-center justify-between gap-4">
               <div>

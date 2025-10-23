@@ -36,7 +36,7 @@ export default function Terms() {
             variant="ghost"
             size="icon"
             onClick={() => navigate(-1)}
-            className="absolute -top-2 right-0"
+            className="absolute top-0 right-0"
             aria-label="Close"
           >
             <X className="h-5 w-5" />

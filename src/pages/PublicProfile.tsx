@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams, useSearchParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -13,6 +13,7 @@ import { ContactsDisplay } from "@/components/ContactsDisplay";
 import { ContactOwnerModal } from "@/components/ContactOwnerModal";
 import { AzureButton } from "@/components/ui/azure-button";
 import { sanitizeText, sanitizeHtml } from "@/utils/inputSanitizer";
+import { smoothScrollIntoViewIfNeeded } from "@/utils/smoothScroll";
 
 const PublicProfile = () => {
   const { petId } = useParams<{ petId: string }>();
@@ -25,12 +26,55 @@ const PublicProfile = () => {
   const [debugInfo, setDebugInfo] = useState<string[]>([]);
   const [showAddReview, setShowAddReview] = useState(false);
   const [isContactModalOpen, setIsContactModalOpen] = useState(false);
+  const reviewFormRef = React.useRef<HTMLDivElement>(null);
 
   const handleClose = () => {
     if (window.history.length > 1) {
       navigate(-1);
     } else {
       navigate('/');
+    }
+  };
+
+  const handleOpenReviewForm = () => {
+    setShowAddReview(true);
+    setTimeout(() => {
+      if (reviewFormRef.current) {
+        smoothScrollIntoViewIfNeeded(reviewFormRef.current);
+      }
+    }, 100);
+  };
+
+  const handleReviewSuccess = async () => {
+    setShowAddReview(false);
+    // Reload pet data to show the new review
+    if (!petId) return;
+    const { data } = await supabase
+      .from('pets')
+      .select(`
+        *,
+        pet_photos (*),
+        professional_data (*),
+        medical (*),
+        contacts (*),
+        pet_contacts (*),
+        care_instructions (*),
+        certifications (*),
+        documents (*),
+        reviews (*),
+        training (*),
+        travel_locations (*),
+        gallery_photos (*),
+        achievements (*),
+        experiences (*),
+        map_pins (*)
+      `)
+      .eq('id', petId)
+      .eq('is_public', true)
+      .maybeSingle();
+    
+    if (data) {
+      setPetData(data);
     }
   };
 
@@ -783,38 +827,91 @@ const PublicProfile = () => {
             </Card>
           )}
 
-          {/* Reviews */}
-          {petData.reviews && petData.reviews.length > 0 && (
-            <Card className="mb-6">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-navy-900">
-                  <Star className="w-5 h-5 text-primary" />
-                  Reviews & References
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {petData.reviews.map((review: any, idx: number) => (
-                  <div key={idx} className="p-4 rounded border">
-                    <div className="flex items-center justify-between mb-2">
-                      <div className="font-medium">{review.reviewer_name}</div>
-                      <div className="flex items-center gap-1">
-                        {[1,2,3,4,5].map(i => (
-                          <Star key={i} className={`w-4 h-4 ${i <= review.rating ? 'text-yellow-500 fill-current' : 'text-yellow-300'}`} />
-                        ))}
+          {/* Reviews Section */}
+          <Card className="mb-6">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-navy-900">
+                <Star className="w-5 h-5 text-primary" />
+                Reviews & References
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              {/* Leave a Review Button */}
+              {!showAddReview && (
+                <div className="text-center mb-6">
+                  <Button 
+                    onClick={handleOpenReviewForm}
+                    className="bg-gold-500 hover:bg-gold-600 text-white"
+                  >
+                    <Star className="w-4 h-4 mr-2" />
+                    Leave a Review for {petData.name}
+                  </Button>
+                </div>
+              )}
+
+              {/* Review Form */}
+              {showAddReview && (
+                <div ref={reviewFormRef} className="mb-6">
+                  <Card className="border-gold-500/30 bg-gold-50/50">
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2 text-navy-900">
+                        <Star className="w-5 h-5 text-gold-500" />
+                        Leave a Review for {petData.name}
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <AddReviewForm 
+                        petId={petData.id} 
+                        petName={petData.name} 
+                        onClose={() => setShowAddReview(false)}
+                        onSuccess={handleReviewSuccess}
+                      />
+                    </CardContent>
+                  </Card>
+                </div>
+              )}
+
+              {/* Existing Reviews */}
+              {petData.reviews && petData.reviews.length > 0 ? (
+                <div className="space-y-4">
+                  {petData.reviews.map((review: any, idx: number) => (
+                    <div key={idx} className="p-4 rounded border">
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="font-medium">{review.reviewer_name}</div>
+                        <div className="flex items-center gap-1">
+                          {[1,2,3,4,5].map(i => (
+                            <Star key={i} className={`w-4 h-4 ${i <= review.rating ? 'text-yellow-500 fill-current' : 'text-yellow-300'}`} />
+                          ))}
+                        </div>
+                      </div>
+                      {review.text && (
+                        <p className="text-sm text-muted-foreground mb-2">{review.text}</p>
+                      )}
+                      <div className="text-xs text-muted-foreground">
+                        {review.location && <span>{review.location}</span>}
+                        {review.date && <span> • {review.date}</span>}
                       </div>
                     </div>
-                    {review.text && (
-                      <p className="text-sm text-muted-foreground mb-2">{review.text}</p>
-                    )}
-                    <div className="text-xs text-muted-foreground">
-                      {review.location && <span>{review.location}</span>}
-                      {review.date && <span> • {review.date}</span>}
-                    </div>
-                  </div>
-                ))}
-              </CardContent>
-            </Card>
-          )}
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-6">
+                  <p className="text-muted-foreground mb-4">
+                    No reviews yet. Be the first to share your experience with {petData.name}!
+                  </p>
+                  {!showAddReview && (
+                    <Button 
+                      onClick={handleOpenReviewForm}
+                      className="bg-gold-500 hover:bg-gold-600 text-white"
+                    >
+                      <Star className="w-4 h-4 mr-2" />
+                      Write First Review
+                    </Button>
+                  )}
+                </div>
+              )}
+            </CardContent>
+          </Card>
 
           {/* Travel History */}
           {petData.travel_locations && petData.travel_locations.length > 0 && (

@@ -95,6 +95,7 @@ const App = () => {
                   
           {/* Demo Pages - Static versions using Finn's real data */}
           <Route path="/demos" element={<Demos />} />
+          <Route path="/dog-gone-good" element={<DogGoneGood />} />
           <Route path="/demo/resume" element={<DemoResume />} />
           <Route path="/demo/missing-pet" element={<DemoMissingPet />} />
           <Route path="/demo/care" element={<DemoCare />} />

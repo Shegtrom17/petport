@@ -531,6 +531,11 @@ export const QuickIDSection = ({ petData, onUpdate }: QuickIDSectionProps) => {
         </CardContent>
       </Card>
 
+      {/* Sightings Moderation Board - only show when pet is missing */}
+      {lostPetData.is_missing && (
+        <SightingsModerationBoard petId={petData.id!} petName={petData.name} />
+      )}
+
       {/* Photo Display Information */}
       <GuidanceHint 
         message="Photo Display Information: All photos are showcased on the public share link. PDF flyers display the first 4 photos only due to two-page format optimized for posting on bulletin boards and walls."
@@ -566,11 +571,6 @@ export const QuickIDSection = ({ petData, onUpdate }: QuickIDSectionProps) => {
         petData={petData} 
         isLost={lostPetData.is_missing}
       />
-
-      {/* Sightings Moderation Board - only show when pet is missing */}
-      {lostPetData.is_missing && (
-        <SightingsModerationBoard petId={petData.id!} petName={petData.name} />
-      )}
     </div>
   );
 };

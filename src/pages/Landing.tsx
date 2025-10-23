@@ -148,7 +148,7 @@ export default function Landing() {
                 Digital Pet Passport?
               </h1>
               <p className="mt-6 text-xl text-brand-primary-dark leading-relaxed">
-                PetPort is an all-in-one digital information platform for pets and horses. Securely organize vaccines, insurance, medical records, and travel documents. Our innovative PetPort LiveLinks allow anyone with your shared link to view your pet's information instantly — perfect for groomers, sitters, or emergencies. Share a Lost Pet Link, Pet Résumé, and Care Instructions in real time. Instantly generate PDFs for lost-pet flyers. Update your pet's data from anywhere, to anyone, on any device
+                Yes, but so much more! PetPort is an all-in-one digital information platform for pets and horses. Securely organize vaccines, insurance, medical records, and travel documents. Our revolutionary Lost Pet Sightings Board instantly rallies community help when you share your One-Tap Missing Pet Flyer and LiveLink. Our Care LiveLink is perfect for groomers, sitters, or emergencies. Update and share a Pet Résumé, ask for Pet Reviews and Care Instructions in real time. Instantly Update your pet's data from anywhere, to anyone, on any device. This app is everything a foster to adopter transfer needs! Give them a voice for a lifetime. <Link to="/demos" className="font-bold text-brand-primary hover:underline">SEE DEMO</Link>
               </p>
 
               

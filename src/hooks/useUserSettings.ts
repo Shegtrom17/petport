@@ -9,7 +9,7 @@ export interface UserSettings {
 
 const DEFAULT_SETTINGS: UserSettings = {
   homeDestination: "app",
-  rememberLastTab: true,
+  rememberLastTab: false,
 };
 
 const storageKey = (userId?: string) =>

@@ -406,7 +406,7 @@ export default function Learn() {
             <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl p-6 mb-8">
               <h3 className="text-xl font-semibold text-brand-primary mb-4">🔗 How to Request Reviews with PetPort</h3>
               <ol className="text-brand-primary-dark space-y-3">
-                <li><strong>1. Share Your Pet's Profile:</strong> Send your review link via email or whiteboard to service providers after a positive experience.</li>
+                <li><strong>1. Share Your Pet's Profile:</strong> Send your review link via email or LiveLink to service providers after a positive experience.</li>
                 <li><strong>2. Request Specific Feedback:</strong> Ask for comments on behavior, training, cleanliness, and overall experience.</li>
                 <li><strong>3. Build Your Portfolio:</strong> Collect reviews over time to create a comprehensive reputation.</li>
                 <li><strong>4. Share with New Providers:</strong> Show your pet's track record to new groomers, sitters, and hotels - instantly share via PDF download, shareable link, or directly from your phone.</li>

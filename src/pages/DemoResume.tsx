@@ -64,7 +64,7 @@ export default function DemoResume() {
     <div className="min-h-screen bg-gradient-to-br from-brand-cream via-white to-brand-cream">
       <MetaTags 
         title={`${data.name}'s Professional Resume - Live PetPort Demo`}
-        description={`Experience a real PetPort Whiteboard - ${data.name}'s professional pet resume with certifications, training, achievements, and reviews`}
+        description={`Experience a real PetPort LiveLink - ${data.name}'s professional pet resume with certifications, training, achievements, and reviews`}
         image="https://dxghbhujugsfmaecilrq.supabase.co/storage/v1/object/public/og-images/resume-og-1mb.png"
         url={`https://petport.app/demo/resume`}
       />
@@ -363,7 +363,7 @@ export default function DemoResume() {
 
         {/* Footer CTA */}
         <div className="bg-gradient-to-r from-brand-primary to-brand-secondary rounded-lg p-8 text-center text-white mb-6">
-          <h2 className="text-2xl font-bold mb-3">Ready to Create Your Pet's Professional Whiteboard?</h2>
+          <h2 className="text-2xl font-bold mb-3">Ready to Create Your Pet's Professional LiveLink?</h2>
           <p className="mb-4 text-white/90">Join thousands of pet owners showcasing their pets' achievements</p>
           <a href="/#pricing">
             <Button 

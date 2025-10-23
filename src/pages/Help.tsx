@@ -127,6 +127,11 @@ const Help = () => {
       id: "contact-relay",
       question: "Where do Contact Owner messages go?",
       answer: "When someone uses the 'Contact Owner' button on your public pages (Lost Pet, Profile, Resume, etc.), their message is securely relayed to the email address associated with your PetPort account (visible in Profile → Account Information). Your email is never exposed publicly. You can reply directly to the sender from your email inbox, and they will receive your response at the email address they provided."
+    },
+    {
+      id: "sharing-privacy",
+      question: "How are my contacts shared in PDFs vs LiveLinks?",
+      answer: "All PDFs include contact numbers for easy printing and offline access. For social media safety, LiveLinks (public shareable links) have smart privacy controls: Your Photo Gallery & Complete Profile hides contacts, Resume shows only Vet contact, while Care Instructions, Emergency Profile, and Missing Pet alerts display all contacts. This ensures your contact info is available when needed for emergencies, but protected when sharing socially."
     }
   ];
 

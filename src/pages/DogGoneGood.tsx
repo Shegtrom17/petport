@@ -67,8 +67,10 @@ export default function DogGoneGood() {
   const [species, setSpecies] = useState<Species>('dog');
   const [theme, setTheme] = useState<ThemeId>('patriotic');
   const [petName, setPetName] = useState('');
-  const [photoPreview, setPhotoPreview] = useState<string | null>(null);
-  const [photoFile, setPhotoFile] = useState<File | null>(null);
+  const [photoPreview1, setPhotoPreview1] = useState<string | null>(null);
+  const [photoPreview2, setPhotoPreview2] = useState<string | null>(null);
+  const [photoFile1, setPhotoFile1] = useState<File | null>(null);
+  const [photoFile2, setPhotoFile2] = useState<File | null>(null);
   const [formData, setFormData] = useState<ResumeData>({
     title: dogCatOptions.title[0],
     achievements: themes.patriotic.achievements[0],
@@ -84,9 +86,9 @@ export default function DogGoneGood() {
 
   useEffect(() => {
     renderCanvas();
-  }, [formData, petName, photoPreview, species, theme]);
+  }, [formData, petName, photoPreview1, photoPreview2, species, theme]);
 
-  const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handlePhotoUpload = (photoNumber: 1 | 2) => (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -100,12 +102,21 @@ export default function DogGoneGood() {
       return;
     }
 
-    setPhotoFile(file);
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setPhotoPreview(reader.result as string);
-    };
-    reader.readAsDataURL(file);
+    if (photoNumber === 1) {
+      setPhotoFile1(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPhotoPreview1(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    } else {
+      setPhotoFile2(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPhotoPreview2(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   const updateField = (field: keyof ResumeData, value: string) => {
@@ -191,71 +202,120 @@ export default function DogGoneGood() {
     ctx.textBaseline = "middle";
     ctx.fillText("PET RÉSUMÉ", 600, 180);
 
-    // Pet Info Section - MUCH LARGER PHOTO
+    // Pet Photos Section - TWO SQUARE PHOTOS SIDE BY SIDE
     let yOffset = 320;
-    const photoSize = 500; // Much larger photo
-    const photoX = (1200 - photoSize) / 2;
-    const photoY = yOffset;
-
-    // Pet photo or silhouette
-    if (photoPreview) {
+    const hasPhoto1 = !!photoPreview1;
+    const hasPhoto2 = !!photoPreview2;
+    const photoCount = (hasPhoto1 ? 1 : 0) + (hasPhoto2 ? 1 : 0);
+    
+    // Photo sizing
+    const twoPhotoSize = 480; // Each photo is 40% of 1200px canvas
+    const onePhotoSize = 720; // Single photo is 60% of canvas
+    const gap = 40;
+    
+    const drawSquarePhoto = (photoSrc: string, x: number, y: number, size: number) => {
       const img = new Image();
-      img.src = photoPreview;
+      img.src = photoSrc;
       img.onload = () => {
         ctx.save();
-        ctx.beginPath();
-        ctx.arc(600, photoY + photoSize / 2, photoSize / 2, 0, Math.PI * 2);
-        ctx.closePath();
-        ctx.clip();
         
-        // Draw image centered and covering the circle
+        // Shadow for depth
+        ctx.shadowColor = 'rgba(0, 0, 0, 0.15)';
+        ctx.shadowBlur = 20;
+        ctx.shadowOffsetX = 0;
+        ctx.shadowOffsetY = 10;
+        
+        // Draw square photo
         const imgAspect = img.width / img.height;
-        let drawWidth = photoSize;
-        let drawHeight = photoSize;
-        let drawX = photoX;
-        let drawY = photoY;
+        let drawWidth = size;
+        let drawHeight = size;
+        let drawX = x;
+        let drawY = y;
         
         if (imgAspect > 1) {
-          drawWidth = photoSize * imgAspect;
-          drawX = photoX - (drawWidth - photoSize) / 2;
+          drawWidth = size * imgAspect;
+          drawX = x - (drawWidth - size) / 2;
         } else {
-          drawHeight = photoSize / imgAspect;
-          drawY = photoY - (drawHeight - photoSize) / 2;
+          drawHeight = size / imgAspect;
+          drawY = y - (drawHeight - size) / 2;
         }
         
+        // Clip to square
+        ctx.beginPath();
+        ctx.rect(x, y, size, size);
+        ctx.clip();
         ctx.drawImage(img, drawX, drawY, drawWidth, drawHeight);
         ctx.restore();
         
-        // Add subtle border with theme color
+        // Border with theme accent color
+        ctx.shadowColor = 'transparent';
         ctx.strokeStyle = currentTheme.colors.accent;
-        ctx.lineWidth = 8;
-        ctx.beginPath();
-        ctx.arc(600, photoY + photoSize / 2, photoSize / 2, 0, Math.PI * 2);
-        ctx.stroke();
+        ctx.lineWidth = 6;
+        ctx.strokeRect(x, y, size, size);
       };
-    } else {
-      // Draw large placeholder with silhouette
+    };
+    
+    const drawPlaceholder = (x: number, y: number, size: number) => {
+      // Shadow for depth
+      ctx.shadowColor = 'rgba(0, 0, 0, 0.15)';
+      ctx.shadowBlur = 20;
+      ctx.shadowOffsetX = 0;
+      ctx.shadowOffsetY = 10;
+      
+      // Background
       ctx.fillStyle = '#f3f4f6';
-      ctx.beginPath();
-      ctx.arc(600, photoY + photoSize / 2, photoSize / 2, 0, Math.PI * 2);
-      ctx.fill();
+      ctx.fillRect(x, y, size, size);
       
-      // Border with theme color
+      ctx.shadowColor = 'transparent';
+      
+      // Border
       ctx.strokeStyle = currentTheme.colors.accent;
-      ctx.lineWidth = 8;
-      ctx.beginPath();
-      ctx.arc(600, photoY + photoSize / 2, photoSize / 2, 0, Math.PI * 2);
-      ctx.stroke();
+      ctx.lineWidth = 6;
+      ctx.strokeRect(x, y, size, size);
       
-      // Large species emoji as placeholder
-      ctx.font = '280px Arial';
+      // Large species emoji
+      ctx.font = `${size * 0.5}px Arial`;
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
       const emoji = species === 'dog' ? '🐕' : species === 'cat' ? '🐱' : '🐴';
-      ctx.fillText(emoji, 600, photoY + photoSize / 2);
+      ctx.fillText(emoji, x + size / 2, y + size / 2);
+    };
+    
+    if (photoCount === 2) {
+      // Two photos side by side
+      const photo1X = (1200 - (twoPhotoSize * 2 + gap)) / 2;
+      const photo2X = photo1X + twoPhotoSize + gap;
+      
+      if (hasPhoto1) {
+        drawSquarePhoto(photoPreview1, photo1X, yOffset, twoPhotoSize);
+      } else {
+        drawPlaceholder(photo1X, yOffset, twoPhotoSize);
+      }
+      
+      if (hasPhoto2) {
+        drawSquarePhoto(photoPreview2, photo2X, yOffset, twoPhotoSize);
+      } else {
+        drawPlaceholder(photo2X, yOffset, twoPhotoSize);
+      }
+      
+      yOffset += twoPhotoSize + 60;
+    } else if (photoCount === 1) {
+      // One photo centered at 60% width
+      const photoX = (1200 - onePhotoSize) / 2;
+      
+      if (hasPhoto1) {
+        drawSquarePhoto(photoPreview1, photoX, yOffset, onePhotoSize);
+      } else if (hasPhoto2) {
+        drawSquarePhoto(photoPreview2, photoX, yOffset, onePhotoSize);
+      }
+      
+      yOffset += onePhotoSize + 60;
+    } else {
+      // No photos - show centered placeholder
+      const photoX = (1200 - onePhotoSize) / 2;
+      drawPlaceholder(photoX, yOffset, onePhotoSize);
+      yOffset += onePhotoSize + 60;
     }
-
-    yOffset += photoSize + 60;
 
     // Pet Name
     ctx.fillStyle = currentTheme.colors.text;
@@ -568,22 +628,43 @@ export default function DogGoneGood() {
               </div>
             </div>
 
-            {/* Photo Upload (Optional) */}
+            {/* Photo Uploads (Optional) */}
             <div className="bg-white rounded-xl p-6 shadow-lg">
               <label className="block text-sm font-semibold text-brand-primary mb-3">
-                Pet Photo (optional)
+                Pet Photos (optional - up to 2)
               </label>
-              <input 
-                type="file" 
-                accept="image/*" 
-                onChange={handlePhotoUpload}
-                className="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-brand-primary/10 file:text-brand-primary hover:file:bg-brand-primary/20"
-              />
-              {photoPreview && (
-                <div className="mt-4 flex justify-center">
-                  <img src={photoPreview} alt="Preview" className="w-32 h-32 rounded-full object-cover border-4 border-brand-primary/20" />
-                </div>
-              )}
+              
+              {/* Photo 1 */}
+              <div className="mb-4">
+                <label className="block text-xs text-gray-600 mb-2">Photo 1</label>
+                <input 
+                  type="file" 
+                  accept="image/*" 
+                  onChange={handlePhotoUpload(1)}
+                  className="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-brand-primary/10 file:text-brand-primary hover:file:bg-brand-primary/20"
+                />
+                {photoPreview1 && (
+                  <div className="mt-2 flex justify-center">
+                    <img src={photoPreview1} alt="Preview 1" className="w-24 h-24 rounded object-cover border-2 border-brand-primary/20" />
+                  </div>
+                )}
+              </div>
+              
+              {/* Photo 2 */}
+              <div>
+                <label className="block text-xs text-gray-600 mb-2">Photo 2</label>
+                <input 
+                  type="file" 
+                  accept="image/*" 
+                  onChange={handlePhotoUpload(2)}
+                  className="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-brand-primary/10 file:text-brand-primary hover:file:bg-brand-primary/20"
+                />
+                {photoPreview2 && (
+                  <div className="mt-2 flex justify-center">
+                    <img src={photoPreview2} alt="Preview 2" className="w-24 h-24 rounded object-cover border-2 border-brand-primary/20" />
+                  </div>
+                )}
+              </div>
             </div>
 
             {/* Pet Name (Optional) */}

@@ -8,6 +8,7 @@ import { AppShareButton } from "@/components/AppShareButton";
 import PricingSection from "@/components/PricingSection";
 import { Testimonials } from "@/components/Testimonials";
 import { supabase } from "@/integrations/supabase/client";
+import { Sparkles } from "lucide-react";
 import createProfileScreenshot from "@/assets/create-profile-screenshot.png";
 import documentUploadScreenshot from "@/assets/document-upload-screenshot.png";
 import resumeDetailsScreenshot from "@/assets/resume-details-screenshot.png";

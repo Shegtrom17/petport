@@ -55,6 +55,7 @@ import DemoMissingPet from "./pages/DemoMissingPet";
 import DemoCare from "./pages/DemoCare";
 import DemoGallery from "./pages/DemoGallery";
 import Demos from "./pages/Demos";
+import DogGoneGood from "./pages/DogGoneGood";
 
 // Redirect component for credentials -> resume consolidation
 const CredentialsRedirect = () => {

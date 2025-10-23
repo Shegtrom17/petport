@@ -36,6 +36,8 @@ export const QuickReferralModal = ({ isOpen, onClose }: QuickReferralModalProps)
 
     try {
       setLoading(true);
+      
+      // Step 1: Try to load existing referral code
       const { data, error } = await supabase
         .from("referrals")
         .select("referral_code")
@@ -50,11 +52,62 @@ export const QuickReferralModal = ({ isOpen, onClose }: QuickReferralModalProps)
           description: "Failed to load your referral code.",
           variant: "destructive",
         });
-      } else if (data) {
-        setReferralCode(data.referral_code);
+        return;
       }
+      
+      // Step 2: If code exists, use it
+      if (data) {
+        setReferralCode(data.referral_code);
+        return;
+      }
+      
+      // Step 3: No code exists - create one automatically
+      console.log("No referral code found, creating one...");
+      
+      const { data: newReferral, error: createError } = await supabase
+        .rpc('create_user_referral', { _user_id: user.id });
+      
+      if (createError) {
+        console.error("Error creating referral code:", createError);
+        toast({
+          title: "Setup Required",
+          description: "Unable to generate your referral code. Please contact support.",
+          variant: "destructive",
+        });
+        return;
+      }
+      
+      // Step 4: Load the newly created code
+      const { data: freshData, error: reloadError } = await supabase
+        .from("referrals")
+        .select("referral_code")
+        .eq("referrer_user_id", user.id)
+        .is("referred_user_id", null)
+        .single();
+      
+      if (reloadError || !freshData) {
+        console.error("Error reloading referral code:", reloadError);
+        toast({
+          title: "Error",
+          description: "Referral code created but failed to load.",
+          variant: "destructive",
+        });
+        return;
+      }
+      
+      setReferralCode(freshData.referral_code);
+      toast({
+        title: "Referral Code Ready!",
+        description: "Your referral link has been generated.",
+      });
+      
     } catch (error) {
       console.error("Error in loadReferralCode:", error);
+      toast({
+        title: "Error",
+        description: "An unexpected error occurred.",
+        variant: "destructive",
+      });
     } finally {
       setLoading(false);
     }

@@ -122,6 +122,28 @@ export default function Referrals() {
         console.error("Error loading referral code:", referralError);
       } else if (referralData) {
         setReferralCode(referralData.referral_code);
+      } else {
+        // No referral code exists - create one automatically
+        console.log("No referral code found, creating one...");
+        
+        const { data: newReferral, error: createError } = await supabase
+          .rpc('create_user_referral', { _user_id: user.id });
+        
+        if (createError) {
+          console.error("Error creating referral code:", createError);
+        } else {
+          // Reload the newly created code
+          const { data: freshData, error: reloadError } = await supabase
+            .from("referrals")
+            .select("referral_code")
+            .eq("referrer_user_id", user.id)
+            .is("referred_user_id", null)
+            .single();
+          
+          if (!reloadError && freshData) {
+            setReferralCode(freshData.referral_code);
+          }
+        }
       }
 
       // Load all referrals for this user

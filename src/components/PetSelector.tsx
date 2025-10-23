@@ -48,7 +48,7 @@ export const PetSelector = ({ pets, selectedPet, onSelectPet, onReorderPets, pet
   };
 
   return (
-    <div className="mb-4 sm:mb-6 relative passport-map-container">
+    <div id="pet-selector-cards" className="mb-4 sm:mb-6 relative passport-map-container">
       <div 
         className="absolute inset-0 rounded-lg -m-2"
         style={{

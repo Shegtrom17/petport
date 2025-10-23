@@ -102,7 +102,7 @@ export const PetHeader = ({ activeTab, onTabChange, selectedPetId, selectedPetNa
             </Button>
             {user && (
               <DropdownMenu>
-                <DropdownMenuTrigger asChild>
+                <DropdownMenuTrigger id="three-dot-menu" asChild>
                   <Button
                     variant="ghost"
                     size="icon"
@@ -212,7 +212,7 @@ export const PetHeader = ({ activeTab, onTabChange, selectedPetId, selectedPetNa
             </Button>
             {user && (
               <DropdownMenu>
-                <DropdownMenuTrigger asChild>
+                <DropdownMenuTrigger id="three-dot-menu" asChild>
                   <Button
                     variant="ghost"
                     size="icon"

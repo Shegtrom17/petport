@@ -11,11 +11,13 @@ import { Switch } from "@/components/ui/switch";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 
 import { useUserSettings } from "@/hooks/useUserSettings";
-import { User, LogOut, Mail } from "lucide-react";
+import { useOnboardingTour } from "@/hooks/useOnboardingTour";
+import { User, LogOut, Mail, RotateCw } from "lucide-react";
 
 export default function Profile() {
   const { user, signOut } = useAuth();
   const { settings, updateSettings } = useUserSettings(user?.id);
+  const { restartTour } = useOnboardingTour({ hasPets: true });
   const navigate = useNavigate();
   // removed one-time payment state
   const handleLogout = async () => {
@@ -34,6 +36,24 @@ export default function Profile() {
       <div className="p-4 space-y-4">
         {/* PWA Install Card */}
         <PWAInstallCard />
+
+        {/* Onboarding Tour Card */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-xl font-semibold flex items-center gap-2">
+              <RotateCw className="w-5 h-5" />
+              Getting Started Tour
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-sm text-muted-foreground mb-4">
+              Need a refresher? Restart the guided tour to learn about key features like editing profiles, sharing pages, and navigating the app.
+            </p>
+            <Button onClick={restartTour} variant="outline" className="w-full sm:w-auto">
+              🔄 Restart Onboarding Tour
+            </Button>
+          </CardContent>
+        </Card>
 
         {user && (
           <div>

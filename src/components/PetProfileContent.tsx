@@ -295,7 +295,7 @@ export const PetProfileContent = ({
       {/* Profile Management Hub */}
       <div className="mb-8">
         <div className="bg-white/50 backdrop-blur-sm rounded-2xl p-6">
-          <Card className="bg-white shadow-xl transition-all duration-300 ease-in-out">
+          <Card id="profile-management-hub" className="bg-white shadow-xl transition-all duration-300 ease-in-out">
             <CardHeader>
               <CardTitle className="text-xl flex items-center gap-2">
                 <Edit className="w-6 h-6 text-[#5691af]" />

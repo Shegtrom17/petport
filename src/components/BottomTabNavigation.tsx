@@ -31,6 +31,7 @@ export const BottomTabNavigation = () => {
               <NavLink
                 key={tab.id}
                 to={tab.path}
+                id={tab.id === 'menu' ? 'bottom-nav-menu' : undefined}
                 onClick={(e) => {
                   if (tab.id === 'menu') {
                     e.preventDefault();

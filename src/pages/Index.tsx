@@ -42,6 +42,8 @@ import { useToast } from "@/hooks/use-toast";
 import { PullToRefresh } from "@/components/PullToRefresh";
 import { useQueryClient } from "@tanstack/react-query";
 import { featureFlags } from "@/config/featureFlags";
+import { OnboardingTour } from "@/components/OnboardingTour";
+import { useOnboardingTour } from "@/hooks/useOnboardingTour";
 
 // Helper to get initial tab from localStorage synchronously
 const getInitialTab = () => {
@@ -79,6 +81,10 @@ const Index = () => {
     handleReorderPets,
     togglePetPublicVisibility
   } = usePetData();
+
+  const { runTour, tourKey, completeTour, skipTour } = useOnboardingTour({
+    hasPets: pets.length > 0, // ✅ No-pet safeguard
+  });
 
   const handleTabChange = (tab: string) => {
     setActiveTab(tab);
@@ -452,6 +458,14 @@ const Index = () => {
   return (
     <IOSOptimizedIndex activeTab={activeTab}>
       <PWALayout>
+        {/* ✅ Onboarding Tour */}
+        <OnboardingTour
+          runTour={runTour}
+          tourKey={tourKey}
+          onComplete={completeTour}
+          onSkip={skipTour}
+        />
+        
         {featureFlags.enablePullToRefresh ? (
           <PullToRefresh onRefresh={handleRefresh} disabled={isOverlayOpen}>
             {content}

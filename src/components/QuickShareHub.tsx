@@ -935,7 +935,7 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
   const availablePages = sharePages;
 
   return (
-    <Card className="bg-white shadow-xl">
+    <Card id="quick-share-hub" className="bg-white shadow-xl">
       <CardHeader>
         <CardTitle className="text-xl flex items-center gap-2">
           <Share2 className="w-6 h-6 text-brand-primary" />

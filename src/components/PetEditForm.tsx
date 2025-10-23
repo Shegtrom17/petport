@@ -513,6 +513,10 @@ export const PetEditForm = ({ petData, onSave, onCancel, togglePetPublicVisibili
               </AlertDescription>
             </Alert>
             
+            <p className="text-sm text-muted-foreground mb-3">
+              Phone numbers auto-format as you type.
+            </p>
+            
             <div className="space-y-4">
               {['emergency', 'emergency_secondary', 'veterinary', 'caretaker'].map((type) => {
                 const contact = contacts.find(c => c.contact_type === type);

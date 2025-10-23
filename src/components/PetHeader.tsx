@@ -1,4 +1,4 @@
-import { ArrowLeft, LogIn, MoreVertical, Gift, Settings, CreditCard, HelpCircle, Flag, LogOut } from "lucide-react";
+import { ArrowLeft, LogIn, MoreVertical, Gift, Settings, CreditCard, HelpCircle, Flag, LogOut, DollarSign } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
@@ -82,6 +82,15 @@ export const PetHeader = ({ activeTab, onTabChange, selectedPetId, selectedPetNa
                 />
               </div>
             )}
+            <Button
+              variant="ghost"
+              size="icon"
+              className="touch-feedback h-8 w-8"
+              onClick={() => setShowReferralModal(true)}
+              aria-label="Refer & Earn"
+            >
+              <DollarSign className="h-4 w-4" />
+            </Button>
             <Button
               variant="ghost"
               size="icon"
@@ -183,6 +192,15 @@ export const PetHeader = ({ activeTab, onTabChange, selectedPetId, selectedPetNa
                 />
               </div>
             )}
+            <Button
+              variant="ghost"
+              size="icon"
+              className="touch-feedback"
+              onClick={() => setShowReferralModal(true)}
+              aria-label="Refer & Earn"
+            >
+              <DollarSign className="h-5 w-5" />
+            </Button>
             <Button
               variant="ghost"
               size="icon"

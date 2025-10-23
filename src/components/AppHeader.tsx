@@ -1,4 +1,4 @@
-import { ArrowLeft, MoreVertical, Gift, Settings, CreditCard, HelpCircle, Flag, LogOut } from "lucide-react";
+import { ArrowLeft, MoreVertical, Gift, Settings, CreditCard, HelpCircle, Flag, LogOut, DollarSign } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/context/AuthContext";
@@ -36,6 +36,17 @@ export const AppHeader = ({ title, showBack = false, actions, showHelpIcon = tru
         </div>
 
         <div className="flex items-center space-x-2">
+          {user && (
+            <Button
+              variant="ghost"
+              size="icon"
+              className="touch-feedback"
+              onClick={() => setShowReferralModal(true)}
+              aria-label="Refer & Earn"
+            >
+              <DollarSign className="h-5 w-5" />
+            </Button>
+          )}
           {showHelpIcon && (
             <Button
               variant="ghost"

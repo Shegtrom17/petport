@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { MetaTags } from "@/components/MetaTags";
-import { Sparkles, Download, Share2, Wand2 } from "lucide-react";
+import { Sparkles, Download, Share2, Wand2, Eye } from "lucide-react";
 import { toast } from "sonner";
 import {
   Select,
@@ -297,11 +297,14 @@ export default function DogGoneGood() {
 
     // PetPort logo text
     ctx.fillStyle = '#ffffff';
-    ctx.font = 'bold 32px Inter, sans-serif';
+    ctx.font = 'bold 32px Fredoka, Inter, sans-serif';
     ctx.fillText('PetPort.app', 60, 120);
 
-    // Pet Info Section
-    let yOffset = 250;
+    // Pet Info Section - MUCH LARGER PHOTO
+    let yOffset = 230;
+    const photoSize = 500; // Much larger photo
+    const photoX = (1200 - photoSize) / 2;
+    const photoY = yOffset;
 
     // Pet photo or silhouette
     if (photoPreview) {
@@ -310,98 +313,141 @@ export default function DogGoneGood() {
       img.onload = () => {
         ctx.save();
         ctx.beginPath();
-        ctx.arc(600, yOffset + 100, 100, 0, Math.PI * 2);
+        ctx.arc(600, photoY + photoSize / 2, photoSize / 2, 0, Math.PI * 2);
         ctx.closePath();
         ctx.clip();
-        ctx.drawImage(img, 500, yOffset, 200, 200);
+        
+        // Draw image centered and covering the circle
+        const imgAspect = img.width / img.height;
+        let drawWidth = photoSize;
+        let drawHeight = photoSize;
+        let drawX = photoX;
+        let drawY = photoY;
+        
+        if (imgAspect > 1) {
+          drawWidth = photoSize * imgAspect;
+          drawX = photoX - (drawWidth - photoSize) / 2;
+        } else {
+          drawHeight = photoSize / imgAspect;
+          drawY = photoY - (drawHeight - photoSize) / 2;
+        }
+        
+        ctx.drawImage(img, drawX, drawY, drawWidth, drawHeight);
         ctx.restore();
+        
+        // Add subtle border
+        ctx.strokeStyle = '#5691af';
+        ctx.lineWidth = 8;
+        ctx.beginPath();
+        ctx.arc(600, photoY + photoSize / 2, photoSize / 2, 0, Math.PI * 2);
+        ctx.stroke();
       };
     } else {
-      // Draw placeholder circle
-      ctx.fillStyle = '#e5e7eb';
+      // Draw large placeholder with silhouette
+      ctx.fillStyle = '#f3f4f6';
       ctx.beginPath();
-      ctx.arc(600, yOffset + 100, 100, 0, Math.PI * 2);
+      ctx.arc(600, photoY + photoSize / 2, photoSize / 2, 0, Math.PI * 2);
       ctx.fill();
       
-      // Species emoji
-      ctx.font = '80px Arial';
+      // Border
+      ctx.strokeStyle = '#5691af';
+      ctx.lineWidth = 8;
+      ctx.beginPath();
+      ctx.arc(600, photoY + photoSize / 2, photoSize / 2, 0, Math.PI * 2);
+      ctx.stroke();
+      
+      // Large species emoji as placeholder
+      ctx.font = '280px Arial';
       ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
       const emoji = species === 'dog' ? '🐕' : species === 'cat' ? '🐱' : '🐴';
-      ctx.fillText(emoji, 600, yOffset + 125);
+      ctx.fillText(emoji, 600, photoY + photoSize / 2);
     }
 
-    yOffset += 240;
+    yOffset += photoSize + 60;
 
     // Resume title
     ctx.fillStyle = '#1f2937';
-    ctx.font = 'bold 48px Inter, sans-serif';
+    ctx.font = 'bold 52px Fredoka, Inter, sans-serif';
     ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
     const displayName = petName || species.charAt(0).toUpperCase() + species.slice(1);
     ctx.fillText(`RÉSUMÉ OF ${displayName.toUpperCase()}`, 600, yOffset);
 
-    yOffset += 80;
+    yOffset += 90;
 
-    // Content sections
+    // Content sections - more compact
     ctx.textAlign = 'left';
+    ctx.textBaseline = 'alphabetic';
     const leftMargin = 80;
     const maxWidth = 1040;
 
     // Title
     ctx.fillStyle = '#5691af';
-    ctx.font = 'bold 28px Inter, sans-serif';
+    ctx.font = 'bold 30px Fredoka, Inter, sans-serif';
     ctx.fillText('PROFESSIONAL TITLE', leftMargin, yOffset);
-    yOffset += 40;
+    yOffset += 42;
     ctx.fillStyle = '#374151';
     ctx.font = '24px Inter, sans-serif';
     wrapText(ctx, formData.title, leftMargin, yOffset, maxWidth, 35);
-    yOffset += 80;
+    yOffset += 75;
 
     // Achievements
     ctx.fillStyle = '#5691af';
-    ctx.font = 'bold 28px Inter, sans-serif';
+    ctx.font = 'bold 30px Fredoka, Inter, sans-serif';
     ctx.fillText('KEY ACHIEVEMENTS', leftMargin, yOffset);
-    yOffset += 40;
+    yOffset += 42;
     ctx.fillStyle = '#374151';
     ctx.font = '24px Inter, sans-serif';
     wrapText(ctx, formData.achievements, leftMargin, yOffset, maxWidth, 35);
-    yOffset += 80;
+    yOffset += 75;
 
     // Experience
     ctx.fillStyle = '#5691af';
-    ctx.font = 'bold 28px Inter, sans-serif';
+    ctx.font = 'bold 30px Fredoka, Inter, sans-serif';
     ctx.fillText('PROFESSIONAL EXPERIENCE', leftMargin, yOffset);
-    yOffset += 40;
+    yOffset += 42;
     ctx.fillStyle = '#374151';
     ctx.font = '24px Inter, sans-serif';
     wrapText(ctx, formData.experience, leftMargin, yOffset, maxWidth, 35);
-    yOffset += 80;
+    yOffset += 75;
 
     // References
     ctx.fillStyle = '#5691af';
-    ctx.font = 'bold 28px Inter, sans-serif';
+    ctx.font = 'bold 30px Fredoka, Inter, sans-serif';
     ctx.fillText('REFERENCES', leftMargin, yOffset);
-    yOffset += 40;
+    yOffset += 42;
     ctx.fillStyle = '#374151';
     ctx.font = '24px Inter, sans-serif';
     wrapText(ctx, formData.references, leftMargin, yOffset, maxWidth, 35);
-    yOffset += 80;
+    yOffset += 75;
 
     // Motto
     ctx.fillStyle = '#5691af';
-    ctx.font = 'bold 28px Inter, sans-serif';
+    ctx.font = 'bold 30px Fredoka, Inter, sans-serif';
     ctx.fillText('LIFE MOTTO', leftMargin, yOffset);
-    yOffset += 40;
+    yOffset += 42;
     ctx.fillStyle = '#374151';
     ctx.font = 'italic 26px Inter, sans-serif';
     wrapText(ctx, `"${formData.motto}"`, leftMargin, yOffset, maxWidth, 35);
+
+    // Pawprint watermark in bottom corner
+    ctx.globalAlpha = 0.1;
+    ctx.font = '120px Arial';
+    ctx.textAlign = 'right';
+    ctx.fillStyle = '#5691af';
+    ctx.fillText('🐾', 1150, 1450);
+    ctx.globalAlpha = 1.0;
 
     // Footer banner
     ctx.fillStyle = '#5691af';
     ctx.fillRect(0, 1500, 1200, 100);
     ctx.fillStyle = '#ffffff';
-    ctx.font = '22px Inter, sans-serif';
+    ctx.font = 'bold 24px Fredoka, Inter, sans-serif';
     ctx.textAlign = 'center';
-    ctx.fillText('🐾 Created with love at PetPort.app — Giving Pets a Voice for Their Lifetime.', 600, 1560);
+    ctx.fillText('🐾 Created with love at PetPort.app', 600, 1545);
+    ctx.font = '18px Inter, sans-serif';
+    ctx.fillText('Giving Pets a Voice for Their Lifetime', 600, 1575);
   };
 
   const generateJPEGBlob = (): Promise<Blob> => {
@@ -418,7 +464,7 @@ export default function DogGoneGood() {
         } else {
           reject(new Error('Failed to generate image'));
         }
-      }, 'image/jpeg', 0.92);
+      }, 'image/jpeg', 0.95);
     });
   };
 
@@ -447,6 +493,18 @@ export default function DogGoneGood() {
     } catch (error) {
       console.error('Download failed:', error);
       toast.error('Failed to download image');
+    }
+  };
+
+  const viewResume = async () => {
+    try {
+      const blob = await generateJPEGBlob();
+      const url = URL.createObjectURL(blob);
+      window.open(url, '_blank');
+      toast.success('Opening résumé in new tab! 👀');
+    } catch (error) {
+      console.error('View failed:', error);
+      toast.error('Failed to open résumé');
     }
   };
 
@@ -689,7 +747,7 @@ export default function DogGoneGood() {
             <Button 
               onClick={randomizeAll}
               size="lg"
-              className="w-full bg-gradient-to-r from-brand-secondary to-brand-primary text-white hover:opacity-90"
+              className="w-full bg-gradient-to-r from-brand-secondary to-brand-primary text-white hover:opacity-90 animate-bounce hover:animate-none"
             >
               <Wand2 className="mr-2 h-5 w-5" />
               🎲 I'm Feeling Fetchy
@@ -712,6 +770,15 @@ export default function DogGoneGood() {
 
             {/* Action Buttons */}
             <div className="space-y-3">
+              <Button 
+                onClick={viewResume}
+                size="lg"
+                variant="outline"
+                className="w-full border-brand-primary text-brand-primary hover:bg-brand-primary/10"
+              >
+                <Eye className="mr-2 h-5 w-5" />
+                View Full Size
+              </Button>
               <Button 
                 onClick={downloadJPEG}
                 size="lg"

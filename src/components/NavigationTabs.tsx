@@ -10,7 +10,7 @@ interface NavigationTabsProps {
 
 export const NavigationTabs = ({ activeTab, onTabChange, isMobile = false }: NavigationTabsProps) => {
   const tabs = [
-    { id: "profile", label: "PROFILE", icon: FileText },
+    { id: "profile", label: "HOME", icon: FileText },
     { id: "care", label: "CARE & HANDLING", icon: Heart },
     { id: "resume", label: "RESUME", icon: Badge },
     { id: "documents", label: "DOCUMENTS", icon: FileText },

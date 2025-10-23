@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react";
-import { useParams, useSearchParams } from "react-router-dom";
+import { useParams, useSearchParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
-import { Heart, MapPin, Phone, Star, Award, GraduationCap, Plane, Trophy, Briefcase, Shield, Building, Mail, Globe, Camera, AlertTriangle, FileText, Eye, Stethoscope } from "lucide-react";
+import { Heart, MapPin, Phone, Star, Award, GraduationCap, Plane, Trophy, Briefcase, Shield, Building, Mail, Globe, Camera, AlertTriangle, FileText, Eye, Stethoscope, X } from "lucide-react";
 
 import { MetaTags } from "@/components/MetaTags";
 import { AddReviewForm } from "@/components/AddReviewForm";
@@ -17,6 +17,7 @@ import { sanitizeText, sanitizeHtml } from "@/utils/inputSanitizer";
 const PublicProfile = () => {
   const { petId } = useParams<{ petId: string }>();
   const [searchParams, setSearchParams] = useSearchParams();
+  const navigate = useNavigate();
   const [petData, setPetData] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -24,6 +25,14 @@ const PublicProfile = () => {
   const [debugInfo, setDebugInfo] = useState<string[]>([]);
   const [showAddReview, setShowAddReview] = useState(false);
   const [isContactModalOpen, setIsContactModalOpen] = useState(false);
+
+  const handleClose = () => {
+    if (window.history.length > 1) {
+      navigate(-1);
+    } else {
+      navigate('/');
+    }
+  };
 
   useEffect(() => {
     const loadPetData = async () => {
@@ -316,6 +325,19 @@ const PublicProfile = () => {
         type="profile"
       />
       <div className="min-h-screen bg-gradient-to-br from-sage-50 to-cream-50">
+        {/* Close Button */}
+        <div className="fixed top-4 right-4 z-50">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={handleClose}
+            className="bg-white/80 hover:bg-white shadow-md"
+            aria-label="Close"
+          >
+            <X className="h-5 w-5" />
+          </Button>
+        </div>
+
         <main className="container mx-auto px-4 py-8 max-w-4xl">
           {/* Header */}
           <header className="text-center mb-8">

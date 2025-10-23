@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { MapPin, Phone, Calendar, Clock, Share2, AlertTriangle, Stethoscope, Camera, AlertCircle, Heart, ArrowLeft, FileDown, Eye, Download, Printer, Loader2, Copy, Check, MessageCircle, Mail, Facebook, MessageSquare, Smartphone, Send } from 'lucide-react';
+import { MapPin, Phone, Calendar, Clock, Share2, AlertTriangle, Stethoscope, Camera, AlertCircle, Heart, ArrowLeft, FileDown, Eye, Download, Printer, Loader2, Copy, Check, MessageCircle, Mail, Facebook, MessageSquare, Smartphone, Send, X } from 'lucide-react';
 import { SocialShareButtons } from '@/components/SocialShareButtons';
 import { MetaTags } from '@/components/MetaTags';
 import { sanitizeText, truncateText } from '@/utils/inputSanitizer';
@@ -88,6 +88,14 @@ export default function PublicMissingPet() {
   
   // Validate petId format
   const isValidPetId = petId && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(petId);
+
+  const handleClose = () => {
+    if (window.history.length > 1) {
+      navigate(-1);
+    } else {
+      navigate('/');
+    }
+  };
 
   useEffect(() => {
     if (petId && isValidPetId) {
@@ -484,19 +492,22 @@ export default function PublicMissingPet() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-red-50 via-white to-orange-50">
+      {/* Close Button */}
+      <div className="fixed top-4 right-4 z-50">
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={handleClose}
+          className="bg-white/80 hover:bg-white shadow-md"
+          aria-label="Close"
+        >
+          <X className="h-5 w-5" />
+        </Button>
+      </div>
+
       <MetaTags title={metaTitle} description={metaDescription} url={pageUrl} image={metaImage} type="article" />
       
       <div className="container mx-auto px-4 py-8 max-w-4xl">
-        {/* Back Button */}
-        <Button
-          variant="ghost"
-          onClick={() => navigate('/')}
-          className="mb-6"
-        >
-          <ArrowLeft className="mr-2 h-4 w-4" />
-          Back
-        </Button>
-
         {/* Urgent Missing Pet Alert Banner */}
         <Alert className="mb-6 border-red-600 bg-red-50">
           <AlertTriangle className="h-6 w-6 text-red-600" />

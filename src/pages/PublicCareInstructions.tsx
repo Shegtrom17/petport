@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
-import { Clock, Heart, AlertTriangle, MapPin, Pill, Sparkles, Mail, MessageCircle, Send, Loader2 } from "lucide-react";
+import { Clock, Heart, AlertTriangle, MapPin, Pill, Sparkles, Mail, MessageCircle, Send, Loader2, X } from "lucide-react";
 import { fetchPetDetails } from '@/services/petService';
 import { fetchCareInstructions } from '@/services/careInstructionsService';
 import { supabase } from "@/integrations/supabase/client";
@@ -75,6 +75,14 @@ const PublicCareInstructions = () => {
   const [isSubmittingUpdate, setIsSubmittingUpdate] = useState(false);
 
   const isValidUUID = (id: string) => /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(id);
+
+  const handleClose = () => {
+    if (window.history.length > 1) {
+      navigate(-1);
+    } else {
+      navigate('/');
+    }
+  };
 
   const formatTimeAgo = (timestamp: string) => {
     const now = new Date();
@@ -316,7 +324,20 @@ const PublicCareInstructions = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-sage-50 to-cream-50">
-      <MetaTags 
+      {/* Close Button */}
+      <div className="fixed top-4 right-4 z-50">
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={handleClose}
+          className="bg-white/80 hover:bg-white shadow-md"
+          aria-label="Close"
+        >
+          <X className="h-5 w-5" />
+        </Button>
+      </div>
+
+      <MetaTags
         title={`${pet.name}'s Care Instructions | PetPort`}
         description={`Live care plan for ${pet.name}: feeding, routines, and important notes.`}
         image="https://pub-a7c2c18b8d6143b9a256105ef44f2da0.r2.dev/carehandling-og.png"

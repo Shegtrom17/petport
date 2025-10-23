@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
-import { MapPin, Trophy, Plane } from "lucide-react";
+import { MapPin, Trophy, Plane, X } from "lucide-react";
 import { MetaTags } from "@/components/MetaTags";
 import { FreeInteractiveMap } from "@/components/FreeInteractiveMap";
 import { sanitizeText } from "@/utils/inputSanitizer";
@@ -29,9 +30,18 @@ interface MapPin {
 
 const PublicTravelMap = () => {
   const { petId } = useParams<{ petId: string }>();
+  const navigate = useNavigate();
   const [petData, setPetData] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  const handleClose = () => {
+    if (window.history.length > 1) {
+      navigate(-1);
+    } else {
+      navigate('/');
+    }
+  };
 
   useEffect(() => {
     const loadTravelData = async () => {
@@ -159,6 +169,19 @@ const PublicTravelMap = () => {
 
   return (
     <>
+      {/* Close Button */}
+      <div className="fixed top-4 right-4 z-50">
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={handleClose}
+          className="bg-white/80 hover:bg-white shadow-md"
+          aria-label="Close"
+        >
+          <X className="h-5 w-5" />
+        </Button>
+      </div>
+
       <MetaTags
         title={travelTitle}
         description={travelDescription}

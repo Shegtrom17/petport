@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { MetaTags } from "@/components/MetaTags";
 import { fetchPetDetails } from "@/services/petService";
-import { Star } from "lucide-react";
+import { Star, X } from "lucide-react";
 
 interface PublicReviewsData {
   id: string;
@@ -22,8 +23,17 @@ interface PublicReviewsData {
 
 export default function PublicReviews() {
   const { petId } = useParams();
+  const navigate = useNavigate();
   const [data, setData] = useState<PublicReviewsData | null>(null);
   const [loading, setLoading] = useState(true);
+
+  const handleClose = () => {
+    if (window.history.length > 1) {
+      navigate(-1);
+    } else {
+      navigate('/');
+    }
+  };
 
   useEffect(() => {
     const load = async () => {
@@ -64,7 +74,20 @@ export default function PublicReviews() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-sage-50 to-cream-50">
-      <MetaTags 
+      {/* Close Button */}
+      <div className="fixed top-4 right-4 z-50">
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={handleClose}
+          className="bg-white/80 hover:bg-white shadow-md"
+          aria-label="Close"
+        >
+          <X className="h-5 w-5" />
+        </Button>
+      </div>
+
+      <MetaTags
         title={`${data.name} Reviews & References | PetPort`}
         description={`Read reviews and references for ${data.name}.`}
         url={`${window.location.origin}/reviews/${data.id}`}

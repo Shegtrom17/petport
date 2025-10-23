@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { AzureButton } from "@/components/ui/azure-button";
-import { Shield, Award, GraduationCap, Trophy, Activity, Star, MapPin, Heart, Phone, Mail } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Shield, Award, GraduationCap, Trophy, Activity, Star, MapPin, Heart, Phone, Mail, X } from "lucide-react";
 import { MetaTags } from "@/components/MetaTags";
 import { SupportAnimalBanner } from "@/components/SupportAnimalBanner";
 import { CertificationBanner } from "@/components/CertificationBanner";
@@ -76,9 +77,18 @@ interface PublicResumeData {
 
 export default function PublicResume() {
   const { petId } = useParams();
+  const navigate = useNavigate();
   const [data, setData] = useState<PublicResumeData | null>(null);
   const [loading, setLoading] = useState(true);
   const [isContactModalOpen, setIsContactModalOpen] = useState(false);
+
+  const handleClose = () => {
+    if (window.history.length > 1) {
+      navigate(-1);
+    } else {
+      navigate('/');
+    }
+  };
 
   useEffect(() => {
     const load = async () => {
@@ -117,7 +127,20 @@ export default function PublicResume() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-sage-50 to-cream-50">
-      <MetaTags 
+      {/* Close Button */}
+      <div className="fixed top-4 right-4 z-50">
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={handleClose}
+          className="bg-white/80 hover:bg-white shadow-md"
+          aria-label="Close"
+        >
+          <X className="h-5 w-5" />
+        </Button>
+      </div>
+
+      <MetaTags
         title={`See ${data.name}'s Resume | PetPort`}
         description={`Professional resume for ${data.name}: certifications, training, achievements, and experience.`}
         image="https://pub-a7c2c18b8d6143b9a256105ef44f2da0.r2.dev/og-resume.png"

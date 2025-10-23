@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
-import { useParams, useSearchParams } from 'react-router-dom';
+import { useParams, useSearchParams, useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Camera, ArrowLeft } from "lucide-react";
+import { Camera, ArrowLeft, X } from "lucide-react";
 import { MetaTags } from "@/components/MetaTags";
 import { supabase } from '@/integrations/supabase/client';
 import { Link } from 'react-router-dom';
@@ -24,9 +24,18 @@ interface PetData {
 export const PublicGallery = () => {
   const { petId } = useParams<{ petId: string }>();
   const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
   const [petData, setPetData] = useState<PetData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  const handleClose = () => {
+    if (window.history.length > 1) {
+      navigate(-1);
+    } else {
+      navigate('/');
+    }
+  };
 
   const selectedPhotoIds = searchParams.get('photos')?.split(',') || [];
 
@@ -117,7 +126,20 @@ export const PublicGallery = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-      <MetaTags 
+      {/* Close Button */}
+      <div className="fixed top-4 right-4 z-50">
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={handleClose}
+          className="bg-white/80 hover:bg-white shadow-md"
+          aria-label="Close"
+        >
+          <X className="h-5 w-5" />
+        </Button>
+      </div>
+
+      <MetaTags
         title={pageTitle}
         description={`View ${petData.name}'s photo gallery - ${photosToShow.length} beautiful photos`}
         image={photosToShow[0]?.url || "https://pub-a7c2c18b8d6143b9a256105ef44f2da0.r2.dev/Photo-og%20(1).png"}

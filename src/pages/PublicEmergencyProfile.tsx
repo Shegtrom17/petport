@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import worldMapOutline from "@/assets/world-map-outline.png";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
-import { Heart, MapPin, Phone, Shield, Building, Mail, Globe, AlertTriangle } from "lucide-react";
+import { Heart, MapPin, Phone, Shield, Building, Mail, Globe, AlertTriangle, X } from "lucide-react";
 import { SocialShareButtons } from "@/components/SocialShareButtons";
 import { MetaTags } from "@/components/MetaTags";
 import { AzureButton } from "@/components/ui/azure-button";
@@ -15,12 +16,21 @@ import { getOrderedContacts } from "@/utils/contactUtils";
 
 const PublicEmergencyProfile = () => {
   const { petId } = useParams<{ petId: string }>();
+  const navigate = useNavigate();
   const [petData, setPetData] = useState<any>(null);
   const [contacts, setContacts] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [retryCount, setRetryCount] = useState(0);
   const [isContactModalOpen, setIsContactModalOpen] = useState(false);
+
+  const handleClose = () => {
+    if (window.history.length > 1) {
+      navigate(-1);
+    } else {
+      navigate('/');
+    }
+  };
 
   useEffect(() => {
     const loadPetData = async () => {
@@ -171,6 +181,19 @@ const PublicEmergencyProfile = () => {
         type="profile"
       />
       <div className="min-h-screen bg-gradient-to-br from-red-50 to-orange-100">
+        {/* Close Button */}
+        <div className="fixed top-4 right-4 z-50">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={handleClose}
+            className="bg-white/80 hover:bg-white shadow-md"
+            aria-label="Close"
+          >
+            <X className="h-5 w-5" />
+          </Button>
+        </div>
+
         {/* Emergency Header */}
         <div className="bg-red-600 text-white shadow-lg">
           <div className="max-w-4xl mx-auto px-4 py-6">

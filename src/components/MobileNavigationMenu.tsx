@@ -23,7 +23,7 @@ export const MobileNavigationMenu = ({ isOpen, onClose }: MobileNavigationMenuPr
   };
 
   const pages = [
-    { id: "profile", label: "Profile", icon: FileText },
+    { id: "profile", label: "Home", icon: FileText },
     { id: "care", label: "Care & Handling", icon: Heart },
     { id: "resume", label: "Resume", icon: Badge },
     { id: "documents", label: "Documents", icon: FileText },

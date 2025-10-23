@@ -14,6 +14,7 @@ import { updatePetBasicInfo, updatePetMedical } from "@/services/petService";
 import { Loader2, Mail } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { sanitizeText, validateTextLength, containsSuspiciousContent } from "@/utils/inputSanitizer";
+import { formatPhoneNumber } from "@/utils/phoneFormatter";
 import { PrivacyToggle } from "@/components/PrivacyToggle";
 import { PetTransferDialog } from "@/components/PetTransferDialog";
 import { PetDeleteDialog } from "@/components/PetDeleteDialog";
@@ -556,7 +557,13 @@ export const PetEditForm = ({ petData, onSave, onCancel, togglePetPublicVisibili
                           autoComplete="tel-national"
                           value={contact?.contact_phone || ''}
                           onChange={(e) => handleContactChange(type, 'contact_phone', e.target.value)}
-                          placeholder="Enter phone number"
+                          onBlur={(e) => {
+                            const formatted = formatPhoneNumber(e.target.value);
+                            if (formatted !== e.target.value) {
+                              handleContactChange(type, 'contact_phone', formatted);
+                            }
+                          }}
+                          placeholder="(555) 123-4567"
                         />
                         {contact?.contact_phone?.trim() && (
                           <span className="absolute right-3 top-1/2 -translate-y-1/2 text-green-600">✓</span>
@@ -623,8 +630,17 @@ export const PetEditForm = ({ petData, onSave, onCancel, togglePetPublicVisibili
                   <Input
                     id="organizationPhone"
                     name="organizationPhone"
+                    type="tel"
+                    inputMode="tel"
                     value={formData.organizationPhone || ''}
                     onChange={handleChange}
+                    onBlur={(e) => {
+                      const formatted = formatPhoneNumber(e.target.value);
+                      if (formatted !== e.target.value) {
+                        handleChange({ target: { name: 'organizationPhone', value: formatted } } as any);
+                      }
+                    }}
+                    placeholder="(555) 123-4567"
                   />
                 </div>
                 <div>

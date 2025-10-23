@@ -172,6 +172,8 @@ ${data.recipientStatus === 'new' ? '- Create a PetPort account with a 7-day free
 
 View ${petName}'s profile: ${baseUrl}/profile/${data.petId}
 
+Thank you for keeping ${petName}'s voice with them wherever they go! 🐾
+
 ---
 PetPort - Digital Pet Passport
 https://petport.app`,
@@ -533,6 +535,12 @@ const generateEmailTemplate = (data: EmailRequest) => {
         </div>
         
         <p style="color: #64748b; margin-top: 25px;">The transfer is secure and can only be accepted by the email address you specified.</p>
+        
+        <div style="background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); padding: 25px; border-radius: 10px; margin: 25px 0; text-align: center; border: 2px solid #5691af;">
+          <p style="color: #0c4a6e; font-size: 18px; margin: 0; font-weight: 600; line-height: 1.6;">
+            Thank you for keeping ${petName}'s voice with them wherever they go! 🐾
+          </p>
+        </div>
       `
     },
     transfer_completed_sender: {

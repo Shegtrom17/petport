@@ -11,6 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { themes, ThemeId } from "@/config/themes";
 
 type Species = 'dog' | 'cat' | 'horse';
 
@@ -39,74 +40,6 @@ const dogCatOptions = {
     "Senior Belly Rub Consultant",
     "Head of Household Security",
     "Professional Cuddle Coordinator"
-  ],
-  achievements: [
-    "Completed basic obedience (eventually)",
-    "Mastered 'The Stare' technique",
-    "Survived a bath without retaliation",
-    "Awarded 'Best Snuggler' 2024",
-    "Achieved 10,000 tail wags in a day",
-    "Top score in Treat Acquisition Program",
-    "Successfully ignored 97% of commands",
-    "Perfected the 'Feed Me Now' eyes",
-    "Made peace with the vacuum cleaner",
-    "Caught tail on multiple occasions",
-    "Never met a stranger (all are friends)",
-    "Completed marathon nap session (18 hrs)",
-    "Won 'Most Dramatic' at doggy daycare",
-    "Mastered door-opening techniques",
-    "Perfect attendance at dinner time"
-  ],
-  experience: [
-    "3 years in backyard security",
-    "5 years in nap optimization",
-    "Volunteer greeter at local dog park",
-    "Neighborhood patrol specialist",
-    "Intern, Snack Research Division",
-    "Resident alarm clock",
-    "Expert in couch warming",
-    "Head of household morale",
-    "Former lead toy destroyer",
-    "Senior squirrel surveillance officer",
-    "Professional treat taste tester",
-    "Certified lap warmer (self-certified)",
-    "Full-time cuddle coordinator",
-    "Part-time bird watcher",
-    "Freelance belly rub quality inspector"
-  ],
-  references: [
-    "The mailman (reluctant)",
-    "The neighbor's cat",
-    "Mom & Dad",
-    "The groomer",
-    "Grandma (biased)",
-    "Local vet",
-    "The UPS driver (conflicted feelings)",
-    "The dog next door",
-    "My favorite toy",
-    "The treat jar (no comment)",
-    "The vacuum cleaner (arch nemesis)",
-    "Random squirrels (declined to comment)",
-    "The couch (well-worn)",
-    "Neighborhood birds (traumatized)",
-    "The doorbell (frenemies)"
-  ],
-  motto: [
-    "Work hard, nap harder.",
-    "Fetching is a lifestyle.",
-    "Purrfection takes practice.",
-    "Treats are temporary, loyalty is forever.",
-    "If it fits, I sits.",
-    "Life's short — chase the squirrel.",
-    "Love unconditionally, bark occasionally.",
-    "Snacks first, questions later.",
-    "Every day is a tail-wagging adventure.",
-    "Nap like nobody's watching.",
-    "Bark softly, carry a big stick.",
-    "Paws for a moment, enjoy life.",
-    "Eat, sleep, play, repeat.",
-    "Be the person your dog thinks you are.",
-    "Happiness is a warm lap."
   ]
 };
 
@@ -125,66 +58,6 @@ const horseOptions = {
     "Professional Fence Inspector",
     "Head of Grazing Operations",
     "Chief Whinny Officer"
-  ],
-  achievements: [
-    "Cleared every fence (eventually)",
-    "Won 'Best Mane' at county fair",
-    "Survived fly season with dignity",
-    "Logged 10,000 pasture laps",
-    "Perfected side-eye communication",
-    "Carried human safely through chaos",
-    "Never bucked at the vet (mostly)",
-    "Mastered trailer loading (finally)",
-    "Accepted bridle without drama",
-    "Champion ear pinning technique",
-    "Avoided work detail successfully",
-    "Perfect record of finding treats",
-    "Master of dramatic sighs"
-  ],
-  experience: [
-    "7 years trail experience",
-    "Former therapy horse",
-    "Lead mare responsibilities",
-    "Showjumping intern",
-    "Pasture maintenance supervisor",
-    "Seasoned trailer traveler",
-    "Professional arena work avoidance",
-    "Expert hay quality inspector",
-    "5 years in carrot acquisition",
-    "Veteran of the county fair circuit",
-    "Barn favorite status (earned)",
-    "Professional photo model",
-    "Full-time pasture ornament"
-  ],
-  references: [
-    "Farrier",
-    "Barn manager",
-    "Riding instructor",
-    "Stablehand",
-    "Groom",
-    "Other horses (anonymous)",
-    "The local goat",
-    "Vet (mixed reviews)",
-    "Feed supplier",
-    "Tack store owner",
-    "Trail riding buddies",
-    "The neighbor's donkey",
-    "County fair judge"
-  ],
-  motto: [
-    "Trot like you mean it.",
-    "Neigh today, shine tomorrow.",
-    "Eat hay, stay humble.",
-    "Not all who wander are lost — some just found a better patch of grass.",
-    "Keep calm and canter on.",
-    "Born to run, forced to work.",
-    "Hay is for horses (obviously).",
-    "Life is better in the saddle.",
-    "Carrots are life.",
-    "Whinny more, worry less.",
-    "Mane goals daily.",
-    "Hoof it or lose it.",
-    "Gallop towards your dreams."
   ]
 };
 
@@ -192,24 +65,26 @@ export default function DogGoneGood() {
   const navigate = useNavigate();
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [species, setSpecies] = useState<Species>('dog');
+  const [theme, setTheme] = useState<ThemeId>('patriotic');
   const [petName, setPetName] = useState('');
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
   const [photoFile, setPhotoFile] = useState<File | null>(null);
   const [formData, setFormData] = useState<ResumeData>({
     title: dogCatOptions.title[0],
-    achievements: dogCatOptions.achievements[0],
-    experience: dogCatOptions.experience[0],
-    references: dogCatOptions.references[0],
-    motto: dogCatOptions.motto[0]
+    achievements: themes.patriotic.achievements[0],
+    experience: themes.patriotic.experiences[0],
+    references: themes.patriotic.references[0],
+    motto: themes.patriotic.mottos[0]
   });
   const [showCTA, setShowCTA] = useState(false);
   const [isRandomizing, setIsRandomizing] = useState(false);
 
   const currentOptions = species === 'horse' ? horseOptions : dogCatOptions;
+  const currentTheme = themes[theme];
 
   useEffect(() => {
     renderCanvas();
-  }, [formData, petName, photoPreview, species]);
+  }, [formData, petName, photoPreview, species, theme]);
 
   const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -240,10 +115,10 @@ export default function DogGoneGood() {
   const randomizeAll = () => {
     setIsRandomizing(true);
     const randomTitle = currentOptions.title[Math.floor(Math.random() * currentOptions.title.length)];
-    const randomAchievement = currentOptions.achievements[Math.floor(Math.random() * currentOptions.achievements.length)];
-    const randomExperience = currentOptions.experience[Math.floor(Math.random() * currentOptions.experience.length)];
-    const randomReference = currentOptions.references[Math.floor(Math.random() * currentOptions.references.length)];
-    const randomMotto = currentOptions.motto[Math.floor(Math.random() * currentOptions.motto.length)];
+    const randomAchievement = currentTheme.achievements[Math.floor(Math.random() * currentTheme.achievements.length)];
+    const randomExperience = currentTheme.experiences[Math.floor(Math.random() * currentTheme.experiences.length)];
+    const randomReference = currentTheme.references[Math.floor(Math.random() * currentTheme.references.length)];
+    const randomMotto = currentTheme.mottos[Math.floor(Math.random() * currentTheme.mottos.length)];
 
     setFormData({
       title: randomTitle,
@@ -284,24 +159,40 @@ export default function DogGoneGood() {
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    // Clear canvas
-    ctx.fillStyle = '#ffffff';
+    // Get theme banner (for Christmas, pick random)
+    const banner = 'bannerChoices' in currentTheme.colors 
+      ? currentTheme.colors.bannerChoices[Math.floor(Math.random() * currentTheme.colors.bannerChoices.length)]
+      : currentTheme.colors.banner;
+
+    // Clear canvas with theme background
+    ctx.fillStyle = currentTheme.colors.background;
     ctx.fillRect(0, 0, 1200, 1600);
 
-    // Top section - gradient header
-    const gradient = ctx.createLinearGradient(0, 0, 1200, 200);
-    gradient.addColorStop(0, '#5691af');
-    gradient.addColorStop(1, '#7bb3d1');
-    ctx.fillStyle = gradient;
-    ctx.fillRect(0, 0, 1200, 200);
+    // Theme Banner at top
+    ctx.fillStyle = banner.bg;
+    ctx.fillRect(0, 0, 1200, 80);
+    ctx.fillStyle = banner.fg;
+    ctx.font = "bold 36px 'Fredoka', Inter, sans-serif";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText(banner.text, 600, 40);
 
-    // PetPort logo text
-    ctx.fillStyle = '#ffffff';
-    ctx.font = 'bold 32px Fredoka, Inter, sans-serif';
-    ctx.fillText('PetPort.app', 60, 120);
+    // Header gradient (below banner)
+    const gradient = ctx.createLinearGradient(0, 80, 1200, 280);
+    gradient.addColorStop(0, currentTheme.colors.accent);
+    gradient.addColorStop(1, currentTheme.colors.text);
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 80, 1200, 200);
+
+    // Title
+    ctx.fillStyle = "#ffffff";
+    ctx.font = "bold 68px 'Fredoka', Inter, sans-serif";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText("PET RÉSUMÉ", 600, 180);
 
     // Pet Info Section - MUCH LARGER PHOTO
-    let yOffset = 230;
+    let yOffset = 320;
     const photoSize = 500; // Much larger photo
     const photoX = (1200 - photoSize) / 2;
     const photoY = yOffset;
@@ -335,8 +226,8 @@ export default function DogGoneGood() {
         ctx.drawImage(img, drawX, drawY, drawWidth, drawHeight);
         ctx.restore();
         
-        // Add subtle border
-        ctx.strokeStyle = '#5691af';
+        // Add subtle border with theme color
+        ctx.strokeStyle = currentTheme.colors.accent;
         ctx.lineWidth = 8;
         ctx.beginPath();
         ctx.arc(600, photoY + photoSize / 2, photoSize / 2, 0, Math.PI * 2);
@@ -349,8 +240,8 @@ export default function DogGoneGood() {
       ctx.arc(600, photoY + photoSize / 2, photoSize / 2, 0, Math.PI * 2);
       ctx.fill();
       
-      // Border
-      ctx.strokeStyle = '#5691af';
+      // Border with theme color
+      ctx.strokeStyle = currentTheme.colors.accent;
       ctx.lineWidth = 8;
       ctx.beginPath();
       ctx.arc(600, photoY + photoSize / 2, photoSize / 2, 0, Math.PI * 2);
@@ -366,11 +257,11 @@ export default function DogGoneGood() {
 
     yOffset += photoSize + 60;
 
-    // Resume title
-    ctx.fillStyle = '#1f2937';
-    ctx.font = 'bold 52px Fredoka, Inter, sans-serif';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
+    // Pet Name
+    ctx.fillStyle = currentTheme.colors.text;
+    ctx.font = "bold 70px 'Fredoka', Inter, sans-serif";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
     const displayName = petName || species.charAt(0).toUpperCase() + species.slice(1);
     ctx.fillText(`RÉSUMÉ OF ${displayName.toUpperCase()}`, 600, yOffset);
 
@@ -383,71 +274,71 @@ export default function DogGoneGood() {
     const maxWidth = 1040;
 
     // Title
-    ctx.fillStyle = '#5691af';
-    ctx.font = 'bold 30px Fredoka, Inter, sans-serif';
+    ctx.fillStyle = currentTheme.colors.accent;
+    ctx.font = "bold 38px 'Fredoka', Inter, sans-serif";
     ctx.fillText('PROFESSIONAL TITLE', leftMargin, yOffset);
-    yOffset += 42;
-    ctx.fillStyle = '#374151';
-    ctx.font = '24px Inter, sans-serif';
-    wrapText(ctx, formData.title, leftMargin, yOffset, maxWidth, 35);
-    yOffset += 75;
+    yOffset += 48;
+    ctx.fillStyle = currentTheme.colors.text;
+    ctx.font = '26px Inter, sans-serif';
+    wrapText(ctx, formData.title, leftMargin, yOffset, maxWidth, 38);
+    yOffset += 85;
 
     // Achievements
-    ctx.fillStyle = '#5691af';
-    ctx.font = 'bold 30px Fredoka, Inter, sans-serif';
+    ctx.fillStyle = currentTheme.colors.accent;
+    ctx.font = "bold 38px 'Fredoka', Inter, sans-serif";
     ctx.fillText('KEY ACHIEVEMENTS', leftMargin, yOffset);
-    yOffset += 42;
-    ctx.fillStyle = '#374151';
-    ctx.font = '24px Inter, sans-serif';
-    wrapText(ctx, formData.achievements, leftMargin, yOffset, maxWidth, 35);
-    yOffset += 75;
+    yOffset += 48;
+    ctx.fillStyle = currentTheme.colors.text;
+    ctx.font = '26px Inter, sans-serif';
+    wrapText(ctx, formData.achievements, leftMargin, yOffset, maxWidth, 38);
+    yOffset += 85;
 
     // Experience
-    ctx.fillStyle = '#5691af';
-    ctx.font = 'bold 30px Fredoka, Inter, sans-serif';
+    ctx.fillStyle = currentTheme.colors.accent;
+    ctx.font = "bold 38px 'Fredoka', Inter, sans-serif";
     ctx.fillText('PROFESSIONAL EXPERIENCE', leftMargin, yOffset);
-    yOffset += 42;
-    ctx.fillStyle = '#374151';
-    ctx.font = '24px Inter, sans-serif';
-    wrapText(ctx, formData.experience, leftMargin, yOffset, maxWidth, 35);
-    yOffset += 75;
+    yOffset += 48;
+    ctx.fillStyle = currentTheme.colors.text;
+    ctx.font = '26px Inter, sans-serif';
+    wrapText(ctx, formData.experience, leftMargin, yOffset, maxWidth, 38);
+    yOffset += 85;
 
     // References
-    ctx.fillStyle = '#5691af';
-    ctx.font = 'bold 30px Fredoka, Inter, sans-serif';
+    ctx.fillStyle = currentTheme.colors.accent;
+    ctx.font = "bold 38px 'Fredoka', Inter, sans-serif";
     ctx.fillText('REFERENCES', leftMargin, yOffset);
-    yOffset += 42;
-    ctx.fillStyle = '#374151';
-    ctx.font = '24px Inter, sans-serif';
-    wrapText(ctx, formData.references, leftMargin, yOffset, maxWidth, 35);
-    yOffset += 75;
+    yOffset += 48;
+    ctx.fillStyle = currentTheme.colors.text;
+    ctx.font = '26px Inter, sans-serif';
+    wrapText(ctx, formData.references, leftMargin, yOffset, maxWidth, 38);
+    yOffset += 85;
 
-    // Motto
-    ctx.fillStyle = '#5691af';
-    ctx.font = 'bold 30px Fredoka, Inter, sans-serif';
-    ctx.fillText('LIFE MOTTO', leftMargin, yOffset);
-    yOffset += 42;
-    ctx.fillStyle = '#374151';
-    ctx.font = 'italic 26px Inter, sans-serif';
-    wrapText(ctx, `"${formData.motto}"`, leftMargin, yOffset, maxWidth, 35);
+    // Motto - larger and more prominent
+    ctx.fillStyle = currentTheme.colors.accent;
+    ctx.font = "bold italic 34px 'Fredoka', Inter, sans-serif";
+    ctx.textAlign = "center";
+    wrapText(ctx, `"${formData.motto}"`, 600, yOffset, 1000, 44);
 
     // Pawprint watermark in bottom corner
-    ctx.globalAlpha = 0.1;
+    ctx.globalAlpha = 0.08;
     ctx.font = '120px Arial';
     ctx.textAlign = 'right';
-    ctx.fillStyle = '#5691af';
+    ctx.fillStyle = currentTheme.colors.text;
     ctx.fillText('🐾', 1150, 1450);
     ctx.globalAlpha = 1.0;
 
-    // Footer banner
-    ctx.fillStyle = '#5691af';
+    // Footer banner with theme color
+    ctx.fillStyle = currentTheme.colors.text;
+    ctx.globalAlpha = 0.6;
     ctx.fillRect(0, 1500, 1200, 100);
+    ctx.globalAlpha = 1.0;
     ctx.fillStyle = '#ffffff';
-    ctx.font = 'bold 24px Fredoka, Inter, sans-serif';
-    ctx.textAlign = 'center';
-    ctx.fillText('🐾 Created with love at PetPort.app', 600, 1545);
+    ctx.font = "bold 24px 'Fredoka', Inter, sans-serif";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText('🐾 Created with love at PetPort.app', 600, 1540);
     ctx.font = '18px Inter, sans-serif';
-    ctx.fillText('Giving Pets a Voice for Their Lifetime', 600, 1575);
+    ctx.fillText('Giving Pets a Voice for Their Lifetime', 600, 1572);
   };
 
   const generateJPEGBlob = (): Promise<Blob> => {
@@ -474,7 +365,7 @@ export default function DogGoneGood() {
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `petport-resume-${species}-${Date.now()}.jpg`;
+      a.download = `petport-resume-${theme}-${species}-${Date.now()}.jpg`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
@@ -487,7 +378,7 @@ export default function DogGoneGood() {
       if (typeof window !== 'undefined' && 'gtag' in window) {
         (window as any).gtag('event', 'resume_download', {
           event_category: 'conversion',
-          event_label: species
+          event_label: `${theme}_${species}`
         });
       }
     } catch (error) {
@@ -517,11 +408,11 @@ export default function DogGoneGood() {
 
     try {
       const blob = await generateJPEGBlob();
-      const file = new File([blob], `petport-resume-${species}.jpg`, { type: 'image/jpeg' });
+      const file = new File([blob], `petport-resume-${theme}-${species}.jpg`, { type: 'image/jpeg' });
 
       await navigator.share({
         title: `${petName || 'My Pet'}'s Résumé`,
-        text: `Just made a résumé for my pet with PetPort! 😂 Try it yourself: ${window.location.href}`,
+        text: `Just made a ${currentTheme.name} résumé for my pet with PetPort! 😂 Try it yourself: ${window.location.href}`,
         files: [file]
       });
 
@@ -532,7 +423,7 @@ export default function DogGoneGood() {
       if (typeof window !== 'undefined' && 'gtag' in window) {
         (window as any).gtag('event', 'resume_share', {
           event_category: 'conversion',
-          event_label: species
+          event_label: `${theme}_${species}`
         });
       }
     } catch (error) {
@@ -546,10 +437,10 @@ export default function DogGoneGood() {
     const options = newSpecies === 'horse' ? horseOptions : dogCatOptions;
     setFormData({
       title: options.title[0],
-      achievements: options.achievements[0],
-      experience: options.experience[0],
-      references: options.references[0],
-      motto: options.motto[0]
+      achievements: currentTheme.achievements[0],
+      experience: currentTheme.experiences[0],
+      references: currentTheme.references[0],
+      motto: currentTheme.mottos[0]
     });
 
     // Analytics
@@ -557,6 +448,26 @@ export default function DogGoneGood() {
       (window as any).gtag('event', 'species_select', {
         event_category: 'engagement',
         event_label: newSpecies
+      });
+    }
+  };
+
+  const handleThemeChange = (newTheme: ThemeId) => {
+    setTheme(newTheme);
+    const newThemeData = themes[newTheme];
+    setFormData({
+      title: currentOptions.title[0],
+      achievements: newThemeData.achievements[0],
+      experience: newThemeData.experiences[0],
+      references: newThemeData.references[0],
+      motto: newThemeData.mottos[0]
+    });
+
+    // Analytics
+    if (typeof window !== 'undefined' && 'gtag' in window) {
+      (window as any).gtag('event', 'theme_select', {
+        event_category: 'engagement',
+        event_label: newTheme
       });
     }
   };
@@ -610,6 +521,23 @@ export default function DogGoneGood() {
         <div className="grid md:grid-cols-2 gap-8">
           {/* Left Column: Form */}
           <div className="space-y-6">
+            {/* Theme Selector */}
+            <div className="bg-white rounded-xl p-6 shadow-lg">
+              <label className="block text-sm font-semibold text-brand-primary mb-3">
+                Choose Your Theme
+              </label>
+              <Select value={theme} onValueChange={handleThemeChange}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="patriotic">{themes.patriotic.name}</SelectItem>
+                  <SelectItem value="christmas">{themes.christmas.name}</SelectItem>
+                  <SelectItem value="fall">{themes.fall.name}</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
             {/* Species Toggle */}
             <div className="bg-white rounded-xl p-6 shadow-lg">
               <label className="block text-sm font-semibold text-brand-primary mb-3">
@@ -694,7 +622,7 @@ export default function DogGoneGood() {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  {currentOptions.achievements.map((option) => (
+                  {currentTheme.achievements.map((option) => (
                     <SelectItem key={option} value={option}>{option}</SelectItem>
                   ))}
                 </SelectContent>
@@ -708,7 +636,7 @@ export default function DogGoneGood() {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  {currentOptions.experience.map((option) => (
+                  {currentTheme.experiences.map((option) => (
                     <SelectItem key={option} value={option}>{option}</SelectItem>
                   ))}
                 </SelectContent>
@@ -722,7 +650,7 @@ export default function DogGoneGood() {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  {currentOptions.references.map((option) => (
+                  {currentTheme.references.map((option) => (
                     <SelectItem key={option} value={option}>{option}</SelectItem>
                   ))}
                 </SelectContent>
@@ -736,7 +664,7 @@ export default function DogGoneGood() {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  {currentOptions.motto.map((option) => (
+                  {currentTheme.mottos.map((option) => (
                     <SelectItem key={option} value={option}>{option}</SelectItem>
                   ))}
                 </SelectContent>

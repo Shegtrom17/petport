@@ -6,6 +6,13 @@ import { Button } from "@/components/ui/button";
 export default function Privacy() {
   const navigate = useNavigate();
   const baseUrl = typeof window !== 'undefined' ? window.location.origin : '';
+  const handleClose = () => {
+    if (typeof window !== 'undefined' && window.history.length > 1) {
+      navigate(-1);
+    } else {
+      navigate('/');
+    }
+  };
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
       <MetaTags
@@ -16,10 +23,10 @@ export default function Privacy() {
       <main className="max-w-4xl mx-auto px-4 py-10">
         <header className="mb-6 relative">
           <Button
-            variant="ghost"
+            variant="secondary"
             size="icon"
-            onClick={() => navigate(-1)}
-            className="absolute top-0 right-0"
+            onClick={handleClose}
+            className="fixed top-4 right-4 z-50"
             aria-label="Close"
           >
             <X className="h-5 w-5" />

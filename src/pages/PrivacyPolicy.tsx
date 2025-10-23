@@ -1,10 +1,21 @@
 import React, { useEffect } from "react";
 import { MetaTags } from "@/components/MetaTags";
+import { useNavigate } from "react-router-dom";
+import { X } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 export default function PrivacyPolicy() {
   const baseUrl = typeof window !== 'undefined' ? window.location.origin : '';
   const url = baseUrl + "/privacy-policy";
   const effectiveDate = "August 10, 2025"; // Update if your go-live date differs
+  const navigate = useNavigate();
+  const handleClose = () => {
+    if (typeof window !== 'undefined' && window.history.length > 1) {
+      navigate(-1);
+    } else {
+      navigate('/');
+    }
+  };
 
   useEffect(() => {
     // Canonical link
@@ -43,7 +54,16 @@ export default function PrivacyPolicy() {
       />
 
       <main className="max-w-3xl mx-auto px-4 py-10">
-        <header className="mb-6">
+        <header className="mb-6 relative">
+          <Button
+            variant="secondary"
+            size="icon"
+            onClick={handleClose}
+            className="fixed top-4 right-4 z-50"
+            aria-label="Close"
+          >
+            <X className="h-5 w-5" />
+          </Button>
           <h1 className="text-3xl md:text-4xl font-bold text-navy-900">Privacy Policy</h1>
           <p className="text-sm text-navy-700 mt-2"><strong>Effective Date:</strong> {effectiveDate}</p>
           <p className="text-sm text-navy-700">PetPort is a registered DBA of Cool Change LLC.</p>

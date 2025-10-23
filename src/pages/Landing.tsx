@@ -551,10 +551,13 @@ export default function Landing() {
 
               <div className="border-b border-gray-200 pb-8">
                 <h3 className="text-xl font-semibold text-brand-primary mb-4">
-                  Can I share my pet's care instructions with sitters or vets?
+                  What's special about your Care & Handling feature?
                 </h3>
                 <p className="text-brand-primary-dark leading-relaxed">
-                  Absolutely. PetPort makes it simple to share real-time updates about diets, medications, allergies, and routines. It is viewable by anyone with the link or send an PDF via email. You control what's shared publicly vs. privately, and your sitter or vet always has the latest version.
+                  With PetPort's LiveLinks, you never have to rewrite or resend pet care instructions again. Share one smart link with sitters, vets, or trainers — and they'll always see the most up-to-date info on diets, meds, allergies, routines, and notes.
+                </p>
+                <p className="text-brand-primary-dark leading-relaxed mt-4">
+                  Even better, each Care & Handling LiveLink includes a Care Update board where your sitter or trainer can leave daily messages. That means no more chasing texts or worrying from afar — you get peace of mind, and they get clear, current instructions, whether you're across town or across the country. <a href="/demos" className="font-bold text-brand-primary hover:underline">SEE DEMO</a>
                 </p>
               </div>
 
@@ -604,10 +607,10 @@ export default function Landing() {
               }
             }, {
               "@type": "Question",
-              "name": "Can I share my pet's care instructions with sitters or vets?",
+              "name": "What's special about your Care & Handling feature?",
               "acceptedAnswer": {
                 "@type": "Answer",
-                "text": "Absolutely. PetPort makes it simple to share real-time updates about diets, medications, allergies, and routines. It is viewable by anyone with the link or send an PDF via email. You control what's shared publicly vs. privately, and your sitter or vet always has the latest version."
+                "text": "With PetPort's LiveLinks, you never have to rewrite or resend pet care instructions again. Share one smart link with sitters, vets, or trainers — and they'll always see the most up-to-date info on diets, meds, allergies, routines, and notes. Even better, each Care & Handling LiveLink includes a Care Update board where your sitter or trainer can leave daily messages. That means no more chasing texts or worrying from afar — you get peace of mind, and they get clear, current instructions, whether you're across town or across the country."
               }
             }, {
               "@type": "Question",

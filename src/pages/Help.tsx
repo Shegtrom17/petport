@@ -106,7 +106,7 @@ const Help = () => {
     {
       id: "pet-transfer",
       question: "How do I transfer my pet's account to another user?",
-      answer: "You can transfer your pet's account to another PetPort user through the Profile Edit section. This feature is especially useful for foster organizations transferring pets between foster families or to adopters. Go to your pet's profile, click 'Edit', scroll down to the 'Ownership & Danger Zone' section, and use the Transfer Pet button. Enter the recipient's email address and they will receive an email with instructions to accept the transfer. Important: This action is permanent and cannot be undone. The recipient must have an active PetPort subscription to accept the transfer."
+      answer: "You can transfer your pet's account to another PetPort user through the Profile Edit section. This feature is especially useful for foster organizations transferring pets between foster families or to adopters. Go to your pet's profile, click 'Edit', scroll down to the 'Ownership & Transfer' section, and use the Transfer Pet button. Enter the recipient's email address and they will receive an email with instructions to accept the transfer. Important: This action is permanent and cannot be undone. The recipient must have an active PetPort subscription to accept the transfer."
     },
     {
       id: "transfer-requirements",

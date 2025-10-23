@@ -289,6 +289,62 @@ export default function Referrals() {
           totalEarnings={stats.totalEarnings}
         />
 
+        {/* How It Works Section */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-xl font-bold flex items-center gap-2">
+              <Clock className="h-5 w-5 text-[#5691af]" />
+              How It Works
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="grid gap-4">
+              <div className="flex gap-3">
+                <div className="flex-shrink-0 w-8 h-8 rounded-full bg-[#5691af]/10 flex items-center justify-center text-[#5691af] font-bold">
+                  1
+                </div>
+                <div>
+                  <h3 className="font-semibold mb-1">Share Your Link</h3>
+                  <p className="text-sm text-muted-foreground">
+                    Copy your unique referral link and share it with friends, family, or on social media.
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex gap-3">
+                <div className="flex-shrink-0 w-8 h-8 rounded-full bg-[#5691af]/10 flex items-center justify-center text-[#5691af] font-bold">
+                  2
+                </div>
+                <div>
+                  <h3 className="font-semibold mb-1">They Subscribe</h3>
+                  <p className="text-sm text-muted-foreground">
+                    When someone signs up using your link and subscribes to a yearly plan, you earn $2.
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex gap-3">
+                <div className="flex-shrink-0 w-8 h-8 rounded-full bg-[#5691af]/10 flex items-center justify-center text-[#5691af] font-bold">
+                  3
+                </div>
+                <div>
+                  <h3 className="font-semibold mb-1">Get Paid</h3>
+                  <p className="text-sm text-muted-foreground">
+                    Connect your Stripe account to receive payouts. Commissions are approved after the 45-day paid membership period.
+                  </p>
+                </div>
+              </div>
+
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mt-2">
+                <p className="text-sm text-blue-900">
+                  <strong>Note:</strong> Only yearly plan subscriptions are eligible for referral commissions. 
+                  Monthly subscriptions do not qualify for the $2 commission.
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
         {/* Connect Stripe Section */}
         <ConnectStripeButton
           onboardingStatus={
@@ -460,62 +516,6 @@ export default function Referrals() {
                   <Copy className="h-3 w-3 mr-1" />
                   Copy Message
                 </Button>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* How It Works Section */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-xl font-bold flex items-center gap-2">
-              <Clock className="h-5 w-5 text-[#5691af]" />
-              How It Works
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid gap-4">
-              <div className="flex gap-3">
-                <div className="flex-shrink-0 w-8 h-8 rounded-full bg-[#5691af]/10 flex items-center justify-center text-[#5691af] font-bold">
-                  1
-                </div>
-                <div>
-                  <h3 className="font-semibold mb-1">Share Your Link</h3>
-                  <p className="text-sm text-muted-foreground">
-                    Copy your unique referral link and share it with friends, family, or on social media.
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex gap-3">
-                <div className="flex-shrink-0 w-8 h-8 rounded-full bg-[#5691af]/10 flex items-center justify-center text-[#5691af] font-bold">
-                  2
-                </div>
-                <div>
-                  <h3 className="font-semibold mb-1">They Subscribe</h3>
-                  <p className="text-sm text-muted-foreground">
-                    When someone signs up using your link and subscribes to a yearly plan, you earn $2.
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex gap-3">
-                <div className="flex-shrink-0 w-8 h-8 rounded-full bg-[#5691af]/10 flex items-center justify-center text-[#5691af] font-bold">
-                  3
-                </div>
-                <div>
-                  <h3 className="font-semibold mb-1">Get Paid</h3>
-                  <p className="text-sm text-muted-foreground">
-                    Connect your Stripe account to receive payouts. Commissions are approved after the 45-day paid membership period.
-                  </p>
-                </div>
-              </div>
-
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mt-2">
-                <p className="text-sm text-blue-900">
-                  <strong>Note:</strong> Only yearly plan subscriptions are eligible for referral commissions. 
-                  Monthly subscriptions do not qualify for the $2 commission.
-                </p>
               </div>
             </div>
           </CardContent>

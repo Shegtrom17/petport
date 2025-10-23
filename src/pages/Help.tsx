@@ -99,11 +99,6 @@ const Help = () => {
       answer: "Add emergency contacts in your pet's profile. When someone scans your pet's QR code, they can see these contacts if your pet is marked as missing, helping reunite you quickly. Make sure your pet's profile is set to public so emergency contacts can access this vital information."
     },
     {
-      id: "subscription",
-      question: "What features require a subscription?",
-      answer: "Basic pet profiles and QR codes are free. Premium features include unlimited pets, advanced medical tracking, custom designs, and priority support. Check the pricing section for details."
-    },
-    {
       id: "data-security",
       question: "Is my pet's information secure?",
       answer: "Yes, we take data security seriously. All information is encrypted and stored securely. You control what information is public, and we never share your data with third parties without your consent."

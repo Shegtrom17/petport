@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Star, MapPin, Award, GraduationCap, Trophy, MessageSquare, Sparkles, Heart, Activity, Shield, Phone } from "lucide-react";
@@ -8,6 +8,8 @@ import { CertificationBanner } from "@/components/CertificationBanner";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { fetchPetDetails } from "@/services/petService";
+import { AddReviewForm } from "@/components/AddReviewForm";
+import { smoothScrollIntoViewIfNeeded } from "@/utils/smoothScroll";
 
 const FINNEGAN_ID = "297d1397-c876-4075-bf24-41ee1862853a";
 
@@ -15,14 +17,31 @@ export default function DemoResume() {
   const navigate = useNavigate();
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [showAddReview, setShowAddReview] = useState(false);
+  const reviewFormRef = useRef<HTMLDivElement>(null);
+
+  const loadPetData = async () => {
+    const pet = await fetchPetDetails(FINNEGAN_ID);
+    setData(pet);
+    setLoading(false);
+  };
+
+  const handleOpenReviewForm = () => {
+    setShowAddReview(true);
+    setTimeout(() => {
+      if (reviewFormRef.current) {
+        smoothScrollIntoViewIfNeeded(reviewFormRef.current);
+      }
+    }, 100);
+  };
+
+  const handleReviewSuccess = () => {
+    setShowAddReview(false);
+    loadPetData();
+  };
 
   useEffect(() => {
-    const load = async () => {
-      const pet = await fetchPetDetails(FINNEGAN_ID);
-      setData(pet);
-      setLoading(false);
-    };
-    load();
+    loadPetData();
   }, []);
 
   if (loading) {
@@ -227,16 +246,41 @@ export default function DemoResume() {
         )}
 
         {/* References & Reviews */}
-        {data.reviews && data.reviews.length > 0 && (
-          <Card className="mb-6">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-navy-900">
-                <Star className="w-5 h-5 text-primary" />
-                References & Reviews
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {data.reviews.map((review, idx) => (
+        <Card className="mb-6">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-navy-900">
+              <Star className="w-5 h-5 text-primary" />
+              References & Reviews
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {/* Leave Review Button */}
+            {!showAddReview && (
+              <Button 
+                onClick={handleOpenReviewForm}
+                variant="outline"
+                className="w-full"
+              >
+                <Star className="w-4 h-4 mr-2" />
+                Leave a Review for {data.name}
+              </Button>
+            )}
+
+            {/* Review Form */}
+            {showAddReview && (
+              <div ref={reviewFormRef}>
+                <AddReviewForm
+                  petId={data.id}
+                  petName={data.name}
+                  onClose={() => setShowAddReview(false)}
+                  onSuccess={handleReviewSuccess}
+                />
+              </div>
+            )}
+
+            {/* Existing Reviews */}
+            {data.reviews && data.reviews.length > 0 ? (
+              data.reviews.map((review, idx) => (
                 <div key={idx} className="p-4 rounded border">
                   <div className="flex items-center justify-between mb-2">
                     <div className="font-medium">{review.reviewerName}</div>
@@ -262,10 +306,22 @@ export default function DemoResume() {
                     )}
                   </div>
                 </div>
-              ))}
-            </CardContent>
-          </Card>
-        )}
+              ))
+            ) : (
+              !showAddReview && (
+                <div className="text-center py-6 text-muted-foreground">
+                  <p className="mb-3">No reviews yet. Be the first to leave a reference!</p>
+                  <Button 
+                    onClick={handleOpenReviewForm}
+                    variant="default"
+                  >
+                    Write First Review
+                  </Button>
+                </div>
+              )
+            )}
+          </CardContent>
+        </Card>
 
         {/* Travel History */}
         {data.travel_locations && data.travel_locations.length > 0 && (

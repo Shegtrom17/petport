@@ -16,7 +16,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Hotspot } from "@/components/Hotspot";
 
 interface PetHeaderProps {
   activeTab: string;
@@ -103,25 +102,15 @@ export const PetHeader = ({ activeTab, onTabChange, selectedPetId, selectedPetNa
             </Button>
             {user && (
               <DropdownMenu>
-                <div className="relative">
-                  <DropdownMenuTrigger id="three-dot-menu" asChild>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="touch-feedback h-8 w-8"
-                    >
-                      <MoreVertical className="h-4 w-4" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <div className="absolute -top-1 -right-1">
-                    <Hotspot
-                      id="three-dot-menu"
-                      title="Settings & Help"
-                      description="Find account settings, billing, help resources, and the option to restart this tour anytime!"
-                      position="bottom"
-                    />
-                  </div>
-                </div>
+                <DropdownMenuTrigger id="three-dot-menu" asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="touch-feedback h-8 w-8"
+                  >
+                    <MoreVertical className="h-4 w-4" />
+                  </Button>
+                </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-56 bg-background">
                   <DropdownMenuLabel className="font-normal">
                     <div className="flex flex-col space-y-1">

@@ -29,7 +29,6 @@ import { GuidanceHint } from "@/components/ui/guidance-hint";
 import { QuickShareHub } from "@/components/QuickShareHub";
 import { ContactsDisplay } from "@/components/ContactsDisplay";
 import { compressMultipleImages } from "@/utils/imageCompression";
-import { Hotspot } from "@/components/Hotspot";
 
 
 interface PetProfileContentProps {
@@ -301,12 +300,6 @@ export const PetProfileContent = ({
               <CardTitle className="text-xl flex items-center gap-2">
                 <Edit className="w-6 h-6 text-[#5691af]" />
                 Profile Management Hub
-                <Hotspot
-                  id="profile-hub"
-                  title="Edit Your Pet's Info"
-                  description="Tap any section here to update photos, bio, medical records, and more. Keep everything current!"
-                  position="bottom"
-                />
               </CardTitle>
             </CardHeader>
             <CardContent className="transition-all duration-300 ease-in-out">

@@ -66,7 +66,8 @@ export default function DogGoneGood() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [species, setSpecies] = useState<Species>('dog');
   const [theme, setTheme] = useState<ThemeId>('patriotic');
-  const [petName, setPetName] = useState('');
+  const [petName1, setPetName1] = useState('');
+  const [petName2, setPetName2] = useState('');
   const [photoPreview1, setPhotoPreview1] = useState<string | null>(null);
   const [photoPreview2, setPhotoPreview2] = useState<string | null>(null);
   const [photoFile1, setPhotoFile1] = useState<File | null>(null);
@@ -86,7 +87,7 @@ export default function DogGoneGood() {
 
   useEffect(() => {
     renderCanvas();
-  }, [formData, petName, photoPreview1, photoPreview2, species, theme]);
+  }, [formData, petName1, petName2, photoPreview1, photoPreview2, species, theme]);
 
   const handlePhotoUpload = (photoNumber: 1 | 2) => (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -298,7 +299,22 @@ export default function DogGoneGood() {
         drawPlaceholder(photo2X, yOffset, twoPhotoSize);
       }
       
-      yOffset += twoPhotoSize + 60;
+      yOffset += twoPhotoSize + 20;
+      
+      // Draw pet names under photos with theme accent color
+      ctx.fillStyle = currentTheme.colors.accent;
+      ctx.font = "bold 36px 'Fredoka', Inter, sans-serif";
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'top';
+      
+      if (hasPhoto1 && petName1) {
+        ctx.fillText(petName1, photo1X + twoPhotoSize / 2, yOffset);
+      }
+      if (hasPhoto2 && petName2) {
+        ctx.fillText(petName2, photo2X + twoPhotoSize / 2, yOffset);
+      }
+      
+      yOffset += 70;
     } else if (photoCount === 1) {
       // One photo centered at 60% width
       const photoX = (1200 - onePhotoSize) / 2;
@@ -309,7 +325,19 @@ export default function DogGoneGood() {
         drawSquarePhoto(photoPreview2, photoX, yOffset, onePhotoSize);
       }
       
-      yOffset += onePhotoSize + 60;
+      yOffset += onePhotoSize + 20;
+      
+      // Draw single pet name centered under photo with theme accent color
+      const displayPetName = petName1 || petName2;
+      if (displayPetName) {
+        ctx.fillStyle = currentTheme.colors.accent;
+        ctx.font = "bold 36px 'Fredoka', Inter, sans-serif";
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'top';
+        ctx.fillText(displayPetName, 600, yOffset);
+      }
+      
+      yOffset += 70;
     } else {
       // No photos - show centered placeholder
       const photoX = (1200 - onePhotoSize) / 2;
@@ -317,12 +345,12 @@ export default function DogGoneGood() {
       yOffset += onePhotoSize + 60;
     }
 
-    // Pet Name
+    // Title (not individual pet names - those appear under photos now)
     ctx.fillStyle = currentTheme.colors.text;
     ctx.font = "bold 70px 'Fredoka', Inter, sans-serif";
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
-    const displayName = petName || species.charAt(0).toUpperCase() + species.slice(1);
+    const displayName = petName1 || petName2 || species.charAt(0).toUpperCase() + species.slice(1);
     ctx.fillText(`RÉSUMÉ OF ${displayName.toUpperCase()}`, 600, yOffset);
 
     yOffset += 90;
@@ -471,7 +499,7 @@ export default function DogGoneGood() {
       const file = new File([blob], `petport-resume-${theme}-${species}.jpg`, { type: 'image/jpeg' });
 
       await navigator.share({
-        title: `${petName || 'My Pet'}'s Résumé`,
+        title: `${petName1 || petName2 || 'My Pet'}'s Résumé`,
         text: `Just made a ${currentTheme.name} résumé for my pet with PetPort! 😂 Try it yourself: ${window.location.href}`,
         files: [file]
       });
@@ -667,18 +695,33 @@ export default function DogGoneGood() {
               </div>
             </div>
 
-            {/* Pet Name (Optional) */}
+            {/* Pet Names (Optional) */}
             <div className="bg-white rounded-xl p-6 shadow-lg">
               <label className="block text-sm font-semibold text-brand-primary mb-3">
-                Pet Name (optional)
+                Pet Names (optional)
               </label>
-              <input 
-                type="text" 
-                value={petName}
-                onChange={(e) => setPetName(e.target.value)}
-                placeholder="Enter pet name"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-primary focus:border-transparent"
-              />
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs text-gray-600 mb-1">Pet 1 Name</label>
+                  <input 
+                    type="text" 
+                    value={petName1}
+                    onChange={(e) => setPetName1(e.target.value)}
+                    placeholder="Enter first pet name"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-primary focus:border-transparent"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs text-gray-600 mb-1">Pet 2 Name</label>
+                  <input 
+                    type="text" 
+                    value={petName2}
+                    onChange={(e) => setPetName2(e.target.value)}
+                    placeholder="Enter second pet name"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-primary focus:border-transparent"
+                  />
+                </div>
+              </div>
             </div>
 
             {/* Dropdown Fields */}
@@ -811,7 +854,7 @@ export default function DogGoneGood() {
             {showCTA && (
               <div className="bg-gradient-to-r from-brand-primary to-brand-secondary rounded-xl p-6 text-white text-center shadow-xl animate-in fade-in slide-in-from-bottom-4">
                 <h3 className="text-xl font-bold mb-2">
-                  Want a REAL PetPort Profile{petName ? ` for ${petName}` : ''}?
+                  Want a REAL PetPort Profile{petName1 || petName2 ? ` for ${petName1 || petName2}` : ''}?
                 </h3>
                 <p className="text-white/90 mb-4 text-sm">
                   Store medical records, share care instructions, generate lost pet flyers, and more!

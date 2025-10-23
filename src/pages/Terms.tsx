@@ -1,7 +1,11 @@
 import { MetaTags } from "@/components/MetaTags";
 import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { X } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 export default function Terms() {
+  const navigate = useNavigate();
   const baseUrl = typeof window !== 'undefined' ? window.location.origin : '';
   const url = baseUrl + "/terms";
   // TODO: Replace with confirmed go-live date
@@ -27,7 +31,16 @@ export default function Terms() {
         url={url}
       />
       <main className="max-w-4xl mx-auto px-4 py-10">
-        <header className="mb-6">
+        <header className="mb-6 relative">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => navigate(-1)}
+            className="absolute -top-2 right-0"
+            aria-label="Close"
+          >
+            <X className="h-5 w-5" />
+          </Button>
           <h1 className="text-3xl md:text-4xl font-bold text-navy-900">PetPort Terms of Service</h1>
           <p className="mt-2 text-navy-700"><strong>Effective Date:</strong> {effectiveDate}</p>
           <p className="text-navy-700">Cool Change LLC, DBA "PetPort" ("PetPort", "we", "our", "us") • <a href="https://petport.app" target="_blank" rel="noopener" className="underline">https://petport.app</a></p>

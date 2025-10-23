@@ -1,6 +1,10 @@
 import { MetaTags } from "@/components/MetaTags";
+import { useNavigate } from "react-router-dom";
+import { X } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 export default function Privacy() {
+  const navigate = useNavigate();
   const baseUrl = typeof window !== 'undefined' ? window.location.origin : '';
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
@@ -10,7 +14,16 @@ export default function Privacy() {
         url={baseUrl + "/privacy"}
       />
       <main className="max-w-4xl mx-auto px-4 py-10">
-        <header className="mb-6">
+        <header className="mb-6 relative">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => navigate(-1)}
+            className="absolute -top-2 right-0"
+            aria-label="Close"
+          >
+            <X className="h-5 w-5" />
+          </Button>
           <h1 className="text-3xl md:text-4xl font-bold text-navy-900">Privacy Policy</h1>
           <p className="mt-2 text-navy-700">PetPort is owned and operated by Cool Change LLC (DBA "PetPort").</p>
         </header>

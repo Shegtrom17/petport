@@ -99,6 +99,8 @@ What you'll receive:
 
 Accept transfer: ${transferUrl || `${baseUrl}/transfer/accept/${transferToken}`}
 
+Thank you for keeping ${petName}'s voice with them wherever they go! 🐾
+
 ---
 Sent via PetPort - Digital Pet Passport
 https://petport.app`,
@@ -112,6 +114,8 @@ ${customMessage ? `\nMessage: "${customMessage}"\n` : ''}
 Click below to accept and claim ${petName}'s profile. Once you accept, ${petName} and all their information will be transferred to your account.
 
 Accept transfer: ${transferUrl || `${baseUrl}/transfer/accept/${transferToken}`}
+
+Thank you for keeping ${petName}'s voice with them wherever they go! 🐾
 
 ---
 Sent via PetPort - Digital Pet Passport
@@ -129,7 +133,7 @@ What happens next:
 
 View ${petName}'s profile: ${baseUrl}/profile/${data.petId}
 
-Thank you for using PetPort!
+Thank you for keeping ${petName}'s voice with them wherever they go! 🐾
 
 ---
 PetPort - Digital Pet Passport
@@ -144,6 +148,8 @@ ${sender} wants to transfer ${petName}'s profile to your PetPort account.
 You've reached your current pet limit. Add an additional pet slot to accept this transfer and bring ${petName} into your account.
 
 Add pet slot and accept transfer: ${transferUrl || `${baseUrl}/transfer/accept/${transferToken}`}
+
+Thank you for keeping ${petName}'s voice with them wherever they go! 🐾
 
 ---
 Sent via PetPort - Digital Pet Passport
@@ -434,6 +440,12 @@ const generateEmailTemplate = (data: EmailRequest) => {
             <li>Photo galleries and vaccination records</li>
           </ul>
         </div>
+        
+        <div style="background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); padding: 25px; border-radius: 10px; margin: 25px 0; text-align: center; border: 2px solid #5691af;">
+          <p style="color: #0c4a6e; font-size: 18px; margin: 0; font-weight: 600; line-height: 1.6;">
+            Thank you for keeping ${petName}'s voice with them wherever they go! 🐾
+          </p>
+        </div>
       `
     },
     transfer_invite_existing: {
@@ -454,6 +466,12 @@ const generateEmailTemplate = (data: EmailRequest) => {
         ${customMessage ? `<blockquote style="border-left: 4px solid #5691af; padding-left: 16px; margin: 16px 0; font-style: italic; background-color: #f8fafc;">"${customMessage}"</blockquote>` : ''}
         
         <p>Click the button below to accept this transfer and add ${petName} to your account.</p>
+        
+        <div style="background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); padding: 25px; border-radius: 10px; margin: 25px 0; text-align: center; border: 2px solid #5691af;">
+          <p style="color: #0c4a6e; font-size: 18px; margin: 0; font-weight: 600; line-height: 1.6;">
+            Thank you for keeping ${petName}'s voice with them wherever they go! 🐾
+          </p>
+        </div>
       `
     },
     transfer_success: {
@@ -473,7 +491,11 @@ const generateEmailTemplate = (data: EmailRequest) => {
           </ul>
         </div>
         
-        <p>Thank you for using PetPort to keep ${petName}'s information safe and organized!</p>
+        <div style="background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); padding: 25px; border-radius: 10px; margin: 25px 0; text-align: center; border: 2px solid #5691af;">
+          <p style="color: #0c4a6e; font-size: 18px; margin: 0; font-weight: 600; line-height: 1.6;">
+            Thank you for keeping ${petName}'s voice with them wherever they go! 🐾
+          </p>
+        </div>
       `
     },
     transfer_limit_reached: {
@@ -495,6 +517,12 @@ const generateEmailTemplate = (data: EmailRequest) => {
         ${customMessage ? `<blockquote style="border-left: 4px solid #5691af; padding-left: 16px; margin: 16px 0; font-style: italic; background-color: #f8fafc;">"${customMessage}"</blockquote>` : ''}
         
         <p>Click the button below to add a pet slot and claim ${petName}'s profile.</p>
+        
+        <div style="background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); padding: 25px; border-radius: 10px; margin: 25px 0; text-align: center; border: 2px solid #5691af;">
+          <p style="color: #0c4a6e; font-size: 18px; margin: 0; font-weight: 600; line-height: 1.6;">
+            Thank you for keeping ${petName}'s voice with them wherever they go! 🐾
+          </p>
+        </div>
       `
     },
     transfer_sent_confirmation: {

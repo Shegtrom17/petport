@@ -509,13 +509,13 @@ export default function Landing() {
                   How can I quickly make a lost pet flyer if my pet goes missing?
                 </h3>
                 <p className="text-brand-primary-dark leading-relaxed">
-                  With PetPort, it takes seconds — not hours — to get the word out. Our One-Tap Missing Pet Flyer instantly pulls your pet's photos, name, and last-seen details into a ready-to-share PDF flyer. Each flyer includes:
+                  With PetPort, it takes seconds — not hours — to get the word out. Our One-Tap Missing Pet Flyer and interactive LiveLink instantly pull your pet's photos, name, and last-seen details into a ready-to-share PDF flyer and LiveLink that can be shared in any format.
                 </p>
                 <p className="text-brand-primary-dark leading-relaxed mt-4">
-                  A QR code printed right on the flyer that links directly to your pet's live profile page. Anyone who scans it sees the most up-to-date info, even if you add new sightings later.
+                  Both have a QR code printed that links others directly to your pet's LiveLink Lost Pet page. Anyone who scans it sees the most up-to-date info on the LiveLink page. Flyers can be downloaded straight from that LiveLink page, so others can post in nearby areas. It's not just you!!!
                 </p>
                 <p className="text-brand-primary-dark leading-relaxed mt-4">
-                  A social media–ready share link, so you can blast the flyer to Facebook, Instagram, Nextdoor, or text it to neighbors with one tap.
+                  The LiveLink has a revolutionary <strong>"Sightings Board"</strong> where the public can add sightings and you will be updated instantly via email if your companion is sighted or found. Updates happen in real-time, with notifications going directly to you as a member.
                 </p>
                 <p className="text-brand-primary-dark leading-relaxed mt-4">
                   No graphic design, no formatting headaches — just click, print, or share. It's the fastest way to rally help when minutes matter.
@@ -579,7 +579,7 @@ export default function Landing() {
               "name": "How can I quickly make a lost pet flyer if my pet goes missing?",
               "acceptedAnswer": {
                 "@type": "Answer",
-                "text": "With PetPort, it takes seconds — not hours — to get the word out. Our One-Tap Missing Pet Flyer instantly pulls your pet's photos, name, and last-seen details into a ready-to-share PDF flyer. Each flyer includes: A QR code printed right on the flyer that links directly to your pet's live profile page. Anyone who scans it sees the most up-to-date info, even if you add new sightings later. A social media–ready share link, so you can blast the flyer to Facebook, Instagram, Nextdoor, or text it to neighbors with one tap. No graphic design, no formatting headaches — just click, print, or share. It's the fastest way to rally help when minutes matter."
+                "text": "With PetPort, it takes seconds — not hours — to get the word out. Our One-Tap Missing Pet Flyer and interactive LiveLink instantly pull your pet's photos, name, and last-seen details into a ready-to-share PDF flyer and LiveLink that can be shared in any format. Both have a QR code that links directly to your pet's LiveLink Lost Pet page with the most up-to-date info. The LiveLink features a revolutionary Sightings Board where the public can add sightings and you receive instant email notifications if your companion is sighted or found. Flyers can be downloaded from the LiveLink page so others can help post in nearby areas. No graphic design, no formatting headaches — just click, print, or share."
               }
             }, {
               "@type": "Question",

@@ -355,75 +355,6 @@ export default function Referrals() {
           isLoading={connectingStripe}
         />
 
-        {/* Referral History Table */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-xl font-bold">Referral History</CardTitle>
-          </CardHeader>
-          <CardContent>
-            {referrals.length === 0 ? (
-              <div className="text-center py-12">
-                <Users className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                <h3 className="text-lg font-medium mb-2">No referrals yet</h3>
-                <p className="text-muted-foreground mb-4">
-                  Share your referral link to start earning!
-                </p>
-              </div>
-            ) : (
-              <div className="overflow-x-auto">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Date</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead>Commission</TableHead>
-                      <TableHead>Approved</TableHead>
-                      <TableHead>Paid</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {referrals.map((referral) => (
-                      <TableRow key={referral.id}>
-                        <TableCell className="font-medium">
-                          {formatDate(referral.created_at)}
-                        </TableCell>
-                        <TableCell>
-                          <div className="flex items-center gap-2">
-                            {getStatusBadge(referral.commission_status)}
-                            
-                            {/* Show ineligibility badge for monthly plans */}
-                            {referral.referred_plan_interval === 'month' && (
-                              <Badge variant="outline" className="text-xs text-muted-foreground border-muted-foreground/30">
-                                Monthly - Not Eligible
-                              </Badge>
-                            )}
-                            
-                            {/* Show if plan interval is missing */}
-                            {!referral.referred_plan_interval && referral.commission_status === 'pending' && (
-                              <Badge variant="outline" className="text-xs text-amber-600 border-amber-600/30">
-                                Plan Info Pending
-                              </Badge>
-                            )}
-                          </div>
-                        </TableCell>
-                        <TableCell className="font-semibold text-[#5691af]">
-                          ${(referral.commission_amount / 100).toFixed(2)}
-                        </TableCell>
-                        <TableCell className="text-muted-foreground">
-                          {formatDate(referral.approved_at)}
-                        </TableCell>
-                        <TableCell className="text-muted-foreground">
-                          {formatDate(referral.paid_at)}
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
-            )}
-          </CardContent>
-        </Card>
-
         {/* Media Kit Section */}
         <Card>
           <CardHeader>
@@ -518,6 +449,75 @@ export default function Referrals() {
                 </Button>
               </div>
             </div>
+          </CardContent>
+        </Card>
+
+        {/* Referral History Table */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-xl font-bold">Referral History</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {referrals.length === 0 ? (
+              <div className="text-center py-12">
+                <Users className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                <h3 className="text-lg font-medium mb-2">No referrals yet</h3>
+                <p className="text-muted-foreground mb-4">
+                  Share your referral link to start earning!
+                </p>
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Date</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead>Commission</TableHead>
+                      <TableHead>Approved</TableHead>
+                      <TableHead>Paid</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {referrals.map((referral) => (
+                      <TableRow key={referral.id}>
+                        <TableCell className="font-medium">
+                          {formatDate(referral.created_at)}
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-2">
+                            {getStatusBadge(referral.commission_status)}
+                            
+                            {/* Show ineligibility badge for monthly plans */}
+                            {referral.referred_plan_interval === 'month' && (
+                              <Badge variant="outline" className="text-xs text-muted-foreground border-muted-foreground/30">
+                                Monthly - Not Eligible
+                              </Badge>
+                            )}
+                            
+                            {/* Show if plan interval is missing */}
+                            {!referral.referred_plan_interval && referral.commission_status === 'pending' && (
+                              <Badge variant="outline" className="text-xs text-amber-600 border-amber-600/30">
+                                Plan Info Pending
+                              </Badge>
+                            )}
+                          </div>
+                        </TableCell>
+                        <TableCell className="font-semibold text-[#5691af]">
+                          ${(referral.commission_amount / 100).toFixed(2)}
+                        </TableCell>
+                        <TableCell className="text-muted-foreground">
+                          {formatDate(referral.approved_at)}
+                        </TableCell>
+                        <TableCell className="text-muted-foreground">
+                          {formatDate(referral.paid_at)}
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            )}
           </CardContent>
         </Card>
       </div>

@@ -125,7 +125,7 @@ export default function LostPetFeatures() {
                 Our Gift: A Free Tool to Bring Them Home
               </h2>
               <p className="text-lg text-muted-foreground">
-                This free tool creates a basic printable flyer — perfect for quick distribution. For dynamic Lost Pet LiveLinks with QR codes, real-time updates, and sighting notifications, explore the full PetPort platform below.
+                This free tool creates a basic printable flyer — perfect for quick distribution. For the full-featured Lost Pet PDF Flyer with QR codes, plus dynamic LiveLinks with real-time updates and sighting notifications, explore the full PetPort platform below.
               </p>
             </div>
 

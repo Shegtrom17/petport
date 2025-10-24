@@ -15,8 +15,8 @@ export default function LostPetFeatures() {
   return (
     <>
       <MetaTags 
-        title="Lost Pet Solutions - Quick Flyer Generator & Real-Time Alerts | PetPort"
-        description="Generate lost pet flyers in seconds. Get real-time sighting notifications, QR codes, and community support. Every minute counts when your pet goes missing."
+        title="Lost Pet Flyer Generator & LiveLink Alert System | PetPort"
+        description="Free lost pet flyer tool. Create missing pet LiveLinks in 60 seconds with QR codes, sighting board & instant sharing. Help bring your pet home safely."
         type="website"
         url="https://petport.app/lost-pet-features"
       />

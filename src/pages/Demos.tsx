@@ -151,8 +151,8 @@ export default function Demos() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-brand-cream via-white to-brand-cream">
       <MetaTags 
-        title="PetPort LiveLinks Demos - See All Features in Action"
-        description="Explore interactive demos of all PetPort LiveLinks: Pet Resume, Missing Pet Alerts, Care Instructions, Photo Gallery, Travel Map, Reviews, and more. See how easy it is to give your pet a digital voice."
+        title="PetPort LiveLink Demos - Live Pet Passport Examples & Features"
+        description="See PetPort LiveLinks in action! Explore live demos: pet resumes, lost pet alerts, care instructions & photo galleries. Real data from Finnegan."
         image="https://pub-a7c2c18b8d6143b9a256105ef44f2da0.r2.dev/OG%20General.png"
         url={`${window.location.origin}/demos`}
       />

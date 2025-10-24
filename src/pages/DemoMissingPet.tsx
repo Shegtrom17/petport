@@ -434,8 +434,8 @@ export default function DemoMissingPet() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-red-50 via-white to-orange-50">
       <MetaTags 
-        title={`LOST PET: ${data.name} - Missing ${data.breed || data.species} Alert`}
-        description={`URGENT: ${data.name} is missing! Last seen ${lostData.last_seen_location}. ${lostData.reward_amount} reward. Please help bring ${data.name} home safely.`}
+        title="Lost Pet Alert LiveLink Demo - Missing Pet Flyer Example | PetPort"
+        description="See a live missing pet LiveLink alert with QR code, sighting board & instant sharing. Experience PetPort's emergency lost pet features in real-time."
         image="https://dxghbhujugsfmaecilrq.supabase.co/storage/v1/object/public/og-images/general-og.png"
         url={shareUrl}
         type="article"

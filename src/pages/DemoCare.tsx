@@ -201,8 +201,8 @@ export default function DemoCare() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-sage-50 to-cream-50">
       <MetaTags 
-        title={`${data.name}'s Care & Handling Instructions - Live PetPort Demo`}
-        description={`Experience a real PetPort Care & Handling page - ${data.name}'s complete care instructions, routines, and emergency protocols`}
+        title="Pet Care Instructions LiveLink Example - Sitter Guide Demo | PetPort"
+        description="Live demo of shareable pet care LiveLink for sitters, groomers & vets. Includes routines, medications, allergies & real-time update board."
         image="https://dxghbhujugsfmaecilrq.supabase.co/storage/v1/object/public/og-images/resume-og-1mb.png"
         url="https://petport.app/demo/care"
       />

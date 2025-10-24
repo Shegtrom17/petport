@@ -63,8 +63,8 @@ export default function DemoResume() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-brand-cream via-white to-brand-cream">
       <MetaTags 
-        title={`${data.name}'s Professional Resume - Live PetPort Demo`}
-        description={`Experience a real PetPort LiveLink - ${data.name}'s professional pet resume with certifications, training, achievements, and reviews`}
+        title="Pet Resume LiveLink Example - Professional Pet Profile Demo | PetPort"
+        description="Live pet resume LiveLink demo with certifications, training, reviews & travel history. See how PetPort creates shareable pet credentials for groomers & hotels."
         image="https://dxghbhujugsfmaecilrq.supabase.co/storage/v1/object/public/og-images/resume-og-1mb.png"
         url={`https://petport.app/demo/resume`}
       />

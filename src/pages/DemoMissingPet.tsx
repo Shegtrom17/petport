@@ -609,23 +609,22 @@ export default function DemoMissingPet() {
         )}
         
         {/* Community Sighting Board */}
-        <Card className="mb-6 border-blue-500">
-          <CardHeader className="bg-gradient-to-r from-blue-500 to-blue-600 text-white">
-            <CardTitle className="flex items-center gap-2">
-              <AlertCircle className="h-6 w-6" />
-              Community Sighting Board
+        <Card className="mb-6 border-blue-300 bg-blue-50/50">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-blue-900">
+              <MapPin className="h-5 w-5" />
+              Community Sighting Updates
             </CardTitle>
-            <p className="text-sm text-white/90 mt-2">
-              Help bring {data.name} home! Report any sightings below.
+            <p className="text-sm text-blue-700 mt-2">
+              Help bring {data.name} home! Report any sightings or check recent community reports.
             </p>
           </CardHeader>
           <CardContent className="space-y-4 pt-6">
             {/* Report Sighting Form */}
-            <div className="bg-blue-50 p-4 rounded-lg border-2 border-blue-200">
-              <h4 className="font-semibold text-blue-900 mb-3 flex items-center gap-2">
-                <Send className="h-4 w-4" />
-                Report a Sighting
-              </h4>
+            <div className="bg-white p-4 rounded-lg border border-blue-200 shadow-sm">
+              <label className="font-semibold text-blue-900 mb-2 block">
+                Have you seen {data.name}?
+              </label>
               <Textarea
                 placeholder={`Where did you see ${data.name}? Include location, date/time, and any other details...`}
                 value={sightingText}
@@ -641,19 +640,15 @@ export default function DemoMissingPet() {
                 <Button
                   onClick={handleReportSighting}
                   disabled={!sightingText.trim() || isSubmittingSighting}
-                  className="bg-blue-600 hover:bg-blue-700"
+                  className="bg-blue-600 hover:bg-blue-700 text-white"
+                  size="sm"
                 >
                   {isSubmittingSighting ? (
-                    <>
-                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                      Submitting...
-                    </>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                   ) : (
-                    <>
-                      <Send className="h-4 w-4 mr-2" />
-                      Report Sighting
-                    </>
+                    <Send className="w-4 h-4 mr-2" />
                   )}
+                  Report Sighting
                 </Button>
               </div>
             </div>
@@ -661,11 +656,14 @@ export default function DemoMissingPet() {
             {/* Sightings List */}
             {sightings.length > 0 ? (
               <div className="space-y-3">
-                <h4 className="font-semibold text-sm text-muted-foreground">
-                  Recent Sightings ({sightings.length})
+                <h4 className="font-semibold text-blue-900 mb-3">
+                  Recent Reports ({sightings.length})
                 </h4>
                 {sightings.map((sighting) => (
-                  <div key={sighting.id} className="p-4 bg-white border border-blue-200 rounded-lg shadow-sm">
+                  <div 
+                    key={sighting.id} 
+                    className="bg-white p-3 rounded-lg border border-blue-200 shadow-sm hover:border-blue-400 transition-colors"
+                  >
                     <p className="text-sm text-gray-700 mb-2">{sighting.sighting_text}</p>
                     <p className="text-xs text-muted-foreground">
                       Reported {formatTimeAgo(sighting.reported_at)}

@@ -224,7 +224,7 @@ export default function LostPetFeatures() {
               Complete digital profile, medical records, care instructions, and advanced lost pet tools - all in one place.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
-              <Button size="lg" asChild>
+              <Button size="lg" asChild className="text-white">
                 <Link to="/auth">Start 7-Day Free Trial</Link>
               </Button>
               <Button size="lg" variant="outline" asChild>

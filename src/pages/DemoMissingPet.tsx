@@ -485,66 +485,81 @@ export default function DemoMissingPet() {
             </CardTitle>
           </CardHeader>
           <CardContent className="p-6">
-            <div className="flex flex-col md:flex-row gap-6">
-              {/* Pet Photo */}
-              <div className="flex-shrink-0">
-                <img
-                  src={data.photo_url}
-                  alt={`Missing ${data.name}`}
-                  className="w-64 h-64 object-cover rounded-lg shadow-lg border-4 border-red-500"
-                />
-                <p className="text-center mt-2 text-sm text-muted-foreground">
-                  Last seen photo of {data.name}
-                </p>
-              </div>
-
-              {/* Pet Details */}
-              <div className="flex-1 space-y-4">
-                <div>
-                  <h3 className="font-semibold text-lg text-brand-primary mb-2">Pet Details</h3>
-                  <div className="grid grid-cols-2 gap-2">
-                    <div>
-                      <p className="text-sm text-muted-foreground">Species</p>
-                      <p className="font-semibold capitalize">{data.species}</p>
-                    </div>
-                    {data.breed && (
-                      <div>
-                        <p className="text-sm text-muted-foreground">Breed</p>
-                        <p className="font-semibold">{data.breed}</p>
-                      </div>
-                    )}
-                    <div>
-                      <p className="text-sm text-muted-foreground">Age</p>
-                      <p className="font-semibold">{data.age} years</p>
-                    </div>
-                    <div>
-                      <p className="text-sm text-muted-foreground">Weight</p>
-                      <p className="font-semibold">{data.weight} lbs</p>
-                    </div>
-                    <div>
-                      <p className="text-sm text-muted-foreground">Sex</p>
-                      <p className="font-semibold capitalize">{data.sex.replace('_', ' ')}</p>
-                    </div>
-                    {data.microchip_id && (
-                      <div>
-                        <p className="text-sm text-muted-foreground">Microchip</p>
-                        <p className="font-semibold font-mono text-xs">{data.microchip_id}</p>
-                      </div>
-                    )}
-                  </div>
+            {/* Profile Photo with Red Border */}
+            {data.photo_url && (
+              <div className="flex justify-center mb-6">
+                <div className="w-full max-w-md">
+                  <img 
+                    src={data.photo_url} 
+                    alt={`${data.name}'s profile photo`}
+                    className="w-full h-auto max-h-96 object-contain rounded-lg shadow-lg border-4 border-red-500"
+                  />
+                  <p className="text-center text-sm text-muted-foreground mt-2">
+                    Last seen photo of {data.name}
+                  </p>
                 </div>
+              </div>
+            )}
 
-                {/* Reward */}
-                {lostData.reward_amount && (
-                  <Alert className="bg-green-50 border-green-600">
-                    <Heart className="h-5 w-5 text-green-600" />
-                    <AlertDescription className="text-green-900 font-bold text-xl">
-                      {lostData.reward_amount} REWARD
-                    </AlertDescription>
-                  </Alert>
+            {/* Full Body Photo with Red Border */}
+            {data.full_body_photo_url && (
+              <div className="flex justify-center mb-6">
+                <div className="w-full max-w-md">
+                  <h3 className="font-semibold text-red-600 mb-2 text-center">Full Body Photo</h3>
+                  <img 
+                    src={data.full_body_photo_url} 
+                    alt={`${data.name}'s full body photo`}
+                    className="w-full h-auto max-h-[500px] object-contain rounded-lg shadow-lg border-4 border-red-500"
+                  />
+                </div>
+              </div>
+            )}
+
+            {/* Pet Details Grid */}
+            <div className="mb-6">
+              <h3 className="font-semibold text-lg text-brand-primary mb-4">Pet Details</h3>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                <div>
+                  <p className="text-sm text-muted-foreground">Species</p>
+                  <p className="font-semibold capitalize">{data.species}</p>
+                </div>
+                {data.breed && (
+                  <div>
+                    <p className="text-sm text-muted-foreground">Breed</p>
+                    <p className="font-semibold">{data.breed}</p>
+                  </div>
+                )}
+                <div>
+                  <p className="text-sm text-muted-foreground">Age</p>
+                  <p className="font-semibold">{data.age}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Weight</p>
+                  <p className="font-semibold">{data.weight}lb</p>
+                </div>
+                {data.sex && (
+                  <div>
+                    <p className="text-sm text-muted-foreground">Sex</p>
+                    <p className="font-semibold capitalize">{data.sex.replace(/_/g, ' ')}</p>
+                  </div>
+                )}
+                {data.microchip_id && (
+                  <div>
+                    <p className="text-sm text-muted-foreground">Microchip ID</p>
+                    <p className="font-semibold">{data.microchip_id}</p>
+                  </div>
                 )}
               </div>
             </div>
+
+            {/* Reward Amount */}
+            {lostData.reward_amount && (
+              <div className="bg-yellow-100 border-2 border-yellow-500 p-4 rounded-lg text-center">
+                <Badge className="bg-yellow-500 text-white text-lg px-6 py-2 font-bold">
+                  ${lostData.reward_amount} REWARD
+                </Badge>
+              </div>
+            )}
           </CardContent>
         </Card>
 

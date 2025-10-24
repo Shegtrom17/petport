@@ -761,7 +761,7 @@ export default function DogGoneGood() {
 
           {/* Right Column: Live Preview */}
           <div className="space-y-6">
-            <div className="bg-white rounded-xl p-6 shadow-2xl border-2 border-brand-primary/20 md:sticky md:top-4">
+            <div className="bg-white rounded-xl p-6 shadow-2xl border-2 border-brand-primary/20">
               <h3 className="text-lg font-semibold text-brand-primary mb-4 text-center">
                 Live Preview
               </h3>

@@ -686,9 +686,9 @@ pageManager.addY(6);
   const rightColumnX = 110;
   const currentY = pageManager.getCurrentY();
   
-  // Smaller pet photo (60x60) on the left
+  // Pet photo (80x80) on the left - enlarged for better visibility
   if (petData.photoUrl) {
-    await addImage(doc, pageManager, petData.photoUrl, 60, 60, leftColumnX);
+    await addImage(doc, pageManager, petData.photoUrl, 80, 80, leftColumnX);
   }
   
   // Pet information on the right side

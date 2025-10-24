@@ -46,7 +46,7 @@ export default function LostPetFeatures() {
             {/* Hero Video Placeholder */}
             <div className="relative aspect-video bg-muted rounded-lg overflow-hidden shadow-2xl border border-border">
               <video 
-                className="w-full h-full object-cover"
+                className="w-full h-full object-contain"
                 autoPlay 
                 loop 
                 muted 
@@ -54,9 +54,6 @@ export default function LostPetFeatures() {
               >
                 <source src="/hero-15.mp4" type="video/mp4" />
               </video>
-              <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent flex items-end justify-center p-6">
-                <p className="text-sm text-muted-foreground">One-tap flyer generation in action</p>
-              </div>
             </div>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">

@@ -512,7 +512,11 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
     toast({ title: "Generating Lost Pet Flyer...", description: "Creating your missing pet alert." });
     
     try {
-      const result = await generateClientPetPDF(petData, 'lost_pet');
+      const mergedPetData = {
+        ...petData,
+        ...(Array.isArray(petData?.lost_pet_data) ? petData.lost_pet_data[0] : (petData?.lost_pet_data || {}))
+      };
+      const result = await generateClientPetPDF(mergedPetData, 'lost_pet');
       
       if (result.success && result.blob) {
         setLostPetPdfBlob(result.blob);

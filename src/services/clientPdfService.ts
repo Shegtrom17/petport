@@ -154,16 +154,16 @@ async function normalizePetData(raw: any): Promise<any> {
     vet_contact: contactData.vetContact,
     pet_caretaker: contactData.petCaretaker,
 
-    // Lost pet data
-    is_missing: pet.is_missing ?? pet.lost_pet_data?.is_missing ?? false,
-    last_seen_location: pet.last_seen_location || pet.lost_pet_data?.last_seen_location,
-    last_seen_date: pet.last_seen_date || pet.lost_pet_data?.last_seen_date,
-    last_seen_time: pet.last_seen_time || pet.lost_pet_data?.last_seen_time,
-    distinctive_features: pet.distinctive_features || pet.lost_pet_data?.distinctive_features,
-    finder_instructions: pet.finder_instructions || pet.lost_pet_data?.finder_instructions,
-    reward_amount: pet.reward_amount || pet.lost_pet_data?.reward_amount,
-    contact_priority: pet.contact_priority || pet.lost_pet_data?.contact_priority,
-    emergency_notes: pet.emergency_notes || pet.lost_pet_data?.emergency_notes,
+    // Lost pet data (robust merge from root and nested lost_pet_data)
+    is_missing: pet.is_missing ?? (Array.isArray(pet.lost_pet_data) ? pet.lost_pet_data[0]?.is_missing : pet.lost_pet_data?.is_missing) ?? false,
+    last_seen_location: pet.last_seen_location || (Array.isArray(pet.lost_pet_data) ? pet.lost_pet_data[0]?.last_seen_location : pet.lost_pet_data?.last_seen_location),
+    last_seen_date: pet.last_seen_date || (Array.isArray(pet.lost_pet_data) ? pet.lost_pet_data[0]?.last_seen_date : pet.lost_pet_data?.last_seen_date),
+    last_seen_time: pet.last_seen_time || (Array.isArray(pet.lost_pet_data) ? pet.lost_pet_data[0]?.last_seen_time : pet.lost_pet_data?.last_seen_time),
+    distinctive_features: pet.distinctive_features || (Array.isArray(pet.lost_pet_data) ? pet.lost_pet_data[0]?.distinctive_features : pet.lost_pet_data?.distinctive_features),
+    finder_instructions: pet.finder_instructions || (Array.isArray(pet.lost_pet_data) ? pet.lost_pet_data[0]?.finder_instructions : pet.lost_pet_data?.finder_instructions),
+    reward_amount: pet.reward_amount || (Array.isArray(pet.lost_pet_data) ? pet.lost_pet_data[0]?.reward_amount : pet.lost_pet_data?.reward_amount),
+    contact_priority: pet.contact_priority || (Array.isArray(pet.lost_pet_data) ? pet.lost_pet_data[0]?.contact_priority : pet.lost_pet_data?.contact_priority),
+    emergency_notes: pet.emergency_notes || (Array.isArray(pet.lost_pet_data) ? pet.lost_pet_data[0]?.emergency_notes : pet.lost_pet_data?.emergency_notes),
 
     // Professional / credentials
     support_animal_status: pet.support_animal_status || pet.professional_data?.support_animal_status,

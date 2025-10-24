@@ -54,7 +54,11 @@ export const LostPetPDFGenerator = ({ petId, petName, isActive, petData }: LostP
     
     try {
       console.log('LostPetPDFGenerator - Generating lost pet PDF for petId:', petId, 'petName:', petName);
-      const result = await generateClientPetPDF(petData, 'lost_pet');
+      const mergedPetData = {
+        ...petData,
+        ...(Array.isArray(petData?.lost_pet_data) ? petData.lost_pet_data[0] : (petData?.lost_pet_data || {}))
+      };
+      const result = await generateClientPetPDF(mergedPetData, 'lost_pet');
       
       if (result.success && result.blob) {
         setPdfBlob(result.blob);
@@ -158,7 +162,11 @@ const handleQuickFlyer = async () => {
   }
   setIsGenerating(true);
   try {
-    const result = await generateClientPetPDF(petData, 'lost_pet');
+    const mergedPetData = {
+      ...petData,
+      ...(Array.isArray(petData?.lost_pet_data) ? petData.lost_pet_data[0] : (petData?.lost_pet_data || {}))
+    };
+    const result = await generateClientPetPDF(mergedPetData, 'lost_pet');
     if (result.success && result.blob) {
       setPdfBlob(result.blob);
       const missingUrl = generatePublicMissingUrl(petId);

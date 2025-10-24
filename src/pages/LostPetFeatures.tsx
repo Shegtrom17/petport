@@ -93,7 +93,7 @@ export default function LostPetFeatures() {
                   step: 4,
                   title: "Sightings Board",
                   description: "Receive real-time notifications when community members report sightings.",
-                  image: "/lovable-uploads/22b5b776-467c-4cee-be36-887346e71205.png"
+                  image: "/lovable-uploads/Sighting_board_lost_1000_x_1000_px.png"
                 }
               ].map((step) => (
                 <Card key={step.step} className="relative overflow-hidden group hover:shadow-lg transition-shadow">

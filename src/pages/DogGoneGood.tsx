@@ -386,12 +386,19 @@ export default function DogGoneGood() {
     ctx.textAlign = "center";
     wrapText(ctx, `"${formData.motto}"`, 600, yOffset, 1000, 44);
 
-    // Pawprint watermark in bottom corner
+    // Watermarks in bottom corners
     ctx.globalAlpha = 0.08;
     ctx.font = '120px Arial';
-    ctx.textAlign = 'right';
     ctx.fillStyle = currentTheme.colors.text;
+    
+    // Pawprint watermark in bottom right
+    ctx.textAlign = 'right';
     ctx.fillText('🐾', 1150, 1450);
+    
+    // Horseshoe watermark in bottom left
+    ctx.textAlign = 'left';
+    ctx.fillText('🐴', 50, 1450);
+    
     ctx.globalAlpha = 1.0;
 
     // Footer banner with theme color

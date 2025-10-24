@@ -74,7 +74,7 @@ export default function Demos() {
       color: "from-[#d4c5b0] to-[#bfb09b]",
       borderColor: "border-[#d4c5b0]/40 hover:border-[#d4c5b0]",
       features: [
-        "36 photo upload sleaves",
+        "36 Photo Uploads (up to 10mp)",
         "Organized by drag & drop",
         "Social media ready sharing",
         "Caption and title each photo"

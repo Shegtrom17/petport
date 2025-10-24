@@ -75,7 +75,7 @@ export default function LostPetFeatures() {
                   step: 1,
                   title: "Report Missing",
                   description: "Mark your pet as missing with one tap. Update status anytime from anywhere.",
-                  image: "/lovable-uploads/report-missing-step.png"
+                  image: "/lovable-uploads/mark_lost_1000_x_1000_px.png"
                 },
                 {
                   step: 2,

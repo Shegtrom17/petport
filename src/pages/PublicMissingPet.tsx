@@ -90,8 +90,15 @@ export default function PublicMissingPet() {
   const isValidPetId = petId && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(petId);
 
   const handleClose = () => {
-    if (window.history.length > 1) {
+    const referrer = document.referrer;
+    const isFromDemoOrMarketing = referrer.includes('/demos') || 
+                                  referrer.includes('/lost-pet-features') ||
+                                  referrer.includes('/learn');
+    
+    if (window.history.length > 1 && !isFromDemoOrMarketing) {
       navigate(-1);
+    } else if (isFromDemoOrMarketing) {
+      navigate('/demos');
     } else {
       navigate('/');
     }

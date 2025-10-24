@@ -77,8 +77,15 @@ const PublicCareInstructions = () => {
   const isValidUUID = (id: string) => /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(id);
 
   const handleClose = () => {
-    if (window.history.length > 1) {
+    const referrer = document.referrer;
+    const isFromDemoOrMarketing = referrer.includes('/demos') || 
+                                  referrer.includes('/lost-pet-features') ||
+                                  referrer.includes('/learn');
+    
+    if (window.history.length > 1 && !isFromDemoOrMarketing) {
       navigate(-1);
+    } else if (isFromDemoOrMarketing) {
+      navigate('/demos');
     } else {
       navigate('/');
     }

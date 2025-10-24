@@ -631,14 +631,35 @@ const generateEmergencyPDF = async (doc: jsPDF, pageManager: PDFPageManager, pet
 const generateLostPetPDF = async (doc: jsPDF, pageManager: PDFPageManager, petData: any): Promise<void> => {
   const safeText = (text: string) => sanitizeText(text || '');
   
-  console.log('generateLostPetPDF - Pet data received:', {
+  // ============= PHASE 1: DIAGNOSTIC LOGGING =============
+  console.log('🔍 [Lost Pet PDF] Data received:', {
     name: petData.name,
+    id: petData.id,
     emergencyContact: petData.emergencyContact,
-    emergencyContact2: petData.second_emergency_contact,
-    lastSeenLocation: petData.last_seen_location,
-    distinctiveFeatures: petData.distinctive_features,
-    keys: Object.keys(petData)
+    secondEmergencyContact: petData.second_emergency_contact,
+    // Lost pet specific fields
+    last_seen_location: petData.last_seen_location,
+    last_seen_date: petData.last_seen_date,
+    last_seen_time: petData.last_seen_time,
+    distinctive_features: petData.distinctive_features,
+    reward_amount: petData.reward_amount,
+    finder_instructions: petData.finder_instructions,
+    emergency_notes: petData.emergency_notes,
+    contact_priority: petData.contact_priority,
+    // Full keys for debugging
+    allKeys: Object.keys(petData)
   });
+  
+  // Log missing critical fields
+  const missingFields = [];
+  if (!petData.last_seen_location) missingFields.push('last_seen_location');
+  if (!petData.reward_amount) missingFields.push('reward_amount');
+  if (!petData.finder_instructions) missingFields.push('finder_instructions');
+  
+  if (missingFields.length > 0) {
+    console.warn('⚠️ [Lost Pet PDF] Missing recommended fields:', missingFields);
+  }
+  // ========================================================
   
   // Red banner across the top
   doc.setFillColor(220, 38, 38); // Red color (#dc2626)
@@ -714,26 +735,38 @@ pageManager.addY(6);
     addText(doc, pageManager, `PetPort ID: ${safeText(petData.id)}`, '#000000', 11);
   });
   
-  // Last seen information (if available from lost pet data)
-  if (petData.last_seen_location || petData.last_seen_date) {
-    pageManager.addY(4);
-    addCompactSection(doc, pageManager, 'LAST SEEN', () => {
-      let lastSeenText = '';
-      if (petData.last_seen_location) {
-        lastSeenText += `Location: ${safeText(petData.last_seen_location)}`;
-      }
-      if (petData.last_seen_date) {
-        const dateStr = petData.last_seen_date instanceof Date 
-          ? petData.last_seen_date.toLocaleDateString()
-          : new Date(petData.last_seen_date).toLocaleDateString();
-        lastSeenText += lastSeenText ? ` | Date: ${dateStr}` : `Date: ${dateStr}`;
-      }
-      if (petData.last_seen_time) {
-        lastSeenText += lastSeenText ? ` | Time: ${safeText(petData.last_seen_time)}` : `Time: ${safeText(petData.last_seen_time)}`;
-      }
-      addText(doc, pageManager, lastSeenText, '#000000', 12);
-    });
-  }
+  // ============= PHASE 3: ALWAYS VISIBLE LAST SEEN SECTION =============
+  // Always show this section, even if data is missing
+  pageManager.addY(4);
+  addCompactSection(doc, pageManager, 'LAST SEEN', () => {
+    let lastSeenText = '';
+    
+    if (petData.last_seen_location) {
+      lastSeenText += `Location: ${safeText(petData.last_seen_location)}`;
+    } else {
+      lastSeenText += 'Location: (Not specified - add in Lost Pet Settings)';
+    }
+    
+    if (petData.last_seen_date) {
+      const dateStr = petData.last_seen_date instanceof Date 
+        ? petData.last_seen_date.toLocaleDateString()
+        : new Date(petData.last_seen_date).toLocaleDateString();
+      lastSeenText += lastSeenText ? ` | Date: ${dateStr}` : `Date: ${dateStr}`;
+    } else {
+      lastSeenText += ' | Date: (Not specified)';
+    }
+    
+    if (petData.last_seen_time) {
+      lastSeenText += ` | Time: ${safeText(petData.last_seen_time)}`;
+    }
+    
+    addText(doc, pageManager, lastSeenText, '#000000', 12);
+    
+    if (!petData.last_seen_location) {
+      console.warn('⚠️ [Lost Pet PDF] LAST SEEN section rendered without location data');
+    }
+  });
+  // ====================================================================
   
   // Special markings/description
   if (petData.bio || petData.distinctive_features) {
@@ -816,23 +849,28 @@ pageManager.addY(6);
     doc.setTextColor(0, 0, 0); // Reset text color
   }
   
-  // Combined Finder Instructions section
+  // ============= PHASE 3: ALWAYS VISIBLE FINDER INSTRUCTIONS =============
   pageManager.addY(4);
   addCompactSection(doc, pageManager, 'FINDER INSTRUCTIONS', () => {
     // Add custom instructions if available
     if (petData.finder_instructions) {
       addText(doc, pageManager, safeText(petData.finder_instructions), '#000000', 12);
       pageManager.addY(2);
+    } else {
+      addText(doc, pageManager, 'If you find this pet, please follow these steps:', '#000000', 12);
+      pageManager.addY(2);
+      console.warn('⚠️ [Lost Pet PDF] FINDER INSTRUCTIONS section rendered without custom instructions');
     }
-    // Standard instructions
+    // Always show standard instructions
     addText(doc, pageManager, '1. Approach calmly and speak softly', '#000000', 11);
     addText(doc, pageManager, '2. Check for identification tags or collar', '#000000', 11);
     addText(doc, pageManager, '3. Contact numbers listed above immediately', '#000000', 11);
     addText(doc, pageManager, '4. Keep pet safe and contained if possible', '#000000', 11);
     addText(doc, pageManager, '5. Pet may be scared and not respond to name', '#000000', 11);
   });
+  // ====================================================================
 
-// Compact reward section
+// ============= PHASE 3: ALWAYS VISIBLE REWARD SECTION =============
 pageManager.addY(4);
 // Render "REWARD OFFERED" and the amount on the same line
 const rewardLabel = 'REWARD OFFERED';
@@ -843,16 +881,27 @@ doc.setFontSize(16);
 doc.setTextColor('#dc2626');
 doc.text(rewardLabel, baseX, baseY);
 let lineAdvance = 8;
+
 if (petData.reward_amount) {
   const labelWidth = doc.getTextWidth(rewardLabel) + 3; // small gap
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(12);
   doc.setTextColor('#000000');
   doc.text(`${safeText(petData.reward_amount)}`, baseX + labelWidth, baseY);
+} else {
+  // Show placeholder when no reward amount specified
+  const labelWidth = doc.getTextWidth(rewardLabel) + 3;
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(12);
+  doc.setTextColor('#666666');
+  doc.text('(Contact owner for details)', baseX + labelWidth, baseY);
+  console.warn('⚠️ [Lost Pet PDF] REWARD section rendered without amount specified');
 }
+
 pageManager.addY(lineAdvance);
 addText(doc, pageManager, 'PLEASE CONTACT IMMEDIATELY IF FOUND!', '#dc2626', 12);
 pageManager.addY(6);
+// ====================================================================
 
 // QR code linking to live missing pet page
 try {

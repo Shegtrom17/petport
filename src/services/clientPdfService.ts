@@ -711,7 +711,7 @@ pageManager.addY(6);
   
   // Reset X position and move below both columns
   pageManager.setX(originalX);
-  pageManager.setY(Math.max(currentY + 80, pageManager.getCurrentY()));
+  pageManager.setY(Math.max(currentY + 98, pageManager.getCurrentY()));
   
   // Emergency contact information - compact format
   pageManager.addY(4);

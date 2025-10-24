@@ -122,10 +122,10 @@ export default function LostPetFeatures() {
           <div className="max-w-4xl mx-auto">
             <div className="text-center mb-8">
               <h2 className="text-3xl md:text-4xl font-bold mb-4">
-                Try Our Free Lost Pet Flyer Generator
+                Our Gift: A Free Tool to Bring Them Home
               </h2>
               <p className="text-lg text-muted-foreground">
-                Create a basic flyer right now - no signup required
+                Create a printable lost pet flyer in seconds — It's our way of giving every pet a voice when it matters most.
               </p>
             </div>
 

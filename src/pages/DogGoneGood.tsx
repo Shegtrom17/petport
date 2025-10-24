@@ -875,9 +875,9 @@ export default function DogGoneGood() {
           </div>
 
           <div className="grid md:grid-cols-3 gap-6">
-            {/* Lost Pet Flyer - Featured */}
+            {/* Lost Pet Flyer - Featured with Red Branding */}
             <Card 
-              className="border-2 border-amber-400 bg-gradient-to-br from-amber-50 to-orange-50 hover:shadow-xl transition-shadow cursor-pointer group"
+              className="border-2 border-red-500 bg-gradient-to-br from-red-50 to-rose-50 hover:shadow-xl transition-shadow cursor-pointer group"
               onClick={() => {
                 navigate('/demos/missing-pet');
                 if (typeof window !== 'undefined' && 'gtag' in window) {
@@ -890,22 +890,22 @@ export default function DogGoneGood() {
             >
               <CardContent className="p-6">
                 <div className="flex items-start justify-between mb-3">
-                  <div className="p-3 bg-amber-400 rounded-lg">
-                    <AlertTriangle className="h-6 w-6 text-white" />
+                  <div className="p-3 bg-red-600 rounded-lg">
+                    <AlertTriangle className="h-6 w-6 text-white animate-pulse" />
                   </div>
-                  <span className="bg-amber-400 text-white text-xs font-bold px-2 py-1 rounded-full">
-                    MOST POPULAR
+                  <span className="bg-red-600 text-white text-xs font-bold px-2 py-1 rounded-full">
+                    EMERGENCY TOOL
                   </span>
                 </div>
-                <h3 className="text-xl font-bold text-amber-900 mb-2 group-hover:text-amber-700">
+                <h3 className="text-xl font-bold text-red-900 mb-2 group-hover:text-red-700">
                   Lost Pet Flyer Generator
                 </h3>
-                <p className="text-amber-800 text-sm mb-4">
-                  Generate professional lost pet flyers with custom details, photos, and QR codes in seconds.
+                <p className="text-gray-700 text-sm mb-4">
+                  Generate professional missing pet flyers with custom details, photos, and QR codes in seconds. Every minute counts.
                 </p>
                 <Button 
                   variant="default" 
-                  className="w-full bg-amber-400 hover:bg-amber-500 text-white"
+                  className="w-full bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white"
                   onClick={(e) => {
                     e.stopPropagation();
                     navigate('/demos/missing-pet');
@@ -1013,26 +1013,31 @@ export default function DogGoneGood() {
       {/* Ad Slot - Footer */}
       <div id="adslot-doggone-footer" className="max-w-7xl mx-auto px-4 py-4" />
 
-      {/* Exit Intent Modal */}
+      {/* Exit Intent Modal - Lost Pet Branded */}
       <Dialog open={showExitIntent} onOpenChange={setShowExitIntent}>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="sm:max-w-md bg-gradient-to-br from-red-50 to-rose-50 border-2 border-red-500">
           <DialogHeader>
-            <DialogTitle className="text-2xl text-brand-primary">Wait! Before You Go... 🐾</DialogTitle>
-            <DialogDescription className="text-base">
-              Did you know PetPort can help keep your pet safe?
+            <DialogTitle className="text-2xl font-bold text-red-900 flex items-center gap-2">
+              <AlertTriangle className="w-7 h-7 text-red-600 animate-pulse" />
+              Wait! Lost Pet Emergency Tool
+            </DialogTitle>
+            <DialogDescription className="text-base text-red-800">
+              Every minute counts when your pet goes missing
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
-            <div className="bg-amber-50 border-2 border-amber-400 rounded-lg p-4">
+            <div className="bg-white/90 border-2 border-red-400 rounded-lg p-4 shadow-lg">
               <div className="flex items-center gap-3 mb-2">
-                <AlertTriangle className="h-6 w-6 text-amber-600" />
-                <h4 className="font-bold text-amber-900">Lost Pet Flyer Generator</h4>
+                <div className="p-2 bg-red-100 rounded-lg">
+                  <AlertTriangle className="h-6 w-6 text-red-700" />
+                </div>
+                <h4 className="font-bold text-red-900">Lost Pet Flyer Generator</h4>
               </div>
-              <p className="text-sm text-amber-800 mb-3">
-                If your pet ever goes missing, generate a professional flyer in seconds with custom details and QR codes.
+              <p className="text-sm text-gray-700 mb-3">
+                Generate professional missing pet flyers in seconds with custom details, QR codes, and contact information.
               </p>
               <Button 
-                className="w-full bg-amber-400 hover:bg-amber-500 text-white"
+                className="w-full bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white"
                 onClick={() => {
                   navigate('/demos/missing-pet');
                   setShowExitIntent(false);
@@ -1050,6 +1055,7 @@ export default function DogGoneGood() {
             <div className="text-center">
               <Button 
                 variant="outline"
+                className="border-red-500 text-red-700 hover:bg-red-50"
                 onClick={() => {
                   navigate('/demos');
                   setShowExitIntent(false);
@@ -1074,15 +1080,15 @@ export default function DogGoneGood() {
           <div className="space-y-4">
             <div className="grid grid-cols-2 gap-3">
               <div 
-                className="p-4 border-2 border-amber-400 rounded-lg cursor-pointer hover:bg-amber-50 transition-colors"
+                className="p-4 border-2 border-red-500 rounded-lg cursor-pointer hover:bg-red-50 transition-colors bg-gradient-to-br from-red-50 to-rose-50"
                 onClick={() => {
                   navigate('/demos/missing-pet');
                   setShowPostDownload(false);
                 }}
               >
-                <AlertTriangle className="h-8 w-8 text-amber-600 mb-2" />
-                <h4 className="font-bold text-sm text-amber-900 mb-1">Lost Pet Flyers</h4>
-                <p className="text-xs text-amber-800">Generate in seconds</p>
+                <AlertTriangle className="h-8 w-8 text-red-600 mb-2" />
+                <h4 className="font-bold text-sm text-red-900 mb-1">Lost Pet Flyers</h4>
+                <p className="text-xs text-red-700">Generate in seconds</p>
               </div>
               <div 
                 className="p-4 border-2 border-brand-primary/30 rounded-lg cursor-pointer hover:bg-brand-primary/5 transition-colors"

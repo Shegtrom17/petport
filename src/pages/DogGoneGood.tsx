@@ -91,12 +91,20 @@ export default function DogGoneGood() {
   const [showExitIntent, setShowExitIntent] = useState(false);
   const [showPostDownload, setShowPostDownload] = useState(false);
   const [dismissedSticky, setDismissedSticky] = useState(false);
+  const [isCanvasReady, setIsCanvasReady] = useState(false);
+  const [photosLoading, setPhotosLoading] = useState(false);
 
   const currentOptions = species === 'horse' ? horseOptions : dogCatOptions;
   const currentTheme = themes[theme];
 
   useEffect(() => {
-    renderCanvas();
+    setIsCanvasReady(false);
+    const timer = setTimeout(() => {
+      renderCanvas();
+      // Mark as ready after a short delay to ensure all async operations complete
+      setTimeout(() => setIsCanvasReady(true), 300);
+    }, 100);
+    return () => clearTimeout(timer);
   }, [formData, petName, photoPreview1, photoPreview2, species, theme]);
 
   const handlePhotoUpload = (photoNumber: 1 | 2) => (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -113,18 +121,45 @@ export default function DogGoneGood() {
       return;
     }
 
+    setPhotosLoading(true);
+    setIsCanvasReady(false);
+
     if (photoNumber === 1) {
       setPhotoFile1(file);
       const reader = new FileReader();
       reader.onloadend = () => {
-        setPhotoPreview1(reader.result as string);
+        const imgSrc = reader.result as string;
+        // Preload image to ensure it's ready
+        const img = new Image();
+        img.onload = () => {
+          setPhotoPreview1(imgSrc);
+          setPhotosLoading(false);
+          toast.success("Photo 1 loaded!");
+        };
+        img.onerror = () => {
+          setPhotosLoading(false);
+          toast.error("Failed to load photo");
+        };
+        img.src = imgSrc;
       };
       reader.readAsDataURL(file);
     } else {
       setPhotoFile2(file);
       const reader = new FileReader();
       reader.onloadend = () => {
-        setPhotoPreview2(reader.result as string);
+        const imgSrc = reader.result as string;
+        // Preload image to ensure it's ready
+        const img = new Image();
+        img.onload = () => {
+          setPhotoPreview2(imgSrc);
+          setPhotosLoading(false);
+          toast.success("Photo 2 loaded!");
+        };
+        img.onerror = () => {
+          setPhotosLoading(false);
+          toast.error("Failed to load photo");
+        };
+        img.src = imgSrc;
       };
       reader.readAsDataURL(file);
     }
@@ -440,17 +475,33 @@ export default function DogGoneGood() {
 
   const downloadJPEG = async () => {
     try {
+      // Haptic feedback on mobile
+      if ('vibrate' in navigator) {
+        navigator.vibrate(50);
+      }
+
+      toast.loading('Preparing your résumé...', { id: 'download-prep' });
+      
+      // Force re-render canvas with current data
+      await new Promise(resolve => {
+        renderCanvas();
+        setTimeout(resolve, 500); // Wait for canvas to fully render
+      });
+
       const blob = await generateJPEGBlob();
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `petport-resume-${theme}-${species}-${Date.now()}.jpg`;
+      const fileName = petName 
+        ? `${petName.toLowerCase().replace(/\s+/g, '-')}-resume-${theme}.jpg`
+        : `petport-resume-${theme}-${species}-${Date.now()}.jpg`;
+      a.download = fileName;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
       
-      toast.success('Resume downloaded! 🎉');
+      toast.success('Resume downloaded! 🎉', { id: 'download-prep' });
       setShowCTA(true);
       setShowPostDownload(true);
 
@@ -463,19 +514,27 @@ export default function DogGoneGood() {
       }
     } catch (error) {
       console.error('Download failed:', error);
-      toast.error('Failed to download image');
+      toast.error('Failed to download image', { id: 'download-prep' });
     }
   };
 
   const viewResume = async () => {
     try {
+      toast.loading('Preparing preview...', { id: 'view-prep' });
+      
+      // Force re-render canvas with current data
+      await new Promise(resolve => {
+        renderCanvas();
+        setTimeout(resolve, 500);
+      });
+
       const blob = await generateJPEGBlob();
       const url = URL.createObjectURL(blob);
       window.open(url, '_blank');
-      toast.success('Opening résumé in new tab! 👀');
+      toast.success('Opening résumé in new tab! 👀', { id: 'view-prep' });
     } catch (error) {
       console.error('View failed:', error);
-      toast.error('Failed to open résumé');
+      toast.error('Failed to open résumé', { id: 'view-prep' });
     }
   };
 
@@ -487,8 +546,24 @@ export default function DogGoneGood() {
     }
 
     try {
+      // Haptic feedback on mobile
+      if ('vibrate' in navigator) {
+        navigator.vibrate(50);
+      }
+
+      toast.loading('Preparing to share...', { id: 'share-prep' });
+      
+      // Force re-render canvas with current data
+      await new Promise(resolve => {
+        renderCanvas();
+        setTimeout(resolve, 500);
+      });
+
       const blob = await generateJPEGBlob();
-      const file = new File([blob], `petport-resume-${theme}-${species}.jpg`, { type: 'image/jpeg' });
+      const fileName = petName 
+        ? `${petName.toLowerCase().replace(/\s+/g, '-')}-resume-${theme}.jpg`
+        : `petport-resume-${theme}-${species}.jpg`;
+      const file = new File([blob], fileName, { type: 'image/jpeg' });
 
       await navigator.share({
         title: `${petName || 'My Pet'}'s Résumé`,
@@ -496,7 +571,7 @@ export default function DogGoneGood() {
         files: [file]
       });
 
-      toast.success("Shared successfully! 🎉");
+      toast.success("Shared successfully! 🎉", { id: 'share-prep' });
       setShowCTA(true);
 
       // Analytics
@@ -508,7 +583,7 @@ export default function DogGoneGood() {
       }
     } catch (error) {
       console.error('Share failed:', error);
-      toast.error('Share canceled');
+      toast.error('Share canceled', { id: 'share-prep' });
     }
   };
 
@@ -818,11 +893,24 @@ export default function DogGoneGood() {
 
             {/* Action Buttons */}
             <div className="space-y-3">
+              {!isCanvasReady && (
+                <div className="text-center text-sm text-gray-600 bg-yellow-50 border border-yellow-200 rounded-lg p-3">
+                  <Camera className="inline-block mr-2 h-4 w-4 animate-pulse" />
+                  Rendering your résumé...
+                </div>
+              )}
+              {photosLoading && (
+                <div className="text-center text-sm text-gray-600 bg-blue-50 border border-blue-200 rounded-lg p-3">
+                  <Camera className="inline-block mr-2 h-4 w-4 animate-pulse" />
+                  Loading photo...
+                </div>
+              )}
               <Button 
                 onClick={viewResume}
                 size="lg"
                 variant="outline"
-                className="w-full border-brand-primary text-brand-primary hover:bg-brand-primary/10"
+                disabled={!isCanvasReady || photosLoading}
+                className="w-full border-brand-primary text-brand-primary hover:bg-brand-primary/10 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <Eye className="mr-2 h-5 w-5" />
                 View Full Size
@@ -830,7 +918,8 @@ export default function DogGoneGood() {
               <Button 
                 onClick={downloadJPEG}
                 size="lg"
-                className="w-full bg-brand-primary text-white hover:bg-brand-primary/90"
+                disabled={!isCanvasReady || photosLoading}
+                className="w-full bg-brand-primary text-white hover:bg-brand-primary/90 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <Download className="mr-2 h-5 w-5" />
                 Download as Image
@@ -839,7 +928,8 @@ export default function DogGoneGood() {
                 onClick={shareNative}
                 size="lg"
                 variant="outline"
-                className="w-full border-brand-primary text-brand-primary hover:bg-brand-primary hover:text-white"
+                disabled={!isCanvasReady || photosLoading}
+                className="w-full border-brand-primary text-brand-primary hover:bg-brand-primary hover:text-white disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <Share2 className="mr-2 h-5 w-5" />
                 Share on Social

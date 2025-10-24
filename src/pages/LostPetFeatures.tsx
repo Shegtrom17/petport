@@ -52,7 +52,7 @@ export default function LostPetFeatures() {
                 muted 
                 playsInline
               >
-                <source src="/hero-14.mp4" type="video/mp4" />
+                <source src="/hero-15.mp4" type="video/mp4" />
               </video>
               <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent flex items-end justify-center p-6">
                 <p className="text-sm text-muted-foreground">One-tap flyer generation in action</p>

@@ -2,8 +2,16 @@ import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { MetaTags } from "@/components/MetaTags";
-import { Sparkles, Download, Share2, Wand2, Eye } from "lucide-react";
+import { Sparkles, Download, Share2, Wand2, Eye, X, Heart, FileText, AlertTriangle, Camera } from "lucide-react";
 import { toast } from "sonner";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Card, CardContent } from "@/components/ui/card";
 import {
   Select,
   SelectContent,
@@ -80,6 +88,9 @@ export default function DogGoneGood() {
   });
   const [showCTA, setShowCTA] = useState(false);
   const [isRandomizing, setIsRandomizing] = useState(false);
+  const [showExitIntent, setShowExitIntent] = useState(false);
+  const [showPostDownload, setShowPostDownload] = useState(false);
+  const [dismissedSticky, setDismissedSticky] = useState(false);
 
   const currentOptions = species === 'horse' ? horseOptions : dogCatOptions;
   const currentTheme = themes[theme];
@@ -429,6 +440,7 @@ export default function DogGoneGood() {
       
       toast.success('Resume downloaded! 🎉');
       setShowCTA(true);
+      setShowPostDownload(true);
 
       // Analytics
       if (typeof window !== 'undefined' && 'gtag' in window) {
@@ -537,6 +549,25 @@ export default function DogGoneGood() {
       });
     }
   }, []);
+
+  // Exit intent detection
+  useEffect(() => {
+    const handleMouseLeave = (e: MouseEvent) => {
+      if (e.clientY <= 0 && !showExitIntent && !showPostDownload) {
+        setShowExitIntent(true);
+        
+        if (typeof window !== 'undefined' && 'gtag' in window) {
+          (window as any).gtag('event', 'exit_intent_shown', {
+            event_category: 'engagement',
+            event_label: 'funnel'
+          });
+        }
+      }
+    };
+
+    document.addEventListener('mouseleave', handleMouseLeave);
+    return () => document.removeEventListener('mouseleave', handleMouseLeave);
+  }, [showExitIntent, showPostDownload]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-brand-cream via-white to-brand-cream">
@@ -831,10 +862,318 @@ export default function DogGoneGood() {
             )}
           </div>
         </div>
+
+        {/* Feature Showcase Section - Inline Funnel */}
+        <div className="mt-16 mb-12">
+          <div className="text-center mb-8">
+            <h2 className="text-3xl font-bold text-brand-primary mb-3">
+              What Else Can You Create?
+            </h2>
+            <p className="text-brand-primary-dark max-w-2xl mx-auto">
+              This free résumé generator is just the beginning. See what else PetPort can do for your pets.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-6">
+            {/* Lost Pet Flyer - Featured */}
+            <Card 
+              className="border-2 border-amber-400 bg-gradient-to-br from-amber-50 to-orange-50 hover:shadow-xl transition-shadow cursor-pointer group"
+              onClick={() => {
+                navigate('/demos/missing-pet');
+                if (typeof window !== 'undefined' && 'gtag' in window) {
+                  (window as any).gtag('event', 'feature_card_click', {
+                    event_category: 'conversion',
+                    event_label: 'lost_pet_flyer'
+                  });
+                }
+              }}
+            >
+              <CardContent className="p-6">
+                <div className="flex items-start justify-between mb-3">
+                  <div className="p-3 bg-amber-400 rounded-lg">
+                    <AlertTriangle className="h-6 w-6 text-white" />
+                  </div>
+                  <span className="bg-amber-400 text-white text-xs font-bold px-2 py-1 rounded-full">
+                    MOST POPULAR
+                  </span>
+                </div>
+                <h3 className="text-xl font-bold text-amber-900 mb-2 group-hover:text-amber-700">
+                  Lost Pet Flyer Generator
+                </h3>
+                <p className="text-amber-800 text-sm mb-4">
+                  Generate professional lost pet flyers with custom details, photos, and QR codes in seconds.
+                </p>
+                <Button 
+                  variant="default" 
+                  className="w-full bg-amber-400 hover:bg-amber-500 text-white"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    navigate('/demos/missing-pet');
+                  }}
+                >
+                  Try It Free →
+                </Button>
+              </CardContent>
+            </Card>
+
+            {/* Pet Profile */}
+            <Card 
+              className="border-brand-primary/20 hover:border-brand-primary hover:shadow-xl transition-all cursor-pointer group"
+              onClick={() => {
+                navigate('/demos');
+                if (typeof window !== 'undefined' && 'gtag' in window) {
+                  (window as any).gtag('event', 'feature_card_click', {
+                    event_category: 'conversion',
+                    event_label: 'pet_profile'
+                  });
+                }
+              }}
+            >
+              <CardContent className="p-6">
+                <div className="p-3 bg-brand-primary/10 rounded-lg mb-3 w-fit">
+                  <Heart className="h-6 w-6 text-brand-primary" />
+                </div>
+                <h3 className="text-xl font-bold text-brand-primary mb-2 group-hover:text-brand-secondary">
+                  Digital Pet Profiles
+                </h3>
+                <p className="text-brand-primary-dark text-sm mb-4">
+                  Create beautiful, shareable profiles with photos, medical records, care instructions & more.
+                </p>
+                <Button 
+                  variant="outline" 
+                  className="w-full border-brand-primary text-brand-primary hover:bg-brand-primary hover:text-white"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    navigate('/demos');
+                  }}
+                >
+                  See Demo →
+                </Button>
+              </CardContent>
+            </Card>
+
+            {/* Pet Gallery */}
+            <Card 
+              className="border-brand-primary/20 hover:border-brand-primary hover:shadow-xl transition-all cursor-pointer group"
+              onClick={() => {
+                navigate('/demos/gallery');
+                if (typeof window !== 'undefined' && 'gtag' in window) {
+                  (window as any).gtag('event', 'feature_card_click', {
+                    event_category: 'conversion',
+                    event_label: 'gallery'
+                  });
+                }
+              }}
+            >
+              <CardContent className="p-6">
+                <div className="p-3 bg-brand-primary/10 rounded-lg mb-3 w-fit">
+                  <Camera className="h-6 w-6 text-brand-primary" />
+                </div>
+                <h3 className="text-xl font-bold text-brand-primary mb-2 group-hover:text-brand-secondary">
+                  Photo Galleries
+                </h3>
+                <p className="text-brand-primary-dark text-sm mb-4">
+                  Share unlimited photos & videos of your pets with friends and family in beautiful galleries.
+                </p>
+                <Button 
+                  variant="outline" 
+                  className="w-full border-brand-primary text-brand-primary hover:bg-brand-primary hover:text-white"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    navigate('/demos/gallery');
+                  }}
+                >
+                  See Demo →
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* CTA Below Cards */}
+          <div className="text-center mt-8">
+            <Button 
+              size="lg"
+              className="bg-gradient-to-r from-brand-primary to-brand-secondary text-white hover:opacity-90"
+              onClick={() => {
+                navigate('/#pricing?utm_source=doggone&utm_medium=showcase&utm_campaign=viral');
+                if (typeof window !== 'undefined' && 'gtag' in window) {
+                  (window as any).gtag('event', 'showcase_cta_click', {
+                    event_category: 'conversion',
+                    event_label: 'start_free_trial'
+                  });
+                }
+              }}
+            >
+              Start Your Free Trial
+            </Button>
+          </div>
+        </div>
       </main>
 
       {/* Ad Slot - Footer */}
       <div id="adslot-doggone-footer" className="max-w-7xl mx-auto px-4 py-4" />
+
+      {/* Exit Intent Modal */}
+      <Dialog open={showExitIntent} onOpenChange={setShowExitIntent}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-2xl text-brand-primary">Wait! Before You Go... 🐾</DialogTitle>
+            <DialogDescription className="text-base">
+              Did you know PetPort can help keep your pet safe?
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="bg-amber-50 border-2 border-amber-400 rounded-lg p-4">
+              <div className="flex items-center gap-3 mb-2">
+                <AlertTriangle className="h-6 w-6 text-amber-600" />
+                <h4 className="font-bold text-amber-900">Lost Pet Flyer Generator</h4>
+              </div>
+              <p className="text-sm text-amber-800 mb-3">
+                If your pet ever goes missing, generate a professional flyer in seconds with custom details and QR codes.
+              </p>
+              <Button 
+                className="w-full bg-amber-400 hover:bg-amber-500 text-white"
+                onClick={() => {
+                  navigate('/demos/missing-pet');
+                  setShowExitIntent(false);
+                  if (typeof window !== 'undefined' && 'gtag' in window) {
+                    (window as any).gtag('event', 'exit_intent_conversion', {
+                      event_category: 'conversion',
+                      event_label: 'lost_pet_demo'
+                    });
+                  }
+                }}
+              >
+                Try Lost Pet Flyer →
+              </Button>
+            </div>
+            <div className="text-center">
+              <Button 
+                variant="outline"
+                onClick={() => {
+                  navigate('/demos');
+                  setShowExitIntent(false);
+                }}
+              >
+                See All Features
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Post-Download Modal */}
+      <Dialog open={showPostDownload} onOpenChange={setShowPostDownload}>
+        <DialogContent className="sm:max-w-lg">
+          <DialogHeader>
+            <DialogTitle className="text-2xl text-brand-primary">Love Your Résumé? 🎉</DialogTitle>
+            <DialogDescription className="text-base">
+              Imagine what you could do with a full PetPort profile...
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="grid grid-cols-2 gap-3">
+              <div 
+                className="p-4 border-2 border-amber-400 rounded-lg cursor-pointer hover:bg-amber-50 transition-colors"
+                onClick={() => {
+                  navigate('/demos/missing-pet');
+                  setShowPostDownload(false);
+                }}
+              >
+                <AlertTriangle className="h-8 w-8 text-amber-600 mb-2" />
+                <h4 className="font-bold text-sm text-amber-900 mb-1">Lost Pet Flyers</h4>
+                <p className="text-xs text-amber-800">Generate in seconds</p>
+              </div>
+              <div 
+                className="p-4 border-2 border-brand-primary/30 rounded-lg cursor-pointer hover:bg-brand-primary/5 transition-colors"
+                onClick={() => {
+                  navigate('/demos');
+                  setShowPostDownload(false);
+                }}
+              >
+                <FileText className="h-8 w-8 text-brand-primary mb-2" />
+                <h4 className="font-bold text-sm text-brand-primary mb-1">Medical Records</h4>
+                <p className="text-xs text-brand-primary-dark">Store & share</p>
+              </div>
+              <div 
+                className="p-4 border-2 border-brand-primary/30 rounded-lg cursor-pointer hover:bg-brand-primary/5 transition-colors"
+                onClick={() => {
+                  navigate('/demos/care');
+                  setShowPostDownload(false);
+                }}
+              >
+                <Heart className="h-8 w-8 text-brand-primary mb-2" />
+                <h4 className="font-bold text-sm text-brand-primary mb-1">Care Instructions</h4>
+                <p className="text-xs text-brand-primary-dark">For sitters</p>
+              </div>
+              <div 
+                className="p-4 border-2 border-brand-primary/30 rounded-lg cursor-pointer hover:bg-brand-primary/5 transition-colors"
+                onClick={() => {
+                  navigate('/demos/gallery');
+                  setShowPostDownload(false);
+                }}
+              >
+                <Camera className="h-8 w-8 text-brand-primary mb-2" />
+                <h4 className="font-bold text-sm text-brand-primary mb-1">Photo Gallery</h4>
+                <p className="text-xs text-brand-primary-dark">Unlimited storage</p>
+              </div>
+            </div>
+            <Button 
+              size="lg"
+              className="w-full bg-gradient-to-r from-brand-primary to-brand-secondary text-white"
+              onClick={() => {
+                navigate('/#pricing?utm_source=doggone&utm_medium=post_download&utm_campaign=viral');
+                setShowPostDownload(false);
+                if (typeof window !== 'undefined' && 'gtag' in window) {
+                  (window as any).gtag('event', 'post_download_conversion', {
+                    event_category: 'conversion',
+                    event_label: 'pricing_page'
+                  });
+                }
+              }}
+            >
+              Start Free Trial
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Sticky Bottom Banner - Mobile Only */}
+      {!dismissedSticky && (
+        <div className="fixed bottom-0 left-0 right-0 bg-gradient-to-r from-amber-500 to-orange-500 text-white p-4 shadow-2xl z-50 md:hidden">
+          <button 
+            onClick={() => setDismissedSticky(true)}
+            className="absolute top-2 right-2 text-white/80 hover:text-white"
+          >
+            <X className="h-5 w-5" />
+          </button>
+          <div className="pr-8">
+            <div className="flex items-center gap-2 mb-2">
+              <AlertTriangle className="h-5 w-5" />
+              <h4 className="font-bold text-sm">Lost Pet Protection</h4>
+            </div>
+            <p className="text-xs text-white/90 mb-3">
+              Generate lost pet flyers instantly if your pet ever goes missing
+            </p>
+            <Button 
+              size="sm"
+              className="bg-white text-amber-600 hover:bg-amber-50 w-full"
+              onClick={() => {
+                navigate('/demos/missing-pet');
+                setDismissedSticky(true);
+                if (typeof window !== 'undefined' && 'gtag' in window) {
+                  (window as any).gtag('event', 'sticky_banner_click', {
+                    event_category: 'conversion',
+                    event_label: 'lost_pet_demo'
+                  });
+                }
+              }}
+            >
+              Try It Free →
+            </Button>
+          </div>
+        </div>
+      )}
 
       {/* Footer */}
       <footer className="border-t border-gray-200 mt-16 py-8">

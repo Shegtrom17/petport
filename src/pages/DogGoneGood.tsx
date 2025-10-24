@@ -88,7 +88,6 @@ export default function DogGoneGood() {
   });
   const [showCTA, setShowCTA] = useState(false);
   const [isRandomizing, setIsRandomizing] = useState(false);
-  const [showExitIntent, setShowExitIntent] = useState(false);
   const [showPostDownload, setShowPostDownload] = useState(false);
   const [dismissedSticky, setDismissedSticky] = useState(false);
   const [isCanvasReady, setIsCanvasReady] = useState(false);
@@ -637,24 +636,6 @@ export default function DogGoneGood() {
     }
   }, []);
 
-  // Exit intent detection
-  useEffect(() => {
-    const handleMouseLeave = (e: MouseEvent) => {
-      if (e.clientY <= 0 && !showExitIntent && !showPostDownload) {
-        setShowExitIntent(true);
-        
-        if (typeof window !== 'undefined' && 'gtag' in window) {
-          (window as any).gtag('event', 'exit_intent_shown', {
-            event_category: 'engagement',
-            event_label: 'funnel'
-          });
-        }
-      }
-    };
-
-    document.addEventListener('mouseleave', handleMouseLeave);
-    return () => document.removeEventListener('mouseleave', handleMouseLeave);
-  }, [showExitIntent, showPostDownload]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-brand-cream via-white to-brand-cream">
@@ -1115,60 +1096,6 @@ export default function DogGoneGood() {
       {/* Ad Slot - Footer */}
       <div id="adslot-doggone-footer" className="max-w-7xl mx-auto px-4 py-4" />
 
-      {/* Exit Intent Modal - Lost Pet Branded */}
-      <Dialog open={showExitIntent} onOpenChange={setShowExitIntent}>
-        <DialogContent className="sm:max-w-md bg-gradient-to-br from-red-50 to-rose-50 border-2 border-red-500">
-          <DialogHeader>
-            <DialogTitle className="text-2xl font-bold text-red-900 flex items-center gap-2">
-              <AlertTriangle className="w-7 h-7 text-red-600 animate-pulse" />
-              Wait! Lost Pet Emergency Tool
-            </DialogTitle>
-            <DialogDescription className="text-base text-red-800">
-              Every minute counts when your pet goes missing
-            </DialogDescription>
-          </DialogHeader>
-          <div className="space-y-4">
-            <div className="bg-white/90 border-2 border-red-400 rounded-lg p-4 shadow-lg">
-              <div className="flex items-center gap-3 mb-2">
-                <div className="p-2 bg-red-100 rounded-lg">
-                  <AlertTriangle className="h-6 w-6 text-red-700" />
-                </div>
-                <h4 className="font-bold text-red-900">Lost Pet Flyer Generator</h4>
-              </div>
-              <p className="text-sm text-gray-700 mb-3">
-                Generate professional missing pet flyers in seconds with custom details, QR codes, and contact information.
-              </p>
-              <Button 
-                className="w-full bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white"
-                onClick={() => {
-                  navigate('/demos/missing-pet');
-                  setShowExitIntent(false);
-                  if (typeof window !== 'undefined' && 'gtag' in window) {
-                    (window as any).gtag('event', 'exit_intent_conversion', {
-                      event_category: 'conversion',
-                      event_label: 'lost_pet_demo'
-                    });
-                  }
-                }}
-              >
-                Try Lost Pet Flyer →
-              </Button>
-            </div>
-            <div className="text-center">
-              <Button 
-                variant="outline"
-                className="border-red-500 text-red-700 hover:bg-red-50"
-                onClick={() => {
-                  navigate('/demos');
-                  setShowExitIntent(false);
-                }}
-              >
-                See All Features
-              </Button>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
 
       {/* Post-Download Modal */}
       <Dialog open={showPostDownload} onOpenChange={setShowPostDownload}>

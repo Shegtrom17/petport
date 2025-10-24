@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
 import { 
   AlertTriangle, 
   MapPin, 
@@ -12,21 +13,67 @@ import {
   Clock,
   AlertCircle,
   Camera,
-  Sparkles
+  Sparkles,
+  FileDown,
+  Eye,
+  Download,
+  Printer,
+  Loader2,
+  Copy,
+  Check,
+  MessageCircle,
+  Mail,
+  Facebook,
+  MessageSquare,
+  Smartphone,
+  Send,
+  X,
+  Share2
 } from "lucide-react";
 import { MetaTags } from "@/components/MetaTags";
 import { SocialShareButtons } from "@/components/SocialShareButtons";
+import { ContactOwnerModal } from "@/components/ContactOwnerModal";
 import { useNavigate } from "react-router-dom";
 import QRCode from "react-qr-code";
 import { supabase } from "@/integrations/supabase/client";
 import { sanitizeText, truncateText } from "@/utils/inputSanitizer";
+import { generateClientPetPDF, viewPDFBlob, downloadPDFBlob } from '@/services/clientPdfService';
+import { sharePDFBlob } from '@/services/pdfService';
+import { generateShareURL } from '@/utils/domainUtils';
+import { shareViaMessenger, copyToClipboard } from '@/utils/messengerShare';
+import { shareQRCode } from '@/utils/qrShare';
+import { toast } from 'sonner';
 
 const FINNEGAN_ID = "297d1397-c876-4075-bf24-41ee1862853a";
+
+interface PetSighting {
+  id: string;
+  pet_id: string;
+  sighting_text: string;
+  reported_at: string;
+  is_visible: boolean;
+}
 
 export default function DemoMissingPet() {
   const navigate = useNavigate();
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  
+  // PDF State
+  const [lostPetPdfBlob, setLostPetPdfBlob] = useState<Blob | null>(null);
+  const [isGeneratingLostPetPdf, setIsGeneratingLostPetPdf] = useState(false);
+  
+  // Share Options State
+  const [showShareOptions, setShowShareOptions] = useState(false);
+  const [copyingLink, setCopyingLink] = useState(false);
+  
+  // Contact Owner Modal State
+  const [showContactModal, setShowContactModal] = useState(false);
+  
+  // Sighting Board State
+  const [sightings, setSightings] = useState<PetSighting[]>([]);
+  const [sightingText, setSightingText] = useState('');
+  const [isSubmittingSighting, setIsSubmittingSighting] = useState(false);
 
   useEffect(() => {
     const load = async () => {
@@ -122,7 +169,221 @@ export default function DemoMissingPet() {
       }
     };
     load();
+    fetchSightings(FINNEGAN_ID);
+    
+    // Subscribe to real-time sighting updates
+    const channel = supabase
+      .channel('sighting-updates')
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'pet_sightings',
+          filter: `pet_id=eq.${FINNEGAN_ID}`
+        },
+        (payload) => {
+          const newSighting = payload.new as PetSighting;
+          if (newSighting.is_visible) {
+            setSightings(prev => [newSighting, ...prev]);
+            toast.success('New sighting reported!', {
+              description: 'Someone just reported seeing this pet'
+            });
+          }
+        }
+      )
+      .subscribe();
+    
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, []);
+  
+  // PDF Handler
+  const handleGenerateLostPetPDF = async () => {
+    if (!data?.id) {
+      toast.error("Pet data not available");
+      return;
+    }
+    
+    setIsGeneratingLostPetPdf(true);
+    toast.info("Generating Lost Pet Flyer...", { description: "Creating your missing pet alert." });
+    
+    try {
+      const result = await generateClientPetPDF(data, 'lost_pet');
+      
+      if (result.success && result.blob) {
+        setLostPetPdfBlob(result.blob);
+        toast.success("Lost Pet Flyer Ready!", { description: "Your flyer has been generated." });
+      } else {
+        throw new Error(result.error || "Failed to generate PDF");
+      }
+    } catch (error: any) {
+      console.error('[Lost Pet PDF] Generation failed:', error);
+      toast.error("Generation Failed", { description: "Could not generate flyer." });
+    } finally {
+      setIsGeneratingLostPetPdf(false);
+    }
+  };
+
+  const handleSharePdf = async () => {
+    if (!lostPetPdfBlob || !data) return;
+    
+    try {
+      const result = await sharePDFBlob(lostPetPdfBlob, `${data.name}_Missing_Flyer.pdf`, data.name, 'profile');
+      if (result.success) {
+        toast.success(result.shared ? "PDF Shared!" : "Link Copied!", { description: result.message });
+      } else {
+        throw new Error(result.error || 'Share failed');
+      }
+    } catch (error) {
+      console.error('Lost Pet PDF share error:', error);
+      toast.error("Share Failed", { description: "Unable to share PDF. Please try download instead." });
+    }
+  };
+
+  // Share handlers
+  const handleCopyLink = async () => {
+    if (!data) return;
+    setCopyingLink(true);
+    const directUrl = window.location.href;
+    const shareUrl = generateShareURL('missing-pet-share', data.id, directUrl);
+    try {
+      await navigator.clipboard.writeText(shareUrl);
+      toast.success('Link Copied!', { description: 'Missing pet alert link copied to clipboard' });
+    } catch (error) {
+      toast.error('Copy Failed', { description: 'Please try again' });
+    } finally {
+      setCopyingLink(false);
+    }
+  };
+
+  const handleSMSShare = () => {
+    if (!data) return;
+    const directUrl = window.location.href;
+    const shareUrl = generateShareURL('missing-pet-share', data.id, directUrl);
+    const message = `🚨 MISSING: ${data.name}! Last seen: ${data.lost_pet_data?.last_seen_location || 'location unknown'}. Help bring them home: ${shareUrl}`;
+    window.location.href = `sms:?body=${encodeURIComponent(message)}`;
+  };
+
+  const handleFacebookShare = () => {
+    if (!data) return;
+    const directUrl = window.location.href;
+    const shareUrl = generateShareURL('missing-pet-share', data.id, directUrl);
+    const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`;
+    window.open(facebookUrl, '_blank');
+  };
+
+  const handleMessengerShare = async () => {
+    if (!data) return;
+    const directUrl = window.location.href;
+    const shareUrl = generateShareURL('missing-pet-share', data.id, directUrl);
+    const needsFallback = await shareViaMessenger({
+      url: shareUrl,
+      title: `Help find ${data.name}!`,
+      text: `${data.name} is missing! Please help share their alert.`
+    });
+    
+    if (needsFallback) {
+      const copySuccess = await copyToClipboard(shareUrl);
+      if (copySuccess) {
+        toast.info("🐾 Link copied! Now paste it in Messenger.", {
+          duration: 3000,
+        });
+      }
+    }
+  };
+
+  const handleEmailShare = () => {
+    if (!data) return;
+    const directUrl = window.location.href;
+    const shareUrl = generateShareURL('missing-pet-share', data.id, directUrl);
+    const subject = `🚨 MISSING PET ALERT: ${data.name}`;
+    const body = `Please help us find ${data.name}!\n\nLast seen: ${data.lost_pet_data?.last_seen_location || 'location unknown'}\n\nView the full missing pet alert:\n${shareUrl}\n\nEvery share helps bring ${data.name} home safely. Thank you!`;
+    window.location.href = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  };
+
+  const handleShareQRCode = async () => {
+    if (!data) return;
+    await shareQRCode(
+      window.location.href, 
+      data.name, 
+      'LOST PET',
+      'dc2626',
+      `🚨 LOST PET: ${data.name} - Scan this QR code to help find them!`
+    );
+  };
+
+  // Sighting Board Functions
+  const fetchSightings = async (id: string) => {
+    try {
+      const { data: sightingsData, error } = await supabase
+        .from('pet_sightings')
+        .select('*')
+        .eq('pet_id', id)
+        .eq('is_visible', true)
+        .order('reported_at', { ascending: false })
+        .limit(20);
+      
+      if (error) throw error;
+      setSightings(sightingsData || []);
+    } catch (error) {
+      console.error('Error fetching sightings:', error);
+    }
+  };
+
+  const handleReportSighting = async () => {
+    if (!sightingText.trim() || !FINNEGAN_ID) return;
+    
+    setIsSubmittingSighting(true);
+    try {
+      const { error } = await supabase
+        .from('pet_sightings')
+        .insert({
+          pet_id: FINNEGAN_ID,
+          sighting_text: sightingText.trim().slice(0, 200),
+          is_visible: true
+        });
+      
+      if (error) throw error;
+      
+      // Send notification email to owner (fire and forget)
+      supabase.functions.invoke('notify-sighting', {
+        body: {
+          petId: FINNEGAN_ID,
+          sightingText: sightingText.trim().slice(0, 200),
+          reportedAt: new Date().toISOString()
+        }
+      }).catch(err => console.error('Failed to send sighting notification:', err));
+      
+      setSightingText('');
+      toast.success('Sighting reported!', {
+        description: 'Thank you for helping find this pet'
+      });
+    } catch (error) {
+      console.error('Error reporting sighting:', error);
+      toast.error('Failed to report sighting', {
+        description: 'Please try again'
+      });
+    } finally {
+      setIsSubmittingSighting(false);
+    }
+  };
+
+  const formatTimeAgo = (dateString: string) => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffMs = now.getTime() - date.getTime();
+    const diffMins = Math.floor(diffMs / 60000);
+    const diffHours = Math.floor(diffMs / 3600000);
+    const diffDays = Math.floor(diffMs / 86400000);
+    
+    if (diffMins < 1) return 'Just now';
+    if (diffMins < 60) return `${diffMins} minute${diffMins === 1 ? '' : 's'} ago`;
+    if (diffHours < 24) return `${diffHours} hour${diffHours === 1 ? '' : 's'} ago`;
+    if (diffDays < 7) return `${diffDays} day${diffDays === 1 ? '' : 's'} ago`;
+    return date.toLocaleDateString();
+  };
 
   if (loading) {
     return (
@@ -332,9 +593,95 @@ export default function DemoMissingPet() {
                   </a>
                 </div>
               ))}
+              
+              <div className="pt-4 border-t">
+                <Button
+                  onClick={() => setShowContactModal(true)}
+                  className="w-full"
+                  variant="outline"
+                >
+                  <Mail className="h-4 w-4 mr-2" />
+                  Contact Owner via Email
+                </Button>
+              </div>
             </CardContent>
           </Card>
         )}
+        
+        {/* Community Sighting Board */}
+        <Card className="mb-6 border-blue-500">
+          <CardHeader className="bg-gradient-to-r from-blue-500 to-blue-600 text-white">
+            <CardTitle className="flex items-center gap-2">
+              <AlertCircle className="h-6 w-6" />
+              Community Sighting Board
+            </CardTitle>
+            <p className="text-sm text-white/90 mt-2">
+              Help bring {data.name} home! Report any sightings below.
+            </p>
+          </CardHeader>
+          <CardContent className="space-y-4 pt-6">
+            {/* Report Sighting Form */}
+            <div className="bg-blue-50 p-4 rounded-lg border-2 border-blue-200">
+              <h4 className="font-semibold text-blue-900 mb-3 flex items-center gap-2">
+                <Send className="h-4 w-4" />
+                Report a Sighting
+              </h4>
+              <Textarea
+                placeholder={`Where did you see ${data.name}? Include location, date/time, and any other details...`}
+                value={sightingText}
+                onChange={(e) => setSightingText(e.target.value)}
+                maxLength={200}
+                className="mb-2 resize-none"
+                rows={3}
+              />
+              <div className="flex items-center justify-between">
+                <span className="text-xs text-muted-foreground">
+                  {sightingText.length}/200 characters
+                </span>
+                <Button
+                  onClick={handleReportSighting}
+                  disabled={!sightingText.trim() || isSubmittingSighting}
+                  className="bg-blue-600 hover:bg-blue-700"
+                >
+                  {isSubmittingSighting ? (
+                    <>
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      Submitting...
+                    </>
+                  ) : (
+                    <>
+                      <Send className="h-4 w-4 mr-2" />
+                      Report Sighting
+                    </>
+                  )}
+                </Button>
+              </div>
+            </div>
+
+            {/* Sightings List */}
+            {sightings.length > 0 ? (
+              <div className="space-y-3">
+                <h4 className="font-semibold text-sm text-muted-foreground">
+                  Recent Sightings ({sightings.length})
+                </h4>
+                {sightings.map((sighting) => (
+                  <div key={sighting.id} className="p-4 bg-white border border-blue-200 rounded-lg shadow-sm">
+                    <p className="text-sm text-gray-700 mb-2">{sighting.sighting_text}</p>
+                    <p className="text-xs text-muted-foreground">
+                      Reported {formatTimeAgo(sighting.reported_at)}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-8 text-muted-foreground">
+                <AlertCircle className="h-12 w-12 mx-auto mb-2 opacity-50" />
+                <p className="text-sm">No sightings reported yet.</p>
+                <p className="text-xs mt-1">Be the first to help!</p>
+              </div>
+            )}
+          </CardContent>
+        </Card>
 
         {/* Finder Instructions */}
         {lostData.finder_instructions && (
@@ -360,28 +707,146 @@ export default function DemoMissingPet() {
           </Card>
         )}
 
-        {/* QR Code Section */}
+        {/* Share & QR Code Section */}
         <Card className="mb-6">
           <CardHeader>
-            <CardTitle className="text-center">Share This Alert</CardTitle>
+            <CardTitle className="text-center flex items-center justify-center gap-2">
+              <Share2 className="h-6 w-6" />
+              Share This Alert
+            </CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex justify-center">
-              <div className="bg-white p-4 rounded-lg shadow-inner">
-                <QRCode value={shareUrl} size={200} />
-              </div>
+          <CardContent className="space-y-6">
+            {/* PDF Flyer Generation */}
+            <div className="space-y-3">
+              <h4 className="font-semibold text-center">Missing Pet Flyer</h4>
+              
+              {!lostPetPdfBlob ? (
+                <Button
+                  onClick={handleGenerateLostPetPDF}
+                  disabled={isGeneratingLostPetPdf}
+                  className="w-full bg-red-600 hover:bg-red-700"
+                  size="lg"
+                >
+                  {isGeneratingLostPetPdf ? (
+                    <>
+                      <Loader2 className="h-5 w-5 mr-2 animate-spin" />
+                      Generating Flyer...
+                    </>
+                  ) : (
+                    <>
+                      <FileDown className="h-5 w-5 mr-2" />
+                      Generate Missing Pet Flyer PDF
+                    </>
+                  )}
+                </Button>
+              ) : (
+                <div className="grid grid-cols-2 gap-2">
+                  <Button
+                    onClick={() => lostPetPdfBlob && viewPDFBlob(lostPetPdfBlob, `${data.name}_Missing_Flyer.pdf`)}
+                    variant="outline"
+                    className="flex items-center gap-2"
+                  >
+                    <Eye className="h-4 w-4" />
+                    View
+                  </Button>
+                  <Button
+                    onClick={() => lostPetPdfBlob && downloadPDFBlob(lostPetPdfBlob, `${data.name}_Missing_Flyer.pdf`)}
+                    variant="outline"
+                    className="flex items-center gap-2"
+                  >
+                    <Download className="h-4 w-4" />
+                    Download
+                  </Button>
+                  <Button
+                    onClick={() => lostPetPdfBlob && window.print()}
+                    variant="outline"
+                    className="flex items-center gap-2"
+                  >
+                    <Printer className="h-4 w-4" />
+                    Print
+                  </Button>
+                  <Button
+                    onClick={handleSharePdf}
+                    variant="outline"
+                    className="flex items-center gap-2"
+                  >
+                    <Share2 className="h-4 w-4" />
+                    Share
+                  </Button>
+                </div>
+              )}
             </div>
-            <p className="text-center text-sm text-muted-foreground">
-              Scan to view this missing pet alert on any device
-            </p>
-            <div className="flex justify-center">
-              <SocialShareButtons 
-                petName={data.name}
-                petId={data.id}
-                isMissingPet={true}
-                context="missing"
-                compact={true}
-              />
+
+            <div className="border-t pt-6">
+              <h4 className="font-semibold text-center mb-4">QR Code</h4>
+              <div className="flex justify-center mb-4">
+                <div className="bg-white p-4 rounded-lg shadow-inner">
+                  <QRCode value={shareUrl} size={200} />
+                </div>
+              </div>
+              <Button
+                onClick={handleShareQRCode}
+                variant="outline"
+                className="w-full border-red-600 text-red-600 hover:bg-red-50"
+              >
+                <Download className="h-4 w-4 mr-2" />
+                Share/Download LOST PET QR Code
+              </Button>
+            </div>
+
+            <div className="border-t pt-6">
+              <h4 className="font-semibold text-center mb-4">Advanced Share Options</h4>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                <Button
+                  onClick={handleCopyLink}
+                  variant="outline"
+                  disabled={copyingLink}
+                  className="flex flex-col items-center gap-2 h-auto py-4"
+                >
+                  {copyingLink ? <Check className="h-5 w-5" /> : <Copy className="h-5 w-5" />}
+                  <span className="text-xs">Copy Link</span>
+                </Button>
+                <Button
+                  onClick={handleSMSShare}
+                  variant="outline"
+                  className="flex flex-col items-center gap-2 h-auto py-4"
+                >
+                  <Smartphone className="h-5 w-5" />
+                  <span className="text-xs">SMS</span>
+                </Button>
+                <Button
+                  onClick={handleEmailShare}
+                  variant="outline"
+                  className="flex flex-col items-center gap-2 h-auto py-4"
+                >
+                  <Mail className="h-5 w-5" />
+                  <span className="text-xs">Email</span>
+                </Button>
+                <Button
+                  onClick={handleFacebookShare}
+                  variant="outline"
+                  className="flex flex-col items-center gap-2 h-auto py-4"
+                >
+                  <Facebook className="h-5 w-5" />
+                  <span className="text-xs">Facebook</span>
+                </Button>
+                <Button
+                  onClick={handleMessengerShare}
+                  variant="outline"
+                  className="flex flex-col items-center gap-2 h-auto py-4"
+                >
+                  <MessageSquare className="h-5 w-5" />
+                  <span className="text-xs">Messenger</span>
+                </Button>
+                <Button
+                  onClick={handleEmailShare}
+                  variant="outline"
+                  className="flex flex-col items-center gap-2 h-auto py-4"
+                >
+                  <MessageCircle className="h-5 w-5" />
+                  <span className="text-xs">More</span>
+                </Button>
+              </div>
             </div>
           </CardContent>
         </Card>
@@ -434,6 +899,15 @@ export default function DemoMissingPet() {
             Create Emergency Page
           </Button>
         </div>
+
+        {/* Contact Owner Modal */}
+        <ContactOwnerModal
+          isOpen={showContactModal}
+          onClose={() => setShowContactModal(false)}
+          petId={data.id}
+          petName={data.name}
+          pageType="missing"
+        />
 
         {/* Branding Footer */}
         <div className="text-center py-6 border-t">

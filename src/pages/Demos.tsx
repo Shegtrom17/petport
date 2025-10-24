@@ -183,26 +183,6 @@ export default function Demos() {
           </p>
         </div>
 
-        {/* Dog-Gone-Good Featured Card */}
-        <article className="bg-gradient-to-r from-brand-secondary to-brand-primary rounded-xl shadow-2xl overflow-hidden border-4 border-white mb-12">
-          <div className="p-8 text-white text-center">
-            <div className="inline-flex items-center gap-2 bg-white/20 rounded-full px-4 py-2 mb-4">
-              <Sparkles className="h-5 w-5" />
-              <span className="font-semibold">VIRAL FUN TOOL</span>
-            </div>
-            <h2 className="text-3xl font-bold mb-3">🎉 Dog-Gone-Good Résumé Generator</h2>
-            <p className="text-xl text-white/90 mb-6">
-              Create a hilarious, shareable résumé for your pet in 60 seconds. No signup required — just pure fun!
-            </p>
-            <Button 
-              onClick={() => navigate('/dog-gone-good')}
-              size="lg"
-              className="bg-white text-brand-primary hover:bg-brand-cream text-lg px-8"
-            >
-              Try It Now (Free!)
-            </Button>
-          </div>
-        </article>
 
         {/* Live Demos Available Banner */}
         <div className="bg-gradient-to-r from-brand-primary/10 to-brand-secondary/10 rounded-lg p-6 mb-12 border border-brand-primary/20">

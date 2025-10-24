@@ -106,48 +106,6 @@ export default function Learn() {
             </p>
           </div>
 
-          {/* Dog-Gone-Good Resume Generator Banner */}
-          <div className="mb-8 bg-gradient-to-r from-amber-50 to-orange-50 rounded-xl shadow-xl overflow-hidden border-2 border-amber-400/50 hover:border-amber-500 transition-all hover:shadow-2xl">
-            <div className="bg-gradient-to-r from-amber-500 to-orange-500 p-6 text-white">
-              <div className="flex items-center gap-3 mb-2">
-                <span className="text-3xl">🐾</span>
-                <h3 className="text-2xl font-bold">Dog-Gone-Good Résumé Generator</h3>
-                <span className="bg-white/20 text-white text-xs font-bold px-2 py-1 rounded-full">NEW!</span>
-              </div>
-              <p className="text-white/90">Create hilarious, shareable résumés for your pet in seconds</p>
-            </div>
-            <div className="p-6">
-              <p className="text-brand-primary-dark mb-4">
-                Turn your pet's quirks into qualifications! Generate a fun, shareable résumé complete with skills like "Professional Treat Taster" and "Master of Couch Inspection." Perfect for social media or just for laughs!
-              </p>
-              <ul className="space-y-2 mb-6 text-brand-primary-dark">
-                <li className="flex items-start gap-2">
-                  <span className="text-amber-500">✓</span>
-                  <span>AI-powered funny job titles & skills</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-amber-500">✓</span>
-                  <span>Upload your pet's photo for instant fun</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-amber-500">✓</span>
-                  <span>"I'm Feeling Fetchy" random generator</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-amber-500">✓</span>
-                  <span>Download & share on social media</span>
-                </li>
-              </ul>
-              <Link to="/dog-gone-good" className="block w-full">
-                <Button 
-                  className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white"
-                  size="lg"
-                >
-                  🎲 Try Dog-Gone-Good Generator
-                </Button>
-              </Link>
-            </div>
-          </div>
 
           <div className="grid md:grid-cols-3 gap-8 mb-8">
             {/* Pet Resume Demo Card */}

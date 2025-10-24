@@ -152,16 +152,6 @@ export default function Landing() {
                 Yes, but so much more! PetPort is an all-in-one digital information platform for pets and horses. Securely organize vaccines, insurance, medical records, and travel documents. Our revolutionary Lost Pet Sightings Board instantly rallies community help when you share your One-Tap Missing Pet Flyer and LiveLink. Our Care LiveLink is perfect for groomers, sitters, or emergencies. Update and share a Pet Résumé, ask for Pet Reviews and Care Instructions in real time. Instantly Update your pet's data from anywhere, to anyone, on any device. This app is everything a foster to adopter transfer needs! Give them a voice for a lifetime. <Link to="/demos" className="font-bold text-brand-primary hover:underline">SEE DEMO</Link>
               </p>
 
-              {/* Dog-Gone-Good Promo Banner */}
-              <div className="mt-8 bg-gradient-to-r from-brand-secondary/10 to-brand-primary/10 rounded-lg p-6 border border-brand-primary/20">
-                <div className="flex items-center justify-center gap-3 flex-wrap text-center">
-                  <Sparkles className="h-6 w-6 text-brand-primary" />
-                  <p className="text-brand-primary font-semibold text-lg">
-                    🎉 NEW: Try our viral <Link to="/dog-gone-good" className="underline hover:text-brand-secondary">Dog-Gone-Good Résumé Generator</Link> — Create a hilarious résumé for your pet in 60 seconds!
-                  </p>
-                </div>
-              </div>
-
               
               {/* Free Trial Badge */}
               <div className="mt-4 inline-flex items-center gap-2 bg-transparent border border-[#5691af]/30 rounded-full px-4 py-2">
@@ -637,6 +627,19 @@ export default function Landing() {
 
         <Testimonials />
 
+        {/* Dog-Gone-Good Promo Banner */}
+        <section className="py-12 bg-gradient-to-br from-brand-cream via-white to-brand-cream">
+          <div className="max-w-4xl mx-auto px-4">
+            <div className="bg-gradient-to-r from-brand-secondary/10 to-brand-primary/10 rounded-lg p-4 border border-brand-primary/20">
+              <div className="flex items-center justify-center gap-2 flex-wrap text-center">
+                <Sparkles className="h-5 w-5 text-brand-primary" />
+                <p className="text-brand-primary font-semibold">
+                  🎉 NEW: Try our viral <Link to="/dog-gone-good" className="underline hover:text-brand-secondary">Dog-Gone-Good Résumé Generator</Link> — Create a hilarious résumé for your pet in 60 seconds!
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
 
         {/* Share Prompt */}
         {showSharePrompt && <section className="max-w-md mx-auto px-4 py-8">

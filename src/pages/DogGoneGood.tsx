@@ -66,8 +66,7 @@ export default function DogGoneGood() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [species, setSpecies] = useState<Species>('dog');
   const [theme, setTheme] = useState<ThemeId>('patriotic');
-  const [petName1, setPetName1] = useState('');
-  const [petName2, setPetName2] = useState('');
+  const [petName, setPetName] = useState('');
   const [photoPreview1, setPhotoPreview1] = useState<string | null>(null);
   const [photoPreview2, setPhotoPreview2] = useState<string | null>(null);
   const [photoFile1, setPhotoFile1] = useState<File | null>(null);
@@ -87,7 +86,7 @@ export default function DogGoneGood() {
 
   useEffect(() => {
     renderCanvas();
-  }, [formData, petName1, petName2, photoPreview1, photoPreview2, species, theme]);
+  }, [formData, petName, photoPreview1, photoPreview2, species, theme]);
 
   const handlePhotoUpload = (photoNumber: 1 | 2) => (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -197,16 +196,14 @@ export default function DogGoneGood() {
     ctx.fillRect(0, 80, 1200, 200);
 
     // Title
-    // Pet name(s) as main title
-    const displayName = petName1 && petName2 
-      ? `${petName1.toUpperCase()} & ${petName2.toUpperCase()}`
-      : (petName1 || petName2 || species.charAt(0).toUpperCase() + species.slice(1)).toUpperCase();
+    // "RÉSUMÉ OF [PET NAME]" title
+    const displayName = petName || species.charAt(0).toUpperCase() + species.slice(1);
     
     ctx.fillStyle = "#ffffff";
     ctx.font = "bold 68px 'Fredoka', Inter, sans-serif";
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
-    ctx.fillText(displayName, 600, 180);
+    ctx.fillText(`RÉSUMÉ OF ${displayName.toUpperCase()}`, 600, 180);
 
     // Pet Photos Section - TWO SQUARE PHOTOS SIDE BY SIDE
     let yOffset = 320;
@@ -470,7 +467,7 @@ export default function DogGoneGood() {
       const file = new File([blob], `petport-resume-${theme}-${species}.jpg`, { type: 'image/jpeg' });
 
       await navigator.share({
-        title: `${petName1 || petName2 || 'My Pet'}'s Résumé`,
+        title: `${petName || 'My Pet'}'s Résumé`,
         text: `Just made a ${currentTheme.name} résumé for my pet with PetPort! 😂 Try it yourself: ${window.location.href}`,
         files: [file]
       });
@@ -666,33 +663,18 @@ export default function DogGoneGood() {
               </div>
             </div>
 
-            {/* Pet Names (Optional) */}
+            {/* Pet Name (Optional) */}
             <div className="bg-white rounded-xl p-6 shadow-lg">
               <label className="block text-sm font-semibold text-brand-primary mb-3">
-                Pet Names (optional)
+                Pet Name (optional)
               </label>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs text-gray-600 mb-1">Pet 1 Name</label>
-                  <input 
-                    type="text" 
-                    value={petName1}
-                    onChange={(e) => setPetName1(e.target.value)}
-                    placeholder="Enter first pet name"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-primary focus:border-transparent"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs text-gray-600 mb-1">Pet 2 Name</label>
-                  <input 
-                    type="text" 
-                    value={petName2}
-                    onChange={(e) => setPetName2(e.target.value)}
-                    placeholder="Enter second pet name"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-primary focus:border-transparent"
-                  />
-                </div>
-              </div>
+              <input 
+                type="text" 
+                value={petName}
+                onChange={(e) => setPetName(e.target.value)}
+                placeholder="Enter pet name"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-primary focus:border-transparent"
+              />
             </div>
 
             {/* Dropdown Fields */}
@@ -825,7 +807,7 @@ export default function DogGoneGood() {
             {showCTA && (
               <div className="bg-gradient-to-r from-brand-primary to-brand-secondary rounded-xl p-6 text-white text-center shadow-xl animate-in fade-in slide-in-from-bottom-4">
                 <h3 className="text-xl font-bold mb-2">
-                  Want a REAL PetPort Profile{petName1 || petName2 ? ` for ${petName1 || petName2}` : ''}?
+                  Want a REAL PetPort Profile{petName ? ` for ${petName}` : ''}?
                 </h3>
                 <p className="text-white/90 mb-4 text-sm">
                   Store medical records, share care instructions, generate lost pet flyers, and more!

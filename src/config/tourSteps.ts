@@ -18,7 +18,7 @@ export const ONBOARDING_STEPS: Step[] = [
   },
   {
     target: '#quick-share-hub',
-    content: 'Share specific pages like emergency contacts, care instructions, or your pet\'s resume with vets, sitters, or adopters.',
+    content: 'Share specific LiveLinks and PDF\'s for Care Instructions, Lost Pet, Pet\'s Resume with - vets, sitters, or adopters. This HUB is found on every page.',
     title: '📤 Share Your Pet\'s Info Instantly',
     placement: 'top',
     spotlightPadding: 8,

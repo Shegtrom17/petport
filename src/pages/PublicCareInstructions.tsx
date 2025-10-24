@@ -76,18 +76,31 @@ const PublicCareInstructions = () => {
 
   const isValidUUID = (id: string) => /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(id);
 
-  const handleClose = () => {
-    const referrer = document.referrer;
-    const isFromDemoOrMarketing = referrer.includes('/demos') || 
-                                  referrer.includes('/lost-pet-features') ||
-                                  referrer.includes('/learn');
+  const handleClose = async () => {
+    // Check if user is authenticated (owner previewing their LiveLink)
+    const { data: { user } } = await supabase.auth.getUser();
     
-    if (window.history.length > 1 && !isFromDemoOrMarketing) {
-      navigate(-1);
-    } else if (isFromDemoOrMarketing) {
-      navigate('/demos');
+    if (user) {
+      // Authenticated user - return to their app page
+      if (window.history.length > 1) {
+        navigate(-1);
+      } else {
+        navigate('/profile');
+      }
     } else {
-      navigate('/');
+      // Anonymous visitor - check if from demo/marketing
+      const referrer = document.referrer;
+      const isFromDemoOrMarketing = referrer.includes('/demos') || 
+                                    referrer.includes('/lost-pet-features') ||
+                                    referrer.includes('/learn');
+      
+      if (window.history.length > 1 && !isFromDemoOrMarketing) {
+        navigate(-1);
+      } else if (isFromDemoOrMarketing) {
+        navigate('/demos');
+      } else {
+        navigate('/');
+      }
     }
   };
 

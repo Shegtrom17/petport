@@ -35,18 +35,31 @@ const PublicTravelMap = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const handleClose = () => {
-    const referrer = document.referrer;
-    const isFromDemoOrMarketing = referrer.includes('/demos') || 
-                                  referrer.includes('/lost-pet-features') ||
-                                  referrer.includes('/learn');
+  const handleClose = async () => {
+    // Check if user is authenticated (owner previewing their LiveLink)
+    const { data: { user } } = await supabase.auth.getUser();
     
-    if (window.history.length > 1 && !isFromDemoOrMarketing) {
-      navigate(-1);
-    } else if (isFromDemoOrMarketing) {
-      navigate('/demos');
+    if (user) {
+      // Authenticated user - return to their app page
+      if (window.history.length > 1) {
+        navigate(-1);
+      } else {
+        navigate('/profile');
+      }
     } else {
-      navigate('/');
+      // Anonymous visitor - check if from demo/marketing
+      const referrer = document.referrer;
+      const isFromDemoOrMarketing = referrer.includes('/demos') || 
+                                    referrer.includes('/lost-pet-features') ||
+                                    referrer.includes('/learn');
+      
+      if (window.history.length > 1 && !isFromDemoOrMarketing) {
+        navigate(-1);
+      } else if (isFromDemoOrMarketing) {
+        navigate('/demos');
+      } else {
+        navigate('/');
+      }
     }
   };
 

@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { MetaTags } from "@/components/MetaTags";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { PricingSection } from "@/components/PricingSection";
+import { ArrowRight } from "lucide-react";
 import createProfileScreenshot from "@/assets/create-profile-screenshot.png";
 import documentUploadScreenshot from "@/assets/document-upload-screenshot.png";
 import resumeDetailsScreenshot from "@/assets/resume-details-screenshot.png";
@@ -205,14 +206,25 @@ export default function Learn() {
                     <span>Photo gallery & distinctive features</span>
                   </li>
                 </ul>
-                <Link to="/demo/missing-pet" className="block w-full">
-                  <Button 
-                    className="w-full bg-red-600 hover:bg-red-700 text-white"
-                    size="lg"
-                  >
-                    View Missing Pet Demo
-                  </Button>
-                </Link>
+                <div className="space-y-3">
+                  <Link to="/demo/missing-pet" className="block w-full">
+                    <Button 
+                      className="w-full bg-red-600 hover:bg-red-700 text-white"
+                      size="lg"
+                    >
+                      View Missing Pet Demo
+                    </Button>
+                  </Link>
+                  <div className="text-center">
+                    <Link 
+                      to="/lost-pet-features"
+                      className="text-sm text-brand-primary hover:underline inline-flex items-center gap-1"
+                    >
+                      Learn about Lost Pet Features
+                      <ArrowRight className="h-3 w-3" />
+                    </Link>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

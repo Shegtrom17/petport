@@ -226,14 +226,27 @@ export default function Demos() {
                 </ul>
                 
                 {link.hasLiveDemo ? (
-                  <Button 
-                    onClick={() => navigate(link.demoLink!)}
-                    className={`w-full bg-gradient-to-r ${link.color} text-white hover:opacity-90`}
-                    size="lg"
-                  >
-                    View Live Demo
-                    <ArrowRight className="ml-2 h-5 w-5" />
-                  </Button>
+                  <div className="space-y-3">
+                    <Button 
+                      onClick={() => navigate(link.demoLink!)}
+                      className={`w-full bg-gradient-to-r ${link.color} text-white hover:opacity-90`}
+                      size="lg"
+                    >
+                      View Live Demo
+                      <ArrowRight className="ml-2 h-5 w-5" />
+                    </Button>
+                    {link.id === "missing-pet" && (
+                      <div className="text-center">
+                        <button
+                          onClick={() => navigate('/lost-pet-features')}
+                          className="text-sm text-brand-primary hover:underline inline-flex items-center gap-1"
+                        >
+                          Learn about Lost Pet Features
+                          <ArrowRight className="h-3 w-3" />
+                        </button>
+                      </div>
+                    )}
+                  </div>
                 ) : (
                   <div className="bg-gray-50 rounded-lg p-4 text-center border border-gray-200">
                     <p className="text-sm text-gray-600 mb-2">

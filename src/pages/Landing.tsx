@@ -8,7 +8,7 @@ import { AppShareButton } from "@/components/AppShareButton";
 import PricingSection from "@/components/PricingSection";
 import { Testimonials } from "@/components/Testimonials";
 import { supabase } from "@/integrations/supabase/client";
-import { Sparkles } from "lucide-react";
+import { Sparkles, ArrowRight } from "lucide-react";
 import createProfileScreenshot from "@/assets/create-profile-screenshot.png";
 import documentUploadScreenshot from "@/assets/document-upload-screenshot.png";
 import resumeDetailsScreenshot from "@/assets/resume-details-screenshot.png";
@@ -269,13 +269,24 @@ export default function Landing() {
                       <span>Photo gallery & distinctive features</span>
                     </li>
                   </ul>
-                  <Button 
-                    onClick={() => navigate('/demo/missing-pet')}
-                    className="w-full bg-red-600 hover:bg-red-700 text-white"
-                    size="lg"
-                  >
-                    View Missing Pet Demo
-                  </Button>
+                  <div className="space-y-3">
+                    <Button 
+                      onClick={() => navigate('/demo/missing-pet')}
+                      className="w-full bg-red-600 hover:bg-red-700 text-white"
+                      size="lg"
+                    >
+                      View Missing Pet Demo
+                    </Button>
+                    <div className="text-center">
+                      <button
+                        onClick={() => navigate('/lost-pet-features')}
+                        className="text-sm text-brand-primary hover:underline inline-flex items-center gap-1"
+                      >
+                        Learn about Lost Pet Features
+                        <ArrowRight className="h-3 w-3" />
+                      </button>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>

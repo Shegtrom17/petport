@@ -47,11 +47,11 @@ export default function LostPetFeatures() {
             </div>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
-              <Button size="lg" onClick={scrollToGenerator} className="text-lg">
+              <Button size="lg" onClick={scrollToGenerator} className="text-lg text-white">
                 Try Free Flyer Generator
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
-              <Button size="lg" variant="outline" asChild>
+              <Button size="lg" variant="outline" asChild className="text-white">
                 <Link to="/demo/missing-pet">View Live Demo</Link>
               </Button>
             </div>
@@ -131,7 +131,7 @@ export default function LostPetFeatures() {
               <p className="text-sm text-muted-foreground mb-4">
                 <strong>Upgrade to PetPort</strong> for QR codes, real-time updates, Sightings Board, and automatic notifications
               </p>
-              <Button asChild>
+              <Button asChild className="text-white">
                 <Link to="/#pricing">See Full Features & Pricing</Link>
               </Button>
             </div>

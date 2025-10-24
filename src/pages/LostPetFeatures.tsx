@@ -125,19 +125,38 @@ export default function LostPetFeatures() {
                 Our Gift: A Free Tool to Bring Them Home
               </h2>
               <p className="text-lg text-muted-foreground">
-                Create a printable lost pet flyer in seconds — It's our way of giving every pet a voice when it matters most.
+                This free tool creates a basic printable flyer — perfect for quick distribution. For dynamic Lost Pet LiveLinks with QR codes, real-time updates, and sighting notifications, explore the full PetPort platform below.
               </p>
             </div>
 
             <FreeLostPetFlyerGenerator />
 
-            <div className="text-center mt-8 p-6 bg-primary/5 rounded-lg border border-primary/20">
-              <p className="text-sm text-muted-foreground mb-4">
-                <strong>Upgrade to PetPort</strong> for QR codes, real-time updates, Sightings Board, and automatic notifications
+            <div className="text-center mt-8 p-6 bg-gradient-to-br from-primary/10 to-primary/5 rounded-lg border-2 border-primary/30 shadow-md">
+              <div className="inline-flex items-center gap-2 px-3 py-1 bg-primary/20 rounded-full mb-3">
+                <span className="text-xs font-bold text-primary uppercase tracking-wider">Static Flyer</span>
+                <ArrowRight className="h-3 w-3 text-primary" />
+                <span className="text-xs font-bold text-primary uppercase tracking-wider">Dynamic LiveLink</span>
+              </div>
+              
+              <p className="text-sm font-semibold mb-2">
+                This free tool creates a static PDF — great for printing and sharing.
               </p>
-              <Button asChild className="text-white">
-                <Link to="/#pricing">See Full Features & Pricing</Link>
-              </Button>
+              
+              <p className="text-sm text-muted-foreground mb-4">
+                <strong>Upgrade to PetPort's Lost Pet LiveLink</strong> for QR codes that link to a live, updateable page with real-time Sightings Board, automatic notifications, social sharing, and more.
+              </p>
+              
+              <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                <Button asChild className="text-white">
+                  <Link to="/#pricing">See Full Features & Pricing</Link>
+                </Button>
+                <Button asChild variant="outline">
+                  <Link to="/demo/missing-pet">
+                    <Eye className="mr-2 h-4 w-4" />
+                    View Live Demo
+                  </Link>
+                </Button>
+              </div>
             </div>
           </div>
         </section>

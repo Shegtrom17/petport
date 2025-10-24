@@ -87,7 +87,7 @@ export default function LostPetFeatures() {
                   step: 3,
                   title: "Share Everywhere",
                   description: "One-tap sharing to SMS, email, social media, and printable posters.",
-                  image: "/lovable-uploads/213ccabc-3918-406d-b844-9c2730b7637d.png"
+                  image: "/lovable-uploads/LiveLink_lost_1000_x_1000_px.png"
                 },
                 {
                   step: 4,

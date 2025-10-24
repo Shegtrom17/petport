@@ -6,10 +6,11 @@ import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Textarea } from "@/components/ui/textarea";
 import { ContactsDisplay } from "@/components/ContactsDisplay";
-import { Sparkles, Clock, Pill, Heart, AlertTriangle, MessageCircle, Send, Loader2, MapPin, Mail } from "lucide-react";
+import { Sparkles, Clock, Pill, Heart, AlertTriangle, MessageCircle, Send, Loader2, MapPin, Mail, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { AzureButton } from "@/components/ui/azure-button";
+import { useNavigate } from "react-router-dom";
 
 const FINNEGAN_ID = "297d1397-c876-4075-bf24-41ee1862853a";
 
@@ -22,6 +23,7 @@ interface CareUpdate {
 }
 
 export default function DemoCare() {
+  const navigate = useNavigate();
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [careUpdates, setCareUpdates] = useState<CareUpdate[]>([]);
@@ -207,7 +209,16 @@ export default function DemoCare() {
 
       {/* Live Demo Banner */}
       <div className="bg-gradient-to-r from-brand-primary via-brand-secondary to-brand-primary text-white py-3 px-4 text-center sticky top-0 z-50 shadow-lg">
-        <div className="max-w-4xl mx-auto flex items-center justify-center gap-2 flex-wrap">
+        <div className="max-w-4xl mx-auto flex items-center justify-center gap-2 flex-wrap relative">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => navigate('/demos')}
+            className="absolute left-0 hover:bg-white/20 text-white p-2 h-auto"
+            aria-label="Close demo"
+          >
+            <X className="h-5 w-5" />
+          </Button>
           <Sparkles className="h-5 w-5" />
           <span className="font-semibold">✨ Demo – PetPort LiveLink</span>
           <a href="/#pricing">

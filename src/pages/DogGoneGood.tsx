@@ -197,11 +197,16 @@ export default function DogGoneGood() {
     ctx.fillRect(0, 80, 1200, 200);
 
     // Title
+    // Pet name(s) as main title
+    const displayName = petName1 && petName2 
+      ? `${petName1.toUpperCase()} & ${petName2.toUpperCase()}`
+      : (petName1 || petName2 || species.charAt(0).toUpperCase() + species.slice(1)).toUpperCase();
+    
     ctx.fillStyle = "#ffffff";
     ctx.font = "bold 68px 'Fredoka', Inter, sans-serif";
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
-    ctx.fillText("PET RÉSUMÉ", 600, 180);
+    ctx.fillText(displayName, 600, 180);
 
     // Pet Photos Section - TWO SQUARE PHOTOS SIDE BY SIDE
     let yOffset = 320;
@@ -299,22 +304,7 @@ export default function DogGoneGood() {
         drawPlaceholder(photo2X, yOffset, twoPhotoSize);
       }
       
-      yOffset += twoPhotoSize + 20;
-      
-      // Draw pet names under photos with theme accent color
-      ctx.fillStyle = currentTheme.colors.accent;
-      ctx.font = "bold 36px 'Fredoka', Inter, sans-serif";
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'top';
-      
-      if (hasPhoto1 && petName1) {
-        ctx.fillText(petName1, photo1X + twoPhotoSize / 2, yOffset);
-      }
-      if (hasPhoto2 && petName2) {
-        ctx.fillText(petName2, photo2X + twoPhotoSize / 2, yOffset);
-      }
-      
-      yOffset += 70;
+      yOffset += twoPhotoSize + 40;
     } else if (photoCount === 1) {
       // One photo centered at 60% width
       const photoX = (1200 - onePhotoSize) / 2;
@@ -325,19 +315,7 @@ export default function DogGoneGood() {
         drawSquarePhoto(photoPreview2, photoX, yOffset, onePhotoSize);
       }
       
-      yOffset += onePhotoSize + 20;
-      
-      // Draw single pet name centered under photo with theme accent color
-      const displayPetName = petName1 || petName2;
-      if (displayPetName) {
-        ctx.fillStyle = currentTheme.colors.accent;
-        ctx.font = "bold 36px 'Fredoka', Inter, sans-serif";
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'top';
-        ctx.fillText(displayPetName, 600, yOffset);
-      }
-      
-      yOffset += 70;
+      yOffset += onePhotoSize + 40;
     } else {
       // No photos - show centered placeholder
       const photoX = (1200 - onePhotoSize) / 2;
@@ -345,15 +323,8 @@ export default function DogGoneGood() {
       yOffset += onePhotoSize + 60;
     }
 
-    // Title (not individual pet names - those appear under photos now)
-    ctx.fillStyle = currentTheme.colors.text;
-    ctx.font = "bold 70px 'Fredoka', Inter, sans-serif";
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-    const displayName = petName1 || petName2 || species.charAt(0).toUpperCase() + species.slice(1);
-    ctx.fillText(`RÉSUMÉ OF ${displayName.toUpperCase()}`, 600, yOffset);
-
-    yOffset += 90;
+    // Remove duplicate "RÉSUMÉ OF" text - name is already at top
+    yOffset += 20;
 
     // Content sections - more compact
     ctx.textAlign = 'left';

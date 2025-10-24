@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Check, X, ArrowRight } from "lucide-react";
+import { Check, X, ArrowRight, Eye } from "lucide-react";
 import { Link } from "react-router-dom";
 import { FreeLostPetFlyerGenerator } from "@/components/FreeLostPetFlyerGenerator";
 import { MetaTags } from "@/components/MetaTags";
@@ -134,6 +134,82 @@ export default function LostPetFeatures() {
               <Button asChild className="text-white">
                 <Link to="/#pricing">See Full Features & Pricing</Link>
               </Button>
+            </div>
+          </div>
+        </section>
+
+        {/* Live Demo Section */}
+        <section className="container mx-auto px-4 py-16">
+          <div className="max-w-5xl mx-auto">
+            <div className="bg-gradient-to-br from-red-500/10 via-orange-500/10 to-red-500/5 rounded-2xl p-8 md:p-12 border-2 border-red-500/20 shadow-xl">
+              <div className="text-center mb-8">
+                <div className="inline-flex items-center gap-2 px-4 py-2 bg-red-500/10 rounded-full mb-4">
+                  <Eye className="h-5 w-5 text-red-600" />
+                  <span className="text-sm font-semibold text-red-600 uppercase tracking-wide">Live Interactive Demo</span>
+                </div>
+                <h2 className="text-3xl md:text-4xl font-bold mb-3">See a Real Lost Pet Alert in Action</h2>
+                <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+                  Experience how PetPort's Lost Pet LiveLink works with Finnegan's live demo profile. 
+                  See exactly what your emergency alert would look like.
+                </p>
+              </div>
+
+              <div className="grid md:grid-cols-2 gap-8 items-center mb-8">
+                <div>
+                  <img 
+                    src="/lovable-uploads/d4e1e1f9-612c-48bb-8391-e7bce7658e8c.png" 
+                    alt="Lost Pet Demo Preview"
+                    className="rounded-lg shadow-2xl border-2 border-red-500/30"
+                  />
+                </div>
+                
+                <div className="space-y-4">
+                  <h3 className="text-xl font-semibold mb-4">What You'll See in the Demo:</h3>
+                  <div className="space-y-3">
+                    <div className="flex items-start gap-3">
+                      <div className="flex-shrink-0 w-6 h-6 rounded-full bg-red-500 flex items-center justify-center text-white text-sm font-bold">✓</div>
+                      <div>
+                        <p className="font-semibold">Real-Time Sighting Board</p>
+                        <p className="text-sm text-muted-foreground">Community-powered updates and location tracking</p>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <div className="flex-shrink-0 w-6 h-6 rounded-full bg-red-500 flex items-center justify-center text-white text-sm font-bold">✓</div>
+                      <div>
+                        <p className="font-semibold">Instant QR Code Sharing</p>
+                        <p className="text-sm text-muted-foreground">Print and post anywhere for quick mobile access</p>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <div className="flex-shrink-0 w-6 h-6 rounded-full bg-red-500 flex items-center justify-center text-white text-sm font-bold">✓</div>
+                      <div>
+                        <p className="font-semibold">Photo Gallery & Details</p>
+                        <p className="text-sm text-muted-foreground">Multiple photos to help identify your pet</p>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <div className="flex-shrink-0 w-6 h-6 rounded-full bg-red-500 flex items-center justify-center text-white text-sm font-bold">✓</div>
+                      <div>
+                        <p className="font-semibold">Emergency Contact Access</p>
+                        <p className="text-sm text-muted-foreground">One-tap calling and social media sharing</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="text-center">
+                <Button asChild size="lg" className="bg-red-600 hover:bg-red-700 text-white shadow-lg">
+                  <Link to="/demo/missing-pet" className="flex items-center gap-2">
+                    <Eye className="h-5 w-5" />
+                    View Full Live Demo
+                    <ArrowRight className="h-5 w-5" />
+                  </Link>
+                </Button>
+                <p className="text-sm text-muted-foreground mt-3">
+                  No signup required • See it in action right now
+                </p>
+              </div>
             </div>
           </div>
         </section>

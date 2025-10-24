@@ -101,7 +101,7 @@ export default function LostPetFeatures() {
                     <div className="absolute top-4 right-4 w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-xl">
                       {step.step}
                     </div>
-                    <div className="aspect-square rounded-lg overflow-hidden bg-muted">
+                    <div className="aspect-[3/4] rounded-lg overflow-hidden bg-muted">
                       <img 
                         src={step.image} 
                         alt={step.title}

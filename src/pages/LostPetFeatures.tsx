@@ -4,6 +4,7 @@ import { Check, X, ArrowRight, Eye } from "lucide-react";
 import { Link } from "react-router-dom";
 import { FreeLostPetFlyerGenerator } from "@/components/FreeLostPetFlyerGenerator";
 import { MetaTags } from "@/components/MetaTags";
+import lostPetDemoPreview from "@/assets/lost-pet-demo-preview.png";
 
 export default function LostPetFeatures() {
   const scrollToGenerator = () => {
@@ -180,7 +181,7 @@ export default function LostPetFeatures() {
               <div className="grid md:grid-cols-2 gap-8 items-center mb-8">
                 <div>
                   <img 
-                    src="/lovable-uploads/d4e1e1f9-612c-48bb-8391-e7bce7658e8c.png" 
+                    src={lostPetDemoPreview} 
                     alt="Lost Pet Demo Preview"
                     className="rounded-lg shadow-2xl border-2 border-red-500/30"
                   />

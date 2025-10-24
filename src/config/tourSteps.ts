@@ -25,8 +25,8 @@ export const ONBOARDING_STEPS: Step[] = [
   },
   {
     target: '#bottom-nav-menu',
-    content: 'Tap the Menu button to access Care & Handling, Resume, Documents, Travel Map, Gallery, and more.',
-    title: '📂 Navigate All Sections',
+    content: 'Tap the Menu button to access and edit information for Care & Handling, Resume, Documents, Travel Map, Gallery, and more.',
+    title: '📂 Navigate All Pages',
     placement: 'top',
     spotlightPadding: 10,
   },

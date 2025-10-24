@@ -11,7 +11,7 @@ export const ONBOARDING_STEPS: Step[] = [
   },
   {
     target: '#profile-management-hub',
-    content: 'This is your control center. Tap any section to edit photos, bio, medical info, and more. Keep your pet\'s details current here.',
+    content: 'This is your control center area on each page. Tap Edit to Keep your pet\'s details current for that page\'s featured Information. This page it\'s Profile Photo, Pet Info, Med and Foster/Adopter.',
     title: '✏️ Update Pet Information',
     placement: 'top',
     spotlightPadding: 8,

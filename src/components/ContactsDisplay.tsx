@@ -61,7 +61,7 @@ export const ContactsDisplay = ({ petId, hideHeader = false, fallbackPetData, re
           const labelColor = isEmergency ? 'text-red-600' : 'text-[#5691af]';
           
           return (
-            <div key={`${contact.type}-${index}`} className="border rounded-lg p-4 bg-transparent">
+            <div key={`${contact.type}-${index}`} className="border rounded-lg p-3 bg-transparent">
               {!contact.isEmpty && contact.phone ? (
                 <a 
                   href={`tel:${contact.phone.replace(/\D/g, '')}`}
@@ -69,29 +69,29 @@ export const ContactsDisplay = ({ petId, hideHeader = false, fallbackPetData, re
                   aria-label={`Call ${contact.name}`}
                 >
                   <div className="flex items-center justify-between">
-                    <div className="flex-1">
-                      <h4 className={`font-medium ${labelColor} hover:opacity-80`}>
+                    <div className="flex-1 min-w-0">
+                      <h4 className={`text-sm font-medium ${labelColor} hover:opacity-80 truncate`}>
                         {contact.label}
                       </h4>
-                      <p className="text-sm text-muted-foreground">{contact.name}</p>
+                      <p className="text-xs text-muted-foreground truncate">{contact.name}</p>
                     </div>
                   </div>
                   
-                  <div className="flex items-center space-x-2 mt-2">
+                  <div className="flex items-center gap-2 mt-2">
                     <p className={`text-sm ${labelColor} hover:underline`}>
                       {contact.phone}
                     </p>
-                    <span className="text-xs text-muted-foreground">• Tap to call</span>
+                    <span className="text-xs text-muted-foreground whitespace-nowrap">• Tap to call</span>
                   </div>
                 </a>
               ) : (
                 <div>
                   <div className="flex items-center justify-between">
-                    <div className="flex-1">
-                      <h4 className={`font-medium ${labelColor}`}>
+                    <div className="flex-1 min-w-0">
+                      <h4 className={`text-sm font-medium ${labelColor} truncate`}>
                         {contact.label}
                       </h4>
-                      <p className="text-sm text-muted-foreground">{contact.name}</p>
+                      <p className="text-xs text-muted-foreground truncate">{contact.name}</p>
                     </div>
                   </div>
                 </div>

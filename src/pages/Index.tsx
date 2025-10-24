@@ -28,7 +28,7 @@ import { ReportIssueModal } from "@/components/ReportIssueModal";
 import { AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useUserSettings } from "@/hooks/useUserSettings";
-import { useNavigate, Navigate } from "react-router-dom";
+import { useNavigate, Navigate, useLocation, useSearchParams } from "react-router-dom";
 import { SwipeContainer } from "@/components/layout/SwipeContainer";
 import { useOverlayOpen } from "@/stores/overlayStore";
 import { isTouchDevice } from "@/hooks/useIsTouchDevice";
@@ -58,6 +58,8 @@ const Index = () => {
   const [petLimit, setPetLimit] = useState<number>(0);
   const restoredRef = useRef(false);
   const navigate = useNavigate();
+  const location = useLocation();
+  const [searchParams, setSearchParams] = useSearchParams();
   const { toast } = useToast();
   const queryClient = useQueryClient();
   
@@ -184,6 +186,30 @@ const Index = () => {
       window.removeEventListener('navigate-to-quickid', handleNavigateToQuickid);
     };
   }, []);
+
+  // Handle query parameters for tab and pet selection (from public preview pages)
+  useEffect(() => {
+    const tabParam = searchParams.get('tab');
+    const petParam = searchParams.get('pet');
+    
+    if (tabParam) {
+      // Valid tabs: profile, resume, care, quickid, gallery, travel, reviews, certifications, documents
+      const validTabs = ['profile', 'resume', 'care', 'quickid', 'gallery', 'travel', 'reviews', 'certifications', 'documents'];
+      if (validTabs.includes(tabParam)) {
+        setActiveTab(tabParam);
+      }
+      // Clear the query parameters after processing
+      setSearchParams({});
+    }
+    
+    if (petParam && pets.length > 0) {
+      // If a specific pet is requested, select it
+      const requestedPet = pets.find(p => p.id === petParam);
+      if (requestedPet && requestedPet.id !== selectedPet?.id) {
+        handleSelectPet(requestedPet.id);
+      }
+    }
+  }, [searchParams, pets, selectedPet?.id]);
 
   // Mark as restored immediately to prevent any tab restoration
   useEffect(() => {

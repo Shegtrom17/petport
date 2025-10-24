@@ -88,18 +88,23 @@ export default function PublicResume() {
   const reviewFormRef = useRef<HTMLDivElement>(null);
 
   const handleClose = async () => {
-    // Check if user is authenticated (owner previewing their LiveLink)
     const { data: { user } } = await supabase.auth.getUser();
     
     if (user) {
-      // Authenticated user - return to their app page
-      if (window.history.length > 1) {
+      // Authenticated user previewing their own LiveLink
+      const urlParams = new URLSearchParams(window.location.search);
+      const returnTo = urlParams.get('returnTo');
+      
+      if (returnTo && petId) {
+        // Navigate directly to the specific tab they came from
+        navigate(`/profile?pet=${petId}&tab=${returnTo}`);
+      } else if (window.history.length > 1) {
         navigate(-1);
       } else {
         navigate('/profile');
       }
     } else {
-      // Anonymous visitor - check if from demo/marketing
+      // Anonymous visitor logic (unchanged)
       const referrer = document.referrer;
       const isFromDemoOrMarketing = referrer.includes('/demos') || 
                                     referrer.includes('/lost-pet-features') ||

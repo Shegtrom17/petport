@@ -126,7 +126,7 @@ export const PetGallerySection = ({ petData, onUpdate, handlePetUpdate }: PetGal
   };
 
   const handlePreview = () => {
-    const url = generateShareableUrl();
+    const url = generateShareableUrl() + (generateShareableUrl().includes('?') ? '&' : '?') + 'returnTo=gallery';
     window.open(url, '_blank');
   };
 
@@ -573,7 +573,7 @@ export const PetGallerySection = ({ petData, onUpdate, handlePetUpdate }: PetGal
 
             <Button 
               className="w-full bg-brand-primary hover:bg-brand-primary-dark text-white"
-              onClick={() => window.open(`/gallery/${petData.id}`, '_blank')}
+              onClick={() => window.open(`/gallery/${petData.id}?returnTo=gallery`, '_blank')}
             >
               <ExternalLink className="w-4 h-4 mr-2" />
               Preview Gallery LiveLink
@@ -773,7 +773,7 @@ export const PetGallerySection = ({ petData, onUpdate, handlePetUpdate }: PetGal
       <Card className="border-0 shadow-lg bg-white">
         <CardContent className="p-4">
           <Button
-            onClick={() => window.open(`/gallery/${petData.id}`, '_blank')}
+            onClick={() => window.open(`/gallery/${petData.id}?returnTo=gallery`, '_blank')}
             variant="outline"
             className="w-full bg-[#5691af] text-white hover:bg-[#4a7d99] hover:text-white border-[#5691af] focus-visible:ring-[#5691af]"
           >

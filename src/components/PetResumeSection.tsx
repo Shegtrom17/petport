@@ -113,7 +113,7 @@ export const PetResumeSection = ({ petData, onUpdate, handlePetUpdate }: PetResu
             </Button>
             
             <Button
-              onClick={() => window.open(`/resume/${petData.id}`, '_blank')}
+              onClick={() => window.open(`/resume/${petData.id}?returnTo=resume`, '_blank')}
               variant="outline"
               className="w-full h-14 text-lg bg-[#5691af] text-white hover:bg-[#4a7d99] hover:text-white border-[#5691af] focus-visible:ring-[#5691af]"
             >

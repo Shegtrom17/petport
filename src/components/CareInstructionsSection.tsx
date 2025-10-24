@@ -176,7 +176,7 @@ export const CareInstructionsSection = ({ petData, onUpdate, handlePetUpdate }: 
             </Button>
             
             <Button
-              onClick={() => window.open(`/care/${petData.id}`, '_blank')}
+              onClick={() => window.open(`/care/${petData.id}?returnTo=care`, '_blank')}
               variant="outline"
               className="w-full h-14 text-lg bg-[#5691af] text-white hover:bg-[#4a7d99] hover:text-white border-[#5691af] focus-visible:ring-[#5691af]"
             >

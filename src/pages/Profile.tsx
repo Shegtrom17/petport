@@ -50,7 +50,7 @@ export default function Profile() {
 
         <Card>
           <CardHeader>
-            <CardTitle>Billing & Cancellation</CardTitle>
+            <CardTitle>Billing & Subscription</CardTitle>
           </CardHeader>
           <CardContent className="space-y-2">
             <p className="text-sm text-muted-foreground">

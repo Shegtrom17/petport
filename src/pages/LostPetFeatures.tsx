@@ -81,7 +81,7 @@ export default function LostPetFeatures() {
                   step: 2,
                   title: "Generate Flyer",
                   description: "Professional PDF flyer created instantly with photos, details, and QR code.",
-                  image: "/lovable-uploads/1af9fe70-ed76-44c5-a1e1-1a058e497a10.png"
+                  image: "/lovable-uploads/LiveLink_lost_1000_x_1000_px.png"
                 },
                 {
                   step: 3,

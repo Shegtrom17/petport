@@ -50,14 +50,30 @@ export const LostPetPDFGenerator = ({ petId, petName, isActive, petData }: LostP
     }
 
     setAuthError(false);
+    
+    // Pre-flight check for missing data
+    const mergedPetData = {
+      ...petData,
+      ...(Array.isArray(petData?.lost_pet_data) ? petData.lost_pet_data[0] : (petData?.lost_pet_data || {}))
+    };
+    
+    const missingFields: string[] = [];
+    if (!mergedPetData.last_seen_location) missingFields.push("Last Seen Location");
+    if (!mergedPetData.reward_amount) missingFields.push("Reward Amount");
+    if (!mergedPetData.finder_instructions) missingFields.push("Finder Instructions");
+    
+    if (missingFields.length > 0) {
+      toast({
+        title: "⚠️ Missing Information",
+        description: `Your flyer will include placeholder text for: ${missingFields.join(", ")}. Add this info in Lost Pet Settings for a complete flyer.`,
+        duration: 6000,
+      });
+    }
+    
     setIsGenerating(true);
     
     try {
       console.log('LostPetPDFGenerator - Generating lost pet PDF for petId:', petId, 'petName:', petName);
-      const mergedPetData = {
-        ...petData,
-        ...(Array.isArray(petData?.lost_pet_data) ? petData.lost_pet_data[0] : (petData?.lost_pet_data || {}))
-      };
       const result = await generateClientPetPDF(mergedPetData, 'lost_pet');
       
       if (result.success && result.blob) {

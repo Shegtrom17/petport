@@ -27,7 +27,7 @@ export default function LostPetFeatures() {
               Every Minute Counts When They Go Missing
             </h1>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Generate professional lost pet flyers in seconds, share instantly across all platforms, and receive real-time sighting notifications from your community.
+              With PetPort.app you can generate professional lost pet flyers in seconds, share instantly across all platforms, and receive real-time sighting notifications from your community.
             </p>
 
             {/* Hero Video Placeholder */}

@@ -56,6 +56,7 @@ import DemoCare from "./pages/DemoCare";
 import DemoGallery from "./pages/DemoGallery";
 import Demos from "./pages/Demos";
 import DogGoneGood from "./pages/DogGoneGood";
+import LostPetFeatures from "./pages/LostPetFeatures";
 
 // Redirect component for credentials -> resume consolidation
 const CredentialsRedirect = () => {
@@ -101,6 +102,7 @@ const App = () => {
           <Route path="/demo/missing-pet" element={<DemoMissingPet />} />
           <Route path="/demo/care" element={<DemoCare />} />
           <Route path="/demo/gallery" element={<DemoGallery />} />
+          <Route path="/lost-pet-features" element={<LostPetFeatures />} />
                   <Route path="/app" element={
                     <ProtectedRoute>
                       <Index />

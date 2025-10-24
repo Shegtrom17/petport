@@ -311,7 +311,7 @@ export default function Demos() {
         </section>
 
         {/* CTA Section */}
-        <div className="bg-gradient-to-r from-brand-primary to-brand-secondary rounded-2xl p-8 md:p-12 text-center text-white shadow-2xl">
+        <div className="bg-[#5691af] rounded-2xl p-8 md:p-12 text-center text-white shadow-2xl">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
             Ready to Create LiveLinks for Your Pet?
           </h2>

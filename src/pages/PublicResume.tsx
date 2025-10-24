@@ -361,14 +361,13 @@ export default function PublicResume() {
           <CardContent className="space-y-4">
             {/* Leave Review Button */}
             {!showAddReview && (
-              <Button 
+              <AzureButton 
                 onClick={handleOpenReviewForm}
-                variant="outline"
                 className="w-full"
               >
                 <Star className="w-4 h-4 mr-2" />
                 Leave a Review for {data.name}
-              </Button>
+              </AzureButton>
             )}
 
             {/* Review Form */}

@@ -28,7 +28,8 @@ import {
   Smartphone,
   Send,
   X,
-  Share2
+  Share2,
+  MoreHorizontal
 } from "lucide-react";
 import { MetaTags } from "@/components/MetaTags";
 import { SocialShareButtons } from "@/components/SocialShareButtons";
@@ -312,6 +313,30 @@ export default function DemoMissingPet() {
       'dc2626',
       `🚨 LOST PET: ${data.name} - Scan this QR code to help find them!`
     );
+  };
+
+  const handleShare = async () => {
+    if (!data) return;
+    const directUrl = window.location.href;
+    const shareUrl = generateShareURL('missing-pet-share', data.id, directUrl);
+    const shareData = {
+      title: `LOST PET: ${data.name}`,
+      text: `🚨 ${data.name} is missing! Last seen: ${data.lost_pet_data?.last_seen_location || 'location unknown'}. ${data.lost_pet_data?.reward_amount ? `REWARD: $${data.lost_pet_data.reward_amount}` : ''}`,
+      url: shareUrl,
+    };
+    
+    if (navigator.share && navigator.canShare(shareData)) {
+      try {
+        await navigator.share(shareData);
+        toast.success('Shared successfully!');
+      } catch (err) {
+        if ((err as Error).name !== 'AbortError') {
+          console.error('Share failed:', err);
+        }
+      }
+    } else {
+      await handleCopyLink();
+    }
   };
 
   // Sighting Board Functions
@@ -705,146 +730,174 @@ export default function DemoMissingPet() {
           </Card>
         )}
 
+        {/* Contact Owner via Email Button */}
+        <div className="mb-6">
+          <Button
+            onClick={() => setShowContactModal(true)}
+            className="w-full bg-[#5691af] hover:bg-[#4a7c95] text-white py-6 text-lg"
+          >
+            <Mail className="w-5 h-5 mr-2" />
+            Contact Owner via Email
+          </Button>
+          <p className="text-center text-sm text-muted-foreground mt-2">
+            🔒 Messages are sent through PetPort's secure relay system
+          </p>
+        </div>
+
         {/* Share & QR Code Section */}
         <Card className="mb-6">
           <CardHeader>
-            <CardTitle className="text-center flex items-center justify-center gap-2">
-              <Share2 className="h-6 w-6" />
-              Share This Alert
-            </CardTitle>
+            <CardTitle className="text-center">Share This Missing Pet Alert</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-6">
-            {/* PDF Flyer Generation */}
+          <CardContent className="space-y-4">
+            {/* 1. QR CODE DISPLAY */}
+            <div className="flex justify-center">
+              <div className="bg-white p-4 rounded-lg shadow-inner border-2 border-gray-200">
+                <QRCode 
+                  value={shareUrl} 
+                  size={200}
+                  fgColor="#dc2626"
+                  bgColor="#ffffff"
+                />
+              </div>
+            </div>
+            
+            {/* 2. SHARE QR CODE BUTTON */}
+            <Button
+              onClick={handleShareQRCode}
+              className="w-full bg-red-600 hover:bg-red-700 text-white font-semibold"
+            >
+              <Share2 className="mr-2 h-4 w-4" />
+              Share LOST PET QR Code
+            </Button>
+            <p className="text-center text-sm text-muted-foreground">
+              Scan this QR code to view and share this missing pet alert on any device
+            </p>
+            
+            {/* 3. PDF GENERATION */}
             <div className="space-y-3">
-              <h4 className="font-semibold text-center">Missing Pet Flyer</h4>
-              
               {!lostPetPdfBlob ? (
                 <Button
                   onClick={handleGenerateLostPetPDF}
                   disabled={isGeneratingLostPetPdf}
-                  className="w-full bg-red-600 hover:bg-red-700"
-                  size="lg"
+                  className="w-full text-white"
+                  variant="default"
                 >
                   {isGeneratingLostPetPdf ? (
                     <>
-                      <Loader2 className="h-5 w-5 mr-2 animate-spin" />
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                       Generating Flyer...
                     </>
                   ) : (
                     <>
-                      <FileDown className="h-5 w-5 mr-2" />
+                      <FileDown className="mr-2 h-4 w-4" />
                       Generate Missing Pet Flyer PDF
                     </>
                   )}
                 </Button>
               ) : (
-                <div className="grid grid-cols-2 gap-2">
-                  <Button
-                    onClick={() => lostPetPdfBlob && viewPDFBlob(lostPetPdfBlob, `${data.name}_Missing_Flyer.pdf`)}
-                    variant="outline"
-                    className="flex items-center gap-2"
-                  >
-                    <Eye className="h-4 w-4" />
-                    View
-                  </Button>
-                  <Button
-                    onClick={() => lostPetPdfBlob && downloadPDFBlob(lostPetPdfBlob, `${data.name}_Missing_Flyer.pdf`)}
-                    variant="outline"
-                    className="flex items-center gap-2"
-                  >
-                    <Download className="h-4 w-4" />
-                    Download
-                  </Button>
-                  <Button
-                    onClick={() => lostPetPdfBlob && window.print()}
-                    variant="outline"
-                    className="flex items-center gap-2"
-                  >
-                    <Printer className="h-4 w-4" />
-                    Print
-                  </Button>
+                <div className="space-y-2">
+                  <div className="grid grid-cols-3 gap-2">
+                    <Button
+                      onClick={() => viewPDFBlob(lostPetPdfBlob, `${data.name}-lost-flyer.pdf`)}
+                      variant="outline"
+                      size="sm"
+                    >
+                      <Eye className="mr-1 h-4 w-4" />
+                      View
+                    </Button>
+                    <Button
+                      onClick={() => downloadPDFBlob(lostPetPdfBlob, `${data.name}-lost-flyer.pdf`)}
+                      variant="outline"
+                      size="sm"
+                    >
+                      <Download className="mr-1 h-4 w-4" />
+                      Download
+                    </Button>
+                    <Button
+                      onClick={() => {
+                        const url = URL.createObjectURL(lostPetPdfBlob);
+                        const printWindow = window.open(url, '_blank');
+                        if (printWindow) {
+                          printWindow.onload = () => {
+                            printWindow.print();
+                            URL.revokeObjectURL(url);
+                          };
+                        }
+                      }}
+                      variant="outline"
+                      size="sm"
+                    >
+                      <Printer className="mr-1 h-4 w-4" />
+                      Print
+                    </Button>
+                  </div>
                   <Button
                     onClick={handleSharePdf}
-                    variant="outline"
-                    className="flex items-center gap-2"
+                    className="w-full"
+                    variant="default"
                   >
-                    <Share2 className="h-4 w-4" />
-                    Share
+                    <Share2 className="mr-2 h-4 w-4" />
+                    Share PDF Flyer
                   </Button>
                 </div>
               )}
             </div>
-
-            <div className="border-t pt-6">
-              <h4 className="font-semibold text-center mb-4">QR Code</h4>
-              <div className="flex justify-center mb-4">
-                <div className="bg-white p-4 rounded-lg shadow-inner">
-                  <QRCode value={shareUrl} size={200} />
-                </div>
-              </div>
-              <Button
-                onClick={handleShareQRCode}
-                variant="outline"
-                className="w-full border-red-600 text-red-600 hover:bg-red-50"
-              >
-                <Download className="h-4 w-4 mr-2" />
-                Share/Download LOST PET QR Code
-              </Button>
-            </div>
-
-            <div className="border-t pt-6">
-              <h4 className="font-semibold text-center mb-4">Advanced Share Options</h4>
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+            
+            {/* 4. SHARE MISSING ALERT (Collapsible) */}
+            <div className="space-y-3" data-touch-safe="true">
+              {!showShareOptions ? (
                 <Button
-                  onClick={handleCopyLink}
-                  variant="outline"
-                  disabled={copyingLink}
-                  className="flex flex-col items-center gap-2 h-auto py-4"
+                  onClick={() => setShowShareOptions(true)}
+                  onTouchEnd={(e) => e.stopPropagation()}
+                  className="w-full bg-red-600 hover:bg-red-700 text-white h-12 font-semibold"
+                  style={{ touchAction: 'none' }}
                 >
-                  {copyingLink ? <Check className="h-5 w-5" /> : <Copy className="h-5 w-5" />}
-                  <span className="text-xs">Copy Link</span>
+                  <Share2 className="w-5 h-5 mr-2" />
+                  Share Missing Alert
                 </Button>
-                <Button
-                  onClick={handleSMSShare}
-                  variant="outline"
-                  className="flex flex-col items-center gap-2 h-auto py-4"
-                >
-                  <Smartphone className="h-5 w-5" />
-                  <span className="text-xs">SMS</span>
-                </Button>
-                <Button
-                  onClick={handleEmailShare}
-                  variant="outline"
-                  className="flex flex-col items-center gap-2 h-auto py-4"
-                >
-                  <Mail className="h-5 w-5" />
-                  <span className="text-xs">Email</span>
-                </Button>
-                <Button
-                  onClick={handleFacebookShare}
-                  variant="outline"
-                  className="flex flex-col items-center gap-2 h-auto py-4"
-                >
-                  <Facebook className="h-5 w-5" />
-                  <span className="text-xs">Facebook</span>
-                </Button>
-                <Button
-                  onClick={handleMessengerShare}
-                  variant="outline"
-                  className="flex flex-col items-center gap-2 h-auto py-4"
-                >
-                  <MessageSquare className="h-5 w-5" />
-                  <span className="text-xs">Messenger</span>
-                </Button>
-                <Button
-                  onClick={handleEmailShare}
-                  variant="outline"
-                  className="flex flex-col items-center gap-2 h-auto py-4"
-                >
-                  <MessageCircle className="h-5 w-5" />
-                  <span className="text-xs">More</span>
-                </Button>
-              </div>
+              ) : (
+                <>
+                  {/* Quick Share Button */}
+                  <Button
+                    onClick={handleShare}
+                    onTouchEnd={(e) => e.stopPropagation()}
+                    className="w-full bg-red-600 hover:bg-red-700 text-white h-12 font-semibold"
+                    style={{ touchAction: 'none' }}
+                  >
+                    <Smartphone className="w-5 h-5 mr-2" />
+                    Quick Share
+                  </Button>
+                  
+                  {/* 3x2 Grid */}
+                  <div className="grid grid-cols-3 gap-2" data-touch-safe="true">
+                    <Button onClick={handleCopyLink} variant="outline" className="flex flex-col items-center gap-2 h-auto py-4">
+                      {copyingLink ? <Check className="h-5 w-5" /> : <Copy className="h-5 w-5" />}
+                      <span className="text-xs">Copy Link</span>
+                    </Button>
+                    <Button onClick={handleSMSShare} variant="outline" className="flex flex-col items-center gap-2 h-auto py-4">
+                      <Smartphone className="h-5 w-5" />
+                      <span className="text-xs">SMS</span>
+                    </Button>
+                    <Button onClick={handleEmailShare} variant="outline" className="flex flex-col items-center gap-2 h-auto py-4">
+                      <Mail className="h-5 w-5" />
+                      <span className="text-xs">Email</span>
+                    </Button>
+                    <Button onClick={handleFacebookShare} variant="outline" className="flex flex-col items-center gap-2 h-auto py-4">
+                      <Facebook className="h-5 w-5" />
+                      <span className="text-xs">Facebook</span>
+                    </Button>
+                    <Button onClick={handleMessengerShare} variant="outline" className="flex flex-col items-center gap-2 h-auto py-4">
+                      <MessageSquare className="h-5 w-5" />
+                      <span className="text-xs">Messenger</span>
+                    </Button>
+                    <Button onClick={handleEmailShare} variant="outline" className="flex flex-col items-center gap-2 h-auto py-4">
+                      <MoreHorizontal className="h-5 w-5" />
+                      <span className="text-xs">More</span>
+                    </Button>
+                  </div>
+                </>
+              )}
             </div>
           </CardContent>
         </Card>

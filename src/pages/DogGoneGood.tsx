@@ -386,18 +386,23 @@ export default function DogGoneGood() {
     ctx.textAlign = "center";
     wrapText(ctx, `"${formData.motto}"`, 600, yOffset, 1000, 44);
 
-    // Watermarks in bottom corners
+    // Watermarks on the right side - stacked vertically
     ctx.globalAlpha = 0.08;
     ctx.font = '120px Arial';
     ctx.fillStyle = currentTheme.colors.text;
-    
-    // Pawprint watermark in bottom right
     ctx.textAlign = 'right';
-    ctx.fillText('🐾', 1150, 1450);
     
-    // Horseshoe watermark in bottom left
-    ctx.textAlign = 'left';
-    ctx.fillText('🐴', 50, 1450);
+    // Dog paw at top right
+    ctx.fillText('🐾', 1150, 400);
+    
+    // Cat at middle right
+    ctx.fillText('🐱', 1150, 700);
+    
+    // Horse at bottom right
+    ctx.fillText('🐴', 1150, 1000);
+    
+    // Additional paw at very bottom right
+    ctx.fillText('🐾', 1150, 1300);
     
     ctx.globalAlpha = 1.0;
 

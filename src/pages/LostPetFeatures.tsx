@@ -337,7 +337,7 @@ export default function LostPetFeatures() {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
               <Button size="lg" asChild className="text-white">
-                <Link to="/">Start 7-Day Free Trial</Link>
+                <Link to="/">See All Features</Link>
               </Button>
               <Button size="lg" variant="outline" asChild>
                 <Link to="/#pricing">View Pricing</Link>

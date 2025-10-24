@@ -1,12 +1,13 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Check, X, ArrowRight, Eye } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { FreeLostPetFlyerGenerator } from "@/components/FreeLostPetFlyerGenerator";
 import { MetaTags } from "@/components/MetaTags";
 import lostPetDemoPreview from "@/assets/lost-pet-demo-preview.png";
 
 export default function LostPetFeatures() {
+  const navigate = useNavigate();
   const scrollToGenerator = () => {
     document.getElementById('free-generator')?.scrollIntoView({ behavior: 'smooth' });
   };
@@ -21,6 +22,17 @@ export default function LostPetFeatures() {
       />
       
       <div className="min-h-screen bg-gradient-to-b from-background to-muted/20">
+        {/* Header */}
+        <header className="container mx-auto px-4 py-6 flex items-center justify-between">
+          <div className="flex items-center gap-3 cursor-pointer" onClick={() => navigate('/')}>
+            <img src="/lovable-uploads/213ccabc-3918-406d-b844-9c2730b7637d.png" alt="PetPort logo" className="w-10 h-10" />
+            <span className="text-xl font-semibold text-brand-primary">PetPort</span>
+          </div>
+          <Button onClick={() => navigate('/')} variant="outline">
+            Back to Home
+          </Button>
+        </header>
+
         {/* Hero Section */}
         <section className="container mx-auto px-4 py-12 md:py-20">
           <div className="max-w-4xl mx-auto text-center space-y-6">
@@ -333,6 +345,30 @@ export default function LostPetFeatures() {
             </div>
           </div>
         </section>
+
+        {/* Footer */}
+        <div className="container mx-auto px-4 pb-8">
+          <div className="text-center text-muted-foreground text-sm">
+            <div className="border-t border-border mb-6 max-w-md mx-auto" />
+            <p className="mb-3">
+              Powered by{" "}
+              <button 
+                onClick={() => navigate('/')}
+                className="text-primary hover:underline font-medium"
+              >
+                PetPort.app
+              </button>
+              {" "}— Be ready for travel, sitters, lost pet, and emergencies
+            </p>
+            <div className="flex gap-3 justify-center text-xs">
+              <Link to="/privacy-policy" className="text-muted-foreground hover:text-primary">Privacy</Link>
+              <span>•</span>
+              <Link to="/terms" className="text-muted-foreground hover:text-primary">Terms</Link>
+              <span>•</span>
+              <Link to="/data-deletion" className="text-muted-foreground hover:text-primary">Data Deletion</Link>
+            </div>
+          </div>
+        </div>
       </div>
     </>
   );

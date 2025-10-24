@@ -870,7 +870,7 @@ export default function DogGoneGood() {
             <Button 
               onClick={randomizeAll}
               size="lg"
-              className="w-full bg-gradient-to-r from-brand-secondary to-brand-primary text-white hover:opacity-90 animate-bounce hover:animate-none"
+              className="w-full bg-gradient-to-r from-brand-secondary to-brand-primary text-white hover:opacity-90 hover:scale-105 transition-all"
             >
               <Wand2 className="mr-2 h-5 w-5" />
               🎲 I'm Feeling Fetchy

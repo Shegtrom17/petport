@@ -686,13 +686,13 @@ pageManager.addY(6);
   const rightColumnX = 110;
   const currentY = pageManager.getCurrentY();
   
-  // Pet photo (80x80) on the left - enlarged for better visibility
+  // Pet photo (90x90) on the left - enlarged for better visibility
   if (petData.photoUrl) {
-    await addImage(doc, pageManager, petData.photoUrl, 80, 80, leftColumnX);
+    await addImage(doc, pageManager, petData.photoUrl, 90, 90, leftColumnX);
   }
   
-  // Pet information on the right side
-  pageManager.setY(currentY);
+  // Pet information on the right side - offset down slightly to avoid overlap
+  pageManager.setY(currentY + 8);
   const originalX = pageManager.getX();
   pageManager.setX(rightColumnX);
   
@@ -711,7 +711,7 @@ pageManager.addY(6);
   
   // Reset X position and move below both columns
   pageManager.setX(originalX);
-  pageManager.setY(Math.max(currentY + 70, pageManager.getCurrentY()));
+  pageManager.setY(Math.max(currentY + 80, pageManager.getCurrentY()));
   
   // Emergency contact information - compact format
   pageManager.addY(4);

@@ -163,7 +163,7 @@ export const FreeLostPetFlyerGenerator = () => {
               onClick={handleGenerate}
               disabled={isGenerating}
               size="lg"
-              className="w-full bg-destructive hover:bg-destructive/90"
+              className="w-full bg-destructive hover:bg-destructive/90 text-white"
             >
               {isGenerating ? (
                 <>

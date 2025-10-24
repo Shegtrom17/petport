@@ -43,16 +43,20 @@ export default function LostPetFeatures() {
               With PetPort.app you can generate professional lost pet flyers in seconds, share instantly across all platforms, and receive real-time sighting notifications from your community.
             </p>
 
-            {/* Hero Video Placeholder */}
-            <div className="relative aspect-video bg-muted rounded-lg overflow-hidden shadow-2xl border border-border">
+            {/* Hero Video */}
+            <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
               <video 
-                className="w-full h-full object-contain"
+                key="hero-15"
                 autoPlay 
-                loop 
                 muted 
+                loop 
                 playsInline
+                preload="metadata"
+                className="w-full h-auto rounded-2xl"
+                poster=""
               >
                 <source src="/hero-15.mp4" type="video/mp4" />
+                Your browser does not support the video tag.
               </video>
             </div>
 

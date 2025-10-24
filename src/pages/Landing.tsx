@@ -714,6 +714,7 @@ export default function Landing() {
               <ul className="space-y-2 text-sm">
                 <li><Link to="/privacy-policy" className="text-brand-primary-dark hover:text-brand-primary transition-colors">Privacy Policy</Link></li>
                 <li><Link to="/terms" className="text-brand-primary-dark hover:text-brand-primary transition-colors">Terms of Service</Link></li>
+                <li><Link to="/data-deletion" className="text-brand-primary-dark hover:text-brand-primary transition-colors">Data Deletion</Link></li>
               </ul>
             </div>
           </div>

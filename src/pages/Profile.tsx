@@ -56,7 +56,11 @@ export default function Profile() {
             <p className="text-sm text-muted-foreground">
               You can cancel anytime from the Customer Portal. Your plan stays active until the end of your current billing cycle. No prorated refunds.
             </p>
-            <a href="/terms#cancellation" className="text-sm underline">Read full cancellation policy</a>
+            <div className="flex gap-3 text-sm">
+              <a href="/terms#cancellation" className="underline text-muted-foreground hover:text-foreground">Cancellation policy</a>
+              <span className="text-muted-foreground">•</span>
+              <a href="/data-deletion" className="underline text-muted-foreground hover:text-foreground">Delete account</a>
+            </div>
           </CardContent>
         </Card>
 

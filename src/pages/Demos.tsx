@@ -315,7 +315,7 @@ export default function Demos() {
         {/* Footer */}
         <div className="mt-16 text-center text-gray-500 text-sm pb-8">
           <div className="border-t border-gray-200 mb-6 max-w-md mx-auto" />
-          <p>
+          <p className="mb-3">
             Powered by{" "}
             <a 
               href={window.location.origin}
@@ -325,6 +325,13 @@ export default function Demos() {
             </a>
             {" "}— Be ready for travel, sitters, lost pet, and emergencies
           </p>
+          <div className="flex gap-3 justify-center text-xs">
+            <a href="/privacy-policy" className="text-gray-500 hover:text-brand-primary">Privacy</a>
+            <span>•</span>
+            <a href="/terms" className="text-gray-500 hover:text-brand-primary">Terms</a>
+            <span>•</span>
+            <a href="/data-deletion" className="text-gray-500 hover:text-brand-primary">Data Deletion</a>
+          </div>
         </div>
       </main>
     </div>

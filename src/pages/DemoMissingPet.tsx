@@ -953,13 +953,13 @@ export default function DemoMissingPet() {
         )}
 
         {/* Footer CTA */}
-        <div className="bg-gradient-to-r from-brand-primary to-brand-secondary rounded-lg p-8 text-center text-white mb-6">
+        <div className="bg-[#5691af] rounded-lg p-8 text-center text-white mb-6">
           <h2 className="text-2xl font-bold mb-3">Protect Your Pet with a PetPort Emergency Page</h2>
           <p className="mb-4 text-white/90">Be prepared with a shareable emergency profile and QR code</p>
           <Button 
             onClick={() => navigate('/auth')}
             size="lg"
-            className="bg-white text-brand-primary hover:bg-brand-cream"
+            className="bg-white text-[#5691af] hover:bg-white/90"
           >
             Create Emergency Page
           </Button>

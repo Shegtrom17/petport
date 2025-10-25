@@ -86,6 +86,16 @@ const Index = () => {
     hasPets: pets.length > 0, // ✅ No-pet safeguard
   });
 
+  const { 
+    runTour: runLostPetTour, 
+    tourKey: lostPetTourKey, 
+    completeTour: completeLostPetTour, 
+    skipTour: skipLostPetTour 
+  } = useOnboardingTour({
+    hasPets: pets.length > 0,
+    tourType: 'lostPet',
+  });
+
   const handleTabChange = (tab: string) => {
     setActiveTab(tab);
     window.scrollTo(0, 0);
@@ -468,13 +478,25 @@ const Index = () => {
   return (
     <IOSOptimizedIndex activeTab={activeTab}>
       <PWALayout>
-        {/* ✅ Onboarding Tour */}
+        {/* ✅ Main Onboarding Tour */}
         <OnboardingTour
           runTour={runTour}
           tourKey={tourKey}
           onComplete={completeTour}
           onSkip={skipTour}
+          tourType="main"
         />
+        
+        {/* ✅ Lost Pet Tour - Runs when on QuickID tab */}
+        {activeTab === 'quickid' && (
+          <OnboardingTour
+            runTour={runLostPetTour}
+            tourKey={lostPetTourKey}
+            onComplete={completeLostPetTour}
+            onSkip={skipLostPetTour}
+            tourType="lostPet"
+          />
+        )}
         
         {featureFlags.enablePullToRefresh ? (
           <PullToRefresh onRefresh={handleRefresh} disabled={isOverlayOpen}>

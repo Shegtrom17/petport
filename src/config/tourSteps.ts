@@ -38,3 +38,35 @@ export const ONBOARDING_STEPS: Step[] = [
     spotlightPadding: 8,
   },
 ];
+
+export const LOST_PET_TOUR_STEPS: Step[] = [
+  {
+    target: '#report-missing-button',
+    content: 'Start by tapping "Report Missing" to mark your pet as lost. This activates all lost pet features and alerts.',
+    title: '🚨 Step 1: Mark Pet as Lost',
+    placement: 'top',
+    disableBeacon: true,
+    spotlightPadding: 8,
+  },
+  {
+    target: '#privacy-toggle-lost-pet',
+    content: 'Make your pet\'s profile PUBLIC to enable sharing features. This allows others to view the lost pet alert and help find your pet.',
+    title: '🔓 Step 2: Make Profile Public',
+    placement: 'top',
+    spotlightPadding: 8,
+  },
+  {
+    target: '#lost-pet-details-form',
+    content: 'Add critical details: last seen location, date/time, distinctive features, and reward amount. The more information you provide, the better the chances of finding your pet!',
+    title: '📝 Step 3: Add Lost Pet Details',
+    placement: 'top',
+    spotlightPadding: 8,
+  },
+  {
+    target: '#quick-share-hub',
+    content: 'Share your pet\'s alert via LiveLink, QR code, or PDF flyer. The public can view, share, and print PDFs from any shared link or scanned QR code!',
+    title: '📤 Step 4: Share the Alert',
+    placement: 'top',
+    spotlightPadding: 8,
+  },
+];

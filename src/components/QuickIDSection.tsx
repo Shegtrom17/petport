@@ -338,6 +338,7 @@ export const QuickIDSection = ({ petData, onUpdate }: QuickIDSectionProps) => {
                 {isEditing ? 'Cancel' : 'Edit'}
               </Button>
               <Button
+                id="report-missing-button"
                 onClick={toggleMissingStatus}
                 size="sm"
                 className={`w-full sm:w-auto leading-tight ${
@@ -351,7 +352,7 @@ export const QuickIDSection = ({ petData, onUpdate }: QuickIDSectionProps) => {
             </div>
           </div>
         </CardHeader>
-        <CardContent className="p-6 space-y-6">
+        <CardContent className="p-6 space-y-6" id="lost-pet-details-form">
           {isEditing ? (
             <>
               {/* Last Seen Location */}
@@ -567,10 +568,12 @@ export const QuickIDSection = ({ petData, onUpdate }: QuickIDSectionProps) => {
 
 
       {/* Quick Share Hub */}
-      <QuickShareHub 
-        petData={petData} 
-        isLost={lostPetData.is_missing}
-      />
+      <div id="quick-share-hub">
+        <QuickShareHub 
+          petData={petData} 
+          isLost={lostPetData.is_missing}
+        />
+      </div>
     </div>
   );
 };

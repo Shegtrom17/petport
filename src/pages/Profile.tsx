@@ -18,6 +18,7 @@ export default function Profile() {
   const { user, signOut } = useAuth();
   const { settings, updateSettings } = useUserSettings(user?.id);
   const { restartTour } = useOnboardingTour({ hasPets: true });
+  const { restartTour: restartLostPetTour } = useOnboardingTour({ hasPets: true, tourType: 'lostPet' });
   const navigate = useNavigate();
   // removed one-time payment state
   const handleLogout = async () => {
@@ -108,14 +109,19 @@ export default function Profile() {
             <div className="pb-4 border-b">
               <div className="flex items-center gap-2 mb-2">
                 <RotateCw className="w-4 h-4 text-muted-foreground" />
-                <Label className="text-sm font-medium">Getting Started Tour</Label>
+                <Label className="text-sm font-medium">Getting Started Tours</Label>
               </div>
               <p className="text-xs text-muted-foreground mb-3">
-                Restart the guided tour to learn about key features
+                Restart the guided tours to learn about key features
               </p>
-              <Button onClick={restartTour} variant="outline" size="sm">
-                🔄 Restart Tour
-              </Button>
+              <div className="flex flex-col sm:flex-row gap-2">
+                <Button onClick={restartTour} variant="outline" size="sm">
+                  🔄 Main App Tour
+                </Button>
+                <Button onClick={restartLostPetTour} variant="outline" size="sm">
+                  🚨 Lost Pet Tour
+                </Button>
+              </div>
             </div>
 
             <div className="flex items-center justify-between gap-4">

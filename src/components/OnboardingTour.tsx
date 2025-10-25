@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import Joyride, { CallBackProps, STATUS, ACTIONS } from 'react-joyride';
-import { ONBOARDING_STEPS } from '@/config/tourSteps';
+import { ONBOARDING_STEPS, LOST_PET_TOUR_STEPS } from '@/config/tourSteps';
 import { useOverlayOpen } from '@/stores/overlayStore';
 
 interface OnboardingTourProps {
@@ -8,6 +8,7 @@ interface OnboardingTourProps {
   tourKey: number;
   onComplete: () => void;
   onSkip: () => void;
+  tourType?: 'main' | 'lostPet';
 }
 
 export const OnboardingTour: React.FC<OnboardingTourProps> = ({
@@ -15,10 +16,14 @@ export const OnboardingTour: React.FC<OnboardingTourProps> = ({
   tourKey,
   onComplete,
   onSkip,
+  tourType = 'main',
 }) => {
   const isOverlayOpen = useOverlayOpen();
   const [currentStep, setCurrentStep] = React.useState(0);
   const [internalRun, setInternalRun] = React.useState(runTour);
+
+  // Select the appropriate steps based on tour type
+  const steps = tourType === 'lostPet' ? LOST_PET_TOUR_STEPS : ONBOARDING_STEPS;
 
   // ✅ Pause tour if any overlay/modal is open
   useEffect(() => {
@@ -68,12 +73,14 @@ export const OnboardingTour: React.FC<OnboardingTourProps> = ({
   };
 
   // Validate steps before rendering (Pet Selector is optional for single-pet users)
-  const validSteps = ONBOARDING_STEPS.filter((step) => {
+  const validSteps = steps.filter((step) => {
     const target = document.querySelector(step.target as string);
     if (!target) {
       // Only warn for essential targets, skip optional ones silently
-      if (step.target !== '#pet-selector-cards') {
+      if (tourType === 'main' && step.target !== '#pet-selector-cards') {
         console.warn(`⚠️ Tour target not found: ${step.target}`);
+      } else if (tourType === 'lostPet') {
+        console.warn(`⚠️ Lost Pet Tour target not found: ${step.target}`);
       }
       return false;
     }

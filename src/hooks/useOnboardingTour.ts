@@ -4,27 +4,41 @@ import { useLocation } from 'react-router-dom';
 
 const TOUR_COMPLETED_KEY = 'petport_onboarding_completed';
 const TOUR_SKIPPED_KEY = 'petport_onboarding_skipped';
+const LOST_PET_TOUR_COMPLETED_KEY = 'petport_lost_pet_tour_completed';
+const LOST_PET_TOUR_SKIPPED_KEY = 'petport_lost_pet_tour_skipped';
 
 interface UseOnboardingTourProps {
   hasPets: boolean; // Safeguard: don't run if no pets
+  tourType?: 'main' | 'lostPet'; // Which tour to run
 }
 
-export const useOnboardingTour = ({ hasPets }: UseOnboardingTourProps) => {
+export const useOnboardingTour = ({ hasPets, tourType = 'main' }: UseOnboardingTourProps) => {
   const { user } = useAuth();
   const location = useLocation();
   const [runTour, setRunTour] = useState(false);
   const [tourKey, setTourKey] = useState(0);
   const [targetsReady, setTargetsReady] = useState(false);
 
+  // Tour keys based on type
+  const completedKey = tourType === 'lostPet' ? LOST_PET_TOUR_COMPLETED_KEY : TOUR_COMPLETED_KEY;
+  const skippedKey = tourType === 'lostPet' ? LOST_PET_TOUR_SKIPPED_KEY : TOUR_SKIPPED_KEY;
+
   // Wait for essential DOM targets (Pet Selector is optional for single-pet users)
   const waitForTargets = (): Promise<boolean> => {
     return new Promise((resolve) => {
-      const essentialTargetIds = [
-        'profile-management-hub',
-        'quick-share-hub',
-        'bottom-nav-menu',
-        'three-dot-menu',
-      ];
+      const essentialTargetIds = tourType === 'lostPet' 
+        ? [
+            'report-missing-button',
+            'privacy-toggle-lost-pet',
+            'lost-pet-details-form',
+            'quick-share-hub',
+          ]
+        : [
+            'profile-management-hub',
+            'quick-share-hub',
+            'bottom-nav-menu',
+            'three-dot-menu',
+          ];
 
       let attempts = 0;
       const maxAttempts = 30; // 3 seconds max (100ms intervals)
@@ -33,14 +47,14 @@ export const useOnboardingTour = ({ hasPets }: UseOnboardingTourProps) => {
         const allEssentialExist = essentialTargetIds.every(id => document.getElementById(id));
         
         if (allEssentialExist) {
-          console.log('✅ Essential tour targets found');
+          console.log(`✅ Essential ${tourType} tour targets found`);
           resolve(true);
           return;
         }
 
         attempts++;
         if (attempts >= maxAttempts) {
-          console.warn('⚠️ Essential tour targets not found after 3 seconds, skipping tour');
+          console.warn(`⚠️ Essential ${tourType} tour targets not found after 3 seconds, skipping tour`);
           resolve(false);
           return;
         }
@@ -65,8 +79,8 @@ export const useOnboardingTour = ({ hasPets }: UseOnboardingTourProps) => {
       return;
     }
 
-    const completed = localStorage.getItem(TOUR_COMPLETED_KEY);
-    const skipped = localStorage.getItem(TOUR_SKIPPED_KEY);
+    const completed = localStorage.getItem(completedKey);
+    const skipped = localStorage.getItem(skippedKey);
     
     // Show tour if never completed or skipped
     if (!completed && !skipped) {
@@ -78,21 +92,21 @@ export const useOnboardingTour = ({ hasPets }: UseOnboardingTourProps) => {
         }
       });
     }
-  }, [user, hasPets, location.pathname]);
+  }, [user, hasPets, location.pathname, completedKey, skippedKey]);
 
   const completeTour = () => {
-    localStorage.setItem(TOUR_COMPLETED_KEY, 'true');
+    localStorage.setItem(completedKey, 'true');
     setRunTour(false);
   };
 
   const skipTour = () => {
-    localStorage.setItem(TOUR_SKIPPED_KEY, 'true');
+    localStorage.setItem(skippedKey, 'true');
     setRunTour(false);
   };
 
   const restartTour = () => {
-    localStorage.removeItem(TOUR_COMPLETED_KEY);
-    localStorage.removeItem(TOUR_SKIPPED_KEY);
+    localStorage.removeItem(completedKey);
+    localStorage.removeItem(skippedKey);
     
     // Wait for targets again
     waitForTargets().then((ready) => {

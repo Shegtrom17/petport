@@ -75,7 +75,7 @@ export const PetHeader = ({ activeTab, onTabChange, selectedPetId, selectedPetNa
           {/* Right: Action Buttons */}
           <div className="flex items-center space-x-2 flex-shrink-0">
             {user && selectedPet && onPrivacyToggle && (
-              <div className="scale-75 origin-center">
+              <div id="privacy-toggle-lost-pet" className="scale-75 origin-center">
                 <CompactPrivacyToggle
                   isPublic={selectedPet.is_public || false}
                   onToggle={onPrivacyToggle}

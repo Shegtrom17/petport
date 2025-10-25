@@ -39,6 +39,8 @@ export const useOnboardingTour = ({ hasPets, tourType = 'main' }: UseOnboardingT
             'bottom-nav-menu',
             'three-dot-menu',
           ];
+      
+      // Note: sightings-moderation-board is optional for Lost Pet tour (only shows when pet is marked missing)
 
       let attempts = 0;
       const maxAttempts = 30; // 3 seconds max (100ms intervals)

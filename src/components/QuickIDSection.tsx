@@ -534,7 +534,9 @@ export const QuickIDSection = ({ petData, onUpdate }: QuickIDSectionProps) => {
 
       {/* Sightings Moderation Board - only show when pet is missing */}
       {lostPetData.is_missing && (
-        <SightingsModerationBoard petId={petData.id!} petName={petData.name} />
+        <div id="sightings-moderation-board">
+          <SightingsModerationBoard petId={petData.id!} petName={petData.name} />
+        </div>
       )}
 
       {/* Photo Display Information */}

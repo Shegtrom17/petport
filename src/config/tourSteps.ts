@@ -63,9 +63,16 @@ export const LOST_PET_TOUR_STEPS: Step[] = [
     spotlightPadding: 8,
   },
   {
+    target: '#sightings-moderation-board',
+    content: 'Monitor community sighting reports here. You can review, edit, or delete any reported sightings to keep the information accurate and helpful.',
+    title: '👁️ Step 4: Manage Sighting Reports',
+    placement: 'top',
+    spotlightPadding: 8,
+  },
+  {
     target: '#quick-share-hub',
     content: 'Share your pet\'s alert via LiveLink, QR code, or PDF flyer. The public can view, share, and print PDFs from any shared link or scanned QR code!',
-    title: '📤 Step 4: Share the Alert',
+    title: '📤 Step 5: Share the Alert',
     placement: 'top',
     spotlightPadding: 8,
   },

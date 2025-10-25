@@ -9,6 +9,7 @@ import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useIsMobile } from "@/hooks/useIsMobile";
+import { getSafeBaseURL } from "@/utils/domainGuard";
 
 interface AppShareButtonProps {
   variant?: "icon" | "full";
@@ -47,7 +48,7 @@ export const AppShareButton = ({ variant = "icon", className = "" }: AppShareBut
     return null;
   }
 
-  const appUrl = window.location.origin; // Landing page URL
+  const appUrl = getSafeBaseURL(); // Use production domain for proper OG tags in SMS/social shares
   const shareData = {
     title: "PetPort - Digital Pet Passport",
     text: "Create digital passports for your pets! Build beautiful profiles, store emergency info, and share with caregivers. Finally... Everything Your Pet Needs.",

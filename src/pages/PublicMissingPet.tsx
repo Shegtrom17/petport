@@ -17,6 +17,7 @@ import { generateShareURL } from '@/utils/domainUtils';
 import { shareViaMessenger, copyToClipboard } from '@/utils/messengerShare';
 import { shareQRCode } from '@/utils/qrShare';
 import { ContactOwnerModal } from '@/components/ContactOwnerModal';
+import { ContactsDisplay } from '@/components/ContactsDisplay';
 import { Textarea } from '@/components/ui/textarea';
 
 interface MissingPetData {
@@ -704,30 +705,12 @@ export default function PublicMissingPet() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {petData.contacts.map((contact, index) => (
-                  <div 
-                    key={index}
-                    className="p-4 rounded-lg bg-blue-50 border border-blue-200 hover:shadow-md transition-shadow"
-                  >
-                    <div className="space-y-2">
-                      <div className="flex items-center justify-between">
-                        <p className="font-semibold text-foreground">{contact.contact_name}</p>
-                        <span className="text-xs px-2 py-1 bg-blue-100 text-blue-700 rounded-full capitalize">
-                          {contact.contact_type.replace('_', ' ')}
-                        </span>
-                      </div>
-                      <a 
-                        href={`tel:${contact.contact_phone}`}
-                        className="flex items-center gap-2 text-brand-primary hover:text-brand-primary/80 font-medium text-lg"
-                      >
-                        <Phone className="h-5 w-5 flex-shrink-0" />
-                        {contact.contact_phone}
-                      </a>
-                    </div>
-                  </div>
-                ))}
-              </div>
+              <ContactsDisplay 
+                petId={petData.id}
+                hideHeader={true}
+                fallbackPetData={petData}
+                pageContext="missing"
+              />
             </CardContent>
           </Card>
         )}

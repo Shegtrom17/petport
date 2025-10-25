@@ -34,6 +34,7 @@ import {
 import { MetaTags } from "@/components/MetaTags";
 import { SocialShareButtons } from "@/components/SocialShareButtons";
 import { ContactOwnerModal } from "@/components/ContactOwnerModal";
+import { ContactsDisplay } from "@/components/ContactsDisplay";
 import { useNavigate } from "react-router-dom";
 import QRCode from "react-qr-code";
 import { supabase } from "@/integrations/supabase/client";
@@ -625,23 +626,12 @@ export default function DemoMissingPet() {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
-              {data.pet_contacts.map((contact) => (
-                <div key={contact.id} className="flex items-center justify-between p-4 bg-blue-50 rounded-lg border border-blue-200">
-                  <div>
-                    <p className="font-semibold text-brand-primary">{contact.contact_name}</p>
-                    <Badge variant="outline" className="mt-1">
-                      {contact.contact_type}
-                    </Badge>
-                  </div>
-                  <a 
-                    href={`tel:${contact.contact_phone}`}
-                    className="inline-flex items-center gap-2 bg-brand-primary text-white px-4 py-2 rounded-lg hover:bg-brand-secondary transition-colors"
-                  >
-                    <Phone className="h-4 w-4" />
-                    {contact.contact_phone}
-                  </a>
-                </div>
-              ))}
+              <ContactsDisplay 
+                petId={data.id}
+                hideHeader={true}
+                fallbackPetData={data}
+                pageContext="missing"
+              />
               
               <div className="pt-4 border-t">
                 <Button

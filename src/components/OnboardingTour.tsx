@@ -38,10 +38,17 @@ export const OnboardingTour: React.FC<OnboardingTourProps> = ({
 
   // Sync external runTour prop
   useEffect(() => {
+    console.log(`🎯 [${tourType}] OnboardingTour component:`, {
+      runTour,
+      internalRun,
+      isOverlayOpen,
+      validSteps: steps.filter(s => !!document.querySelector(s.target as string)).length,
+      totalSteps: steps.length,
+    });
     if (runTour !== internalRun && !isOverlayOpen) {
       setInternalRun(runTour);
     }
-  }, [runTour, isOverlayOpen, internalRun]);
+  }, [runTour, isOverlayOpen, internalRun, tourType, steps.length]);
 
   const handleJoyrideCallback = (data: CallBackProps) => {
     const { status, action, index, type } = data;

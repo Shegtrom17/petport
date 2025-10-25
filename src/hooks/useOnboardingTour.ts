@@ -10,9 +10,11 @@ const LOST_PET_TOUR_SKIPPED_KEY = 'petport_lost_pet_tour_skipped';
 interface UseOnboardingTourProps {
   hasPets: boolean; // Safeguard: don't run if no pets
   tourType?: 'main' | 'lostPet'; // Which tour to run
+  requiredTab?: string; // Tab that must be active for tour to run
+  currentTab?: string; // Current active tab
 }
 
-export const useOnboardingTour = ({ hasPets, tourType = 'main' }: UseOnboardingTourProps) => {
+export const useOnboardingTour = ({ hasPets, tourType = 'main', requiredTab, currentTab }: UseOnboardingTourProps) => {
   const { user } = useAuth();
   const location = useLocation();
   const [runTour, setRunTour] = useState(false);
@@ -46,17 +48,24 @@ export const useOnboardingTour = ({ hasPets, tourType = 'main' }: UseOnboardingT
       const maxAttempts = 30; // 3 seconds max (100ms intervals)
 
       const checkTargets = () => {
-        const allEssentialExist = essentialTargetIds.every(id => document.getElementById(id));
+        const allEssentialExist = essentialTargetIds.every(id => {
+          const exists = !!document.getElementById(id);
+          if (!exists) {
+            console.log(`⏳ [${tourType}] Waiting for target: #${id}`);
+          }
+          return exists;
+        });
         
         if (allEssentialExist) {
-          console.log(`✅ Essential ${tourType} tour targets found`);
+          console.log(`✅ [${tourType}] All essential tour targets found`);
           resolve(true);
           return;
         }
 
         attempts++;
         if (attempts >= maxAttempts) {
-          console.warn(`⚠️ Essential ${tourType} tour targets not found after 3 seconds, skipping tour`);
+          console.warn(`⚠️ [${tourType}] Essential tour targets not found after 3 seconds, skipping tour`);
+          console.log(`Missing targets:`, essentialTargetIds.filter(id => !document.getElementById(id)));
           resolve(false);
           return;
         }
@@ -69,14 +78,33 @@ export const useOnboardingTour = ({ hasPets, tourType = 'main' }: UseOnboardingT
   };
 
   useEffect(() => {
+    console.log(`🔍 [${tourType}] Tour state check:`, {
+      pathname: location.pathname,
+      hasPets,
+      user: !!user,
+      requiredTab,
+      currentTab,
+      completed: localStorage.getItem(completedKey),
+      skipped: localStorage.getItem(skippedKey),
+    });
+
     // ✅ Route guard: Only run on homepage (/app)
     if (location.pathname !== '/app') {
+      console.log(`⏸️ [${tourType}] Tour blocked: not on /app`);
       setRunTour(false);
       return;
     }
 
     // ✅ No-pet safeguard
     if (!user || !hasPets) {
+      console.log(`⏸️ [${tourType}] Tour blocked: no user or no pets`);
+      setRunTour(false);
+      return;
+    }
+
+    // ✅ Tab requirement check
+    if (requiredTab && currentTab !== requiredTab) {
+      console.log(`⏸️ [${tourType}] Tour blocked: waiting for tab ${requiredTab} (current: ${currentTab})`);
       setRunTour(false);
       return;
     }
@@ -86,15 +114,19 @@ export const useOnboardingTour = ({ hasPets, tourType = 'main' }: UseOnboardingT
     
     // Show tour if never completed or skipped
     if (!completed && !skipped) {
+      console.log(`🚀 [${tourType}] Starting tour target detection`);
       // Wait for DOM targets before starting
       waitForTargets().then((ready) => {
         if (ready) {
+          console.log(`✅ [${tourType}] Tour ready to start`);
           setTargetsReady(true);
           setRunTour(true);
         }
       });
+    } else {
+      console.log(`⏸️ [${tourType}] Tour already completed or skipped`);
     }
-  }, [user, hasPets, location.pathname, completedKey, skippedKey]);
+  }, [user, hasPets, location.pathname, completedKey, skippedKey, requiredTab, currentTab, tourType]);
 
   const completeTour = () => {
     localStorage.setItem(completedKey, 'true');
@@ -107,16 +139,35 @@ export const useOnboardingTour = ({ hasPets, tourType = 'main' }: UseOnboardingT
   };
 
   const restartTour = () => {
+    console.log(`🔄 [${tourType}] Restarting tour`);
     localStorage.removeItem(completedKey);
     localStorage.removeItem(skippedKey);
     
-    // Wait for targets again
-    waitForTargets().then((ready) => {
-      if (ready) {
-        setTourKey(prev => prev + 1);
-        setRunTour(true);
-      }
-    });
+    // If tour requires a specific tab, trigger navigation
+    if (requiredTab && currentTab !== requiredTab) {
+      console.log(`🔄 [${tourType}] Navigating to required tab: ${requiredTab}`);
+      window.dispatchEvent(new CustomEvent('navigate-to-tab', { detail: requiredTab }));
+      
+      // Wait a bit for tab change and DOM update
+      setTimeout(() => {
+        waitForTargets().then((ready) => {
+          if (ready) {
+            console.log(`✅ [${tourType}] Tour restarted successfully`);
+            setTourKey(prev => prev + 1);
+            setRunTour(true);
+          }
+        });
+      }, 300);
+    } else {
+      // No tab change needed, start immediately
+      waitForTargets().then((ready) => {
+        if (ready) {
+          console.log(`✅ [${tourType}] Tour restarted successfully`);
+          setTourKey(prev => prev + 1);
+          setRunTour(true);
+        }
+      });
+    }
   };
 
   return {

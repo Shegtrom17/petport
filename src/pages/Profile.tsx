@@ -13,6 +13,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useUserSettings } from "@/hooks/useUserSettings";
 import { useOnboardingTour } from "@/hooks/useOnboardingTour";
 import { User, LogOut, Mail, RotateCw } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 export default function Profile() {
   const { user, signOut } = useAuth();
@@ -20,6 +21,7 @@ export default function Profile() {
   const { restartTour } = useOnboardingTour({ hasPets: true });
   const { restartTour: restartLostPetTour } = useOnboardingTour({ hasPets: true, tourType: 'lostPet' });
   const navigate = useNavigate();
+  const { toast } = useToast();
   // removed one-time payment state
   const handleLogout = async () => {
     try {
@@ -115,10 +117,34 @@ export default function Profile() {
                 Restart the guided tours to learn about key features
               </p>
               <div className="flex flex-col sm:flex-row gap-2">
-                <Button onClick={restartTour} variant="outline" size="sm">
+                <Button 
+                  onClick={() => {
+                    toast({
+                      title: "🔄 Starting Main App Tour",
+                      description: "Navigating to home page...",
+                      duration: 2000,
+                    });
+                    navigate('/app');
+                    setTimeout(() => restartTour(), 300);
+                  }} 
+                  variant="outline" 
+                  size="sm"
+                >
                   🔄 Main App Tour
                 </Button>
-                <Button onClick={restartLostPetTour} variant="outline" size="sm">
+                <Button 
+                  onClick={() => {
+                    toast({
+                      title: "🚨 Starting Lost Pet Tour",
+                      description: "Navigating to Quick ID tab...",
+                      duration: 2000,
+                    });
+                    navigate('/app?tab=quickid');
+                    setTimeout(() => restartLostPetTour(), 500);
+                  }} 
+                  variant="outline" 
+                  size="sm"
+                >
                   🚨 Lost Pet Tour
                 </Button>
               </div>

@@ -84,6 +84,7 @@ const Index = () => {
 
   const { runTour, tourKey, completeTour, skipTour } = useOnboardingTour({
     hasPets: pets.length > 0, // ✅ No-pet safeguard
+    currentTab: activeTab,
   });
 
   const { 
@@ -94,6 +95,8 @@ const Index = () => {
   } = useOnboardingTour({
     hasPets: pets.length > 0,
     tourType: 'lostPet',
+    requiredTab: 'quickid',
+    currentTab: activeTab,
   });
 
   const handleTabChange = (tab: string) => {
@@ -487,16 +490,14 @@ const Index = () => {
           tourType="main"
         />
         
-        {/* ✅ Lost Pet Tour - Runs when on QuickID tab */}
-        {activeTab === 'quickid' && (
-          <OnboardingTour
-            runTour={runLostPetTour}
-            tourKey={lostPetTourKey}
-            onComplete={completeLostPetTour}
-            onSkip={skipLostPetTour}
-            tourType="lostPet"
-          />
-        )}
+        {/* ✅ Lost Pet Tour - Tab navigation handled by hook */}
+        <OnboardingTour
+          runTour={runLostPetTour}
+          tourKey={lostPetTourKey}
+          onComplete={completeLostPetTour}
+          onSkip={skipLostPetTour}
+          tourType="lostPet"
+        />
         
         {featureFlags.enablePullToRefresh ? (
           <PullToRefresh onRefresh={handleRefresh} disabled={isOverlayOpen}>

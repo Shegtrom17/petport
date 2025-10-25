@@ -395,8 +395,23 @@ export default function Referrals() {
             <div className="space-y-3">
               {/* Message 1 */}
               <div className="bg-muted/50 rounded-lg p-4 border border-border">
-                <p className="text-sm mb-3">
-                  "Just found the perfect pet management app! Get organized with PetPort - track health, travel, and more. Use my link to try it:{" "}
+                <p className="text-sm mb-3 whitespace-pre-line">
+                  "Just found the perfect pet management app, and I mean perfect. PetPort gives our furry friends a voice of life!
+
+I'm blown away by the innovation and the safety features:
+
+Safety & Social Proof (Next-Gen Features)
+
+🐾 LiveLinks for instant pet profiles on the go.
+🐾 One-Tap Lost Pet Flyers (seriously next-gen status!).
+🐾 Sighting Boards for quick community support.
+🐾 Pet Resume Builder: Our pets can receive reviews from sitters/groomers! It's amazing for passing along verified care info and social proof to anyone new.
+
+Beyond the emergency tools. I can store all documents by upload or snap a photo and its a PDF stored in app. Plus, I can sign in from any device, from anywhere. And the best part? It includes Care and Handling for live updates to and from sitters—no more scribbling on paper, I can update instructions 24/7!
+
+It truly feels like the future of pet care. All accounts are transferable so my companions will have a voice for life!
+
+See LiveLinks for yourself at PetPort.app and check out the innovation yourself. Use my link to try it:{" "}
                   <span className="font-mono text-[#5691af]">
                     {referralCode ? `https://petport.app?ref=${referralCode}` : "[Your link will appear here]"}
                   </span>
@@ -406,7 +421,22 @@ export default function Referrals() {
                   size="sm"
                   variant="outline"
                   onClick={() => {
-                    const message = `Just found the perfect pet management app! Get organized with PetPort - track health, travel, and more. Use my link to try it: https://petport.app?ref=${referralCode}`;
+                    const message = `Just found the perfect pet management app, and I mean perfect. PetPort gives our furry friends a voice of life!
+
+I'm blown away by the innovation and the safety features:
+
+Safety & Social Proof (Next-Gen Features)
+
+🐾 LiveLinks for instant pet profiles on the go.
+🐾 One-Tap Lost Pet Flyers (seriously next-gen status!).
+🐾 Sighting Boards for quick community support.
+🐾 Pet Resume Builder: Our pets can receive reviews from sitters/groomers! It's amazing for passing along verified care info and social proof to anyone new.
+
+Beyond the emergency tools. I can store all documents by upload or snap a photo and its a PDF stored in app. Plus, I can sign in from any device, from anywhere. And the best part? It includes Care and Handling for live updates to and from sitters—no more scribbling on paper, I can update instructions 24/7!
+
+It truly feels like the future of pet care. All accounts are transferable so my companions will have a voice for life!
+
+See LiveLinks for yourself at PetPort.app and check out the innovation yourself. Use my link to try it: https://petport.app?ref=${referralCode}`;
                     navigator.clipboard.writeText(message);
                     toast({ title: "Copied!", description: "Message copied to clipboard" });
                   }}

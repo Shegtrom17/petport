@@ -616,37 +616,6 @@ export default function DemoMissingPet() {
           </CardContent>
         </Card>
 
-        {/* Emergency Contacts */}
-        {data.pet_contacts && data.pet_contacts.length > 0 && (
-          <Card className="mb-6">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Phone className="h-6 w-6 text-brand-primary" />
-                Emergency Contacts
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              <ContactsDisplay 
-                petId={data.id}
-                hideHeader={true}
-                fallbackPetData={data}
-                pageContext="missing"
-              />
-              
-              <div className="pt-4 border-t">
-                <Button
-                  onClick={() => setShowContactModal(true)}
-                  className="w-full"
-                  variant="outline"
-                >
-                  <Mail className="h-4 w-4 mr-2" />
-                  Contact Owner via Email
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        )}
-        
         {/* Community Sighting Board */}
         <Card className="mb-6 border-blue-300 bg-blue-50/50">
           <CardHeader>
@@ -740,6 +709,37 @@ export default function DemoMissingPet() {
                   </AlertDescription>
                 </Alert>
               )}
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Emergency Contacts */}
+        {data.pet_contacts && data.pet_contacts.length > 0 && (
+          <Card className="mb-6">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Phone className="h-6 w-6 text-brand-primary" />
+                Emergency Contacts
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <ContactsDisplay 
+                petId={data.id}
+                hideHeader={true}
+                fallbackPetData={data}
+                pageContext="missing"
+              />
+              
+              <div className="pt-4 border-t">
+                <Button
+                  onClick={() => setShowContactModal(true)}
+                  className="w-full"
+                  variant="outline"
+                >
+                  <Mail className="h-4 w-4 mr-2" />
+                  Contact Owner via Email
+                </Button>
+              </div>
             </CardContent>
           </Card>
         )}

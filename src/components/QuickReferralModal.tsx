@@ -141,7 +141,7 @@ export const QuickReferralModal = ({ isOpen, onClose }: QuickReferralModalProps)
 
     const shareData = {
       title: "Join PetPort!",
-      text: "Check out PetPort - the best way to manage your pet's information! Use my referral link:",
+      text: "Just found the perfect pet management app, and I mean perfect. PetPort gives our furry friends a voice of life!\n\nI'm blown away by the innovation and the safety features:\n\nSafety & Social Proof (Next-Gen Features)\n\n🐾 LiveLinks for instant pet profiles on the go.\n🐾 One-Tap Lost Pet Flyers (seriously next-gen status!).\n🐾 Sighting Boards for quick community support.\n🐾 Pet Resume Builder: Our pets can receive reviews from sitters/groomers! It's amazing for passing along verified care info and social proof to anyone new.\n\nBeyond the emergency tools. I can store all documents by upload or snap a photo and its a PDF stored in app. Plus, I can sign in from any device, from anywhere. And the best part? It includes Care and Handling for live updates to and from sitters—no more scribbling on paper, I can update instructions 24/7!\n\nIt truly feels like the future of pet care. All accounts are transferable so my companions will have a voice for life!\n\nSee LiveLinks for yourself at PetPort.app and check out the innovation yourself. Use my link to try it:",
       url: referralLink,
     };
 

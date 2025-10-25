@@ -5,7 +5,6 @@ import { QuickIDSection } from "@/components/QuickIDSection";
 import { CareInstructionsSection } from "@/components/CareInstructionsSection";
 import { PetResumeSection } from "@/components/PetResumeSection";
 import { ReviewsSection } from "@/components/ReviewsSection";
-import { CertificationSection } from "@/components/CertificationSection";
 import { TravelMapSection } from "@/components/TravelMapSection";
 import { DocumentsSection } from "@/components/DocumentsSection";
 import { PetGallerySection } from "@/components/PetGallerySection";
@@ -318,7 +317,6 @@ const Index = () => {
         return (
           <div className="space-y-6">
             <PetResumeSection petData={petData} onUpdate={handlePetUpdate} handlePetUpdate={handlePetUpdate} />
-            <CertificationSection petData={petData} onUpdate={handlePetUpdate} />
             <ReviewsSection petData={petData} onUpdate={handlePetUpdate} />
             
             {/* Documentation Note - Placed after contact info */}

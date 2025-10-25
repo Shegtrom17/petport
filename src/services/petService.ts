@@ -671,6 +671,48 @@ export async function updatePetTraining(petId: string, training: {
   }
 }
 
+export async function updatePetCertifications(petId: string, certifications: {
+  type: string;
+  status: string;
+  issuer?: string;
+  certification_number?: string;
+  issue_date?: string;
+  expiry_date?: string;
+  notes?: string;
+}[]): Promise<boolean> {
+  try {
+    await supabase
+      .from("certifications")
+      .delete()
+      .eq("pet_id", petId);
+
+    if (certifications.length > 0) {
+      const { error } = await supabase
+        .from("certifications")
+        .insert(certifications.map(cert => ({
+          pet_id: petId,
+          type: cert.type,
+          status: cert.status,
+          issuer: cert.issuer,
+          certification_number: cert.certification_number,
+          issue_date: cert.issue_date,
+          expiry_date: cert.expiry_date,
+          notes: cert.notes
+        })));
+
+      if (error) {
+        console.error("Error updating certifications:", error);
+        throw error;
+      }
+    }
+
+    return true;
+  } catch (error) {
+    console.error("Error in updatePetCertifications:", error);
+    return false;
+  }
+}
+
 export async function updatePetReviews(petId: string, reviews: {
   reviewerName: string;
   reviewerContact?: string;

@@ -45,6 +45,15 @@ interface PetResumeSectionProps {
       phone: string;
       completed: string;
     }>;
+    certifications?: Array<{
+      type: string;
+      status: string;
+      issuer?: string;
+      certification_number?: string;
+      issue_date?: string;
+      expiry_date?: string;
+      notes?: string;
+    }>;
     reviews?: Array<{
       reviewerName: string;
       reviewerContact?: string;
@@ -360,6 +369,53 @@ export const PetResumeSection = ({ petData, onUpdate, handlePetUpdate }: PetResu
                     </div>
                     <p className="text-xs text-gray-600">Completed: {course.completed}</p>
                   </div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Certifications Section */}
+      {petData.certifications && petData.certifications.length > 0 && (
+        <Card className="border-0 shadow-xl bg-white/90 backdrop-blur-sm border-l-4 border-brand-primary">
+          <CardHeader>
+            <CardTitle className="flex items-center space-x-2">
+              <Shield className="w-5 h-5 text-brand-primary" />
+              <span>Professional Certifications</span>
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {petData.certifications.map((cert, index) => (
+                <div key={index} className="bg-white border border-gray-200 rounded-lg p-4">
+                  <div className="flex items-start justify-between mb-2">
+                    <h4 className="font-semibold text-gray-800">{cert.type}</h4>
+                    <Badge variant={cert.status === 'active' ? 'default' : cert.status === 'expired' ? 'destructive' : 'secondary'}>
+                      {cert.status.charAt(0).toUpperCase() + cert.status.slice(1)}
+                    </Badge>
+                  </div>
+                  {cert.issuer && (
+                    <p className="text-sm text-gray-700 mb-1">
+                      <strong>Issuer:</strong> {cert.issuer}
+                    </p>
+                  )}
+                  {cert.certification_number && (
+                    <p className="text-sm text-gray-700 mb-1">
+                      <strong>Certificate #:</strong> {cert.certification_number}
+                    </p>
+                  )}
+                  <div className="flex gap-4 text-xs text-gray-600 mt-2">
+                    {cert.issue_date && (
+                      <span><strong>Issued:</strong> {new Date(cert.issue_date).toLocaleDateString()}</span>
+                    )}
+                    {cert.expiry_date && (
+                      <span><strong>Expires:</strong> {new Date(cert.expiry_date).toLocaleDateString()}</span>
+                    )}
+                  </div>
+                  {cert.notes && (
+                    <p className="text-sm text-gray-600 mt-2 italic">{cert.notes}</p>
+                  )}
                 </div>
               ))}
             </div>

@@ -11,9 +11,11 @@ import { useKeyboardAwareLayout } from "@/hooks/useKeyboardAwareLayout";
 import { 
   updatePetExperience, 
   updatePetAchievements, 
-  updatePetTraining 
+  updatePetTraining,
+  updatePetCertifications
 } from "@/services/petService";
-import { Plus, Trash2, Activity, Trophy, GraduationCap, Loader2 } from "lucide-react";
+import { Plus, Trash2, Activity, Trophy, GraduationCap, Shield, Loader2 } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 
 interface PetResumeEditFormProps {
@@ -35,6 +37,15 @@ interface PetResumeEditFormProps {
       phone?: string;
       completed?: string;
     }>;
+    certifications?: Array<{
+      type: string;
+      status: string;
+      issuer?: string;
+      certification_number?: string;
+      issue_date?: string;
+      expiry_date?: string;
+      notes?: string;
+    }>;
   };
   onSave: () => void;
   onCancel: () => void;
@@ -45,7 +56,8 @@ export const PetResumeEditForm = ({ petData, onSave, onCancel }: PetResumeEditFo
     defaultValues: {
       experiences: petData.experiences && petData.experiences.length > 0 ? petData.experiences : [{ activity: "", contact: "", description: "" }],
       achievements: petData.achievements && petData.achievements.length > 0 ? petData.achievements : [{ title: "", description: "" }],
-      training: petData.training && petData.training.length > 0 ? petData.training : [{ course: "", facility: "", phone: "", completed: "" }]
+      training: petData.training && petData.training.length > 0 ? petData.training : [{ course: "", facility: "", phone: "", completed: "" }],
+      certifications: petData.certifications && petData.certifications.length > 0 ? petData.certifications : [{ type: "", status: "active", issuer: "", certification_number: "", issue_date: "", expiry_date: "", notes: "" }]
     }
   });
 
@@ -62,6 +74,11 @@ export const PetResumeEditForm = ({ petData, onSave, onCancel }: PetResumeEditFo
   const { fields: trainingFields, append: appendTraining, remove: removeTraining } = useFieldArray({
     control,
     name: "training"
+  });
+
+  const { fields: certificationFields, append: appendCertification, remove: removeCertification } = useFieldArray({
+    control,
+    name: "certifications"
   });
 
   const [isLoading, setIsLoading] = useState(false);
@@ -102,6 +119,16 @@ export const PetResumeEditForm = ({ petData, onSave, onCancel }: PetResumeEditFo
 
       if (!trainingSuccess) {
         throw new Error("Failed to update training information");
+      }
+
+      // Update certifications
+      const validCertifications = data.certifications.filter((cert: any) => cert.type.trim() !== "");
+      console.log("Valid certifications to save:", validCertifications);
+      
+      const certificationSuccess = await updatePetCertifications(petData.id, validCertifications);
+
+      if (!certificationSuccess) {
+        throw new Error("Failed to update certification information");
       }
 
       toast({
@@ -324,6 +351,116 @@ export const PetResumeEditForm = ({ petData, onSave, onCancel }: PetResumeEditFo
             >
               <Plus className="w-4 h-4 mr-2" />
               Add Training
+            </Button>
+          </CardContent>
+        </Card>
+
+        {/* Certifications Section */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center space-x-2">
+              <Shield className="w-5 h-5" />
+              <span>Certifications</span>
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {certificationFields.map((field, index) => (
+              <div key={field.id} className="space-y-3 p-4 border rounded-lg">
+                <div className="flex justify-between items-center">
+                  <Label className="text-sm font-medium">Certification {index + 1}</Label>
+                  {certificationFields.length > 1 && (
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => removeCertification(index)}
+                      disabled={isLoading}
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
+                  )}
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <div>
+                    <Label htmlFor={`certifications.${index}.type`}>Certification Type *</Label>
+                    <Input
+                      {...register(`certifications.${index}.type`, { required: true })}
+                      placeholder="e.g., Service Animal, Therapy Dog"
+                      disabled={isLoading}
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor={`certifications.${index}.status`}>Status</Label>
+                    <Select
+                      defaultValue={(field as any).status || "active"}
+                      onValueChange={(value) => setValue(`certifications.${index}.status`, value)}
+                      disabled={isLoading}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select status" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="active">Active</SelectItem>
+                        <SelectItem value="expired">Expired</SelectItem>
+                        <SelectItem value="pending">Pending</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <Label htmlFor={`certifications.${index}.issuer`}>Issuer</Label>
+                    <Input
+                      {...register(`certifications.${index}.issuer`)}
+                      placeholder="Issuing organization"
+                      disabled={isLoading}
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor={`certifications.${index}.certification_number`}>Certification Number</Label>
+                    <Input
+                      {...register(`certifications.${index}.certification_number`)}
+                      placeholder="Certificate number"
+                      disabled={isLoading}
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor={`certifications.${index}.issue_date`}>Issue Date</Label>
+                    <Input
+                      {...register(`certifications.${index}.issue_date`)}
+                      type="date"
+                      disabled={isLoading}
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor={`certifications.${index}.expiry_date`}>Expiry Date</Label>
+                    <Input
+                      {...register(`certifications.${index}.expiry_date`)}
+                      type="date"
+                      disabled={isLoading}
+                    />
+                  </div>
+                </div>
+                
+                <div>
+                  <Label htmlFor={`certifications.${index}.notes`}>Notes</Label>
+                  <Textarea
+                    {...register(`certifications.${index}.notes`)}
+                    placeholder="Additional notes about this certification..."
+                    rows={2}
+                    disabled={isLoading}
+                  />
+                </div>
+              </div>
+            ))}
+            
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => appendCertification({ type: "", status: "active", issuer: "", certification_number: "", issue_date: "", expiry_date: "", notes: "" })}
+              disabled={isLoading}
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              Add Certification
             </Button>
           </CardContent>
         </Card>

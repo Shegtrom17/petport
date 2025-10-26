@@ -408,7 +408,7 @@ export default function Landing() {
                     <div className="w-2 h-2 bg-brand-primary rounded-full flex-shrink-0 mt-2"></div>
                     <div>
                       <strong className="text-brand-primary">Foster-to-Adopter Transfer</strong>
-                      <p className="text-brand-primary-dark text-sm">Streamline the transition. Give adopters a complete, digital version of the pet's profile with all your recorded notes, photos, and health logs.</p>
+                      <p className="text-brand-primary-dark text-sm">streamline the transition. Give adopters a complete, digital version of the pet's profile with all your recorded notes, photos, and health logs.</p>
                     </div>
                   </div>
                   

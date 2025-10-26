@@ -686,9 +686,11 @@ pageManager.addY(6);
   const rightColumnX = 110;
   const currentY = pageManager.getCurrentY();
   
-  // Pet photo (90x90) on the left - enlarged for better visibility
+  // Pet photo on the left - aspect ratio preserved for better visibility
+  let photoHeight = 90;
   if (petData.photoUrl) {
-    await addImage(doc, pageManager, petData.photoUrl, 90, 90, leftColumnX);
+    const { height } = await addGalleryImage(doc, pageManager, petData.photoUrl, leftColumnX, currentY, 90, 110);
+    photoHeight = height;
   }
   
   // Pet information on the right side - offset down slightly to avoid overlap
@@ -711,7 +713,7 @@ pageManager.addY(6);
   
   // Reset X position and move below both columns
   pageManager.setX(originalX);
-  pageManager.setY(Math.max(currentY + 98, pageManager.getCurrentY()));
+  pageManager.setY(Math.max(currentY + photoHeight + 8, pageManager.getCurrentY()));
   
   // Emergency contact information - compact format
   pageManager.addY(4);
@@ -817,27 +819,27 @@ pageManager.addY(6);
     
     const startY = pageManager.getCurrentY();
     const photoCount = Math.min(additionalPhotos.length, 4);
-    const photoSize = photoCount >= 3 ? 30 : 35; // Smaller photos when 3+ are displayed
-    const spacing = photoCount >= 3 ? 45 : 50; // Photo width + margin
-    const startX = photoCount >= 3 ? 15 : 20; // Adjust starting position for 3+ photos
+    const maxPhotoWidth = photoCount >= 3 ? 35 : 40; // Max width for each photo
+    const maxPhotoHeight = photoCount >= 3 ? 45 : 50; // Max height for each photo
+    const spacing = photoCount >= 3 ? 45 : 50; // Spacing between photos
+    const startX = photoCount >= 3 ? 15 : 20;
+    
+    let maxRowHeight = 0;
     
     // Limit to 4 additional photos for compact design
     for (let i = 0; i < additionalPhotos.length && i < 4; i++) {
       const photoX = startX + (i * spacing);
       
-      // Draw photo without advancing Y cursor
+      // Draw photo with aspect ratio preserved
       try {
-        const oriented = await loadOrientedImageAsBase64(additionalPhotos[i].url);
-        const base64 = GALLERY_CONFIG.PDF_IMAGE_OPTIMIZATION 
-          ? await optimizeBase64ForPDF(oriented, GALLERY_CONFIG.PDF_MAX_IMAGE_WIDTH, GALLERY_CONFIG.PDF_MAX_IMAGE_HEIGHT, GALLERY_CONFIG.PDF_IMAGE_QUALITY)
-          : oriented;
-        doc.addImage(base64, 'JPEG', photoX, startY, photoSize, photoSize);
+        const { height } = await addGalleryImage(doc, pageManager, additionalPhotos[i].url, photoX, startY, maxPhotoWidth, maxPhotoHeight);
+        maxRowHeight = Math.max(maxRowHeight, height);
       } catch (error) {
         console.error('Error adding image:', error);
       }
       
       // Add caption below photo
-      const captionY = startY + photoSize + 3;
+      const captionY = startY + maxPhotoHeight + 3;
       doc.setFontSize(7);
       doc.setTextColor(107, 114, 128); // Gray color
       const caption = additionalPhotos[i].caption.substring(0, 12); // Limit caption length
@@ -845,7 +847,7 @@ pageManager.addY(6);
     }
     
     // Move cursor below the photos
-    pageManager.setY(startY + photoSize + 12);
+    pageManager.setY(startY + maxRowHeight + 12);
     doc.setTextColor(0, 0, 0); // Reset text color
   }
   
@@ -1083,9 +1085,11 @@ const generateFullPDF = async (doc: jsPDF, pageManager: PDFPageManager, petData:
     }
   });
   
-  // Pet photo
+  // Pet photo with aspect ratio preserved
   if (petData.photoUrl) {
-    await addImage(doc, pageManager, petData.photoUrl, 80, 80);
+    const currentY = pageManager.getCurrentY();
+    await addGalleryImage(doc, pageManager, petData.photoUrl, pageManager.getX(), currentY, 80, 100);
+    pageManager.setY(currentY + 100); // Move past the photo
   }
   
   // Basic Pet Information
@@ -1296,8 +1300,9 @@ const generateFullPDF = async (doc: jsPDF, pageManager: PDFPageManager, petData:
     addSubtitle(doc, pageManager, 'PHOTO GALLERY', '#1e40af');
     
     const photosToShow = galleryPhotos.slice(0, 8); // Show up to 8 photos
-    const photoSize = 55;
-    const spacing = 60; // 55 photo width + 5 margin
+    const maxPhotoWidth = 55;
+    const maxPhotoHeight = 65;
+    const spacing = 60; // Photo width + margin
     const startX = 20;
     const photosPerRow = 3;
     
@@ -1305,27 +1310,28 @@ const generateFullPDF = async (doc: jsPDF, pageManager: PDFPageManager, petData:
       const startY = pageManager.getCurrentY();
       const rowPhotos = photosToShow.slice(i, i + photosPerRow);
       
-      // Place photos horizontally in the same row
+      let maxRowHeight = 0;
+      
+      // Place photos horizontally in the same row with aspect ratio preserved
       for (let j = 0; j < rowPhotos.length; j++) {
         const photoX = startX + (j * spacing);
         
-        // Draw photo without advancing Y cursor
         try {
-          const base64 = await loadOrientedImageAsBase64(rowPhotos[j].url);
-          doc.addImage(base64, 'JPEG', photoX, startY, photoSize, photoSize);
+          const { height } = await addGalleryImage(doc, pageManager, rowPhotos[j].url, photoX, startY, maxPhotoWidth, maxPhotoHeight);
+          maxRowHeight = Math.max(maxRowHeight, height);
         } catch (error) {
           console.error('Error adding image:', error);
         }
         
         // Add caption below photo
         if (rowPhotos[j].caption) {
-          const captionY = startY + photoSize + 5;
-          doc.text(rowPhotos[j].caption, photoX, captionY, { maxWidth: photoSize });
+          const captionY = startY + maxRowHeight + 5;
+          doc.text(rowPhotos[j].caption, photoX, captionY, { maxWidth: maxPhotoWidth });
         }
       }
       
-      // Advance Y position for next row
-      pageManager.addY(photoSize + 20); // Photo height + space for caption and row spacing
+      // Advance Y position for next row based on tallest photo
+      pageManager.addY(maxRowHeight + 20); // Photo height + space for caption and row spacing
     }
   }
   
@@ -1621,8 +1627,9 @@ const generateResumePDF = async (doc: jsPDF, pageManager: PDFPageManager, petDat
     pageManager.addY(5);
     
     const photosToShow = galleryPhotos.slice(0, 5); // Show up to 5 photos
-    const photoSize = 55;
-    const spacing = 60; // 55 photo width + 5 margin
+    const maxPhotoWidth = 55;
+    const maxPhotoHeight = 65;
+    const spacing = 60; // Photo width + margin
     const startX = 20;
     const photosPerRow = 3;
     
@@ -1631,17 +1638,18 @@ const generateResumePDF = async (doc: jsPDF, pageManager: PDFPageManager, petDat
       const rowPhotos = photosToShow.slice(i, i + photosPerRow);
       
       // Check if we need a new page for this row
-      pageManager.checkPageSpace(photoSize + 25);
+      pageManager.checkPageSpace(maxPhotoHeight + 25);
       const currentRowY = pageManager.getCurrentY();
       
-      // Place photos horizontally in the same row
+      let maxRowHeight = 0;
+      
+      // Place photos horizontally in the same row with aspect ratio preserved
       for (let j = 0; j < rowPhotos.length; j++) {
         const photoX = startX + (j * spacing);
         
-        // Draw photo without advancing Y cursor
         try {
-          const base64 = await loadOrientedImageAsBase64(rowPhotos[j].url);
-          doc.addImage(base64, 'JPEG', photoX, currentRowY, photoSize, photoSize);
+          const { height } = await addGalleryImage(doc, pageManager, rowPhotos[j].url, photoX, currentRowY, maxPhotoWidth, maxPhotoHeight);
+          maxRowHeight = Math.max(maxRowHeight, height);
         } catch (error) {
           console.error('Error adding gallery image:', error);
         }
@@ -1651,14 +1659,14 @@ const generateResumePDF = async (doc: jsPDF, pageManager: PDFPageManager, petDat
           doc.setFontSize(8);
           doc.setTextColor('#374151');
           doc.setFont('helvetica', 'normal');
-          const captionY = currentRowY + photoSize + 3;
-          const captionLines = doc.splitTextToSize(sanitizeText(rowPhotos[j].caption), photoSize);
+          const captionY = currentRowY + maxRowHeight + 3;
+          const captionLines = doc.splitTextToSize(sanitizeText(rowPhotos[j].caption), maxPhotoWidth);
           doc.text(captionLines, photoX, captionY);
         }
       }
       
-      // Advance Y position for next row
-      pageManager.addY(photoSize + 20); // Photo height + space for caption and row spacing
+      // Advance Y position for next row based on tallest photo
+      pageManager.addY(maxRowHeight + 20); // Photo height + space for caption and row spacing
     }
   }
 

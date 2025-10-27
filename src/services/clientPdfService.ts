@@ -791,16 +791,25 @@ pageManager.addY(6);
   });
   // ====================================================================
   
-  // Special markings/description
+  // Special markings/description - FORCE ON PAGE 1, no page break
   if (petData.bio || petData.distinctive_features) {
     pageManager.addY(2);
-    addCompactSection(doc, pageManager, 'DISTINCTIVE FEATURES', () => {
-      if (petData.distinctive_features) {
-        addText(doc, pageManager, safeText(petData.distinctive_features), '#000000', 12);
-      } else if (petData.bio) {
-        addText(doc, pageManager, safeText(petData.bio), '#000000', 12);
-      }
-    });
+    // Manually render section header without page space check
+    doc.setFontSize(14);
+    doc.setTextColor('#374151');
+    doc.setFont('helvetica', 'bold');
+    doc.text('DISTINCTIVE FEATURES', pageManager.getX(), pageManager.getCurrentY());
+    pageManager.addY(14 / 2 + 5);
+    
+    // Manually render text without page space check
+    const textContent = petData.distinctive_features ? safeText(petData.distinctive_features) : safeText(petData.bio);
+    doc.setFontSize(12);
+    doc.setTextColor('#000000');
+    doc.setFont('helvetica', 'normal');
+    const lines = doc.splitTextToSize(sanitizeText(textContent), pageManager.getContentWidth());
+    doc.text(lines, pageManager.getCurrentX(), pageManager.getCurrentY());
+    pageManager.addY(lines.length * (12 / 2) + 2);
+    pageManager.addY(6);
   }
   
   // Medical alerts

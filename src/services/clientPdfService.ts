@@ -863,12 +863,6 @@ pageManager.addY(6);
       pageManager.addY(2);
       console.warn('⚠️ [Lost Pet PDF] FINDER INSTRUCTIONS section rendered without custom instructions');
     }
-    // Always show standard instructions
-    addText(doc, pageManager, '1. Approach calmly and speak softly', '#000000', 11);
-    addText(doc, pageManager, '2. Check for identification tags or collar', '#000000', 11);
-    addText(doc, pageManager, '3. Contact numbers listed above immediately', '#000000', 11);
-    addText(doc, pageManager, '4. Keep pet safe and contained if possible', '#000000', 11);
-    addText(doc, pageManager, '5. Pet may be scared and not respond to name', '#000000', 11);
   });
   // ====================================================================
 

@@ -711,9 +711,30 @@ pageManager.addY(6);
     if (petData.registrationNumber) addText(doc, pageManager, `Registration #: ${safeText(petData.registrationNumber)}`, '#dc2626', 11);
   });
   
+  // Add QR code in right column under PET DETAILS
+  pageManager.addY(6); // Spacing after PET DETAILS
+  const qrY = pageManager.getCurrentY();
+  try {
+    const publicUrl = generatePublicMissingUrl(petData.id);
+    const qrUrl = generateQRCodeUrl(publicUrl, 240);
+    const base64 = await loadImageAsBase64(qrUrl);
+    const qrSize = 25; // mm
+    doc.addImage(base64, 'PNG', rightColumnX, qrY, qrSize, qrSize);
+    pageManager.setY(qrY + qrSize + 2);
+    doc.setFontSize(8);
+    doc.setTextColor(107, 114, 128);
+    doc.text('Scan for live updates', rightColumnX, pageManager.getCurrentY());
+    pageManager.addY(2);
+    doc.text('and contact info', rightColumnX, pageManager.getCurrentY());
+    pageManager.addY(4);
+  } catch (e) {
+    console.warn('QR generation failed:', e);
+  }
+  
   // Reset X position and move below both columns
   pageManager.setX(originalX);
-  pageManager.setY(Math.max(currentY + photoHeight + 8, pageManager.getCurrentY()));
+  const rightColumnEnd = pageManager.getCurrentY();
+  pageManager.setY(Math.max(currentY + photoHeight + 8, rightColumnEnd));
   
   // Emergency contact information - compact format
   pageManager.addY(4);
@@ -898,26 +919,6 @@ pageManager.addY(lineAdvance);
 addText(doc, pageManager, 'PLEASE CONTACT IMMEDIATELY IF FOUND!', '#dc2626', 12);
 pageManager.addY(6);
 // ====================================================================
-
-// QR code linking to live missing pet page
-try {
-  const publicUrl = generatePublicMissingUrl(petData.id);
-  const qrUrl = generateQRCodeUrl(publicUrl, 240);
-  const base64 = await loadImageAsBase64(qrUrl); // QR codes don't need orientation correction
-  const qrSize = 25; // mm (smaller QR code for better layout)
-  const x = (210 - qrSize) / 2;
-  const y = pageManager.getCurrentY();
-  doc.addImage(base64, 'PNG', x, y, qrSize, qrSize);
-  pageManager.setY(y + qrSize + 4);
-  doc.setFontSize(8);
-  doc.setTextColor(107, 114, 128);
-  const label = 'Scan for live updates and contact info';
-  const labelWidth = doc.getTextWidth(label);
-  doc.text(label, (210 - labelWidth) / 2, pageManager.getCurrentY());
-  pageManager.addY(4);
-} catch (e) {
-  console.warn('QR generation failed:', e);
-}
 
 // Footer pinned to bottom of the last page
 addFooterBottom(doc, pageManager, [

@@ -737,7 +737,7 @@ pageManager.addY(6);
   pageManager.setY(Math.max(currentY + photoHeight + 8, rightColumnEnd));
   
   // Emergency contact information - compact format
-  pageManager.addY(4);
+  pageManager.addY(2);
   addCompactSection(doc, pageManager, 'EMERGENCY CONTACT', () => {
     // Try different possible property names for emergency contacts
     const primaryContact = petData.emergencyContact || petData.emergency_contact || petData.emergency_contacts?.[0];
@@ -760,7 +760,7 @@ pageManager.addY(6);
   
   // ============= PHASE 3: ALWAYS VISIBLE LAST SEEN SECTION =============
   // Always show this section, even if data is missing
-  pageManager.addY(4);
+  pageManager.addY(2);
   addCompactSection(doc, pageManager, 'LAST SEEN', () => {
     let lastSeenText = '';
     
@@ -793,7 +793,7 @@ pageManager.addY(6);
   
   // Special markings/description
   if (petData.bio || petData.distinctive_features) {
-    pageManager.addY(4);
+    pageManager.addY(2);
     addCompactSection(doc, pageManager, 'DISTINCTIVE FEATURES', () => {
       if (petData.distinctive_features) {
         addText(doc, pageManager, safeText(petData.distinctive_features), '#000000', 12);
@@ -805,7 +805,7 @@ pageManager.addY(6);
   
   // Medical alerts
   if (petData.medicalAlert && petData.medicalConditions) {
-    pageManager.addY(4);
+    pageManager.addY(2);
     addCompactSection(doc, pageManager, 'MEDICAL ALERT', () => {
       addText(doc, pageManager, safeText(petData.medicalConditions), '#dc2626', 12);
       if (petData.medications && petData.medications.length > 0) {
@@ -834,9 +834,9 @@ pageManager.addY(6);
   }
   
   if (additionalPhotos.length > 0) {
-    pageManager.addY(4);
+    pageManager.addY(2);
     addText(doc, pageManager, 'IDENTIFICATION PHOTOS', '#dc2626', 12);
-    pageManager.addY(3);
+    pageManager.addY(2);
     
     const startY = pageManager.getCurrentY();
     const photoCount = Math.min(additionalPhotos.length, 4);

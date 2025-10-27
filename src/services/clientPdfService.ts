@@ -430,7 +430,7 @@ const addSubtitle = (doc: jsPDF, pageManager: PDFPageManager, text: string, colo
   doc.setTextColor(color);
   doc.setFont('helvetica', 'bold');
   doc.text(text, pageManager.getX(), pageManager.getCurrentY());
-  pageManager.addY(fontSize / 2 + 5);
+  pageManager.addY(fontSize / 2 + 2);
 };
 
 const addText = (doc: jsPDF, pageManager: PDFPageManager, text: string, color: string = '#000000', fontSize: number = 10): void => {
@@ -799,7 +799,7 @@ pageManager.addY(6);
     doc.setTextColor('#374151');
     doc.setFont('helvetica', 'bold');
     doc.text('DISTINCTIVE FEATURES', pageManager.getX(), pageManager.getCurrentY());
-    pageManager.addY(14 / 2 + 5);
+    pageManager.addY(14 / 2 + 2);
     
     // Manually render text without page space check
     const textContent = petData.distinctive_features ? safeText(petData.distinctive_features) : safeText(petData.bio);

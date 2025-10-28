@@ -327,24 +327,32 @@ export const StoryStreamManager = ({ petId, petName }: StoryStreamManagerProps) 
                       id="story-photo-upload"
                       disabled={uploadingPhoto}
                     />
-                    <label 
-                      htmlFor="story-photo-upload" 
-                      className="cursor-pointer flex flex-col items-center gap-2"
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      className="w-full h-auto py-4"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        document.getElementById('story-photo-upload')?.click();
+                      }}
+                      disabled={uploadingPhoto}
                     >
-                      {uploadingPhoto ? (
-                        <div className="text-muted-foreground">Compressing...</div>
-                      ) : (
-                        <>
-                          <Upload className="w-8 h-8 text-muted-foreground" />
-                          <span className="text-sm text-muted-foreground">
-                            Click to add a photo
-                          </span>
-                          <span className="text-xs text-muted-foreground">
-                            Will be compressed to ~500KB
-                          </span>
-                        </>
-                      )}
-                    </label>
+                      <div className="flex flex-col items-center gap-2">
+                        {uploadingPhoto ? (
+                          <div className="text-muted-foreground">Compressing...</div>
+                        ) : (
+                          <>
+                            <Upload className="w-8 h-8 text-muted-foreground" />
+                            <span className="text-sm text-muted-foreground">
+                              Click to add a photo
+                            </span>
+                            <span className="text-xs text-muted-foreground">
+                              Will be compressed to ~500KB
+                            </span>
+                          </>
+                        )}
+                      </div>
+                    </Button>
                   </div>
                 ) : (
                   <div className="relative rounded-lg overflow-hidden border">

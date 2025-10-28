@@ -109,6 +109,9 @@ export default function Landing() {
           <Link to="/lost-pet-features" className="text-sm font-medium text-brand-primary hover:text-brand-primary-dark transition-colors">
             Lost Pet Solutions
           </Link>
+          <Link to="/foster-program" className="text-sm font-medium text-brand-primary hover:text-brand-primary-dark transition-colors">
+            Foster Program
+          </Link>
           <Link to="/demos" className="text-sm font-medium text-brand-primary hover:text-brand-primary-dark transition-colors">
             Demos
           </Link>

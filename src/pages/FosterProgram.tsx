@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { MetaTags } from "@/components/MetaTags";
 import { AzureButton } from "@/components/ui/azure-button";
 import { Heart, Link2, MapPin, Sparkles } from "lucide-react";
+import { GuidanceHint } from "@/components/ui/guidance-hint";
 
 const FosterProgram = () => {
   return (
@@ -159,6 +160,16 @@ const FosterProgram = () => {
               </div>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* Smart Slot System Info */}
+      <section className="container mx-auto px-4 py-8 bg-muted/20">
+        <div className="max-w-4xl mx-auto">
+          <GuidanceHint
+            variant="gentle"
+            message="💡 Smart Slot System: Your Pet Accounts Work for Every Foster — Each pet account you purchase ($3.99/year for additional slots) is permanent and reusable. When you transfer a pet to their adopter, that slot opens up immediately for your next foster. This means one $3.99 slot can serve dozens of pets over the years—making it incredibly cost-effective for active foster families. Your subscription includes 1 pet slot, and you can add up to 20 additional slots as needed."
+          />
         </div>
       </section>
 

@@ -59,21 +59,23 @@ const StoryStream = ({ petId, petName }: StoryStreamProps) => {
   };
 
   const handleShareStory = (storyId: string) => {
-    const storyUrl = `${window.location.origin}/story-stream/${petId}#story-${storyId}`;
+    const directUrl = `${window.location.origin}/story-stream/${petId}#story-${storyId}`;
+    const edgeFunctionUrl = `https://dxghbhujugsfmaecilrq.supabase.co/functions/v1/story-share?storyId=${storyId}&redirect=${encodeURIComponent(directUrl)}`;
     
+    // Try native share first (mobile)
     if (navigator.share) {
       navigator.share({
         title: `${petName}'s Story`,
         text: 'Check out this story update!',
-        url: storyUrl
+        url: edgeFunctionUrl // Use edge function for better previews
       }).catch(() => {
-        // User cancelled or error, fallback to copy
-        navigator.clipboard.writeText(storyUrl);
+        navigator.clipboard.writeText(directUrl);
         toast.success('Link copied to clipboard!');
       });
     } else {
-      navigator.clipboard.writeText(storyUrl);
-      toast.success('Link copied to clipboard!');
+      // Desktop: copy edge function URL for social sharing
+      navigator.clipboard.writeText(edgeFunctionUrl);
+      toast.success('Share link copied! Paste in Facebook/Threads for rich preview.');
     }
   };
 

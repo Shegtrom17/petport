@@ -240,7 +240,7 @@ export const StoryStreamManager = ({ petId, petName }: StoryStreamManagerProps) 
                   type="button"
                   onClick={handleSubmitStory}
                   disabled={submitting || !storyText.trim() || remainingChars < 0}
-                  className="flex-1"
+                  className="flex-1 text-primary-foreground"
                 >
                   {submitting ? (
                     <>

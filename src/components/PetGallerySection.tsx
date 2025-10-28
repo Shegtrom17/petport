@@ -21,6 +21,7 @@ import { useLongPress } from "@/hooks/useLongPress";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { supabase } from "@/integrations/supabase/client";
 import { QuickShareHub } from "@/components/QuickShareHub";
+import { StoryStreamManager } from "@/components/StoryStreamManager";
 
 // Helper to save current tab before risky actions
 const saveLastTab = async () => {
@@ -984,6 +985,9 @@ export const PetGallerySection = ({ petData, onUpdate, handlePetUpdate }: PetGal
         isOpen={lightboxOpen}
         onClose={closeLightbox}
       />
+
+      {/* Story Stream Manager */}
+      <StoryStreamManager petId={petData.id} petName={petData.name} />
     </div>
   );
 };

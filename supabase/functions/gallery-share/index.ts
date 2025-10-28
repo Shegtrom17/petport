@@ -81,9 +81,32 @@ serve(async (req) => {
       });
     }
 
+    // Fetch gallery photo count
+    const { count: photoCount } = await supabase
+      .from('gallery_photos')
+      .select('*', { count: 'exact', head: true })
+      .eq('pet_id', petId);
+
+    // Fetch story updates count
+    const { count: storyCount } = await supabase
+      .from('story_updates')
+      .select('*', { count: 'exact', head: true })
+      .eq('pet_id', petId)
+      .eq('is_visible', true);
+
     // Generate meta tags for social sharing
     const title = `${pet.name}'s Photo Gallery - PetPort`;
-    const description = `Check out ${pet.name}'s photo gallery on PetPort.`;
+    
+    // Build dynamic description based on content
+    let description = `Check out ${pet.name}'s photo gallery`;
+    if (photoCount && photoCount > 0) {
+      description += ` with ${photoCount} ${photoCount === 1 ? 'photo' : 'photos'}`;
+    }
+    if (storyCount && storyCount > 0) {
+      description += ` and ${storyCount} ${storyCount === 1 ? 'story update' : 'story updates'}`;
+    }
+    description += ' on PetPort.';
+    
     const ogImageUrl = "https://pub-a7c2c18b8d6143b9a256105ef44f2da0.r2.dev/gallery-og.png";
     const canonicalUrl = `https://petport.app/gallery/${petId}`;
     

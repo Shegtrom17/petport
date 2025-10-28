@@ -1229,6 +1229,50 @@ export type Database = {
         }
         Relationships: []
       }
+      story_updates: {
+        Row: {
+          author_name: string | null
+          created_at: string | null
+          id: string
+          ip_address: string | null
+          is_visible: boolean | null
+          pet_id: string
+          photo_url: string | null
+          story_text: string
+          updated_at: string | null
+        }
+        Insert: {
+          author_name?: string | null
+          created_at?: string | null
+          id?: string
+          ip_address?: string | null
+          is_visible?: boolean | null
+          pet_id: string
+          photo_url?: string | null
+          story_text: string
+          updated_at?: string | null
+        }
+        Update: {
+          author_name?: string | null
+          created_at?: string | null
+          id?: string
+          ip_address?: string | null
+          is_visible?: boolean | null
+          pet_id?: string
+          photo_url?: string | null
+          story_text?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "story_updates_pet_id_fkey"
+            columns: ["pet_id"]
+            isOneToOne: false
+            referencedRelation: "pets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       subscriber_tags: {
         Row: {
           color: string | null

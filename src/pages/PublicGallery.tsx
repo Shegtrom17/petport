@@ -7,6 +7,7 @@ import { MetaTags } from "@/components/MetaTags";
 import { supabase } from '@/integrations/supabase/client';
 import { Link } from 'react-router-dom';
 import { GALLERY_CONFIG } from "@/config/featureFlags";
+import StoryStream from '@/components/StoryStream';
 
 interface GalleryPhoto {
   id: string;
@@ -236,6 +237,8 @@ export const PublicGallery = () => {
            </CardContent>
         </Card>
 
+        {/* Story Stream Section */}
+        {petData && <StoryStream petId={petData.id} petName={petData.name} />}
 
         {/* Footer */}
         <div className="mt-12 text-center text-gray-500 text-sm pb-8">

@@ -546,6 +546,81 @@ export type Database = {
           },
         ]
       }
+      gift_memberships: {
+        Row: {
+          activated_at: string | null
+          amount_paid: number
+          created_at: string | null
+          expires_at: string | null
+          gift_code: string
+          gift_message: string | null
+          id: string
+          purchased_at: string | null
+          purchaser_email: string
+          purchaser_user_id: string | null
+          recipient_email: string
+          recipient_user_id: string | null
+          reminder_30_sent_at: string | null
+          reminder_60_sent_at: string | null
+          reminder_7_sent_at: string | null
+          renewed_at: string | null
+          sender_name: string | null
+          status: string
+          stripe_checkout_session_id: string | null
+          stripe_payment_intent_id: string | null
+          stripe_subscription_id: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          activated_at?: string | null
+          amount_paid?: number
+          created_at?: string | null
+          expires_at?: string | null
+          gift_code: string
+          gift_message?: string | null
+          id?: string
+          purchased_at?: string | null
+          purchaser_email: string
+          purchaser_user_id?: string | null
+          recipient_email: string
+          recipient_user_id?: string | null
+          reminder_30_sent_at?: string | null
+          reminder_60_sent_at?: string | null
+          reminder_7_sent_at?: string | null
+          renewed_at?: string | null
+          sender_name?: string | null
+          status?: string
+          stripe_checkout_session_id?: string | null
+          stripe_payment_intent_id?: string | null
+          stripe_subscription_id?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          activated_at?: string | null
+          amount_paid?: number
+          created_at?: string | null
+          expires_at?: string | null
+          gift_code?: string
+          gift_message?: string | null
+          id?: string
+          purchased_at?: string | null
+          purchaser_email?: string
+          purchaser_user_id?: string | null
+          recipient_email?: string
+          recipient_user_id?: string | null
+          reminder_30_sent_at?: string | null
+          reminder_60_sent_at?: string | null
+          reminder_7_sent_at?: string | null
+          renewed_at?: string | null
+          sender_name?: string | null
+          status?: string
+          stripe_checkout_session_id?: string | null
+          stripe_payment_intent_id?: string | null
+          stripe_subscription_id?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       issues: {
         Row: {
           browser_info: Json | null

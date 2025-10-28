@@ -189,6 +189,7 @@ export const StoryStreamManager = ({ petId, petName }: StoryStreamManagerProps) 
             onClick={() => setShowForm(!showForm)}
             variant={showForm ? "outline" : "default"}
             size="sm"
+            className={showForm ? "" : "text-primary-foreground"}
           >
             {showForm ? 'Cancel' : (
               <>

@@ -68,6 +68,11 @@ export const StoryStreamManager = ({ petId, petName }: StoryStreamManagerProps) 
   };
 
   const handlePhotoSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    // Prevent any navigation
+    e.preventDefault();
+    e.stopPropagation();
+    console.log('[Story Upload] Photo selected, processing...');
+    
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -82,6 +87,7 @@ export const StoryStreamManager = ({ petId, petName }: StoryStreamManagerProps) 
 
     try {
       setUploadingPhoto(true);
+      console.log('[Story Upload] Compressing photo...');
       
       const compressed = await compressImage(file, {
         maxWidth: 1200,
@@ -92,6 +98,7 @@ export const StoryStreamManager = ({ petId, petName }: StoryStreamManagerProps) 
       setPhotoFile(compressed.file);
       setPhotoPreview(URL.createObjectURL(compressed.file));
       
+      console.log('[Story Upload] Photo compressed and ready');
       toast({
         title: 'Photo ready',
         description: `Compressed to ${(compressed.compressedSize / 1024).toFixed(0)}KB`,
@@ -116,7 +123,14 @@ export const StoryStreamManager = ({ petId, petName }: StoryStreamManagerProps) 
     setPhotoPreview(null);
   };
 
-  const handleSubmitStory = async () => {
+  const handleSubmitStory = async (e?: React.MouseEvent) => {
+    // Prevent any navigation
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    console.log('[Story Upload] Starting story submission...');
+    
     if (!storyText.trim()) {
       toast({
         variant: 'destructive',
@@ -141,6 +155,7 @@ export const StoryStreamManager = ({ petId, petName }: StoryStreamManagerProps) 
       let photoUrl: string | null = null;
 
       if (photoFile) {
+        console.log('[Story Upload] Uploading photo to storage...');
         const fileExt = photoFile.name.split('.').pop();
         const fileName = `${petId}/${Date.now()}.${fileExt}`;
 
@@ -158,8 +173,10 @@ export const StoryStreamManager = ({ petId, petName }: StoryStreamManagerProps) 
           .getPublicUrl(uploadData.path);
 
         photoUrl = publicUrl;
+        console.log('[Story Upload] Photo uploaded successfully');
       }
 
+      console.log('[Story Upload] Inserting story to database...');
       const { error } = await supabase
         .from('story_updates')
         .insert({
@@ -172,6 +189,7 @@ export const StoryStreamManager = ({ petId, petName }: StoryStreamManagerProps) 
 
       if (error) throw error;
 
+      console.log('[Story Upload] Story posted successfully');
       toast({
         title: 'Success',
         description: 'Story update posted successfully',
@@ -183,7 +201,7 @@ export const StoryStreamManager = ({ petId, petName }: StoryStreamManagerProps) 
       setShowForm(false);
       loadStories();
     } catch (error) {
-      console.error('Error posting story:', error);
+      console.error('[Story Upload] Error posting story:', error);
       toast({
         variant: 'destructive',
         title: 'Error',
@@ -377,7 +395,11 @@ export const StoryStreamManager = ({ petId, petName }: StoryStreamManagerProps) 
               <div className="flex gap-2">
                 <Button
                   type="button"
-                  onClick={handleSubmitStory}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    handleSubmitStory(e);
+                  }}
                   disabled={submitting || !storyText.trim() || remainingChars < 0 || uploadingPhoto}
                   className="flex-1 text-primary-foreground"
                 >

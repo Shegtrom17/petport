@@ -29,7 +29,7 @@ const FosterProgram = () => {
                 <Link to="/#pricing">Start Free • No Credit Card Required</Link>
               </AzureButton>
               <AzureButton size="lg" variant="outline" asChild>
-                <Link to="/demo/resume">View Example Pet Profile</Link>
+                <Link to="/demos">See LiveLinks</Link>
               </AzureButton>
             </div>
           </div>
@@ -209,7 +209,7 @@ const FosterProgram = () => {
               <Link to="/#pricing">Start Free • No Credit Card Required</Link>
             </AzureButton>
             <AzureButton size="lg" variant="outline" asChild>
-              <Link to="/demo/resume">View Example Pet Profile</Link>
+              <Link to="/demos">See LiveLinks</Link>
             </AzureButton>
           </div>
         </div>

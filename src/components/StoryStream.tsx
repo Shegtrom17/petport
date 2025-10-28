@@ -2,8 +2,9 @@ import { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Clock, User } from 'lucide-react';
+import { Clock, User, Share2 } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
+import { SocialShareButtons } from '@/components/SocialShareButtons';
 
 interface StoryUpdate {
   id: string;
@@ -24,6 +25,7 @@ const StoryStream = ({ petId, petName }: StoryStreamProps) => {
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
+  const [shareStoryId, setShareStoryId] = useState<string | null>(null);
   const storiesPerPage = 10;
 
   useEffect(() => {
@@ -105,27 +107,40 @@ const StoryStream = ({ petId, petName }: StoryStreamProps) => {
             className="p-4 sm:p-6 hover:shadow-lg transition-shadow"
           >
             {/* Author & Timestamp Header */}
-            <div className="flex items-center gap-3 mb-3 text-sm text-muted-foreground">
-              {story.author_name ? (
-                <>
-                  <User className="w-4 h-4" />
-                  <span className="font-medium text-foreground">
-                    {story.author_name}
-                  </span>
-                </>
-              ) : (
-                <>
-                  <User className="w-4 h-4" />
-                  <span className="font-medium text-foreground">
-                    Story Update
-                  </span>
-                </>
-              )}
-              <span className="text-muted-foreground">•</span>
-              <div className="flex items-center gap-1">
-                <Clock className="w-4 h-4" />
-                <span>{formatTimeAgo(story.created_at)}</span>
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center gap-3 text-sm text-muted-foreground">
+                {story.author_name ? (
+                  <>
+                    <User className="w-4 h-4" />
+                    <span className="font-medium text-foreground">
+                      {story.author_name}
+                    </span>
+                  </>
+                ) : (
+                  <>
+                    <User className="w-4 h-4" />
+                    <span className="font-medium text-foreground">
+                      Story Update
+                    </span>
+                  </>
+                )}
+                <span className="text-muted-foreground">•</span>
+                <div className="flex items-center gap-1">
+                  <Clock className="w-4 h-4" />
+                  <span>{formatTimeAgo(story.created_at)}</span>
+                </div>
               </div>
+              
+              {/* Share Button */}
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setShareStoryId(story.id)}
+                className="flex items-center gap-2"
+              >
+                <Share2 className="w-4 h-4" />
+                Share
+              </Button>
             </div>
 
             {/* Story Text */}
@@ -160,6 +175,16 @@ const StoryStream = ({ petId, petName }: StoryStreamProps) => {
             {loading ? 'Loading...' : 'Load More Stories'}
           </Button>
         </div>
+      )}
+
+      {/* Social Share Dialog */}
+      {shareStoryId && (
+        <SocialShareButtons
+          url={`${window.location.origin}/story-stream/${petId}#story-${shareStoryId}`}
+          title={`${petName}'s Story Stream`}
+          description="Check out this story update!"
+          onClose={() => setShareStoryId(null)}
+        />
       )}
     </div>
   );

@@ -168,7 +168,7 @@ const FosterProgram = () => {
         <div className="max-w-4xl mx-auto">
           <GuidanceHint
             variant="gentle"
-            message="💡 Smart Slot System: Your Pet Accounts Work for Every Foster — Each pet account you purchase ($3.99/year for additional slots) is permanent and reusable. When you transfer a pet to their adopter, that slot opens up immediately for your next foster. This means one $3.99 slot can serve dozens of pets over the years—making it incredibly cost-effective for active foster families. Your subscription includes 1 pet slot, and you can add up to 20 additional slots as needed."
+            message="💰 Reusable Pet Slots = Maximum Value: Unlike traditional systems, your pet slots never disappear when you transfer a pet. Transfer 100 pets with just 1 slot, or manage 21 fosters simultaneously—your choice! Start with 1 included slot, add more ($3.99/year each) as your rescue grows. Pay once, reuse endlessly."
           />
         </div>
       </section>

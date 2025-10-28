@@ -26,7 +26,7 @@ const FosterProgram = () => {
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
               <AzureButton size="lg" asChild>
-                <Link to="/#pricing">Start Free • No Credit Card Required</Link>
+                <Link to="/#pricing">Start 7-Day Free Trial</Link>
               </AzureButton>
               <AzureButton size="lg" variant="outline" asChild>
                 <Link to="/demos">See LiveLinks</Link>
@@ -206,7 +206,7 @@ const FosterProgram = () => {
           </h2>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <AzureButton size="lg" asChild>
-              <Link to="/#pricing">Start Free • No Credit Card Required</Link>
+              <Link to="/#pricing">Start 7-Day Free Trial</Link>
             </AzureButton>
             <AzureButton size="lg" variant="outline" asChild>
               <Link to="/demos">See LiveLinks</Link>

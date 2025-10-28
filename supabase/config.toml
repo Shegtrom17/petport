@@ -123,3 +123,6 @@ verify_jwt = false
 
 [functions.send-gift-email]
 verify_jwt = false
+
+[functions.purchase-gift-membership]
+verify_jwt = false

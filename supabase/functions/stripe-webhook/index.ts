@@ -91,6 +91,10 @@ serve(async (req) => {
         await handleSubscriptionEvent(event, supabaseClient, "canceled");
         break;
 
+      case "checkout.session.completed":
+        await handleCheckoutCompleted(event, supabaseClient, stripe);
+        break;
+
       default:
         logStep("Unhandled event type", { eventType: event.type });
     }
@@ -352,5 +356,114 @@ async function handlePaymentSucceeded(event: any, supabaseClient: any) {
       userId: user.id,
       previousStatus: currentStatus.status 
     });
+  }
+}
+
+async function handleCheckoutCompleted(event: any, supabaseClient: any, stripe: any) {
+  const session = event.data.object;
+  
+  logStep("Handling checkout.session.completed", { 
+    sessionId: session.id,
+    metadata: session.metadata 
+  });
+
+  // Check if this is a gift membership purchase
+  if (session.metadata?.type === "gift_membership") {
+    await handleGiftMembershipPurchase(session, supabaseClient);
+  }
+}
+
+async function handleGiftMembershipPurchase(session: any, supabaseClient: any) {
+  const recipientEmail = session.metadata.recipient_email;
+  const senderName = session.metadata.sender_name || "A PetPort supporter";
+  const giftMessage = session.metadata.gift_message || "";
+  const purchaserEmail = session.metadata.purchaser_email || session.customer_email;
+
+  logStep("Processing gift membership", { 
+    recipientEmail,
+    senderName,
+    purchaserEmail 
+  });
+
+  // Generate unique 8-character gift code
+  const giftCode = crypto.randomUUID().split('-')[0].toUpperCase();
+  
+  // Calculate expiry (1 year from purchase)
+  const expiresAt = new Date();
+  expiresAt.setFullYear(expiresAt.getFullYear() + 1);
+
+  // Insert gift membership record
+  const { data: giftData, error: giftError } = await supabaseClient
+    .from('gift_memberships')
+    .insert({
+      gift_code: giftCode,
+      purchaser_email: purchaserEmail,
+      recipient_email: recipientEmail,
+      sender_name: senderName,
+      gift_message: giftMessage,
+      stripe_payment_intent_id: session.payment_intent,
+      stripe_checkout_session_id: session.id,
+      amount_paid: 1499,
+      status: 'pending',
+      purchased_at: new Date().toISOString(),
+      expires_at: expiresAt.toISOString()
+    })
+    .select()
+    .single();
+
+  if (giftError) {
+    logStep("Error creating gift membership", { error: giftError });
+    throw giftError;
+  }
+
+  logStep("Gift membership created", { 
+    giftCode,
+    recipientEmail,
+    expiresAt: expiresAt.toISOString() 
+  });
+
+  // Send confirmation emails
+  try {
+    const baseUrl = Deno.env.get("APP_ORIGIN") || "https://petport.app";
+    const redemptionLink = `${baseUrl}/redeem?code=${giftCode}`;
+    
+    // Send to purchaser
+    await supabaseClient.functions.invoke('send-gift-email', {
+      body: {
+        type: 'gift-purchase-confirmation',
+        recipientEmail: purchaserEmail,
+        senderName: senderName,
+        giftMessage: giftMessage,
+        giftCode: giftCode,
+        redemptionLink: redemptionLink,
+        expiresAt: expiresAt.toLocaleDateString('en-US', { 
+          year: 'numeric', 
+          month: 'long', 
+          day: 'numeric' 
+        })
+      }
+    });
+
+    // Send to recipient
+    await supabaseClient.functions.invoke('send-gift-email', {
+      body: {
+        type: 'gift-notification',
+        recipientEmail: recipientEmail,
+        senderName: senderName,
+        giftMessage: giftMessage,
+        giftCode: giftCode,
+        redemptionLink: redemptionLink,
+        expiresAt: expiresAt.toLocaleDateString('en-US', { 
+          year: 'numeric', 
+          month: 'long', 
+          day: 'numeric' 
+        })
+      }
+    });
+
+    logStep("Gift emails sent", { purchaserEmail, recipientEmail });
+  } catch (emailError) {
+    logStep("Error sending gift emails", { error: emailError });
+    // Don't throw - gift is still created even if emails fail
   }
 }

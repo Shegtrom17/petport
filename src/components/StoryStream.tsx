@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Clock, User, Share2 } from 'lucide-react';
+import { Clock, User } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { toast } from 'sonner';
 
@@ -58,26 +58,6 @@ const StoryStream = ({ petId, petName }: StoryStreamProps) => {
     }
   };
 
-  const handleShareStory = (storyId: string) => {
-    const directUrl = `${window.location.origin}/story-stream/${petId}#story-${storyId}`;
-    const edgeFunctionUrl = `https://dxghbhujugsfmaecilrq.supabase.co/functions/v1/story-share?storyId=${storyId}&redirect=${encodeURIComponent(directUrl)}`;
-    
-    // Try native share first (mobile)
-    if (navigator.share) {
-      navigator.share({
-        title: `${petName}'s Story`,
-        text: 'Check out this story update!',
-        url: edgeFunctionUrl // Use edge function for better previews
-      }).catch(() => {
-        navigator.clipboard.writeText(directUrl);
-        toast.success('Link copied to clipboard!');
-      });
-    } else {
-      // Desktop: copy edge function URL for social sharing
-      navigator.clipboard.writeText(edgeFunctionUrl);
-      toast.success('Share link copied! Paste in Facebook/Threads for rich preview.');
-    }
-  };
 
   const formatTimeAgo = (dateString: string) => {
     try {
@@ -150,17 +130,6 @@ const StoryStream = ({ petId, petName }: StoryStreamProps) => {
                   <span>{formatTimeAgo(story.created_at)}</span>
                 </div>
               </div>
-              
-              {/* Share Button */}
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => handleShareStory(story.id)}
-                className="flex items-center gap-2"
-              >
-                <Share2 className="w-4 h-4" />
-                Share
-              </Button>
             </div>
 
             {/* Story Text */}

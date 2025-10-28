@@ -120,3 +120,6 @@ verify_jwt = false
 
 [functions.notify-care-update]
 verify_jwt = false
+
+[functions.send-gift-email]
+verify_jwt = false

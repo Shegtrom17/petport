@@ -8,7 +8,7 @@ const corsHeaders = {
 };
 
 interface EmailRequest {
-  type: 'profile' | 'care' | 'credentials' | 'resume' | 'reviews' | 'review_request' | 'missing_pet' | 'app_share' | 'welcome' | 'welcome_trial' | 'transfer_invite_new' | 'transfer_invite_existing' | 'transfer_success' | 'transfer_limit_reached' | 'transfer_sent_confirmation' | 'transfer_completed_sender';
+  type: 'profile' | 'care' | 'credentials' | 'resume' | 'reviews' | 'review_request' | 'missing_pet' | 'app_share' | 'welcome' | 'welcome_trial' | 'transfer_invite_new' | 'transfer_invite_existing' | 'transfer_success' | 'transfer_limit_reached' | 'transfer_sent_confirmation' | 'transfer_completed_sender' | 'gift_purchase' | 'gift_notification' | 'gift_activated' | 'gift_renewal_60' | 'gift_renewal_30' | 'gift_renewal_7' | 'gift_expired';
   recipientEmail: string;
   transferRecipientEmail?: string;
   recipientName?: string;
@@ -25,6 +25,11 @@ interface EmailRequest {
   transferToken?: string;
   transferUrl?: string;
   recipientStatus?: string;
+  // Gift-specific fields
+  giftCode?: string;
+  expiresAt?: string;
+  daysRemaining?: number;
+  usePostmarkTemplate?: boolean; // If true, use Postmark template instead of HTML generation
 }
 
 const generateTextBody = (data: EmailRequest): string => {

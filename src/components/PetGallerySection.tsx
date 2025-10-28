@@ -22,6 +22,7 @@ import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { supabase } from "@/integrations/supabase/client";
 import { QuickShareHub } from "@/components/QuickShareHub";
 import { StoryStreamManager } from "@/components/StoryStreamManager";
+import StoryStream from "@/components/StoryStream";
 
 // Helper to save current tab before risky actions
 const saveLastTab = async () => {
@@ -784,11 +785,10 @@ export const PetGallerySection = ({ petData, onUpdate, handlePetUpdate }: PetGal
         </CardContent>
       </Card>
 
-      {/* Quick Share Hub */}
-      <QuickShareHub 
-        petData={petData} 
-        isLost={false}
-      />
+      {/* Story Stream Display */}
+      <div className="mt-8">
+        <StoryStream petId={petData.id} petName={petData.name} />
+      </div>
 
       {/* Gallery PDF Dialog */}
       <Dialog open={isGalleryPDFDialogOpen} onOpenChange={setIsGalleryPDFDialogOpen}>
@@ -988,6 +988,12 @@ export const PetGallerySection = ({ petData, onUpdate, handlePetUpdate }: PetGal
 
       {/* Story Stream Manager */}
       <StoryStreamManager petId={petData.id} petName={petData.name} />
+
+      {/* Quick Share Hub */}
+      <QuickShareHub 
+        petData={petData} 
+        isLost={false}
+      />
     </div>
   );
 };

@@ -6,10 +6,11 @@ import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
-import { Clock, User, Eye, EyeOff, Trash2, Plus, Loader2, Image as ImageIcon } from 'lucide-react';
+import { Clock, User, Eye, EyeOff, Trash2, Plus, Loader2, Image as ImageIcon, Upload, X } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { useToast } from '@/hooks/use-toast';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
+import { compressImage } from '@/utils/imageCompression';
 
 interface StoryUpdate {
   id: string;
@@ -34,6 +35,9 @@ export const StoryStreamManager = ({ petId, petName }: StoryStreamManagerProps) 
   const [storyText, setStoryText] = useState('');
   const [authorName, setAuthorName] = useState('');
   const [showForm, setShowForm] = useState(false);
+  const [photoFile, setPhotoFile] = useState<File | null>(null);
+  const [photoPreview, setPhotoPreview] = useState<string | null>(null);
+  const [uploadingPhoto, setUploadingPhoto] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -63,6 +67,55 @@ export const StoryStreamManager = ({ petId, petName }: StoryStreamManagerProps) 
     }
   };
 
+  const handlePhotoSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      toast({
+        variant: 'destructive',
+        title: 'Error',
+        description: 'Please select an image file',
+      });
+      return;
+    }
+
+    try {
+      setUploadingPhoto(true);
+      
+      const compressed = await compressImage(file, {
+        maxWidth: 1200,
+        maxHeight: 1200,
+        quality: 0.8
+      });
+
+      setPhotoFile(compressed.file);
+      setPhotoPreview(URL.createObjectURL(compressed.file));
+      
+      toast({
+        title: 'Photo ready',
+        description: `Compressed to ${(compressed.compressedSize / 1024).toFixed(0)}KB`,
+      });
+    } catch (error) {
+      console.error('Error compressing photo:', error);
+      toast({
+        variant: 'destructive',
+        title: 'Error',
+        description: 'Failed to process photo',
+      });
+    } finally {
+      setUploadingPhoto(false);
+    }
+  };
+
+  const handleRemovePhoto = () => {
+    if (photoPreview) {
+      URL.revokeObjectURL(photoPreview);
+    }
+    setPhotoFile(null);
+    setPhotoPreview(null);
+  };
+
   const handleSubmitStory = async () => {
     if (!storyText.trim()) {
       toast({
@@ -84,12 +137,36 @@ export const StoryStreamManager = ({ petId, petName }: StoryStreamManagerProps) 
 
     try {
       setSubmitting(true);
+      
+      let photoUrl: string | null = null;
+
+      if (photoFile) {
+        const fileExt = photoFile.name.split('.').pop();
+        const fileName = `${petId}/${Date.now()}.${fileExt}`;
+
+        const { data: uploadData, error: uploadError } = await supabase.storage
+          .from('story-photos')
+          .upload(fileName, photoFile, {
+            cacheControl: '3600',
+            upsert: false
+          });
+
+        if (uploadError) throw uploadError;
+
+        const { data: { publicUrl } } = supabase.storage
+          .from('story-photos')
+          .getPublicUrl(uploadData.path);
+
+        photoUrl = publicUrl;
+      }
+
       const { error } = await supabase
         .from('story_updates')
         .insert({
           pet_id: petId,
           story_text: storyText.trim(),
           author_name: authorName.trim() || null,
+          photo_url: photoUrl,
           is_visible: true,
         });
 
@@ -102,6 +179,7 @@ export const StoryStreamManager = ({ petId, petName }: StoryStreamManagerProps) 
 
       setStoryText('');
       setAuthorName('');
+      handleRemovePhoto();
       setShowForm(false);
       loadStories();
     } catch (error) {
@@ -235,11 +313,64 @@ export const StoryStreamManager = ({ petId, petName }: StoryStreamManagerProps) 
                 />
               </div>
 
+              {/* Photo Upload */}
+              <div className="space-y-2">
+                <Label>Photo (Optional)</Label>
+                
+                {!photoPreview ? (
+                  <div className="border-2 border-dashed border-muted rounded-lg p-6 text-center">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handlePhotoSelect}
+                      className="hidden"
+                      id="story-photo-upload"
+                      disabled={uploadingPhoto}
+                    />
+                    <label 
+                      htmlFor="story-photo-upload" 
+                      className="cursor-pointer flex flex-col items-center gap-2"
+                    >
+                      {uploadingPhoto ? (
+                        <div className="text-muted-foreground">Compressing...</div>
+                      ) : (
+                        <>
+                          <Upload className="w-8 h-8 text-muted-foreground" />
+                          <span className="text-sm text-muted-foreground">
+                            Click to add a photo
+                          </span>
+                          <span className="text-xs text-muted-foreground">
+                            Will be compressed to ~500KB
+                          </span>
+                        </>
+                      )}
+                    </label>
+                  </div>
+                ) : (
+                  <div className="relative rounded-lg overflow-hidden border">
+                    <img 
+                      src={photoPreview} 
+                      alt="Story preview" 
+                      className="w-full max-h-64 object-contain bg-muted"
+                    />
+                    <Button
+                      type="button"
+                      variant="destructive"
+                      size="icon"
+                      className="absolute top-2 right-2"
+                      onClick={handleRemovePhoto}
+                    >
+                      <X className="w-4 h-4" />
+                    </Button>
+                  </div>
+                )}
+              </div>
+
               <div className="flex gap-2">
                 <Button
                   type="button"
                   onClick={handleSubmitStory}
-                  disabled={submitting || !storyText.trim() || remainingChars < 0}
+                  disabled={submitting || !storyText.trim() || remainingChars < 0 || uploadingPhoto}
                   className="flex-1 text-primary-foreground"
                 >
                   {submitting ? (
@@ -341,6 +472,18 @@ export const StoryStreamManager = ({ petId, petName }: StoryStreamManagerProps) 
                   <p className="text-base leading-relaxed whitespace-pre-wrap">
                     {story.story_text}
                   </p>
+
+                  {/* Photo */}
+                  {story.photo_url && (
+                    <div className="rounded-lg overflow-hidden mt-4">
+                      <img
+                        src={story.photo_url}
+                        alt="Story photo"
+                        className="w-full max-h-96 object-contain bg-muted"
+                        loading="lazy"
+                      />
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             ))}

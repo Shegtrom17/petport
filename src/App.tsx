@@ -26,6 +26,7 @@ import PublicProfile from "./pages/PublicProfile";
 import PublicCareInstructions from "./pages/PublicCareInstructions";
 import PublicMissingPet from "./pages/PublicMissingPet";
 import PublicTravelMap from "./pages/PublicTravelMap";
+import PublicStoryStream from "./pages/PublicStoryStream";
 import NotFound from "./pages/NotFound";
 
 import TransferAccept from "./pages/TransferAccept";
@@ -137,6 +138,7 @@ const App = () => {
                     <Route path="/missing-pet/:petId" element={<PublicMissingPet />} />
                     <Route path="/gallery/:petId" element={<PublicGallery />} />
                     <Route path="/travel/:petId" element={<PublicTravelMap />} />
+                    <Route path="/story-stream/:petId" element={<PublicStoryStream />} />
                   <Route path="/transfer/accept/:token" element={<TransferAccept />} />
                   <Route path="/privacy" element={<Navigate to="/privacy-policy" replace />} />
             <Route path="/terms" element={<Terms />} />

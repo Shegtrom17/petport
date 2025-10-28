@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Clock, User, ArrowLeft, Share2 } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { MetaTags } from '@/components/MetaTags';
-import { SocialShareButtons } from '@/components/SocialShareButtons';
+import { toast } from 'sonner';
 
 interface StoryUpdate {
   id: string;
@@ -31,7 +31,6 @@ const PublicStoryStream = () => {
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
-  const [showShareDialog, setShowShareDialog] = useState(false);
   const storiesPerPage = 10;
 
   useEffect(() => {
@@ -77,6 +76,25 @@ const PublicStoryStream = () => {
       console.error('Error loading story stream:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleShare = () => {
+    const pageUrl = `${window.location.origin}/story-stream/${petId}`;
+    
+    if (navigator.share) {
+      navigator.share({
+        title: `${petData?.name}'s Story Stream`,
+        text: `Follow ${petData?.name}'s adventures and life updates.`,
+        url: pageUrl
+      }).catch(() => {
+        // User cancelled or error, fallback to copy
+        navigator.clipboard.writeText(pageUrl);
+        toast.success('Link copied to clipboard!');
+      });
+    } else {
+      navigator.clipboard.writeText(pageUrl);
+      toast.success('Link copied to clipboard!');
     }
   };
 
@@ -160,7 +178,7 @@ const PublicStoryStream = () => {
 
             <Button
               variant="outline"
-              onClick={() => setShowShareDialog(true)}
+              onClick={handleShare}
               className="flex items-center gap-2"
             >
               <Share2 className="w-4 h-4" />
@@ -241,16 +259,6 @@ const PublicStoryStream = () => {
           )}
         </div>
       </div>
-
-      {/* Social Share Dialog */}
-      {showShareDialog && (
-        <SocialShareButtons
-          url={pageUrl}
-          title={pageTitle}
-          description={pageDescription}
-          onClose={() => setShowShareDialog(false)}
-        />
-      )}
     </>
   );
 };

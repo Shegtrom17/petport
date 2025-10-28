@@ -4,7 +4,7 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Clock, User, Share2 } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
-import { SocialShareButtons } from '@/components/SocialShareButtons';
+import { toast } from 'sonner';
 
 interface StoryUpdate {
   id: string;
@@ -25,7 +25,6 @@ const StoryStream = ({ petId, petName }: StoryStreamProps) => {
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
-  const [shareStoryId, setShareStoryId] = useState<string | null>(null);
   const storiesPerPage = 10;
 
   useEffect(() => {
@@ -56,6 +55,25 @@ const StoryStream = ({ petId, petName }: StoryStreamProps) => {
       console.error('Error loading stories:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleShareStory = (storyId: string) => {
+    const storyUrl = `${window.location.origin}/story-stream/${petId}#story-${storyId}`;
+    
+    if (navigator.share) {
+      navigator.share({
+        title: `${petName}'s Story`,
+        text: 'Check out this story update!',
+        url: storyUrl
+      }).catch(() => {
+        // User cancelled or error, fallback to copy
+        navigator.clipboard.writeText(storyUrl);
+        toast.success('Link copied to clipboard!');
+      });
+    } else {
+      navigator.clipboard.writeText(storyUrl);
+      toast.success('Link copied to clipboard!');
     }
   };
 
@@ -135,7 +153,7 @@ const StoryStream = ({ petId, petName }: StoryStreamProps) => {
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => setShareStoryId(story.id)}
+                onClick={() => handleShareStory(story.id)}
                 className="flex items-center gap-2"
               >
                 <Share2 className="w-4 h-4" />
@@ -175,16 +193,6 @@ const StoryStream = ({ petId, petName }: StoryStreamProps) => {
             {loading ? 'Loading...' : 'Load More Stories'}
           </Button>
         </div>
-      )}
-
-      {/* Social Share Dialog */}
-      {shareStoryId && (
-        <SocialShareButtons
-          url={`${window.location.origin}/story-stream/${petId}#story-${shareStoryId}`}
-          title={`${petName}'s Story Stream`}
-          description="Check out this story update!"
-          onClose={() => setShareStoryId(null)}
-        />
       )}
     </div>
   );

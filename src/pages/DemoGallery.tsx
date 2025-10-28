@@ -4,6 +4,7 @@ import { Sparkles, Camera, X } from "lucide-react";
 import { MetaTags } from "@/components/MetaTags";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
+import StoryStream from "@/components/StoryStream";
 import { supabase } from "@/integrations/supabase/client";
 
 const FINNEGAN_ID = "297d1397-c876-4075-bf24-41ee1862853a";
@@ -183,6 +184,11 @@ export default function DemoGallery() {
             <p className="text-gray-500">No photos in gallery yet</p>
           </div>
         )}
+
+        {/* Story Stream Section */}
+        <div className="mb-8">
+          <StoryStream petId={FINNEGAN_ID} petName={data.name} />
+        </div>
 
         {/* Footer CTA */}
         <div className="bg-gradient-to-r from-brand-primary to-brand-secondary rounded-lg p-8 text-center text-white mb-6">

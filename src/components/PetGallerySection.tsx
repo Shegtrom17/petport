@@ -177,7 +177,15 @@ export const PetGallerySection = ({ petData, onUpdate, handlePetUpdate }: PetGal
   };
 
   // Upload functions
-  const handleUploadPhotos = async () => {
+  const handleUploadPhotos = async (e?: React.MouseEvent) => {
+    // Prevent any default navigation behavior
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    
+    console.log('[Gallery Upload] Starting photo upload...');
+    
     if (isLimitReached) {
       toast({
         title: "Photo limit reached",
@@ -193,6 +201,9 @@ export const PetGallerySection = ({ petData, onUpdate, handlePetUpdate }: PetGal
     input.multiple = true;
     
     input.onchange = async (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      console.log('[Gallery Upload] Files selected, processing...');
       const files = Array.from((e.target as HTMLInputElement).files || []);
       if (files.length === 0) return;
 
@@ -218,11 +229,15 @@ export const PetGallerySection = ({ petData, onUpdate, handlePetUpdate }: PetGal
         const result = await uploadMultipleGalleryPhotos(petData.id, compressedFiles);
         
         if (result.success) {
+          console.log('[Gallery Upload] Upload successful, refreshing data...');
           toast({
             title: "Photos uploaded successfully",
             description: `${result.uploaded} photo(s) added to gallery`,
           });
+          // Defensive: ensure we stay on gallery tab
+          await saveLastTab();
           onUpdate();
+          console.log('[Gallery Upload] Data refreshed, staying on gallery tab');
         } else {
           toast({
             title: "Some photos failed to upload",
@@ -248,7 +263,15 @@ export const PetGallerySection = ({ petData, onUpdate, handlePetUpdate }: PetGal
     input.click();
   };
 
-  const handleCapturePhoto = async () => {
+  const handleCapturePhoto = async (e?: React.MouseEvent) => {
+    // Prevent any default navigation behavior
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    
+    console.log('[Gallery Capture] Starting photo capture...');
+    
     if (isLimitReached) {
       toast({
         title: "Photo limit reached",
@@ -264,6 +287,9 @@ export const PetGallerySection = ({ petData, onUpdate, handlePetUpdate }: PetGal
     input.capture = 'environment';
     
     input.onchange = async (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      console.log('[Gallery Capture] Photo captured, processing...');
       const file = (e.target as HTMLInputElement).files?.[0];
       if (!file) return;
 
@@ -281,11 +307,15 @@ export const PetGallerySection = ({ petData, onUpdate, handlePetUpdate }: PetGal
         const success = await uploadGalleryPhoto(petData.id, compressedFile, `Captured on ${new Date().toLocaleDateString()}`);
         
         if (success) {
+          console.log('[Gallery Capture] Capture successful, refreshing data...');
           toast({
             title: "Photo captured",
             description: "Photo added to gallery",
           });
+          // Defensive: ensure we stay on gallery tab
+          await saveLastTab();
           onUpdate();
+          console.log('[Gallery Capture] Data refreshed, staying on gallery tab');
         } else {
           toast({
             title: "Capture failed",
@@ -556,8 +586,13 @@ export const PetGallerySection = ({ petData, onUpdate, handlePetUpdate }: PetGal
           {/* Action Buttons */}
           <div className="space-y-3">
             <Button 
+              type="button"
               className="w-full bg-brand-primary hover:bg-brand-primary-dark text-white"
-              onClick={handleUploadPhotos}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                handleUploadPhotos(e);
+              }}
               disabled={uploading || isLimitReached}
             >
               <Upload className="w-4 h-4 mr-2" />
@@ -565,8 +600,13 @@ export const PetGallerySection = ({ petData, onUpdate, handlePetUpdate }: PetGal
             </Button>
 
             <Button 
+              type="button"
               className="w-full bg-brand-primary hover:bg-brand-primary-dark text-white"
-              onClick={handleCapturePhoto}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                handleCapturePhoto(e);
+              }}
               disabled={uploading || isLimitReached}
             >
               <Camera className="w-4 h-4 mr-2" />
@@ -750,7 +790,12 @@ export const PetGallerySection = ({ petData, onUpdate, handlePetUpdate }: PetGal
               <Camera className="w-16 h-16 text-gray-400 mx-auto mb-4" />
               <p className="text-gray-500 mb-4">No photos in gallery yet</p>
               <Button 
-                onClick={handleUploadPhotos}
+                type="button"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  handleUploadPhotos(e);
+                }}
                 className="bg-brand-primary hover:bg-brand-primary-dark text-white"
                 disabled={uploading}
               >

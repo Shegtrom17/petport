@@ -10,6 +10,7 @@ import { DocumentsSection } from "@/components/DocumentsSection";
 import { PetGallerySection } from "@/components/PetGallerySection";
 import { InAppSharingModal } from "@/components/InAppSharingModal";
 import { PWALayout } from "@/components/PWALayout";
+import StoryStream from "@/components/StoryStream";
 
 import { useAuth } from "@/context/AuthContext";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -355,7 +356,14 @@ const Index = () => {
         />;
       case "gallery":
         console.log("Rendering PetGallerySection");
-        return <PetGallerySection petData={petData} onUpdate={handlePetUpdate} handlePetUpdate={handlePetUpdate} />;
+        return (
+          <>
+            <PetGallerySection petData={petData} onUpdate={handlePetUpdate} handlePetUpdate={handlePetUpdate} />
+            <div className="mt-8">
+              <StoryStream petId={petData.id} petName={petData.name} />
+            </div>
+          </>
+        );
       case "quickid":
         console.log("Rendering QuickIDSection");
         return <QuickIDSection petData={petData} onUpdate={handlePetUpdate} />;

@@ -186,6 +186,7 @@ export const StoryStreamManager = ({ petId, petName }: StoryStreamManagerProps) 
             <Badge variant="secondary">{stories.length}</Badge>
           </div>
           <Button
+            type="button"
             onClick={() => setShowForm(!showForm)}
             variant={showForm ? "outline" : "default"}
             size="sm"
@@ -236,6 +237,7 @@ export const StoryStreamManager = ({ petId, petName }: StoryStreamManagerProps) 
 
               <div className="flex gap-2">
                 <Button
+                  type="button"
                   onClick={handleSubmitStory}
                   disabled={submitting || !storyText.trim() || remainingChars < 0}
                   className="flex-1"
@@ -298,6 +300,7 @@ export const StoryStreamManager = ({ petId, petName }: StoryStreamManagerProps) 
                         </Badge>
                       )}
                       <Button
+                        type="button"
                         variant="ghost"
                         size="sm"
                         onClick={() => toggleVisibility(story.id, story.is_visible)}
@@ -312,7 +315,7 @@ export const StoryStreamManager = ({ petId, petName }: StoryStreamManagerProps) 
 
                       <AlertDialog>
                         <AlertDialogTrigger asChild>
-                          <Button variant="ghost" size="sm" title="Delete story">
+                          <Button type="button" variant="ghost" size="sm" title="Delete story">
                             <Trash2 className="w-4 h-4 text-destructive" />
                           </Button>
                         </AlertDialogTrigger>

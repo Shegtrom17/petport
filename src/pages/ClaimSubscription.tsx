@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,12 +12,22 @@ import { User, Mail, Lock, Eye, EyeOff } from "lucide-react";
 export default function ClaimSubscription() {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [email, setEmail] = useState("susanloren.coach@gmail.com");
+  const [searchParams] = useSearchParams();
+  const giftCode = searchParams.get("code");
+  
+  const [email, setEmail] = useState("");
   const [fullName, setFullName] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isCreatingAccount, setIsCreatingAccount] = useState(false);
+
+  useEffect(() => {
+    if (!giftCode) {
+      toast({ variant: "destructive", title: "Invalid link", description: "Gift code is missing" });
+      navigate("/");
+    }
+  }, [giftCode, navigate, toast]);
 
   const handleAccountSetup = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -60,19 +70,28 @@ export default function ClaimSubscription() {
       if (signUpError) throw signUpError;
 
       if (signUpData.user) {
-        // Update the subscribers table to link the user_id
-        const { error: updateError } = await supabase
-          .from("subscribers")
-          .update({ user_id: signUpData.user.id })
-          .eq("email", email.trim());
+        // Claim the gift membership
+        const { data: claimData, error: claimError } = await supabase.functions.invoke('claim-gift-membership', {
+          body: {
+            giftCode,
+            userId: signUpData.user.id
+          }
+        });
 
-        if (updateError) {
-          console.error("Failed to link subscriber:", updateError);
-          // Don't throw here - account was created successfully
+        if (claimError) {
+          console.error("Failed to claim gift:", claimError);
+          toast({ 
+            variant: "destructive", 
+            title: "Gift claim failed", 
+            description: "Your account was created but we couldn't activate your gift. Please contact support." 
+          });
+        } else {
+          toast({ 
+            title: "Gift activated!", 
+            description: "Your PetPort membership is now active. Welcome!" 
+          });
         }
 
-        toast({ title: "Account created!", description: "Welcome to PetPort!" });
-        
         // Auto-login and redirect to app
         navigate("/app");
       } else {

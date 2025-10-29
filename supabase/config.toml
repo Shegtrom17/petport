@@ -123,3 +123,12 @@ verify_jwt = false
 
 [functions.purchase-gift-membership]
 verify_jwt = false
+
+[functions.claim-gift-membership]
+verify_jwt = false
+
+[functions.send-gift-renewal-reminders]
+verify_jwt = false
+
+[functions.story-share]
+verify_jwt = false

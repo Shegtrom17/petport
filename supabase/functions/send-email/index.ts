@@ -664,14 +664,17 @@ const generateEmailTemplate = (data: EmailRequest) => {
         </div>` : ''}
         
         <div style="background: linear-gradient(135deg, #5691af 0%, #4a7c95 100%); color: white; padding: 25px; border-radius: 12px; margin: 25px 0;">
-          <h3 style="margin: 0 0 15px 0; color: white; font-size: 20px;">✨ Your Gift Includes:</h3>
+          <h3 style="margin: 0 0 10px 0; color: white; font-size: 20px;">🎁 You've Been Gifted PetPort — A Year of Pawsitivity!</h3>
+          <p style="margin: 0 0 15px 0; color: rgba(255,255,255,0.95); font-size: 16px; font-weight: 600;">The App that gives your pet a voice for life!!</p>
+          <p style="margin: 0 0 10px 0; color: rgba(255,255,255,0.95); font-weight: 600;">This gift includes:</p>
           <ul style="color: rgba(255,255,255,0.95); margin: 0; padding-left: 20px; line-height: 1.8;">
-            <li>Full year of premium membership</li>
-            <li>Unlimited pet profiles</li>
-            <li>Emergency information sharing</li>
-            <li>Medical record storage</li>
-            <li>Lost pet flyer generation</li>
-            <li>Beautiful photo galleries</li>
+            <li>~ Full year of premium membership</li>
+            <li>~ 1 free pet profile</li>
+            <li>~ Beautiful Photo Gallery up to 36 photo</li>
+            <li>~ Medical, Vaccination and Doc record storage</li>
+            <li>~ One-Tap Lost pet flyer generation</li>
+            <li>~ Livelinks for Care Instructions for all caregivers</li>
+            <li>~ Resume Builder for sitters, groomers, lodging and more</li>
           </ul>
         </div>
         

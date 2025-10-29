@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gift Activated</title>
+</head>
+<body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #f7f7f7;">
+  <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #f7f7f7;">
+    <tr>
+      <td style="padding: 40px 20px;">
+        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="600" style="margin: 0 auto; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+          
+          <!-- Header -->
+          <tr>
+            <td style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); padding: 40px 30px; text-align: center;">
+              <div style="font-size: 48px; margin-bottom: 10px;">🎉</div>
+              <h1 style="margin: 0; color: #ffffff; font-size: 28px; font-weight: 700;">Welcome to PetPort!</h1>
+              <p style="margin: 10px 0 0; color: #d1fae5; font-size: 16px;">Your gift membership is now active</p>
+            </td>
+          </tr>
+          
+          <!-- Body -->
+          <tr>
+            <td style="padding: 40px 30px;">
+              <p style="margin: 0 0 20px; font-size: 16px; line-height: 1.6; color: #333333;">
+                {{#if recipient_name}}Hi {{recipient_name}},{{else}}Hello,{{/if}}
+              </p>
+              
+              <p style="margin: 0 0 20px; font-size: 16px; line-height: 1.6; color: #333333;">
+                Your PetPort gift membership from <strong>{{sender_name}}</strong> is now active and ready to use! 🎁
+              </p>
+              
+              <div style="background-color: #f0fdf4; border: 2px solid #10b981; border-radius: 8px; padding: 20px; margin: 25px 0;">
+                <p style="margin: 0 0 10px; font-size: 14px; color: #6b7280;">Your membership is valid until:</p>
+                <p style="margin: 0; font-size: 20px; color: #059669; font-weight: 700;">{{expires_at}}</p>
+              </div>
+              
+              <h2 style="margin: 30px 0 15px; font-size: 20px; color: #333333; font-weight: 600;">🚀 Get Started in 3 Easy Steps:</h2>
+              
+              <div style="margin: 20px 0;">
+                <div style="display: table; width: 100%; margin-bottom: 15px;">
+                  <div style="display: table-cell; width: 40px; vertical-align: top;">
+                    <div style="width: 32px; height: 32px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 50%; color: #ffffff; text-align: center; line-height: 32px; font-weight: 700;">1</div>
+                  </div>
+                  <div style="display: table-cell; vertical-align: top; padding-left: 10px;">
+                    <h3 style="margin: 0 0 5px; font-size: 16px; color: #333333; font-weight: 600;">Create Your First Pet Profile</h3>
+                    <p style="margin: 0; font-size: 14px; color: #666666; line-height: 1.5;">Add photos, basic info, and medical records</p>
+                  </div>
+                </div>
+                
+                <div style="display: table; width: 100%; margin-bottom: 15px;">
+                  <div style="display: table-cell; width: 40px; vertical-align: top;">
+                    <div style="width: 32px; height: 32px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 50%; color: #ffffff; text-align: center; line-height: 32px; font-weight: 700;">2</div>
+                  </div>
+                  <div style="display: table-cell; vertical-align: top; padding-left: 10px;">
+                    <h3 style="margin: 0 0 5px; font-size: 16px; color: #333333; font-weight: 600;">Add Care Instructions</h3>
+                    <p style="margin: 0; font-size: 14px; color: #666666; line-height: 1.5;">Share feeding schedules, favorite activities, and emergency contacts</p>
+                  </div>
+                </div>
+                
+                <div style="display: table; width: 100%;">
+                  <div style="display: table-cell; width: 40px; vertical-align: top;">
+                    <div style="width: 32px; height: 32px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 50%; color: #ffffff; text-align: center; line-height: 32px; font-weight: 700;">3</div>
+                  </div>
+                  <div style="display: table-cell; vertical-align: top; padding-left: 10px;">
+                    <h3 style="margin: 0 0 5px; font-size: 16px; color: #333333; font-weight: 600;">Share Your Pet's Profile</h3>
+                    <p style="margin: 0; font-size: 14px; color: #666666; line-height: 1.5;">Send it to vets, pet sitters, or friends and family</p>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- CTA Button -->
+              <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                <tr>
+                  <td style="text-align: center; padding: 30px 0 20px;">
+                    <a href="https://petport.app" style="display: inline-block; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #ffffff; text-decoration: none; padding: 16px 40px; border-radius: 6px; font-size: 16px; font-weight: 600; box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);">
+                      Go to PetPort →
+                    </a>
+                  </td>
+                </tr>
+              </table>
+              
+              <div style="border-top: 1px solid #e0e0e0; padding-top: 20px; margin-top: 20px;">
+                <p style="margin: 0 0 10px; font-size: 14px; color: #666666;">
+                  Need help getting started? Check out our <a href="https://petport.app/help" style="color: #667eea; text-decoration: none;">Help Center</a> or email <a href="mailto:support@petport.app" style="color: #667eea; text-decoration: none;">support@petport.app</a>
+                </p>
+              </div>
+            </td>
+          </tr>
+          
+          <!-- Footer -->
+          <tr>
+            <td style="background-color: #f8f9fa; padding: 30px; text-align: center;">
+              <p style="margin: 0 0 10px; font-size: 14px; color: #666666;">
+                <strong>PetPort</strong> — Digital Pet Passport
+              </p>
+              <p style="margin: 0; font-size: 12px; color: #999999;">
+                Questions? Email us at <a href="mailto:support@petport.app" style="color: #667eea; text-decoration: none;">support@petport.app</a>
+              </p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>

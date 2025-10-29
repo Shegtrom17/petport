@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gift Expiring Soon</title>
+</head>
+<body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #fef9f3;">
+  <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #fef9f3;">
+    <tr>
+      <td style="padding: 40px 20px;">
+        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="600" style="margin: 0 auto; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 16px rgba(0,0,0,0.1);">
+          
+          <!-- Warning Banner -->
+          <tr>
+            <td style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); padding: 8px; text-align: center;">
+              <span style="color: #ffffff; font-size: 12px; font-weight: 700; letter-spacing: 1px;">⏰ GIFT EXPIRING SOON ⏰</span>
+            </td>
+          </tr>
+          
+          <!-- Header -->
+          <tr>
+            <td style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); padding: 30px; text-align: center;">
+              <div style="font-size: 48px; margin-bottom: 10px;">🎁⏰</div>
+              <h1 style="margin: 0; color: #ffffff; font-size: 28px; font-weight: 700; text-shadow: 0 2px 4px rgba(0,0,0,0.2);">
+                Your PetPort Gift Expires in {{days_remaining}} Days
+              </h1>
+              <p style="margin: 10px 0 0; color: #fef3c7; font-size: 16px;">Keep the holiday spirit going!</p>
+            </td>
+          </tr>
+          
+          <!-- Body -->
+          <tr>
+            <td style="padding: 40px 30px;">
+              <p style="margin: 0 0 20px; font-size: 16px; line-height: 1.6; color: #333333;">
+                {{#if recipient_name}}Hi {{recipient_name}},{{else}}Hello,{{/if}}
+              </p>
+              
+              <p style="margin: 0 0 20px; font-size: 16px; line-height: 1.6; color: #333333;">
+                Your PetPort gift membership expires on <strong>{{expires_at}}</strong>. Don't let this wonderful gift come to an end — keep your pet's profiles, memories, and care instructions safe!
+              </p>
+              
+              <div style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border: 2px solid #f59e0b; border-radius: 8px; padding: 25px; margin: 25px 0;">
+                <h2 style="margin: 0 0 15px; font-size: 18px; color: #c41e3a; font-weight: 600;">🎁 Don't Lose Access To:</h2>
+                <ul style="margin: 0; padding-left: 20px; color: #78350f;">
+                  <li style="margin-bottom: 8px;">🐾 All your pet profiles & photos</li>
+                  <li style="margin-bottom: 8px;">❤️ Care instructions & medical records</li>
+                  <li style="margin-bottom: 8px;">📸 Photo galleries & story streams</li>
+                  <li style="margin-bottom: 8px;">🚨 Lost pet alert capabilities</li>
+                  <li style="margin-bottom: 8px;">🗺️ Travel maps & documentation</li>
+                </ul>
+              </div>
+              
+              <h2 style="margin: 30px 0 15px; font-size: 20px; color: #c41e3a; font-weight: 600;">🎄 Keep the Gift Going!</h2>
+              
+              <p style="margin: 0 0 25px; font-size: 16px; line-height: 1.6; color: #555555;">
+                Continue your PetPort membership to keep all your pet's information safe and accessible throughout the year.
+              </p>
+              
+              <!-- Festive CTA Button -->
+              <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                <tr>
+                  <td style="text-align: center; padding: 20px 0;">
+                    <a href="https://petport.app/subscribe" style="display: inline-block; background: linear-gradient(135deg, #c41e3a 0%, #8b1320 100%); color: #ffffff; text-decoration: none; padding: 16px 40px; border-radius: 6px; font-size: 16px; font-weight: 600; box-shadow: 0 4px 12px rgba(196, 30, 58, 0.3); border: 2px solid #d4af37;">
+                      🎁 Renew My Membership 🎁
+                    </a>
+                  </td>
+                </tr>
+              </table>
+              
+              <div style="border-top: 2px dashed #d4af37; padding-top: 20px; margin-top: 30px; text-align: center;">
+                <p style="margin: 0; font-size: 14px; color: #666666;">
+                  Questions? Contact us at <a href="mailto:support@petport.app" style="color: #c41e3a; text-decoration: none; font-weight: 600;">support@petport.app</a>
+                </p>
+              </div>
+            </td>
+          </tr>
+          
+          <!-- Festive Footer -->
+          <tr>
+            <td style="background: linear-gradient(135deg, #0f5e3a 0%, #0a4228 100%); padding: 30px; text-align: center;">
+              <p style="margin: 0 0 10px; font-size: 14px; color: #d4e8dd;">
+                <strong>PetPort</strong> — Digital Pet Passport
+              </p>
+              <p style="margin: 0; font-size: 12px; color: #a8cbb8;">
+                Don't want renewal reminders? <a href="https://petport.app/settings" style="color: #d4af37; text-decoration: none;">Update preferences</a>
+              </p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>

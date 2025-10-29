@@ -820,11 +820,21 @@ const generateEmailTemplate = (data: EmailRequest) => {
           
           ${template.content}
           
-          ${type !== 'transfer_completed_sender' ? `
+          ${type !== 'transfer_completed_sender' && type !== 'gift_purchase_confirmation' && type !== 'gift_renewal_reminder' && type !== 'gift_expired' ? `
           <div style="text-align: center; margin: 30px 0;">
             <a href="${(() => {
               // Determine the correct button URL based on email type
               const baseUrl = Deno.env.get("APP_ORIGIN") || "https://petport.app";
+              
+              // For gift notification, go to claim page with gift code
+              if (type === 'gift_notification') {
+                return `${baseUrl}/claim-subscription?code=${data.giftCode}`;
+              }
+              
+              // For gift activated, go to add pet page
+              if (type === 'gift_activated') {
+                return `${baseUrl}/add-pet`;
+              }
               
               // For transfer emails, use transferUrl instead of shareUrl
               if (type === 'transfer_invite_new' || type === 'transfer_invite_existing' || type === 'transfer_limit_reached') {
@@ -846,6 +856,8 @@ const generateEmailTemplate = (data: EmailRequest) => {
             })()} " 
                style="display: inline-block; background: linear-gradient(135deg, #5691af 0%, #4a7c95 100%); color: white; text-decoration: none; padding: 15px 30px; border-radius: 8px; font-weight: bold; font-size: 16px;">
                ${isDocumentShare ? '📄 View Document' : 
+                  type === 'gift_notification' ? '🎁 Claim Your Gift' :
+                  type === 'gift_activated' ? '🐾 Add Your First Pet' :
                   type === 'review_request' ? `📝 Leave a Review for ${petName}` :
                   type === 'transfer_invite_new' ? 'Create Account & Start Free Trial' :
                   type === 'transfer_invite_existing' ? `Accept ${petName}'s Transfer` :

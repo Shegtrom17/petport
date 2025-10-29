@@ -8,7 +8,7 @@ const corsHeaders = {
 };
 
 interface EmailRequest {
-  type: 'profile' | 'care' | 'credentials' | 'resume' | 'reviews' | 'review_request' | 'missing_pet' | 'app_share' | 'welcome' | 'welcome_trial' | 'transfer_invite_new' | 'transfer_invite_existing' | 'transfer_success' | 'transfer_limit_reached' | 'transfer_sent_confirmation' | 'transfer_completed_sender' | 'gift_purchase' | 'gift_notification' | 'gift_activated' | 'gift_renewal_60' | 'gift_renewal_30' | 'gift_renewal_7' | 'gift_expired';
+  type: 'profile' | 'care' | 'credentials' | 'resume' | 'reviews' | 'review_request' | 'missing_pet' | 'app_share' | 'welcome' | 'welcome_trial' | 'transfer_invite_new' | 'transfer_invite_existing' | 'transfer_success' | 'transfer_limit_reached' | 'transfer_sent_confirmation' | 'transfer_completed_sender' | 'gift_purchase_confirmation' | 'gift_notification' | 'gift_activated' | 'gift_renewal_reminder' | 'gift_expired';
   recipientEmail: string;
   transferRecipientEmail?: string;
   recipientName?: string;
@@ -29,7 +29,8 @@ interface EmailRequest {
   giftCode?: string;
   expiresAt?: string;
   daysRemaining?: number;
-  usePostmarkTemplate?: boolean; // If true, use Postmark template instead of HTML generation
+  giftMessage?: string;
+  redemptionLink?: string;
 }
 
 const generateTextBody = (data: EmailRequest): string => {
@@ -609,6 +610,183 @@ const generateEmailTemplate = (data: EmailRequest) => {
           </p>
         </div>
       `
+    },
+    gift_purchase_confirmation: {
+      subject: Deno.env.get('HOLIDAY_MODE') === 'true' ? '🎁 Your PetPort Gift Has Been Sent!' : '✅ Gift Purchase Confirmed - PetPort',
+      content: `
+        <h2 style="color: #5691af;">${Deno.env.get('HOLIDAY_MODE') === 'true' ? '🎁 Your Gift Has Been Sent!' : '✅ Gift Purchase Confirmed'}</h2>
+        <p>Thank you for gifting a year of PetPort to ${data.recipientName || data.recipientEmail}!</p>
+        
+        <div style="background: linear-gradient(135deg, #5691af 0%, #4a7c95 100%); color: white; padding: 25px; border-radius: 12px; margin: 25px 0;">
+          <h3 style="margin: 0; color: white; font-size: 20px;">🎁 Gift Details</h3>
+          <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.3);">
+            <p style="margin: 8px 0; color: rgba(255,255,255,0.95);"><strong>Recipient:</strong> ${data.recipientEmail}</p>
+            <p style="margin: 8px 0; color: rgba(255,255,255,0.95);"><strong>Gift Code:</strong> ${data.giftCode}</p>
+            <p style="margin: 8px 0; color: rgba(255,255,255,0.95);"><strong>Expires:</strong> ${data.expiresAt}</p>
+          </div>
+        </div>
+        
+        ${data.giftMessage ? `<div style="background: #f8fafc; border-left: 4px solid #5691af; padding: 20px; border-radius: 8px; margin: 20px 0;">
+          <p style="margin: 0; color: #475569; font-style: italic;">"${data.giftMessage}"</p>
+        </div>` : ''}
+        
+        <div style="background: #f0f9ff; padding: 20px; border-radius: 8px; margin: 20px 0;">
+          <h3 style="margin-top: 0; color: #5691af;">✉️ What Happens Next</h3>
+          <p style="color: #475569; line-height: 1.7; margin: 0;">
+            We've sent an email to <strong>${data.recipientEmail}</strong> with instructions to redeem their gift. 
+            They'll receive a full year of PetPort premium membership!
+          </p>
+        </div>
+        
+        ${Deno.env.get('HOLIDAY_MODE') === 'true' ? `
+        <div style="background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%); color: white; padding: 25px; border-radius: 12px; margin: 25px 0; text-align: center;">
+          <p style="margin: 0; font-size: 18px; line-height: 1.6;">🎄 Happy Holidays from the PetPort Team! 🎄</p>
+        </div>
+        ` : ''}
+      `
+    },
+    gift_notification: {
+      subject: Deno.env.get('HOLIDAY_MODE') === 'true' ? '🎁 You\'ve Been Gifted PetPort — A Year of Pawsitivity!' : '🎁 You\'ve Received a PetPort Gift Membership!',
+      content: `
+        <h2 style="color: #5691af;">${Deno.env.get('HOLIDAY_MODE') === 'true' ? '🎁 You\'ve Received a Holiday Gift!' : '🎁 You\'ve Received a Gift!'}</h2>
+        <p><strong>${data.senderName || 'Someone special'}</strong> has gifted you a full year of PetPort premium membership!</p>
+        
+        ${Deno.env.get('HOLIDAY_MODE') === 'true' ? `
+        <div style="background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%); color: white; padding: 25px; border-radius: 12px; margin: 25px 0; text-align: center;">
+          <div style="font-size: 48px; margin-bottom: 10px;">🎄</div>
+          <p style="margin: 0; font-size: 18px; line-height: 1.6;">Happy Holidays! This is a gift of love for you and your pet.</p>
+        </div>
+        ` : ''}
+        
+        ${data.giftMessage ? `<div style="background: #f8fafc; border-left: 4px solid #5691af; padding: 20px; border-radius: 8px; margin: 20px 0;">
+          <p style="margin: 0 0 8px 0; color: #5691af; font-weight: 600;">Message from ${data.senderName}:</p>
+          <p style="margin: 0; color: #475569; font-style: italic;">"${data.giftMessage}"</p>
+        </div>` : ''}
+        
+        <div style="background: linear-gradient(135deg, #5691af 0%, #4a7c95 100%); color: white; padding: 25px; border-radius: 12px; margin: 25px 0;">
+          <h3 style="margin: 0 0 15px 0; color: white; font-size: 20px;">✨ Your Gift Includes:</h3>
+          <ul style="color: rgba(255,255,255,0.95); margin: 0; padding-left: 20px; line-height: 1.8;">
+            <li>Full year of premium membership</li>
+            <li>Unlimited pet profiles</li>
+            <li>Emergency information sharing</li>
+            <li>Medical record storage</li>
+            <li>Lost pet flyer generation</li>
+            <li>Beautiful photo galleries</li>
+          </ul>
+        </div>
+        
+        <div style="background: #fef3c7; border: 2px solid #f59e0b; border-radius: 8px; padding: 20px; margin: 20px 0;">
+          <h3 style="margin-top: 0; color: #92400e;">🔑 Your Gift Code</h3>
+          <div style="background: white; padding: 15px; border-radius: 6px; text-align: center; font-size: 24px; font-weight: bold; color: #5691af; letter-spacing: 2px;">
+            ${data.giftCode}
+          </div>
+          <p style="margin: 15px 0 0 0; color: #92400e; text-align: center;">
+            Valid until ${data.expiresAt}
+          </p>
+        </div>
+      `
+    },
+    gift_activated: {
+      subject: Deno.env.get('HOLIDAY_MODE') === 'true' ? '🎉 Your PetPort Gift Is Now Active!' : '✅ Welcome to PetPort - Your Gift Membership Is Active',
+      content: `
+        <h2 style="color: #5691af;">🎉 Your Gift Is Now Active!</h2>
+        <p>Welcome to PetPort! Your gift membership from <strong>${data.senderName || 'a friend'}</strong> is now active.</p>
+        
+        <div style="background: #ecfdf5; border: 2px solid #10b981; border-radius: 8px; padding: 20px; margin: 20px 0;">
+          <h3 style="margin-top: 0; color: #047857;">✅ Membership Activated</h3>
+          <p style="color: #047857; line-height: 1.7; margin: 0;">
+            You now have full access to all PetPort premium features for one year. Start creating beautiful profiles for your pets today!
+          </p>
+        </div>
+        
+        <div style="background: #f0f9ff; padding: 20px; border-radius: 8px; margin: 20px 0;">
+          <h3 style="margin-top: 0; color: #5691af;">🚀 Get Started</h3>
+          <ul style="color: #475569; margin: 15px 0; padding-left: 20px; line-height: 1.8;">
+            <li><strong>Add your first pet</strong> - Create a beautiful digital profile</li>
+            <li><strong>Upload photos</strong> - Showcase your pet's best moments</li>
+            <li><strong>Add emergency contacts</strong> - Keep important information safe</li>
+            <li><strong>Upload medical records</strong> - Store vaccination and health documents</li>
+            <li><strong>Share with caregivers</strong> - Send profiles to vets, boarders, and sitters</li>
+          </ul>
+        </div>
+        
+        ${Deno.env.get('HOLIDAY_MODE') === 'true' ? `
+        <div style="background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%); color: white; padding: 25px; border-radius: 12px; margin: 25px 0; text-align: center;">
+          <p style="margin: 0; font-size: 18px; line-height: 1.6;">🎄 Happy Holidays from the PetPort Team! 🎄</p>
+        </div>
+        ` : ''}
+      `
+    },
+    gift_renewal_reminder: {
+      subject: data.daysRemaining === 60 ? '🎁 Your PetPort Gift Expires in 60 Days' : 
+               data.daysRemaining === 30 ? '⏰ Your PetPort Gift Expires in 30 Days' :
+               '🚨 Your PetPort Gift Expires in 7 Days',
+      content: `
+        <h2 style="color: #5691af;">${data.daysRemaining === 7 ? '🚨' : '⏰'} Your Gift Membership Is Expiring Soon</h2>
+        <p>Your PetPort gift membership from <strong>${data.senderName || 'a friend'}</strong> expires in <strong>${data.daysRemaining} days</strong>.</p>
+        
+        <div style="background: ${data.daysRemaining === 7 ? '#fef2f2' : '#fef3c7'}; border: 2px solid ${data.daysRemaining === 7 ? '#dc2626' : '#f59e0b'}; border-radius: 8px; padding: 20px; margin: 20px 0; text-align: center;">
+          <h3 style="margin-top: 0; color: ${data.daysRemaining === 7 ? '#991b1b' : '#92400e'};">
+            ${data.daysRemaining === 7 ? '⚠️ Only 7 Days Remaining!' : `⏰ ${data.daysRemaining} Days Remaining`}
+          </h3>
+          <p style="margin: 10px 0 0 0; color: ${data.daysRemaining === 7 ? '#991b1b' : '#92400e'}; font-size: 18px; font-weight: bold;">
+            Expires on ${data.expiresAt}
+          </p>
+        </div>
+        
+        <div style="background: #f0f9ff; padding: 20px; border-radius: 8px; margin: 20px 0;">
+          <h3 style="margin-top: 0; color: #5691af;">💝 Keep Your Pets Protected</h3>
+          <p style="color: #475569; line-height: 1.7; margin: 0;">
+            Don't lose access to your pet profiles, emergency information, and medical records. 
+            Continue your membership for just <strong>$14.99/year</strong> to keep everything safe and accessible.
+          </p>
+        </div>
+        
+        <div style="background: linear-gradient(135deg, #5691af 0%, #4a7c95 100%); color: white; padding: 25px; border-radius: 12px; margin: 25px 0;">
+          <h3 style="margin: 0 0 15px 0; color: white; font-size: 18px;">✨ Your Premium Features:</h3>
+          <ul style="color: rgba(255,255,255,0.95); margin: 0; padding-left: 20px; line-height: 1.8;">
+            <li>Unlimited pet profiles</li>
+            <li>Emergency information sharing</li>
+            <li>Medical record storage</li>
+            <li>Lost pet flyer generation</li>
+            <li>Beautiful photo galleries</li>
+          </ul>
+        </div>
+      `
+    },
+    gift_expired: {
+      subject: 'Your PetPort Gift Membership Has Expired',
+      content: `
+        <h2 style="color: #5691af;">Your Gift Membership Has Expired</h2>
+        <p>Your PetPort gift membership from <strong>${data.senderName || 'a friend'}</strong> has expired.</p>
+        
+        <div style="background: #fef2f2; border: 2px solid #dc2626; border-radius: 8px; padding: 20px; margin: 20px 0;">
+          <h3 style="margin-top: 0; color: #991b1b;">⚠️ Membership Expired</h3>
+          <p style="color: #991b1b; line-height: 1.7; margin: 0;">
+            Your gift membership expired on ${data.expiresAt}. To continue accessing your pet profiles and premium features, 
+            please subscribe to keep everything safe and accessible.
+          </p>
+        </div>
+        
+        <div style="background: #f0f9ff; padding: 20px; border-radius: 8px; margin: 20px 0;">
+          <h3 style="margin-top: 0; color: #5691af;">💝 Continue Your Membership</h3>
+          <p style="color: #475569; line-height: 1.7; margin: 0;">
+            Subscribe for just <strong>$14.99/year</strong> to keep your pet profiles, emergency information, 
+            and medical records safe and accessible.
+          </p>
+        </div>
+        
+        <div style="background: linear-gradient(135deg, #5691af 0%, #4a7c95 100%); color: white; padding: 25px; border-radius: 12px; margin: 25px 0;">
+          <h3 style="margin: 0 0 15px 0; color: white; font-size: 18px;">✨ Premium Features You'll Keep:</h3>
+          <ul style="color: rgba(255,255,255,0.95); margin: 0; padding-left: 20px; line-height: 1.8;">
+            <li>Unlimited pet profiles</li>
+            <li>Emergency information sharing</li>
+            <li>Medical record storage</li>
+            <li>Lost pet flyer generation</li>
+            <li>Beautiful photo galleries</li>
+          </ul>
+        </div>
+      `
     }
   };
 
@@ -772,6 +950,23 @@ const handler = async (req: Request): Promise<Response> => {
       },
       transfer_limit_reached: {
         subject: `🐾 ${emailData.petName}'s profile is waiting - Add a pet slot to claim it`
+      },
+      gift_purchase_confirmation: {
+        subject: Deno.env.get('HOLIDAY_MODE') === 'true' ? '🎁 Your PetPort Gift Has Been Sent!' : '✅ Gift Purchase Confirmed - PetPort'
+      },
+      gift_notification: {
+        subject: Deno.env.get('HOLIDAY_MODE') === 'true' ? '🎁 You\'ve Been Gifted PetPort — A Year of Pawsitivity!' : '🎁 You\'ve Received a PetPort Gift Membership!'
+      },
+      gift_activated: {
+        subject: Deno.env.get('HOLIDAY_MODE') === 'true' ? '🎉 Your PetPort Gift Is Now Active!' : '✅ Welcome to PetPort - Your Gift Membership Is Active'
+      },
+      gift_renewal_reminder: {
+        subject: emailData.daysRemaining === 60 ? '🎁 Your PetPort Gift Expires in 60 Days' : 
+                 emailData.daysRemaining === 30 ? '⏰ Your PetPort Gift Expires in 30 Days' :
+                 '🚨 Your PetPort Gift Expires in 7 Days'
+      },
+      gift_expired: {
+        subject: 'Your PetPort Gift Membership Has Expired'
       }
     };
 
@@ -790,6 +985,8 @@ const handler = async (req: Request): Promise<Response> => {
       body: JSON.stringify({
         From: emailData.type === 'welcome_trial' || emailData.type === 'app_share' 
           ? "PetPort <campaign@petport.app>"
+          : emailData.type.startsWith('gift_')
+          ? "PetPort <gifts@petport.app>"
           : "PetPort <info@petport.app>",
         ReplyTo: "info@petport.app",
         To: emailData.recipientEmail,

@@ -426,44 +426,49 @@ async function handleGiftMembershipPurchase(session: any, supabaseClient: any) {
   try {
     const baseUrl = Deno.env.get("APP_ORIGIN") || "https://petport.app";
     const redemptionLink = `${baseUrl}/redeem?code=${giftCode}`;
+    const formattedExpiry = expiresAt.toLocaleDateString('en-US', { 
+      year: 'numeric', 
+      month: 'long', 
+      day: 'numeric' 
+    });
     
     // Send to purchaser
-    await supabaseClient.functions.invoke('send-gift-email', {
+    await supabaseClient.functions.invoke('send-email', {
       body: {
-        type: 'gift-purchase-confirmation',
+        type: 'gift_purchase_confirmation',
         recipientEmail: purchaserEmail,
+        recipientName: senderName,
+        petName: 'Gift Membership',
+        petId: giftCode,
+        shareUrl: redemptionLink,
         senderName: senderName,
         giftMessage: giftMessage,
         giftCode: giftCode,
         redemptionLink: redemptionLink,
-        expiresAt: expiresAt.toLocaleDateString('en-US', { 
-          year: 'numeric', 
-          month: 'long', 
-          day: 'numeric' 
-        })
+        expiresAt: formattedExpiry
       }
     });
 
     // Send to recipient
-    await supabaseClient.functions.invoke('send-gift-email', {
+    await supabaseClient.functions.invoke('send-email', {
       body: {
-        type: 'gift-notification',
+        type: 'gift_notification',
         recipientEmail: recipientEmail,
+        recipientName: recipientEmail.split('@')[0],
+        petName: 'Gift Membership',
+        petId: giftCode,
+        shareUrl: redemptionLink,
         senderName: senderName,
         giftMessage: giftMessage,
         giftCode: giftCode,
         redemptionLink: redemptionLink,
-        expiresAt: expiresAt.toLocaleDateString('en-US', { 
-          year: 'numeric', 
-          month: 'long', 
-          day: 'numeric' 
-        })
+        expiresAt: formattedExpiry
       }
     });
 
     logStep("Gift emails sent", { purchaserEmail, recipientEmail });
   } catch (emailError) {
-    logStep("Error sending gift emails", { error: emailError });
+    logStep("Error sending gift emails", { error: emailError.message });
     // Don't throw - gift is still created even if emails fail
   }
 }

@@ -8,7 +8,7 @@ import { AppShareButton } from "@/components/AppShareButton";
 import PricingSection from "@/components/PricingSection";
 import { Testimonials } from "@/components/Testimonials";
 import { supabase } from "@/integrations/supabase/client";
-import { Sparkles, ArrowRight } from "lucide-react";
+import { Sparkles, ArrowRight, Heart } from "lucide-react";
 import createProfileScreenshot from "@/assets/create-profile-screenshot.png";
 import documentUploadScreenshot from "@/assets/document-upload-screenshot.png";
 import resumeDetailsScreenshot from "@/assets/resume-details-screenshot.png";
@@ -119,6 +119,10 @@ export default function Landing() {
         
         <div className="flex items-center gap-3">
           <AppShareButton variant="icon" />
+          <Button onClick={() => navigate('/gift')} variant="outline" className="hidden md:flex items-center gap-2">
+            <Heart className="h-4 w-4 text-rose-500" />
+            Gift PetPort
+          </Button>
           {user ? <Button onClick={() => navigate('/app')} className="text-white">Open App</Button> : <Button onClick={() => navigate('/auth')} className="text-white">Sign In</Button>}
         </div>
       </header>
@@ -175,16 +179,22 @@ export default function Landing() {
                 <span className="w-2 h-2 bg-[#5691af] rounded-full"></span>
                 <span className="text-[#5691af] font-medium text-sm">7-Day Free Trial • No charges for 7 days • Cancel anytime</span>
               </div>
-              <div className="mt-8 flex flex-col items-center md:items-start gap-2">
+              <div className="mt-8 flex flex-col items-center md:items-start gap-3">
                 {user ? <Button onClick={() => navigate('/app')} size="lg" className="text-lg px-8 py-3 text-white">
                     Open App
                   </Button> : <>
-                    <a href="#pricing">
-                      <Button size="lg" className="text-lg px-8 py-3 text-white">
-                        Start Free Trial
+                    <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
+                      <a href="#pricing">
+                        <Button size="lg" className="text-lg px-8 py-3 text-white w-full sm:w-auto">
+                          Start Free Trial
+                        </Button>
+                      </a>
+                      <Button onClick={() => navigate('/gift')} size="lg" variant="outline" className="text-lg px-8 py-3 flex items-center gap-2 w-full sm:w-auto border-2">
+                        <Heart className="h-5 w-5 text-rose-500" />
+                        Give as a Gift
                       </Button>
-                    </a>
-                    <p className="text-sm text-white/80">
+                    </div>
+                    <p className="text-sm text-white/80 text-center md:text-left">
                       7-day free trial • Card required; billed after trial unless canceled
                     </p>
                   </>}

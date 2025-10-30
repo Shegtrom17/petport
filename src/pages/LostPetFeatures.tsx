@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Check, X, ArrowRight, Eye } from "lucide-react";
+import { Check, X, ArrowRight, Eye, Heart } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { FreeLostPetFlyerGenerator } from "@/components/FreeLostPetFlyerGenerator";
 import { MetaTags } from "@/components/MetaTags";
@@ -28,9 +28,15 @@ export default function LostPetFeatures() {
             <img src="/lovable-uploads/213ccabc-3918-406d-b844-9c2730b7637d.png" alt="PetPort logo" className="w-10 h-10" />
             <span className="text-xl font-semibold text-brand-primary">PetPort</span>
           </div>
-          <Button onClick={() => navigate('/')} variant="outline">
-            Back to Home
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button onClick={() => navigate('/gift')} variant="outline" className="flex items-center gap-2">
+              <Heart className="h-4 w-4 text-rose-500" />
+              <span className="hidden sm:inline">Gift PetPort</span>
+            </Button>
+            <Button onClick={() => navigate('/')} variant="outline">
+              Back to Home
+            </Button>
+          </div>
         </header>
 
         {/* Hero Section */}
@@ -65,6 +71,10 @@ export default function LostPetFeatures() {
                 <Link to="/">
                   Explore Full Platform
                 </Link>
+              </Button>
+              <Button size="lg" onClick={() => navigate('/gift')} variant="outline" className="border-2 flex items-center gap-2">
+                <Heart className="h-5 w-5 text-rose-500" />
+                Give PetPort as a Gift
               </Button>
               <Button size="lg" asChild className="bg-brand-primary hover:bg-brand-primary-dark text-white">
                 <Link to="/demo/missing-pet">
@@ -163,6 +173,10 @@ export default function LostPetFeatures() {
               <div className="flex flex-col sm:flex-row gap-3 justify-center">
                 <Button asChild className="text-white">
                   <Link to="/#pricing">See Full Features & Pricing</Link>
+                </Button>
+                <Button onClick={() => navigate('/gift')} variant="outline" className="flex items-center gap-2 border-2">
+                  <Heart className="h-4 w-4 text-rose-500" />
+                  Give as a Gift
                 </Button>
                 <Button asChild variant="outline">
                   <Link to="/demo/missing-pet">
@@ -339,6 +353,10 @@ export default function LostPetFeatures() {
             <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
               <Button size="lg" asChild className="text-white">
                 <Link to="/">See All Features</Link>
+              </Button>
+              <Button size="lg" onClick={() => navigate('/gift')} variant="outline" className="flex items-center gap-2 border-2">
+                <Heart className="h-5 w-5 text-rose-500" />
+                Give as a Gift
               </Button>
               <Button size="lg" variant="outline" asChild>
                 <Link to="/#pricing">View Pricing</Link>

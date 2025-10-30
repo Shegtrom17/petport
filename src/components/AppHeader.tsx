@@ -100,8 +100,12 @@ export const AppHeader = ({ title, showBack = false, actions, showHelpIcon = tru
                   </div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={() => navigate('/gift')}>
+                  <Heart className="mr-2 h-4 w-4" />
+                  <span>Give PetPort as a Gift</span>
+                </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => setShowReferralModal(true)}>
-                  <Gift className="mr-2 h-4 w-4" />
+                  <DollarSign className="mr-2 h-4 w-4" />
                   <span>Refer & Earn</span>
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => navigate('/profile')}>

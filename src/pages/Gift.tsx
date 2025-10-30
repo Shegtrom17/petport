@@ -93,7 +93,7 @@ const Gift = () => {
               </ul>
               <div className="mt-6 p-4 bg-primary/10 rounded-lg text-center">
                 <div className="text-3xl font-bold text-primary">$14.99</div>
-                <div className="text-sm text-muted-foreground">One-time payment for 12 months</div>
+                <div className="text-sm text-muted-foreground">For a Full Year Gift of PetPort</div>
               </div>
             </CardContent>
           </Card>

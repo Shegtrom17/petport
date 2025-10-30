@@ -1,4 +1,4 @@
-import { ArrowLeft, MoreVertical, Gift, Settings, CreditCard, HelpCircle, Flag, LogOut, DollarSign, Sparkles } from "lucide-react";
+import { ArrowLeft, MoreVertical, Gift, Settings, CreditCard, HelpCircle, Flag, LogOut, DollarSign, Sparkles, Heart } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/context/AuthContext";
@@ -47,6 +47,15 @@ export const AppHeader = ({ title, showBack = false, actions, showHelpIcon = tru
               <DollarSign className="h-5 w-5" />
             </Button>
           )}
+          <Button
+            variant="ghost"
+            size="icon"
+            className="touch-feedback"
+            onClick={() => navigate('/gift')}
+            aria-label="Give PetPort as a Gift"
+          >
+            <Heart className="h-5 w-5 text-rose-500" />
+          </Button>
           <Button
             variant="ghost"
             size="sm"

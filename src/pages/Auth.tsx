@@ -286,6 +286,12 @@ export default function Auth() {
                   🎬 See Demos
                 </Link>
                 <Link 
+                  to="/gift" 
+                  className="text-muted-foreground hover:text-primary underline underline-offset-4 transition-colors"
+                >
+                  🎁 Give as Gift
+                </Link>
+                <Link 
                   to="/" 
                   className="text-muted-foreground hover:text-primary underline underline-offset-4 transition-colors"
                 >

@@ -1,4 +1,4 @@
-import { ArrowLeft, LogIn, MoreVertical, Gift, Settings, CreditCard, HelpCircle, Flag, LogOut, DollarSign } from "lucide-react";
+import { ArrowLeft, LogIn, MoreVertical, Gift, Settings, CreditCard, HelpCircle, Flag, LogOut, DollarSign, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
@@ -86,6 +86,15 @@ export const PetHeader = ({ activeTab, onTabChange, selectedPetId, selectedPetNa
               variant="ghost"
               size="icon"
               className="touch-feedback h-8 w-8"
+              onClick={() => navigate('/gift')}
+              aria-label="Give PetPort as a Gift"
+            >
+              <Heart className="h-4 w-4 text-rose-500" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="touch-feedback h-8 w-8"
               onClick={() => setShowReferralModal(true)}
               aria-label="Refer & Earn"
             >
@@ -121,8 +130,12 @@ export const PetHeader = ({ activeTab, onTabChange, selectedPetId, selectedPetNa
                     </div>
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={() => navigate('/gift')}>
+                    <Heart className="mr-2 h-4 w-4 text-rose-500" />
+                    <span>Give PetPort as a Gift</span>
+                  </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => setShowReferralModal(true)}>
-                    <Gift className="mr-2 h-4 w-4" />
+                    <DollarSign className="mr-2 h-4 w-4" />
                     <span>Refer & Earn</span>
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => navigate('/profile')}>
@@ -196,6 +209,15 @@ export const PetHeader = ({ activeTab, onTabChange, selectedPetId, selectedPetNa
               variant="ghost"
               size="icon"
               className="touch-feedback"
+              onClick={() => navigate('/gift')}
+              aria-label="Give PetPort as a Gift"
+            >
+              <Heart className="h-5 w-5 text-rose-500" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="touch-feedback"
               onClick={() => setShowReferralModal(true)}
               aria-label="Refer & Earn"
             >
@@ -231,8 +253,12 @@ export const PetHeader = ({ activeTab, onTabChange, selectedPetId, selectedPetNa
                     </div>
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={() => navigate('/gift')}>
+                    <Heart className="mr-2 h-4 w-4 text-rose-500" />
+                    <span>Give PetPort as a Gift</span>
+                  </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => setShowReferralModal(true)}>
-                    <Gift className="mr-2 h-4 w-4" />
+                    <DollarSign className="mr-2 h-4 w-4" />
                     <span>Refer & Earn</span>
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => navigate('/profile')}>

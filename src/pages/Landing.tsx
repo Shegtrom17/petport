@@ -119,11 +119,11 @@ export default function Landing() {
         
         <div className="flex items-center gap-3">
           <AppShareButton variant="icon" />
-          <Button onClick={() => navigate('/gift')} variant="outline" className="hidden md:flex items-center gap-2">
+          <Button onClick={() => navigate('/gift')} variant="outline" className="flex items-center gap-2">
             <Heart className="h-4 w-4 text-rose-500" />
-            Gift PetPort
+            <span className="hidden sm:inline">Gift PetPort</span>
           </Button>
-          {user ? <Button onClick={() => navigate('/app')} className="text-white">Open App</Button> : <Button onClick={() => navigate('/auth')} className="text-white">Sign In</Button>}
+          {user ? <Button onClick={() => navigate('/app')} className="text-white hidden md:flex">Open App</Button> : <Button onClick={() => navigate('/auth')} className="text-white">Sign In</Button>}
         </div>
       </header>
 
@@ -180,7 +180,7 @@ export default function Landing() {
                 <span className="text-[#5691af] font-medium text-sm">7-Day Free Trial • No charges for 7 days • Cancel anytime</span>
               </div>
               <div className="mt-8 flex flex-col items-center md:items-start gap-3">
-                {user ? <Button onClick={() => navigate('/app')} size="lg" className="text-lg px-8 py-3 text-white">
+                {user ? <Button onClick={() => navigate('/app')} size="lg" className="text-lg px-8 py-3 text-white hidden md:flex">
                     Open App
                   </Button> : <>
                     <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">

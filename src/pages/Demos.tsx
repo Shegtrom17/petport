@@ -163,9 +163,15 @@ export default function Demos() {
           <img src="/lovable-uploads/213ccabc-3918-406d-b844-9c2730b7637d.png" alt="PetPort logo" className="w-10 h-10" />
           <span className="text-xl font-semibold text-brand-primary">PetPort</span>
         </div>
-        <Button onClick={() => navigate('/')} variant="outline">
-          Back to Home
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button onClick={() => navigate('/gift')} variant="outline" className="flex items-center gap-2">
+            <Heart className="h-4 w-4 text-rose-500" />
+            <span className="hidden sm:inline">Gift PetPort</span>
+          </Button>
+          <Button onClick={() => navigate('/')} variant="outline">
+            Back to Home
+          </Button>
+        </div>
       </header>
 
       <main className="container mx-auto px-4 py-12 max-w-7xl">

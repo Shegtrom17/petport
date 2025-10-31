@@ -1,10 +1,13 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { MetaTags } from "@/components/MetaTags";
 import { AzureButton } from "@/components/ui/azure-button";
+import { Button } from "@/components/ui/button";
 import { Heart, Link2, MapPin, Sparkles } from "lucide-react";
 import { GuidanceHint } from "@/components/ui/guidance-hint";
 
 const FosterProgram = () => {
+  const navigate = useNavigate();
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-muted/20">
       <MetaTags
@@ -13,6 +16,23 @@ const FosterProgram = () => {
         image="https://pub-a7c2c18b8d6143b9a256105ef44f2da0.r2.dev/OG%20General.png"
         url={window.location.origin + "/foster-program"}
       />
+
+      {/* Header */}
+      <header className="container mx-auto px-4 py-6 flex items-center justify-between">
+        <div className="flex items-center gap-3 cursor-pointer" onClick={() => navigate('/')}>
+          <img src="/lovable-uploads/213ccabc-3918-406d-b844-9c2730b7637d.png" alt="PetPort logo" className="w-10 h-10" />
+          <span className="text-xl font-semibold text-brand-primary">PetPort</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <Button onClick={() => navigate('/gift')} variant="outline" className="flex items-center gap-2">
+            <Heart className="h-4 w-4 text-rose-500" />
+            <span className="hidden sm:inline">Gift PetPort</span>
+          </Button>
+          <Button onClick={() => navigate('/')} variant="outline">
+            Back to Home
+          </Button>
+        </div>
+      </header>
 
       {/* Hero Section */}
       <section className="container mx-auto px-4 py-12 lg:py-20">

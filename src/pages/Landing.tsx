@@ -8,7 +8,8 @@ import { AppShareButton } from "@/components/AppShareButton";
 import PricingSection from "@/components/PricingSection";
 import { Testimonials } from "@/components/Testimonials";
 import { supabase } from "@/integrations/supabase/client";
-import { Sparkles, ArrowRight, Heart } from "lucide-react";
+import { Sparkles, ArrowRight, Heart, Menu } from "lucide-react";
+import { PublicNavigationMenu } from "@/components/PublicNavigationMenu";
 import createProfileScreenshot from "@/assets/create-profile-screenshot.png";
 import documentUploadScreenshot from "@/assets/document-upload-screenshot.png";
 import resumeDetailsScreenshot from "@/assets/resume-details-screenshot.png";
@@ -22,6 +23,7 @@ export default function Landing() {
   const [showSharePrompt, setShowSharePrompt] = useState(false);
   const [publicPets, setPublicPets] = useState<any[]>([]);
   const [hasReferralCode, setHasReferralCode] = useState(false);
+  const [showMobileMenu, setShowMobileMenu] = useState(false);
 
   // Detect if we're in preview environment
   const isPreview = window.location.hostname.includes('lovableproject.com') || window.location.hostname.includes('lovable.app');
@@ -97,6 +99,16 @@ export default function Landing() {
       {/* Header Navigation */}
       <header className="max-w-7xl mx-auto px-4 py-6 flex items-center justify-between">
         <div className="flex items-center gap-3">
+          {/* Mobile Menu Icon */}
+          <Button
+            variant="ghost"
+            size="icon"
+            className="md:hidden"
+            onClick={() => setShowMobileMenu(true)}
+          >
+            <Menu className="h-6 w-6 text-brand-primary" />
+          </Button>
+          
           <img src="/lovable-uploads/213ccabc-3918-406d-b844-9c2730b7637d.png" alt="PetPort logo" className="w-10 h-10" />
           <span className="text-xl font-semibold text-brand-primary">PetPort</span>
         </div>
@@ -126,6 +138,12 @@ export default function Landing() {
           {user ? <Button onClick={() => navigate('/app')} className="text-white hidden md:flex">Open App</Button> : <Button onClick={() => navigate('/auth')} className="text-white">Sign In</Button>}
         </div>
       </header>
+
+      {/* Mobile Navigation Menu */}
+      <PublicNavigationMenu 
+        isOpen={showMobileMenu} 
+        onClose={() => setShowMobileMenu(false)} 
+      />
 
       {/* Referral Program Banner */}
       <div className="bg-gradient-to-r from-[#5691af]/10 to-[#5691af]/5 border-b border-[#5691af]/20">

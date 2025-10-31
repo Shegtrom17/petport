@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { MetaTags } from "@/components/MetaTags";
-import { Sparkles, Download, Share2, Wand2, Eye, X, Heart, FileText, AlertTriangle, Camera } from "lucide-react";
+import { Sparkles, Download, Share2, Wand2, Eye, X, Heart, FileText, AlertTriangle, Camera, Menu } from "lucide-react";
 import { toast } from "sonner";
 import {
   Dialog,
@@ -20,6 +20,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { themes, ThemeId } from "@/config/themes";
+import { PublicNavigationMenu } from "@/components/PublicNavigationMenu";
 
 type Species = 'dog' | 'cat' | 'horse';
 
@@ -92,6 +93,7 @@ export default function DogGoneGood() {
   const [dismissedSticky, setDismissedSticky] = useState(false);
   const [isCanvasReady, setIsCanvasReady] = useState(false);
   const [photosLoading, setPhotosLoading] = useState(false);
+  const [showMobileMenu, setShowMobileMenu] = useState(false);
 
   const currentOptions = species === 'horse' ? horseOptions : dogCatOptions;
   const currentTheme = themes[theme];
@@ -648,9 +650,19 @@ export default function DogGoneGood() {
 
       {/* Header */}
       <header className="max-w-7xl mx-auto px-4 py-6 flex items-center justify-between">
-        <div className="flex items-center gap-3 cursor-pointer" onClick={() => navigate('/')}>
-          <img src="/lovable-uploads/213ccabc-3918-406d-b844-9c2730b7637d.png" alt="PetPort" className="w-10 h-10" />
-          <span className="text-xl font-semibold text-brand-primary">PetPort</span>
+        <div className="flex items-center gap-3">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="md:hidden"
+            onClick={() => setShowMobileMenu(true)}
+          >
+            <Menu className="h-6 w-6 text-brand-primary" />
+          </Button>
+          <div className="flex items-center gap-3 cursor-pointer" onClick={() => navigate('/')}>
+            <img src="/lovable-uploads/213ccabc-3918-406d-b844-9c2730b7637d.png" alt="PetPort" className="w-10 h-10" />
+            <span className="text-xl font-semibold text-brand-primary">PetPort</span>
+          </div>
         </div>
         <div className="flex items-center gap-2">
           <Button onClick={() => navigate('/gift')} variant="outline" className="flex items-center gap-2">
@@ -660,6 +672,12 @@ export default function DogGoneGood() {
           <Button onClick={() => navigate('/')} variant="outline">Back to Home</Button>
         </div>
       </header>
+
+      {/* Mobile Navigation Menu */}
+      <PublicNavigationMenu 
+        isOpen={showMobileMenu} 
+        onClose={() => setShowMobileMenu(false)} 
+      />
 
       {/* Ad Slot - Top */}
       <div id="adslot-doggone-top" className="max-w-7xl mx-auto px-4 py-2" />

@@ -1,13 +1,16 @@
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Check, X, ArrowRight, Eye, Heart } from "lucide-react";
+import { Check, X, ArrowRight, Eye, Heart, Menu } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { FreeLostPetFlyerGenerator } from "@/components/FreeLostPetFlyerGenerator";
 import { MetaTags } from "@/components/MetaTags";
+import { PublicNavigationMenu } from "@/components/PublicNavigationMenu";
 import lostPetDemoPreview from "@/assets/lost-pet-demo-preview.png";
 
 export default function LostPetFeatures() {
   const navigate = useNavigate();
+  const [showMobileMenu, setShowMobileMenu] = useState(false);
   const scrollToGenerator = () => {
     document.getElementById('free-generator')?.scrollIntoView({ behavior: 'smooth' });
   };
@@ -24,9 +27,19 @@ export default function LostPetFeatures() {
       <div className="min-h-screen bg-gradient-to-b from-background to-muted/20">
         {/* Header */}
         <header className="container mx-auto px-4 py-6 flex items-center justify-between">
-          <div className="flex items-center gap-3 cursor-pointer" onClick={() => navigate('/')}>
-            <img src="/lovable-uploads/213ccabc-3918-406d-b844-9c2730b7637d.png" alt="PetPort logo" className="w-10 h-10" />
-            <span className="text-xl font-semibold text-brand-primary">PetPort</span>
+          <div className="flex items-center gap-3">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="md:hidden"
+              onClick={() => setShowMobileMenu(true)}
+            >
+              <Menu className="h-6 w-6 text-brand-primary" />
+            </Button>
+            <div className="flex items-center gap-3 cursor-pointer" onClick={() => navigate('/')}>
+              <img src="/lovable-uploads/213ccabc-3918-406d-b844-9c2730b7637d.png" alt="PetPort logo" className="w-10 h-10" />
+              <span className="text-xl font-semibold text-brand-primary">PetPort</span>
+            </div>
           </div>
           <div className="flex items-center gap-2">
             <Button onClick={() => navigate('/gift')} variant="outline" className="flex items-center gap-2">
@@ -38,6 +51,12 @@ export default function LostPetFeatures() {
             </Button>
           </div>
         </header>
+
+        {/* Mobile Navigation Menu */}
+        <PublicNavigationMenu 
+          isOpen={showMobileMenu} 
+          onClose={() => setShowMobileMenu(false)} 
+        />
 
         {/* Hero Section */}
         <section className="container mx-auto px-4 py-12 md:py-20">

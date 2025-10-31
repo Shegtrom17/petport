@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 import { MetaTags } from "@/components/MetaTags";
 import { Button } from "@/components/ui/button";
 import { 
@@ -11,11 +12,14 @@ import {
   Star,
   Shield,
   User,
-  ArrowRight
+  ArrowRight,
+  Menu
 } from "lucide-react";
+import { PublicNavigationMenu } from "@/components/PublicNavigationMenu";
 
 export default function Demos() {
   const navigate = useNavigate();
+  const [showMobileMenu, setShowMobileMenu] = useState(false);
 
   const liveLinks = [
     {
@@ -159,9 +163,19 @@ export default function Demos() {
 
       {/* Header */}
       <header className="max-w-7xl mx-auto px-4 py-6 flex items-center justify-between">
-        <div className="flex items-center gap-3 cursor-pointer" onClick={() => navigate('/')}>
-          <img src="/lovable-uploads/213ccabc-3918-406d-b844-9c2730b7637d.png" alt="PetPort logo" className="w-10 h-10" />
-          <span className="text-xl font-semibold text-brand-primary">PetPort</span>
+        <div className="flex items-center gap-3">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="md:hidden"
+            onClick={() => setShowMobileMenu(true)}
+          >
+            <Menu className="h-6 w-6 text-brand-primary" />
+          </Button>
+          <div className="flex items-center gap-3 cursor-pointer" onClick={() => navigate('/')}>
+            <img src="/lovable-uploads/213ccabc-3918-406d-b844-9c2730b7637d.png" alt="PetPort logo" className="w-10 h-10" />
+            <span className="text-xl font-semibold text-brand-primary">PetPort</span>
+          </div>
         </div>
         <div className="flex items-center gap-2">
           <Button onClick={() => navigate('/gift')} variant="outline" className="flex items-center gap-2">
@@ -173,6 +187,12 @@ export default function Demos() {
           </Button>
         </div>
       </header>
+
+      {/* Mobile Navigation Menu */}
+      <PublicNavigationMenu 
+        isOpen={showMobileMenu} 
+        onClose={() => setShowMobileMenu(false)} 
+      />
 
       <main className="container mx-auto px-4 py-12 max-w-7xl">
         {/* Hero Section */}

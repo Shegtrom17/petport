@@ -1,9 +1,11 @@
 import { Link } from "react-router-dom";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { MetaTags } from "@/components/MetaTags";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { PricingSection } from "@/components/PricingSection";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Menu } from "lucide-react";
+import { PublicNavigationMenu } from "@/components/PublicNavigationMenu";
 import createProfileScreenshot from "@/assets/create-profile-screenshot.png";
 import documentUploadScreenshot from "@/assets/document-upload-screenshot.png";
 import resumeDetailsScreenshot from "@/assets/resume-details-screenshot.png";
@@ -11,6 +13,8 @@ import shareInstructionsScreenshot from "@/assets/share-instructions-screenshot.
 import referralProgramHero from "@/assets/referral-program-hero.png";
 
 export default function Learn() {
+  const [showMobileMenu, setShowMobileMenu] = useState(false);
+
   return <div className="min-h-screen bg-white">
       <MetaTags 
         title="Learn About PetPort | Digital Pet Profiles" 
@@ -22,6 +26,14 @@ export default function Learn() {
       {/* Header Navigation */}
       <header className="max-w-7xl mx-auto px-4 py-6 flex items-center justify-between border-b border-gray-200">
         <div className="flex items-center gap-3">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="md:hidden"
+            onClick={() => setShowMobileMenu(true)}
+          >
+            <Menu className="h-6 w-6 text-brand-primary" />
+          </Button>
           <Link to="/" className="flex items-center gap-3">
             <img src="/lovable-uploads/213ccabc-3918-406d-b844-9c2730b7637d.png" alt="PetPort logo" className="w-10 h-10" />
             <span className="text-xl font-semibold text-brand-primary">PetPort</span>
@@ -33,6 +45,12 @@ export default function Learn() {
           </a>
         </div>
       </header>
+
+      {/* Mobile Navigation Menu */}
+      <PublicNavigationMenu 
+        isOpen={showMobileMenu} 
+        onClose={() => setShowMobileMenu(false)} 
+      />
 
       {/* Referral Program Banner */}
       <div className="bg-gradient-to-r from-[#5691af]/10 to-[#5691af]/5 border-b border-[#5691af]/20">

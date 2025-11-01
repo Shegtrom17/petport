@@ -207,12 +207,20 @@ const PodcastEpisode = () => {
           </section>
         )}
 
-        {/* Transcript */}
+        {/* Hidden SEO Transcript */}
+        <div className="hidden-transcript" style={{ display: 'none' }}>
+          {episode.transcript}
+        </div>
+
+        {/* Visible Transcript Section - TEMPORARILY HIDDEN */}
+        {/* Will be re-enabled when you provide the pretty version */}
+        {/* 
         <section className="py-12 px-4">
           <div className="container mx-auto max-w-4xl">
             <PodcastTranscript transcript={episode.transcript} />
           </div>
         </section>
+        */}
 
         {/* Related Episodes */}
         {relatedEpisodes.length > 0 && (

@@ -299,6 +299,88 @@ For more information about setting up foster programs with digital profiles, vis
     audioUrl: "https://pub-a7c2c18b8d6143b9a256105ef44f2da0.r2.dev/podcast/lost-pet-episode.mp3",
     duration: "9:45",
     publishDate: "2025-10-24",
+    displayTranscript: `
+      <article>
+        <section id="intro">
+          <h2>Introduction: PetPort.app Overview</h2>
+          <p>Welcome back. Today we analyze <strong>PetPort.app</strong>, a progressive web application engineered for
+            <strong>lost pet recovery</strong> and comprehensive <strong>pet information management</strong>.
+            The episode focuses on <strong>Digital Lost-Pet Flyers</strong>, the <strong>LiveLink System</strong>,
+            and the integrated <strong>QR code share function</strong> that enables immediate community action.</p>
+        </section>
+
+        <section id="flyer">
+          <h2>Lost Pet Flyer Generator and Emergency Activation</h2>
+          <p>Listeners learn that while the Lost Pet Flyer Generator is essential, it represents only one-tenth of
+            the PetPort ecosystem. The <strong>Emergency Toolkit</strong> removes friction in crisis moments through
+            one-tap activation, automatic data retrieval (name, breed, microchip ID, contact info), and instant flyer
+            generation.</p>
+          <p>Unlike manual designs from Canva or Word, PetPort auto-formats the flyer and publishes a dynamic
+            <strong>LiveLink page</strong> instead of a static PDF. This page serves as the single source of truth for all
+            updates during a missing-pet incident.</p>
+        </section>
+
+        <section id="livelink">
+          <h2>LiveLink System: Real-Time Updates and QR Sharing</h2>
+          <p>The <a href="/demos/livelink">LiveLink System</a> distinguishes PetPort from conventional flyer tools by
+            maintaining a constantly updated web endpoint. Owners can revise reward values, change last-seen locations, or
+            correct information; updates propagate globally within seconds to every shared link and printed QR code.</p>
+          <p>This live synchronization eliminates confusion and wasted search efforts, effectively functioning as a
+            <strong>command center for lost-pet recovery</strong>.</p>
+        </section>
+
+        <section id="community">
+          <h2>Community Coordination and Sightings Integration</h2>
+          <p>Each LiveLink includes a secure, moderated <strong>sightings board</strong> where verified users can report
+            possible pet sightings, upload photos, and add time-stamped details. Reports populate a live map that visualizes
+            search zones. The owner receives push notifications, consolidating community intelligence into one interface.</p>
+        </section>
+
+        <section id="preparedness">
+          <h2>Preparedness and Digital Pet Identity</h2>
+          <p>PetPort emphasizes preventive readiness by encouraging owners to build complete digital profiles before any
+            crisis occurs. These profiles act as secure <strong>digital ID cards</strong> storing medical data, vaccination
+            records, behavioral notes, and photos. During emergencies, the pre-filled information enables immediate flyer
+            activation and streamlined veterinary communication.</p>
+        </section>
+
+        <section id="management">
+          <h2>Beyond Emergencies: Daily Pet Management</h2>
+          <p>Additional modules support everyday tasks—such as the <strong>Pet Résumé Builder</strong> for trainers,
+            groomers, and landlords, and the <strong>Care and Handling section</strong> for diets, medications, and daily
+            routines. Each uses LiveLink to ensure caregivers access current data across devices.</p>
+        </section>
+
+        <section id="transfer">
+          <h2>Rescue, Foster, and Adoption Data Transfer</h2>
+          <p>PetPort uniquely enables seamless digital transfer of complete pet records from foster to adopter, ensuring
+            continuity of care. This innovation replaces paper folders and fragmented email histories with a single,
+            secure, cloud-based data handoff—vital for rescues and shelters.</p>
+        </section>
+
+        <section id="architecture">
+          <h2>Technical Architecture and Reliability</h2>
+          <p>Built as a <strong>Progressive Web App (PWA)</strong>, PetPort delivers native-app performance without app-store
+            downloads. Hosting on <strong>Cloudflare infrastructure</strong> provides global speed, low latency, and
+            redundancy. The design prioritizes rapid update propagation during high-traffic scenarios, such as community
+            searches following pet loss.</p>
+        </section>
+
+        <section id="conclusion">
+          <h2>Conclusion: From Panic to Action</h2>
+          <p>The PetPort ecosystem integrates <strong>real-time communication</strong>, <strong>community mapping</strong>,
+            and <strong>secure data management</strong> into one cohesive platform. The mission statement encapsulates the
+            brand's goal: transforming panic into coordinated action through intelligent digital tools.</p>
+          <p>For demonstrations of PetPort's public modules, visit the
+            <a href="/features/lost-pet-flyer">Lost Pet Flyer Generator</a> and
+            <a href="/demos/livelink">LiveLink Demo</a>.</p>
+        </section>
+
+        <footer>
+          <p><em>© 2025 PetPort.app | All Rights Reserved | PetPort Lost Pet Recovery & Pet Management Technology.</em></p>
+        </footer>
+      </article>
+    `,
     transcript: `Every pet owner's nightmare: that moment when you realize your dog or cat is missing. Your heart drops. Panic sets in. And your first instinct is probably to grab printer paper and start making flyers.
 
 But here's the reality—by the time you've designed, printed, and posted 50 paper flyers around your neighborhood, your pet could have traveled miles. And those flyers? They reach maybe a few hundred people, max, and only if they happen to walk past that specific telephone pole.

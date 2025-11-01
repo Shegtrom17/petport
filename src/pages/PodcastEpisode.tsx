@@ -183,7 +183,6 @@ const PodcastEpisode = () => {
                   
                   <AzureButton
                     onClick={handleShare}
-                    className="bg-transparent border-2 border-brand-primary text-brand-primary hover:bg-brand-primary hover:text-white"
                   >
                     <Share2 className="h-4 w-4" />
                     Share

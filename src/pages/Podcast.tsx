@@ -37,7 +37,7 @@ const Podcast = () => {
 
             <div className="absolute left-1/2 -translate-x-1/2">
               <img 
-                src="/lovable-uploads/d4e1e1f9-612c-48bb-8391-e7bce7658e8c.png" 
+                src="/lovable-uploads/petport-logo-new.png" 
                 alt="PetPort" 
                 className="h-8"
               />

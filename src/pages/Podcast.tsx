@@ -82,7 +82,7 @@ const Podcast = () => {
             <AzureButton
               size="lg"
               onClick={() => navigate(`/podcast/${latestEpisode.slug}`)}
-              className="bg-white text-brand-primary hover:bg-white/90 hover:text-brand-primary shadow-xl"
+              className="bg-white text-[#5691af] hover:bg-white/90 hover:text-[#5691af] shadow-xl"
             >
               <Headphones className="h-5 w-5" />
               Listen to Latest Episode

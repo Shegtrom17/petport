@@ -99,11 +99,10 @@ export default function Landing() {
       {/* Header Navigation */}
       <header className="max-w-7xl mx-auto px-4 py-6 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          {/* Mobile Menu Icon */}
+          {/* Hamburger Menu Icon - Now visible on all screen sizes */}
           <Button
             variant="ghost"
             size="icon"
-            className="md:hidden"
             onClick={() => setShowMobileMenu(true)}
           >
             <Menu className="h-6 w-6 text-brand-primary" />
@@ -112,22 +111,6 @@ export default function Landing() {
           <img src="/lovable-uploads/213ccabc-3918-406d-b844-9c2730b7637d.png" alt="PetPort logo" className="w-10 h-10" />
           <span className="text-xl font-semibold text-brand-primary">PetPort</span>
         </div>
-        
-        {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center gap-6">
-          <Link to="/learn" className="text-sm font-medium text-brand-primary hover:text-brand-primary-dark transition-colors">
-            Features
-          </Link>
-          <Link to="/lost-pet-features" className="text-sm font-medium text-brand-primary hover:text-brand-primary-dark transition-colors">
-            Lost Pet Solutions
-          </Link>
-          <Link to="/foster-program" className="text-sm font-medium text-brand-primary hover:text-brand-primary-dark transition-colors">
-            Foster Program
-          </Link>
-          <Link to="/demos" className="text-sm font-medium text-brand-primary hover:text-brand-primary-dark transition-colors">
-            Demos
-          </Link>
-        </nav>
         
         <div className="flex items-center gap-3">
           <AppShareButton variant="icon" />

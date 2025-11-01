@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Headphones, ArrowLeft, Gift, Menu } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { AzureButton } from '@/components/ui/azure-button';
+import { Button } from '@/components/ui/button';
 import { PodcastEpisodeCard } from '@/components/PodcastEpisodeCard';
 import { podcastEpisodes } from '@/data/podcastEpisodes';
 import { MetaTags } from '@/components/MetaTags';
@@ -79,14 +80,14 @@ const Podcast = () => {
               Expert pet care insights delivered in 10-minute episodes. Learn about digital pet management, foster programs, lost pet recovery, and more.
             </p>
 
-            <AzureButton
+            <Button
               size="lg"
               onClick={() => navigate(`/podcast/${latestEpisode.slug}`)}
-              className="bg-white text-[#5691af] hover:bg-white/90 hover:text-[#5691af] shadow-xl"
+              className="bg-white text-[#5691af] hover:bg-white/90 hover:text-[#5691af] shadow-xl [&_svg]:text-[#5691af]"
             >
               <Headphones className="h-5 w-5" />
               Listen to Latest Episode
-            </AzureButton>
+            </Button>
           </div>
         </section>
 

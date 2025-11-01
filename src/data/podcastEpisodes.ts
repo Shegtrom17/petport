@@ -15,12 +15,13 @@ export interface PodcastEpisode {
 export const podcastEpisodes: PodcastEpisode[] = [
   {
     slug: "beyond-the-lost-pet-flyer",
-    title: "Beyond the Lost Pet Flyer: The Complete PetPort System",
-    description: "Discover how PetPort's LiveLink, Sightings Board, and integrated QR codes transform lost pet recovery into a coordinated community effort—plus explore the other 90% of features that make it the gold standard in digital pet management.",
-    coverImage: "https://pub-a7c2c18b8d6143b9a256105ef44f2da0.r2.dev/og/resume-og-1mb.png",
+    title: "Beyond the Lost Pet Flyer — Inside PetPort's LiveLink Ecosystem | The PetPort Podcast",
+    description: "Welcome to The PetPort Podcast — giving every pet a voice for life. Discover how PetPort.app transforms lost-pet recovery through the Lost Pet Flyer Generator, LiveLink demos, and QR-enabled sharing that unites communities in minutes.",
+    coverImage: "https://pub-a7c2c18b8d6143b9a256105ef44f2da0.r2.dev/podcast-covers/beyond-lost-pet-flyer-cover.jpg",
     audioUrl: "https://pub-5e3024d73a954e09aa62c81c9d3f1592.r2.dev/beyond-the-lost-pet-flyer.m4a",
     duration: "14:30",
-    publishDate: "2025-11-08",
+    publishDate: "2025-11-01",
+    keywords: ["lost pet flyer generator", "PetPort app", "LiveLink system", "QR code pet ID", "pet recovery", "digital pet management", "PetPort podcast"],
     transcript: `Welcome back! Today we're exploring PetPort.app — the most advanced lost-pet recovery and pet-information management system in the market. Not just storage for medical records, vet records and documents but so much more!
 
 We're immersing ourselves in the world of Digital Lost-Pet Flyers, the LiveLink system, and the Sightings Board, plus that built-in QR code that lets anyone share or print from anywhere.
@@ -242,8 +243,7 @@ Absolutely. And maybe Connecting this idea of a centralized realtime system to t
         </section>
       </article>
     `,
-    relatedPages: ['/lost-pet-features', '/foster-program'],
-    keywords: ['lost pet flyer', 'digital pet management', 'LiveLink', 'sightings board', 'pet emergency', 'QR code', 'pet resume', 'rescue coordination', 'pet recovery', 'community search']
+    relatedPages: ['/lost-pet-features', '/foster-program']
   },
   {
     slug: "foster-to-adopter-digital-transition",

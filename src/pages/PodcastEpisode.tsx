@@ -63,7 +63,7 @@ const PodcastEpisode = () => {
   return (
     <>
       <MetaTags
-        title={`${episode.title} | PetPort Podcast`}
+        title={episode.title}
         description={episode.description}
         image={episode.coverImage}
         url={window.location.href}

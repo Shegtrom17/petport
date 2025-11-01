@@ -65,7 +65,7 @@ const PodcastEpisode = () => {
       <MetaTags
         title={episode.title}
         description={episode.description}
-        image={episode.coverImage}
+        image={episode.ogImage || episode.coverImage}
         url={window.location.href}
       />
 

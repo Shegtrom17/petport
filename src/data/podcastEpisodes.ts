@@ -3,6 +3,7 @@ export interface PodcastEpisode {
   title: string;
   description: string;
   coverImage: string;
+  ogImage?: string; // Optional 1200x630 image for social sharing
   audioUrl: string;
   duration: string;
   publishDate: string;
@@ -17,7 +18,8 @@ export const podcastEpisodes: PodcastEpisode[] = [
     slug: "beyond-the-lost-pet-flyer",
     title: "Beyond the Lost Pet Flyer — Inside PetPort's LiveLink Ecosystem | The PetPort Podcast",
     description: "Welcome to The PetPort Podcast — giving every pet a voice for life. Discover how PetPort.app transforms lost-pet recovery through the Lost Pet Flyer Generator, LiveLink demos, and QR-enabled sharing that unites communities in minutes.",
-    coverImage: "https://pub-a7c2c18b8d6143b9a256105ef44f2da0.r2.dev/podcast-covers/beyond-lost-pet-flyer-cover.jpg",
+    coverImage: "https://pub-5e3024d73a954e09aa62c81c9d3f1592.r2.dev/beyond-lost-pet-flyer-og-1000x1000.jpg",
+    ogImage: "https://pub-5e3024d73a954e09aa62c81c9d3f1592.r2.dev/beyond-lost-pet-flyer-podcast-cover-1200x630.jpg",
     audioUrl: "https://pub-5e3024d73a954e09aa62c81c9d3f1592.r2.dev/beyond-the-lost-pet-flyer.m4a",
     duration: "14:30",
     publishDate: "2025-11-01",

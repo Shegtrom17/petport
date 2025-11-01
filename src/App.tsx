@@ -61,6 +61,8 @@ import LostPetFeatures from "./pages/LostPetFeatures";
 import FosterProgram from "./pages/FosterProgram";
 import Gift from "./pages/Gift";
 import GiftSent from "./pages/GiftSent";
+import Podcast from "./pages/Podcast";
+import PodcastEpisode from "./pages/PodcastEpisode";
 
 // Redirect component for credentials -> resume consolidation
 const CredentialsRedirect = () => {
@@ -108,6 +110,8 @@ const App = () => {
           <Route path="/demo/gallery" element={<DemoGallery />} />
           <Route path="/lost-pet-features" element={<LostPetFeatures />} />
           <Route path="/foster-program" element={<FosterProgram />} />
+          <Route path="/podcast" element={<Podcast />} />
+          <Route path="/podcast/:episodeSlug" element={<PodcastEpisode />} />
           <Route path="/gift" element={<Gift />} />
           <Route path="/gift-sent" element={<GiftSent />} />
                   <Route path="/app" element={

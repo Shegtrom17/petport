@@ -121,13 +121,13 @@ const Podcast = () => {
             <p className="text-xl text-white/90 mb-8">
               Start your free PetPort profile today and experience the tools we discuss in every episode.
             </p>
-            <AzureButton
+            <Button
               size="lg"
               onClick={() => navigate('/subscribe')}
-              className="bg-white text-brand-primary hover:bg-white/90 hover:text-brand-primary shadow-xl"
+              className="bg-white text-[#5691af] hover:bg-white/90 hover:text-[#5691af] shadow-xl"
             >
               Start Free Trial
-            </AzureButton>
+            </Button>
           </div>
         </section>
       </div>

@@ -102,10 +102,11 @@ export default function Landing() {
           {/* Hamburger Menu Icon - Now visible on all screen sizes */}
           <Button
             variant="ghost"
-            size="icon"
+            size="lg"
+            className="h-12 w-12 md:h-14 md:w-14"
             onClick={() => setShowMobileMenu(true)}
           >
-            <Menu className="h-6 w-6 text-brand-primary" />
+            <Menu className="h-7 w-7 md:h-8 md:w-8 text-brand-primary" />
           </Button>
           
           <img src="/lovable-uploads/213ccabc-3918-406d-b844-9c2730b7637d.png" alt="PetPort logo" className="w-10 h-10" />

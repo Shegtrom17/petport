@@ -253,7 +253,7 @@ Absolutely. And maybe Connecting this idea of a centralized realtime system to t
     description: "Learn how PetPort's LiveLinks make foster-to-adopter transfers seamless with digital medical records, vaccination history, and care instructions that follow your pet.",
     coverImage: "https://pub-5e3024d73a954e09aa62c81c9d3f1592.r2.dev/digital-pet-adoption-foster-transfer-og-100x1000%20.jpg",
     ogImage: "https://pub-5e3024d73a954e09aa62c81c9d3f1592.r2.dev/digital-pet-adoption-foster-transfer-og-1200x630.jpg",
-    audioUrl: "https://pub-a7c2c18b8d6143b9a256105ef44f2da0.r2.dev/podcast/foster-episode.mp3",
+    audioUrl: "https://pub-5e3024d73a954e09aa62c81c9d3f1592.r2.dev/digital-pet-adoption-foster-transfer.m4a",
     duration: "10:30",
     publishDate: "2025-11-01",
     transcript: `Welcome to the PetPort Podcast. Today we're diving into one of the most challenging aspects of pet fostering: the handoff moment when a foster pet transitions to their forever home.

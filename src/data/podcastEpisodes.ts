@@ -294,64 +294,6 @@ For more information about setting up foster programs with digital profiles, vis
     keywords: ['foster', 'adoption', 'pet transfer', 'digital records', 'rescue']
   },
   {
-    slug: "lost-pet-recovery-digital-tools",
-    title: "Lost Pet Recovery: Beyond the Paper Flyer",
-    description: "Discover how digital tools are revolutionizing lost pet recovery with real-time sighting maps, SMS alerts, and shareable emergency profiles that reach thousands in minutes.",
-    coverImage: "https://pub-a7c2c18b8d6143b9a256105ef44f2da0.r2.dev/og/resume-og-1mb.png",
-    audioUrl: "https://pub-a7c2c18b8d6143b9a256105ef44f2da0.r2.dev/podcast/lost-pet-episode.mp3",
-    duration: "9:45",
-    publishDate: "2025-10-24",
-    transcript: `Every pet owner's nightmare: that moment when you realize your dog or cat is missing. Your heart drops. Panic sets in. And your first instinct is probably to grab printer paper and start making flyers.
-
-But here's the reality—by the time you've designed, printed, and posted 50 paper flyers around your neighborhood, your pet could have traveled miles. And those flyers? They reach maybe a few hundred people, max, and only if they happen to walk past that specific telephone pole.
-
-Today we're talking about how digital tools are changing lost pet recovery, making it faster, more efficient, and dramatically more effective than traditional methods.
-
-Let's start with the fundamental problem: time and reach. When a pet goes missing, every minute counts. You need to alert as many people as possible, as quickly as possible, in the specific geographic area where your pet was last seen.
-
-Paper flyers are slow to create, slow to distribute, and limited in reach. Digital missing pet alerts solve all three problems simultaneously.
-
-Here's how modern lost pet recovery works with digital tools. The moment you realize your pet is missing, you open your PetPort profile—which already contains photos, physical description, medical needs, and your contact information—and click "Report Missing."
-
-In less than two minutes, you've created a shareable emergency profile with your pet's photo, description, last known location, and contact details. This profile generates a unique link and QR code that you can instantly share via text, social media, neighborhood apps, and email.
-
-But here's where it gets powerful: PetPort's lost pet features include an interactive sighting map. When someone spots your missing pet, they can report the sighting through your shared link—no app download required. They pin the location on a map, add a description, and optionally include a photo.
-
-You receive an instant notification with the sighting details. Now you're not just searching randomly—you're following a trail of confirmed sightings. Maybe your dog was spotted heading east on Main Street at 3 PM, then someone else saw them near the park at 4 PM. You can track movement patterns and focus your search.
-
-The system also enables SMS and email alerts. People who want to help can subscribe to updates about your missing pet. When new sightings come in, everyone gets notified simultaneously. It's like having hundreds of volunteers actively searching, all coordinated in real-time.
-
-We've seen this work in practice. Rachel in Oregon lost her cat Milo. Within 15 minutes of marking him missing, she'd shared his profile to three neighborhood Facebook groups, two NextDoor communities, and a local lost pets page. By hour two, 300 people had viewed the profile. By hour four, she had three sighting reports mapping Milo's movement toward a nearby greenbelt.
-
-Rachel found Milo the next morning using the sighting trail. The digital approach reached 300+ people in hours—something impossible with paper flyers.
-
-Another powerful feature: medical information visibility. If your pet has medical needs—say, diabetes requiring insulin—you can highlight this on the missing pet profile. Anyone who finds your pet immediately knows this is urgent and medical care is needed.
-
-The free flyer generator is another tool worth mentioning. Even with digital methods, sometimes you want physical flyers for vet clinics or community boards. PetPort's system generates professional PDF flyers pulling from your existing profile data—no graphic design needed. Print-ready in 30 seconds.
-
-Let's talk about the psychology of lost pet recovery. When someone finds a lost pet, they're looking for contact information and proof of ownership. A digital profile with multiple photos, vaccination records, and detailed descriptions provides instant credibility. The finder knows this is the legitimate owner, not someone trying to steal a pet.
-
-The QR code capability is particularly useful for collars and tags. Some owners print a small QR code tag that links directly to their pet's emergency profile. If someone finds your pet, one smartphone scan gives them all necessary information and an instant way to contact you.
-
-From a community perspective, digital lost pet tools create network effects. The more people who use them, the more effective they become. When someone sees a lost dog, they can check recent missing pet reports in their area and potentially match the dog to an owner before the dog is even caught.
-
-Animal control and shelters benefit too. Instead of relying on physical descriptions alone, they can compare found animals to digital profiles with photos and detailed information.
-
-The data also helps identify patterns. Maybe there's a fence gap in a neighborhood where multiple dogs escape. Sighting maps can reveal these patterns, helping prevent future incidents.
-
-Now, digital doesn't replace all traditional methods. You should still contact local shelters, check with neighbors, and search your immediate area on foot. But digital tools amplify these efforts exponentially.
-
-The best practice is a layered approach: immediate digital alert sharing, physical search of the local area, contacting shelters, and posting physical flyers at high-traffic locations like vet clinics.
-
-One final note: prevention is always better than recovery. PetPort profiles include up-to-date photos, which are crucial for lost pet situations. Many people only have old photos of their pets. When your dog gets a haircut or your cat's fur changes color seasonally, update your profile photos. In a crisis, you'll be grateful you did.
-
-If you want to prepare for the possibility of a lost pet—and every owner should—set up a complete digital profile now while you're calm and have time to do it right. Upload clear photos, verify contact information, and familiarize yourself with the missing pet reporting process.
-
-Visit petport.app/lost-pet-features to explore the tools. Let's hope you never need them, but be prepared just in case. Thanks for listening to the PetPort Podcast.`,
-    relatedPages: ['/lost-pet-features'],
-    keywords: ['lost pet', 'pet recovery', 'missing pet', 'sighting map', 'emergency profile']
-  },
-  {
     slug: "pet-resume-why-it-matters",
     title: "Why Your Pet's Resume Actually Matters",
     description: "From adoption applications to apartment hunting, discover why a professional pet resume opens doors and how to create one that showcases your pet's best qualities.",

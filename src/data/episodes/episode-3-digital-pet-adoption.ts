@@ -4,7 +4,7 @@ const episode: PodcastEpisode = {
   slug: "foster-to-adopter-digital-transition",
   title: "Digital Pet Adoption & Foster Transfer: Giving Pets a Voice for Life",
   description: "Learn how PetPort's LiveLinks make foster-to-adopter transfers seamless with digital medical records, vaccination history, and care instructions that follow your pet.",
-  coverImage: "https://pub-5e3024d73a954e09aa62c81c9d3f1592.r2.dev/digital-pet-adoption-foster-transfer-og-100x1000%20.jpg",
+  coverImage: "https://pub-5e3024d73a954e09aa62c81c9d3f1592.r2.dev/digital-pet-adoption-foster-transfer-og-1000x1000.jpg",
   ogImage: "https://pub-5e3024d73a954e09aa62c81c9d3f1592.r2.dev/digital-pet-adoption-foster-transfer-og-1200x630.jpg",
   audioUrl: "https://pub-5e3024d73a954e09aa62c81c9d3f1592.r2.dev/digital-pet-adoption-foster-transfer.m4a",
   duration: "10:30",

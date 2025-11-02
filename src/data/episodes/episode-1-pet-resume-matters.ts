@@ -6,7 +6,7 @@ const episode: PodcastEpisode = {
   description: "From adoption applications to apartment hunting, discover why a professional pet resume opens doors and how to create one that showcases your pet's best qualities.",
   coverImage: "/og/pet-screening-resume-1000x1000.jpg",
   ogImage: "/og/pet-screening-resume-social.jpg",
-  audioUrl: "https://pub-a7c2c18b8d6143b9a256105ef44f2da0.r2.dev/podcast/resume-episode.mp3",
+  audioUrl: "https://pub-5e3024d73a954e09aa62c81c9d3f1592.r2.dev/pet-screening-resume-builder.mp3",
   duration: "11:15",
   publishDate: "2025-10-17",
   transcript: `Pet resume. If you've never heard the term, it might sound absurd. But if you've ever tried to rent an apartment with a pet, adopt a second animal, or apply for pet insurance, you already understand why professional pet documentation matters.

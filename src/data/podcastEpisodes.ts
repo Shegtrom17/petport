@@ -249,7 +249,7 @@ Absolutely. And maybe Connecting this idea of a centralized realtime system to t
   },
   {
     slug: "foster-to-adopter-digital-transition",
-    title: "Foster-to-Adopter: The Digital Handoff",
+    title: "Digital Pet Adoption & Foster Transfer: Giving Pets a Voice for Life",
     description: "Learn how PetPort's LiveLinks make foster-to-adopter transfers seamless with digital medical records, vaccination history, and care instructions that follow your pet.",
     coverImage: "https://pub-a7c2c18b8d6143b9a256105ef44f2da0.r2.dev/og/resume-og-1mb.png",
     audioUrl: "https://pub-a7c2c18b8d6143b9a256105ef44f2da0.r2.dev/podcast/foster-episode.mp3",

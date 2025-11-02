@@ -2,9 +2,10 @@ import { PodcastEpisode } from '../podcastEpisodes';
 
 const episode: PodcastEpisode = {
   slug: "pet-resume-why-it-matters",
-  title: "Why Your Pet's Resume Actually Matters",
+  title: "Pet Screening: The Verified Digital Pet Résumé",
   description: "From adoption applications to apartment hunting, discover why a professional pet resume opens doors and how to create one that showcases your pet's best qualities.",
-  coverImage: "https://pub-a7c2c18b8d6143b9a256105ef44f2da0.r2.dev/og/resume-og-1mb.png",
+  coverImage: "/og/pet-screening-resume-1000x1000.jpg",
+  ogImage: "/og/pet-screening-resume-social.jpg",
   audioUrl: "https://pub-a7c2c18b8d6143b9a256105ef44f2da0.r2.dev/podcast/resume-episode.mp3",
   duration: "11:15",
   publishDate: "2025-10-17",

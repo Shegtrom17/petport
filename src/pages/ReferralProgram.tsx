@@ -1,9 +1,15 @@
-import { Link } from "react-router-dom";
-import { DollarSign, Users, Clock, ArrowRight } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { DollarSign, Users, Clock, ArrowRight, Menu } from "lucide-react";
 import { AzureButton } from "@/components/ui/azure-button";
 import { MetaTags } from "@/components/MetaTags";
 import { PricingSection } from "@/components/PricingSection";
+import { PublicNavigationMenu } from "@/components/PublicNavigationMenu";
+
 export default function ReferralProgram() {
+  const navigate = useNavigate();
+  const [showMobileMenu, setShowMobileMenu] = useState(false);
+
   return <>
       <MetaTags title="Referral Program - Earn $2 Per Friend | PetPort" description="Join PetPort's referral program and earn $2 for every friend who subscribes to a yearly plan. Get paid via Stripe Connect. Start earning today!" url={window.location.origin + "/referral-program"} type="website" />
       
@@ -11,10 +17,19 @@ export default function ReferralProgram() {
         {/* Header */}
         <header className="border-b border-gray-100">
           <div className="container max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
-            <Link to="/" className="flex items-center gap-2">
-              <img src="/lovable-uploads/213ccabc-3918-406d-b844-9c2730b7637d.png" alt="PetPort Logo" className="w-10 h-10" />
-              <span className="text-xl font-bold text-[#5691af]">PetPort</span>
-            </Link>
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => setShowMobileMenu(true)}
+                className="p-2 hover:bg-accent rounded-md transition-colors"
+                aria-label="Open menu"
+              >
+                <Menu className="h-6 w-6 text-foreground" />
+              </button>
+              <Link to="/" className="flex items-center gap-2">
+                <img src="/lovable-uploads/213ccabc-3918-406d-b844-9c2730b7637d.png" alt="PetPort Logo" className="w-10 h-10" />
+                <span className="text-xl font-bold text-[#5691af]">PetPort</span>
+              </Link>
+            </div>
             <nav className="flex items-center gap-4">
               <Link to="/learn" className="text-sm text-gray-600 hover:text-[#5691af]">
                 Learn
@@ -25,6 +40,12 @@ export default function ReferralProgram() {
             </nav>
           </div>
         </header>
+
+        {/* Mobile Navigation Menu */}
+        <PublicNavigationMenu 
+          isOpen={showMobileMenu} 
+          onClose={() => setShowMobileMenu(false)} 
+        />
 
         {/* Hero Section */}
         <section className="py-20 px-4">

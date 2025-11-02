@@ -164,14 +164,13 @@ export default function Demos() {
       {/* Header */}
       <header className="max-w-7xl mx-auto px-4 py-6 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <Button
-            variant="ghost"
-            size="icon"
-            className="md:hidden"
+          <button
             onClick={() => setShowMobileMenu(true)}
+            className="p-2 hover:bg-accent rounded-md transition-colors"
+            aria-label="Open menu"
           >
-            <Menu className="h-6 w-6 text-brand-primary" />
-          </Button>
+            <Menu className="h-6 w-6 text-foreground" />
+          </button>
           <div className="flex items-center gap-3 cursor-pointer" onClick={() => navigate('/')}>
             <img src="/lovable-uploads/213ccabc-3918-406d-b844-9c2730b7637d.png" alt="PetPort logo" className="w-10 h-10" />
             <span className="text-xl font-semibold text-brand-primary">PetPort</span>

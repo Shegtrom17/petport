@@ -99,15 +99,14 @@ export default function Landing() {
       {/* Header Navigation */}
       <header className="max-w-7xl mx-auto px-4 py-6 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          {/* Hamburger Menu Icon - Now visible on all screen sizes */}
-          <Button
-            variant="ghost"
-            size="lg"
-            className="h-12 w-12 md:h-14 md:w-14"
+          {/* Hamburger Menu Icon - Visible on all screen sizes */}
+          <button
             onClick={() => setShowMobileMenu(true)}
+            className="p-2 hover:bg-accent rounded-md transition-colors"
+            aria-label="Open menu"
           >
-            <Menu className="h-7 w-7 md:h-8 md:w-8 text-brand-primary" />
-          </Button>
+            <Menu className="h-6 w-6 text-foreground" />
+          </button>
           
           <img src="/lovable-uploads/213ccabc-3918-406d-b844-9c2730b7637d.png" alt="PetPort logo" className="w-10 h-10" />
           <span className="text-xl font-semibold text-brand-primary">PetPort</span>

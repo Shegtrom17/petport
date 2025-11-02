@@ -125,7 +125,7 @@ This has been incredibly insightful. We've seen how this technology acts as more
  It is. And we leave you, the listener, with this final thought: If these standardized, durable digital records mean a pet always takes its full history and safety net along, what does that permanently accessible story really mean for how we define animal welfare long term?
  Think about that seamless record always there, potentially seven years later. That could change everything for the life of that animal.`,
   displayTranscript: `
-    <h2 id="intro">Intro & SEO Setup</h2>
+    <h2 id="intro">Intro</h2>
     <p><strong>ALEX:</strong> Welcome back to The PetPort Podcast. Last week, we established the efficiency of our LiveLink one-tap generation for Lost Pet Flyers. Today, we are taking those features and applying them to the single most important transition in animal welfare: the digital transfer of the animal's life data during pet adoption.</p>
     
     <p><strong>ALEX:</strong> We're diving deep into how PetPort delivers the first truly comprehensive digital pet medical records solution for every foster parent and animal rescue near me. Forget chasing paper vaccination charts or a single pet health certificate. We're talking about a seamless transfer of the full, verified account.</p>

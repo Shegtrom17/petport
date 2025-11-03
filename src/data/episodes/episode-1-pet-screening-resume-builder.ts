@@ -2,7 +2,7 @@ import { PodcastEpisode } from '../podcastEpisodes';
 
 const episode: PodcastEpisode = {
   slug: "pet-screening-resume-builder",
-  title: "Pet Screening: The Verified Digital Pet Résumé",
+  title: "Pet Screening & Resume Builder",
   description: "From adoption applications to apartment hunting, discover why a professional pet resume opens doors and how to create one that showcases your pet's best qualities.",
   coverImage: "/og/pet-screening-resume-1000x1000.jpg",
   ogImage: "/og/pet-screening-resume-social.jpg",

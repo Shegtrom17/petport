@@ -42,6 +42,99 @@ ALEX: The PWA also lets you tie the digital LiveLink back to the physical world�
 JAMIE: And to ease any privacy concerns for our listeners, while the link is shareable, it's not publicly indexed. It's like an unlisted link; no one finds it unless you explicitly share and store it away. Owners always have that private toggle to control who sees what, and for how long. The owner is the ultimate gatekeeper of their pet's data.
 ALEX: A truly comprehensive, digital life record. And to make it easy for everyone to see the value, we are offering a 7-day free trial of the premium features. Just sign up with a credit card, and you'll get instant access to create your verified résumé, set up your LiveLink, and explore the vendor verification tools.
 JAMIE: A week of having a verified Animal Background Check and all your Vaccination Records instantly accessible? And the peace of mind knowing you have the Lost Pet Protocol ready to go? That functionality alone makes the premium subscription a no-brainer for any serious pet owner or, frankly, any tenant looking for pet friendly rentals or any vendor looking to drastically reduce their liability. Head to petport.app and start your trial today.`,
+  displayTranscript: `
+    <div class="space-y-8">
+      <div class="border-l-4 border-brand-primary pl-6">
+        <div class="flex items-baseline gap-3 mb-2">
+          <span class="text-sm font-mono text-muted-foreground">0:00</span>
+          <h2 class="text-xl font-bold text-foreground">Intro: The Challenge of Trust</h2>
+        </div>
+        <p class="text-sm text-muted-foreground mb-2">Host: ALEX/JAMIE</p>
+        <p class="text-foreground leading-relaxed">Core Thesis: The Pet Résumé Builder solves the pet industry's biggest challenge: trust. Moves beyond easily-faked paperwork to verifiable, dynamic credentials for <strong>Pet Screening</strong> and <strong>Pet Friendly Housing</strong>.</p>
+      </div>
+
+      <div class="border-l-4 border-brand-primary pl-6">
+        <div class="flex items-baseline gap-3 mb-2">
+          <span class="text-sm font-mono text-muted-foreground">1:05</span>
+          <h2 class="text-xl font-bold text-foreground">Real-Time Verification & Credentials</h2>
+        </div>
+        <p class="text-sm text-muted-foreground mb-2">Host: JAMIE/ALEX</p>
+        <p class="text-foreground leading-relaxed">Foundation is third-party validation (not self-reporting). Every credential (vaccine dates, behavior notes) is timestamped and attributable. Discusses the <strong>Animal Background Check</strong> and <strong>Pet Reference Letter</strong> concept.</p>
+      </div>
+
+      <div class="border-l-4 border-brand-primary pl-6">
+        <div class="flex items-baseline gap-3 mb-2">
+          <span class="text-sm font-mono text-muted-foreground">2:30</span>
+          <h2 class="text-xl font-bold text-foreground">Institutional Value & Liability</h2>
+        </div>
+        <p class="text-sm text-muted-foreground mb-2">Host: ALEX</p>
+        <p class="text-foreground leading-relaxed">The value shifts: PetPort is a risk mitigation tool for landlords and horse boarding facilities. Discusses the unbroken chain of custody for behavioral data verified by groomers/vets.</p>
+      </div>
+
+      <div class="border-l-4 border-brand-primary pl-6">
+        <div class="flex items-baseline gap-3 mb-2">
+          <span class="text-sm font-mono text-muted-foreground">3:45</span>
+          <h2 class="text-xl font-bold text-foreground">B2B Integration & Smart Policy</h2>
+        </div>
+        <p class="text-sm text-muted-foreground mb-2">Host: JAMIE/ALEX</p>
+        <p class="text-foreground leading-relaxed">Eliminates manual <strong>Pet Screening Services</strong>. Shows how a verified history allows landlords to use a data-driven risk assessment model.</p>
+      </div>
+
+      <div class="border-l-4 border-brand-primary pl-6">
+        <div class="flex items-baseline gap-3 mb-2">
+          <span class="text-sm font-mono text-muted-foreground">4:30</span>
+          <h2 class="text-xl font-bold text-foreground">Fairness & Waiving Restrictions</h2>
+        </div>
+        <p class="text-sm text-muted-foreground mb-2">Host: ALEX</p>
+        <p class="text-foreground leading-relaxed">Strategy for fairer pet policies. The <strong>LiveLink</strong> allows landlords to waive breed restrictions based on certified training (e.g., Canine Good Citizen) and verified references.</p>
+      </div>
+
+      <div class="border-l-4 border-brand-primary pl-6">
+        <div class="flex items-baseline gap-3 mb-2">
+          <span class="text-sm font-mono text-muted-foreground">5:20</span>
+          <h2 class="text-xl font-bold text-foreground">Equine & Ecosystem Scalability</h2>
+        </div>
+        <p class="text-sm text-muted-foreground mb-2">Host: JAMIE/ALEX</p>
+        <p class="text-foreground leading-relaxed">Focus on high-value animals like horses (farrier care, hoof health). LiveLink manages complex records for equines and exotic pets. Immutable record of care eliminates the "broken link" when professionals change.</p>
+      </div>
+
+      <div class="border-l-4 border-brand-primary pl-6">
+        <div class="flex items-baseline gap-3 mb-2">
+          <span class="text-sm font-mono text-muted-foreground">6:50</span>
+          <h2 class="text-xl font-bold text-foreground">Safety & PWA Architecture</h2>
+        </div>
+        <p class="text-sm text-muted-foreground mb-2">Host: JAMIE/ALEX</p>
+        <p class="text-foreground leading-relaxed">Lost Pet Protocol is activated by a geo-fenced alert to other users. Discusses the <strong>PWA (Progressive Web App)</strong>—accessibility via petport.app URL, not a store download.</p>
+      </div>
+
+      <div class="border-l-4 border-brand-primary pl-6">
+        <div class="flex items-baseline gap-3 mb-2">
+          <span class="text-sm font-mono text-muted-foreground">7:45</span>
+          <h2 class="text-xl font-bold text-foreground">Microchip & Data Durability</h2>
+        </div>
+        <p class="text-sm text-muted-foreground mb-2">Host: ALEX</p>
+        <p class="text-foreground leading-relaxed">Crucial point: LiveLink links to microchip ID and solves the problem of outdated microchip data. PetPort acts as the centralized, always-updated directory.</p>
+      </div>
+
+      <div class="border-l-4 border-brand-primary pl-6">
+        <div class="flex items-baseline gap-3 mb-2">
+          <span class="text-sm font-mono text-muted-foreground">8:30</span>
+          <h2 class="text-xl font-bold text-foreground">Community & Utility</h2>
+        </div>
+        <p class="text-sm text-muted-foreground mb-2">Host: JAMIE/ALEX</p>
+        <p class="text-foreground leading-relaxed">Pet Playdates (based on reliable data). Discusses granular control/permission tiers for sharing specific instructions with pet sitters/dog walkers.</p>
+      </div>
+
+      <div class="border-l-4 border-brand-primary pl-6">
+        <div class="flex items-baseline gap-3 mb-2">
+          <span class="text-sm font-mono text-muted-foreground">9:10</span>
+          <h2 class="text-xl font-bold text-foreground">Final CTA & Value Hook</h2>
+        </div>
+        <p class="text-sm text-muted-foreground mb-2">Host: ALEX/JAMIE</p>
+        <p class="text-foreground leading-relaxed">Final push: 7-day free trial hook. Stresses the functionality of <strong>Animal Background Check</strong> for <strong>pet friendly rentals</strong> and liability reduction.</p>
+      </div>
+    </div>
+  `,
   relatedPages: ['/demo-resume', '/learn'],
   keywords: ['pet screening', 'pet resume builder', 'verified pet credentials', 'pet application form', 'animal background check', 'pet medical history', 'pet friendly rentals', 'pet references', 'LiveLink', 'vaccination records', 'pet screening services', 'rental application', 'pet documentation', 'landlord', 'verified pet resume']
 };

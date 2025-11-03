@@ -26,10 +26,12 @@ export interface PodcastEpisode {
 import episode1 from './episodes/episode-1-pet-screening-resume-builder';
 import episode2 from './episodes/episode-2-beyond-lost-pet-flyer';
 import episode3 from './episodes/episode-3-digital-pet-adoption';
+import episode4 from './episodes/episode-4-pet-care-handling-digital-voice';
 
 // Export episodes array in chronological order
 export const podcastEpisodes: PodcastEpisode[] = [
   episode1,  // Oct 17, 2025 - "Why Your Pet's Resume Actually Matters"
   episode2,  // Nov 1, 2025 - "Beyond the Lost Pet Flyer"
-  episode3   // Nov 1, 2025 - "Digital Pet Adoption & Foster Transfer"
+  episode3,  // Nov 1, 2025 - "Digital Pet Adoption & Foster Transfer"
+  episode4   // Nov 1, 2025 - "Pet Care & Handling: Digital Voice and Wellness"
 ];

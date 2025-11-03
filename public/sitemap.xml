@@ -131,6 +131,13 @@
   </url>
   
   <url>
+    <loc>https://petport.app/podcast/pet-care-handling-digital-voice</loc>
+    <lastmod>2025-11-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  
+  <url>
     <loc>https://petport.app/podcast/pet-screening-resume-builder</loc>
     <lastmod>2025-10-17</lastmod>
     <changefreq>monthly</changefreq>

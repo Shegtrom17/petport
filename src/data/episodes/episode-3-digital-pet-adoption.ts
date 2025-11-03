@@ -336,7 +336,15 @@ This has been incredibly insightful. We've seen how this technology acts as more
     <p><strong>ALEX:</strong> Think about that seamless record—always there, potentially seven years later. That could change everything for the life of that animal.</p>
   `,
   relatedPages: ['/foster-program'],
-  keywords: ['foster', 'adoption', 'pet transfer', 'digital records', 'rescue']
+  keywords: [
+    "digital pet adoption paperwork",
+    "foster-to-adopter transfer checklist",
+    "animal rescue management software",
+    "how to transfer vet records",
+    "pet medical records transfer",
+    "animal shelter digital records",
+    "pet adoption continuity of care"
+  ]
 };
 
 export default episode;

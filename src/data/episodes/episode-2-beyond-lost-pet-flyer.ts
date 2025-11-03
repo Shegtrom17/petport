@@ -9,7 +9,15 @@ const episode: PodcastEpisode = {
   audioUrl: "https://pub-5e3024d73a954e09aa62c81c9d3f1592.r2.dev/beyond-the-lost-pet-flyer.m4a",
   duration: "14:30",
   publishDate: "2025-11-01",
-  keywords: ["lost pet flyer generator", "PetPort app", "LiveLink system", "QR code pet ID", "pet recovery", "digital pet management", "PetPort podcast"],
+  keywords: [
+    "lost pet flyer generator free",
+    "pet recovery QR code",
+    "emergency pet contact information",
+    "digital pet ID tag",
+    "how to make a lost dog poster",
+    "pet recovery protocol",
+    "real-time lost pet alerts"
+  ],
   transcript: `Welcome back! Today we're exploring PetPort.app — the most advanced lost-pet recovery and pet-information management system in the market. Not just storage for medical records, vet records and documents but so much more!
 
 We're immersing ourselves in the world of Digital Lost-Pet Flyers, the LiveLink system, and the Sightings Board, plus that built-in QR code that lets anyone share or print from anywhere.

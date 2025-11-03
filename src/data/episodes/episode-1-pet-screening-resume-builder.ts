@@ -136,7 +136,16 @@ JAMIE: A week of having a verified Animal Background Check and all your Vaccinat
     </div>
   `,
   relatedPages: ['/demo-resume', '/learn'],
-  keywords: ['pet screening', 'pet resume builder', 'verified pet credentials', 'pet application form', 'animal background check', 'pet medical history', 'pet friendly rentals', 'pet references', 'LiveLink', 'vaccination records', 'pet screening services', 'rental application', 'pet documentation', 'landlord', 'verified pet resume']
+  keywords: [
+    "pet résumé builder",
+    "verified pet credentials",
+    "pet screening process for landlords",
+    "animal background check",
+    "digital pet health records",
+    "how to get a pet health certificate",
+    "pet screening for rentals",
+    "Petport PWA"
+  ]
 };
 
 export default episode;

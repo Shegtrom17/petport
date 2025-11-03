@@ -118,14 +118,14 @@
   <!-- Podcast Episodes -->
   <url>
     <loc>https://petport.app/podcast/beyond-the-lost-pet-flyer</loc>
-    <lastmod>2025-11-01</lastmod>
+    <lastmod>2025-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   
   <url>
     <loc>https://petport.app/podcast/digital-pet-adoption-foster-transfer</loc>
-    <lastmod>2025-11-01</lastmod>
+    <lastmod>2025-10-24</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>

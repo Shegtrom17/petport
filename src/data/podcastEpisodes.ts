@@ -23,7 +23,7 @@ export interface PodcastEpisode {
 }
 
 // Import individual episode modules
-import episode1 from './episodes/episode-1-pet-resume-matters';
+import episode1 from './episodes/episode-1-pet-screening-resume-builder';
 import episode2 from './episodes/episode-2-beyond-lost-pet-flyer';
 import episode3 from './episodes/episode-3-digital-pet-adoption';
 

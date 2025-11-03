@@ -8,7 +8,7 @@ const episode: PodcastEpisode = {
   ogImage: "https://pub-5e3024d73a954e09aa62c81c9d3f1592.r2.dev/digital-pet-adoption-foster-transfer-og-1200x630.jpg",
   audioUrl: "https://pub-5e3024d73a954e09aa62c81c9d3f1592.r2.dev/digital-pet-adoption-foster-transfer.m4a",
   duration: "10:30",
-  publishDate: "2025-10-24",
+  publishDate: "2025-09-30",
   transcript: `Welcome back to The PetPort Podcast. Last week, we established the efficiency of our LiveLink one-tap generation for Lost Pet Flyers,. Today, we are taking those features and applying them to the single most important transition in animal welfare: the digital transfer of the animal's life data during pet adoption.
 We're diving deep into how PetPort delivers the first truly comprehensive digital pet medical records solution for every foster parent and animal rescue near me. Forget chasing paper vaccination charts or a single pet health certificate. We're talking about a seamless transfer of the full, verified account.
 Exactly. The core value proposition is clear: Pet foster care adoption requires an audit trail, and paper creates liability. PetPort delivers the efficiency of all pet documents, photos and achievmens, available instantly to the new owner, guaranteeing that every dog adoption or cat adoption starts with verifiable data integrity.

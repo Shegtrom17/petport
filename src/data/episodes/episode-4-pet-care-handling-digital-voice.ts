@@ -8,7 +8,7 @@ const episode: PodcastEpisode = {
   ogImage: "https://pub-5e3024d73a954e09aa62c81c9d3f1592.r2.dev/pet-care-handling-pets-digital-care-1200x630.jpg",
   audioUrl: "https://pub-5e3024d73a954e09aa62c81c9d3f1592.r2.dev/pet-care-handling-digital-voice.m4a",
   duration: "16:47",
-  publishDate: "2025-11-01",
+  publishDate: "2025-10-07",
   keywords: [
     "pet care communication app",
     "pet sitter instructions",

@@ -8,7 +8,7 @@ const episode: PodcastEpisode = {
   ogImage: 'https://pub-5e3024d73a954e09aa62c81c9d3f1592.r2.dev/petport-photo-gallery-life-story-1200x630.jpg',
   audioUrl: 'https://pub-5e3024d73a954e09aa62c81c9d3f1592.r2.dev/petport-photo-gallery-life-story.m4a',
   duration: '12:24',
-  publishDate: '2025-11-02',
+  publishDate: '2025-10-14',
   transcript: `Welcome back to The PetPort Podcast. Today, we are undertaking a deep dive into the Pet Photo Gallery—the ultimate digital pet photo album that turns those precious memories into verifiable data.. We've got a stack of Information to share from petport exploring how analytical data, yeah, facts and figures really intersects with the emotional reality of owning a pet.
 
 We're looking at the Petport system, designed not just for records, but to capture the actual verifiable digital life story of your animal. This is a must-have for every pet or horse management app user. Think of it like a permanent digital identity.

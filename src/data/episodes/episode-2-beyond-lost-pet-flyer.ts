@@ -8,7 +8,7 @@ const episode: PodcastEpisode = {
   ogImage: "https://pub-5e3024d73a954e09aa62c81c9d3f1592.r2.dev/beyond-lost-pet-flyer-podcast-cover-1200x630.jpg",
   audioUrl: "https://pub-5e3024d73a954e09aa62c81c9d3f1592.r2.dev/beyond-the-lost-pet-flyer.m4a",
   duration: "14:30",
-  publishDate: "2025-10-22",
+  publishDate: "2025-09-24",
   keywords: [
     "lost pet flyer generator free",
     "pet recovery QR code",

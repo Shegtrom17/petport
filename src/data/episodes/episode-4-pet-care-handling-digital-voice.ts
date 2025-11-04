@@ -1,7 +1,7 @@
 import { PodcastEpisode } from '../podcastEpisodes';
 
 const episode: PodcastEpisode = {
-  slug: "pet-care-handling-digital-voice",
+  slug: "petport-pet-care-handling-digital-voice",
   title: "Pet Care & Handling: Digital Voice and Wellness",
   description: "Tired of frantic notes and scattered texts? Alex and Jamie break down Petport's Care & Handling feature—the pet sitter communication app that provides real-time medical alerts and behavior instructions to anyone caring for your dog, cat, or horse. Discover how this single-tap PWA gives your pet a digital voice and guarantees continuity of care.",
   coverImage: "https://pub-5e3024d73a954e09aa62c81c9d3f1592.r2.dev/pet-care-handling-pets-digital-care-1000x1000.jpg",

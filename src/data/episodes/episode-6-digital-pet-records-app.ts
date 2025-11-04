@@ -9,6 +9,18 @@ const episode: PodcastEpisode = {
   audioUrl: "https://pub-5e3024d73a954e09aa62c81c9d3f1592.r2.dev/petport-digital-pet-records-document-storage.m4a",
   duration: "15:42",
   publishDate: "2025-10-20",
+  keywords: [
+    "digital pet health records",
+    "pet document storage app",
+    "pet vaccination record management",
+    "photo to PDF pet record scanner",
+    "veterinary paperwork organization",
+    "digital pet passport system",
+    "portable pet medical history",
+    "lost pet proof of ownership",
+    "horse Coggins test digital storage",
+    "secure cloud pet documents"
+  ],
   transcript: `The Petport Podcast is the essential resource for the Digital Information Relay System. This deep dive explores the Documents & Records feature—the ultimate digital vault for pet paperwork. Learn how Petport eliminates chaos by providing verifiable vaccination records, pet insurance policy documents, and horse Coggins test results instantly. We analyze why this photo-to-PDF scanner system is the best pet care app solution for secure, cross-device access to all critical medical and compliance documents, ensuring your pet's life story and emergency care history are never lost.
 
 Exactly. We've sifted through a whole stack of sources, all focused on Petport. And specifically, we're zeroing in on its document management features. Our mission really is to figure out if this platform genuinely offers a solid way to organize all those scattered pet records.
@@ -325,19 +337,6 @@ Right? What's your priority document to digitize right now? That's the immediate
 <p class="mb-4"><strong>ALEX:</strong> It's just $14.99 a year, or $1.99 a month—the cost of one dinner out. That investment guarantees your pet's verifiable legacy.</p>
 
 <p class="mb-4"><strong>JAMIE:</strong> Give your furry friend a voice. Visit Petport.app and start your 7-day free trial.</p>`,
-  keywords: [
-    "pet records app",
-    "digital pet medical records",
-    "pet document storage app",
-    "pet health record system",
-    "pet care PWA",
-    "upload pet vaccine certificates PDF",
-    "share pet medical history with vet via app",
-    "secure pet document filing for pet owners",
-    "send pet health records to emergency vet",
-    "horse Coggins test results",
-    "emergency vet document access"
-  ],
   relatedPages: ["/demos", "/demo-resume", "/help"]
 };
 

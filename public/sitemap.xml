@@ -150,5 +150,13 @@
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
+  
+  <!-- Episode 6: Digital Pet Records & Document Storage -->
+  <url>
+    <loc>https://petport.app/podcast/petport-digital-pet-records-app</loc>
+    <lastmod>2025-10-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
 
 </urlset>

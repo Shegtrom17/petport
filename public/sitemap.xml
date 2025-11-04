@@ -174,5 +174,13 @@
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
+  
+  <!-- Episode 8: Real-Life Stories: How PetPort Changes Everyday Pet Care -->
+  <url>
+    <loc>https://petport.app/podcast/petport-real-life-stories-digital-pet-care</loc>
+    <lastmod>2025-11-02</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
 
 </urlset>

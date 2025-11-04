@@ -31,6 +31,7 @@ import episode4 from './episodes/episode-4-pet-care-handling-digital-voice';
 import episode5 from './episodes/episode-5-photo-gallery-life-story';
 import episode6 from './episodes/episode-6-digital-pet-records-app';
 import episode7 from './episodes/episode-7-livelinks-digital-pet-care';
+import episode8 from './episodes/episode-8-real-life-stories';
 
 // Export episodes array in strategic order (by user importance)
 export const podcastEpisodes: PodcastEpisode[] = [
@@ -41,5 +42,6 @@ export const podcastEpisodes: PodcastEpisode[] = [
   episode7,      // #7 - Oct 25, 2025 - "LiveLinks in Action — The Heartbeat of PetPort"
   episode6,      // #6 - Oct 20, 2025 - "Digital Pet Records & Document Storage"
   episode4,      // #4 - Nov 1, 2025 - "Pet Care & Handling: Digital Voice and Wellness"
-  episode5       // #5 - Nov 2, 2025 - "The Photo Gallery: The Pet's Digital Life Story For Safety and Sharing"
+  episode5,      // #5 - Nov 2, 2025 - "The Photo Gallery: The Pet's Digital Life Story For Safety and Sharing"
+  episode8       // #8 - Nov 2, 2025 - "Real-Life Stories: How PetPort Changes Everyday Pet Care"
 ];

@@ -4,7 +4,7 @@ const episode: PodcastEpisode = {
   slug: "petport-digital-pet-records-app",
   title: "Digital Pet Records & Document Storage",
   description: "Paperwork Panic Solved! dive into Petport's Documents & Records feature—the essential digital vault that eliminates scattered vet files. Learn how the unique photo-to-PDF scanner instantly digitizes vaccination records and insurance policies for secure, one-tap sharing. Think Horse Coggins test. Stop searching and guarantee your pet's verifiable proof is always with you. Start your free 7 day trial at Petport.app.",
-  coverImage: "https://pub-5e3024d73a954e09aa62c81c9d3f1592.r2.dev/petport-digital-pet-records-app-1000x1000%20.jpg",
+  coverImage: "https://pub-5e3024d73a954e09aa62c81c9d3f1592.r2.dev/petport-digital-pet-records-app-1000x1000.jpg",
   ogImage: "https://pub-5e3024d73a954e09aa62c81c9d3f1592.r2.dev/petport-digital-pet-records-app-1200x630.jpg",
   audioUrl: "https://pub-5e3024d73a954e09aa62c81c9d3f1592.r2.dev/petport-digital-pet-records-document-storage.m4a",
   duration: "15:42",

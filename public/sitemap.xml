@@ -166,5 +166,13 @@
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
+  
+  <!-- Episode 7: LiveLinks in Action — The Heartbeat of PetPort -->
+  <url>
+    <loc>https://petport.app/podcast/petport-livelinks-digital-pet-care</loc>
+    <lastmod>2025-10-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
 
 </urlset>

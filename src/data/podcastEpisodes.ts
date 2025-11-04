@@ -30,11 +30,13 @@ import episode3 from './episodes/episode-3-digital-pet-adoption';
 import episode4 from './episodes/episode-4-pet-care-handling-digital-voice';
 import episode5 from './episodes/episode-5-photo-gallery-life-story';
 import episode6 from './episodes/episode-6-digital-pet-records-app';
+import episode7 from './episodes/episode-7-livelinks-digital-pet-care';
 
 // Export episodes array in chronological order
 export const podcastEpisodes: PodcastEpisode[] = [
   episodePilot,  // Sept 7, 2025 - "The Digital Pet Profile & Information Platform for a Lifetime" (PILOT)
   episode6,      // Oct 20, 2025 - "Digital Pet Records & Document Storage"
+  episode7,      // Oct 25, 2025 - "LiveLinks in Action — The Heartbeat of PetPort"
   episode1,      // Oct 17, 2025 - "Why Your Pet's Resume Actually Matters"
   episode2,      // Nov 1, 2025 - "Beyond the Lost Pet Flyer"
   episode3,      // Nov 1, 2025 - "Digital Pet Adoption & Foster Transfer"

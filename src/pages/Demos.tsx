@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { MetaTags } from "@/components/MetaTags";
 import { Button } from "@/components/ui/button";
+import { PodcastBanner } from "@/components/PodcastBanner";
 import { 
   Sparkles, 
   FileText, 
@@ -193,6 +194,9 @@ export default function Demos() {
         onClose={() => setShowMobileMenu(false)} 
       />
 
+      {/* Podcast Banner */}
+      <PodcastBanner />
+
       <main className="container mx-auto px-4 py-12 max-w-7xl">
         {/* Hero Section */}
         <div className="text-center mb-16">
@@ -325,6 +329,25 @@ export default function Demos() {
                 Changes sync instantly. Everyone with your link sees the latest information in real-time
               </p>
             </div>
+          </div>
+        </section>
+
+        {/* Referral Program Section */}
+        <section className="bg-gradient-to-r from-[#5691af]/10 to-[#5691af]/5 rounded-2xl p-8 md:p-12 mb-16 border-2 border-[#5691af]/20">
+          <div className="text-center">
+            <h2 className="text-3xl md:text-4xl font-bold text-[#5691af] mb-4">
+              💰 Help Another Pet Find Their Voice
+            </h2>
+            <p className="text-lg text-[#5691af]/80 mb-6">
+              Share PetPort with fellow pet owners and earn $2 as a thank you when they subscribe
+            </p>
+            <Button 
+              onClick={() => navigate('/referral-program')}
+              size="lg"
+              className="bg-[#5691af] hover:bg-[#4a7d99] text-white"
+            >
+              Learn More About Referrals
+            </Button>
           </div>
         </section>
 

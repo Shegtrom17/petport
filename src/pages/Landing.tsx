@@ -10,6 +10,7 @@ import { Testimonials } from "@/components/Testimonials";
 import { supabase } from "@/integrations/supabase/client";
 import { Sparkles, ArrowRight, Heart, Menu } from "lucide-react";
 import { PublicNavigationMenu } from "@/components/PublicNavigationMenu";
+import { PodcastBanner } from "@/components/PodcastBanner";
 import createProfileScreenshot from "@/assets/create-profile-screenshot.png";
 import documentUploadScreenshot from "@/assets/document-upload-screenshot.png";
 import resumeDetailsScreenshot from "@/assets/resume-details-screenshot.png";
@@ -128,22 +129,8 @@ export default function Landing() {
         onClose={() => setShowMobileMenu(false)} 
       />
 
-      {/* Referral Program Banner */}
-      <div className="bg-gradient-to-r from-[#5691af]/10 to-[#5691af]/5 border-b border-[#5691af]/20">
-        <div className="max-w-7xl mx-auto px-4 py-3">
-          <div className="flex items-center justify-center gap-3 flex-wrap">
-            <span className="text-[#5691af] font-semibold">💰 Help another pet find their voice and earn $2 as a thank you</span>
-            <Button 
-              onClick={() => navigate('/referral-program')}
-              variant="outline"
-              size="sm"
-              className="border-[#5691af] text-[#5691af] hover:bg-[#5691af] hover:text-white"
-            >
-              Learn More
-            </Button>
-          </div>
-        </div>
-      </div>
+      {/* Podcast Banner */}
+      <PodcastBanner />
 
       {/* Development Navigation Helper - Preview Only */}
       {isPreview && user && publicPets.length > 0 && <div className="bg-blue-50 border-b border-blue-200">
@@ -681,9 +668,30 @@ export default function Landing() {
         </section>
 
         {/* Share Prompt */}
-        {showSharePrompt && <section className="max-w-md mx-auto px-4 py-8">
+         {showSharePrompt && <section className="max-w-md mx-auto px-4 py-8">
             <AppShareButton variant="full" className="w-full" />
           </section>}
+
+        {/* Referral Program Section */}
+        <section className="bg-gradient-to-r from-[#5691af]/10 to-[#5691af]/5 py-12">
+          <div className="max-w-7xl mx-auto px-4">
+            <div className="text-center">
+              <h2 className="text-3xl font-bold text-[#5691af] mb-4">
+                💰 Help Another Pet Find Their Voice
+              </h2>
+              <p className="text-lg text-[#5691af]/80 mb-6">
+                Share PetPort with fellow pet owners and earn $2 as a thank you when they subscribe
+              </p>
+              <Button 
+                onClick={() => navigate('/referral-program')}
+                size="lg"
+                className="bg-[#5691af] hover:bg-[#4a7d99] text-white"
+              >
+                Learn More About Referrals
+              </Button>
+            </div>
+          </div>
+        </section>
 
         {/* Pricing Section */}
         <section id="pricing" className="bg-gradient-to-br from-blue-50 to-indigo-50 py-20">

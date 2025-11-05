@@ -6,6 +6,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { FreeLostPetFlyerGenerator } from "@/components/FreeLostPetFlyerGenerator";
 import { MetaTags } from "@/components/MetaTags";
 import { PublicNavigationMenu } from "@/components/PublicNavigationMenu";
+import { PodcastBanner } from "@/components/PodcastBanner";
 import lostPetDemoPreview from "@/assets/lost-pet-demo-preview.png";
 
 export default function LostPetFeatures() {
@@ -56,6 +57,9 @@ export default function LostPetFeatures() {
           isOpen={showMobileMenu} 
           onClose={() => setShowMobileMenu(false)} 
         />
+
+        {/* Podcast Banner */}
+        <PodcastBanner />
 
         {/* Hero Section */}
         <section className="container mx-auto px-4 py-12 md:py-20">
@@ -356,6 +360,28 @@ export default function LostPetFeatures() {
                 </div>
               </CardContent>
             </Card>
+          </div>
+        </section>
+
+        {/* Referral Program Section */}
+        <section className="container mx-auto px-4 py-12">
+          <div className="max-w-4xl mx-auto bg-gradient-to-r from-[#5691af]/10 to-[#5691af]/5 rounded-2xl p-8 border-2 border-[#5691af]/20">
+            <div className="text-center">
+              <h2 className="text-3xl font-bold text-[#5691af] mb-4">
+                💰 Help Another Pet Find Their Voice
+              </h2>
+              <p className="text-lg text-[#5691af]/80 mb-6">
+                Share PetPort with fellow pet owners and earn $2 as a thank you when they subscribe
+              </p>
+              <Link to="/referral-program">
+                <Button 
+                  size="lg"
+                  className="bg-[#5691af] hover:bg-[#4a7d99] text-white"
+                >
+                  Learn More About Referrals
+                </Button>
+              </Link>
+            </div>
           </div>
         </section>
 

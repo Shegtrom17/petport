@@ -6,6 +6,7 @@ import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { PricingSection } from "@/components/PricingSection";
 import { ArrowRight, Menu } from "lucide-react";
 import { PublicNavigationMenu } from "@/components/PublicNavigationMenu";
+import { PodcastBanner } from "@/components/PodcastBanner";
 import createProfileScreenshot from "@/assets/create-profile-screenshot.png";
 import documentUploadScreenshot from "@/assets/document-upload-screenshot.png";
 import resumeDetailsScreenshot from "@/assets/resume-details-screenshot.png";
@@ -51,35 +52,8 @@ export default function Learn() {
         onClose={() => setShowMobileMenu(false)} 
       />
 
-      {/* Referral Program Banner */}
-      <div className="bg-gradient-to-r from-[#5691af]/10 to-[#5691af]/5 border-b border-[#5691af]/20">
-        <div className="max-w-7xl mx-auto px-4 py-3">
-          <div className="flex items-center justify-center gap-3 flex-wrap">
-            <span className="text-[#5691af] font-semibold">💰 Help another pet find their voice and earn $2 as a thank you</span>
-            <Link to="/referral-program">
-              <Button 
-                variant="outline"
-                size="sm"
-                className="border-[#5691af] text-[#5691af] hover:bg-[#5691af] hover:text-white"
-              >
-                Learn More
-              </Button>
-            </Link>
-          </div>
-        </div>
-      </div>
-
-      {/* Referral Program Image */}
-      <div className="max-w-4xl mx-auto px-4 pt-8">
-        <Link to="/referral-program" className="block">
-          <img 
-            src={referralProgramHero} 
-            alt="PetPort referral program - Give every pet a voice that lasts a lifetime. Earn rewards by sharing PetPort with fellow pet owners."
-            className="w-full h-auto rounded-lg shadow-md hover:shadow-lg transition-shadow cursor-pointer"
-            loading="lazy"
-          />
-        </Link>
-      </div>
+      {/* Podcast Banner */}
+      <PodcastBanner />
 
       <main className="max-w-4xl mx-auto px-4 py-12">
         {/* Hero Section */}
@@ -665,6 +639,28 @@ export default function Learn() {
                 <h3 className="text-xl font-semibold text-brand-primary mb-2">Step 4: Share & Go</h3>
                 <p className="text-brand-primary-dark">Share with vets, sitters, hotels, or groomers instantly. Generate PDFs and QR codes on demand.</p>
               </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Referral Program Section */}
+        <section className="bg-gradient-to-r from-[#5691af]/10 to-[#5691af]/5 py-12">
+          <div className="max-w-7xl mx-auto px-4">
+            <div className="text-center">
+              <h2 className="text-3xl font-bold text-[#5691af] mb-4">
+                💰 Help Another Pet Find Their Voice
+              </h2>
+              <p className="text-lg text-[#5691af]/80 mb-6">
+                Share PetPort with fellow pet owners and earn $2 as a thank you when they subscribe
+              </p>
+              <Link to="/referral-program">
+                <Button 
+                  size="lg"
+                  className="bg-[#5691af] hover:bg-[#4a7d99] text-white"
+                >
+                  Learn More About Referrals
+                </Button>
+              </Link>
             </div>
           </div>
         </section>

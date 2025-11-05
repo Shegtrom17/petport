@@ -87,7 +87,7 @@ export default function Landing() {
   return <div className="min-h-screen bg-white">
       <MetaTags 
         title="Digital Pet Passport App | PetPort LiveLink - Records & Safety" 
-        description="Free 7-day trial. Complete digital passport with QR codes for medical records, lost recovery alerts, housing applications & emergency care. Manage everything in one place." 
+        description="Digital pet passport with QR codes. Manage your dog or cat's medical records, lost pet alerts, housing résumés & emergency contacts. 7-day free trial." 
         image="https://pub-a7c2c18b8d6143b9a256105ef44f2da0.r2.dev/OG%20General.png"
         url={window.location.origin + "/"} 
       />

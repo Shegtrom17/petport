@@ -99,11 +99,11 @@ const Podcast = () => {
               <Headphones className="h-8 w-8 text-white" />
             </div>
             
-            <h1 className="text-4xl md:text-5xl font-bold text-white mb-6">
+            <h1 className="text-3xl md:text-4xl font-bold text-white mb-6">
               PetPort Podcast: Give Your Pet a Digital Voice for Life
             </h1>
             
-            <p className="text-xl text-white/90 mb-8 max-w-2xl mx-auto">
+            <p className="text-lg text-white/90 mb-8 max-w-2xl mx-auto">
               Learn how to create a complete digital voice for your pet or companion. Discover expert strategies for pet health records, lost pet recovery, pet housing applications, pet vaccination tracking, emergency contacts, pet foster programs, and pet lifetime care planning. From building pet resumes and pet digital passports to managing pet medical documents and creating photo galleries—get actionable insights that protect your pet and simplify your life. Join thousands of pet parents mastering modern pet portfolios with PetPort's comprehensive digital platform.
             </p>
 

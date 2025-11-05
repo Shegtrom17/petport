@@ -1268,7 +1268,7 @@ export default function DogGoneGood() {
                   className="w-full border-brand-primary text-brand-primary hover:bg-brand-primary hover:text-white"
                   onClick={(e) => {
                     e.stopPropagation();
-                    navigate('/demos/gallery');
+                    navigate('/demo/gallery');
                   }}
                 >
                   See Demo →
@@ -1316,7 +1316,7 @@ export default function DogGoneGood() {
               <div 
                 className="p-4 border-2 border-red-500 rounded-lg cursor-pointer hover:bg-red-50 transition-colors bg-gradient-to-br from-red-50 to-rose-50"
                 onClick={() => {
-                  navigate('/demos/missing-pet');
+                  navigate('/demo/missing-pet');
                   setShowPostDownload(false);
                 }}
               >
@@ -1338,7 +1338,7 @@ export default function DogGoneGood() {
               <div 
                 className="p-4 border-2 border-brand-primary/30 rounded-lg cursor-pointer hover:bg-brand-primary/5 transition-colors"
                 onClick={() => {
-                  navigate('/demos/care');
+                  navigate('/demo/care');
                   setShowPostDownload(false);
                 }}
               >
@@ -1349,7 +1349,7 @@ export default function DogGoneGood() {
               <div 
                 className="p-4 border-2 border-brand-primary/30 rounded-lg cursor-pointer hover:bg-brand-primary/5 transition-colors"
                 onClick={() => {
-                  navigate('/demos/gallery');
+                  navigate('/demo/gallery');
                   setShowPostDownload(false);
                 }}
               >

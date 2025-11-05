@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Download, Loader2, Eye } from "lucide-react";
+import { Download, Loader2, Eye, Facebook } from "lucide-react";
 import { toast } from "sonner";
 import { generateFreeLostPetFlyer } from "@/services/freeFlyerService";
 
@@ -171,6 +171,34 @@ export const FreeLostPetFlyerGenerator = () => {
     }
   };
 
+  const handleXShare = () => {
+    const shareUrl = 'https://petport.app/lost-pet-features';
+    const shareText = `Just created a free missing pet flyer! 🐾🚨 Help spread the word with PetPort's Free Lost Pet Flyer Generator!`;
+    
+    const xUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`;
+    window.open(xUrl, '_blank', 'width=600,height=400');
+    
+    if (typeof window !== 'undefined' && 'gtag' in window) {
+      (window as any).gtag('event', 'social_share', {
+        event_category: 'engagement',
+        event_label: 'twitter_lost_pet_flyer'
+      });
+    }
+  };
+
+  const handleFacebookShare = () => {
+    const shareUrl = 'https://petport.app/lost-pet-features';
+    const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`;
+    window.open(facebookUrl, '_blank', 'width=600,height=400');
+    
+    if (typeof window !== 'undefined' && 'gtag' in window) {
+      (window as any).gtag('event', 'social_share', {
+        event_category: 'engagement',
+        event_label: 'facebook_lost_pet_flyer'
+      });
+    }
+  };
+
   return (
     <Card className="border-2 border-destructive/20 shadow-lg">
       <CardContent className="p-6 md:p-8">
@@ -299,6 +327,31 @@ export const FreeLostPetFlyerGenerator = () => {
                     Download PDF
                   </>
                 )}
+              </Button>
+            </div>
+
+            {/* Social Share Buttons */}
+            <div className="grid md:grid-cols-2 gap-3">
+              <Button
+                onClick={handleXShare}
+                variant="outline"
+                size="lg"
+                className="w-full border-destructive text-destructive hover:bg-destructive hover:text-white"
+              >
+                <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                </svg>
+                Share on X
+              </Button>
+              
+              <Button
+                onClick={handleFacebookShare}
+                variant="outline"
+                size="lg"
+                className="w-full border-destructive text-destructive hover:bg-destructive hover:text-white"
+              >
+                <Facebook className="w-5 h-5 mr-2" />
+                Share on Facebook
               </Button>
             </div>
           </div>

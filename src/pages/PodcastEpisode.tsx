@@ -243,7 +243,7 @@ const PodcastEpisode = () => {
         {episode.displayTranscript && (
           <section className="py-12 px-4">
             <div className="container mx-auto max-w-4xl">
-              <PodcastTranscript transcript={episode.displayTranscript} />
+              <PodcastTranscript transcript={episode.displayTranscript} episodeTitle={episode.title} />
             </div>
           </section>
         )}

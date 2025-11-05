@@ -181,7 +181,34 @@ export const GuardianManagementModal = ({
 
   const sendGuardianEmail = async () => {
     if (!existingGuardian) return;
-    toast.info("Email functionality coming soon");
+    
+    setIsLoading(true);
+    try {
+      const guardianLink = `${window.location.origin}/guardian/${petId}/${existingGuardian.access_token}`;
+      
+      const { error } = await supabase.functions.invoke('send-email', {
+        body: {
+          to: existingGuardian.guardian_email,
+          subject: `You've been designated as a Pet Guardian for ${petName}`,
+          html: `
+            <h2>Pet Guardian Access</h2>
+            <p>You've been designated as a pet guardian for <strong>${petName}</strong>.</p>
+            <p>You can access ${petName}'s information anytime using this secure link:</p>
+            <p><a href="${guardianLink}">${guardianLink}</a></p>
+            <p>This link is private and should not be shared with others.</p>
+            <br>
+            <p>Thank you for being a trusted guardian!</p>
+          `
+        }
+      });
+
+      if (error) throw error;
+      toast.success(`Guardian email sent to ${existingGuardian.guardian_email}`);
+    } catch (error: any) {
+      toast.error("Failed to send email: " + error.message);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -316,7 +343,11 @@ export const GuardianManagementModal = ({
               />
 
               <div className="flex gap-2 pt-4">
-                <Button type="submit" disabled={isLoading}>
+                <Button 
+                  type="submit" 
+                  disabled={isLoading}
+                  className="bg-brand-primary hover:bg-brand-primary-dark text-white"
+                >
                   {existingGuardian ? "Update Guardian" : "Save Guardian"}
                 </Button>
 
@@ -324,16 +355,19 @@ export const GuardianManagementModal = ({
                   <>
                     <Button
                       type="button"
-                      variant="outline"
+                      variant="secondary"
                       onClick={copyGuardianLink}
+                      className="bg-brand-primary/10 text-brand-primary hover:bg-brand-primary hover:text-white border border-brand-primary/20"
                     >
                       <Copy className="h-4 w-4 mr-2" />
                       Copy Link
                     </Button>
                     <Button
                       type="button"
-                      variant="outline"
+                      variant="secondary"
                       onClick={sendGuardianEmail}
+                      disabled={isLoading}
+                      className="bg-brand-primary/10 text-brand-primary hover:bg-brand-primary hover:text-white border border-brand-primary/20"
                     >
                       <Mail className="h-4 w-4 mr-2" />
                       Send Email

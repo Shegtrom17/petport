@@ -86,8 +86,8 @@ export default function Landing() {
   }, [isPreview, user]);
   return <div className="min-h-screen bg-white">
       <MetaTags 
-        title="Digital Pet Passport App | PetPort LiveLink - Records & Safety" 
-        description="Digital pet passport with QR codes. Manage your dog or cat's medical records, lost pet alerts, housing résumés & emergency contacts. 7-day free trial." 
+        title="Pet Records & Safety | Pet Passport, Lost Pet Flyers, Pet Housing | PetPort" 
+        description="Pet passport and portfolio. Manage your pet's medical records, lost pet flyers, pet housing applications, and pet wellness docs. Organize pet safety and emergency contacts." 
         image="https://pub-a7c2c18b8d6143b9a256105ef44f2da0.r2.dev/OG%20General.png"
         url={window.location.origin + "/"} 
       />

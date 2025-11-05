@@ -129,7 +129,9 @@ Should that kind of information also be stored and shared using a similar PW ali
 Hmm. That's definitely something to think about. Ensuring our own voice is heard when we can't speak and truly. Petport at petport.app go check it out!`,
   displayTranscript: `<p>🐴 **Producer Pilot Copy:** Are you tired of sticky notes and misplaced vet records every time you leave your pet or horse with a caregiver? Discover the **Care & Handling** feature of the **Petport Progressive Web App (PWA)**—the ultimate **pet care communication app** that gives your animal a voice. Learn how to instantly provide real-time instructions on food, medications, allergies, and behavior routines. Plus, see how our interactive **Care Update Board** delivers **peace of mind**, sending you **non-emergency updates** directly from your pet sitter or boarder, so you always know your furry friend is adjusting well. This episode dives into the life-changing simplicity of having **all pet records in one place**—accessible with one tap.</p>
 
-<h1>Care & Handling: The Pet's Digital Voice for Wellness & Care</h1>
+<h1>Pet Care Instructions for Dog Walkers and Pet Sitters: Digital Pet Health Management</h1>
+
+<h2>How to Create Pet Sitter Instructions and Dog Walker Care Notes</h2>
 
 <p><strong>ALEX:</strong> Okay, back with more solutions from **Petport.app**. We are analyzing the **Care & Handling** feature—the ultimate **pet sitter communication app** for managing your **complex creature**, be it a dog, cat, or horse. </p>
 <p><strong>JAMIE:</strong> And if you've ever struggled to write out **pet wellness instructions** or **medical alerts** for a sitter, you know that frantic feeling of doubt. Today, we eliminate that anxiety. Last time we talked about the Pet Résumé idea... Today we're doing a deep dive into something more fundamental: the actual architecture of care management. It's **Petport's Care and Handling** feature. Exactly. It proposes to capture all that critical nuance—data, the stuff that gets lost on paper notes or scattered texts—and put it into a single, real-time digital profile. </p>

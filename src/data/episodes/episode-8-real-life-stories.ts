@@ -100,7 +100,12 @@ An identity that travels with them, regardless of who's holding the leash or the
 Right? And maybe the final thought for you listing is about the value of that proactive organization. We live mobile lives, our pets move with us or between caregivers. Does their critical information travel as easily as they do? Thinking about a secure transferable digital legacy, how could that change the game for your own animal's care? Could it raise the standard?
 
 Definitely something to think about. Thanks for joining us for this deep dive. We'll catch you next time.`,
-  displayTranscript: `<p><strong>From a midnight vet emergency to a nervous rescue cat's first calm grooming, these real-life stories show how PetPort turns pet chaos into peace of mind.</strong> Each moment—whether it's a horse's farrier appointment, a late-night medical scare, or a boarding kennel's feeding routine—reveals how PetPort's digital pet wellness and record system keeps every animal's information organized, accessible, and trusted.</p>
+  displayTranscript: `
+<h1>Real Pet Care Stories: Emergency Vet Visits, Pet Boarding, and Dog Grooming Solutions</h1>
+
+<h2>How Digital Pet Records Help with Vet Emergencies and Pet Care</h2>
+
+<p><strong>From a midnight vet emergency to a nervous rescue cat's first calm grooming, these real-life stories show how PetPort turns pet chaos into peace of mind.</strong> Each moment—whether it's a horse's farrier appointment, a late-night medical scare, or a boarding kennel's feeding routine—reveals how PetPort's digital pet wellness and record system keeps every animal's information organized, accessible, and trusted.</p>
 
 <p>Through secure LiveLinks and digital records, pet parents, vets, trainers, and even foster homes can instantly share vaccination proof, health histories, and care details. You'll hear how a simple scan, tap, or photo upload can bridge miles and minutes—ensuring no pet's story gets lost in paperwork again. Affordable, transferable, and designed for real life, PetPort gives every dog, cat, and horse a lasting voice for life.</p>
 

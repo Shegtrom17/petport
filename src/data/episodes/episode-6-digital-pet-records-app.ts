@@ -308,7 +308,10 @@ So, considering that necessity, maybe the challenge for you listening is this. W
 What's step one for protecting that story?
 
 Right? What's your priority document to digitize right now? That's the immediate practical application of everything we've discussed today.`,
-  displayTranscript: `<h3 class="text-xl font-bold mb-4 mt-6">The Scanner and Structured Filing System</h3>
+  displayTranscript: `
+<h1>Digital Pet Health Records: Pet Vaccination Records and Medical Document Storage</h1>
+
+<h2>How to Organize Pet Medical Records and Veterinary Documents</h2>
 
 <p class="mb-4"><strong>ALEX:</strong> Welcome back to the deep dive. We're looking at Petport's Documents & Records feature. Think of it like a specialized digital vault. The big question is how does Petport actually help? Does it really move beyond just storing files?</p>
 

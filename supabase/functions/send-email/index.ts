@@ -8,8 +8,10 @@ const corsHeaders = {
 };
 
 interface EmailRequest {
-  type: 'profile' | 'care' | 'credentials' | 'resume' | 'reviews' | 'review_request' | 'missing_pet' | 'app_share' | 'welcome' | 'welcome_trial' | 'transfer_invite_new' | 'transfer_invite_existing' | 'transfer_success' | 'transfer_limit_reached' | 'transfer_sent_confirmation' | 'transfer_completed_sender' | 'gift_purchase_confirmation' | 'gift_notification' | 'gift_activated' | 'gift_renewal_reminder' | 'gift_expired';
+  type: 'profile' | 'care' | 'credentials' | 'resume' | 'reviews' | 'review_request' | 'missing_pet' | 'app_share' | 'welcome' | 'welcome_trial' | 'transfer_invite_new' | 'transfer_invite_existing' | 'transfer_success' | 'transfer_limit_reached' | 'transfer_sent_confirmation' | 'transfer_completed_sender' | 'gift_purchase_confirmation' | 'gift_notification' | 'gift_activated' | 'gift_renewal_reminder' | 'gift_expired' | 'pet_guardian';
   recipientEmail: string;
+  guardianLink?: string;
+  guardianName?: string;
   transferRecipientEmail?: string;
   recipientName?: string;
   petName: string;
@@ -202,6 +204,30 @@ Transfer Completed:
 ${petName} has been successfully transferred to their new account. The new owner now has full access to manage ${petName}'s profile, including all photos, documents, and information.
 
 Thank you for keeping ${petName}'s voice with them wherever they go! 🐾
+
+---
+PetPort - Digital Pet Passport
+https://petport.app`,
+
+    pet_guardian: `${greeting}
+
+You've been designated as a Pet Guardian for ${petName} 🛡️
+
+${sender} has designated you as a trusted guardian to care for ${petName} in case of emergency or long-term incapacitation.
+
+You can access ${petName}'s complete information anytime using this secure link:
+${data.guardianLink}
+
+This link is private and should not be shared with others. It provides you with:
+- Complete pet profile and emergency contact information
+- Medical records and vaccination history
+- Care instructions and dietary requirements
+- Behavioral notes and special needs
+- Authorization to make care decisions
+
+${customMessage ? `\nMessage from ${sender}: "${customMessage}"\n` : ''}
+
+Thank you for being a trusted guardian for ${petName}! 🐾
 
 ---
 PetPort - Digital Pet Passport
@@ -611,6 +637,48 @@ const generateEmailTemplate = (data: EmailRequest) => {
         </div>
       `
     },
+    pet_guardian: {
+      subject: `🛡️ You've Been Designated as a Pet Guardian for ${petName}`,
+      content: `
+        <h2 style="color: #5691af;">🛡️ You've Been Designated as a Pet Guardian</h2>
+        <p><strong>${sender}</strong> has designated you as a trusted guardian to care for <strong>${petName}</strong> in case of emergency or long-term incapacitation.</p>
+        
+        <div style="background: linear-gradient(135deg, #5691af 0%, #4a7c95 100%); color: white; padding: 25px; border-radius: 12px; margin: 25px 0; text-align: center;">
+          <div style="font-size: 48px; margin-bottom: 10px;">🛡️</div>
+          <h3 style="margin: 0; color: white; font-size: 20px;">Trusted Guardian for ${petName}</h3>
+        </div>
+        
+        ${customMessage ? `<div style="background: #f8fafc; border-left: 4px solid #5691af; padding: 20px; border-radius: 8px; margin: 20px 0;">
+          <p style="margin: 0 0 8px 0; color: #5691af; font-weight: 600;">Message from ${sender}:</p>
+          <p style="margin: 0; color: #475569; font-style: italic;">"${customMessage}"</p>
+        </div>` : ''}
+        
+        <div style="background: #f0f9ff; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #5691af;">
+          <h3 style="margin-top: 0; color: #5691af;">🔐 Your Guardian Access</h3>
+          <p style="color: #475569; line-height: 1.7; margin: 0;">
+            You can access <strong>${petName}'s complete information anytime</strong> using your secure guardian link. 
+            This link is private and should not be shared with others.
+          </p>
+        </div>
+        
+        <div style="background: #f8fafc; border: 2px solid #5691af; border-radius: 10px; padding: 20px; margin: 20px 0;">
+          <h3 style="margin-top: 0; color: #5691af;">📋 What You Have Access To:</h3>
+          <ul style="color: #475569; margin: 10px 0; padding-left: 20px; line-height: 1.8;">
+            <li><strong>Complete pet profile</strong> and emergency contact information</li>
+            <li><strong>Medical records</strong> and vaccination history</li>
+            <li><strong>Care instructions</strong> and dietary requirements</li>
+            <li><strong>Behavioral notes</strong> and special needs</li>
+            <li><strong>Authorization</strong> to make care decisions</li>
+          </ul>
+        </div>
+        
+        <div style="background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); padding: 25px; border-radius: 10px; margin: 25px 0; text-align: center; border: 2px solid #5691af;">
+          <p style="color: #0c4a6e; font-size: 18px; margin: 0; font-weight: 600; line-height: 1.6;">
+            Thank you for being a trusted guardian for ${petName}! 🐾
+          </p>
+        </div>
+      `
+    },
     gift_purchase_confirmation: {
       subject: Deno.env.get('HOLIDAY_MODE') === 'true' ? '🎁 Your PetPort Gift Has Been Sent!' : '✅ Gift Purchase Confirmed - PetPort',
       content: `
@@ -982,6 +1050,9 @@ const handler = async (req: Request): Promise<Response> => {
       },
       gift_expired: {
         subject: 'Your PetPort Gift Membership Has Expired'
+      },
+      pet_guardian: {
+        subject: `🛡️ You've Been Designated as a Pet Guardian for ${emailData.petName}`
       }
     };
 

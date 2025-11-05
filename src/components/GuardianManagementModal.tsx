@@ -187,25 +187,23 @@ export const GuardianManagementModal = ({
     try {
       const guardianLink = `${window.location.origin}/guardian/${petId}/${existingGuardian.access_token}`;
       
-      const { error } = await supabase.functions.invoke('send-email', {
+      const { data, error } = await supabase.functions.invoke('send-email', {
         body: {
-          to: existingGuardian.guardian_email,
-          subject: `You've been designated as a Pet Guardian for ${petName}`,
-          html: `
-            <h2>Pet Guardian Access</h2>
-            <p>You've been designated as a pet guardian for <strong>${petName}</strong>.</p>
-            <p>You can access ${petName}'s information anytime using this secure link:</p>
-            <p><a href="${guardianLink}">${guardianLink}</a></p>
-            <p>This link is private and should not be shared with others.</p>
-            <br>
-            <p>Thank you for being a trusted guardian!</p>
-          `
+          type: 'pet_guardian',
+          recipientEmail: existingGuardian.guardian_email,
+          petName: petName,
+          petId: petId,
+          guardianLink: guardianLink,
+          guardianName: existingGuardian.guardian_name,
+          shareUrl: guardianLink,
+          senderName: 'Pet Owner'
         }
       });
 
       if (error) throw error;
       toast.success(`Guardian email sent to ${existingGuardian.guardian_email}`);
     } catch (error: any) {
+      console.error('Error sending guardian email:', error);
       toast.error("Failed to send email: " + error.message);
     } finally {
       setIsLoading(false);

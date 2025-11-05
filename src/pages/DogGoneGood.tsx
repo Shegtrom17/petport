@@ -649,6 +649,39 @@ export default function DogGoneGood() {
         url={`${window.location.origin}/dog-gone-good`}
       />
 
+      {/* Schema.org WebApplication Markup */}
+      <script type="application/ld+json">
+        {JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "WebApplication",
+          "name": "Dog-Gone-Good Résumé Generator",
+          "description": "Create hilarious, shareable résumés for your dog, cat, or horse in seconds. Free, no signup required. Perfect for social media!",
+          "applicationCategory": "SoftwareApplication",
+          "operatingSystem": "All",
+          "url": "https://petport.app/dog-gone-good",
+          "inLanguage": "en-US",
+          "keywords": "pet resume maker, free pet resume, dog housing application, cat resume, pet screening tool, horse resume, pet rental application",
+          "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+          },
+          "featureList": [
+            "Free Pet Résumé Maker",
+            "Instant Shareable Profiles",
+            "Supports Dog, Cat, and Horse",
+            "No Signup Required",
+            "Multiple Themes Available",
+            "Download as JPEG"
+          ],
+          "author": {
+            "@type": "Organization",
+            "name": "PetPort",
+            "url": "https://petport.app"
+          }
+        })}
+      </script>
+
       {/* Header */}
       <header className="max-w-7xl mx-auto px-4 py-6 flex items-center justify-between">
         <div className="flex items-center gap-3">

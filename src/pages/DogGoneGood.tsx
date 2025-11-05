@@ -187,7 +187,15 @@ export default function DogGoneGood() {
     toast.success("🎲 Feeling fetchy!");
   };
 
-  const wrapText = (ctx: CanvasRenderingContext2D, text: string, x: number, y: number, maxWidth: number, lineHeight: number, maxLines?: number) => {
+  const wrapText = (
+    ctx: CanvasRenderingContext2D,
+    text: string,
+    x: number,
+    y: number,
+    maxWidth: number,
+    lineHeight: number,
+    maxLines?: number
+  ): number => {
     const words = text.split(' ');
     let line = '';
     let currentY = y;
@@ -195,13 +203,12 @@ export default function DogGoneGood() {
 
     for (let n = 0; n < words.length; n++) {
       const testLine = line + words[n] + ' ';
-      const metrics = ctx.measureText(testLine);
-      const testWidth = metrics.width;
+      const testWidth = ctx.measureText(testLine).width;
       if (testWidth > maxWidth && n > 0) {
         ctx.fillText(line, x, currentY);
         lineCount++;
         if (maxLines && lineCount >= maxLines) {
-          return; // Stop if we've reached max lines
+          return lineCount * lineHeight; // Stop if we've reached max lines
         }
         line = words[n] + ' ';
         currentY += lineHeight;
@@ -211,7 +218,9 @@ export default function DogGoneGood() {
     }
     if (!maxLines || lineCount < maxLines) {
       ctx.fillText(line, x, currentY);
+      lineCount++;
     }
+    return lineCount * lineHeight;
   };
 
   const renderCanvas = () => {
@@ -263,8 +272,8 @@ export default function DogGoneGood() {
     const photoCount = (hasPhoto1 ? 1 : 0) + (hasPhoto2 ? 1 : 0);
     
     // Photo sizing
-    const twoPhotoSize = 480; // Each photo is 40% of 1200px canvas
-    const onePhotoSize = 720; // Single photo is 60% of canvas
+    const twoPhotoSize = 440; // Slightly smaller to free vertical space
+    const onePhotoSize = 640; // Slightly smaller single photo
     const gap = 40;
     
     const drawSquarePhoto = (photoSrc: string, x: number, y: number, size: number) => {
@@ -352,7 +361,7 @@ export default function DogGoneGood() {
         drawPlaceholder(photo2X, yOffset, twoPhotoSize);
       }
       
-      yOffset += twoPhotoSize + 40;
+      yOffset += twoPhotoSize + 32;
     } else if (photoCount === 1) {
       // One photo centered at 60% width
       const photoX = (1200 - onePhotoSize) / 2;
@@ -363,61 +372,69 @@ export default function DogGoneGood() {
         drawSquarePhoto(photoPreview2, photoX, yOffset, onePhotoSize);
       }
       
-      yOffset += onePhotoSize + 40;
+      yOffset += onePhotoSize + 32;
     } else {
       // No photos - show centered placeholder
       const photoX = (1200 - onePhotoSize) / 2;
       drawPlaceholder(photoX, yOffset, onePhotoSize);
-      yOffset += onePhotoSize + 60;
+      yOffset += onePhotoSize + 40;
     }
 
     // Remove duplicate "RÉSUMÉ OF" text - name is already at top
-    yOffset += 20;
+    yOffset += 12;
 
-    // Content sections - more compact
+    // Content sections - compact with dynamic height accounting
     ctx.textAlign = 'left';
     ctx.textBaseline = 'alphabetic';
     const leftMargin = 80;
     const maxWidth = 1040;
+    const lineHeight = 38;
+    const headerSpacing = 48;
+    const sectionGap = 32;
+    const bottomSafeY = 1460; // Reserve space for PetPort banner (1500-1600)
 
     // Title
     ctx.fillStyle = currentTheme.colors.accent;
     ctx.font = "bold 38px 'Fredoka', Inter, sans-serif";
     ctx.fillText('PROFESSIONAL TITLE', leftMargin, yOffset);
-    yOffset += 48;
+    yOffset += headerSpacing;
     ctx.fillStyle = currentTheme.colors.text;
     ctx.font = '26px Inter, sans-serif';
-    wrapText(ctx, formData.title, leftMargin, yOffset, maxWidth, 38);
-    yOffset += 65;
+    let used = wrapText(ctx, formData.title, leftMargin, yOffset, maxWidth, lineHeight);
+    yOffset += used + sectionGap;
 
     // Achievements
     ctx.fillStyle = currentTheme.colors.accent;
     ctx.font = "bold 38px 'Fredoka', Inter, sans-serif";
     ctx.fillText('KEY ACHIEVEMENTS', leftMargin, yOffset);
-    yOffset += 48;
+    yOffset += headerSpacing;
     ctx.fillStyle = currentTheme.colors.text;
     ctx.font = '26px Inter, sans-serif';
-    wrapText(ctx, formData.achievements, leftMargin, yOffset, maxWidth, 38);
-    yOffset += 65;
+    used = wrapText(ctx, formData.achievements, leftMargin, yOffset, maxWidth, lineHeight);
+    yOffset += used + sectionGap;
 
     // Experience
     ctx.fillStyle = currentTheme.colors.accent;
     ctx.font = "bold 38px 'Fredoka', Inter, sans-serif";
     ctx.fillText('PROFESSIONAL EXPERIENCE', leftMargin, yOffset);
-    yOffset += 48;
+    yOffset += headerSpacing;
     ctx.fillStyle = currentTheme.colors.text;
     ctx.font = '26px Inter, sans-serif';
-    wrapText(ctx, formData.experience, leftMargin, yOffset, maxWidth, 38);
-    yOffset += 65;
+    used = wrapText(ctx, formData.experience, leftMargin, yOffset, maxWidth, lineHeight);
+    yOffset += used + sectionGap;
 
-    // References - limited to 4 lines to prevent overlap with footer
+    // References - dynamically limit lines to avoid banner overlap
     ctx.fillStyle = currentTheme.colors.accent;
     ctx.font = "bold 38px 'Fredoka', Inter, sans-serif";
     ctx.fillText('REFERENCES', leftMargin, yOffset);
-    yOffset += 48;
+    yOffset += headerSpacing;
     ctx.fillStyle = currentTheme.colors.text;
     ctx.font = '26px Inter, sans-serif';
-    wrapText(ctx, formData.references, leftMargin, yOffset, maxWidth, 38, 4);
+    const remainingLines = Math.max(0, Math.floor((bottomSafeY - yOffset) / lineHeight));
+    if (remainingLines > 0) {
+      wrapText(ctx, formData.references, leftMargin, yOffset, maxWidth, lineHeight, remainingLines);
+    }
+
 
     // Watermarks on the right side - stacked vertically
     ctx.globalAlpha = 0.08;
@@ -435,7 +452,7 @@ export default function DogGoneGood() {
     ctx.fillText('🐴', 1150, 1000);
     
     // Additional paw at very bottom right
-    ctx.fillText('🐾', 1150, 1300);
+    ctx.fillText('🐾', 1150, 1290);
     
     ctx.globalAlpha = 1.0;
 

@@ -87,10 +87,48 @@ export default function Landing() {
   return <div className="min-h-screen bg-white">
       <MetaTags 
         title="Digital Pet Passport App | PetPort LiveLink - Pet Records & Safety" 
-        description="Free 7-day trial. Create LiveLinks for pet records, lost pet alerts, care instructions. Digital passport for travel, emergencies & sitters. Try PetPort today." 
+        description="Free 7-day trial. Digital pet passport with QR codes for pet medical records, lost pet recovery, pet housing applications & pet emergency care. Start today!" 
         image="https://pub-a7c2c18b8d6143b9a256105ef44f2da0.r2.dev/OG%20General.png"
         url={window.location.origin + "/"} 
       />
+      
+      {/* Schema.org Structured Data for SEO */}
+      <script type="application/ld+json">
+        {JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "SoftwareApplication",
+          "name": "PetPort: Digital Pet Passport & Records App",
+          "description": "Comprehensive digital platform for pet owners to manage pet medical records, lost pet recovery, pet travel documents, pet housing applications, and pet emergency care instructions.",
+          "applicationCategory": "LifestyleApplication",
+          "operatingSystem": "iOS, Android, Web",
+          "url": "https://petport.app/",
+          "image": "https://pub-a7c2c18b8d6143b9a256105ef44f2da0.r2.dev/OG%20General.png",
+          "keywords": "pet records app, digital pet passport, lost pet recovery, pet screening resume, pet housing application, pet medical records, qr code pet tag, pet emergency contacts, pet travel documents, pet care instructions, digital pet id, pet health records, pet adoption resume, pet foster care, pet boarding documents, pet wellness tracking, pet vaccination records, pet microchip alternative, pet safety app, pet caregiver instructions",
+          "featureList": [
+            "QR Code Pet Tags with LiveLink",
+            "Lost Pet Recovery System with Sighting Board",
+            "Pet Screening Resume Builder for Housing",
+            "Pet Medical Records Management",
+            "Pet Travel Documentation",
+            "Pet Emergency Care Instructions",
+            "Pet Photo Gallery & Life Story",
+            "Pet Foster Care Management",
+            "Pet Vaccination Tracking",
+            "Pet Caregiver Access Control"
+          ],
+          "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD",
+            "description": "7-day free trial included"
+          },
+          "publisher": {
+            "@type": "Organization",
+            "name": "PetPort",
+            "url": "https://petport.app/"
+          }
+        })}
+      </script>
       
       {/* Referral Banner */}
       {hasReferralCode && <div className="bg-brand-primary text-white py-2 text-center text-sm">

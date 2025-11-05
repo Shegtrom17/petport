@@ -23,6 +23,7 @@ export default function LostPetFeatures() {
         description="Free lost pet flyer tool. Create missing pet LiveLinks in 60 seconds with QR codes, sighting board & instant sharing. Help bring your pet home safely."
         type="website"
         url="https://petport.app/lost-pet-features"
+        image="https://pub-a7c2c18b8d6143b9a256105ef44f2da0.r2.dev/og-lostpet.png"
       />
       
       {/* Schema.org FAQPage Markup for Lost Pet Features */}

@@ -5,6 +5,7 @@ import * as z from "zod";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Copy, Mail, Trash2, Shield } from "lucide-react";
+import { formatPhoneNumber } from "@/utils/phoneFormatter";
 import {
   Dialog,
   DialogContent,
@@ -268,7 +269,14 @@ export const GuardianManagementModal = ({
                     <FormItem>
                       <FormLabel>Guardian's Phone</FormLabel>
                       <FormControl>
-                        <Input placeholder="(555) 123-4567" {...field} />
+                        <Input 
+                          placeholder="(555) 123-4567" 
+                          {...field}
+                          onChange={(e) => {
+                            const formatted = formatPhoneNumber(e.target.value);
+                            field.onChange(formatted);
+                          }}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>

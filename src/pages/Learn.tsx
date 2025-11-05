@@ -18,11 +18,81 @@ export default function Learn() {
 
   return <div className="min-h-screen bg-white">
       <MetaTags 
-        title="Learn About PetPort | Digital Pet Profiles" 
-        description="Explore how PetPort keeps your pet's info, photos, and care instructions in one sharable hub." 
+        title="Pet Emergency Guide: Lost Pet Recovery, Travel Docs & Pet Health Records | PetPort" 
+        description="Complete guide to digital pet management: pet emergency preparedness, lost pet recovery system, pet care instructions, pet travel documentation, pet health records & pet foster care. Free demos included." 
         image="https://pub-a7c2c18b8d6143b9a256105ef44f2da0.r2.dev/OG%20General.png"
         url={window.location.origin + "/learn"} 
       />
+
+      {/* Schema.org Structured Data for Learn Page */}
+      <script type="application/ld+json">
+        {JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "WebPage",
+          "name": "Pet Emergency Guide & Digital Pet Management Learning Center",
+          "description": "Comprehensive guide to pet emergency preparedness, lost pet recovery, pet travel documentation, pet health records management, and digital pet care instructions.",
+          "url": "https://petport.app/learn",
+          "about": {
+            "@type": "SoftwareApplication",
+            "name": "PetPort",
+            "applicationCategory": "LifestyleApplication"
+          },
+          "keywords": "pet emergency guide, lost pet recovery system, pet travel documents, pet health records, pet care instructions, pet emergency preparedness, pet medical records app, pet housing application guide, pet screening resume, pet boarding documents, pet foster care management, pet vaccination tracking, pet emergency contacts, digital pet passport guide, pet caregiver instructions, pet wellness tracking, pet adoption resume builder, pet safety planning, pet emergency kit, qr code pet tags guide",
+          "mainEntity": {
+            "@type": "ItemList",
+            "name": "Pet Management Features",
+            "itemListElement": [
+              {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Lost Pet Recovery System with LiveLink"
+              },
+              {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "Pet Emergency Care Instructions & Contacts"
+              },
+              {
+                "@type": "ListItem",
+                "position": 3,
+                "name": "Pet Travel Documentation & International Records"
+              },
+              {
+                "@type": "ListItem",
+                "position": 4,
+                "name": "Pet Health Records & Vaccination Tracking"
+              },
+              {
+                "@type": "ListItem",
+                "position": 5,
+                "name": "Pet Screening Resume for Housing Applications"
+              },
+              {
+                "@type": "ListItem",
+                "position": 6,
+                "name": "Pet Foster Care & Boarding Management"
+              }
+            ]
+          },
+          "breadcrumb": {
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+              {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Home",
+                "item": "https://petport.app/"
+              },
+              {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "Learn",
+                "item": "https://petport.app/learn"
+              }
+            ]
+          }
+        })}
+      </script>
 
       {/* Header Navigation */}
       <header className="max-w-7xl mx-auto px-4 py-6 flex items-center justify-between border-b border-gray-200">

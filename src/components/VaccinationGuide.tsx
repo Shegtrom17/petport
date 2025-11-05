@@ -413,7 +413,7 @@ export const VaccinationGuide = ({ isOpen, onClose, isPageMode = false }: Vaccin
                     key={key}
                     variant={selectedSpecies === key ? "default" : "outline"}
                     onClick={() => setSelectedSpecies(key)}
-                    className="flex items-center gap-2"
+                    className={selectedSpecies === key ? "flex items-center gap-2 text-white" : "flex items-center gap-2"}
                   >
                     <IconComponent className="w-4 h-4" />
                     {species.name}

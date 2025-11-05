@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { MetaTags } from "@/components/MetaTags";
-import { Sparkles, Download, Share2, Wand2, Eye, X, Heart, FileText, AlertTriangle, Camera, Menu } from "lucide-react";
+import { Sparkles, Download, Share2, Wand2, Eye, X, Heart, FileText, AlertTriangle, Camera, Menu, Facebook } from "lucide-react";
 import { toast } from "sonner";
 import {
   Dialog,
@@ -602,6 +602,34 @@ export default function DogGoneGood() {
     }
   };
 
+  const handleXShare = () => {
+    const shareUrl = 'https://petport.app/dog-gone-good';
+    const shareText = `Just created a hilarious résumé for my pet! 😂🐾 Try the free Dog-Gone-Good Résumé Generator at PetPort!`;
+    
+    const xUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`;
+    window.open(xUrl, '_blank', 'width=600,height=400');
+    
+    if (typeof window !== 'undefined' && 'gtag' in window) {
+      (window as any).gtag('event', 'social_share', {
+        event_category: 'engagement',
+        event_label: 'twitter_dog_gone_good'
+      });
+    }
+  };
+
+  const handleFacebookShare = () => {
+    const shareUrl = 'https://petport.app/dog-gone-good';
+    const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`;
+    window.open(facebookUrl, '_blank', 'width=600,height=400');
+    
+    if (typeof window !== 'undefined' && 'gtag' in window) {
+      (window as any).gtag('event', 'social_share', {
+        event_category: 'engagement',
+        event_label: 'facebook_dog_gone_good'
+      });
+    }
+  };
+
   const handleSpeciesChange = (newSpecies: Species) => {
     setSpecies(newSpecies);
     const options = newSpecies === 'horse' ? horseOptions : dogCatOptions;
@@ -962,16 +990,33 @@ export default function DogGoneGood() {
                 <Download className="mr-2 h-5 w-5" />
                 Download as Image
               </Button>
-              <Button 
-                onClick={shareNative}
-                size="lg"
-                variant="outline"
-                disabled={!isCanvasReady || photosLoading}
-                className="w-full border-brand-primary text-brand-primary hover:bg-brand-primary hover:text-white disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                <Share2 className="mr-2 h-5 w-5" />
-                Share on Social
-              </Button>
+              
+              {/* Social Share Buttons */}
+              <div className="flex gap-2 w-full">
+                <Button
+                  onClick={handleXShare}
+                  variant="outline"
+                  size="lg"
+                  disabled={!isCanvasReady || photosLoading}
+                  className="flex-1 border-brand-primary text-brand-primary hover:bg-brand-primary hover:text-white disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                  </svg>
+                  Share on X
+                </Button>
+                
+                <Button
+                  onClick={handleFacebookShare}
+                  variant="outline"
+                  size="lg"
+                  disabled={!isCanvasReady || photosLoading}
+                  className="flex-1 border-brand-primary text-brand-primary hover:bg-brand-primary hover:text-white disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <Facebook className="w-5 h-5 mr-2" />
+                  Share on Facebook
+                </Button>
+              </div>
             </div>
 
             {/* Conversion CTA */}

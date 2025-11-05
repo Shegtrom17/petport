@@ -28,6 +28,28 @@ export default function LostPetFeatures() {
         image="https://pub-a7c2c18b8d6143b9a256105ef44f2da0.r2.dev/og-lostpet.png"
       />
       
+      {/* Breadcrumb Schema */}
+      <script type="application/ld+json">
+        {JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            {
+              "@type": "ListItem",
+              "position": 1,
+              "name": "Home",
+              "item": "https://petport.app/"
+            },
+            {
+              "@type": "ListItem",
+              "position": 2,
+              "name": "Lost Pet Features",
+              "item": "https://petport.app/lost-pet-features"
+            }
+          ]
+        })}
+      </script>
+      
       {/* Schema.org FAQPage Markup for Lost Pet Features */}
       <script type="application/ld+json">
         {JSON.stringify({

@@ -25,6 +25,56 @@ export default function LostPetFeatures() {
         url="https://petport.app/lost-pet-features"
       />
       
+      {/* Schema.org FAQPage Markup for Lost Pet Features */}
+      <script type="application/ld+json">
+        {JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "FAQPage",
+          "mainEntity": [
+            {
+              "@type": "Question",
+              "name": "How does the PetPort LiveLink Alert System help find a lost pet faster?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "The LiveLink system uses a unique QR code tied to a digital profile. When the code is scanned, the finder immediately accesses a secure Lost Pet Flyer and a Sighting Board to report the exact location and time, giving the owner real-time alerts."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "What happens when a finder scans my pet's LiveLink QR code?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "The finder is directed to a secure, mobile-friendly page containing a full Lost Pet Flyer and instructions on contacting the owner's emergency contacts. They can also instantly post a sighting to the pet's dedicated Sighting Board without logging in."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Is the PetPort Lost Pet Flyer Generator free to use?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Yes, our customizable, high-quality, print-ready Lost Pet Flyer generator is completely free, no sign-up or payment required. The LiveLink Alert System requires a PetPort subscription to activate."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Can I update my lost pet information after creating the flyer?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "With PetPort's LiveLink system, yes! Unlike static PDFs, your pet's LiveLink page updates in real-time. If you mark your pet as found or need to change contact info, it updates everywhere instantly without needing to reprint flyers."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "How do I receive notifications when someone reports a sighting?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "PetPort sends instant notifications via email and SMS when someone posts to your pet's Sighting Board. Each report includes the exact location, time, and optional photos from the community member who spotted your pet."
+              }
+            }
+          ]
+        })}
+      </script>
+      
       <div className="min-h-screen bg-gradient-to-b from-background to-muted/20">
         {/* Header */}
         <header className="container mx-auto px-4 py-6 flex items-center justify-between">

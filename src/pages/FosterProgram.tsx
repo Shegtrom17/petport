@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Heart, Link2, MapPin, Sparkles, Menu } from "lucide-react";
 import { GuidanceHint } from "@/components/ui/guidance-hint";
 import { PublicNavigationMenu } from "@/components/PublicNavigationMenu";
+import { PodcastBanner } from "@/components/PodcastBanner";
 
 const FosterProgram = () => {
   const navigate = useNavigate();
@@ -46,8 +47,11 @@ const FosterProgram = () => {
         </div>
       </header>
 
+      {/* Podcast Banner */}
+      <PodcastBanner />
+
       {/* Mobile Navigation Menu */}
-      <PublicNavigationMenu 
+      <PublicNavigationMenu
         isOpen={showMobileMenu} 
         onClose={() => setShowMobileMenu(false)} 
       />

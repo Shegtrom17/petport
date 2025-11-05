@@ -21,6 +21,7 @@ import {
 } from "@/components/ui/select";
 import { themes, ThemeId } from "@/config/themes";
 import { PublicNavigationMenu } from "@/components/PublicNavigationMenu";
+import { PodcastBanner } from "@/components/PodcastBanner";
 
 type Species = 'dog' | 'cat' | 'horse';
 
@@ -672,8 +673,11 @@ export default function DogGoneGood() {
         </div>
       </header>
 
+      {/* Podcast Banner */}
+      <PodcastBanner />
+
       {/* Mobile Navigation Menu */}
-      <PublicNavigationMenu 
+      <PublicNavigationMenu
         isOpen={showMobileMenu} 
         onClose={() => setShowMobileMenu(false)} 
       />

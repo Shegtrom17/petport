@@ -21,7 +21,7 @@ export const PublicNavigationMenu = ({ isOpen, onClose }: PublicNavigationMenuPr
   const pages = [
     { id: "home", label: "Home", icon: Home, path: "/" },
     { id: "features", label: "Learn", icon: Sparkles, path: "/learn" },
-    { id: "lost-pet", label: "Lost Pet Solutions", icon: Search, path: "/lost-pet-features" },
+    { id: "lost-pet", label: "Lost Pet Features", icon: Search, path: "/lost-pet-features" },
     { id: "foster", label: "Foster Program", icon: Users, path: "/foster-program" },
     { id: "podcast", label: "Podcast", icon: Headphones, path: "/podcast" },
     { id: "demos", label: "Live Demos", icon: MonitorPlay, path: "/demos" },

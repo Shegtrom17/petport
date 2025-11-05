@@ -45,9 +45,152 @@ Every feature seems geared towards making sure animals get the kind of identity 
 It's trying to turn fragmented static info into living secure communication, building an actual infrastructure for care that lasts the pet's whole life, no matter who's looking after them at any given time. Which leads to a really interesting final thought. Given this level of security, this seamless continuity, the realtime updates all enabled by a transferable digital identity like Pet Port that's designed to be universally accessible.
 How might a model like this eventually start to reshape, you know, standard legal or regulatory requirements where things like pet ownership, proof travel documents, maybe even welfare checks globally if the standard shifts from old paper files to a living accessible, verified digital history. What new possibilities, what new expectations does that create for responsible pet care documentation worldwide?
 Definitely something to mull over. A very compelling thought. Indeed, if you're looking for that secure continuous care story for your pet, remember their motto. Pet port, every pet, every story, one voice for life.`,
-  displayTranscript: `<p>Ever wish your pet could speak up when you're not there? <strong>PetPort's LiveLinks</strong> make that almost possible. In this episode, Alex and Jamie explore how LiveLinks act as the digital heartbeat of every pet's life—connecting owners, sitters, trainers, vets, and even rescuers through one always-current link. From the <strong>Care & Handling Board</strong> that updates feeding and medical notes in real time to the <strong>Lost Pet Sighting Board</strong> that mobilizes a community with instant flyers and one-tap calling, PetPort turns scattered details into seamless communication.</p>
+  displayTranscript: `
+    <h1>LiveLinks in Action — The Heartbeat of PetPort</h1>
 
-<p>You'll hear how <strong>Photo Storyboards</strong>, <strong>Pet Résumés</strong>, and <strong>transferable accounts</strong> preserve a pet's legacy, helping new adopters or foster parents continue care without missing a beat. Affordable at just <strong>$14.99 a year</strong> (or $1.99 a month for multiple pets), PetPort gives every dog, cat, and horse a lasting digital voice for life — organized, shareable, and built for trust.</p>`,
+    <p>Ever wish your pet could speak up when you're not there? <strong>PetPort's LiveLinks</strong> make that almost possible. In this episode, Alex and Jamie explore how LiveLinks act as the <strong>digital heartbeat</strong> of every pet's life—connecting owners, sitters, trainers, vets, and even rescuers through one always-current link.</p>
+
+    <h2>The LiveLink System: Real-Time Digital Identity</h2>
+
+    <div class="space-y-6">
+      <div class="border-l-4 border-brand-primary pl-6">
+        <div class="flex items-baseline gap-3 mb-2">
+          <span class="text-sm font-mono text-muted-foreground">0:00</span>
+          <h3 class="text-xl font-bold text-foreground">The Problem: Paperwork Chaos & Missing Records</h3>
+        </div>
+        <p class="text-sm text-muted-foreground mb-2">Host: ALEX</p>
+        <p class="text-foreground leading-relaxed">The vital <strong>vaccination card</strong> vanishing before the vet visit, frantic texts with the sitter about medication, and sheer panic in emergencies needing history from three owners ago. <strong>PetPort</strong> is positioning itself as a revolutionary, complete, and crucially <strong>transferable digital identity platform</strong> built for individual owners, boarding facilities, and <strong>rescue centers</strong>.</p>
+      </div>
+
+      <div class="border-l-4 border-brand-primary pl-6">
+        <div class="flex items-baseline gap-3 mb-2">
+          <span class="text-sm font-mono text-muted-foreground">1:15</span>
+          <h3 class="text-xl font-bold text-foreground">What Makes LiveLinks Different</h3>
+        </div>
+        <p class="text-sm text-muted-foreground mb-2">Host: JAMIE</p>
+        <p class="text-foreground leading-relaxed">The <strong>live link system</strong> is the engine behind it all—a living thread or digital heartbeat for the animal. It pulls together daily routines, vet records, behavior notes, and photos into one secure, shareable space. Unlike static PDFs, a LiveLink connects to a <strong>dynamic dashboard</strong>. If you update the feeding schedule from Scotland, that change shows up instantly for the sitter back home. There's only one version—the live one.</p>
+      </div>
+
+      <div class="border-l-4 border-brand-primary pl-6">
+        <div class="flex items-baseline gap-3 mb-2">
+          <span class="text-sm font-mono text-muted-foreground">2:20</span>
+          <h3 class="text-xl font-bold text-foreground">Security & Privacy Features</h3>
+        </div>
+        <p class="text-sm text-muted-foreground mb-2">Host: ALEX</p>
+        <p class="text-foreground leading-relaxed"><strong>One-tap calling</strong> and an <strong>email relay system</strong> make PetPort a secure go-between. You can connect a vet or emergency contact with the main caretaker through PetPort without ever revealing the owner's private email. The system routes the message securely instead of fumbling for numbers in a crisis.</p>
+      </div>
+    </div>
+
+    <h2>Care & Handling LiveLink: The Command Center</h2>
+
+    <div class="space-y-6">
+      <div class="border-l-4 border-brand-primary pl-6">
+        <div class="flex items-baseline gap-3 mb-2">
+          <span class="text-sm font-mono text-muted-foreground">3:30</span>
+          <h3 class="text-xl font-bold text-foreground">Dynamic Logbook for Pet Sitters & Trainers</h3>
+        </div>
+        <p class="text-sm text-muted-foreground mb-2">Host: JAMIE</p>
+        <p class="text-foreground leading-relaxed">The <strong>Care & Handling LiveLink</strong> is the command center for sitters, trainers, and foster parents. Owners log detailed routines: feeding amounts, medication schedules, exercise needs, allergy alerts, and behavioral notes. The key feature is the <strong>Care Update Board</strong>—a proper dynamic logbook where caretakers leave timestamped entries like "Gave medication A at 8:05 AM." It's an <strong>audit trail built on transparency</strong>.</p>
+      </div>
+
+      <div class="border-l-4 border-brand-primary pl-6">
+        <div class="flex items-baseline gap-3 mb-2">
+          <span class="text-sm font-mono text-muted-foreground">4:15</span>
+          <h3 class="text-xl font-bold text-foreground">Real-Time Updates Prevent Emergencies</h3>
+        </div>
+        <p class="text-sm text-muted-foreground mb-2">Host: ALEX</p>
+        <p class="text-foreground leading-relaxed">Instant secure confirmation turns stressful handovers into something reliable. The owner who saw the dog's <strong>allergy notes</strong> updated instantly by the sitter from miles away prevented a problem right there. That kind of coordination is what makes <strong>PetPort's Care & Handling feature</strong> different from messy scribbled notes.</p>
+      </div>
+    </div>
+
+    <h2>Lost Pet LiveLink: Crisis Mode Activation</h2>
+
+    <div class="space-y-6">
+      <div class="border-l-4 border-brand-primary pl-6">
+        <div class="flex items-baseline gap-3 mb-2">
+          <span class="text-sm font-mono text-muted-foreground">5:00</span>
+          <h3 class="text-xl font-bold text-foreground">One-Tap Lost Pet Flyer Generator</h3>
+        </div>
+        <p class="text-sm text-muted-foreground mb-2">Host: JAMIE</p>
+        <p class="text-foreground leading-relaxed">One tap in the app flips the pet's profile into <strong>Lost Pet Mode</strong>. The LiveLink generates a special <strong>Sighting Board</strong>. If someone finds the pet's tag or scans the QR code, they can instantly report the time, location, and upload a photo right to that board. Centralized reporting creates a networked recovery team.</p>
+      </div>
+
+      <div class="border-l-4 border-brand-primary pl-6">
+        <div class="flex items-baseline gap-3 mb-2">
+          <span class="text-sm font-mono text-muted-foreground">5:45</span>
+          <h3 class="text-xl font-bold text-foreground">Auto-Generated Flyers with Live QR Codes</h3>
+        </div>
+        <p class="text-sm text-muted-foreground mb-2">Host: ALEX</p>
+        <p class="text-foreground leading-relaxed">The system auto-generates <strong>Lost Pet Flyers</strong> that aren't generic templates—they pull the pet's actual photo, description, reward info, and a new QR code linking straight to the <strong>Lost Pet LiveLink and Sighting Board</strong>. Anyone who finds the flyer can immediately see the latest sightings and report a new one. Community help gets channeled and centralized much quicker than fragmented social media updates.</p>
+      </div>
+    </div>
+
+    <h2>Photo Storyboard & Pet Profile LiveLinks</h2>
+
+    <div class="space-y-6">
+      <div class="border-l-4 border-brand-primary pl-6">
+        <div class="flex items-baseline gap-3 mb-2">
+          <span class="text-sm font-mono text-muted-foreground">6:40</span>
+          <h3 class="text-xl font-bold text-foreground">Living Narrative for Rescue & Foster</h3>
+        </div>
+        <p class="text-sm text-muted-foreground mb-2">Host: JAMIE</p>
+        <p class="text-foreground leading-relaxed">The <strong>Photo Storyboard LiveLink</strong> is more than a <strong>pet photo album</strong>. It's framed as the pet's living narrative. Owners capture key moments with captions or journal entries. In <strong>rescue or foster situations</strong>, the new owner doesn't just get the medical sheet—they inherit the whole storyboard history. They get to see the pet's personality and journey, which helps bonding and prevents returns due to unexpected quirks.</p>
+      </div>
+
+      <div class="border-l-4 border-brand-primary pl-6">
+        <div class="flex items-baseline gap-3 mb-2">
+          <span class="text-sm font-mono text-muted-foreground">7:25</span>
+          <h3 class="text-xl font-bold text-foreground">Full Pet Profile: Digital Resume</h3>
+        </div>
+        <p class="text-sm text-muted-foreground mb-2">Host: ALEX</p>
+        <p class="text-foreground leading-relaxed">The <strong>Full Pet Profile LiveLink</strong> is a <strong>digital resume for pets</strong>. Use it for rental applications, boarding suitability, or <strong>international travel rules</strong>. It pulls together all verified data: <strong>vaccination records</strong>, medical history summaries, training certificates, behavioral notes (good and challenging), storyboard entries, and references from vets or trainers. It's proof of responsible ownership—verifiable, transferable, in seconds.</p>
+      </div>
+    </div>
+
+    <h2>Transferable Accounts: The Legacy Feature</h2>
+
+    <div class="space-y-6">
+      <div class="border-l-4 border-brand-primary pl-6">
+        <div class="flex items-baseline gap-3 mb-2">
+          <span class="text-sm font-mono text-muted-foreground">8:20</span>
+          <h3 class="text-xl font-bold text-foreground">History Belongs to the Pet, Not the Owner</h3>
+        </div>
+        <p class="text-sm text-muted-foreground mb-2">Host: JAMIE</p>
+        <p class="text-foreground leading-relaxed">The most transformative feature is <strong>transferable accounts</strong>. The history belongs to the pet. When ownership changes—adoption, sale, even inheritance—the entire LiveLink ecosystem (all records, the resume, the storyboard) can be securely reassigned to a new PetPort subscriber. Complete continuity. This is <strong>legacy planning for pets</strong>.</p>
+      </div>
+
+      <div class="border-l-4 border-brand-primary pl-6">
+        <div class="flex items-baseline gap-3 mb-2">
+          <span class="text-sm font-mono text-muted-foreground">9:00</span>
+          <h3 class="text-xl font-bold text-foreground">Institutional Memory for Animal Welfare</h3>
+        </div>
+        <p class="text-sm text-muted-foreground mb-2">Host: ALEX</p>
+        <p class="text-foreground leading-relaxed">This eliminates the huge problem in the <strong>rescue world</strong> where vital medical history disappears every time an animal changes hands. No more starting from scratch. It gives the animal <strong>institutional memory</strong>, even if the humans around it change. The entire documented life story transfers seamlessly.</p>
+      </div>
+    </div>
+
+    <h2>Accessibility & Pricing</h2>
+
+    <div class="space-y-6">
+      <div class="border-l-4 border-brand-primary pl-6">
+        <div class="flex items-baseline gap-3 mb-2">
+          <span class="text-sm font-mono text-muted-foreground">9:50</span>
+          <h3 class="text-xl font-bold text-foreground">Universal Standard for Digital Pet Identity</h3>
+        </div>
+        <p class="text-sm text-muted-foreground mb-2">Host: JAMIE</p>
+        <p class="text-foreground leading-relaxed">PetPort is listed at just <strong>$14.99 a year</strong>, or <strong>$1.99 a month</strong>. The low price covers <strong>multiple pets</strong> under one plan. Their model depends on achieving huge scale, not high per-user profits. The goal is genuine: investing in creating a universal standard for <strong>digital pet identity</strong>. They deliberately priced it low for regular families and critically for smaller rescues and foster groups.</p>
+      </div>
+
+      <div class="border-l-4 border-brand-primary pl-6">
+        <div class="flex items-baseline gap-3 mb-2">
+          <span class="text-sm font-mono text-muted-foreground">10:30</span>
+          <h3 class="text-xl font-bold text-foreground">Final CTA: Every Pet, Every Story, One Voice for Life</h3>
+        </div>
+        <p class="text-sm text-muted-foreground mb-2">Host: ALEX</p>
+        <p class="text-foreground leading-relaxed">PetPort offers a <strong>free 7-day trial</strong> so people can try it out—move from scattered chaos to connected care. Every feature is geared towards making sure animals get the kind of <strong>identity verification and continuity</strong> humans take for granted. Visit <strong>PetPort.app</strong> and give your pet a voice for life.</p>
+      </div>
+    </div>
+  `,
   relatedPages: ['/profile', '/lost-pet-features', '/demos'],
   keywords: [
     "PetPort LiveLinks",

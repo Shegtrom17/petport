@@ -22,10 +22,10 @@ export const PublicNavigationMenu = ({ isOpen, onClose }: PublicNavigationMenuPr
     { id: "home", label: "Home", icon: Home, path: "/" },
     { id: "features", label: "Features", icon: Sparkles, path: "/learn" },
     { id: "lost-pet", label: "Lost Pet Solutions", icon: Search, path: "/lost-pet-features" },
-    { id: "vaccination", label: "Vaccination Guide", icon: Syringe, path: "/vaccination-guide" },
     { id: "foster", label: "Foster Program", icon: Users, path: "/foster-program" },
     { id: "podcast", label: "Podcast", icon: Headphones, path: "/podcast" },
     { id: "demos", label: "Live Demos", icon: MonitorPlay, path: "/demos" },
+    { id: "vaccination", label: "Vaccination Guide", icon: Syringe, path: "/vaccination-guide" },
     { id: "resume", label: "Dog Gone Good", icon: Award, path: "/dog-gone-good" },
   ];
 

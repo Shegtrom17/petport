@@ -251,7 +251,7 @@ export default function DogGoneGood() {
     ctx.font = "bold 68px 'Fredoka', Inter, sans-serif";
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
-    ctx.fillText(`RÉSUMÉ OF ${displayName.toUpperCase()}`, 600, 180);
+    ctx.fillText(`RÉSUMÉ FOR ${displayName.toUpperCase()}`, 600, 180);
 
     // Pet Photos Section - TWO SQUARE PHOTOS SIDE BY SIDE
     let yOffset = 320;

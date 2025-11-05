@@ -15,8 +15,8 @@ const FosterProgram = () => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-muted/20">
       <MetaTags
-        title="Foster to Adopter Program | PetPort LiveLinks"
-        description="PetPort's Foster-to-Adopter system makes it effortless to transfer a pet's full history, care plan, and story — complete with LiveLinks for updates and a built-in Lost Pet Finder."
+        title="Pet Foster & Adoption Transfer | Pet Records Management | PetPort"
+        description="Seamless pet foster and adoption transfer system. Effortlessly share pet medical records, behavioral profiles, and care plans using LiveLinks. Built-in Lost Pet Finder for safety."
         image="https://pub-a7c2c18b8d6143b9a256105ef44f2da0.r2.dev/OG%20General.png"
         url={window.location.origin + "/foster-program"}
       />
@@ -150,7 +150,7 @@ const FosterProgram = () => {
           {/* Left: Copy + CTAs */}
           <div className="space-y-6">
             <h1 className="text-4xl lg:text-6xl font-bold tracking-tight">
-              Pass the Leash — Not the Paperwork
+              Pet Foster & Adoption Transfer: Manage Pet Records Digitally
             </h1>
             <p className="text-lg lg:text-xl text-muted-foreground">
               The easiest way for fosters to hand off a pet's full story, care plan, and personality profile to adopters — complete with real-time LiveLinks, a one-tap Lost Pet system, and a lifetime connection that never fades.

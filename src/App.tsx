@@ -27,6 +27,7 @@ import PublicCareInstructions from "./pages/PublicCareInstructions";
 import PublicMissingPet from "./pages/PublicMissingPet";
 import PublicTravelMap from "./pages/PublicTravelMap";
 import PublicStoryStream from "./pages/PublicStoryStream";
+import PublicGuardian from "./pages/PublicGuardian";
 import NotFound from "./pages/NotFound";
 
 import TransferAccept from "./pages/TransferAccept";
@@ -146,10 +147,11 @@ const App = () => {
                       <Route path="/resume/:petId" element={<PublicResume />} />
                      <Route path="/reviews/:petId" element={<PublicReviews />} />
                     <Route path="/missing-pet/:petId" element={<PublicMissingPet />} />
-                    <Route path="/gallery/:petId" element={<PublicGallery />} />
-                    <Route path="/travel/:petId" element={<PublicTravelMap />} />
-                    <Route path="/story-stream/:petId" element={<PublicStoryStream />} />
-                  <Route path="/transfer/accept/:token" element={<TransferAccept />} />
+                     <Route path="/gallery/:petId" element={<PublicGallery />} />
+                     <Route path="/travel/:petId" element={<PublicTravelMap />} />
+                     <Route path="/story-stream/:petId" element={<PublicStoryStream />} />
+                     <Route path="/guardian/:petId/:accessToken" element={<PublicGuardian />} />
+                   <Route path="/transfer/accept/:token" element={<TransferAccept />} />
                   <Route path="/privacy" element={<Navigate to="/privacy-policy" replace />} />
             <Route path="/terms" element={<Terms />} />
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />

@@ -1,7 +1,8 @@
+import { useState, useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { PWALayout } from "@/components/PWALayout";
 import { AppHeader } from "@/components/AppHeader";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { PWAInstallCard } from "@/components/PWAInstallCard";
 import { useNavigate } from "react-router-dom";
@@ -12,8 +13,11 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 
 import { useUserSettings } from "@/hooks/useUserSettings";
 import { useOnboardingTour } from "@/hooks/useOnboardingTour";
-import { User, LogOut, Mail, RotateCw } from "lucide-react";
+import { User, LogOut, Mail, RotateCw, Shield } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { GuardianManagementModal } from "@/components/GuardianManagementModal";
+import { supabase } from "@/integrations/supabase/client";
+import { Badge } from "@/components/ui/badge";
 
 export default function Profile() {
   const { user, signOut } = useAuth();
@@ -22,13 +26,52 @@ export default function Profile() {
   const { restartTour: restartLostPetTour } = useOnboardingTour({ hasPets: true, tourType: 'lostPet' });
   const navigate = useNavigate();
   const { toast } = useToast();
-  // removed one-time payment state
+  const [guardianModalOpen, setGuardianModalOpen] = useState(false);
+  const [selectedPet, setSelectedPet] = useState<{ id: string; name: string } | null>(null);
+  const [userPets, setUserPets] = useState<any[]>([]);
+  const [guardianCounts, setGuardianCounts] = useState<Record<string, number>>({});
+
+  useEffect(() => {
+    if (user?.id) {
+      fetchUserPets();
+    }
+  }, [user?.id]);
+
+  const fetchUserPets = async () => {
+    if (!user?.id) return;
+
+    const { data: pets } = await supabase
+      .from("pets")
+      .select("id, name")
+      .eq("user_id", user.id);
+
+    if (pets) {
+      setUserPets(pets);
+      
+      // Fetch guardian counts for each pet
+      const counts: Record<string, number> = {};
+      for (const pet of pets) {
+        const { count } = await supabase
+          .from("pet_guardians")
+          .select("*", { count: "exact", head: true })
+          .eq("pet_id", pet.id);
+        counts[pet.id] = count || 0;
+      }
+      setGuardianCounts(counts);
+    }
+  };
+
   const handleLogout = async () => {
     try {
       await signOut();
     } catch (error) {
       console.error("Error logging out:", error);
     }
+  };
+
+  const openGuardianModal = (petId: string, petName: string) => {
+    setSelectedPet({ id: petId, name: petName });
+    setGuardianModalOpen(true);
   };
 
 // removed one-time payment handler
@@ -103,6 +146,50 @@ export default function Profile() {
           </CardContent>
         </Card>
 
+        {/* Pet Guardian & Legacy Planning */}
+        {user && userPets.length > 0 && (
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Shield className="h-5 w-5 text-primary" />
+                Pet Guardian & Legacy Planning
+              </CardTitle>
+              <CardDescription>
+                Designate a trusted person to care for your pets in case of emergency
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              {userPets.map((pet) => (
+                <div
+                  key={pet.id}
+                  className="flex items-center justify-between p-3 border rounded-lg"
+                >
+                  <div className="flex items-center gap-3">
+                    <Shield className="h-5 w-5 text-muted-foreground" />
+                    <div>
+                      <p className="font-medium">{pet.name}</p>
+                      {guardianCounts[pet.id] > 0 ? (
+                        <Badge variant="secondary" className="mt-1">
+                          Guardian Assigned
+                        </Badge>
+                      ) : (
+                        <p className="text-sm text-muted-foreground">No guardian set</p>
+                      )}
+                    </div>
+                  </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => openGuardianModal(pet.id, pet.name)}
+                  >
+                    {guardianCounts[pet.id] > 0 ? "Manage" : "Set Up"}
+                  </Button>
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+        )}
+
         <Card>
           <CardHeader>
             <CardTitle>Settings</CardTitle>
@@ -163,6 +250,18 @@ export default function Profile() {
           </CardContent>
         </Card>
       </div>
+
+      {selectedPet && (
+        <GuardianManagementModal
+          isOpen={guardianModalOpen}
+          onClose={() => {
+            setGuardianModalOpen(false);
+            fetchUserPets(); // Refresh counts
+          }}
+          petId={selectedPet.id}
+          petName={selectedPet.name}
+        />
+      )}
     </PWALayout>
   );
 }

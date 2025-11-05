@@ -960,6 +960,59 @@ export type Database = {
           },
         ]
       }
+      pet_guardians: {
+        Row: {
+          access_token: string
+          authorization_level: string
+          created_at: string
+          financial_limit: number | null
+          guardian_email: string
+          guardian_name: string
+          guardian_phone: string | null
+          id: string
+          last_accessed_at: string | null
+          pet_id: string
+          special_instructions: string | null
+          updated_at: string
+        }
+        Insert: {
+          access_token?: string
+          authorization_level?: string
+          created_at?: string
+          financial_limit?: number | null
+          guardian_email: string
+          guardian_name: string
+          guardian_phone?: string | null
+          id?: string
+          last_accessed_at?: string | null
+          pet_id: string
+          special_instructions?: string | null
+          updated_at?: string
+        }
+        Update: {
+          access_token?: string
+          authorization_level?: string
+          created_at?: string
+          financial_limit?: number | null
+          guardian_email?: string
+          guardian_name?: string
+          guardian_phone?: string | null
+          id?: string
+          last_accessed_at?: string | null
+          pet_id?: string
+          special_instructions?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pet_guardians_pet_id_fkey"
+            columns: ["pet_id"]
+            isOneToOne: true
+            referencedRelation: "pets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       pet_photos: {
         Row: {
           created_at: string

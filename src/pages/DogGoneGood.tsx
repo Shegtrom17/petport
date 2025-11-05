@@ -1019,7 +1019,7 @@ export default function DogGoneGood() {
             <Card 
               className="border-2 border-red-500 bg-gradient-to-br from-red-50 to-rose-50 hover:shadow-xl transition-shadow cursor-pointer group"
               onClick={() => {
-                navigate('/demos/missing-pet');
+                navigate('/demo/missing-pet');
                 if (typeof window !== 'undefined' && 'gtag' in window) {
                   (window as any).gtag('event', 'feature_card_click', {
                     event_category: 'conversion',
@@ -1048,7 +1048,7 @@ export default function DogGoneGood() {
                   className="w-full bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white"
                   onClick={(e) => {
                     e.stopPropagation();
-                    navigate('/demos/missing-pet');
+                    navigate('/demo/missing-pet');
                   }}
                 >
                   Try It Free →
@@ -1096,7 +1096,7 @@ export default function DogGoneGood() {
             <Card 
               className="border-brand-primary/20 hover:border-brand-primary hover:shadow-xl transition-all cursor-pointer group"
               onClick={() => {
-                navigate('/demos/gallery');
+                navigate('/demo/gallery');
                 if (typeof window !== 'undefined' && 'gtag' in window) {
                   (window as any).gtag('event', 'feature_card_click', {
                     event_category: 'conversion',
@@ -1251,7 +1251,7 @@ export default function DogGoneGood() {
               size="sm"
               className="bg-white text-amber-600 hover:bg-amber-50 w-full"
               onClick={() => {
-                navigate('/demos/missing-pet');
+                navigate('/demo/missing-pet');
                 setDismissedSticky(true);
                 if (typeof window !== 'undefined' && 'gtag' in window) {
                   (window as any).gtag('event', 'sticky_banner_click', {

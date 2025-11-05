@@ -9,7 +9,7 @@ export const PodcastBanner = () => {
         <div className="flex items-center justify-center gap-3 flex-wrap">
           <Headphones className="h-5 w-5 text-[#5691af]" />
           <span className="text-[#5691af] font-semibold">
-            🎧 New: Dog Gone Good Podcast — Learn how to give your companion a voice for life
+            NEW: PetPort Podcast: Build a complete digital voice for your companion
           </span>
           <Link to="/podcast">
             <Button 

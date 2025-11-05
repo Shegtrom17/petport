@@ -688,6 +688,21 @@ export default function DogGoneGood() {
         url={`${window.location.origin}/dog-gone-good`}
       />
 
+      {/* Keywords Meta Tag for SEO */}
+      <script dangerouslySetInnerHTML={{
+        __html: `
+          (function() {
+            var meta = document.querySelector('meta[name="keywords"]');
+            if (!meta) {
+              meta = document.createElement('meta');
+              meta.name = 'keywords';
+              document.head.appendChild(meta);
+            }
+            meta.content = 'pet resume maker, free pet resume, dog housing application, cat resume, pet screening tool, horse resume, pet rental application, landlord pet resume, pet reference letter, pet housing approval, apartment pet resume, pet screening service, rental pet application, dog resume builder, cat resume generator, pet application form, housing pet documentation, pet friendly housing, pet resume template, pet screening report, professional pet resume';
+          })();
+        `
+      }} />
+
       {/* Schema.org WebApplication Markup */}
       <script type="application/ld+json">
         {JSON.stringify({

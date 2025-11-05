@@ -7,6 +7,8 @@ import { FreeLostPetFlyerGenerator } from "@/components/FreeLostPetFlyerGenerato
 import { MetaTags } from "@/components/MetaTags";
 import { PublicNavigationMenu } from "@/components/PublicNavigationMenu";
 import { PodcastBanner } from "@/components/PodcastBanner";
+import { PodcastEpisodeCard } from "@/components/PodcastEpisodeCard";
+import episode2 from "@/data/episodes/episode-2-beyond-lost-pet-flyer";
 import lostPetDemoPreview from "@/assets/lost-pet-demo-preview.png";
 
 export default function LostPetFeatures() {
@@ -333,6 +335,60 @@ export default function LostPetFeatures() {
                 <p className="text-sm text-muted-foreground mt-3">
                   No signup required • See it in action right now
                 </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Podcast Episode Section */}
+        <section className="container mx-auto px-4 py-16 bg-gradient-to-br from-primary/5 via-primary/3 to-transparent">
+          <div className="max-w-4xl mx-auto text-center">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">
+              Deep Dive: The Complete Lost Pet Recovery System
+            </h2>
+            <p className="text-lg text-muted-foreground mb-12 max-w-2xl mx-auto">
+              Want to understand the full ecosystem? Listen to our podcast episode covering everything from the free flyer generator to the LiveLink system, sighting boards, and community coordination.
+            </p>
+            
+            <div className="max-w-md mx-auto mb-8">
+              <PodcastEpisodeCard
+                slug={episode2.slug}
+                title={episode2.title}
+                description={episode2.description}
+                coverImage={episode2.coverImage}
+                duration={episode2.duration}
+                publishDate={episode2.publishDate}
+              />
+            </div>
+
+            <div className="bg-card border rounded-lg p-6 max-w-2xl mx-auto">
+              <h3 className="font-semibold text-lg mb-3">What You'll Learn:</h3>
+              <ul className="text-left space-y-2 text-muted-foreground">
+                <li className="flex items-start gap-2">
+                  <Check className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
+                  <span>How the free Lost Pet Flyer Generator works and when to use it</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <Check className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
+                  <span>The power of LiveLink QR codes for real-time pet recovery</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <Check className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
+                  <span>How the community Sightings Board coordinates search efforts</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <Check className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
+                  <span>Real-world examples of successful pet recoveries using PetPort</span>
+                </li>
+              </ul>
+              
+              <div className="mt-6">
+                <Button asChild variant="outline" size="lg">
+                  <Link to="/podcast">
+                    Browse All Episodes
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </Link>
+                </Button>
               </div>
             </div>
           </div>

@@ -23,6 +23,33 @@ const Podcast = () => {
         url={window.location.origin + "/podcast"}
       />
 
+      {/* PodcastSeries Schema.org for Google SEO */}
+      <script type="application/ld+json">
+        {JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "PodcastSeries",
+          "name": "Dog Gone Good Podcast by PetPort",
+          "description": "Expert pet care insights, foster tips, and digital pet record management in 10-minute episodes. Subscribe to the PetPort Podcast for actionable advice.",
+          "url": "https://petport.app/podcast",
+          "image": "https://pub-a7c2c18b8d6143b9a256105ef44f2da0.r2.dev/og/resume-og-1mb.png",
+          "publisher": {
+            "@type": "Organization",
+            "name": "PetPort",
+            "logo": {
+              "@type": "ImageObject",
+              "url": "https://petport.app/lovable-uploads/petport-logo-new.png"
+            }
+          },
+          "webFeed": "https://petport.app/podcast-feed.xml",
+          "episode": podcastEpisodes.map(ep => ({
+            "@type": "PodcastEpisode",
+            "url": `https://petport.app/podcast/${ep.slug}`,
+            "name": ep.title,
+            "datePublished": ep.publishDate
+          }))
+        })}
+      </script>
+
       <div className="min-h-screen bg-background">
         {/* Header */}
         <header className="sticky top-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border">

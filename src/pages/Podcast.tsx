@@ -18,7 +18,7 @@ const Podcast = () => {
     <>
       <MetaTags
         title="PetPort Podcast | Give Your Pet a Digital Voice for Life"
-        description="Learn how to create a complete digital voice for your pet or companion. Discover expert strategies for pet health records, lost pet recovery, pet housing applications, pet vaccination tracking, emergency contacts, pet foster programs, and pet lifetime care planning. From building pet resumes and pet digital passports to managing pet medical documents and creating photo galleries—get actionable insights that protect your pet and simplify your life. Join thousands of pet parents mastering modern pet portfolios with PetPort's comprehensive digital platform."
+        description="Learn how to create a complete digital voice for your furry companion. Discover expert strategies for pet health records, lost pet recovery, pet housing applications, document and vaccinations storage, pet foster to adopter programs, and care instructions. Petport has LiveLink Resume builder and Photo Galleries —learn how Petport platform can give your furry companion a digital voice for life! Join thousands of pet parents mastering modern portfolios with PetPort."
         image="https://pub-a7c2c18b8d6143b9a256105ef44f2da0.r2.dev/og/resume-og-1mb.png"
         url={window.location.origin + "/podcast"}
       />
@@ -29,7 +29,7 @@ const Podcast = () => {
           "@context": "https://schema.org",
           "@type": "PodcastSeries",
           "name": "Dog Gone Good Podcast by PetPort",
-          "description": "Learn how to create a complete digital voice for your pet or companion. Discover expert strategies for pet health records, lost pet recovery, pet housing applications, pet vaccination tracking, emergency contacts, pet foster programs, and pet lifetime care planning. From building pet resumes and pet digital passports to managing pet medical documents and creating photo galleries—get actionable insights that protect your pet and simplify your life. Join thousands of pet parents mastering modern pet portfolios with PetPort's comprehensive digital platform.",
+          "description": "Learn how to create a complete digital voice for your furry companion. Discover expert strategies for pet health records, lost pet recovery, pet housing applications, document and vaccinations storage, pet foster to adopter programs, and care instructions. Petport has LiveLink Resume builder and Photo Galleries —learn how Petport platform can give your furry companion a digital voice for life! Join thousands of pet parents mastering modern portfolios with PetPort.",
           "url": "https://petport.app/podcast",
           "image": "https://pub-a7c2c18b8d6143b9a256105ef44f2da0.r2.dev/og/resume-og-1mb.png",
           "publisher": {
@@ -126,7 +126,7 @@ const Podcast = () => {
             </h1>
             
             <p className="text-lg text-white/90 mb-8 max-w-2xl mx-auto">
-              Learn how to create a complete digital voice for your pet or companion. Discover expert strategies for pet health records, lost pet recovery, pet housing applications, pet vaccination tracking, emergency contacts, pet foster programs, and pet lifetime care planning. From building pet resumes and pet digital passports to managing pet medical documents and creating photo galleries—get actionable insights that protect your pet and simplify your life. Join thousands of pet parents mastering modern pet portfolios with PetPort's comprehensive digital platform.
+              Learn how to create a complete digital voice for your furry companion. Discover expert strategies for pet health records, lost pet recovery, pet housing applications, document and vaccinations storage, pet foster to adopter programs, and care instructions. Petport has LiveLink Resume builder and Photo Galleries —learn how Petport platform can give your furry companion a digital voice for life! Join thousands of pet parents mastering modern portfolios with PetPort.
             </p>
 
             <Button

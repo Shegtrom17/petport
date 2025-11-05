@@ -187,10 +187,11 @@ export default function DogGoneGood() {
     toast.success("🎲 Feeling fetchy!");
   };
 
-  const wrapText = (ctx: CanvasRenderingContext2D, text: string, x: number, y: number, maxWidth: number, lineHeight: number) => {
+  const wrapText = (ctx: CanvasRenderingContext2D, text: string, x: number, y: number, maxWidth: number, lineHeight: number, maxLines?: number) => {
     const words = text.split(' ');
     let line = '';
     let currentY = y;
+    let lineCount = 0;
 
     for (let n = 0; n < words.length; n++) {
       const testLine = line + words[n] + ' ';
@@ -198,13 +199,19 @@ export default function DogGoneGood() {
       const testWidth = metrics.width;
       if (testWidth > maxWidth && n > 0) {
         ctx.fillText(line, x, currentY);
+        lineCount++;
+        if (maxLines && lineCount >= maxLines) {
+          return; // Stop if we've reached max lines
+        }
         line = words[n] + ' ';
         currentY += lineHeight;
       } else {
         line = testLine;
       }
     }
-    ctx.fillText(line, x, currentY);
+    if (!maxLines || lineCount < maxLines) {
+      ctx.fillText(line, x, currentY);
+    }
   };
 
   const renderCanvas = () => {
@@ -381,7 +388,7 @@ export default function DogGoneGood() {
     ctx.fillStyle = currentTheme.colors.text;
     ctx.font = '26px Inter, sans-serif';
     wrapText(ctx, formData.title, leftMargin, yOffset, maxWidth, 38);
-    yOffset += 85;
+    yOffset += 65;
 
     // Achievements
     ctx.fillStyle = currentTheme.colors.accent;
@@ -391,7 +398,7 @@ export default function DogGoneGood() {
     ctx.fillStyle = currentTheme.colors.text;
     ctx.font = '26px Inter, sans-serif';
     wrapText(ctx, formData.achievements, leftMargin, yOffset, maxWidth, 38);
-    yOffset += 85;
+    yOffset += 65;
 
     // Experience
     ctx.fillStyle = currentTheme.colors.accent;
@@ -401,16 +408,16 @@ export default function DogGoneGood() {
     ctx.fillStyle = currentTheme.colors.text;
     ctx.font = '26px Inter, sans-serif';
     wrapText(ctx, formData.experience, leftMargin, yOffset, maxWidth, 38);
-    yOffset += 85;
+    yOffset += 65;
 
-    // References
+    // References - limited to 4 lines to prevent overlap with footer
     ctx.fillStyle = currentTheme.colors.accent;
     ctx.font = "bold 38px 'Fredoka', Inter, sans-serif";
     ctx.fillText('REFERENCES', leftMargin, yOffset);
     yOffset += 48;
     ctx.fillStyle = currentTheme.colors.text;
     ctx.font = '26px Inter, sans-serif';
-    wrapText(ctx, formData.references, leftMargin, yOffset, maxWidth, 38);
+    wrapText(ctx, formData.references, leftMargin, yOffset, maxWidth, 38, 4);
 
     // Watermarks on the right side - stacked vertically
     ctx.globalAlpha = 0.08;

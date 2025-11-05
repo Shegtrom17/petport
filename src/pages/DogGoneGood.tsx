@@ -172,9 +172,9 @@ export default function DogGoneGood() {
   const randomizeAll = () => {
     setIsRandomizing(true);
     const randomTitle = currentOptions.title[Math.floor(Math.random() * currentOptions.title.length)];
-    const randomAchievement = currentTheme.achievements[Math.floor(Math.random() * currentTheme.achievements.length)];
-    const randomExperience = currentTheme.experiences[Math.floor(Math.random() * currentTheme.experiences.length)];
-    const randomReference = currentTheme.references[Math.floor(Math.random() * currentTheme.references.length)];
+    const randomAchievement = currentTheme.achievements[species][Math.floor(Math.random() * currentTheme.achievements[species].length)];
+    const randomExperience = currentTheme.experiences[species][Math.floor(Math.random() * currentTheme.experiences[species].length)];
+    const randomReference = currentTheme.references[species][Math.floor(Math.random() * currentTheme.references[species].length)];
 
     setFormData({
       title: randomTitle,
@@ -583,9 +583,9 @@ export default function DogGoneGood() {
     const options = newSpecies === 'horse' ? horseOptions : dogCatOptions;
     setFormData({
       title: options.title[0],
-      achievements: currentTheme.achievements[0],
-      experience: currentTheme.experiences[0],
-      references: currentTheme.references[0]
+      achievements: currentTheme.achievements[newSpecies][0],
+      experience: currentTheme.experiences[newSpecies][0],
+      references: currentTheme.references[newSpecies][0]
     });
 
     // Analytics
@@ -602,9 +602,9 @@ export default function DogGoneGood() {
     const newThemeData = themes[newTheme];
     setFormData({
       title: currentOptions.title[0],
-      achievements: newThemeData.achievements[0],
-      experience: newThemeData.experiences[0],
-      references: newThemeData.references[0]
+      achievements: newThemeData.achievements[species][0],
+      experience: newThemeData.experiences[species][0],
+      references: newThemeData.references[species][0]
     });
 
     // Analytics
@@ -845,7 +845,7 @@ export default function DogGoneGood() {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  {currentTheme.achievements.map((option) => (
+                  {currentTheme.achievements[species].map((option) => (
                     <SelectItem key={option} value={option}>{option}</SelectItem>
                   ))}
                 </SelectContent>
@@ -859,7 +859,7 @@ export default function DogGoneGood() {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  {currentTheme.experiences.map((option) => (
+                  {currentTheme.experiences[species].map((option) => (
                     <SelectItem key={option} value={option}>{option}</SelectItem>
                   ))}
                 </SelectContent>
@@ -873,7 +873,7 @@ export default function DogGoneGood() {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  {currentTheme.references.map((option) => (
+                  {currentTheme.references[species].map((option) => (
                     <SelectItem key={option} value={option}>{option}</SelectItem>
                   ))}
                 </SelectContent>

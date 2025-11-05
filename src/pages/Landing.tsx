@@ -86,8 +86,8 @@ export default function Landing() {
   }, [isPreview, user]);
   return <div className="min-h-screen bg-white">
       <MetaTags 
-        title="Digital Pet Passport App | PetPort LiveLink - Pet Records & Safety" 
-        description="Free 7-day trial. Digital pet passport with QR codes for pet medical records, lost pet recovery, pet housing applications & pet emergency care. Start today!" 
+        title="Digital Pet Passport App | PetPort LiveLink - Records & Safety" 
+        description="Free 7-day trial. Complete digital passport with QR codes for medical records, lost recovery alerts, housing applications & emergency care. Manage everything in one place." 
         image="https://pub-a7c2c18b8d6143b9a256105ef44f2da0.r2.dev/OG%20General.png"
         url={window.location.origin + "/"} 
       />
@@ -97,24 +97,24 @@ export default function Landing() {
         {JSON.stringify({
           "@context": "https://schema.org",
           "@type": "SoftwareApplication",
-          "name": "PetPort: Digital Pet Passport & Records App",
-          "description": "Comprehensive digital platform for pet owners to manage pet medical records, lost pet recovery, pet travel documents, pet housing applications, and pet emergency care instructions.",
+          "name": "PetPort: Digital Passport & Records Platform",
+          "description": "Comprehensive digital platform for managing medical records, lost recovery alerts, travel documentation, housing applications, and emergency care instructions for your companion animals.",
           "applicationCategory": "LifestyleApplication",
           "operatingSystem": "iOS, Android, Web",
           "url": "https://petport.app/",
           "image": "https://pub-a7c2c18b8d6143b9a256105ef44f2da0.r2.dev/OG%20General.png",
-          "keywords": "pet records app, digital pet passport, lost pet recovery, pet screening resume, pet housing application, pet medical records, qr code pet tag, pet emergency contacts, pet travel documents, pet care instructions, digital pet id, pet health records, pet adoption resume, pet foster care, pet boarding documents, pet wellness tracking, pet vaccination records, pet microchip alternative, pet safety app, pet caregiver instructions",
+          "keywords": "digital pet passport, animal records app, lost recovery system, housing screening resume, medical records management, QR code tags, emergency contacts, travel documentation, care instructions platform, health tracking, adoption resume builder, foster care management, boarding documents, wellness tracking, vaccination records, microchip alternative, safety alert system, caregiver instructions",
           "featureList": [
-            "QR Code Pet Tags with LiveLink",
-            "Lost Pet Recovery System with Sighting Board",
-            "Pet Screening Resume Builder for Housing",
-            "Pet Medical Records Management",
-            "Pet Travel Documentation",
-            "Pet Emergency Care Instructions",
-            "Pet Photo Gallery & Life Story",
-            "Pet Foster Care Management",
-            "Pet Vaccination Tracking",
-            "Pet Caregiver Access Control"
+            "QR Code Tags with LiveLink Technology",
+            "Lost Recovery System with Sighting Board",
+            "Screening Resume Builder for Housing Applications",
+            "Medical Records & Vaccination Management",
+            "Travel Documentation & International Records",
+            "Emergency Care Instructions & Contacts",
+            "Photo Gallery & Life Story Timeline",
+            "Foster Care & Adoption Transfer Tools",
+            "Digital Health Records Tracking",
+            "Caregiver Access Control & Sharing"
           ],
           "offers": {
             "@type": "Offer",
@@ -196,7 +196,7 @@ export default function Landing() {
                 Digital Pet Passport?
               </h1>
               <p className="mt-6 text-xl text-brand-primary-dark leading-relaxed">
-                Yes, but so much more! PetPort is an all-in-one digital information platform for pets and horses. Securely organize vaccines, insurance, medical records, and travel documents. Our revolutionary Lost Pet Sightings Board instantly rallies community help when you share your One-Tap Missing Pet Flyer and LiveLink. Our Care LiveLink is perfect for groomers, sitters, or emergencies. Update and share a Pet Résumé, ask for Pet Reviews and Care Instructions in real time. Instantly Update your pet's data from anywhere, to anyone, on any device. This app is everything a foster to adopter transfer needs! Give them a voice for a lifetime.
+                Yes, but so much more! PetPort is an all-in-one digital information platform for companion animals. Securely organize vaccines, insurance, medical records, and travel documents. Our revolutionary Lost Sightings Board instantly rallies community help when you share your One-Tap Missing Alert and LiveLink. Care LiveLinks are perfect for groomers, sitters, or emergencies. Update and share résumés, request reviews, and manage care instructions in real time. Instantly update data from anywhere, to anyone, on any device. Perfect for foster-to-adopter transfers! Give them a digital voice for a lifetime.
               </p>
 
               

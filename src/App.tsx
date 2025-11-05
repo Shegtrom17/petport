@@ -135,11 +135,7 @@ const App = () => {
                        <Onboarding />
                      </ProtectedRoute>
                    } />
-                   <Route path="/vaccination-guide" element={
-                     <ProtectedRoute>
-                       <VaccinationGuide />
-                     </ProtectedRoute>
-                   } />
+                   <Route path="/vaccination-guide" element={<VaccinationGuide />} />
                       <Route path="/profile/:petId" element={<PublicProfile />} />
                       <Route path="/emergency/:petId" element={<PublicEmergencyProfile />} />
                       <Route path="/care/:petId" element={<PublicCareInstructions />} />

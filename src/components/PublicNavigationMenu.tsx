@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { EnhancedSheet } from "@/components/ui/enhanced-sheet";
-import { Home, Sparkles, Search, Users, MonitorPlay, Award, Heart, HelpCircle, LogIn, Headphones } from "lucide-react";
+import { Home, Sparkles, Search, Users, MonitorPlay, Award, Heart, HelpCircle, LogIn, Headphones, Syringe } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 interface PublicNavigationMenuProps {
@@ -22,6 +22,7 @@ export const PublicNavigationMenu = ({ isOpen, onClose }: PublicNavigationMenuPr
     { id: "home", label: "Home", icon: Home, path: "/" },
     { id: "features", label: "Features", icon: Sparkles, path: "/learn" },
     { id: "lost-pet", label: "Lost Pet Solutions", icon: Search, path: "/lost-pet-features" },
+    { id: "vaccination", label: "Vaccination Guide", icon: Syringe, path: "/vaccination-guide" },
     { id: "foster", label: "Foster Program", icon: Users, path: "/foster-program" },
     { id: "podcast", label: "Podcast", icon: Headphones, path: "/podcast" },
     { id: "demos", label: "Live Demos", icon: MonitorPlay, path: "/demos" },

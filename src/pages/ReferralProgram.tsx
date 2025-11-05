@@ -13,6 +13,28 @@ export default function ReferralProgram() {
   return <>
       <MetaTags title="Referral Program - Earn $2 Per Friend | PetPort" description="Join PetPort's referral program and earn $2 for every friend who subscribes to a yearly plan. Get paid via Stripe Connect. Start earning today!" url={window.location.origin + "/referral-program"} type="website" />
       
+      {/* Breadcrumb Schema */}
+      <script type="application/ld+json">
+        {JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            {
+              "@type": "ListItem",
+              "position": 1,
+              "name": "Home",
+              "item": "https://petport.app/"
+            },
+            {
+              "@type": "ListItem",
+              "position": 2,
+              "name": "Referral Program",
+              "item": "https://petport.app/referral-program"
+            }
+          ]
+        })}
+      </script>
+      
       <div className="min-h-screen bg-white">
         {/* Header */}
         <header className="border-b border-gray-100">

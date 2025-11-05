@@ -21,6 +21,28 @@ const FosterProgram = () => {
         url={window.location.origin + "/foster-program"}
       />
 
+      {/* Breadcrumb Schema */}
+      <script type="application/ld+json">
+        {JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            {
+              "@type": "ListItem",
+              "position": 1,
+              "name": "Home",
+              "item": "https://petport.app/"
+            },
+            {
+              "@type": "ListItem",
+              "position": 2,
+              "name": "Foster Program",
+              "item": "https://petport.app/foster-program"
+            }
+          ]
+        })}
+      </script>
+
       {/* Header */}
       <header className="container mx-auto px-4 py-6 flex items-center justify-between">
         <div className="flex items-center gap-3">

@@ -1010,7 +1010,7 @@ export default function DogGoneGood() {
               What Else Can You Create?
             </h2>
             <p className="text-brand-primary-dark max-w-2xl mx-auto">
-              This free résumé generator is just the beginning. See what else PetPort can do for your pets.
+              This free generator is just for fun—PetPort's real power lies beneath. Our platform creates comprehensive digital pet profiles that preserve pet medical records, emergency data, pet care instructions, and your pet's complete story in a secure database. Our Lost pet recovery system is a powerful tool. We're giving pets a permanent voice that protects them for life.
             </p>
           </div>
 

@@ -76,7 +76,7 @@ export default function LostPetFeatures() {
         })}
       </script>
       
-      <div className="min-h-screen bg-gradient-to-b from-background to-muted/20">
+      <main className="min-h-screen bg-gradient-to-b from-background to-muted/20">
         {/* Header */}
         <header className="container mx-auto px-4 py-6 flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -483,7 +483,7 @@ export default function LostPetFeatures() {
             </div>
           </div>
         </div>
-      </div>
+      </main>
     </>
   );
 }

@@ -355,19 +355,17 @@ export const GuardianManagementModal = ({
                   <>
                     <Button
                       type="button"
-                      variant="secondary"
                       onClick={copyGuardianLink}
-                      className="bg-brand-primary/10 text-brand-primary hover:bg-brand-primary hover:text-white border border-brand-primary/20"
+                      className="bg-brand-primary hover:bg-brand-primary-dark text-white"
                     >
                       <Copy className="h-4 w-4 mr-2" />
                       Copy Link
                     </Button>
                     <Button
                       type="button"
-                      variant="secondary"
                       onClick={sendGuardianEmail}
                       disabled={isLoading}
-                      className="bg-brand-primary/10 text-brand-primary hover:bg-brand-primary hover:text-white border border-brand-primary/20"
+                      className="bg-brand-primary hover:bg-brand-primary-dark text-white"
                     >
                       <Mail className="h-4 w-4 mr-2" />
                       Send Email

@@ -30,7 +30,6 @@ interface ResumeData {
   achievements: string;
   experience: string;
   references: string;
-  motto: string;
 }
 
 const dogCatOptions = {
@@ -85,8 +84,7 @@ export default function DogGoneGood() {
     title: dogCatOptions.title[0],
     achievements: themes.patriotic.achievements[0],
     experience: themes.patriotic.experiences[0],
-    references: themes.patriotic.references[0],
-    motto: themes.patriotic.mottos[0]
+    references: themes.patriotic.references[0]
   });
   const [showCTA, setShowCTA] = useState(false);
   const [isRandomizing, setIsRandomizing] = useState(false);
@@ -177,14 +175,12 @@ export default function DogGoneGood() {
     const randomAchievement = currentTheme.achievements[Math.floor(Math.random() * currentTheme.achievements.length)];
     const randomExperience = currentTheme.experiences[Math.floor(Math.random() * currentTheme.experiences.length)];
     const randomReference = currentTheme.references[Math.floor(Math.random() * currentTheme.references.length)];
-    const randomMotto = currentTheme.mottos[Math.floor(Math.random() * currentTheme.mottos.length)];
 
     setFormData({
       title: randomTitle,
       achievements: randomAchievement,
       experience: randomExperience,
-      references: randomReference,
-      motto: randomMotto
+      references: randomReference
     });
 
     setTimeout(() => setIsRandomizing(false), 500);
@@ -415,13 +411,6 @@ export default function DogGoneGood() {
     ctx.fillStyle = currentTheme.colors.text;
     ctx.font = '26px Inter, sans-serif';
     wrapText(ctx, formData.references, leftMargin, yOffset, maxWidth, 38);
-    yOffset += 85;
-
-    // Motto - larger and more prominent
-    ctx.fillStyle = currentTheme.colors.accent;
-    ctx.font = "bold italic 34px 'Fredoka', Inter, sans-serif";
-    ctx.textAlign = "center";
-    wrapText(ctx, `"${formData.motto}"`, 600, yOffset, 1000, 44);
 
     // Watermarks on the right side - stacked vertically
     ctx.globalAlpha = 0.08;
@@ -596,8 +585,7 @@ export default function DogGoneGood() {
       title: options.title[0],
       achievements: currentTheme.achievements[0],
       experience: currentTheme.experiences[0],
-      references: currentTheme.references[0],
-      motto: currentTheme.mottos[0]
+      references: currentTheme.references[0]
     });
 
     // Analytics
@@ -616,8 +604,7 @@ export default function DogGoneGood() {
       title: currentOptions.title[0],
       achievements: newThemeData.achievements[0],
       experience: newThemeData.experiences[0],
-      references: newThemeData.references[0],
-      motto: newThemeData.mottos[0]
+      references: newThemeData.references[0]
     });
 
     // Analytics
@@ -887,20 +874,6 @@ export default function DogGoneGood() {
                 </SelectTrigger>
                 <SelectContent>
                   {currentTheme.references.map((option) => (
-                    <SelectItem key={option} value={option}>{option}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className={`bg-white rounded-xl p-6 shadow-lg transition-transform ${isRandomizing ? 'scale-105' : 'scale-100'}`}>
-              <label className="block text-sm font-semibold text-brand-primary mb-3">Life Motto</label>
-              <Select value={formData.motto} onValueChange={(val) => updateField('motto', val)}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {currentTheme.mottos.map((option) => (
                     <SelectItem key={option} value={option}>{option}</SelectItem>
                   ))}
                 </SelectContent>

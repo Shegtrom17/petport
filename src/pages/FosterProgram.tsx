@@ -43,6 +43,72 @@ const FosterProgram = () => {
         })}
       </script>
 
+      {/* FAQPage Schema for Rich Snippets */}
+      <script type="application/ld+json">
+        {JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "FAQPage",
+          "mainEntity": [
+            {
+              "@type": "Question",
+              "name": "How does the foster-to-adopter pet profile transfer work?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "PetPort's foster-to-adopter transfer is simple: the foster creates a complete digital profile including medical records, care instructions, personality traits, and photos. When adoption is finalized, the foster transfers full ownership of the profile to the adopter with one click. The adopter receives all history, documents, and LiveLinks instantly - no paperwork, no lost records, and complete continuity of care."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "What information should be included in a foster pet's digital profile?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "A comprehensive foster pet profile should include vaccination records, medical history, spay/neuter documentation, microchip information, care instructions (feeding, medications, behavioral notes), emergency contacts, personality traits, likes and dislikes, training progress, and photos showing identifying features. PetPort provides structured sections for all of this information, making it easy for fosters to document everything adopters need to know."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Can adopters update the pet profile after receiving it from a foster?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Yes! Once the profile is transferred, the adopter becomes the full owner and can update any information including adding new photos, medical records, training achievements, or care instructions. The digital profile grows with the pet throughout their lifetime. Fosters can optionally stay connected to see updates, creating a lifelong bond between foster families and the pets they helped save."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "What is a LiveLink and how does it help foster and adopted pets?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "A LiveLink is a QR code that connects to your pet's digital profile. If a foster or adopted pet gets lost, anyone who finds them can scan the QR code on their collar tag to instantly access the Lost Pet page with owner contact information, photos, and a sighting board. Unlike static tags, LiveLinks update in real-time - perfect for foster pets who may have temporary contact information that changes when they're adopted."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "How do rescue organizations benefit from digital foster profiles?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Rescue organizations benefit tremendously: fosters can create detailed, professional profiles that help pets get adopted faster; all medical records and history stay organized in one place; profile transfers are instant and traceable; adopters receive complete information reducing return rates; and the rescue maintains a connection to alumni pets through optional updates. PetPort also helps rescues showcase their impact and success stories."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Is there a cost for foster families to use PetPort?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Individual foster families can use PetPort with a standard subscription. Many rescue organizations provide PetPort subscriptions to their foster network as part of their foster support program. We also offer special pricing for rescue organizations managing multiple foster pets. Contact us to learn about rescue organization partnerships and foster family programs."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Can I keep a connection with a pet after they're adopted?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Yes! When transferring a foster pet's profile, you can request to stay connected as a 'Guardian' - allowing you to see updates the adopter chooses to share like new photos, milestones, or story updates. This optional feature lets foster families maintain a lifelong bond with the pets they helped rescue, without requiring direct contact information exchange. Adopters control what they share, creating a healthy boundary while honoring the foster relationship."
+              }
+            }
+          ]
+        })}
+      </script>
+
       {/* Header */}
       <header className="container mx-auto px-4 py-6 flex items-center justify-between">
         <div className="flex items-center gap-3">

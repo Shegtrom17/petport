@@ -743,6 +743,72 @@ export default function DogGoneGood() {
         })}
       </script>
 
+      {/* FAQPage Schema for Rich Snippets */}
+      <script type="application/ld+json">
+        {JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "FAQPage",
+          "mainEntity": [
+            {
+              "@type": "Question",
+              "name": "Do landlords actually accept pet resumes for rental applications?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Yes! Many landlords and property managers now accept pet resumes as part of the screening process. A professional pet resume demonstrates responsible pet ownership by showing vaccination records, training certifications, references from previous landlords or veterinarians, and proof of pet insurance. This helps landlords make informed decisions and can significantly increase your chances of approval in competitive rental markets."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "What should I include in a pet resume for housing applications?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "A strong pet resume should include: your pet's basic information (name, breed, age, weight), spay/neuter status, current vaccinations and veterinary records, obedience training certifications, behavioral traits and temperament, previous landlord references confirming no property damage or noise complaints, pet insurance information, emergency care plans, and professional photos. PetPort's platform helps organize all this information in one shareable, professional document."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "How does a pet screening resume help with rental applications?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Pet screening resumes help rental applications by presenting your pet as a responsible, well-cared-for companion rather than a liability. They provide landlords with documented proof of vaccinations, training, and good behavior, addressing common concerns about property damage, noise, or safety. In competitive markets, a professional pet resume can be the deciding factor between multiple qualified applicants, showing you take pet ownership seriously."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Can I use the Dog-Gone-Good resume generator for cats and horses?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Absolutely! The Dog-Gone-Good generator works for dogs, cats, and horses. Each species has customized fields and options appropriate for that animal type. Whether you need a professional resume for a rental application, boarding facility, or just for fun social media sharing, you can create a polished, shareable document for any pet species in seconds - completely free with no signup required."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Is the pet resume generator really free to use?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Yes! The Dog-Gone-Good pet resume generator is completely free with no signup, no payment, and no hidden fees. You can create, customize, download, and share as many pet resumes as you want. While the fun resume generator is free, PetPort also offers a full digital pet profile platform with comprehensive features like medical records, LiveLinks for lost pet recovery, and travel documentation for pet owners who want an all-in-one solution."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "What's the difference between the free resume and PetPort's full platform?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "The free Dog-Gone-Good generator creates fun, shareable resumes perfect for social media or basic housing applications. PetPort's full platform provides comprehensive pet management including: complete medical record storage and vaccination tracking, document uploads for vet records and certifications, LiveLink QR codes for lost pet recovery, emergency care instructions, travel documentation, professional references section, and lifetime profile updates. Think of the free generator as a fun introduction, while PetPort is your pet's complete digital portfolio."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Can I update my pet's resume after downloading it?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "The free Dog-Gone-Good generator creates a downloadable image file, so you would need to regenerate it with updated information. However, with a PetPort subscription, your pet's digital resume and profile are always editable and update in real-time. When you share your PetPort profile link with landlords or facilities, they always see the most current information - no need to create and send new documents every time something changes."
+              }
+            }
+          ]
+        })}
+      </script>
+
       {/* Header */}
       <header className="max-w-7xl mx-auto px-4 py-6 flex items-center justify-between">
         <div className="flex items-center gap-3">

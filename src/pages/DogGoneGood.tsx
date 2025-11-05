@@ -1186,10 +1186,10 @@ export default function DogGoneGood() {
                   </span>
                 </div>
                 <h3 className="text-xl font-bold text-red-900 mb-2 group-hover:text-red-700">
-                  Lost Pet Flyer Generator
+                  Lost Pet LiveLink
                 </h3>
                 <p className="text-gray-700 text-sm mb-4">
-                  Generate professional missing pet flyers with custom details, photos, and QR codes in seconds. Every minute counts.
+                  Interactive sighting board, instant social media sharing, and professional PDF flyers. Complete lost pet recovery system.
                 </p>
                 <Button 
                   variant="default" 
@@ -1199,7 +1199,7 @@ export default function DogGoneGood() {
                     navigate('/demo/missing-pet');
                   }}
                 >
-                  Try It Free →
+                  See Demo →
                 </Button>
               </CardContent>
             </Card>
@@ -1321,8 +1321,8 @@ export default function DogGoneGood() {
                 }}
               >
                 <AlertTriangle className="h-8 w-8 text-red-600 mb-2" />
-                <h4 className="font-bold text-sm text-red-900 mb-1">Lost Pet Flyers</h4>
-                <p className="text-xs text-red-700">Generate in seconds</p>
+                <h4 className="font-bold text-sm text-red-900 mb-1">Lost Pet LiveLink</h4>
+                <p className="text-xs text-red-700">Sighting board & flyers</p>
               </div>
               <div 
                 className="p-4 border-2 border-brand-primary/30 rounded-lg cursor-pointer hover:bg-brand-primary/5 transition-colors"

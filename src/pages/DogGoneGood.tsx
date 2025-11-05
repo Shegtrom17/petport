@@ -1241,27 +1241,27 @@ export default function DogGoneGood() {
           </button>
           <div className="pr-8">
             <div className="flex items-center gap-2 mb-2">
-              <AlertTriangle className="h-5 w-5" />
-              <h4 className="font-bold text-sm">Lost Pet Protection</h4>
+              <Heart className="h-5 w-5" />
+              <h4 className="font-bold text-sm">See What Else PetPort Can Do</h4>
             </div>
             <p className="text-xs text-white/90 mb-3">
-              Generate lost pet flyers instantly if your pet ever goes missing
+              Explore digital pet profiles, lost pet recovery, care instructions & more
             </p>
             <Button 
               size="sm"
               className="bg-white text-amber-600 hover:bg-amber-50 w-full"
               onClick={() => {
-                navigate('/demo/missing-pet');
+                navigate('/demos');
                 setDismissedSticky(true);
                 if (typeof window !== 'undefined' && 'gtag' in window) {
                   (window as any).gtag('event', 'sticky_banner_click', {
                     event_category: 'conversion',
-                    event_label: 'lost_pet_demo'
+                    event_label: 'demos_page'
                   });
                 }
               }}
             >
-              Try It Free →
+              Explore LiveLink Demos →
             </Button>
           </div>
         </div>

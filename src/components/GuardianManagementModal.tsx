@@ -246,8 +246,8 @@ export const GuardianManagementModal = ({
   return (
     <>
       <Dialog open={isOpen} onOpenChange={onClose}>
-        <DialogContent ref={contentRef} className="w-[96vw] sm:max-w-md md:max-w-2xl max-h-[90svh] overflow-hidden flex flex-col">
-          <DialogHeader>
+        <DialogContent ref={contentRef} className="w-[96vw] sm:max-w-md md:max-w-2xl max-h-[90svh] overflow-hidden flex flex-col p-0">
+          <DialogHeader className="px-3 sm:px-6 pt-6">
             <DialogTitle className="flex items-center gap-2">
               <Shield className="h-5 w-5 text-primary" />
               Pet Legacy Guardian - {petName}
@@ -440,7 +440,7 @@ export const GuardianManagementModal = ({
 
           <div 
             id="form-actions"
-            className="sticky bottom-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-t p-4"
+            className="sticky bottom-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-t px-3 sm:px-6 py-4"
           >
             <div className="flex flex-col sm:flex-row justify-end gap-3 sm:gap-4">
               <Button type="button" variant="outline" onClick={onClose}>

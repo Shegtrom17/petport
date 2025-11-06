@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -71,6 +71,38 @@ export const GuardianManagementModal = ({
   const [existingGuardian, setExistingGuardian] = useState<any>(null);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const contentRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (isOpen) {
+      // Defer to after render so DOM is ready
+      setTimeout(() => {
+        try {
+          const el = contentRef.current;
+          const viewport = {
+            innerWidth: window.innerWidth,
+            innerHeight: window.innerHeight,
+            devicePixelRatio: window.devicePixelRatio,
+            screenWidth: window.screen?.width,
+            screenHeight: window.screen?.height,
+          };
+          console.log('[GuardianModal] Viewport', viewport);
+          if (el) {
+            const rect = el.getBoundingClientRect();
+            console.log('[GuardianModal] Dialog rect', {
+              width: rect.width,
+              height: rect.height,
+              scrollWidth: el.scrollWidth,
+              clientWidth: el.clientWidth,
+              overflowX: el.scrollWidth > el.clientWidth,
+            });
+          }
+        } catch (e) {
+          console.log('[GuardianModal] Measure error', e);
+        }
+      }, 0);
+    }
+  }, [isOpen]);
 
   const form = useForm<GuardianFormData>({
     resolver: zodResolver(guardianSchema),
@@ -214,7 +246,7 @@ export const GuardianManagementModal = ({
   return (
     <>
       <Dialog open={isOpen} onOpenChange={onClose}>
-        <DialogContent className="sm:max-w-lg md:max-w-2xl max-h-[90vh] overflow-y-auto">
+        <DialogContent ref={contentRef} className="sm:max-w-lg md:max-w-2xl max-h-[90vh] overflow-y-auto overflow-x-hidden">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Shield className="h-5 w-5 text-primary" />

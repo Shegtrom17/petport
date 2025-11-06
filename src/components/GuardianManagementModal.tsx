@@ -246,7 +246,7 @@ export const GuardianManagementModal = ({
   return (
     <>
       <Dialog open={isOpen} onOpenChange={onClose}>
-        <DialogContent ref={contentRef} className="w-[calc(100vw-2rem)] max-w-[calc(100vw-2rem)] sm:max-w-lg md:max-w-2xl max-h-[90vh] overflow-y-auto overflow-x-hidden px-3 sm:px-6">
+        <DialogContent ref={contentRef} className="w-[96vw] sm:max-w-md md:max-w-2xl max-h-[90svh] overflow-hidden flex flex-col">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Shield className="h-5 w-5 text-primary" />
@@ -258,43 +258,116 @@ export const GuardianManagementModal = ({
             </DialogDescription>
           </DialogHeader>
 
-          <Alert className="bg-muted border-muted-foreground/20">
-            <AlertDescription className="text-sm">
-              <strong>Important:</strong> This feature provides view-only access to your pet's information. It does not transfer legal ownership or account control. For complete account transfer, please ensure your guardian has your login credentials and that proper legal arrangements (will, power of attorney, etc.) are in place. PetPort cannot facilitate ownership transfers without legal authorization.
-            </AlertDescription>
-          </Alert>
+          <div className="flex-1 overflow-y-auto with-keyboard-padding native-scroll hide-scrollbar overscroll-contain px-3 sm:px-6 py-4">
+            <Alert className="bg-muted border-muted-foreground/20 mb-4">
+              <AlertDescription className="text-sm">
+                <strong>Important:</strong> This feature provides view-only access to your pet's information. It does not transfer legal ownership or account control. For complete account transfer, please ensure your guardian has your login credentials and that proper legal arrangements (will, power of attorney, etc.) are in place. PetPort cannot facilitate ownership transfers without legal authorization.
+              </AlertDescription>
+            </Alert>
 
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3 sm:space-y-4">
-              <FormField
-                control={form.control}
-                name="guardian_name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Guardian's Name *</FormLabel>
-                    <FormControl>
-                      <Input className="w-full" placeholder="Jane Doe" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3 sm:space-y-4">
                 <FormField
                   control={form.control}
-                  name="guardian_email"
+                  name="guardian_name"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Guardian's Email *</FormLabel>
+                      <FormLabel>Guardian's Name *</FormLabel>
+                      <FormControl>
+                        <Input className="w-full" placeholder="Jane Doe" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <FormField
+                    control={form.control}
+                    name="guardian_email"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Guardian's Email *</FormLabel>
+                        <FormControl>
+                          <Input
+                            className="w-full"
+                            type="email"
+                            placeholder="jane@example.com"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="guardian_phone"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Guardian's Phone</FormLabel>
+                        <FormControl>
+                          <Input 
+                            className="w-full"
+                            placeholder="(555) 123-4567" 
+                            {...field}
+                            onChange={(e) => {
+                              const formatted = formatPhoneNumber(e.target.value);
+                              field.onChange(formatted);
+                            }}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                <FormField
+                  control={form.control}
+                  name="authorization_level"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Authorization Level *</FormLabel>
+                      <Select onValueChange={field.onChange} value={field.value}>
+                        <FormControl>
+                          <SelectTrigger className="w-full">
+                            <SelectValue />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="medical_only">
+                            Medical Only - Can authorize emergency medical care
+                          </SelectItem>
+                          <SelectItem value="full_custody">
+                            Full Custody - Can take ownership and make all decisions
+                          </SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="financial_limit"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Emergency Medical Spending Limit ($)</FormLabel>
                       <FormControl>
                         <Input
                           className="w-full"
-                          type="email"
-                          placeholder="jane@example.com"
+                          type="number"
+                          placeholder="1000"
                           {...field}
+                          onChange={(e) => field.onChange(Number(e.target.value))}
                         />
                       </FormControl>
+                      <FormDescription>
+                        Maximum amount guardian can spend without contacting you
+                      </FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -302,149 +375,94 @@ export const GuardianManagementModal = ({
 
                 <FormField
                   control={form.control}
-                  name="guardian_phone"
+                  name="special_instructions"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Guardian's Phone</FormLabel>
+                      <FormLabel>Special Instructions</FormLabel>
                       <FormControl>
-                        <Input 
+                        <Textarea
                           className="w-full"
-                          placeholder="(555) 123-4567" 
+                          placeholder="Any additional care notes or important information for the guardian..."
+                          rows={4}
                           {...field}
-                          onChange={(e) => {
-                            const formatted = formatPhoneNumber(e.target.value);
-                            field.onChange(formatted);
-                          }}
                         />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
-              </div>
-
-              <FormField
-                control={form.control}
-                name="authorization_level"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Authorization Level *</FormLabel>
-                    <Select onValueChange={field.onChange} value={field.value}>
-                      <FormControl>
-                        <SelectTrigger className="w-full">
-                          <SelectValue />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value="medical_only">
-                          Medical Only - Can authorize emergency medical care
-                        </SelectItem>
-                        <SelectItem value="full_custody">
-                          Full Custody - Can take ownership and make all decisions
-                        </SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="financial_limit"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Emergency Medical Spending Limit ($)</FormLabel>
-                    <FormControl>
-                      <Input
-                        className="w-full"
-                        type="number"
-                        placeholder="1000"
-                        {...field}
-                        onChange={(e) => field.onChange(Number(e.target.value))}
-                      />
-                    </FormControl>
-                    <FormDescription>
-                      Maximum amount guardian can spend without contacting you
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="special_instructions"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Special Instructions</FormLabel>
-                    <FormControl>
-                      <Textarea
-                        className="w-full"
-                        placeholder="Any additional care notes or important information for the guardian..."
-                        rows={4}
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <div className="flex gap-2 pt-4">
-                <Button 
-                  type="submit" 
-                  disabled={isLoading}
-                  className="bg-brand-primary hover:bg-brand-primary-dark text-white"
-                >
-                  {existingGuardian ? "Update Guardian" : "Save Guardian"}
-                </Button>
 
                 {existingGuardian && (
-                  <>
-                    <Button
-                      type="button"
-                      onClick={copyGuardianLink}
-                      className="bg-brand-primary hover:bg-brand-primary-dark text-white"
-                    >
-                      <Copy className="h-4 w-4 mr-2" />
-                      Copy Link
-                    </Button>
-                    <Button
-                      type="button"
-                      onClick={sendGuardianEmail}
-                      disabled={isLoading}
-                      className="bg-brand-primary hover:bg-brand-primary-dark text-white"
-                    >
-                      <Mail className="h-4 w-4 mr-2" />
-                      Send Email
-                    </Button>
-                    <Button
-                      type="button"
-                      variant="destructive"
-                      onClick={() => setShowDeleteDialog(true)}
-                      className="text-white"
-                    >
-                      <Trash2 className="h-4 w-4 mr-2" />
-                      Remove
-                    </Button>
-                  </>
-                )}
-              </div>
-            </form>
-          </Form>
+                  <div className="space-y-3 pt-4 border-t">
+                    <div className="p-4 bg-muted rounded-lg">
+                      <p className="text-sm text-muted-foreground">
+                        <strong>Guardian Link:</strong> Share this secure link with your guardian.
+                        They can access it anytime without a login.
+                      </p>
+                      <p className="text-xs text-muted-foreground mt-2 break-all">
+                        {window.location.origin}/guardian/{petId}/{existingGuardian.access_token}
+                      </p>
+                    </div>
 
-          {existingGuardian && (
-            <div className="mt-6 p-4 bg-muted rounded-lg">
-              <p className="text-sm text-muted-foreground">
-                <strong>Guardian Link:</strong> Share this secure link with your guardian.
-                They can access it anytime without a login.
-              </p>
-              <p className="text-xs text-muted-foreground mt-2 break-all">
-                {window.location.origin}/guardian/{petId}/{existingGuardian.access_token}
-              </p>
+                    <div className="flex flex-col sm:flex-row gap-3">
+                      <Button
+                        type="button"
+                        onClick={copyGuardianLink}
+                        className="bg-brand-primary hover:bg-brand-primary-dark text-white"
+                      >
+                        <Copy className="h-4 w-4 mr-2" />
+                        Copy Link
+                      </Button>
+                      <Button
+                        type="button"
+                        onClick={sendGuardianEmail}
+                        disabled={isLoading}
+                        className="bg-brand-primary hover:bg-brand-primary-dark text-white"
+                      >
+                        <Mail className="h-4 w-4 mr-2" />
+                        Send Email
+                      </Button>
+                      <Button
+                        type="button"
+                        variant="destructive"
+                        onClick={() => setShowDeleteDialog(true)}
+                        className="text-white"
+                      >
+                        <Trash2 className="h-4 w-4 mr-2" />
+                        Remove Guardian
+                      </Button>
+                    </div>
+                  </div>
+                )}
+              </form>
+            </Form>
+          </div>
+
+          <div 
+            id="form-actions"
+            className="sticky bottom-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-t p-4"
+          >
+            <div className="flex flex-col sm:flex-row justify-end gap-3 sm:gap-4">
+              <Button type="button" variant="outline" onClick={onClose}>
+                Cancel
+              </Button>
+              <Button 
+                type="button"
+                onClick={form.handleSubmit(onSubmit)}
+                disabled={isLoading}
+                className="bg-brand-primary hover:bg-brand-primary-dark text-white"
+              >
+                {isLoading ? (
+                  <>
+                    <span className="animate-spin mr-2">⏳</span>
+                    {existingGuardian ? "Updating..." : "Saving..."}
+                  </>
+                ) : (
+                  existingGuardian ? "Update Guardian" : "Save Guardian"
+                )}
+              </Button>
             </div>
-          )}
+          </div>
         </DialogContent>
       </Dialog>
 

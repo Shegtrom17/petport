@@ -537,21 +537,32 @@ body.keyboard-open .keyboard-native-positioning {
 /* ============================================
    ANDROID KEYBOARD-AWARE PADDING REDUCTION
    ============================================ */
-/* Android: Aggressive padding reduction when keyboard open */
+/* Android: Collapse Card and dialog/sheet padding to maximize input width */
+.platform-android.keyboard-open .card,
 .platform-android.keyboard-open [data-radix-dialog-content],
-.platform-android.keyboard-open [data-radix-sheet-content],
-.platform-android.keyboard-open .card {
+.platform-android.keyboard-open [data-radix-sheet-content] {
   padding-left: 0.5rem !important;  /* 8px */
   padding-right: 0.5rem !important; /* 8px */
 }
 
-/* Android: Input fields expand to full width when keyboard open */
+/* Android: Ensure CardContent padding also collapses */
+.platform-android.keyboard-open .card > div[class*="p-6"] {
+  padding-left: 0.5rem !important;
+  padding-right: 0.5rem !important;
+}
+
+/* Android: Input fields use full available width with comfortable internal padding */
+.platform-android.keyboard-open .card input,
+.platform-android.keyboard-open .card textarea,
+.platform-android.keyboard-open .card select,
 .platform-android.keyboard-open input,
 .platform-android.keyboard-open textarea,
 .platform-android.keyboard-open select {
-  width: 100%;
-  padding-left: 0.75rem; /* 12px */
-  padding-right: 0.75rem; /* 12px */
+  width: 100% !important;
+  max-width: 100% !important;
+  padding-left: 0.75rem !important; /* 12px */
+  padding-right: 0.75rem !important; /* 12px */
+  box-sizing: border-box;
 }
 
 /* Android: Reduce form gap spacing when keyboard is open */
@@ -559,10 +570,11 @@ body.keyboard-open .keyboard-native-positioning {
   gap: 0.75rem;
 }
 
-/* Android: Compact labels when keyboard is open */
-.platform-android.keyboard-open label {
-  font-size: 0.875rem;
+/* Android: Slightly compact labels for better spacing */
+.platform-android.keyboard-open .card label {
+  font-size: 0.9rem;
   margin-bottom: 0.25rem;
+  line-height: 1.25;
 }
 
 /* ============================================

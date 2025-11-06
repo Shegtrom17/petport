@@ -260,18 +260,21 @@ export const GuardianManagementModal = ({
   };
 
   const handleFieldFocus = (e: React.FocusEvent<HTMLTextAreaElement | HTMLInputElement>) => {
+    // Prevent default browser scroll behavior
+    e.preventDefault();
+    
     if (isOldiOS) {
-      // Wait for keyboard animation, then smoothly scroll input into view
+      // Wait longer for keyboard animation, then smoothly scroll input into view with more margin
       setTimeout(() => {
-        smoothScrollIntoViewIfNeeded(e.target as HTMLElement, { margin: 20 });
-      }, 300);
+        smoothScrollIntoViewIfNeeded(e.target as HTMLElement, { margin: 60 });
+      }, 500);
     }
   };
 
   return (
     <>
       <Dialog open={isOpen} onOpenChange={onClose}>
-        <DialogContent ref={contentRef} className="w-[96vw] sm:max-w-md md:max-w-2xl max-h-[90svh] overflow-hidden flex flex-col p-0">
+        <DialogContent ref={contentRef} className="w-[96vw] sm:max-w-md md:max-w-2xl max-h-[90svh] overflow-hidden flex flex-col p-0 touch-pan-y">
           {/* Floating Done button when keyboard is open */}
           <Button
             type="button"
@@ -290,7 +293,7 @@ export const GuardianManagementModal = ({
             </DialogTitle>
           </DialogHeader>
 
-          <div className="flex-1 overflow-y-auto with-keyboard-padding native-scroll hide-scrollbar overscroll-contain px-3 sm:px-6 py-4">
+          <div className="flex-1 overflow-y-auto with-keyboard-padding native-scroll hide-scrollbar overscroll-contain px-3 sm:px-6 py-4 touch-pan-y">
             <Alert className="bg-muted border-muted-foreground/20 mb-4">
               <AlertDescription className="text-sm">
                 <strong>Important:</strong> This feature provides view-only access to your pet's information. It does not transfer legal ownership or account control. For complete account transfer, please ensure your guardian has your login credentials and that proper legal arrangements (will, power of attorney, etc.) are in place. PetPort cannot facilitate ownership transfers without legal authorization.

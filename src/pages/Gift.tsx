@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Loader2, Gift as GiftIcon, Check } from "lucide-react";
+import { Loader2, Gift as GiftIcon, Check, X } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/context/AuthContext";
 
@@ -64,7 +64,16 @@ const Gift = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background to-muted/20 py-12 px-4">
+    <div className="min-h-screen bg-gradient-to-b from-background to-muted/20 py-12 px-4 relative">
+      <Button
+        variant="ghost"
+        size="icon"
+        onClick={() => navigate(-1)}
+        className="absolute top-4 right-4 z-10"
+        aria-label="Close"
+      >
+        <X className="h-6 w-6" />
+      </Button>
       <div className="max-w-4xl mx-auto">
         <div className="text-center mb-8">
           <div className="inline-block p-3 bg-primary/10 rounded-full mb-4">

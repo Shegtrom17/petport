@@ -56,7 +56,7 @@ export default function Terms() {
         <section className="bg-white rounded-xl shadow-sm p-6 space-y-4">
           <article className="space-y-4">
             <h2 className="text-xl font-semibold text-navy-900">1. Acceptance of Terms</h2>
-            <p className="text-navy-700">By creating an account, accessing, or using PetPort’s services, you agree to be bound by these Terms of Service and our Privacy Policy. If you do not agree, you may not use our services.</p>
+            <p className="text-navy-700">By creating an account, accessing, or using PetPort's services, you agree to be bound by these Terms of Service and our Privacy Policy. If you do not agree, you may not use our services.</p>
 
             <h2 className="text-xl font-semibold text-navy-900">2. Services Provided</h2>
             <p className="text-navy-700">PetPort is a web-based platform (PWA/SaaS) for organizing, storing, and sharing pet records, credentials, behavior reviews, and emergency information. Certain features may be available only to paying subscribers.</p>
@@ -74,13 +74,13 @@ export default function Terms() {
             <ul className="list-disc pl-6 text-navy-700 space-y-1">
               <li>Upload false or misleading pet records or reviews.</li>
               <li>Use PetPort for unlawful purposes.</li>
-              <li>Interfere with the platform’s operation or security.</li>
+              <li>Interfere with the platform's operation or security.</li>
             </ul>
 
             <h2 className="text-xl font-semibold text-navy-900">5. Subscription & Payment</h2>
             <ul className="list-disc pl-6 text-navy-700 space-y-1">
               <li><strong>Billing:</strong> Subscriptions are billed automatically according to the plan you select (monthly or annually) until cancelled.</li>
-              <li><strong>Pricing Changes:</strong> We may update subscription fees with at least 30 days’ notice via email or in-app notification.</li>
+              <li><strong>Pricing Changes:</strong> We may update subscription fees with at least 30 days' notice via email or in-app notification.</li>
               <li><strong>Payment Method:</strong> You authorize us to charge your chosen payment method for subscription fees.</li>
             </ul>
 
@@ -103,7 +103,8 @@ export default function Terms() {
             </ul>
 
             <h2 className="text-xl font-semibold text-navy-900">8. Disclaimers & Limitation of Liability</h2>
-            <p className="text-navy-700">PetPort is not a veterinary service and does not guarantee the accuracy of user-submitted information. We are not liable for lost pets, disputes between users, or damages resulting from your use of the platform. Services are provided “as is” without warranties of any kind.</p>
+            <p className="text-navy-700">PetPort is not a veterinary service and does not guarantee the accuracy of user-submitted information. We are not liable for lost pets, disputes between users, or damages resulting from your use of the platform. Services are provided "as is" without warranties of any kind.</p>
+            <p className="text-navy-700 mt-2"><strong>Guardian Access Disclaimer:</strong> The guardian feature provides view-only access and does not transfer legal ownership or account control. PetPort has no legal authority to facilitate ownership transfers. Users must establish proper legal arrangements independently.</p>
 
             <h2 className="text-xl font-semibold text-navy-900">9. Termination</h2>
             <p className="text-navy-700">We reserve the right to suspend or terminate accounts that violate these Terms or disrupt the service.</p>

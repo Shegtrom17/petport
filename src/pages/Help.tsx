@@ -127,6 +127,11 @@ const Help = () => {
       id: "sharing-privacy",
       question: "How are my contacts shared in PDFs vs LiveLinks?",
       answer: "All PDFs include contact numbers for easy printing and offline access. For social media safety, LiveLinks (public shareable links) have smart privacy controls: Your Photo Gallery & Complete Profile hides contacts, Resume shows only Vet contact, while Care Instructions, Emergency Profile, and Missing Pet alerts display all contacts. This ensures your contact info is available when needed for emergencies, but protected when sharing socially."
+    },
+    {
+      id: "guardian-access",
+      question: "What does the Guardian feature do and what are its limitations?",
+      answer: "The Guardian feature allows you to designate a trusted person (e.g., family member, friend) who can view your pet's information in emergencies using a secure access link. Important: This feature provides view-only access only and does not transfer legal ownership or account control. PetPort has no legal authority to facilitate ownership transfers. For complete account access or ownership transfer, you must provide your guardian with your login credentials and ensure proper legal arrangements (will, power of attorney, etc.) are in place independently."
     }
   ];
 

@@ -25,6 +25,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import {
   Select,
   SelectContent,
@@ -224,6 +225,12 @@ export const GuardianManagementModal = ({
               long-term incapacitation.
             </DialogDescription>
           </DialogHeader>
+
+          <Alert className="bg-muted border-muted-foreground/20">
+            <AlertDescription className="text-sm">
+              <strong>Important:</strong> This feature provides view-only access to your pet's information. It does not transfer legal ownership or account control. For complete account transfer, please ensure your guardian has your login credentials and that proper legal arrangements (will, power of attorney, etc.) are in place. PetPort cannot facilitate ownership transfers without legal authorization.
+            </AlertDescription>
+          </Alert>
 
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">

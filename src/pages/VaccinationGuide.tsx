@@ -1,3 +1,16 @@
+/**
+ * VaccinationGuide Page Component
+ * 
+ * NOTE: This is the primary full-page route for /vaccination-guide
+ * For the modal version, see src/components/VaccinationGuide.tsx
+ * 
+ * Navigation: Accessible from both public and authenticated menus
+ * - PublicNavigationMenu: Main navigation for non-authenticated users
+ * - MobileNavigationMenu: Authenticated user hamburger menu
+ * 
+ * Both menu types navigate to this page route for consistency.
+ */
+
 import { VaccinationGuide as VaccinationGuideComponent } from "@/components/VaccinationGuide";
 import { MetaTags } from "@/components/MetaTags";
 import { Button } from "@/components/ui/button";

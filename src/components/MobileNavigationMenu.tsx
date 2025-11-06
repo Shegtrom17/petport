@@ -5,7 +5,6 @@ import { SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { EnhancedSheet } from "@/components/ui/enhanced-sheet";
 import { HelpCircle, AlertTriangle, FileText, Heart, Badge, MapPin, Camera, Search, Syringe, Settings, DollarSign } from "lucide-react";
 import { ReportIssueModal } from "@/components/ReportIssueModal";
-import { VaccinationGuide } from "@/components/VaccinationGuide";
 import { useNavigate } from "react-router-dom";
 
 interface MobileNavigationMenuProps {
@@ -15,7 +14,6 @@ interface MobileNavigationMenuProps {
 
 export const MobileNavigationMenu = ({ isOpen, onClose }: MobileNavigationMenuProps) => {
   const [showReportModal, setShowReportModal] = useState(false);
-  const [showVaccinationGuide, setShowVaccinationGuide] = useState(false);
   const navigate = useNavigate();
 
   const handlePageNavigation = (tab: string) => {
@@ -64,7 +62,7 @@ export const MobileNavigationMenu = ({ isOpen, onClose }: MobileNavigationMenuPr
                 variant="ghost"
                 className="w-full justify-start text-sm"
                 onClick={() => {
-                  setShowVaccinationGuide(true);
+                  navigate('/vaccination-guide');
                   onClose();
                 }}
               >
@@ -134,11 +132,6 @@ export const MobileNavigationMenu = ({ isOpen, onClose }: MobileNavigationMenuPr
       <ReportIssueModal 
         isOpen={showReportModal} 
         onClose={() => setShowReportModal(false)} 
-      />
-
-      <VaccinationGuide
-        isOpen={showVaccinationGuide}
-        onClose={() => setShowVaccinationGuide(false)}
       />
     </>
   );

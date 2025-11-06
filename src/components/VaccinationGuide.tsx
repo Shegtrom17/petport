@@ -1,3 +1,17 @@
+/**
+ * VaccinationGuide Modal Component
+ * 
+ * NOTE: This component can be used as a modal dialog in specific contexts.
+ * For the full-page version, see src/pages/VaccinationGuide.tsx
+ * 
+ * Usage Pattern:
+ * - Modal: Used in specific workflows where inline display is needed
+ * - Page: Primary navigation route at /vaccination-guide (see App.tsx)
+ * 
+ * DO NOT DELETE: This component serves as the shared implementation
+ * for both modal and page contexts.
+ */
+
 import { useState } from "react";
 import { NativeModal } from "@/components/NativeModal";
 import { Button } from "@/components/ui/button";

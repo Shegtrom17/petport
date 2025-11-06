@@ -246,7 +246,7 @@ export const GuardianManagementModal = ({
   return (
     <>
       <Dialog open={isOpen} onOpenChange={onClose}>
-        <DialogContent ref={contentRef} className="max-w-[calc(100vw-1rem)] sm:max-w-lg md:max-w-2xl max-h-[90vh] overflow-y-auto overflow-x-hidden break-words">
+        <DialogContent ref={contentRef} className="w-[calc(100vw-2rem)] max-w-[calc(100vw-2rem)] sm:max-w-lg md:max-w-2xl max-h-[90vh] overflow-y-auto overflow-x-hidden px-3 sm:px-6">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Shield className="h-5 w-5 text-primary" />
@@ -273,7 +273,7 @@ export const GuardianManagementModal = ({
                   <FormItem>
                     <FormLabel>Guardian's Name *</FormLabel>
                     <FormControl>
-                      <Input className="text-sm" placeholder="Jane Doe" {...field} />
+                      <Input className="w-full" placeholder="Jane Doe" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -289,7 +289,7 @@ export const GuardianManagementModal = ({
                       <FormLabel>Guardian's Email *</FormLabel>
                       <FormControl>
                         <Input
-                          className="text-sm"
+                          className="w-full"
                           type="email"
                           placeholder="jane@example.com"
                           {...field}
@@ -308,7 +308,7 @@ export const GuardianManagementModal = ({
                       <FormLabel>Guardian's Phone</FormLabel>
                       <FormControl>
                         <Input 
-                          className="text-sm"
+                          className="w-full"
                           placeholder="(555) 123-4567" 
                           {...field}
                           onChange={(e) => {
@@ -331,7 +331,7 @@ export const GuardianManagementModal = ({
                     <FormLabel>Authorization Level *</FormLabel>
                     <Select onValueChange={field.onChange} value={field.value}>
                       <FormControl>
-                        <SelectTrigger className="text-sm">
+                        <SelectTrigger className="w-full">
                           <SelectValue />
                         </SelectTrigger>
                       </FormControl>
@@ -357,7 +357,7 @@ export const GuardianManagementModal = ({
                     <FormLabel>Emergency Medical Spending Limit ($)</FormLabel>
                     <FormControl>
                       <Input
-                        className="text-sm"
+                        className="w-full"
                         type="number"
                         placeholder="1000"
                         {...field}
@@ -380,7 +380,7 @@ export const GuardianManagementModal = ({
                     <FormLabel>Special Instructions</FormLabel>
                     <FormControl>
                       <Textarea
-                        className="text-sm"
+                        className="w-full"
                         placeholder="Any additional care notes or important information for the guardian..."
                         rows={4}
                         {...field}

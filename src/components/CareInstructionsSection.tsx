@@ -191,7 +191,10 @@ export const CareInstructionsSection = ({ petData, onUpdate, handlePetUpdate }: 
       <CareUpdatesModerationBoard petId={petData.id} petName={petData.name} />
 
       {/* Feeding Schedule */}
-      <Card className="border-0 shadow-lg border-l-4 border-l-[#5691af]">
+      {/* Mobile Safety: This component uses text truncation and responsive sizing */}
+      {/* for optimal mobile display. Do not remove 'break-words', 'overflow-wrap-anywhere', or */}
+      {/* 'min-w-0' classes without testing on mobile devices. */}
+      <Card className="border-0 shadow-lg border-l-4 border-l-[#5691af] overflow-hidden">
         <CardHeader>
           <CardTitle className="flex items-center space-x-2">
             <Coffee className="w-5 h-5 text-[#5691af]" />
@@ -208,9 +211,9 @@ export const CareInstructionsSection = ({ petData, onUpdate, handlePetUpdate }: 
                     {feeding.time}
                   </Badge>
                 </div>
-                <div className="flex-1">
-                  <p className="font-medium text-gray-900">{feeding.meal}</p>
-                  <p className="text-sm text-gray-600 mt-1">{feeding.notes}</p>
+                <div className="flex-1 min-w-0">
+                  <p className="font-medium text-gray-900 break-words overflow-wrap-anywhere">{feeding.meal}</p>
+                  <p className="text-sm text-gray-600 mt-1 break-words">{feeding.notes}</p>
                 </div>
               </div>
             ))}
@@ -231,7 +234,7 @@ export const CareInstructionsSection = ({ petData, onUpdate, handlePetUpdate }: 
             <div className="p-4 rounded-lg border border-gray-200">
               <h4 className="font-medium text-[#5691af] mb-2">Morning Routine</h4>
               {careData?.morning_routine ? (
-                <p className="text-sm text-gray-700">{careData.morning_routine}</p>
+                <p className="text-sm text-gray-700 break-words">{careData.morning_routine}</p>
               ) : (
                 <ul className="text-sm text-gray-700 space-y-1">
                   <li>• Wake up around 7:00 AM</li>
@@ -244,7 +247,7 @@ export const CareInstructionsSection = ({ petData, onUpdate, handlePetUpdate }: 
             <div className="p-4 rounded-lg border border-gray-200">
               <h4 className="font-medium text-[#5691af] mb-2">Evening Routine</h4>
               {careData?.evening_routine ? (
-                <p className="text-sm text-gray-700">{careData.evening_routine}</p>
+                <p className="text-sm text-gray-700 break-words">{careData.evening_routine}</p>
               ) : (
                 <ul className="text-sm text-gray-700 space-y-1">
                   <li>• Dinner around 6:00 PM</li>

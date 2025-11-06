@@ -571,7 +571,7 @@ export const PetGallerySection = ({ petData, onUpdate, handlePetUpdate }: PetGal
 
           {/* Guidance Section */}
           <div className="border-l-4 border-brand-primary bg-blue-50 p-4 rounded-r-lg">
-            <p className="text-sm text-navy-700 leading-relaxed">
+            <p className="text-sm text-navy-700 leading-relaxed break-words">
               📸 <strong>Photo Tips:</strong> Upload clear photos that show your pet's unique markings, size, or special features. 
               The first four photos will be used for lost pet flyers. You can drag photos to reorder them, and each photo can have its own caption.
             </p>
@@ -625,7 +625,10 @@ export const PetGallerySection = ({ petData, onUpdate, handlePetUpdate }: PetGal
       </Card>
 
       {/* Photo Gallery Grid */}
-      <Card className="border-0 shadow-lg bg-passport-section-bg backdrop-blur-sm" data-gallery-area>
+      {/* Mobile Safety: This component uses responsive text sizing, touch-optimized drag handles, */}
+      {/* and line clamping for captions. Do not remove 'break-words', 'line-clamp-2', 'overflow-hidden', */}
+      {/* or touch target sizing without testing on mobile devices. */}
+      <Card className="border-0 shadow-lg bg-passport-section-bg backdrop-blur-sm overflow-hidden" data-gallery-area>
         <CardHeader>
           <CardTitle className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div className="flex items-center space-x-2">
@@ -681,12 +684,12 @@ export const PetGallerySection = ({ petData, onUpdate, handlePetUpdate }: PetGal
                             {/* Drag Handle */}
                             {!isSelectionMode && (
                               <div 
-                                className={`absolute top-2 right-2 z-20 bg-black/70 rounded p-1 transition-opacity ${
+                                className={`absolute top-2 right-2 z-20 bg-black/70 rounded p-2 transition-opacity ${
                                   isMobile ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
                                 }`}
                                 style={{ touchAction: 'none', userSelect: 'none', WebkitUserSelect: 'none' }}
                               >
-                                <GripVertical className="w-4 h-4 text-white" />
+                                <GripVertical className="w-5 h-5 text-white" />
                               </div>
                             )}
 
@@ -773,7 +776,7 @@ export const PetGallerySection = ({ petData, onUpdate, handlePetUpdate }: PetGal
                             {/* Caption Overlay */}
                             {photo.caption && !editingCaption && (
                               <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-75 text-white p-2">
-                                <p className="text-sm truncate">{photo.caption}</p>
+                                <p className="text-sm line-clamp-2 break-words">{photo.caption}</p>
                               </div>
                             )}
                           </div>

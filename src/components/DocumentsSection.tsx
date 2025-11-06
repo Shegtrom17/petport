@@ -492,6 +492,9 @@ export const DocumentsSection = ({ petId, petName, documents, onDocumentDeleted 
       </Card>
 
       {/* Document List */}
+      {/* Mobile Safety: This component uses text truncation for long document names and category badges */}
+      {/* for optimal mobile display. Do not remove 'truncate', 'max-w-[120px]', 'overflow-hidden', or */}
+      {/* 'min-w-0' classes without testing on mobile devices. */}
       <Card className="border-0 shadow-lg bg-passport-section-bg backdrop-blur-sm">
         <CardHeader>
           <CardTitle className="flex flex-col space-y-3 sm:flex-row sm:items-center sm:justify-between sm:space-y-0">
@@ -559,16 +562,16 @@ export const DocumentsSection = ({ petId, petName, documents, onDocumentDeleted 
                 return (
                 <div
                   key={doc.id}
-                  className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors gap-3 sm:gap-0"
+                  className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors gap-3 sm:gap-0 overflow-hidden"
                 >
                   <div className="flex items-center space-x-3 min-w-0 flex-1">
                     <div className="w-10 h-10 bg-muted rounded-lg flex items-center justify-center flex-shrink-0">
                       <IconComponent className="w-5 h-5 text-brand-primary" />
                     </div>
                     <div className="min-w-0 flex-1">
-                      <div className="flex items-center gap-2">
-                        <p className="font-medium text-gray-900 truncate">{doc.name}</p>
-                        <span className="px-2 py-1 text-xs bg-muted text-foreground rounded-full flex-shrink-0">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <p className="font-medium text-gray-900 truncate min-w-0">{doc.name}</p>
+                        <span className="px-2 py-1 text-xs bg-muted text-foreground rounded-full flex-shrink-0 max-w-[120px] truncate">
                           {categoryInfo.label}
                         </span>
                       </div>

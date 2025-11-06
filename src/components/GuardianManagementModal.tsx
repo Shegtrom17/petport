@@ -5,6 +5,7 @@ import * as z from "zod";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Copy, Mail, Trash2, Shield } from "lucide-react";
+import { useKeyboardAwareLayout } from "@/hooks/useKeyboardAwareLayout";
 import { formatPhoneNumber } from "@/utils/phoneFormatter";
 import {
   Dialog,
@@ -72,6 +73,9 @@ export const GuardianManagementModal = ({
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const contentRef = useRef<HTMLDivElement | null>(null);
+  
+  // Track keyboard visibility for Done button
+  const { isVisible: keyboardVisible } = useKeyboardAwareLayout();
 
   useEffect(() => {
     if (isOpen) {
@@ -243,10 +247,30 @@ export const GuardianManagementModal = ({
     }
   };
 
+  const dismissKeyboard = () => {
+    // Blur the currently focused input to dismiss keyboard
+    if (document.activeElement instanceof HTMLElement) {
+      document.activeElement.blur();
+    }
+  };
+
   return (
     <>
       <Dialog open={isOpen} onOpenChange={onClose}>
         <DialogContent ref={contentRef} className="w-[96vw] sm:max-w-md md:max-w-2xl max-h-[90svh] overflow-hidden flex flex-col p-0">
+          {/* Floating Done button when keyboard is open */}
+          {keyboardVisible && (
+            <Button
+              type="button"
+              variant="secondary"
+              size="sm"
+              onClick={dismissKeyboard}
+              className="fixed top-4 right-4 z-[9999] shadow-lg"
+            >
+              Done
+            </Button>
+          )}
+          
           <DialogHeader className="px-3 sm:px-6 pt-6">
             <DialogTitle className="flex items-center gap-2">
               <Shield className="h-5 w-5 text-primary" />

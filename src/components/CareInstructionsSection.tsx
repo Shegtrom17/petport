@@ -204,7 +204,7 @@ export const CareInstructionsSection = ({ petData, onUpdate, handlePetUpdate }: 
         <CardContent>
           <div className="space-y-4">
             {feedingScheduleItems.map((feeding, index) => (
-              <div key={index} className="flex flex-col md:flex-row md:items-start space-y-2 md:space-y-0 md:space-x-4 p-4 rounded-lg border border-gray-200">
+              <div key={index} className="flex flex-col md:flex-row md:items-start space-y-2 md:space-y-0 md:space-x-4 p-4 rounded-lg border border-gray-200 overflow-hidden">
                 <div className="flex items-center space-x-2">
                   <Clock className="w-4 h-4 text-[#5691af] flex-shrink-0" />
                   <Badge variant="outline" className="text-[#5691af] border-[#5691af]/30">

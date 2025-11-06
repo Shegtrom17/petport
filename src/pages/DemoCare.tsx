@@ -203,7 +203,7 @@ export default function DemoCare() {
       <MetaTags 
         title="Pet Care Instructions LiveLink Example - Sitter Guide Demo | PetPort"
         description="Live demo of shareable pet care LiveLink for sitters, groomers & vets. Includes routines, medications, allergies & real-time update board."
-        image="https://dxghbhujugsfmaecilrq.supabase.co/storage/v1/object/public/og-images/resume-og-1mb.png"
+        image="https://pub-a7c2c18b8d6143b9a256105ef44f2da0.r2.dev/resume-og-1mb.png"
         url="https://petport.app/demo/care"
       />
 

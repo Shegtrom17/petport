@@ -92,7 +92,7 @@ export default function DemoGallery() {
       <MetaTags 
         title="Pet Photo Gallery LiveLink Demo - Organize Pet Pictures | PetPort"
         description="Live photo gallery LiveLink demo with 36 slots, drag & drop organization & social sharing. Perfect for lost pet identification and sharing memories."
-        image="https://dxghbhujugsfmaecilrq.supabase.co/storage/v1/object/public/og-images/resume-og-1mb.png"
+        image="https://pub-a7c2c18b8d6143b9a256105ef44f2da0.r2.dev/resume-og-1mb.png"
         url={`https://petport.app/demo/gallery`}
       />
 

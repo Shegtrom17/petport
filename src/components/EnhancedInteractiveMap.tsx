@@ -10,6 +10,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { PinEditDialog, EnhancedMapPin } from './PinEditDialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { generateShareURL } from '@/utils/domainUtils';
 
 interface TravelLocation {
   id: string;
@@ -417,8 +418,8 @@ export const EnhancedInteractiveMap = ({ petId, petName, pins, locations, onPins
       const text = generateShareText();
       const currentUrl = window.location.href;
       
-      // Generate travel-specific share URL using the new edge function
-      const travelShareUrl = `https://dxghbhujugsfmaecilrq.supabase.co/functions/v1/travel-share?petId=${encodeURIComponent(petId)}&redirect=${encodeURIComponent(currentUrl)}&v=${Date.now()}`;
+      // Generate travel-specific share URL using the helper function
+      const travelShareUrl = generateShareURL('travel-share', petId, currentUrl);
       const shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(travelShareUrl)}&quote=${encodeURIComponent(text)}`;
       
       console.log('🔗 Sharing travel map to Facebook:', { text, travelShareUrl });
@@ -443,8 +444,8 @@ export const EnhancedInteractiveMap = ({ petId, petName, pins, locations, onPins
       const text = generateShareText();
       const currentUrl = window.location.href;
       
-      // Generate travel-specific share URL using the new edge function
-      const travelShareUrl = `https://dxghbhujugsfmaecilrq.supabase.co/functions/v1/travel-share?petId=${encodeURIComponent(petId)}&redirect=${encodeURIComponent(currentUrl)}&v=${Date.now()}`;
+      // Generate travel-specific share URL using the helper function
+      const travelShareUrl = generateShareURL('travel-share', petId, currentUrl);
       const shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(travelShareUrl)}`;
       
       console.log('🔗 Sharing travel map to X/Twitter:', { text, travelShareUrl });

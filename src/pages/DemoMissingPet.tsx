@@ -437,7 +437,7 @@ export default function DemoMissingPet() {
       <MetaTags 
         title="Lost Pet Alert LiveLink Demo - Missing Pet Flyer Example | PetPort"
         description="See a live missing pet LiveLink alert with QR code, sighting board & instant sharing. Experience PetPort's emergency lost pet features in real-time."
-        image="https://dxghbhujugsfmaecilrq.supabase.co/storage/v1/object/public/og-images/general-og.png"
+        image="https://pub-a7c2c18b8d6143b9a256105ef44f2da0.r2.dev/OG%20General.png"
         url={shareUrl}
         type="article"
       />

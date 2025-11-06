@@ -273,27 +273,21 @@ export const GuardianManagementModal = ({
       <Dialog open={isOpen} onOpenChange={onClose}>
         <DialogContent ref={contentRef} className="w-[96vw] sm:max-w-md md:max-w-2xl max-h-[90svh] overflow-hidden flex flex-col p-0">
           {/* Floating Done button when keyboard is open */}
-          {keyboardVisible && (
-            <Button
-              type="button"
-              variant="secondary"
-              size="sm"
-              onClick={dismissKeyboard}
-              className="fixed top-4 right-4 z-[9999] shadow-lg"
-            >
-              Done
-            </Button>
-          )}
+          <Button
+            type="button"
+            variant="secondary"
+            size="sm"
+            onClick={dismissKeyboard}
+            className="fixed top-2 right-2 z-[99999] shadow-xl bg-primary text-primary-foreground hover:bg-primary/90"
+          >
+            Done
+          </Button>
           
-          <DialogHeader className="px-3 sm:px-6 pt-6">
-            <DialogTitle className="flex items-center gap-2">
-              <Shield className="h-5 w-5 text-primary" />
-              Pet Legacy Guardian - {petName}
+          <DialogHeader className="px-3 sm:px-6 pt-4 pb-2">
+            <DialogTitle className="text-base flex items-center gap-2">
+              <Shield className="h-4 w-4 text-primary" />
+              Guardian for {petName}
             </DialogTitle>
-            <DialogDescription>
-              Designate a trusted person to care for {petName} in case of emergency or
-              long-term incapacitation.
-            </DialogDescription>
           </DialogHeader>
 
           <div className="flex-1 overflow-y-auto with-keyboard-padding native-scroll hide-scrollbar overscroll-contain px-3 sm:px-6 py-4">

@@ -246,7 +246,7 @@ export const GuardianManagementModal = ({
   return (
     <>
       <Dialog open={isOpen} onOpenChange={onClose}>
-        <DialogContent ref={contentRef} className="sm:max-w-lg md:max-w-2xl max-h-[90vh] overflow-y-auto overflow-x-hidden">
+        <DialogContent ref={contentRef} className="max-w-[calc(100vw-1rem)] sm:max-w-lg md:max-w-2xl max-h-[90vh] overflow-y-auto overflow-x-hidden break-words">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Shield className="h-5 w-5 text-primary" />
@@ -265,7 +265,7 @@ export const GuardianManagementModal = ({
           </Alert>
 
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3 sm:space-y-4">
               <FormField
                 control={form.control}
                 name="guardian_name"
@@ -280,7 +280,7 @@ export const GuardianManagementModal = ({
                 )}
               />
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 <FormField
                   control={form.control}
                   name="guardian_email"

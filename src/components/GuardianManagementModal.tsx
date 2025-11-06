@@ -143,7 +143,7 @@ export const GuardianManagementModal = ({
       form.reset({
         guardian_name: data.guardian_name,
         guardian_email: data.guardian_email,
-        guardian_phone: data.guardian_phone || "",
+        guardian_phone: formatPhoneNumber(data.guardian_phone || ""),
         authorization_level: data.authorization_level as "medical_only" | "full_custody",
         financial_limit: data.financial_limit,
         special_instructions: data.special_instructions || "",
@@ -359,6 +359,7 @@ export const GuardianManagementModal = ({
                             className="w-full"
                             placeholder="(555) 123-4567" 
                             {...field}
+                            value={formatPhoneNumber(field.value || "")}
                             onChange={(e) => {
                               const formatted = formatPhoneNumber(e.target.value);
                               field.onChange(formatted);

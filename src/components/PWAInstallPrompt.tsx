@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { X, Download, Share, Plus, Smartphone, Monitor } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { AzureButton } from '@/components/ui/azure-button';
 import { Card, CardContent } from '@/components/ui/card';
 import { usePWAInstall } from '@/hooks/usePWAInstall';
 
@@ -189,13 +190,13 @@ export const PWAInstallPrompt = () => {
           </div>
           
           <div className="flex space-x-2">
-            <Button 
+            <AzureButton 
               onClick={handleInstall}
               size="sm" 
               className="flex-1 h-8 text-xs"
             >
               {isInstallable && !isIOS ? 'Install' : 'Show How'}
-            </Button>
+            </AzureButton>
             <Button 
               variant="outline" 
               onClick={dismissPrompt}

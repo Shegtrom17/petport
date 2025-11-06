@@ -7,6 +7,7 @@ import { FileText, Upload, Download, Eye, Trash2, Loader2, Camera, Shield, Syrin
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { DocumentShareDialog } from "@/components/DocumentShareDialog";
+import { DocumentViewer } from "@/components/DocumentViewer";
 import { useOverlayStore } from "@/stores/overlayStore";
 
 // Helper to save current tab before risky actions
@@ -62,6 +63,7 @@ export const DocumentsSection = ({ petId, petName, documents, onDocumentDeleted 
   const [isUploading, setIsUploading] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<string>('misc');
   const [filterCategory, setFilterCategory] = useState<string>('all');
+  const [viewerDocument, setViewerDocument] = useState<Document | null>(null);
   const { toast } = useToast();
   const overlayStore = useOverlayStore();
   
@@ -73,35 +75,39 @@ export const DocumentsSection = ({ petId, petName, documents, onDocumentDeleted 
   const isAndroid = /Android/i.test(navigator.userAgent);
 
   const handleViewDocument = async (doc: Document, e?: React.MouseEvent) => {
-    // Prevent event propagation to avoid swipe navigation
     if (e) {
       e.stopPropagation();
       e.preventDefault();
     }
     
-    saveLastTab(); // Fire-and-forget to preserve iOS popup chain
-    
+    saveLastTab();
     setViewingDocId(doc.id);
     
     try {
-      // Open document in new tab
-      const newWindow = window.open(doc.file_url, '_blank');
+      // First, try to open in new window (best experience)
+      const newWindow = window.open(doc.file_url, '_blank', 'noopener,noreferrer');
       
-      if (!newWindow) {
-        throw new Error('Popup blocked or failed to open');
+      // If popup is blocked or fails, use inline viewer as fallback
+      if (!newWindow || newWindow.closed || typeof newWindow.closed === 'undefined') {
+        console.log('Popup blocked - using inline viewer fallback');
+        setViewerDocument(doc);
+        toast({
+          title: "Opening Document",
+          description: "Popup blocked. Opening in viewer...",
+        });
+      } else {
+        toast({
+          title: "Success",
+          description: `Opening ${doc.name}...`,
+        });
       }
-      
-      toast({
-        title: "Success",
-        description: `Opening ${doc.name}...`,
-      });
-      
     } catch (error) {
       console.error("Error viewing document:", error);
+      // Fallback to inline viewer on any error
+      setViewerDocument(doc);
       toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Failed to open document. Please try again.",
+        title: "Opening in Viewer",
+        description: "Opening document in modal viewer.",
       });
     } finally {
       setViewingDocId(null);
@@ -648,6 +654,16 @@ export const DocumentsSection = ({ petId, petName, documents, onDocumentDeleted 
           petId={petId}
           isOpen={!!shareDialogDoc}
           onClose={() => setShareDialogDoc(null)}
+        />
+      )}
+
+      {/* Document Viewer Modal - Popup blocker fallback */}
+      {viewerDocument && (
+        <DocumentViewer
+          isOpen={!!viewerDocument}
+          onClose={() => setViewerDocument(null)}
+          documentUrl={viewerDocument.file_url}
+          documentName={viewerDocument.name}
         />
       )}
     </div>

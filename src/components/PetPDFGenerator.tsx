@@ -15,6 +15,7 @@ import { useNavigate } from "react-router-dom";
 import { resolvePdfType, PDFType } from "@/utils/pdfType";
 import { generateShareURL } from "@/utils/domainUtils";
 import { useEmailSharing } from "@/hooks/useEmailSharing";
+import { validatePDFSize, showPDFSizeError } from "@/utils/pdfSizeValidator";
 
 interface PetPDFGeneratorProps {
   petId: string;
@@ -306,6 +307,13 @@ export const PetPDFGenerator = ({ petId, petName, petData, handlePetUpdate }: Pe
         description: "Please enter a recipient email address.",
         variant: "destructive",
       });
+      return;
+    }
+
+    // Size validation before processing
+    const sizeValidation = validatePDFSize(generatedPdfBlob);
+    if (sizeValidation.exceedsLimit) {
+      showPDFSizeError(sizeValidation.sizeInMB);
       return;
     }
 

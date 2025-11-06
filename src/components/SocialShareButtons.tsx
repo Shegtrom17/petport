@@ -17,6 +17,7 @@ import { useAuth } from "@/context/AuthContext";
 import { generateShareURL } from "@/utils/domainUtils";
 import { generatePetPDF } from "@/services/clientPdfService";
 import { useIsMobile } from "@/hooks/useIsMobile";
+import { validatePDFSize, showPDFSizeError } from "@/utils/pdfSizeValidator";
 
   interface SocialShareButtonsProps {
   petName: string;
@@ -193,19 +194,27 @@ title: "Link Copied! 📋",
         const result = await generatePetPDF(petId, pdfType);
         
         if (result.success && result.blob) {
-          // Convert blob to base64
-          const reader = new FileReader();
-          const base64Promise = new Promise<string>((resolve, reject) => {
-            reader.onloadend = () => {
-              const base64 = reader.result as string;
-              resolve(base64.split(',')[1]); // Remove data URL prefix
-            };
-            reader.onerror = reject;
-          });
-          reader.readAsDataURL(result.blob);
-          
-          pdfAttachment = await base64Promise;
-          pdfFileName = result.fileName || `${petName}-${pdfType}.pdf`;
+          // Size validation before base64 conversion
+          const sizeValidation = validatePDFSize(result.blob);
+          if (sizeValidation.exceedsLimit) {
+            showPDFSizeError(sizeValidation.sizeInMB);
+            // Continue with link-only email
+            console.log('PDF too large for email, sending link only');
+          } else {
+            // Only proceed with PDF attachment if size is valid
+            const reader = new FileReader();
+            const base64Promise = new Promise<string>((resolve, reject) => {
+              reader.onloadend = () => {
+                const base64 = reader.result as string;
+                resolve(base64.split(',')[1]); // Remove data URL prefix
+              };
+              reader.onerror = reject;
+            });
+            reader.readAsDataURL(result.blob);
+            
+            pdfAttachment = await base64Promise;
+            pdfFileName = result.fileName || `${petName}-${pdfType}.pdf`;
+          }
         }
       } catch (error) {
         console.error('PDF generation failed:', error);

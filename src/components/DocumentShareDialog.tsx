@@ -24,6 +24,7 @@ import { useAuth } from "@/context/AuthContext";
 import { shareViaMessenger, copyToClipboard } from "@/utils/messengerShare";
 import { viewPDFBlob, downloadPDFBlob, isIOS } from '@/services/clientPdfService';
 import jsPDF from 'jspdf';
+import { validatePDFSize, showPDFSizeError } from "@/utils/pdfSizeValidator";
 
 interface Document {
   id: string;
@@ -333,6 +334,13 @@ export const DocumentShareDialog = ({
         description: "Please enter a recipient email address",
         variant: "destructive",
       });
+      return;
+    }
+
+    // Size validation
+    const sizeValidation = validatePDFSize(pdfBlob);
+    if (sizeValidation.exceedsLimit) {
+      showPDFSizeError(sizeValidation.sizeInMB);
       return;
     }
 

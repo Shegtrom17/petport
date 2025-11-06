@@ -21,6 +21,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useEmailSharing } from "@/hooks/useEmailSharing";
 import { shareViaMessenger, copyToClipboard } from "@/utils/messengerShare";
 import { useIsMobile } from "@/hooks/useIsMobile";
+import { validatePDFSize, showPDFSizeError } from "@/utils/pdfSizeValidator";
 import { 
   Heart, 
   Shield, 
@@ -750,6 +751,13 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
       return;
     }
 
+    // Size validation
+    const sizeValidation = validatePDFSize(emergencyPdfBlob);
+    if (sizeValidation.exceedsLimit) {
+      showPDFSizeError(sizeValidation.sizeInMB);
+      return;
+    }
+
     try {
       const reader = new FileReader();
       const base64Promise = new Promise<string>((resolve, reject) => {
@@ -885,6 +893,13 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
         description: "Please enter recipient email address.",
         variant: "destructive",
       });
+      return;
+    }
+
+    // Size validation
+    const sizeValidation = validatePDFSize(resumePdfBlob);
+    if (sizeValidation.exceedsLimit) {
+      showPDFSizeError(sizeValidation.sizeInMB);
       return;
     }
 

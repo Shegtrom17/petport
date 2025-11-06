@@ -110,8 +110,8 @@ export default function PublicGuardian() {
         url={window.location.href}
       />
 
-      <div className="min-h-screen bg-background p-4 md:p-8">
-        <div className="max-w-4xl mx-auto space-y-6">
+      <div className="min-h-screen bg-background">
+        <div className="container mx-auto px-4 py-8 max-w-4xl space-y-6">
           {/* Header */}
           <Card>
             <CardHeader className="text-center">

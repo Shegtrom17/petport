@@ -380,6 +380,7 @@ export const GuardianManagementModal = ({
                       type="button"
                       variant="destructive"
                       onClick={() => setShowDeleteDialog(true)}
+                      className="text-white"
                     >
                       <Trash2 className="h-4 w-4 mr-2" />
                       Remove

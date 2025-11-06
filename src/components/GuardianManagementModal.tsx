@@ -260,13 +260,26 @@ export const GuardianManagementModal = ({
   };
 
   const handleFieldFocus = (e: React.FocusEvent<HTMLTextAreaElement | HTMLInputElement>) => {
-    // Prevent default browser scroll behavior
     e.preventDefault();
     
-    // Apply smooth scroll for all devices (Android and iOS)
     setTimeout(() => {
-      smoothScrollIntoViewIfNeeded(e.target as HTMLElement, { margin: 80 });
-    }, 400);
+      const input = e.target as HTMLElement;
+      const scrollContainer = document.querySelector('[role="dialog"] [class*="overflow-y-auto"]') as HTMLElement;
+      
+      if (scrollContainer && input) {
+        const inputRect = input.getBoundingClientRect();
+        const containerRect = scrollContainer.getBoundingClientRect();
+        
+        // Calculate relative position within the scroll container
+        const relativeTop = inputRect.top - containerRect.top;
+        const targetScroll = scrollContainer.scrollTop + relativeTop - 100; // 100px from top
+        
+        scrollContainer.scrollTo({
+          top: Math.max(0, targetScroll),
+          behavior: 'smooth'
+        });
+      }
+    }, 300);
   };
 
   return (
@@ -396,9 +409,10 @@ export const GuardianManagementModal = ({
                           className="w-full"
                           type="text"
                           inputMode="numeric"
+                          pattern="[0-9]*"
                           placeholder="1000"
                           {...field}
-                          value={field.value || ""}
+                          value={field.value === 0 || field.value === undefined || field.value === null ? "" : String(field.value)}
                           onChange={(e) => {
                             const value = e.target.value.replace(/[^0-9]/g, '');
                             field.onChange(value ? Number(value) : undefined);

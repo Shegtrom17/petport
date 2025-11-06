@@ -535,6 +535,37 @@ body.keyboard-open .keyboard-native-positioning {
 }
 
 /* ============================================
+   ANDROID KEYBOARD-AWARE PADDING REDUCTION
+   ============================================ */
+/* Android: Aggressive padding reduction when keyboard open */
+.platform-android.keyboard-open [data-radix-dialog-content],
+.platform-android.keyboard-open [data-radix-sheet-content],
+.platform-android.keyboard-open .card {
+  padding-left: 0.5rem !important;  /* 8px */
+  padding-right: 0.5rem !important; /* 8px */
+}
+
+/* Android: Input fields expand to full width when keyboard open */
+.platform-android.keyboard-open input,
+.platform-android.keyboard-open textarea,
+.platform-android.keyboard-open select {
+  width: 100%;
+  padding-left: 0.75rem; /* 12px */
+  padding-right: 0.75rem; /* 12px */
+}
+
+/* Android: Reduce form gap spacing when keyboard is open */
+.platform-android.keyboard-open form {
+  gap: 0.75rem;
+}
+
+/* Android: Compact labels when keyboard is open */
+.platform-android.keyboard-open label {
+  font-size: 0.875rem;
+  margin-bottom: 0.25rem;
+}
+
+/* ============================================
    iOS-SPECIFIC DIALOG POSITIONING FIXES
    ============================================ */
 @supports (-webkit-touch-callout: none) {

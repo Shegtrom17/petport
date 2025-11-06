@@ -398,7 +398,7 @@ export const PetEditForm = ({ petData, onSave, onCancel, togglePetPublicVisibili
   };
 
   return (
-    <Card className="bg-[#f8f8f8] shadow-md">
+    <Card className="bg-[#f8f8f8] shadow-md px-2 py-4 sm:px-6 sm:py-6">
       <CardHeader>
         <CardTitle className="text-xl font-sans text-foreground border-b-2 border-gold-500 pb-2">
           ⚙️ Profile Management Hub

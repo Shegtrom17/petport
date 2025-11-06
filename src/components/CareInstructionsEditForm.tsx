@@ -95,7 +95,7 @@ export const CareInstructionsEditForm = ({ petData, onSave, onCancel }: CareInst
     <div className="space-y-6">
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         {/* Daily Routines */}
-        <Card>
+        <Card className="px-3 sm:px-6">
           <CardHeader>
             <CardTitle className="flex items-center space-x-2">
               <Clock className="w-5 h-5" />
@@ -139,7 +139,7 @@ export const CareInstructionsEditForm = ({ petData, onSave, onCancel }: CareInst
         </Card>
 
         {/* Health & Medications */}
-        <Card>
+        <Card className="px-3 sm:px-6">
           <CardHeader>
             <CardTitle className="flex items-center space-x-2">
               <Pill className="w-5 h-5" />
@@ -185,7 +185,7 @@ export const CareInstructionsEditForm = ({ petData, onSave, onCancel }: CareInst
         </Card>
 
         {/* Behavior & Activities */}
-        <Card>
+        <Card className="px-3 sm:px-6">
           <CardHeader>
             <CardTitle className="flex items-center space-x-2">
               <Heart className="w-5 h-5" />

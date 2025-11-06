@@ -120,7 +120,7 @@ export const GuardianManagementModal = ({
       guardian_email: "",
       guardian_phone: "",
       authorization_level: "medical_only",
-      financial_limit: 0,
+      financial_limit: undefined,
       special_instructions: "",
     },
   });
@@ -263,12 +263,10 @@ export const GuardianManagementModal = ({
     // Prevent default browser scroll behavior
     e.preventDefault();
     
-    if (isOldiOS) {
-      // Wait longer for keyboard animation, then smoothly scroll input into view with more margin
-      setTimeout(() => {
-        smoothScrollIntoViewIfNeeded(e.target as HTMLElement, { margin: 60 });
-      }, 500);
-    }
+    // Apply smooth scroll for all devices (Android and iOS)
+    setTimeout(() => {
+      smoothScrollIntoViewIfNeeded(e.target as HTMLElement, { margin: 80 });
+    }, 400);
   };
 
   return (
@@ -396,10 +394,15 @@ export const GuardianManagementModal = ({
                       <FormControl>
                         <Input
                           className="w-full"
-                          type="number"
+                          type="text"
+                          inputMode="numeric"
                           placeholder="1000"
                           {...field}
-                          onChange={(e) => field.onChange(Number(e.target.value))}
+                          value={field.value || ""}
+                          onChange={(e) => {
+                            const value = e.target.value.replace(/[^0-9]/g, '');
+                            field.onChange(value ? Number(value) : undefined);
+                          }}
                           onFocus={handleFieldFocus}
                         />
                       </FormControl>

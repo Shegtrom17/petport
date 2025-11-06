@@ -9,6 +9,8 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { StorageWarningBanner } from "@/components/StorageWarningBanner";
+import { PublicNavigationMenu } from "@/components/PublicNavigationMenu";
+import { Menu } from "lucide-react";
 
 export default function Auth() {
   console.log("Auth: Component rendering");
@@ -29,6 +31,7 @@ export default function Auth() {
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   
   const { signIn } = useAuth();
 
@@ -168,6 +171,17 @@ export default function Auth() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-brand-primary/10 flex items-center justify-center p-4">
+      <Button
+        variant="ghost"
+        size="icon"
+        className="fixed top-4 left-4 z-50 bg-white/90 hover:bg-white shadow-md"
+        onClick={() => setMenuOpen(true)}
+      >
+        <Menu className="h-5 w-5" />
+      </Button>
+      
+      <PublicNavigationMenu isOpen={menuOpen} onClose={() => setMenuOpen(false)} />
+      
       <div className="w-full max-w-md">
         <Link to="/" className="mb-8 text-center block hover:opacity-80 transition-opacity">
           <div className="flex justify-center">

@@ -6,6 +6,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Copy, Mail, Trash2, Shield } from "lucide-react";
 import { useKeyboardAwareLayout } from "@/hooks/useKeyboardAwareLayout";
+import { isOldIOS } from "@/utils/iosDetection";
+import { smoothScrollIntoViewIfNeeded } from "@/utils/smoothScroll";
 import { formatPhoneNumber } from "@/utils/phoneFormatter";
 import {
   Dialog,
@@ -76,6 +78,9 @@ export const GuardianManagementModal = ({
   
   // Track keyboard visibility for Done button
   const { isVisible: keyboardVisible } = useKeyboardAwareLayout();
+  
+  // Detect if running on old iOS for smooth scroll behavior
+  const isOldiOS = isOldIOS();
 
   useEffect(() => {
     if (isOpen) {
@@ -254,6 +259,15 @@ export const GuardianManagementModal = ({
     }
   };
 
+  const handleFieldFocus = (e: React.FocusEvent<HTMLTextAreaElement | HTMLInputElement>) => {
+    if (isOldiOS) {
+      // Wait for keyboard animation, then smoothly scroll input into view
+      setTimeout(() => {
+        smoothScrollIntoViewIfNeeded(e.target as HTMLElement, { margin: 20 });
+      }, 300);
+    }
+  };
+
   return (
     <>
       <Dialog open={isOpen} onOpenChange={onClose}>
@@ -298,7 +312,7 @@ export const GuardianManagementModal = ({
                     <FormItem>
                       <FormLabel>Guardian's Name *</FormLabel>
                       <FormControl>
-                        <Input className="w-full" placeholder="Jane Doe" {...field} />
+                        <Input className="w-full" placeholder="Jane Doe" {...field} onFocus={handleFieldFocus} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -318,6 +332,7 @@ export const GuardianManagementModal = ({
                             type="email"
                             placeholder="jane@example.com"
                             {...field}
+                            onFocus={handleFieldFocus}
                           />
                         </FormControl>
                         <FormMessage />
@@ -340,6 +355,7 @@ export const GuardianManagementModal = ({
                               const formatted = formatPhoneNumber(e.target.value);
                               field.onChange(formatted);
                             }}
+                            onFocus={handleFieldFocus}
                           />
                         </FormControl>
                         <FormMessage />
@@ -387,6 +403,7 @@ export const GuardianManagementModal = ({
                           placeholder="1000"
                           {...field}
                           onChange={(e) => field.onChange(Number(e.target.value))}
+                          onFocus={handleFieldFocus}
                         />
                       </FormControl>
                       <FormDescription>
@@ -409,6 +426,7 @@ export const GuardianManagementModal = ({
                           placeholder="Any additional care notes or important information for the guardian..."
                           rows={4}
                           {...field}
+                          onFocus={handleFieldFocus}
                         />
                       </FormControl>
                       <FormMessage />

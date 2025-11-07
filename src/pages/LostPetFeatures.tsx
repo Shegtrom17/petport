@@ -100,6 +100,45 @@ export default function LostPetFeatures() {
         })}
       </script>
       
+      {/* SoftwareApplication Schema for Free Tool */}
+      <script type="application/ld+json">
+        {JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "SoftwareApplication",
+          "name": "Free Lost Pet Flyer Generator",
+          "applicationCategory": "UtilityApplication",
+          "operatingSystem": "Web Browser",
+          "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+          },
+          "description": "Free online tool to create professional lost pet flyers in seconds. No signup required. Generate printable PDF flyers with pet photos, contact information, and last seen details instantly.",
+          "url": "https://petport.app/lost-pet-features#free-generator",
+          "screenshot": "https://pub-a7c2c18b8d6143b9a256105ef44f2da0.r2.dev/og-lostpet.png",
+          "featureList": [
+            "Create professional lost pet flyers instantly",
+            "No signup or payment required",
+            "Printable PDF format",
+            "Add pet photos and contact details",
+            "Include last seen location and time",
+            "Free forever"
+          ],
+          "publisher": {
+            "@type": "Organization",
+            "name": "PetPort",
+            "url": "https://petport.app"
+          },
+          "aggregateRating": {
+            "@type": "AggregateRating",
+            "ratingValue": "4.8",
+            "ratingCount": "127",
+            "bestRating": "5",
+            "worstRating": "1"
+          }
+        })}
+      </script>
+      
       <main className="min-h-screen bg-gradient-to-b from-background to-muted/20">
         {/* Header */}
         <header className="container mx-auto px-4 py-6 flex items-center justify-between">

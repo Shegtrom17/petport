@@ -32,9 +32,11 @@ import episode5 from './episodes/episode-5-photo-gallery-life-story';
 import episode6 from './episodes/episode-6-digital-pet-records-app';
 import episode7 from './episodes/episode-7-livelinks-digital-pet-care';
 import episode8 from './episodes/episode-8-real-life-stories';
+import episode9 from './episodes/episode-9-give-pets-voice-life';
 
 // Export episodes array in strategic order (by user importance)
 export const podcastEpisodes: PodcastEpisode[] = [
+  episode9,      // #9 - Nov 7, 2025 - "Give Your Pet a Voice for Life" (LATEST)
   episodePilot,  // #0 - Sept 7, 2025 - "The Digital Pet Profile & Information Platform for a Lifetime" (PILOT)
   episode2,      // #2 - Nov 1, 2025 - "Beyond the Lost Pet Flyer"
   episode3,      // #3 - Nov 1, 2025 - "Digital Pet Adoption & Foster Transfer"

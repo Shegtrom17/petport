@@ -7,6 +7,7 @@ import { Heart, Link2, MapPin, Sparkles, Menu } from "lucide-react";
 import { GuidanceHint } from "@/components/ui/guidance-hint";
 import { PublicNavigationMenu } from "@/components/PublicNavigationMenu";
 import { PodcastBanner } from "@/components/PodcastBanner";
+import { PodcastEpisodeCard } from "@/components/PodcastEpisodeCard";
 
 const FosterProgram = () => {
   const navigate = useNavigate();
@@ -165,18 +166,17 @@ const FosterProgram = () => {
             </div>
           </div>
 
-          {/* Right: Hero Video */}
+          {/* Right: Featured Podcast Episode */}
           <div className="relative">
-            <video
-              autoPlay
-              muted
-              loop
-              playsInline
-              preload="metadata"
-              className="w-full h-auto rounded-2xl shadow-2xl"
-            >
-              <source src="/hero-16.mp4" type="video/mp4" />
-            </video>
+            <PodcastEpisodeCard
+              slug="petport-digital-pet-adoption-foster-transfer"
+              title="Digital Pet Adoption & Foster Transfer: Giving Pets a Voice for Life"
+              description="Learn how PetPort's LiveLinks make foster-to-adopter transfers seamless with digital medical records, vaccination history, and care instructions that follow your pet."
+              coverImage="https://pub-5e3024d73a954e09aa62c81c9d3f1592.r2.dev/digital-pet-adoption-foster-transfer-og-1000x1000.jpg"
+              duration="10:30"
+              publishDate="2025-09-30"
+              className="max-w-md mx-auto"
+            />
           </div>
         </div>
       </section>

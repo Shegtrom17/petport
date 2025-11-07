@@ -44,15 +44,12 @@ import { featureFlags } from "@/config/featureFlags";
 import { OnboardingTour } from "@/components/OnboardingTour";
 import { useOnboardingTour } from "@/hooks/useOnboardingTour";
 
-// Always start on profile tab (home screen) for returning users
-const getInitialTab = () => {
-  return 'profile';
-};
+// Tab state - restored from localStorage on mount
 
 const Index = () => {
   console.log("Index component is rendering");
   
-  const [activeTab, setActiveTab] = useState(getInitialTab);
+  const [activeTab, setActiveTab] = useState('profile');
   const [isInAppSharingOpen, setIsInAppSharingOpen] = useState(false);
   const [petLimit, setPetLimit] = useState<number>(0);
   const restoredRef = useRef(false);
@@ -65,6 +62,26 @@ const Index = () => {
   const { user, status } = useAuth();
   const { settings } = useUserSettings(user?.id);
   const isOverlayOpen = useOverlayOpen();
+
+  // Restore last tab from localStorage on mount (fixes document upload redirect bug)
+  useEffect(() => {
+    const validTabs = ['profile', 'resume', 'care', 'quickid', 'gallery', 'travel', 'reviews', 'certifications', 'documents'];
+    
+    // Try general sticky key first (saved before upload/capture)
+    const lastTab = localStorage.getItem('pp_last_tab_last');
+    if (lastTab && validTabs.includes(lastTab)) {
+      setActiveTab(lastTab);
+      return;
+    }
+    
+    // Try user-specific key if settings allow
+    if (user?.id && settings.rememberLastTab) {
+      const userTab = localStorage.getItem(`pp_last_tab_${user.id}`);
+      if (userTab && validTabs.includes(userTab)) {
+        setActiveTab(userTab);
+      }
+    }
+  }, []); // Empty dependency array - only run on mount
   
   
   // Feature flag and touch capability detection

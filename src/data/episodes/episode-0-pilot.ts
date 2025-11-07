@@ -6,7 +6,7 @@ const episode: PodcastEpisode = {
   description: "PetPort is the all-in-one app that gives every pet a voice for life. From LiveLinks and real-time pet care updates to lost-pet flyers, résumé builders, storyboards, and instant photo-to-PDF records, it keeps every detail organized, shareable, and ready when your pet needs you most.",
   coverImage: "https://pub-5e3024d73a954e09aa62c81c9d3f1592.r2.dev/petport-digital-pet-profile-1000x1000.jpg",
   ogImage: "https://pub-5e3024d73a954e09aa62c81c9d3f1592.r2.dev/petport-digital-pet-profile-1200x630.jpg",
-  audioUrl: "https://pub-5e3024d73a954e09aa62c81c9d3f1592.r2.dev/petport-digital-pet-profile-platform.m4a",
+  audioUrl: "https://pub-5e3024d73a954e09aa62c81c9d3f1592.r2.dev/petport-digital-pet-profile-platform.mp3",
   duration: "10:11",
   publishDate: "2025-09-07",
   transcript: `PetPort is the all-in-one digital pet profile and care management app that unites every part of an animal's life — from lost-pet flyers and community alert systems to daily care and wellness tracking, medical documentation, and adoption transfers. Inside the app, pet owners, fosters, and rescues can store digital health records, create photo-to-PDF medical files, and share proof of vaccinations or Coggins tests instantly. Interactive LiveLinks allow sitters and trainers to post real-time updates on feeding, medication, and behavior. PetPort also features a Pet Résumé Builder for housing and travel, an instant lost-pet flyer generator with QR codes and sighting boards, and secure record transfer for adopters or new owners. More than a file system, it's a complete pet wellness and voice-for-life platform that keeps every story, record, and relationship connected under one roof.

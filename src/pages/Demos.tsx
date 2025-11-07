@@ -18,6 +18,14 @@ import {
   Home
 } from "lucide-react";
 import { PublicNavigationMenu } from "@/components/PublicNavigationMenu";
+import {
+  Breadcrumb,
+  BreadcrumbList,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbSeparator,
+  BreadcrumbPage,
+} from "@/components/ui/breadcrumb";
 
 export default function Demos() {
   const navigate = useNavigate();
@@ -304,6 +312,24 @@ export default function Demos() {
       <PodcastBanner />
 
       <main className="container mx-auto px-4 py-12 max-w-7xl">
+        {/* Breadcrumb Navigation */}
+        <Breadcrumb className="mb-6">
+          <BreadcrumbList>
+            <BreadcrumbItem>
+              <BreadcrumbLink 
+                onClick={() => navigate('/')}
+                className="cursor-pointer"
+              >
+                Home
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbPage>Demos</BreadcrumbPage>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
+
         {/* Hero Section */}
         <div className="text-center mb-16">
           <div className="inline-flex items-center gap-2 bg-brand-primary/10 rounded-full px-4 py-2 mb-6">

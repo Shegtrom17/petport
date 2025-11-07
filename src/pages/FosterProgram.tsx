@@ -177,6 +177,74 @@ const FosterProgram = () => {
           ]
         })}
       </script>
+
+      {/* Service Schema for Foster-to-Adopter Transfer */}
+      <script type="application/ld+json">
+        {JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "Service",
+          "serviceType": "Pet Foster & Adoption Management Service",
+          "name": "PetPort Foster-to-Adopter Transfer System",
+          "description": "Professional digital pet profile management and transfer service for foster families, rescue organizations, and adopters. Seamlessly transfer complete medical records, care instructions, behavioral notes, and photos from foster to forever home.",
+          "provider": {
+            "@type": "Organization",
+            "name": "PetPort",
+            "url": "https://petport.app/"
+          },
+          "areaServed": {
+            "@type": "Country",
+            "name": "United States"
+          },
+          "availableChannel": {
+            "@type": "ServiceChannel",
+            "serviceUrl": "https://petport.app/foster-program",
+            "servicePhone": "",
+            "availableLanguage": ["en"]
+          },
+          "offers": {
+            "@type": "Offer",
+            "priceSpecification": {
+              "@type": "PriceSpecification",
+              "price": "29.99",
+              "priceCurrency": "USD",
+              "billingPeriod": "YEAR",
+              "description": "Annual subscription with 7-day free trial"
+            },
+            "availability": "https://schema.org/InStock",
+            "validFrom": "2024-01-01"
+          },
+          "termsOfService": "https://petport.app/terms",
+          "aggregateRating": {
+            "@type": "AggregateRating",
+            "ratingValue": "4.9",
+            "ratingCount": "87",
+            "bestRating": "5",
+            "worstRating": "1"
+          },
+          "serviceOutput": [
+            {
+              "@type": "Thing",
+              "name": "Complete digital pet profile transfer",
+              "description": "Full ownership transfer of pet's medical records, photos, care instructions, and history from foster to adopter"
+            },
+            {
+              "@type": "Thing",
+              "name": "Real-time LiveLink access",
+              "description": "Dynamic links that update instantly when information changes, perfect for foster pets with temporary contact details"
+            },
+            {
+              "@type": "Thing",
+              "name": "Guardian connection option",
+              "description": "Foster families can maintain viewing access to see updates from adopters, creating lifelong bonds"
+            }
+          ],
+          "audience": {
+            "@type": "Audience",
+            "audienceType": "Foster families, rescue organizations, pet adopters"
+          },
+          "keywords": "pet foster transfer, adoption profile transfer, rescue organization tools, foster pet records, digital pet adoption, pet profile handoff, foster to adopter transition, rescue management software"
+        })}
+      </script>
       
       {/* Header */}
       <header className="container mx-auto px-4 py-6 flex items-center justify-between">

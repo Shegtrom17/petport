@@ -138,6 +138,57 @@ export default function LostPetFeatures() {
           }
         })}
       </script>
+
+      {/* HowTo Schema for 4-Step Process */}
+      <script type="application/ld+json">
+        {JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "HowTo",
+          "name": "How to Find a Lost Pet Using PetPort",
+          "description": "Step-by-step guide to recovering a lost pet using PetPort's LiveLink alert system, flyer generator, and community sighting board.",
+          "image": "https://pub-a7c2c18b8d6143b9a256105ef44f2da0.r2.dev/og-lostpet.png",
+          "totalTime": "PT5M",
+          "estimatedCost": {
+            "@type": "MonetaryAmount",
+            "currency": "USD",
+            "value": "0"
+          },
+          "step": [
+            {
+              "@type": "HowToStep",
+              "position": 1,
+              "name": "Report Missing",
+              "text": "Mark your pet as missing with one tap. Update status anytime from anywhere using the PetPort app.",
+              "image": "https://petport.app/lovable-uploads/mark_lost_1000_x_1000_px.png",
+              "url": "https://petport.app/lost-pet-features#step-1"
+            },
+            {
+              "@type": "HowToStep",
+              "position": 2,
+              "name": "Generate Flyer",
+              "text": "Professional PDF flyer created instantly with photos, details, and QR code. Download and print or share digitally.",
+              "image": "https://petport.app/lovable-uploads/flyer-preview.png",
+              "url": "https://petport.app/lost-pet-features#step-2"
+            },
+            {
+              "@type": "HowToStep",
+              "position": 3,
+              "name": "Share Everywhere",
+              "text": "One-tap sharing to SMS, email, social media, and printable posters. Spread the word instantly to your entire community.",
+              "image": "https://petport.app/lovable-uploads/LiveLink_lost_1000_x_1000_px.png",
+              "url": "https://petport.app/lost-pet-features#step-3"
+            },
+            {
+              "@type": "HowToStep",
+              "position": 4,
+              "name": "Sightings Board",
+              "text": "Receive real-time notifications when community members report sightings. Track your pet's location and coordinate search efforts.",
+              "image": "https://petport.app/lovable-uploads/Sighting_board_lost_1000_x_1000_px.png",
+              "url": "https://petport.app/lost-pet-features#step-4"
+            }
+          ]
+        })}
+      </script>
       
       <main className="min-h-screen bg-gradient-to-b from-background to-muted/20">
         {/* Header */}

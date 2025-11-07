@@ -36,7 +36,6 @@ import episode9 from './episodes/episode-9-give-pets-voice-life';
 
 // Export episodes array in strategic order (by user importance)
 export const podcastEpisodes: PodcastEpisode[] = [
-  episode9,      // #9 - Nov 7, 2025 - "Give Your Pet a Voice for Life" (LATEST)
   episodePilot,  // #0 - Sept 7, 2025 - "The Digital Pet Profile & Information Platform for a Lifetime" (PILOT)
   episode2,      // #2 - Nov 1, 2025 - "Beyond the Lost Pet Flyer"
   episode3,      // #3 - Nov 1, 2025 - "Digital Pet Adoption & Foster Transfer"
@@ -45,5 +44,6 @@ export const podcastEpisodes: PodcastEpisode[] = [
   episode6,      // #6 - Oct 20, 2025 - "Digital Pet Records & Document Storage"
   episode4,      // #4 - Nov 1, 2025 - "Pet Care & Handling: Digital Voice and Wellness"
   episode5,      // #5 - Nov 2, 2025 - "The Photo Gallery: The Pet's Digital Life Story For Safety and Sharing"
-  episode8       // #8 - Nov 2, 2025 - "Real-Life Stories: How PetPort Changes Everyday Pet Care"
+  episode8,      // #8 - Nov 2, 2025 - "Real-Life Stories: How PetPort Changes Everyday Pet Care"
+  episode9       // #9 - Nov 7, 2025 - "Give Your Pet a Voice for Life"
 ];

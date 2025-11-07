@@ -203,13 +203,22 @@ const FosterProgram = () => {
           },
           "offers": {
             "@type": "Offer",
-            "priceSpecification": {
-              "@type": "PriceSpecification",
-              "price": "29.99",
-              "priceCurrency": "USD",
-              "billingPeriod": "YEAR",
-              "description": "Annual subscription with 7-day free trial"
-            },
+            "priceSpecification": [
+              {
+                "@type": "PriceSpecification",
+                "price": "14.99",
+                "priceCurrency": "USD",
+                "billingPeriod": "YEAR",
+                "description": "Annual subscription with 7-day free trial"
+              },
+              {
+                "@type": "PriceSpecification",
+                "price": "1.99",
+                "priceCurrency": "USD",
+                "billingPeriod": "MONTH",
+                "description": "Monthly subscription with 7-day free trial"
+              }
+            ],
             "availability": "https://schema.org/InStock",
             "validFrom": "2024-01-01"
           },

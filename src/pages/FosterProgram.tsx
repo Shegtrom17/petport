@@ -163,6 +163,9 @@ const FosterProgram = () => {
               <AzureButton size="lg" variant="outline" asChild>
                 <Link to="/demos">See LiveLinks</Link>
               </AzureButton>
+              <AzureButton size="lg" variant="outline" asChild>
+                <Link to="/learn">Learn More</Link>
+              </AzureButton>
             </div>
           </div>
 

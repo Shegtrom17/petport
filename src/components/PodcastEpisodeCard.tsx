@@ -59,9 +59,14 @@ export const PodcastEpisodeCard: React.FC<PodcastEpisodeCardProps> = ({
             {description}
           </p>
 
-          <div className="flex items-center gap-2 text-xs text-muted-foreground">
-            <Calendar className="h-3 w-3" />
-            {formattedDate}
+          <div className="space-y-2">
+            <div className="flex items-center gap-2 text-xs text-muted-foreground">
+              <Calendar className="h-3 w-3" />
+              {formattedDate}
+            </div>
+            <p className="text-[10px] text-muted-foreground/70 italic">
+              Educational content - verify features in app
+            </p>
           </div>
         </div>
       </Card>

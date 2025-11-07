@@ -140,6 +140,15 @@ const Podcast = () => {
           </div>
         </section>
 
+        {/* Disclaimer */}
+        <section className="py-4 px-4">
+          <div className="container mx-auto max-w-6xl">
+            <p className="text-xs text-muted-foreground text-center">
+              Information shared in this podcast is for educational purposes. Features may change over time. For current details, please visit the PetPort app.
+            </p>
+          </div>
+        </section>
+
         {/* Episodes Grid */}
         <section className="py-16 px-4">
           <div className="container mx-auto max-w-6xl">

@@ -221,6 +221,15 @@ const PodcastEpisode = () => {
           </div>
         </section>
 
+        {/* Disclaimer */}
+        <section className="py-4 px-4 bg-muted/30">
+          <div className="container mx-auto max-w-4xl">
+            <p className="text-xs text-muted-foreground text-center">
+              Technical details discussed are for educational purposes and may not reflect current features. Please verify functionality in the PetPort app.
+            </p>
+          </div>
+        </section>
+
         {/* Audio Player (Lazy Loaded) */}
         {playerLoaded && (
           <section className="py-8 px-4">

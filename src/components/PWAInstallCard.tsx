@@ -81,20 +81,9 @@ export const PWAInstallCard = () => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="flex items-center justify-between gap-2">
-          <div className="flex items-center space-x-2 min-w-0">
-            <Smartphone className="w-5 h-5 shrink-0" />
-            <span className="truncate">App Installation</span>
-          </div>
-          {isInstalled ? (
-            <Badge variant="secondary" className="text-green-600 shrink-0 text-xs">
-              <Check className="w-3 h-3 mr-1" />
-              <span className="hidden sm:inline">Installed</span>
-              <span className="sm:hidden">✓</span>
-            </Badge>
-          ) : (
-            <Badge variant="outline" className="shrink-0 text-xs">Available</Badge>
-          )}
+        <CardTitle className="flex items-center gap-2">
+          <Smartphone className="w-5 h-5 shrink-0" />
+          <span className="truncate">App Installation</span>
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">

@@ -130,6 +130,93 @@ export default function Landing() {
         })}
       </script>
       
+      {/* Breadcrumb Schema */}
+      <script type="application/ld+json">
+        {JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            {
+              "@type": "ListItem",
+              "position": 1,
+              "name": "Home",
+              "item": "https://petport.app/"
+            }
+          ]
+        })}
+      </script>
+
+      {/* HowTo Schema for 4-Step Setup Process */}
+      <script type="application/ld+json">
+        {JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "HowTo",
+          "name": "How to Set Up Your Pet's Digital Profile on PetPort",
+          "description": "Complete step-by-step guide to creating a comprehensive digital profile for your pet including medical records, care instructions, and emergency contacts in under 15 minutes.",
+          "image": "https://pub-a7c2c18b8d6143b9a256105ef44f2da0.r2.dev/OG%20General.png",
+          "totalTime": "PT15M",
+          "estimatedCost": {
+            "@type": "MonetaryAmount",
+            "currency": "USD",
+            "value": "0"
+          },
+          "supply": [
+            {
+              "@type": "HowToSupply",
+              "name": "Pet photos"
+            },
+            {
+              "@type": "HowToSupply",
+              "name": "Vaccination records (optional)"
+            },
+            {
+              "@type": "HowToSupply",
+              "name": "Medical documents (optional)"
+            }
+          ],
+          "step": [
+            {
+              "@type": "HowToStep",
+              "position": 1,
+              "name": "Create Profile",
+              "text": "Add your pet's basic information, photos, and personality details in under 5 minutes. Include their name, species, breed, age, and any distinctive features.",
+              "image": "https://petport.app/assets/create-profile-screenshot.png",
+              "url": "https://petport.app/#step-1"
+            },
+            {
+              "@type": "HowToStep",
+              "position": 2,
+              "name": "Upload Documents",
+              "text": "Snap photos of vaccines, health records, and certifications. The platform automatically organizes everything in one secure location accessible from any device.",
+              "image": "https://petport.app/assets/document-upload-screenshot.png",
+              "url": "https://petport.app/#step-2"
+            },
+            {
+              "@type": "HowToStep",
+              "position": 3,
+              "name": "Add Resume Details",
+              "text": "Showcase achievements, certifications, and professional credentials to highlight your pet's accomplishments. Request and display reviews from vets, trainers, and pet services.",
+              "image": "https://petport.app/assets/resume-details-screenshot.png",
+              "url": "https://petport.app/#step-3"
+            },
+            {
+              "@type": "HowToStep",
+              "position": 4,
+              "name": "Share & Go",
+              "text": "Share with vets, sitters, or hotels instantly using LiveLinks. Generate PDFs and QR codes on demand for easy access to your pet's complete profile.",
+              "image": "https://petport.app/assets/share-instructions-screenshot.png",
+              "url": "https://petport.app/#step-4"
+            }
+          ],
+          "tool": [
+            {
+              "@type": "HowToTool",
+              "name": "Smartphone or computer with camera"
+            }
+          ]
+        })}
+      </script>
+      
       {/* Referral Banner */}
       {hasReferralCode && <div className="bg-brand-primary text-white py-2 text-center text-sm">
           🎉 You were referred! Start your free trial to thank your friend.

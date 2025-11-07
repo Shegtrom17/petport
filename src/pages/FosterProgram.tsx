@@ -110,6 +110,74 @@ const FosterProgram = () => {
         })}
       </script>
 
+      {/* HowTo Schema for Foster-to-Adopter Transfer */}
+      <script type="application/ld+json">
+        {JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "HowTo",
+          "name": "How to Transfer a Foster Pet's Profile to an Adopter",
+          "description": "Complete step-by-step guide for foster families to seamlessly transfer a pet's complete digital profile, medical records, care instructions, and history to adopters using PetPort's foster-to-adopter system.",
+          "image": "https://pub-a7c2c18b8d6143b9a256105ef44f2da0.r2.dev/OG%20General.png",
+          "totalTime": "PT10M",
+          "estimatedCost": {
+            "@type": "MonetaryAmount",
+            "currency": "USD",
+            "value": "0"
+          },
+          "supply": [
+            {
+              "@type": "HowToSupply",
+              "name": "Pet's medical records and vaccination history"
+            },
+            {
+              "@type": "HowToSupply",
+              "name": "Behavioral notes and care instructions"
+            },
+            {
+              "@type": "HowToSupply",
+              "name": "Pet photos showing identifying features"
+            },
+            {
+              "@type": "HowToSupply",
+              "name": "Adopter's email address"
+            }
+          ],
+          "step": [
+            {
+              "@type": "HowToStep",
+              "position": 1,
+              "name": "Create the Pet's Digital Profile",
+              "text": "Build a comprehensive digital profile for your foster pet including photos, medical records, vaccination history, care instructions, personality notes, behavioral observations, feeding schedules, medication requirements, and any special needs. The more complete the profile, the smoother the transition for the adopter and pet.",
+              "url": "https://petport.app/foster-program#step-1"
+            },
+            {
+              "@type": "HowToStep",
+              "position": 2,
+              "name": "Share the LiveLink",
+              "text": "Generate a secure LiveLink that gives adopters instant access to view the pet's complete profile before adoption is finalized. They can review all information without needing to create an account. The LiveLink updates in real-time, so any changes you make are immediately visible to potential adopters.",
+              "url": "https://petport.app/foster-program#step-2"
+            },
+            {
+              "@type": "HowToStep",
+              "position": 3,
+              "name": "Transfer Ownership",
+              "text": "When adoption is finalized, initiate the secure ownership transfer with one click. Enter the adopter's email address and the entire profile—including all medical records, photos, care instructions, and history—transfers to their account. The adopter receives full ownership and can update information while you optionally maintain viewing access as a Guardian to stay connected.",
+              "url": "https://petport.app/foster-program#step-3"
+            }
+          ],
+          "tool": [
+            {
+              "@type": "HowToTool",
+              "name": "PetPort account (foster subscription)"
+            },
+            {
+              "@type": "HowToTool",
+              "name": "Smartphone or computer"
+            }
+          ]
+        })}
+      </script>
+      
       {/* Header */}
       <header className="container mx-auto px-4 py-6 flex items-center justify-between">
         <div className="flex items-center gap-3">

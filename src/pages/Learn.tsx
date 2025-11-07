@@ -94,6 +94,88 @@ export default function Learn() {
         })}
       </script>
 
+      {/* FAQPage Schema for Rich Snippets */}
+      <script type="application/ld+json">
+        {JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "FAQPage",
+          "mainEntity": [
+            {
+              "@type": "Question",
+              "name": "What is the primary focus of PetPort app?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "PetPort focuses on preserving and sharing your pet's life story. Unlike a simple appointment tracker, PetPort captures all documents/records, care instructions, achievements, and even referrals. This ensures a seamless relay of information, whether to a pet sitter, vet, or a new family."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Is my pet's data secure on PetPort?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Yes! All data is encrypted and stored securely using industry-standard security protocols. You have complete control over what's shared publicly versus kept private. You can manage privacy settings for each section of your pet's profile individually."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "How many pets can I add to PetPort?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Each PetPort plan includes 1 pet profile. You can add more pets with our affordable add-on packages at $3.99 per additional pet per year. Pet slots are reusable - if you transfer a foster pet to an adopter, that slot becomes available for a new pet."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Does PetPort work on all devices?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Yes! PetPort works seamlessly on phones, tablets, and computers. You can install it as a Progressive Web App (PWA) for app-like experience, or use it directly in your browser. All your data syncs across all devices in real-time."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "How does the 7-day free trial work?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Sign up with your card for instant access to all PetPort features including medical records, care instructions, lost pet flyers, and LiveLinks. You won't be charged for 7 days, and you can cancel anytime during or after the trial period. If you continue after the trial, you'll be charged the standard subscription rate."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Do I need a credit card for the free trial?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Yes, a credit card is required to start your 7-day free trial, but you won't be charged until after the trial period ends. This ensures uninterrupted access to all features if you choose to continue using PetPort after your trial."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Can I cancel my PetPort subscription anytime?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Absolutely. You can cancel your PetPort subscription anytime from your account settings. There are no long-term commitments or cancellation fees. If you cancel, you'll retain access until the end of your current billing period."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "How do I share my pet's information with vets and sitters?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "PetPort makes sharing incredibly easy. Generate a LiveLink that you can share via text, email, or social media. Recipients can view the information without creating an account. You can also generate instant PDFs for printing or emailing, and create QR codes for physical tags."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "What makes PetPort different from other pet apps?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "PetPort is a comprehensive digital pet portfolio, not just a tracker. It includes medical records, care instructions, lost pet recovery system with sighting boards, professional pet resumes for housing applications, foster-to-adopter transfer tools, travel documentation, and real-time LiveLinks that update automatically when you make changes."
+              }
+            }
+          ]
+        })}
+      </script>
+      
       {/* Header Navigation */}
       <header className="max-w-7xl mx-auto px-4 py-6 flex items-center justify-between border-b border-gray-200">
         <div className="flex items-center gap-3">

@@ -4,7 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Copy, Mail, Trash2, Shield } from "lucide-react";
+import { Copy, Mail, Trash2, Shield, X } from "lucide-react";
 import { useKeyboardAwareLayout } from "@/hooks/useKeyboardAwareLayout";
 import { isOldIOS } from "@/utils/iosDetection";
 import { smoothScrollIntoViewIfNeeded } from "@/utils/smoothScroll";
@@ -286,15 +286,15 @@ export const GuardianManagementModal = ({
     <>
       <Dialog open={isOpen} onOpenChange={onClose}>
         <DialogContent ref={contentRef} className="w-[96vw] sm:max-w-md md:max-w-2xl max-h-[90svh] overflow-hidden flex flex-col p-0 touch-pan-y">
-          {/* Floating Done button when keyboard is open */}
+          {/* Floating close button */}
           <Button
             type="button"
-            variant="secondary"
-            size="sm"
-            onClick={dismissKeyboard}
-            className="fixed top-2 right-2 z-[99999] shadow-xl bg-primary text-primary-foreground hover:bg-primary/90"
+            variant="ghost"
+            size="icon"
+            onClick={onClose}
+            className="absolute top-2 right-2 z-[99999] h-8 w-8 rounded-full hover:bg-muted"
           >
-            Done
+            <X className="h-4 w-4" />
           </Button>
           
           <DialogHeader className="px-3 sm:px-6 pt-4 pb-2">

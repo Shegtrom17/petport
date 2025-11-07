@@ -196,7 +196,7 @@ export default function Landing() {
                 Digital Pet Passport?
               </h1>
               <p className="mt-6 text-xl text-brand-primary-dark leading-relaxed">
-                Yes, but so much more! PetPort is an all-in-one digital information platform for companion animals. Securely organize Pets vaccines, insurance, pet medical records, and travel documents. Our One-Tap  Lost Pet Flyer Generator feature offers Livelinks and in app Sighting Board.  Our interactive LiveLinks are the heartbeat of the app. Pet Care instructions are easily updated! And the Pet Screening and Resume builder are  perfect for groomers, sitters,  renters or emergencies. Update and share résumés, request reviews, in real time. Instantly update data from anywhere, to anyone, on any device. Perfect for pet foster-to-adopter transfers! Give them a digital voice for a lifetime.
+                Yes, but so much more! PetPort is an all-in-one digital information platform for companion animals. Securely organize pets vaccines, insurance, pet medical records, and travel documents. Our One-Tap Lost Pet Flyer Generator  offers Livelinks and in app Sighting Board. Our interactive LiveLinks are the heartbeat of the app. Pet care instructions are easily updated! And the pet screening and resume builder are perfect for groomers, sitters, renters or emergencies. Update and share résumés, request reviews, in real time. Instantly update data from anywhere, to anyone, on any device. Perfect for pet foster-to-adopter transfers! Give them a digital voice for a lifetime.
               </p>
 
               

@@ -156,11 +156,115 @@ export default function Demos() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-brand-cream via-white to-brand-cream">
       <MetaTags 
-        title="PetPort LiveLink Demos - Live Pet Passport Examples & Features"
-        description="See PetPort LiveLinks in action! Explore live demos: pet resumes, lost pet alerts, care instructions & photo galleries. Real data from Finnegan."
+        title="PetPort LiveLinks Demos | Lost Pet Flyer, Pet Screening Resume, Pet Care & More"
+        description="Explore PetPort LiveLinks: lost pet flyer generator, pet screening resume builder, pet care instructions, pet photo gallery, travel map. Live interactive demos with real data."
         image="https://pub-a7c2c18b8d6143b9a256105ef44f2da0.r2.dev/OG%20General.png"
         url={`${window.location.origin}/demos`}
       />
+
+      {/* Schema.org Structured Data - ItemList for LiveLink Demos */}
+      <script type="application/ld+json">
+        {JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "ItemList",
+          "name": "PetPort LiveLinks Demo Collection",
+          "description": "Interactive LiveLink demos for pet owners: lost pet flyers, pet screening resumes, pet care instructions, emergency profiles, photo galleries, and travel maps",
+          "numberOfItems": liveLinks.length,
+          "itemListElement": liveLinks.map((link, index) => ({
+            "@type": "ListItem",
+            "position": index + 1,
+            "item": {
+              "@type": "SoftwareApplication",
+              "name": link.title,
+              "description": link.description,
+              "applicationCategory": "Pet Care & Safety",
+              "featureList": link.features,
+              "url": link.demoLink ? `${window.location.origin}${link.demoLink}` : `${window.location.origin}/demos`
+            }
+          }))
+        })}
+      </script>
+
+      {/* Breadcrumb Schema */}
+      <script type="application/ld+json">
+        {JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            {
+              "@type": "ListItem",
+              "position": 1,
+              "name": "Home",
+              "item": window.location.origin
+            },
+            {
+              "@type": "ListItem",
+              "position": 2,
+              "name": "LiveLinks Demos",
+              "item": `${window.location.origin}/demos`
+            }
+          ]
+        })}
+      </script>
+
+      {/* FAQ Schema for How It Works */}
+      <script type="application/ld+json">
+        {JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "FAQPage",
+          "mainEntity": [
+            {
+              "@type": "Question",
+              "name": "What are PetPort LiveLinks?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "PetPort LiveLinks are shareable, real-time updating pages for your pet including lost pet flyers, pet screening resumes, pet care instructions, emergency profiles, photo galleries, and travel maps. Each LiveLink updates instantly when you make changes."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "How do I create a lost pet flyer with PetPort?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "PetPort includes a one-tap lost pet flyer generator with LiveLinks. Mark your pet as missing and instantly generate a shareable alert page with QR code, last seen location, photo gallery, and a public sighting board that updates in real-time."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "What is a pet screening resume?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "A pet screening resume is a professional LiveLink showcasing your pet's certifications, training, achievements, and verified reviews. Perfect for rental applications, groomers, pet hotels, and pet-friendly accommodations. Update and share instantly with landlords and service providers."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "How do PetPort LiveLinks update in real-time?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "When you update your pet's information in PetPort, all shared LiveLinks sync instantly. Anyone with your link sees the latest data immediately—perfect for pet sitters viewing care instructions, emergency contacts seeing medical updates, or people finding your lost pet."
+              }
+            }
+          ]
+        })}
+      </script>
+
+      {/* Organization Schema with Keywords */}
+      <script type="application/ld+json">
+        {JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "WebPage",
+          "name": "PetPort LiveLinks Demos",
+          "description": "Interactive pet passport LiveLinks: lost pet flyer generator, pet screening resume builder, pet care instructions, pet emergency profiles, pet photo galleries, pet travel maps",
+          "keywords": "lost pet flyer, pet screening resume, pet care instructions, pet emergency profile, pet photo gallery, pet travel map, digital pet passport, pet housing application, pet rental resume, pet certification, pet training records, pet sitter instructions, pet medical records, pet LiveLinks",
+          "url": `${window.location.origin}/demos`,
+          "provider": {
+            "@type": "Organization",
+            "name": "PetPort",
+            "url": window.location.origin
+          }
+        })}
+      </script>
 
       {/* Header */}
       <header className="max-w-7xl mx-auto px-4 py-6 flex items-center justify-between">

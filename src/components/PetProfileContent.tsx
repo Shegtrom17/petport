@@ -30,6 +30,16 @@ import { QuickShareHub } from "@/components/QuickShareHub";
 import { ContactsDisplay } from "@/components/ContactsDisplay";
 import { compressMultipleImages } from "@/utils/imageCompression";
 
+// Helper to save current tab before risky actions (prevents redirect bug)
+const saveLastTab = async () => {
+  localStorage.setItem('pp_last_tab_last', 'profile');
+  try {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user?.id) {
+      localStorage.setItem(`pp_last_tab_${user.id}`, 'profile');
+    }
+  } catch {}
+};
 
 interface PetProfileContentProps {
   petData: any;
@@ -228,8 +238,11 @@ export const PetProfileContent = ({
     }
   };
 
-  const openProfileFilePicker = (type: 'profile' | 'fullBody', useCamera: boolean) => {
+  const openProfileFilePicker = async (type: 'profile' | 'fullBody', useCamera: boolean) => {
     console.log("OPENING_FILE_PICKER:", { type, useCamera });
+    
+    // Save tab before opening picker to prevent redirect after upload
+    await saveLastTab();
     
     const input = document.createElement('input');
     input.type = 'file';
@@ -250,6 +263,9 @@ export const PetProfileContent = ({
   };
 
   const handlePhotoDelete = async (type: 'profile' | 'fullBody') => {
+    // Save tab before delete to prevent redirect
+    await saveLastTab();
+    
     try {
       await deleteOfficialPhoto(enhancedPetData.id, type);
       toast({

@@ -137,83 +137,184 @@ export default function LostPetFeatures() {
         {/* Podcast Banner */}
         <PodcastBanner />
 
-        {/* Hero Section */}
+        {/* Hero Section - Dual Path */}
         <section className="container mx-auto px-4 py-12 md:py-20">
-          <div className="max-w-4xl mx-auto text-center space-y-6">
-            <h1 className="text-4xl md:text-6xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
+          <div className="text-center mb-8">
+            <h1 className="text-4xl md:text-6xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent mb-4">
               Every Minute Counts When They Go Missing
             </h1>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              With PetPort.app you can generate professional lost pet flyers in seconds, share instantly across all platforms, and receive real-time sighting notifications from your community.
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+              Choose your path: Get immediate help with our free tool, or protect your pet with the complete PetPort platform
             </p>
+          </div>
 
-            {/* Podcast Episode - Featured at Top */}
-            <div className="max-w-3xl mx-auto mb-8">
-              <h2 className="text-2xl md:text-3xl font-bold mb-4">
-                Deep Dive: The Complete Lost Pet Recovery System
-              </h2>
-              <p className="text-base text-muted-foreground mb-8">
-                Want to understand the full ecosystem? Listen to our podcast episode covering everything from the free flyer generator to the LiveLink system, sighting boards, and community coordination.
-              </p>
-              
-              <div className="max-w-md mx-auto mb-6">
-                <PodcastEpisodeCard
-                  slug={episode2.slug}
-                  title={episode2.title}
-                  description={episode2.description}
-                  coverImage={episode2.coverImage}
-                  duration={episode2.duration}
-                  publishDate={episode2.publishDate}
-                />
-              </div>
+          <div className="grid lg:grid-cols-2 gap-8 max-w-6xl mx-auto">
+            {/* LEFT: Emergency Free Tool Path */}
+            <Card className="border-2 border-red-500/30 bg-gradient-to-br from-red-50/50 to-orange-50/50 dark:from-red-950/20 dark:to-orange-950/20">
+              <CardContent className="p-8 space-y-6">
+                <div className="inline-flex items-center gap-2 px-3 py-1 bg-red-500/10 rounded-full border border-red-500/20">
+                  <span className="text-xs font-bold text-red-600 dark:text-red-400 uppercase tracking-wider">🚨 Emergency</span>
+                </div>
+                
+                <h2 className="text-3xl font-bold">Need Help NOW?</h2>
+                
+                <p className="text-muted-foreground text-lg">
+                  Your pet is missing right now and you need a flyer immediately. Use our <strong>free tool</strong> below to create a basic printable flyer in seconds.
+                </p>
 
-              <div className="bg-card border rounded-lg p-6">
-                <h3 className="font-semibold text-lg mb-3">What You'll Learn:</h3>
-                <ul className="text-left space-y-2 text-muted-foreground">
+                <ul className="space-y-3 text-sm">
                   <li className="flex items-start gap-2">
-                    <Check className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
-                    <span>How the free Lost Pet Flyer Generator works and when to use it</span>
+                    <Check className="h-5 w-5 text-red-600 flex-shrink-0 mt-0.5" />
+                    <span>Create printable PDF instantly</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <Check className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
-                    <span>The power of LiveLink QR codes for real-time pet recovery</span>
+                    <Check className="h-5 w-5 text-red-600 flex-shrink-0 mt-0.5" />
+                    <span>No signup required</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <Check className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
-                    <span>How the community Sightings Board coordinates search efforts</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <Check className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
-                    <span>Real-world examples of successful pet recoveries using PetPort</span>
+                    <Check className="h-5 w-5 text-red-600 flex-shrink-0 mt-0.5" />
+                    <span>Free forever</span>
                   </li>
                 </ul>
+
+                <Button 
+                  size="lg" 
+                  onClick={scrollToGenerator}
+                  className="w-full bg-red-600 hover:bg-red-700 text-white text-lg"
+                >
+                  Use Free Generator Below ↓
+                </Button>
+
+                <p className="text-xs text-muted-foreground text-center">
+                  This creates a static flyer. For dynamic updates, QR codes, and sighting boards, see the full platform →
+                </p>
+              </CardContent>
+            </Card>
+
+            {/* RIGHT: Full Platform Path */}
+            <Card className="border-2 border-primary/30 bg-gradient-to-br from-primary/5 to-primary/10">
+              <CardContent className="p-8 space-y-6">
+                <div className="inline-flex items-center gap-2 px-3 py-1 bg-primary/10 rounded-full border border-primary/20">
+                  <span className="text-xs font-bold text-primary uppercase tracking-wider">✨ Complete Solution</span>
+                </div>
                 
-                <div className="mt-6">
-                  <Button asChild variant="outline" size="lg">
-                    <Link to="/podcast">
-                      Browse All Episodes
+                <h2 className="text-3xl font-bold">Want Full Protection?</h2>
+                
+                <p className="text-muted-foreground text-lg">
+                  Be prepared BEFORE an emergency. Get LiveLinks with QR codes, real-time sighting boards, instant updates, and complete pet management.
+                </p>
+
+                <ul className="space-y-3 text-sm">
+                  <li className="flex items-start gap-2">
+                    <Check className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
+                    <span><strong>LiveLink QR codes</strong> that update in real-time</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <Check className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
+                    <span><strong>Sighting board</strong> with email notifications</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <Check className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
+                    <span><strong>Medical records</strong> & care instructions</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <Check className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
+                    <span><strong>One-tap sharing</strong> to all platforms</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <Check className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
+                    <span><strong>Photo gallery</strong> & complete profile</span>
+                  </li>
+                </ul>
+
+                <div className="space-y-3">
+                  <Button size="lg" asChild className="w-full bg-brand-primary hover:bg-brand-primary-dark text-white">
+                    <Link to="/demo/missing-pet">
+                      <Eye className="mr-2 h-5 w-5" />
+                      View Live Demo
+                    </Link>
+                  </Button>
+                  
+                  <Button size="lg" asChild variant="outline" className="w-full border-2">
+                    <Link to="/">
+                      See All Features
                     </Link>
                   </Button>
                 </div>
+
+                <p className="text-xs text-muted-foreground text-center">
+                  7-day free trial • No credit card required
+                </p>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Podcast Episode - Below Hero */}
+          <div className="max-w-3xl mx-auto mt-16">
+            <h2 className="text-2xl md:text-3xl font-bold mb-4 text-center">
+              Deep Dive: The Complete Lost Pet Recovery System
+            </h2>
+            <p className="text-base text-muted-foreground mb-8 text-center">
+              Want to understand the full ecosystem? Listen to our podcast episode covering everything from the free flyer generator to the LiveLink system, sighting boards, and community coordination.
+            </p>
+            
+            <div className="max-w-md mx-auto mb-6">
+              <PodcastEpisodeCard
+                slug={episode2.slug}
+                title={episode2.title}
+                description={episode2.description}
+                coverImage={episode2.coverImage}
+                duration={episode2.duration}
+                publishDate={episode2.publishDate}
+              />
+            </div>
+          </div>
+        </section>
+
+        {/* Free Flyer Generator Section - SECTION 2 */}
+        <section id="free-generator" className="container mx-auto px-4 py-16 scroll-mt-20 bg-gradient-to-br from-red-50/30 to-orange-50/30 dark:from-red-950/10 dark:to-orange-950/10">
+          <div className="max-w-4xl mx-auto">
+            <div className="text-center mb-8">
+              <div className="inline-flex items-center gap-2 px-4 py-2 bg-red-500/10 rounded-full border border-red-500/20 mb-4">
+                <span className="text-sm font-bold text-red-600 dark:text-red-400 uppercase tracking-wider">🆓 Free Tool</span>
               </div>
+              <h2 className="text-3xl md:text-4xl font-bold mb-4">
+                Create Your Free Lost Pet Flyer
+              </h2>
+              <p className="text-lg text-muted-foreground">
+                This free tool creates a basic printable flyer — perfect for quick distribution. For the full-featured Lost Pet system with QR codes, LiveLinks, real-time updates and sighting notifications, <Link to="/" className="text-primary hover:underline font-semibold">explore the full PetPort platform</Link>.
+              </p>
             </div>
 
-            <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
-              <Button size="lg" asChild className="bg-brand-primary hover:bg-brand-primary-dark text-white">
-                <Link to="/">
-                  Explore Full Platform
-                </Link>
-              </Button>
-              <Button size="lg" onClick={() => navigate('/gift')} variant="outline" className="border-2 flex items-center gap-2">
-                <Heart className="h-5 w-5 text-rose-500" />
-                Give PetPort as a Gift
-              </Button>
-              <Button size="lg" asChild className="bg-brand-primary hover:bg-brand-primary-dark text-white">
-                <Link to="/demo/missing-pet">
-                  <Eye className="mr-2 h-5 w-5" />
-                  View Live Demo
-                </Link>
-              </Button>
+            <FreeLostPetFlyerGenerator />
+
+            <div className="text-center mt-8 p-6 bg-gradient-to-br from-primary/10 to-primary/5 rounded-lg border-2 border-primary/30 shadow-md">
+              <div className="inline-flex items-center gap-2 px-3 py-1 bg-primary/20 rounded-full mb-3">
+                <span className="text-xs font-bold text-primary uppercase tracking-wider">Static Flyer</span>
+                <ArrowRight className="h-3 w-3 text-primary" />
+                <span className="text-xs font-bold text-primary uppercase tracking-wider">Dynamic LiveLink</span>
+              </div>
+              
+              <p className="text-sm font-semibold mb-2">
+                Upgrade to PetPort for Real-Time Updates
+              </p>
+              <p className="text-sm text-muted-foreground mb-4">
+                The free generator creates a static PDF. With PetPort, your Lost Pet LiveLink updates instantly with new photos, location changes, and community sightings — no need to reprint or reshare.
+              </p>
+              
+              <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                <Button size="lg" asChild className="bg-brand-primary hover:bg-brand-primary-dark text-white">
+                  <Link to="/demo/missing-pet">
+                    <Eye className="mr-2 h-4 w-4" />
+                    See Full Platform Demo
+                  </Link>
+                </Button>
+                <Button size="lg" asChild variant="outline" className="border-2">
+                  <Link to="/#pricing">
+                    View Pricing
+                  </Link>
+                </Button>
+              </div>
             </div>
           </div>
         </section>
@@ -269,54 +370,6 @@ export default function LostPetFeatures() {
                   </CardContent>
                 </Card>
               ))}
-            </div>
-          </div>
-        </section>
-
-        {/* Free Flyer Generator Section */}
-        <section id="free-generator" className="container mx-auto px-4 py-16 scroll-mt-20">
-          <div className="max-w-4xl mx-auto">
-            <div className="text-center mb-8">
-              <h2 className="text-3xl md:text-4xl font-bold mb-4">
-                Our Gift: A Free Tool to Bring Them Home
-              </h2>
-              <p className="text-lg text-muted-foreground">
-                This free tool creates a basic printable flyer — perfect for quick distribution. For the full-featured Lost Pet PDF Flyer with QR codes, plus dynamic LiveLinks with real-time updates and sighting notifications, explore the full PetPort platform below.
-              </p>
-            </div>
-
-            <FreeLostPetFlyerGenerator />
-
-            <div className="text-center mt-8 p-6 bg-gradient-to-br from-primary/10 to-primary/5 rounded-lg border-2 border-primary/30 shadow-md">
-              <div className="inline-flex items-center gap-2 px-3 py-1 bg-primary/20 rounded-full mb-3">
-                <span className="text-xs font-bold text-primary uppercase tracking-wider">Static Flyer</span>
-                <ArrowRight className="h-3 w-3 text-primary" />
-                <span className="text-xs font-bold text-primary uppercase tracking-wider">Dynamic LiveLink</span>
-              </div>
-              
-              <p className="text-sm font-semibold mb-2">
-                This free tool creates a static PDF — great for printing and sharing.
-              </p>
-              
-              <p className="text-sm text-muted-foreground mb-4">
-                <strong>Upgrade to PetPort's Lost Pet LiveLink</strong> for QR codes that link to a live, updateable page with real-time Sightings Board, automatic notifications, social sharing, and more.
-              </p>
-              
-              <div className="flex flex-col sm:flex-row gap-3 justify-center">
-                <Button asChild className="text-white">
-                  <Link to="/#pricing">See Full Features & Pricing</Link>
-                </Button>
-                <Button onClick={() => navigate('/gift')} variant="outline" className="flex items-center gap-2 border-2">
-                  <Heart className="h-4 w-4 text-rose-500" />
-                  Give as a Gift
-                </Button>
-                <Button asChild variant="outline">
-                  <Link to="/demo/missing-pet">
-                    <Eye className="mr-2 h-4 w-4" />
-                    View Live Demo
-                  </Link>
-                </Button>
-              </div>
             </div>
           </div>
         </section>

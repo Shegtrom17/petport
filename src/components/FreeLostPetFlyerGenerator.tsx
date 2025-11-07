@@ -156,14 +156,21 @@ export const FreeLostPetFlyerGenerator = () => {
     setIsGenerating(true);
 
     try {
-      await generateFreeLostPetFlyer({
+      const result = await generateFreeLostPetFlyer({
         petName: petName.trim(),
         species,
         contactPhone: contactPhone.trim(),
         photoFile: photoFile!
       });
 
-      toast.success("Lost pet flyer downloaded successfully!");
+      if (result.isAndroid) {
+        toast.success("PDF downloaded! Check your Downloads or Documents folder.", {
+          duration: 6000,
+          description: "Open your Files app and look in Downloads or Documents"
+        });
+      } else {
+        toast.success("Lost pet flyer downloaded successfully!");
+      }
     } catch (error) {
       console.error("Error generating flyer:", error);
       toast.error("Failed to generate flyer. Please try again.");

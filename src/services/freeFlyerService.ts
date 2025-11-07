@@ -7,13 +7,36 @@ interface FreeFlyerData {
   photoFile: File;
 }
 
-export const generateFreeLostPetFlyer = async (data: FreeFlyerData): Promise<void> => {
+export const generateFreeLostPetFlyer = async (data: FreeFlyerData): Promise<{ fileName: string; isAndroid: boolean }> => {
   const { petName, species, contactPhone, photoFile } = data;
 
-  // Convert image to base64
+  // Convert and fix image orientation
   const photoDataUrl = await new Promise<string>((resolve, reject) => {
     const reader = new FileReader();
-    reader.onload = () => resolve(reader.result as string);
+    reader.onload = async () => {
+      const img = new Image();
+      img.onload = () => {
+        // Create canvas to handle orientation
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        
+        if (!ctx) {
+          resolve(reader.result as string);
+          return;
+        }
+
+        // Set canvas size to image size (correct orientation)
+        canvas.width = img.width;
+        canvas.height = img.height;
+
+        // Draw image (this handles EXIF orientation automatically in modern browsers)
+        ctx.drawImage(img, 0, 0);
+        
+        // Convert to data URL
+        resolve(canvas.toDataURL('image/jpeg', 0.9));
+      };
+      img.src = reader.result as string;
+    };
     reader.onerror = reject;
     reader.readAsDataURL(photoFile);
   });
@@ -108,7 +131,13 @@ export const generateFreeLostPetFlyer = async (data: FreeFlyerData): Promise<voi
     throw new Error("Failed to process image");
   }
 
-  // Save PDF
+  // Save PDF with platform-specific guidance
   const fileName = `MISSING-${petName.replace(/\s+/g, '-').toUpperCase()}-${Date.now()}.pdf`;
   pdf.save(fileName);
+  
+  // Return platform info for download guidance
+  return {
+    fileName,
+    isAndroid: /android/i.test(navigator.userAgent)
+  };
 };

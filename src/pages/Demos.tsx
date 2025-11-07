@@ -42,16 +42,16 @@ export default function Demos() {
     },
     {
       id: "missing-pet",
-      title: "Missing Pet Emergency Page",
-      description: "Instant shareable alert with QR code for flyers. Update in real-time as your search progresses.",
+      title: "Built In Lost Pet LiveLink + Generator",
+      description: "If the unthinkable happens, instantly generate a shareable lost pet flyer — complete with photos, contact info, and LiveLinks. In app Sighting Board with notifications, Scannable QR codes. PetPort's 'Find My Pet' system keeps communities connected in real time.",
       icon: AlertCircle,
       color: "from-red-600 to-orange-600",
       borderColor: "border-red-200 hover:border-red-500",
       features: [
-        "Last seen location & time details",
-        "Interactive public sighting board",
-        "Shareable QR code for flyers",
-        "Photo gallery & distinctive features"
+        "Instant lost pet flyer generator",
+        "In-app Sighting Board with notifications",
+        "Scannable QR codes for flyers & tags",
+        "Real-time LiveLink updates"
       ],
       demoLink: "/demo/missing-pet",
       hasLiveDemo: true

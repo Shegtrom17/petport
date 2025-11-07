@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { MetaTags } from "@/components/MetaTags";
-import { Sparkles, Download, Share2, Wand2, Eye, X, Heart, FileText, AlertTriangle, Camera, Menu, Facebook } from "lucide-react";
+import { Sparkles, Download, Share2, Wand2, Eye, X, Heart, FileText, AlertTriangle, Camera, Menu, Facebook, Home } from "lucide-react";
 import { toast } from "sonner";
 import {
   Dialog,
@@ -844,7 +844,10 @@ export default function DogGoneGood() {
             <Heart className="h-4 w-4 text-rose-500" />
             <span className="hidden sm:inline">Gift PetPort</span>
           </Button>
-          <Button onClick={() => navigate('/')} variant="outline">Back to Home</Button>
+          <Button onClick={() => navigate('/')} variant="outline" className="flex items-center gap-2">
+            <Home className="h-4 w-4" />
+            <span className="hidden sm:inline">Home</span>
+          </Button>
         </div>
       </header>
 

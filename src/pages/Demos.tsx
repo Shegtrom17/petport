@@ -14,7 +14,8 @@ import {
   Shield,
   User,
   ArrowRight,
-  Menu
+  Menu,
+  Home
 } from "lucide-react";
 import { PublicNavigationMenu } from "@/components/PublicNavigationMenu";
 
@@ -286,8 +287,9 @@ export default function Demos() {
             <Heart className="h-4 w-4 text-rose-500" />
             <span className="hidden sm:inline">Gift PetPort</span>
           </Button>
-          <Button onClick={() => navigate('/')} variant="outline">
-            Back to Home
+          <Button onClick={() => navigate('/')} variant="outline" className="flex items-center gap-2">
+            <Home className="h-4 w-4" />
+            <span className="hidden sm:inline">Home</span>
           </Button>
         </div>
       </header>

@@ -3,7 +3,7 @@ import { useState } from "react";
 import { MetaTags } from "@/components/MetaTags";
 import { AzureButton } from "@/components/ui/azure-button";
 import { Button } from "@/components/ui/button";
-import { Heart, Link2, MapPin, Sparkles, Menu } from "lucide-react";
+import { Heart, Link2, MapPin, Sparkles, Menu, Home } from "lucide-react";
 import { GuidanceHint } from "@/components/ui/guidance-hint";
 import { PublicNavigationMenu } from "@/components/PublicNavigationMenu";
 import { PodcastBanner } from "@/components/PodcastBanner";
@@ -130,8 +130,9 @@ const FosterProgram = () => {
             <Heart className="h-4 w-4 text-rose-500" />
             <span className="hidden sm:inline">Gift PetPort</span>
           </Button>
-          <Button onClick={() => navigate('/')} variant="outline">
-            Back to Home
+          <Button onClick={() => navigate('/')} variant="outline" className="flex items-center gap-2">
+            <Home className="h-4 w-4" />
+            <span className="hidden sm:inline">Home</span>
           </Button>
         </div>
       </header>

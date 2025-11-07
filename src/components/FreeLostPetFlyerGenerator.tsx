@@ -7,6 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Download, Loader2, Eye, Facebook } from "lucide-react";
 import { toast } from "sonner";
 import { generateFreeLostPetFlyer } from "@/services/freeFlyerService";
+import { formatPhoneNumber } from "@/utils/phoneFormatter";
 
 export const FreeLostPetFlyerGenerator = () => {
   const [petName, setPetName] = useState("");
@@ -240,7 +241,10 @@ export const FreeLostPetFlyerGenerator = () => {
                   type="tel"
                   placeholder="(555) 123-4567"
                   value={contactPhone}
-                  onChange={(e) => setContactPhone(e.target.value)}
+                  onChange={(e) => {
+                    const formatted = formatPhoneNumber(e.target.value);
+                    setContactPhone(formatted);
+                  }}
                   maxLength={20}
                 />
               </div>

@@ -368,9 +368,9 @@ const FosterProgram = () => {
                   <MapPin className="h-6 w-6 text-primary" />
                 </div>
                 <div>
-                  <h3 className="text-xl font-semibold mb-2">Built-In Lost Pet Finder + Flyer Generator</h3>
+                  <h3 className="text-xl font-semibold mb-2">Built In Lost Pet LiveLink + Generator</h3>
                   <p className="text-muted-foreground">
-                    If the unthinkable happens, adopters can instantly generate a shareable lost pet flyer — complete with photos, contact info, and auto-map location links. PetPort's "Find My Pet" system keeps communities connected in real time.
+                    If the unthinkable happens, adopters can instantly generate a shareable lost pet flyer — complete with photos, contact info, and LiveLinks. In app Sighting Board with notifications, Scannable QR codes. PetPort's "Find My Pet" system keeps communities connected in real time.
                   </p>
                 </div>
               </div>

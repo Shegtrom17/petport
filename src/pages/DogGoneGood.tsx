@@ -824,6 +824,59 @@ export default function DogGoneGood() {
         })}
       </script>
 
+      {/* HowTo Schema for Step-by-Step Rich Snippets */}
+      <script type="application/ld+json">
+        {JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "HowTo",
+          "name": "How to Create a Pet Resume for Rental Applications",
+          "description": "Step-by-step guide to creating a professional pet resume using the Dog-Gone-Good generator. Perfect for housing applications and social media sharing.",
+          "totalTime": "PT5M",
+          "estimatedCost": {
+            "@type": "MonetaryAmount",
+            "currency": "USD",
+            "value": "0"
+          },
+          "step": [
+            {
+              "@type": "HowToStep",
+              "position": 1,
+              "name": "Upload Pet Photos",
+              "text": "Add up to 2 photos of your pet. Choose clear, high-quality images that show your pet's personality and appearance. Photos should be in JPEG, PNG, or HEIC format. The generator will automatically optimize them for the resume layout.",
+              "url": "https://petport.app/dog-gone-good#upload"
+            },
+            {
+              "@type": "HowToStep",
+              "position": 2,
+              "name": "Enter Pet Name",
+              "text": "Type your pet's name in the designated field. This will appear prominently at the top of the resume. Make sure to spell it exactly as you want it to appear on the final document.",
+              "url": "https://petport.app/dog-gone-good#name"
+            },
+            {
+              "@type": "HowToStep",
+              "position": 3,
+              "name": "Customize Content",
+              "text": "Select from pre-written options or customize the professional title, key achievements, relevant experience, and professional references sections. Choose options that best represent your pet's personality, training, and behavior. For housing applications, emphasize well-behaved traits and training certifications.",
+              "url": "https://petport.app/dog-gone-good#customize"
+            },
+            {
+              "@type": "HowToStep",
+              "position": 4,
+              "name": "Choose Theme",
+              "text": "Select a theme for your pet's resume: Classic Patriotic (professional red, white, and blue), Autumn Harvest (warm seasonal colors), or Christmas Holiday (festive design). Each theme includes appropriate graphics and color schemes while maintaining readability.",
+              "url": "https://petport.app/dog-gone-good#theme"
+            },
+            {
+              "@type": "HowToStep",
+              "position": 5,
+              "name": "Download Resume",
+              "text": "Click the Download button to save your pet's resume as a high-quality JPEG image. The file will be optimized for both digital sharing and printing. You can then attach it to rental applications, email it to landlords, or share it on social media platforms.",
+              "url": "https://petport.app/dog-gone-good#download"
+            }
+          ]
+        })}
+      </script>
+
       {/* Header */}
       <header className="max-w-7xl mx-auto px-4 py-6 flex items-center justify-between">
         <div className="flex items-center gap-3">

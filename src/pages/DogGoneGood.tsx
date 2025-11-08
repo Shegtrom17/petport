@@ -812,10 +812,10 @@ export default function DogGoneGood() {
             },
             {
               "@type": "Question",
-              "name": "What's the difference between the free resume and PetPort's full platform?",
+              "name": "What's the difference between the free resume and PetPort's full resume?",
               "acceptedAnswer": {
                 "@type": "Answer",
-                "text": "The free Dog-Gone-Good generator creates fun, shareable resumes perfect for social media or basic housing applications. PetPort's full platform provides comprehensive pet management including: complete medical record storage and vaccination tracking, document uploads for vet records and certifications, LiveLink QR codes for lost pet recovery, emergency care instructions, travel documentation, professional references section, and lifetime profile updates. Think of the free generator as a fun introduction, while PetPort is your pet's complete digital portfolio."
+                "text": "Free resume: core pet details (name, photo, breed/species, age/size), short bio, simple share/download. Full resume: multi‑section profile with Experience & Activities, Achievements, Training, Professional Certifications, References & Reviews, Travel history, public share link and PDF export, plus a Contact Owner button. In short: the free version is a simple one‑pager; the full resume is a professional, detailed profile."
               }
             },
             {
@@ -1544,18 +1544,35 @@ export default function DogGoneGood() {
               </span>
             </AccordionTrigger>
             <AccordionContent className="text-muted-foreground">
-              The free Dog-Gone-Good generator creates fun, shareable resumes perfect for social media or basic housing applications. PetPort's full Resume Builder provides comprehensive pet management including: complete medical record storage and vaccination tracking, document uploads for vet records and certifications, LiveLink QR codes for lost pet recovery, emergency care instructions, travel documentation, professional references section with verified reviews from groomers/sitters/boarding facilities, categorized Achievements and Experiences, places visited tracking, and lifetime profile updates. Think of the free generator as a fun introduction, while PetPort is your pet's complete digital portfolio. Check out the <a href="/demo/resume" className="text-brand-primary hover:underline font-medium">interactive resume demo</a> to see all features.
+              Yes — the Dog-Gone-Good generator is 100% free: no signup, no payment, and no hidden fees. You can create, customize, download, and share as many pet resumes as you want.
             </AccordionContent>
           </AccordionItem>
 
           <AccordionItem value="item-6" className="border border-border rounded-lg px-6 bg-card">
             <AccordionTrigger className="text-left hover:no-underline">
               <span className="font-semibold text-foreground">
-                What's the difference between the free resume and PetPort's full platform?
+                What's the difference between the free resume and PetPort's full resume?
               </span>
             </AccordionTrigger>
             <AccordionContent className="text-muted-foreground">
-              The free Dog-Gone-Good generator creates fun, shareable resumes perfect for social media or basic housing applications. PetPort's full platform provides comprehensive pet management including: complete medical record storage and vaccination tracking, document uploads for vet records and certifications, LiveLink QR codes for lost pet recovery, emergency care instructions, travel documentation, professional references section, and lifetime profile updates. Think of the free generator as a fun introduction, while PetPort is your pet's complete digital portfolio.
+              <p>Free Dog-Gone-Good resume includes:</p>
+              <ul className="list-disc pl-5 mt-2">
+                <li>Core pet details (name, photo, breed/species, age, size)</li>
+                <li>Short bio/personality</li>
+                <li>Simple, shareable download</li>
+              </ul>
+              <p className="mt-4">PetPort full resume includes:</p>
+              <ul className="list-disc pl-5 mt-2">
+                <li>Experience & Activities</li>
+                <li>Achievements</li>
+                <li>Training</li>
+                <li>Professional Certifications</li>
+                <li>References & Reviews (request and display)</li>
+                <li>Travel history</li>
+                <li>Public share link and PDF export</li>
+                <li>Contact Owner button</li>
+              </ul>
+              <p className="mt-4">In short: the free version is a simple one‑pager; the full resume is a professional, multi‑section profile.</p>
             </AccordionContent>
           </AccordionItem>
 

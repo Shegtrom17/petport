@@ -1544,7 +1544,7 @@ export default function DogGoneGood() {
               </span>
             </AccordionTrigger>
             <AccordionContent className="text-muted-foreground">
-              Yes! The Dog-Gone-Good pet resume generator is completely free with no signup, no payment, and no hidden fees. You can create, customize, download, and share as many pet resumes as you want. While the fun resume generator is free, PetPort also offers a much more robust Resume Builder system perfect for pet screening and rental applications—check out the <a href="/demo/resume" className="text-brand-primary hover:underline font-medium">interactive resume demo</a> to see all the advanced features. PetPort also includes comprehensive medical records, LiveLinks for lost pet recovery, and travel documentation for pet owners who want an all-in-one solution.
+              Yes! The Dog-Gone-Good pet resume generator is completely free with no signup, no payment, and no hidden fees. You can create, customize, download, and share as many pet resumes as you want. While the fun resume generator is free, PetPort also offers a much more robust Resume Builder system perfect for pet screening and rental applications—check out the <a href="/demo/resume" className="text-brand-primary hover:underline font-medium">interactive resume demo</a>. The full Resume Builder lets you receive reviews from groomers, sitters, and rental/lodging facilities, categorize Achievements and Experiences, showcase places visited, and build a professional reference section. PetPort also includes comprehensive medical records, LiveLinks for lost pet recovery, and travel documentation for pet owners who want an all-in-one solution.
             </AccordionContent>
           </AccordionItem>
 

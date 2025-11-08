@@ -7,6 +7,14 @@ import { PodcastEpisodeCard } from '@/components/PodcastEpisodeCard';
 import { podcastEpisodes } from '@/data/podcastEpisodes';
 import { MetaTags } from '@/components/MetaTags';
 import { PublicNavigationMenu } from '@/components/PublicNavigationMenu';
+import {
+  Breadcrumb,
+  BreadcrumbList,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbSeparator,
+  BreadcrumbPage,
+} from '@/components/ui/breadcrumb';
 
 const Podcast = () => {
   const navigate = useNavigate();
@@ -113,6 +121,26 @@ const Podcast = () => {
         </header>
 
         <PublicNavigationMenu isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)} />
+
+        {/* Breadcrumb Navigation */}
+        <div className="container mx-auto px-4 py-4">
+          <Breadcrumb>
+            <BreadcrumbList>
+              <BreadcrumbItem>
+                <BreadcrumbLink 
+                  onClick={() => navigate('/')}
+                  className="cursor-pointer"
+                >
+                  Home
+                </BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator />
+              <BreadcrumbItem>
+                <BreadcrumbPage>Podcast</BreadcrumbPage>
+              </BreadcrumbItem>
+            </BreadcrumbList>
+          </Breadcrumb>
+        </div>
 
         {/* Hero Section */}
         <section className="relative py-20 px-4 bg-gradient-to-br from-brand-primary via-brand-primary/90 to-brand-primary/80">

@@ -9,6 +9,14 @@ import { podcastEpisodes } from '@/data/podcastEpisodes';
 import { MetaTags } from '@/components/MetaTags';
 import { PublicNavigationMenu } from '@/components/PublicNavigationMenu';
 import { toast } from 'sonner';
+import {
+  Breadcrumb,
+  BreadcrumbList,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbSeparator,
+  BreadcrumbPage,
+} from '@/components/ui/breadcrumb';
 
 const PodcastEpisode = () => {
   const { episodeSlug } = useParams<{ episodeSlug: string }>();
@@ -154,6 +162,35 @@ const PodcastEpisode = () => {
         </header>
 
         <PublicNavigationMenu isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)} />
+
+        {/* Breadcrumb Navigation */}
+        <div className="container mx-auto px-4 py-4">
+          <Breadcrumb>
+            <BreadcrumbList>
+              <BreadcrumbItem>
+                <BreadcrumbLink 
+                  onClick={() => navigate('/')}
+                  className="cursor-pointer"
+                >
+                  Home
+                </BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator />
+              <BreadcrumbItem>
+                <BreadcrumbLink 
+                  onClick={() => navigate('/podcast')}
+                  className="cursor-pointer"
+                >
+                  Podcast
+                </BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator />
+              <BreadcrumbItem>
+                <BreadcrumbPage>{episode.title}</BreadcrumbPage>
+              </BreadcrumbItem>
+            </BreadcrumbList>
+          </Breadcrumb>
+        </div>
 
         {/* Episode Hero */}
         <section className="py-12 px-4 bg-gradient-to-br from-brand-primary/5 to-transparent">

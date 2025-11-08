@@ -1570,6 +1570,35 @@ export default function DogGoneGood() {
             </AccordionContent>
           </AccordionItem>
         </Accordion>
+
+        {/* CTA after FAQ */}
+        <div className="mt-12 text-center">
+          <div className="bg-gradient-to-r from-brand-primary/10 to-brand-secondary/10 rounded-2xl p-8 border border-brand-primary/20">
+            <h3 className="text-2xl font-bold text-foreground mb-3">
+              Ready to Create Your Pet's Digital Profile?
+            </h3>
+            <p className="text-muted-foreground mb-6 max-w-2xl mx-auto">
+              Go beyond the fun resume. Get comprehensive pet management with medical records, lost pet recovery, travel docs, and lifetime updates.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-3 justify-center">
+              <Button
+                size="lg"
+                onClick={() => navigate('/#pricing')}
+                className="bg-gradient-to-r from-brand-primary to-brand-secondary text-white hover:opacity-90 transition-opacity"
+              >
+                Start Free Trial
+              </Button>
+              <Button
+                size="lg"
+                variant="outline"
+                onClick={() => navigate('/demos')}
+                className="border-brand-primary text-brand-primary hover:bg-brand-primary/5"
+              >
+                Explore LiveLink Demos
+              </Button>
+            </div>
+          </div>
+        </div>
       </section>
 
       {/* Footer */}

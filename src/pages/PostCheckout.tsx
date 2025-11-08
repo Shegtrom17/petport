@@ -202,7 +202,7 @@ export default function PostCheckout() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 flex items-center justify-center p-4">
-      <MetaTags title="Payment Completed - PetPort" description="Complete your account after payment." url={window.location.href} />
+      <MetaTags title="Payment Completed - PetPort" description="Complete your account after payment." url={window.location.href} noindex={true} />
       <Card className="max-w-lg w-full bg-white/90 backdrop-blur-sm">
         <CardHeader>
           <CardTitle>

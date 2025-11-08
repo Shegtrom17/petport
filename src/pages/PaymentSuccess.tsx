@@ -13,6 +13,7 @@ export default function PaymentSuccess() {
         title="Payment Success - PetPort"
         description="Your one-time payment was successful. Thank you for supporting PetPort."
         url={url}
+        noindex={true}
       />
       <AppHeader title="Payment Success" />
       <main className="p-4">

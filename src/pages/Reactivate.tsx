@@ -198,6 +198,7 @@ export default function Reactivate() {
         title="Reactivate Subscription - PetPort"
         description="Reactivate your PetPort subscription to continue managing your pet profiles."
         url={url}
+        noindex={true}
       />
       <AppHeader title="Subscription Required" />
       

@@ -43,6 +43,8 @@ import { useQueryClient } from "@tanstack/react-query";
 import { featureFlags } from "@/config/featureFlags";
 import { OnboardingTour } from "@/components/OnboardingTour";
 import { useOnboardingTour } from "@/hooks/useOnboardingTour";
+import { MetaTags } from "@/components/MetaTags";
+
 
 // Tab state - restored from localStorage on mount
 
@@ -494,6 +496,12 @@ const Index = () => {
   return (
     <IOSOptimizedIndex activeTab={activeTab}>
       <PWALayout>
+        <MetaTags
+          title="My Pets - PetPort"
+          description="Manage your pet profiles and information"
+          url={typeof window !== 'undefined' ? window.location.href : 'https://petport.app/app'}
+          noindex={true}
+        />
         {/* ✅ Main Onboarding Tour */}
         <OnboardingTour
           runTour={runTour}

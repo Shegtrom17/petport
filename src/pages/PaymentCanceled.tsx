@@ -13,6 +13,7 @@ export default function PaymentCanceled() {
         title="Payment Canceled - PetPort"
         description="Your payment was canceled. You can try again anytime."
         url={url}
+        noindex={true}
       />
       <AppHeader title="Payment Canceled" />
       <main className="p-4">

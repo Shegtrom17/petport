@@ -16,6 +16,7 @@ import { AppHeader } from "@/components/AppHeader";
 import { getSpeciesConfig, getSpeciesOptions } from "@/utils/speciesConfig";
 import { PRICING } from "@/config/pricing";
 import { InfoIcon } from "lucide-react";
+import { MetaTags } from "@/components/MetaTags";
 
 
 export default function AddPet() {
@@ -213,6 +214,12 @@ export default function AddPet() {
 
   return (
     <PWALayout>
+      <MetaTags
+        title="Add New Pet - PetPort"
+        description="Create a new pet profile in your PetPort account"
+        url={typeof window !== 'undefined' ? window.location.href : 'https://petport.app/add-pet'}
+        noindex={true}
+      />
       <AppHeader title="Add New Pet" showBack />
       <div className="min-h-screen bg-gradient-to-br from-brand-primary/10 via-brand-primary/5 to-brand-primary/15 py-8">
         <main className="max-w-4xl mx-auto px-4 py-8">

@@ -15,6 +15,7 @@ import { useUserSettings } from "@/hooks/useUserSettings";
 import { useOnboardingTour } from "@/hooks/useOnboardingTour";
 import { User, LogOut, Mail, RotateCw, Shield } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { MetaTags } from "@/components/MetaTags";
 import { GuardianManagementModal } from "@/components/GuardianManagementModal";
 import { supabase } from "@/integrations/supabase/client";
 import { Badge } from "@/components/ui/badge";
@@ -78,6 +79,12 @@ export default function Profile() {
 
   return (
     <PWALayout>
+      <MetaTags
+        title="Profile - PetPort"
+        description="Manage your PetPort account settings and preferences"
+        url={typeof window !== 'undefined' ? window.location.href : 'https://petport.app/profile'}
+        noindex={true}
+      />
       <AppHeader title="Profile" showHelpIcon />
       <div className="p-4 space-y-4">
         {/* PWA Install Card */}

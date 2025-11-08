@@ -17,6 +17,7 @@ interface MetaTagsProps {
   image?: string;
   url: string;
   type?: string;
+  noindex?: boolean;
 }
 
 // Helper to resolve relative or absolute URLs safely
@@ -36,7 +37,7 @@ const resolveToAbsolute = (u: string): string => {
 };
 
 // @lovable:protect-function - OG tag injection for social media (Oct 2025)
-export const MetaTags = ({ title, description, image, url, type = "website" }: MetaTagsProps) => {
+export const MetaTags = ({ title, description, image, url, type = "website", noindex = false }: MetaTagsProps) => {
   const ogImage = image || "https://pub-a7c2c18b8d6143b9a256105ef44f2da0.r2.dev/OG%20General.png";
   
   // Safely resolve URL to absolute, then force production domain
@@ -109,7 +110,7 @@ export const MetaTags = ({ title, description, image, url, type = "website" }: M
     
     // Additional SEO tags
     updateNameTag('description', description);
-    updateNameTag('robots', 'index, follow');
+    updateNameTag('robots', noindex ? 'noindex, nofollow' : 'index, follow');
 
     // Cleanup function to reset to defaults when component unmounts
     return () => {

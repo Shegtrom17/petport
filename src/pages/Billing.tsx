@@ -117,6 +117,7 @@ export default function Billing() {
         title="Billing & Add-ons – PetPort"
         description="Manage subscription, update billing, and purchase additional pet accounts."
         url={canonicalUrl}
+        noindex={true}
       />
       <AppHeader title="Billing & Add-ons" showHelpIcon />
       <div className="p-4 space-y-4">

@@ -61,7 +61,7 @@ export const ReportIssueModal = ({ children, isOpen, onClose }: ReportIssueModal
 
       toast({
         title: "Issue reported successfully",
-        description: "Thank you for your feedback. We'll look into this issue.",
+        description: "We'll respond to your email within 24 hours via support@petport.app",
       });
 
       setFormData({ title: "", description: "", email: "" });

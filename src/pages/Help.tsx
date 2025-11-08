@@ -297,6 +297,12 @@ const Help = () => {
               ))}
             </div>
           </div>
+
+          {/* Contact Fallback */}
+          <div className="text-center text-sm text-muted-foreground border-t pt-6">
+            <p>Still stuck? Email <a href="mailto:support@petport.app" className="text-primary hover:underline">support@petport.app</a></p>
+            <p className="text-xs mt-1">We respond within 24 hours</p>
+          </div>
         </div>
       </div>
 

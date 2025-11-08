@@ -213,6 +213,12 @@ export default function Billing() {
             <a href="/terms#cancellation" className="underline ml-1">cancellation policy</a>.
           </p>
         </section>
+
+        {/* Billing Contact */}
+        <div className="text-center text-sm text-muted-foreground border-t pt-4">
+          <p>Billing questions? Email <a href="mailto:billing@petport.app" className="text-primary hover:underline">billing@petport.app</a></p>
+          <p className="text-xs mt-1">We respond within 24 hours</p>
+        </div>
       </div>
     </PWALayout>
   );

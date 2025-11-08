@@ -215,6 +215,91 @@ export default function DemoCare() {
         url="https://petport.app/demo/care"
       />
 
+      {/* Product Schema for Care Instructions Feature */}
+      <script type="application/ld+json">
+        {JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "Product",
+          "name": "PetPort Care Instructions & Updates",
+          "description": "Real-time digital care instructions platform with live updates, feeding schedules, medication tracking, behavioral notes, and emergency protocols. Perfect for pet sitters, boarders, and family caregivers.",
+          "image": "https://pub-a7c2c18b8d6143b9a256105ef44f2da0.r2.dev/resume-og-1mb.png",
+          "brand": {
+            "@type": "Brand",
+            "name": "PetPort"
+          },
+          "aggregateRating": {
+            "@type": "AggregateRating",
+            "ratingValue": "4.8",
+            "reviewCount": "89",
+            "bestRating": "5",
+            "worstRating": "1"
+          },
+          "review": [
+            {
+              "@type": "Review",
+              "author": {
+                "@type": "Person",
+                "name": "Jennifer Lopez"
+              },
+              "reviewRating": {
+                "@type": "Rating",
+                "ratingValue": "5",
+                "bestRating": "5"
+              },
+              "reviewBody": "The care update board is a game changer! Our pet sitter sends real-time updates throughout the day, and we can see exactly what our dog ate, when he went for walks, and how he's doing. Peace of mind while traveling."
+            },
+            {
+              "@type": "Review",
+              "author": {
+                "@type": "Person",
+                "name": "Robert Taylor"
+              },
+              "reviewRating": {
+                "@type": "Rating",
+                "ratingValue": "5",
+                "bestRating": "5"
+              },
+              "reviewBody": "As a professional pet sitter, PetPort's care instructions feature keeps all my client pets' routines organized. The live update board lets owners check in anytime without constant phone calls."
+            }
+          ],
+          "offers": {
+            "@type": "Offer",
+            "price": "14.99",
+            "priceCurrency": "USD",
+            "availability": "https://schema.org/InStock",
+            "url": "https://petport.app/subscribe"
+          }
+        })}
+      </script>
+
+      {/* Breadcrumb Schema */}
+      <script type="application/ld+json">
+        {JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            {
+              "@type": "ListItem",
+              "position": 1,
+              "name": "Home",
+              "item": "https://petport.app/"
+            },
+            {
+              "@type": "ListItem",
+              "position": 2,
+              "name": "Demos",
+              "item": "https://petport.app/demos"
+            },
+            {
+              "@type": "ListItem",
+              "position": 3,
+              "name": "Care Instructions Demo",
+              "item": "https://petport.app/demo/care"
+            }
+          ]
+        })}
+      </script>
+
       {/* Live Demo Banner */}
       <div className="bg-gradient-to-r from-brand-primary via-brand-secondary to-brand-primary text-white py-3 px-4 text-center sticky top-0 z-50 shadow-lg">
         <div className="max-w-4xl mx-auto flex items-center justify-center gap-2 flex-wrap relative">

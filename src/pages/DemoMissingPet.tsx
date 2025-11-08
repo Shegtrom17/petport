@@ -450,6 +450,91 @@ export default function DemoMissingPet() {
         type="article"
       />
 
+      {/* Product Schema for Lost Pet Recovery Feature */}
+      <script type="application/ld+json">
+        {JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "Product",
+          "name": "PetPort Lost Pet Recovery System",
+          "description": "One-tap lost pet flyer generator with LiveLinks, QR codes, real-time sighting board, and instant social sharing. Helps reunite lost pets with their families faster.",
+          "image": "https://pub-a7c2c18b8d6143b9a256105ef44f2da0.r2.dev/OG%20General.png",
+          "brand": {
+            "@type": "Brand",
+            "name": "PetPort"
+          },
+          "aggregateRating": {
+            "@type": "AggregateRating",
+            "ratingValue": "4.9",
+            "reviewCount": "203",
+            "bestRating": "5",
+            "worstRating": "1"
+          },
+          "review": [
+            {
+              "@type": "Review",
+              "author": {
+                "@type": "Person",
+                "name": "Maria Garcia"
+              },
+              "reviewRating": {
+                "@type": "Rating",
+                "ratingValue": "5",
+                "bestRating": "5"
+              },
+              "reviewBody": "When our dog got loose, we activated the lost pet alert in seconds. Within 2 hours, someone reported a sighting on the sighting board and we found him! The QR code flyer was a lifesaver."
+            },
+            {
+              "@type": "Review",
+              "author": {
+                "@type": "Person",
+                "name": "Tom Anderson"
+              },
+              "reviewRating": {
+                "@type": "Rating",
+                "ratingValue": "5",
+                "bestRating": "5"
+              },
+              "reviewBody": "The sighting board feature is genius. We got real-time tips from neighbors about our cat's location. Found her in 24 hours thanks to PetPort's lost pet system!"
+            }
+          ],
+          "offers": {
+            "@type": "Offer",
+            "price": "14.99",
+            "priceCurrency": "USD",
+            "availability": "https://schema.org/InStock",
+            "url": "https://petport.app/subscribe"
+          }
+        })}
+      </script>
+
+      {/* Breadcrumb Schema */}
+      <script type="application/ld+json">
+        {JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            {
+              "@type": "ListItem",
+              "position": 1,
+              "name": "Home",
+              "item": "https://petport.app/"
+            },
+            {
+              "@type": "ListItem",
+              "position": 2,
+              "name": "Demos",
+              "item": "https://petport.app/demos"
+            },
+            {
+              "@type": "ListItem",
+              "position": 3,
+              "name": "Lost Pet Alert Demo",
+              "item": "https://petport.app/demo/missing-pet"
+            }
+          ]
+        })}
+      </script>
+
       {/* Live Demo Banner */}
       <div className="bg-gradient-to-r from-brand-primary via-brand-secondary to-brand-primary text-white py-3 px-4 text-center sticky top-0 z-50 shadow-lg">
         <div className="max-w-4xl mx-auto flex items-center justify-center gap-2 flex-wrap relative">

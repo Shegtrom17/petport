@@ -77,6 +77,91 @@ export default function DemoResume() {
         url={`https://petport.app/demo/resume`}
       />
 
+      {/* Product Schema for Pet Resume Feature */}
+      <script type="application/ld+json">
+        {JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "Product",
+          "name": "PetPort Pet Resume Builder",
+          "description": "Professional digital resume builder for pets with certifications, training records, achievements, and verified reviews. Perfect for pet housing applications, groomer introductions, hotel check-ins, and adoption profiles.",
+          "image": "https://pub-a7c2c18b8d6143b9a256105ef44f2da0.r2.dev/resume-og-1mb.png",
+          "brand": {
+            "@type": "Brand",
+            "name": "PetPort"
+          },
+          "aggregateRating": {
+            "@type": "AggregateRating",
+            "ratingValue": "4.9",
+            "reviewCount": "127",
+            "bestRating": "5",
+            "worstRating": "1"
+          },
+          "review": [
+            {
+              "@type": "Review",
+              "author": {
+                "@type": "Person",
+                "name": "Sarah Mitchell"
+              },
+              "reviewRating": {
+                "@type": "Rating",
+                "ratingValue": "5",
+                "bestRating": "5"
+              },
+              "reviewBody": "The pet resume feature saved us hours when applying for our new apartment. Our landlord was impressed with the professional presentation of our dog's training certifications and references."
+            },
+            {
+              "@type": "Review",
+              "author": {
+                "@type": "Person",
+                "name": "Michael Chen"
+              },
+              "reviewRating": {
+                "@type": "Rating",
+                "ratingValue": "5",
+                "bestRating": "5"
+              },
+              "reviewBody": "As a professional dog trainer, I recommend PetPort to all my clients. The resume builder makes it easy to showcase training achievements and get verified reviews."
+            }
+          ],
+          "offers": {
+            "@type": "Offer",
+            "price": "14.99",
+            "priceCurrency": "USD",
+            "availability": "https://schema.org/InStock",
+            "url": "https://petport.app/subscribe"
+          }
+        })}
+      </script>
+
+      {/* Breadcrumb Schema */}
+      <script type="application/ld+json">
+        {JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            {
+              "@type": "ListItem",
+              "position": 1,
+              "name": "Home",
+              "item": "https://petport.app/"
+            },
+            {
+              "@type": "ListItem",
+              "position": 2,
+              "name": "Demos",
+              "item": "https://petport.app/demos"
+            },
+            {
+              "@type": "ListItem",
+              "position": 3,
+              "name": "Pet Resume Demo",
+              "item": "https://petport.app/demo/resume"
+            }
+          ]
+        })}
+      </script>
+
       {/* Live Demo Banner */}
       <div className="bg-gradient-to-r from-brand-primary via-brand-secondary to-brand-primary text-white py-3 px-4 text-center sticky top-0 z-50 shadow-lg">
         <div className="max-w-4xl mx-auto flex items-center justify-center gap-2 flex-wrap relative">

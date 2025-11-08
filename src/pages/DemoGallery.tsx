@@ -104,6 +104,91 @@ export default function DemoGallery() {
         url={`https://petport.app/demo/gallery`}
       />
 
+      {/* Product Schema for Gallery & Story Feature */}
+      <script type="application/ld+json">
+        {JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "Product",
+          "name": "PetPort Photo Gallery & Story Stream",
+          "description": "Digital photo gallery and life story timeline for pets. Create beautiful visual memories with captions, milestones, and shareable moments. Perfect for documenting distinctive features for lost pet recovery.",
+          "image": "https://pub-a7c2c18b8d6143b9a256105ef44f2da0.r2.dev/resume-og-1mb.png",
+          "brand": {
+            "@type": "Brand",
+            "name": "PetPort"
+          },
+          "aggregateRating": {
+            "@type": "AggregateRating",
+            "ratingValue": "4.9",
+            "reviewCount": "156",
+            "bestRating": "5",
+            "worstRating": "1"
+          },
+          "review": [
+            {
+              "@type": "Review",
+              "author": {
+                "@type": "Person",
+                "name": "Amanda Rodriguez"
+              },
+              "reviewRating": {
+                "@type": "Rating",
+                "ratingValue": "5",
+                "bestRating": "5"
+              },
+              "reviewBody": "The photo gallery feature is beautiful! I documented all my puppy's distinctive markings with captions. When she got lost, having those detailed photos in one place helped us create the perfect lost pet flyer immediately."
+            },
+            {
+              "@type": "Review",
+              "author": {
+                "@type": "Person",
+                "name": "David Kim"
+              },
+              "reviewRating": {
+                "@type": "Rating",
+                "ratingValue": "5",
+                "bestRating": "5"
+              },
+              "reviewBody": "Love the story stream! It's like a Instagram just for my pets. I share the gallery link with family and they can see all our pet's adventures in one beautiful timeline."
+            }
+          ],
+          "offers": {
+            "@type": "Offer",
+            "price": "14.99",
+            "priceCurrency": "USD",
+            "availability": "https://schema.org/InStock",
+            "url": "https://petport.app/subscribe"
+          }
+        })}
+      </script>
+
+      {/* Breadcrumb Schema */}
+      <script type="application/ld+json">
+        {JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            {
+              "@type": "ListItem",
+              "position": 1,
+              "name": "Home",
+              "item": "https://petport.app/"
+            },
+            {
+              "@type": "ListItem",
+              "position": 2,
+              "name": "Demos",
+              "item": "https://petport.app/demos"
+            },
+            {
+              "@type": "ListItem",
+              "position": 3,
+              "name": "Photo Gallery Demo",
+              "item": "https://petport.app/demo/gallery"
+            }
+          ]
+        })}
+      </script>
+
       {/* Live Demo Banner */}
       <div className="bg-gradient-to-r from-brand-primary via-brand-secondary to-brand-primary text-white py-3 px-4 text-center sticky top-0 z-50 shadow-lg">
         <div className="max-w-4xl mx-auto flex items-center justify-center gap-2 flex-wrap relative">

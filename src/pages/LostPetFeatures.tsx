@@ -1,13 +1,19 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Check, X, ArrowRight, Eye, Heart, Menu, Home } from "lucide-react";
+import { Check, X, ArrowRight, Eye, Heart, Menu, Home, HelpCircle } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { FreeLostPetFlyerGenerator } from "@/components/FreeLostPetFlyerGenerator";
 import { MetaTags } from "@/components/MetaTags";
 import { PublicNavigationMenu } from "@/components/PublicNavigationMenu";
 import { PodcastBanner } from "@/components/PodcastBanner";
 import { PodcastEpisodeCard } from "@/components/PodcastEpisodeCard";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 import episode2 from "@/data/episodes/episode-2-beyond-lost-pet-flyer";
 import lostPetDemoPreview from "@/assets/lost-pet-demo-preview.png";
 
@@ -658,6 +664,132 @@ export default function LostPetFeatures() {
               <Button size="lg" variant="outline" asChild>
                 <Link to="/#pricing">View Pricing</Link>
               </Button>
+            </div>
+          </div>
+        </section>
+
+        {/* FAQ Section */}
+        <section className="container mx-auto px-4 py-16">
+          <div className="max-w-4xl mx-auto">
+            <div className="text-center mb-8">
+              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-brand-primary/10 mb-4">
+                <HelpCircle className="h-8 w-8 text-brand-primary" />
+              </div>
+              <h2 className="text-3xl font-bold text-foreground mb-3">
+                Frequently Asked Questions
+              </h2>
+              <p className="text-muted-foreground">
+                Everything you need to know about finding lost pets and using our tools
+              </p>
+            </div>
+
+            <Accordion type="single" collapsible className="w-full space-y-4">
+              <AccordionItem value="item-1" className="border border-border rounded-lg px-6 bg-card">
+                <AccordionTrigger className="text-left hover:no-underline">
+                  <span className="font-semibold text-foreground">
+                    How does the PetPort LiveLink Alert System help find a lost pet faster?
+                  </span>
+                </AccordionTrigger>
+                <AccordionContent className="text-muted-foreground">
+                  The LiveLink system uses a unique QR code tied to a digital profile. When the code is scanned, the finder immediately accesses a secure Lost Pet Flyer and a Sighting Board to report the exact location and time, giving the owner real-time alerts. This creates an instant communication channel between finders and owners, dramatically reducing the time it takes to reunite.
+                </AccordionContent>
+              </AccordionItem>
+
+              <AccordionItem value="item-2" className="border border-border rounded-lg px-6 bg-card">
+                <AccordionTrigger className="text-left hover:no-underline">
+                  <span className="font-semibold text-foreground">
+                    What happens when a finder scans my pet's LiveLink QR code?
+                  </span>
+                </AccordionTrigger>
+                <AccordionContent className="text-muted-foreground">
+                  The finder is directed to a secure, mobile-friendly page containing a full Lost Pet Flyer and instructions on contacting your emergency contacts. They can also instantly post a sighting to your pet's dedicated Sighting Board without logging in. You receive immediate email and SMS notifications with the sighting details, including time, location, and optional photos.
+                </AccordionContent>
+              </AccordionItem>
+
+              <AccordionItem value="item-3" className="border border-border rounded-lg px-6 bg-card">
+                <AccordionTrigger className="text-left hover:no-underline">
+                  <span className="font-semibold text-foreground">
+                    Is the PetPort Lost Pet Flyer Generator free to use?
+                  </span>
+                </AccordionTrigger>
+                <AccordionContent className="text-muted-foreground">
+                  Yes! Our customizable, high-quality, print-ready Lost Pet Flyer generator is completely free with no sign-up or payment required. You can create as many flyers as you need. The LiveLink Alert System with QR codes, real-time updates, and sighting boards requires a PetPort subscription to activate.
+                </AccordionContent>
+              </AccordionItem>
+
+              <AccordionItem value="item-4" className="border border-border rounded-lg px-6 bg-card">
+                <AccordionTrigger className="text-left hover:no-underline">
+                  <span className="font-semibold text-foreground">
+                    Can I update my lost pet information after creating the flyer?
+                  </span>
+                </AccordionTrigger>
+                <AccordionContent className="text-muted-foreground">
+                  With PetPort's LiveLink system, yes! Unlike static PDFs, your pet's LiveLink page updates in real-time. If you mark your pet as found or need to change contact info, it updates everywhere instantly without needing to reprint flyers. The QR codes on printed flyers will always point to your current information.
+                </AccordionContent>
+              </AccordionItem>
+
+              <AccordionItem value="item-5" className="border border-border rounded-lg px-6 bg-card">
+                <AccordionTrigger className="text-left hover:no-underline">
+                  <span className="font-semibold text-foreground">
+                    How do I receive notifications when someone reports a sighting?
+                  </span>
+                </AccordionTrigger>
+                <AccordionContent className="text-muted-foreground">
+                  PetPort sends instant notifications via email and SMS when someone posts to your pet's Sighting Board. Each report includes the exact location, time, and optional photos from the community member who spotted your pet. You can view all sightings on an interactive map to coordinate your search efforts.
+                </AccordionContent>
+              </AccordionItem>
+
+              <AccordionItem value="item-6" className="border border-border rounded-lg px-6 bg-card">
+                <AccordionTrigger className="text-left hover:no-underline">
+                  <span className="font-semibold text-foreground">
+                    What should I include on my lost pet flyer to maximize chances of recovery?
+                  </span>
+                </AccordionTrigger>
+                <AccordionContent className="text-muted-foreground">
+                  Essential elements include: clear, recent photos showing distinctive markings, your pet's name (helps them respond if called), last seen location and date/time, your contact phone number, and any medical conditions or special needs. Avoid listing reward amounts on the flyer itself to prevent scams. PetPort's flyer generator guides you through all these elements and auto-generates a professional layout.
+                </AccordionContent>
+              </AccordionItem>
+
+              <AccordionItem value="item-7" className="border border-border rounded-lg px-6 bg-card">
+                <AccordionTrigger className="text-left hover:no-underline">
+                  <span className="font-semibold text-foreground">
+                    How quickly should I start distributing flyers after my pet goes missing?
+                  </span>
+                </AccordionTrigger>
+                <AccordionContent className="text-muted-foreground">
+                  Time is critical! Start distributing flyers within the first 24 hours if possible. Lost pets typically stay within a 1-mile radius initially, so saturate your immediate area first. Post flyers at vet clinics, pet stores, shelters, parks, and high-traffic intersections. With PetPort's one-tap sharing, you can instantly distribute your pet's information digitally to social media, email, and SMS while you're printing physical flyers.
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
+
+            {/* CTA after FAQ */}
+            <div className="mt-12 text-center">
+              <div className="bg-gradient-to-r from-brand-primary/10 to-brand-secondary/10 rounded-2xl p-8 border border-brand-primary/20">
+                <h3 className="text-2xl font-bold text-foreground mb-3">
+                  Protect Your Pet Before It's Too Late
+                </h3>
+                <p className="text-muted-foreground mb-6 max-w-2xl mx-auto">
+                  Don't wait for an emergency. Set up your pet's LiveLink now with QR codes, sighting boards, and instant recovery tools.
+                </p>
+                <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                  <Button
+                    size="lg"
+                    onClick={() => navigate('/#pricing')}
+                    className="bg-gradient-to-r from-brand-primary to-brand-secondary text-white hover:opacity-90 transition-opacity"
+                  >
+                    Start Free Trial
+                  </Button>
+                  <Button
+                    size="lg"
+                    variant="outline"
+                    onClick={() => navigate('/demo/missing-pet')}
+                    className="border-brand-primary text-brand-primary hover:bg-brand-primary/5"
+                  >
+                    <Eye className="mr-2 h-4 w-4" />
+                    View Live Demo
+                  </Button>
+                </div>
+              </div>
             </div>
           </div>
         </section>

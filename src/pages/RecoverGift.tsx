@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
+import { AzureButton } from "@/components/ui/azure-button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
@@ -72,14 +72,14 @@ export default function RecoverGift() {
             </p>
           </div>
 
-          <Button 
+          <AzureButton 
             onClick={handleRecover} 
             disabled={loading || !sessionId}
             className="w-full"
           >
             {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             Recover Gift Membership
-          </Button>
+          </AzureButton>
 
           {result && (
             <Card className="bg-green-50 dark:bg-green-950 border-green-200 dark:border-green-800">

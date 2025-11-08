@@ -63,11 +63,11 @@ const handler = async (req: Request): Promise<Response> => {
       Subject: `New ${rating}-Star Review for ${petName}! 🎉`,
       HtmlBody: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-          <h2 style="color: #2c5282;">New Review Submitted!</h2>
+          <h2 style="color: #5691af;">New Review Submitted!</h2>
           <p>Hi ${ownerName},</p>
           <p>Great news! <strong>${reviewerName}</strong> just left a review for <strong>${petName}</strong>.</p>
           
-          <div style="background-color: #f7fafc; padding: 20px; border-radius: 8px; margin: 20px 0;">
+          <div style="background-color: #f7fafc; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #5691af;">
             <div style="margin-bottom: 10px;">
               <strong>Rating:</strong> ${stars} (${rating}/5)
             </div>
@@ -85,7 +85,7 @@ const handler = async (req: Request): Promise<Response> => {
 
           <p>
             <a href="https://petport.app/reviews/${petId}" 
-               style="display: inline-block; background-color: #d4af37; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold;">
+               style="display: inline-block; background-color: #5691af; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold;">
               View All Reviews
             </a>
           </p>
@@ -98,7 +98,7 @@ const handler = async (req: Request): Promise<Response> => {
           
           <p style="color: #a0aec0; font-size: 12px;">
             This is an automated notification from PetPort. 
-            <a href="https://petport.app/profile" style="color: #4299e1;">Manage your notification settings</a>
+            <a href="https://petport.app/profile" style="color: #5691af;">Manage your notification settings</a>
           </p>
         </div>
       `,

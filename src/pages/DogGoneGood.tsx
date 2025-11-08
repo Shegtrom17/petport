@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { MetaTags } from "@/components/MetaTags";
-import { Sparkles, Download, Share2, Wand2, Eye, X, Heart, FileText, AlertTriangle, Camera, Menu, Facebook, Home } from "lucide-react";
+import { Sparkles, Download, Share2, Wand2, Eye, X, Heart, FileText, AlertTriangle, Camera, Menu, Facebook, Home, HelpCircle } from "lucide-react";
 import { toast } from "sonner";
 import {
   Dialog,
@@ -19,6 +19,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 import { themes, ThemeId } from "@/config/themes";
 import { PublicNavigationMenu } from "@/components/PublicNavigationMenu";
 import { PodcastBanner } from "@/components/PodcastBanner";
@@ -1472,9 +1478,103 @@ export default function DogGoneGood() {
         </div>
       )}
 
+      {/* FAQ Section */}
+      <section className="max-w-4xl mx-auto px-4 mt-16 mb-16">
+        <div className="text-center mb-8">
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-brand-primary/10 mb-4">
+            <HelpCircle className="h-8 w-8 text-brand-primary" />
+          </div>
+          <h2 className="text-3xl font-bold text-foreground mb-3">
+            Frequently Asked Questions
+          </h2>
+          <p className="text-muted-foreground">
+            Everything you need to know about pet resumes and housing applications
+          </p>
+        </div>
+
+        <Accordion type="single" collapsible className="w-full space-y-4">
+          <AccordionItem value="item-1" className="border border-border rounded-lg px-6 bg-card">
+            <AccordionTrigger className="text-left hover:no-underline">
+              <span className="font-semibold text-foreground">
+                Do landlords actually accept pet resumes for rental applications?
+              </span>
+            </AccordionTrigger>
+            <AccordionContent className="text-muted-foreground">
+              Yes! Many landlords and property managers now accept pet resumes as part of the screening process. A professional pet resume demonstrates responsible pet ownership by showing vaccination records, training certifications, references from previous landlords or veterinarians, and proof of pet insurance. This helps landlords make informed decisions and can significantly increase your chances of approval in competitive rental markets.
+            </AccordionContent>
+          </AccordionItem>
+
+          <AccordionItem value="item-2" className="border border-border rounded-lg px-6 bg-card">
+            <AccordionTrigger className="text-left hover:no-underline">
+              <span className="font-semibold text-foreground">
+                What should I include in a pet resume for housing applications?
+              </span>
+            </AccordionTrigger>
+            <AccordionContent className="text-muted-foreground">
+              A strong pet resume should include: your pet's basic information (name, breed, age, weight), spay/neuter status, current vaccinations and veterinary records, obedience training certifications, behavioral traits and temperament, previous landlord references confirming no property damage or noise complaints, pet insurance information, emergency care plans, and professional photos. PetPort's platform helps organize all this information in one shareable, professional document.
+            </AccordionContent>
+          </AccordionItem>
+
+          <AccordionItem value="item-3" className="border border-border rounded-lg px-6 bg-card">
+            <AccordionTrigger className="text-left hover:no-underline">
+              <span className="font-semibold text-foreground">
+                How does a pet screening resume help with rental applications?
+              </span>
+            </AccordionTrigger>
+            <AccordionContent className="text-muted-foreground">
+              Pet screening resumes help rental applications by presenting your pet as a responsible, well-cared-for companion rather than a liability. They provide landlords with documented proof of vaccinations, training, and good behavior, addressing common concerns about property damage, noise, or safety. In competitive markets, a professional pet resume can be the deciding factor between multiple qualified applicants, showing you take pet ownership seriously.
+            </AccordionContent>
+          </AccordionItem>
+
+          <AccordionItem value="item-4" className="border border-border rounded-lg px-6 bg-card">
+            <AccordionTrigger className="text-left hover:no-underline">
+              <span className="font-semibold text-foreground">
+                Can I use the Dog-Gone-Good resume generator for cats and horses?
+              </span>
+            </AccordionTrigger>
+            <AccordionContent className="text-muted-foreground">
+              Absolutely! The Dog-Gone-Good generator works for dogs, cats, and horses. Each species has customized fields and options appropriate for that animal type. Whether you need a professional resume for a rental application, boarding facility, or just for fun social media sharing, you can create a polished, shareable document for any pet species in seconds - completely free with no signup required.
+            </AccordionContent>
+          </AccordionItem>
+
+          <AccordionItem value="item-5" className="border border-border rounded-lg px-6 bg-card">
+            <AccordionTrigger className="text-left hover:no-underline">
+              <span className="font-semibold text-foreground">
+                Is the pet resume generator really free to use?
+              </span>
+            </AccordionTrigger>
+            <AccordionContent className="text-muted-foreground">
+              Yes! The Dog-Gone-Good pet resume generator is completely free with no signup, no payment, and no hidden fees. You can create, customize, download, and share as many pet resumes as you want. While the fun resume generator is free, PetPort also offers a full digital pet profile platform with comprehensive features like medical records, LiveLinks for lost pet recovery, and travel documentation for pet owners who want an all-in-one solution.
+            </AccordionContent>
+          </AccordionItem>
+
+          <AccordionItem value="item-6" className="border border-border rounded-lg px-6 bg-card">
+            <AccordionTrigger className="text-left hover:no-underline">
+              <span className="font-semibold text-foreground">
+                What's the difference between the free resume and PetPort's full platform?
+              </span>
+            </AccordionTrigger>
+            <AccordionContent className="text-muted-foreground">
+              The free Dog-Gone-Good generator creates fun, shareable resumes perfect for social media or basic housing applications. PetPort's full platform provides comprehensive pet management including: complete medical record storage and vaccination tracking, document uploads for vet records and certifications, LiveLink QR codes for lost pet recovery, emergency care instructions, travel documentation, professional references section, and lifetime profile updates. Think of the free generator as a fun introduction, while PetPort is your pet's complete digital portfolio.
+            </AccordionContent>
+          </AccordionItem>
+
+          <AccordionItem value="item-7" className="border border-border rounded-lg px-6 bg-card">
+            <AccordionTrigger className="text-left hover:no-underline">
+              <span className="font-semibold text-foreground">
+                Can I update my pet's resume after downloading it?
+              </span>
+            </AccordionTrigger>
+            <AccordionContent className="text-muted-foreground">
+              The free Dog-Gone-Good generator creates a downloadable image file, so you would need to regenerate it with updated information. However, with a PetPort subscription, your pet's digital resume and profile are always editable and update in real-time. When you share your PetPort profile link with landlords or facilities, they always see the most current information - no need to create and send new documents every time something changes.
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>
+      </section>
+
       {/* Footer */}
-      <footer className="border-t border-gray-200 mt-16 py-8">
-        <div className="max-w-7xl mx-auto px-4 text-center text-gray-500 text-sm">
+      <footer className="border-t border-border mt-16 py-8">
+        <div className="max-w-7xl mx-auto px-4 text-center text-muted-foreground text-sm">
           <p>
             Powered by{" "}
             <a href={window.location.origin} className="text-brand-primary hover:underline font-medium">

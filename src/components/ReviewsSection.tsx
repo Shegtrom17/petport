@@ -7,7 +7,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Star, Plus, Share2, Mail, MapPin, Calendar, User, Edit, Send, X, Loader2, MessageSquare } from "lucide-react";
+import { Star, Plus, Share2, Mail, MapPin, Calendar, User, Edit, Send, X, Loader2, MessageSquare, Trash2, Pencil } from "lucide-react";
 import { ReviewsEditForm } from "@/components/ReviewsEditForm";
 import { ReviewResponseForm } from "@/components/ReviewResponseForm";
 import { useToast } from "@/hooks/use-toast";
@@ -48,6 +48,7 @@ export const ReviewsSection = ({ petData, onUpdate }: ReviewsSectionProps) => {
   const [isRequestModalOpen, setIsRequestModalOpen] = useState(false);
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const [respondingToReviewId, setRespondingToReviewId] = useState<string | null>(null);
+  const [editingResponseId, setEditingResponseId] = useState<string | null>(null);
   const [reviewsWithResponses, setReviewsWithResponses] = useState<Review[]>([]);
   const [requestForm, setRequestForm] = useState({
     name: '',
@@ -95,7 +96,35 @@ export const ReviewsSection = ({ petData, onUpdate }: ReviewsSectionProps) => {
 
   const handleResponseSuccess = () => {
     setRespondingToReviewId(null);
+    setEditingResponseId(null);
     onUpdate?.();
+  };
+
+  const handleDeleteResponse = async (responseId: string) => {
+    if (!confirm('Are you sure you want to delete your response?')) return;
+
+    try {
+      const { error } = await supabase
+        .from('review_responses')
+        .delete()
+        .eq('id', responseId);
+
+      if (error) throw error;
+
+      toast({
+        title: "Response deleted",
+        description: "Your response has been removed.",
+      });
+
+      onUpdate?.();
+    } catch (error) {
+      console.error('Error deleting response:', error);
+      toast({
+        title: "Error",
+        description: "Failed to delete response.",
+        variant: "destructive",
+      });
+    }
   };
 
 
@@ -375,13 +404,45 @@ export const ReviewsSection = ({ petData, onUpdate }: ReviewsSectionProps) => {
                 {/* Owner Response */}
                 {review.response && (
                   <div className="mt-4 p-4 bg-azure/5 border-l-4 border-azure rounded-r-lg">
-                    <div className="flex items-start gap-2 mb-2">
+                    <div className="flex items-start gap-2">
                       <MessageSquare className="w-4 h-4 text-azure mt-1 flex-shrink-0" />
                       <div className="flex-1">
-                        <p className="text-sm font-semibold text-azure mb-1">
-                          Response from {petData.name}'s Owner
-                        </p>
-                        <p className="text-sm text-gray-700">{review.response.response_text}</p>
+                        <div className="flex items-start justify-between gap-2 mb-1">
+                          <p className="text-sm font-semibold text-azure">
+                            Response from {petData.name}'s Owner
+                          </p>
+                          {isOwner && (
+                            <div className="flex gap-1">
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => setEditingResponseId(review.id!)}
+                                className="h-6 px-2 text-azure hover:text-azure/80 hover:bg-azure/10"
+                              >
+                                <Pencil className="w-3 h-3" />
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => handleDeleteResponse(review.response!.id)}
+                                className="h-6 px-2 text-red-600 hover:text-red-700 hover:bg-red-50"
+                              >
+                                <Trash2 className="w-3 h-3" />
+                              </Button>
+                            </div>
+                          )}
+                        </div>
+                        {editingResponseId === review.id ? (
+                          <ReviewResponseForm
+                            reviewId={review.id!}
+                            petName={petData.name}
+                            existingResponse={review.response}
+                            onSuccess={handleResponseSuccess}
+                            onCancel={() => setEditingResponseId(null)}
+                          />
+                        ) : (
+                          <p className="text-sm text-gray-700">{review.response.response_text}</p>
+                        )}
                       </div>
                     </div>
                   </div>

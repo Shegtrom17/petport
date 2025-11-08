@@ -8,14 +8,19 @@ import { MessageSquare, Send, X } from "lucide-react";
 interface ReviewResponseFormProps {
   reviewId: string;
   petName: string;
+  existingResponse?: {
+    id: string;
+    response_text: string;
+  };
   onSuccess: () => void;
   onCancel: () => void;
 }
 
-export const ReviewResponseForm = ({ reviewId, petName, onSuccess, onCancel }: ReviewResponseFormProps) => {
-  const [responseText, setResponseText] = useState("");
+export const ReviewResponseForm = ({ reviewId, petName, existingResponse, onSuccess, onCancel }: ReviewResponseFormProps) => {
+  const [responseText, setResponseText] = useState(existingResponse?.response_text || "");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
+  const isEditing = !!existingResponse;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -32,19 +37,35 @@ export const ReviewResponseForm = ({ reviewId, petName, onSuccess, onCancel }: R
     setIsSubmitting(true);
 
     try {
-      const { error } = await supabase
-        .from('review_responses')
-        .insert({
-          review_id: reviewId,
-          response_text: responseText.trim(),
+      if (isEditing && existingResponse) {
+        // Update existing response
+        const { error } = await supabase
+          .from('review_responses')
+          .update({ response_text: responseText.trim() })
+          .eq('id', existingResponse.id);
+
+        if (error) throw error;
+
+        toast({
+          title: "Response updated!",
+          description: "Your response has been updated.",
         });
+      } else {
+        // Insert new response
+        const { error } = await supabase
+          .from('review_responses')
+          .insert({
+            review_id: reviewId,
+            response_text: responseText.trim(),
+          });
 
-      if (error) throw error;
+        if (error) throw error;
 
-      toast({
-        title: "Response posted!",
-        description: "Your response has been added to the review.",
-      });
+        toast({
+          title: "Response posted!",
+          description: "Your response has been added to the review.",
+        });
+      }
 
       setResponseText("");
       onSuccess();
@@ -64,7 +85,9 @@ export const ReviewResponseForm = ({ reviewId, petName, onSuccess, onCancel }: R
     <div className="mt-3 p-4 bg-muted/30 rounded-lg border border-border/50">
       <div className="flex items-center gap-2 mb-3">
         <MessageSquare className="w-4 h-4 text-muted-foreground" />
-        <span className="text-sm font-medium">Respond as {petName}'s Owner</span>
+        <span className="text-sm font-medium">
+          {isEditing ? 'Edit Response' : `Respond as ${petName}'s Owner`}
+        </span>
       </div>
       <form onSubmit={handleSubmit} className="space-y-3">
         <Textarea
@@ -94,12 +117,12 @@ export const ReviewResponseForm = ({ reviewId, petName, onSuccess, onCancel }: R
             {isSubmitting ? (
               <>
                 <span className="animate-spin mr-2">⏳</span>
-                Posting...
+                {isEditing ? 'Updating...' : 'Posting...'}
               </>
             ) : (
               <>
                 <Send className="w-3 h-3 mr-1" />
-                Post Response
+                {isEditing ? 'Update Response' : 'Post Response'}
               </>
             )}
           </Button>

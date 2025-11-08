@@ -8,7 +8,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { CalendarIcon, Loader2, Send } from "lucide-react";
+import { CalendarIcon, Loader2, Send, Info } from "lucide-react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { format } from "date-fns";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -94,6 +95,13 @@ export const AddServiceProviderNoteForm = ({ petId, petName, onSuccess, onCancel
         <CardTitle>Add Service Provider Note for {petName}</CardTitle>
       </CardHeader>
       <CardContent>
+        <Alert className="mb-4">
+          <Info className="h-4 w-4" />
+          <AlertDescription>
+            <strong>Tip:</strong> Reference external documents in your notes. For example: "Examined Finn today. Right hip X-rays show early arthritis. Recommend joint supplements and weight management. X-rays available from clinic - please add to Documents section for future reference."
+          </AlertDescription>
+        </Alert>
+        
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Provider Info */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -202,7 +210,7 @@ export const AddServiceProviderNoteForm = ({ petId, petName, onSuccess, onCancel
               id="observations"
               value={formData.observations}
               onChange={(e) => setFormData({ ...formData, observations: e.target.value })}
-              placeholder="Detailed observations about the pet's condition, behavior, progress..."
+              placeholder="Detailed observations about the pet's condition, behavior, progress. For X-rays, lab results, or images, mention they're available and owner can add to Documents section."
               rows={4}
             />
           </div>

@@ -16,6 +16,9 @@ import { QuickShareHub } from "@/components/QuickShareHub";
 import { Button } from "@/components/ui/button";
 import { CareUpdatesModerationBoard } from "@/components/CareUpdatesModerationBoard";
 import { ServiceProviderNotesBoard } from "@/components/ServiceProviderNotesBoard";
+import { AddServiceProviderNoteForm } from "@/components/AddServiceProviderNoteForm";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { ChevronDown, Plus } from "lucide-react";
 
 interface CareInstructionsSectionProps {
   petData: any;
@@ -30,6 +33,7 @@ export const CareInstructionsSection = ({ petData, onUpdate, handlePetUpdate }: 
   const [isLoading, setIsLoading] = useState(true);
   const [isAICareModalOpen, setIsAICareModalOpen] = useState(false);
   const [isAIMedicalModalOpen, setIsAIMedicalModalOpen] = useState(false);
+  const [isAddingProviderNote, setIsAddingProviderNote] = useState(false);
   const { toast } = useToast();
   const isHorse = petData.species?.toLowerCase() === 'horse';
 
@@ -190,6 +194,38 @@ export const CareInstructionsSection = ({ petData, onUpdate, handlePetUpdate }: 
       
       {/* Care Updates Moderation Board */}
       <CareUpdatesModerationBoard petId={petData.id} petName={petData.name} />
+
+      {/* Add Service Provider Note Form - Collapsible */}
+      <Collapsible open={isAddingProviderNote} onOpenChange={setIsAddingProviderNote}>
+        <Card className="border-0 shadow-lg bg-passport-section-bg backdrop-blur-sm">
+          <CollapsibleTrigger asChild>
+            <Button
+              variant="outline"
+              className="w-full h-14 text-lg justify-between"
+            >
+              <div className="flex items-center gap-2">
+                <Plus className="w-5 h-5" />
+                <span>Add Service Provider Note</span>
+              </div>
+              <ChevronDown className={`w-5 h-5 transition-transform ${isAddingProviderNote ? 'rotate-180' : ''}`} />
+            </Button>
+          </CollapsibleTrigger>
+          <CollapsibleContent className="pt-4">
+            <AddServiceProviderNoteForm
+              petId={petData.id}
+              petName={petData.name}
+              onSuccess={() => {
+                setIsAddingProviderNote(false);
+                toast({
+                  title: "Success",
+                  description: "Service provider note added successfully"
+                });
+              }}
+              onCancel={() => setIsAddingProviderNote(false)}
+            />
+          </CollapsibleContent>
+        </Card>
+      </Collapsible>
 
       {/* Service Provider Notes Board */}
       <ServiceProviderNotesBoard petId={petData.id} petName={petData.name} />

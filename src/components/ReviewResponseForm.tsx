@@ -112,7 +112,7 @@ export const ReviewResponseForm = ({ reviewId, petName, existingResponse, onSucc
             type="submit" 
             size="sm"
             disabled={isSubmitting}
-            className="bg-azure hover:bg-azure/90 text-white"
+            className="bg-brand-primary text-white hover:bg-brand-primary-dark"
           >
             {isSubmitting ? (
               <>

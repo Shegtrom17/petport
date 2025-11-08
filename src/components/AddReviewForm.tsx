@@ -216,6 +216,7 @@ export const AddReviewForm = ({ petId, petName, onClose, onSuccess }: AddReviewF
                 <SelectItem value="veterinary">Veterinary</SelectItem>
                 <SelectItem value="daycare">Daycare</SelectItem>
                 <SelectItem value="walker">Dog Walking</SelectItem>
+                <SelectItem value="renter">Renter/Lodging</SelectItem>
                 <SelectItem value="behavioral">Behavioral</SelectItem>
                 <SelectItem value="therapy">Therapy Work</SelectItem>
                 <SelectItem value="service">Service Work</SelectItem>

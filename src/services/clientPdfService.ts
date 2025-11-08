@@ -1348,9 +1348,9 @@ const generateFullPDF = async (doc: jsPDF, pageManager: PDFPageManager, petData:
 
       petData.reviews.forEach((review: any, index: number) => {
         addText(doc, pageManager, `Review ${index + 1}: ${review.rating}/5 stars`);
-        addText(doc, pageManager, `Reviewer: ${safeText(review.reviewer_name || 'Anonymous')}`);
-        if (review.reviewer_contact) {
-          addText(doc, pageManager, `Contact: ${safeText(review.reviewer_contact)}`);
+        addText(doc, pageManager, `Reviewer: ${safeText(review.reviewer_name || review.reviewerName || 'Anonymous')}`);
+        if (review.reviewer_contact || review.reviewerContact) {
+          addText(doc, pageManager, `Contact: ${safeText(review.reviewer_contact || review.reviewerContact)}`);
         }
         if (review.text) {
           addText(doc, pageManager, `"${safeText(review.text)}"`);
@@ -1364,6 +1364,24 @@ const generateFullPDF = async (doc: jsPDF, pageManager: PDFPageManager, petData:
         if (review.type) {
           addText(doc, pageManager, `Service Type: ${safeText(review.type)}`);
         }
+        
+        // Add owner response if exists
+        if (review.response && review.response.response_text) {
+          pageManager.addY(2);
+          doc.setFontSize(9);
+          doc.setTextColor(86, 145, 175); // Azure color
+          doc.text(`Response from ${petData.name}'s Owner:`, 20, pageManager.getCurrentY());
+          pageManager.addY(4);
+          doc.setTextColor(0, 0, 0);
+          const responseLines = doc.splitTextToSize(safeText(review.response.response_text), 170);
+          responseLines.forEach((line: string) => {
+            pageManager.checkPageSpace(10);
+            doc.text(line, 25, pageManager.getCurrentY());
+            pageManager.addY(4);
+          });
+          doc.setFontSize(10);
+        }
+        
         pageManager.addY(5);
       });
     });

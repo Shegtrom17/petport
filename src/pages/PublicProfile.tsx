@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
-import { Heart, MapPin, Phone, Star, Award, GraduationCap, Plane, Trophy, Briefcase, Shield, Building, Mail, Globe, Camera, AlertTriangle, FileText, Eye, Stethoscope, X } from "lucide-react";
+import { Heart, MapPin, Phone, Star, Award, GraduationCap, Plane, Trophy, Briefcase, Shield, Building, Mail, Globe, Camera, AlertTriangle, FileText, Eye, Stethoscope, X, MessageSquare } from "lucide-react";
 
 import { MetaTags } from "@/components/MetaTags";
 import { AddReviewForm } from "@/components/AddReviewForm";
@@ -246,10 +246,12 @@ const PublicProfile = () => {
           })) || [],
           reviews: data.reviews?.map((review: any) => ({
             ...review,
+            id: review.id,
             reviewer_name: sanitizeText(review.reviewer_name || ''),
             text: sanitizeText(review.text || ''),
             location: sanitizeText(review.location || ''),
-            type: sanitizeText(review.type || '')
+            type: sanitizeText(review.type || ''),
+            response: null // Will be populated next
           })) || [],
           training: data.training?.map((course: any) => ({
             ...course,
@@ -291,6 +293,23 @@ const PublicProfile = () => {
             description: sanitizeText(experience.description || '')
           })) || []
         };
+
+        // Fetch review responses
+        if (sanitizedData.reviews && sanitizedData.reviews.length > 0) {
+          const reviewIds = sanitizedData.reviews.map((r: any) => r.id).filter(Boolean);
+          
+          if (reviewIds.length > 0) {
+            const { data: responses } = await supabase
+              .from('review_responses')
+              .select('*')
+              .in('review_id', reviewIds);
+
+            sanitizedData.reviews = sanitizedData.reviews.map((review: any) => ({
+              ...review,
+              response: responses?.find((r: any) => r.review_id === review.id) || null
+            }));
+          }
+        }
 
         setPetData(sanitizedData);
         setRetryCount(0); // Reset retry count on success
@@ -916,6 +935,21 @@ const PublicProfile = () => {
                         {review.location && <span>{review.location}</span>}
                         {review.date && <span> • {review.date}</span>}
                       </div>
+                      
+                      {/* Owner Response */}
+                      {review.response && (
+                        <div className="mt-3 p-3 bg-azure/5 border-l-4 border-azure rounded-r-lg">
+                          <div className="flex items-start gap-2">
+                            <MessageSquare className="w-3 h-3 text-azure mt-1 flex-shrink-0" />
+                            <div className="flex-1">
+                              <p className="text-xs font-semibold text-azure mb-1">
+                                Response from {petData.name}'s Owner
+                              </p>
+                              <p className="text-sm text-gray-700">{review.response.response_text}</p>
+                            </div>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>

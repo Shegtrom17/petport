@@ -31,30 +31,41 @@ const Podcast = () => {
         url={window.location.origin + "/podcast"}
       />
 
-      {/* PodcastSeries Schema.org for Google SEO */}
+      {/* PodcastSeries Schema for SEO */}
       <script type="application/ld+json">
         {JSON.stringify({
           "@context": "https://schema.org",
           "@type": "PodcastSeries",
-          "name": "Dog Gone Good Podcast by PetPort",
-          "description": "Learn how to create a complete digital voice for your furry companion. Discover expert strategies for pet health records, lost pet recovery, pet housing applications, document and vaccinations storage, pet foster to adopter programs, and care instructions. Petport has LiveLink Resume builder and Photo Galleries —learn how Petport platform can give your furry companion a digital voice for life! Join thousands of pet parents mastering modern portfolios with PetPort.",
+          "name": "Dog Gone Good Podcast",
+          "alternateName": "PetPort Podcast: Give Your Pet a Digital Voice for Life",
+          "description": "Expert strategies and real-world advice for modern pet parents. Learn how to manage pet health records, create professional pet resumes, implement lost pet recovery systems, organize medical documents, handle foster-to-adopter transitions, and give your companion animal a complete digital voice that lasts a lifetime.",
           "url": "https://petport.app/podcast",
-          "image": "https://pub-a7c2c18b8d6143b9a256105ef44f2da0.r2.dev/og/resume-og-1mb.png",
+          "image": {
+            "@type": "ImageObject",
+            "url": "https://pub-a7c2c18b8d6143b9a256105ef44f2da0.r2.dev/og/resume-og-1mb.png",
+            "width": 1200,
+            "height": 630
+          },
+          "author": {
+            "@type": "Person",
+            "name": "Susan Hegstrom",
+            "jobTitle": "Pet Care Technology Expert"
+          },
           "publisher": {
             "@type": "Organization",
+            "@id": "https://petport.app/#organization",
             "name": "PetPort",
             "logo": {
               "@type": "ImageObject",
-              "url": "https://petport.app/lovable-uploads/petport-logo-new.png"
+              "url": "https://petport.app/lovable-uploads/petport-logo-new.png",
+              "width": 512,
+              "height": 512
             }
           },
-          "webFeed": "https://petport.app/podcast-feed.xml",
-          "episode": podcastEpisodes.map(ep => ({
-            "@type": "PodcastEpisode",
-            "url": `https://petport.app/podcast/${ep.slug}`,
-            "name": ep.title,
-            "datePublished": ep.publishDate
-          }))
+          "webFeed": "https://petport.app/podcast/rss",
+          "genre": ["Education", "Pets & Animals", "Technology"],
+          "keywords": "pet records, lost pet recovery, pet housing applications, pet resume, vaccination storage, foster care, pet adoption, digital pet passport, care instructions, medical records",
+          "inLanguage": "en-US"
         })}
       </script>
 

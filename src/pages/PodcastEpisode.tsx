@@ -77,19 +77,46 @@ const PodcastEpisode = () => {
         url={window.location.href}
       />
 
-      {/* Schema.org Structured Data */}
+      {/* PodcastEpisode Schema for SEO */}
       <script type="application/ld+json">
         {JSON.stringify({
           "@context": "https://schema.org",
           "@type": "PodcastEpisode",
+          "url": `https://petport.app/podcast/${episode.slug}`,
           "name": episode.title,
           "description": episode.description,
           "datePublished": episode.publishDate,
-          "duration": `PT${episode.duration.split(':')[0]}M${episode.duration.split(':')[1]}S`,
-          "audio": {
+          "timeRequired": `PT${episode.duration.split(':')[0]}M${episode.duration.split(':')[1]}S`,
+          "image": {
+            "@type": "ImageObject",
+            "url": episode.ogImage || episode.coverImage,
+            "width": 1200,
+            "height": 630
+          },
+          "associatedMedia": {
             "@type": "AudioObject",
-            "contentUrl": episode.audioUrl
-          }
+            "contentUrl": episode.audioUrl,
+            "duration": `PT${episode.duration.split(':')[0]}M${episode.duration.split(':')[1]}S`,
+            "encodingFormat": "audio/mpeg"
+          },
+          "partOfSeries": {
+            "@type": "PodcastSeries",
+            "@id": "https://petport.app/podcast#series",
+            "name": "Dog Gone Good Podcast",
+            "url": "https://petport.app/podcast"
+          },
+          "author": {
+            "@type": "Person",
+            "name": "Susan Hegstrom",
+            "jobTitle": "Pet Care Technology Expert"
+          },
+          "publisher": {
+            "@type": "Organization",
+            "@id": "https://petport.app/#organization",
+            "name": "PetPort"
+          },
+          "keywords": episode.keywords?.join(', ') || "pet records, digital pet passport, pet care, pet management",
+          "inLanguage": "en-US"
         })}
       </script>
 

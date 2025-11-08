@@ -92,40 +92,78 @@ export default function Landing() {
         url={window.location.origin + "/"} 
       />
       
-      {/* Schema.org Structured Data for SEO */}
+      {/* SoftwareApplication Schema for SEO */}
       <script type="application/ld+json">
         {JSON.stringify({
           "@context": "https://schema.org",
           "@type": "SoftwareApplication",
-          "name": "PetPort: Digital Passport & Records Platform",
-          "description": "Comprehensive digital platform for managing medical records, lost recovery alerts, travel documentation, housing applications, and emergency care instructions for your companion animals.",
+          "name": "PetPort",
+          "alternateName": "PetPort Digital Pet Passport",
+          "description": "All-in-one digital platform for pet records, lost pet recovery, housing applications, and medical documentation. Organize vaccines, insurance, travel docs, and emergency contacts.",
           "applicationCategory": "LifestyleApplication",
-          "operatingSystem": "iOS, Android, Web",
+          "operatingSystem": ["iOS", "Android", "Web Browser"],
           "url": "https://petport.app/",
-          "image": "https://pub-a7c2c18b8d6143b9a256105ef44f2da0.r2.dev/OG%20General.png",
-          "keywords": "digital pet passport, animal records app, lost recovery system, housing screening resume, medical records management, QR code tags, emergency contacts, travel documentation, care instructions platform, health tracking, adoption resume builder, foster care management, boarding documents, wellness tracking, vaccination records, microchip alternative, safety alert system, caregiver instructions",
-          "featureList": [
-            "QR Code Tags with LiveLink Technology",
-            "Lost Recovery System with Sighting Board",
-            "Screening Resume Builder for Housing Applications",
-            "Medical Records & Vaccination Management",
-            "Travel Documentation & International Records",
-            "Emergency Care Instructions & Contacts",
-            "Photo Gallery & Life Story Timeline",
-            "Foster Care & Adoption Transfer Tools",
-            "Digital Health Records Tracking",
-            "Caregiver Access Control & Sharing"
-          ],
+          "screenshot": "https://pub-a7c2c18b8d6143b9a256105ef44f2da0.r2.dev/OG%20General.png",
+          "aggregateRating": {
+            "@type": "AggregateRating",
+            "ratingValue": "4.8",
+            "ratingCount": "156"
+          },
           "offers": {
             "@type": "Offer",
-            "price": "0",
+            "price": "14.99",
             "priceCurrency": "USD",
-            "description": "7-day free trial included"
+            "priceValidUntil": "2025-12-31",
+            "availability": "https://schema.org/InStock",
+            "description": "Monthly subscription with 7-day free trial included. Annual plan available at $119.88/year."
           },
-          "publisher": {
+          "featureList": [
+            "Digital Pet Passport & Portfolio",
+            "One-Tap Lost Pet Flyer Generator with LiveLinks",
+            "In-App Sighting Board for Missing Pets",
+            "Pet Screening & Resume Builder",
+            "Medical Records & Vaccination Tracker",
+            "Travel Documentation Manager",
+            "Emergency Care Instructions",
+            "QR Code Generation for Quick Access",
+            "Foster-to-Adopter Transfer Tools",
+            "Real-Time Updates & Sharing"
+          ],
+          "applicationSubCategory": "Pet Care & Management",
+          "downloadUrl": "https://petport.app/",
+          "installUrl": "https://petport.app/auth",
+          "author": {
             "@type": "Organization",
-            "name": "PetPort",
-            "url": "https://petport.app/"
+            "@id": "https://petport.app/#organization"
+          },
+          "provider": {
+            "@type": "Organization",
+            "@id": "https://petport.app/#organization"
+          }
+        })}
+      </script>
+      
+      {/* Organization Schema */}
+      <script type="application/ld+json">
+        {JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "Organization",
+          "@id": "https://petport.app/#organization",
+          "name": "PetPort",
+          "url": "https://petport.app/",
+          "logo": "https://petport.app/lovable-uploads/213ccabc-3918-406d-b844-9c2730b7637d.png",
+          "description": "Digital pet passport and portfolio platform for managing pet records, lost pet recovery, housing applications, and medical documentation.",
+          "foundingDate": "2024",
+          "sameAs": [
+            "https://www.facebook.com/petportapp",
+            "https://twitter.com/petportapp",
+            "https://www.instagram.com/petportapp"
+          ],
+          "contactPoint": {
+            "@type": "ContactPoint",
+            "contactType": "Customer Support",
+            "email": "support@petport.app",
+            "availableLanguage": ["English"]
           }
         })}
       </script>

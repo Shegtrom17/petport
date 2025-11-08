@@ -73,6 +73,23 @@ export const AddReviewForm = ({ petId, petName, onClose, onSuccess }: AddReviewF
         description: `Thank you for your review of ${petName}!`,
       });
 
+      // Send notification email to pet owner
+      try {
+        await supabase.functions.invoke('notify-review-submission', {
+          body: {
+            petId,
+            reviewerName: formData.reviewer_name.trim(),
+            rating,
+            reviewText: formData.text.trim(),
+            reviewType: formData.type || 'general',
+          }
+        });
+        console.log('Review notification sent to owner');
+      } catch (notifyError) {
+        console.error('Failed to send notification:', notifyError);
+        // Don't fail the whole operation if notification fails
+      }
+
       // Reset form
       setFormData({
         reviewer_name: '',

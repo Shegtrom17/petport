@@ -200,7 +200,8 @@ export default function ClaimSubscription() {
             
             <Button 
               type="submit" 
-              className="w-full bg-[#5691af] text-white font-medium py-2 px-4 rounded-md" 
+              variant="azure"
+              className="w-full font-medium py-2 px-4 rounded-md"
               disabled={isCreatingAccount}
             >
               {isCreatingAccount ? "Creating Account..." : "Create My Account"}

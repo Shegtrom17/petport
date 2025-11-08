@@ -126,7 +126,7 @@ export const CertificationSection = ({
             <Shield className="w-5 h-5 text-brand-primary" />
             <span>Professional Certifications</span>
           </div>
-          <Button onClick={() => setIsEditModalOpen(true)} variant="outline" size="sm" className="border-brand-primary text-sm text-zinc-100 bg-[#5691af] text-center px-[20px] mx-[7px] gap-1">
+          <Button onClick={() => setIsEditModalOpen(true)} variant="azure" size="sm" className="text-sm text-center px-[20px] mx-[7px] gap-1">
             <Edit className="w-4 h-4" />
             Manage
           </Button>

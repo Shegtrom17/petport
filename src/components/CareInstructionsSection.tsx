@@ -182,8 +182,8 @@ export const CareInstructionsSection = ({ petData, onUpdate, handlePetUpdate }: 
             
             <Button
               onClick={() => window.open(`/care/${petData.id}?returnTo=care`, '_blank')}
-              variant="outline"
-              className="w-full h-14 text-lg bg-[#5691af] text-white hover:bg-[#4a7d99] hover:text-white border-[#5691af] focus-visible:ring-[#5691af]"
+              variant="azure"
+              className="w-full h-14 text-lg"
             >
               <Eye className="w-5 h-5 mr-2" />
               Preview Care & Handling LiveLink
@@ -423,7 +423,8 @@ export const CareInstructionsSection = ({ petData, onUpdate, handlePetUpdate }: 
             <Button
               onClick={() => setIsAICareModalOpen(true)}
               size="lg"
-              className="h-14 w-14 rounded-full shadow-lg hover:shadow-xl transition-all bg-[#5691af]/60 hover:bg-[#5691af]/90 hover:scale-110 backdrop-blur-sm"
+              variant="azure"
+              className="h-14 w-14 rounded-full shadow-lg hover:shadow-xl transition-all opacity-60 hover:opacity-90 hover:scale-110 backdrop-blur-sm"
               aria-label="AI Care Assistant"
             >
               <Sparkles className="h-6 w-6" />

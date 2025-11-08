@@ -16,7 +16,8 @@ export function FloatingAIButton({ onClick, label = "AI Assistant", description 
           <Button
             onClick={onClick}
             size="lg"
-            className="fixed bottom-6 right-6 h-14 w-14 rounded-full shadow-lg hover:shadow-xl transition-all z-50 bg-[#5691af]/60 hover:bg-[#5691af]/90 hover:scale-110 backdrop-blur-sm"
+            variant="azure"
+            className="fixed bottom-6 right-6 h-14 w-14 rounded-full shadow-lg hover:shadow-xl transition-all z-50 opacity-60 hover:opacity-90 hover:scale-110 backdrop-blur-sm"
             aria-label={label}
           >
             <Sparkles className="h-6 w-6" />

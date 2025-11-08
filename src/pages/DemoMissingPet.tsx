@@ -868,7 +868,8 @@ export default function DemoMissingPet() {
         <div className="mb-6">
           <Button
             onClick={() => setShowContactModal(true)}
-            className="w-full bg-[#5691af] hover:bg-[#4a7c95] text-white py-6 text-lg"
+            variant="azure"
+            className="w-full py-6 text-lg"
           >
             <Mail className="w-5 h-5 mr-2" />
             Contact Owner via Email

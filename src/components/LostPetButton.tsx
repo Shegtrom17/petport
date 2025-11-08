@@ -356,8 +356,8 @@ export const LostPetButton = ({ petId, petName = "Pet", isMissing = false, class
                 <div className="space-y-3">
                   <Button
                     onClick={() => window.open(`/missing/${petId}`, '_blank')}
-                    variant="outline"
-                    className="w-full bg-[#5691af] text-white hover:bg-[#4a7d99] hover:text-white border-[#5691af] focus-visible:ring-[#5691af]"
+                    variant="azure"
+                    className="w-full"
                   >
                     <Eye className="w-4 h-4 mr-2" />
                     Preview Lost Pet Page

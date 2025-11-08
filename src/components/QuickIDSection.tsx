@@ -311,8 +311,8 @@ export const QuickIDSection = ({ petData, onUpdate }: QuickIDSectionProps) => {
 <div className="mt-4">
   <Button
     onClick={() => window.open(`/missing-pet/${petData.id}?returnTo=quickid`, '_blank')}
-    variant="outline"
-    className="w-full bg-[#5691af] text-white hover:bg-[#4a7d99] hover:text-white border-[#5691af] focus-visible:ring-[#5691af]"
+    variant="azure"
+    className="w-full"
   >
     <Eye className="w-4 h-4 mr-2" />
     Preview Lost Pet LiveLink

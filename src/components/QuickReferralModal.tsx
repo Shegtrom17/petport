@@ -202,7 +202,8 @@ export const QuickReferralModal = ({ isOpen, onClose }: QuickReferralModalProps)
                 <Button
                   onClick={handleCopy}
                   disabled={!referralLink}
-                  className="flex-1 bg-[#5691af] hover:bg-[#4a7d99] text-white"
+                  variant="azure"
+                  className="flex-1"
                 >
                   <Copy className="h-4 w-4 mr-2" />
                   Copy Link

@@ -243,7 +243,7 @@ export const AddServiceProviderNoteForm = ({ petId, petName, onSuccess, onCancel
                 Cancel
               </Button>
             )}
-            <Button type="submit" disabled={isSubmitting} className="bg-[#5691af] hover:bg-[#4a7d99] text-white">
+            <Button type="submit" disabled={isSubmitting} variant="azure">
               {isSubmitting ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />

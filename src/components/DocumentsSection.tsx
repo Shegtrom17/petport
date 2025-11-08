@@ -464,7 +464,8 @@ export const DocumentsSection = ({ petId, petName, documents, onDocumentDeleted 
               <Button 
                 onClick={(e) => handleFileUpload(e)}
                 disabled={isUploading}
-                className="bg-[#5691af] hover:bg-[#4a7d99] text-white border-0 text-sm"
+                variant="azure"
+                className="text-sm border-0"
                 data-touch-safe
               >
                 <Upload className="w-4 h-4 mr-2" />

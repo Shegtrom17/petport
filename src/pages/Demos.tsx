@@ -476,7 +476,7 @@ export default function Demos() {
             <Button 
               onClick={() => navigate('/referral-program')}
               size="lg"
-              className="bg-[#5691af] hover:bg-[#4a7d99] text-white"
+              variant="azure"
             >
               Learn More About Referrals
             </Button>

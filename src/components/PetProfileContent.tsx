@@ -336,7 +336,8 @@ export const PetProfileContent = ({
                     {isOwner && (
                       <Button
                         onClick={() => setIsPhotoModalOpen(true)}
-                        className="bg-[#5691af] hover:bg-[#4a7d99] text-white w-full flex items-center justify-center gap-2 h-12"
+                        variant="azure"
+                        className="w-full flex items-center justify-center gap-2 h-12"
                       >
                         <Camera className="w-4 h-4" />
                         <span>Update Profile Photo</span>
@@ -347,7 +348,8 @@ export const PetProfileContent = ({
                     {isOwner && (
                       <Button
                         onClick={handleProfileEdit}
-                        className="bg-[#5691af] hover:bg-[#4a7d99] text-white w-full flex items-center justify-center gap-2 h-12"
+                        variant="azure"
+                        className="w-full flex items-center justify-center gap-2 h-12"
                       >
                         <Edit className="w-4 h-4" />
                         <span>Edit Pet Profile</span>
@@ -357,8 +359,8 @@ export const PetProfileContent = ({
                     {/* Preview Complete Profile LiveLink Button */}
                     <Button
                       onClick={() => window.open(`/profile/${enhancedPetData.id}?returnTo=profile`, '_blank')}
-                      variant="outline"
-                      className="w-full bg-[#5691af] text-white hover:bg-[#4a7d99] hover:text-white border-[#5691af] focus-visible:ring-[#5691af] flex items-center justify-center gap-2 h-12"
+                      variant="azure"
+                      className="w-full flex items-center justify-center gap-2 h-12"
                     >
                       <Eye className="w-4 h-4" />
                       <span>Preview Complete Profile LiveLink</span>
@@ -458,7 +460,8 @@ export const PetProfileContent = ({
                 openProfileFilePicker('profile', false);
                 setIsPhotoModalOpen(false);
               }}
-              className="w-full flex items-center justify-center gap-2 h-12 bg-[#5691af] hover:bg-[#4a7d99] text-white"
+              variant="azure"
+              className="w-full flex items-center justify-center gap-2 h-12"
             >
               <Upload className="w-5 h-5" />
               <span>Upload from Gallery</span>
@@ -470,7 +473,8 @@ export const PetProfileContent = ({
                 openProfileFilePicker('profile', true);
                 setIsPhotoModalOpen(false);
               }}
-              className="w-full flex items-center justify-center gap-2 h-12 bg-[#5691af] hover:bg-[#4a7d99] text-white"
+              variant="azure"
+              className="w-full flex items-center justify-center gap-2 h-12"
             >
               <Camera className="w-5 h-5" />
               <span>Take Photo</span>

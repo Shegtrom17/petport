@@ -815,7 +815,7 @@ export default function DogGoneGood() {
               "name": "What's the difference between the free resume and PetPort's full resume?",
               "acceptedAnswer": {
                 "@type": "Answer",
-                "text": "Free resume: 1–2 photos plus playful, humorous Q&A prompts for social sharing; downloadable image only. No bio/core details and no advanced sections (training, achievements, references, travel, or contact). Full resume: a professional, multi‑section profile with Experience & Activities, Achievements, Training, Professional Certifications, References & Reviews, Travel history, a public share link and PDF export, and a Contact Owner button."
+                "text": "Free resume: 1–2 photos plus playful, humorous Q&A prompts for social sharing; downloadable image only. No bio/core details and no advanced sections (training, achievements, references, travel, or contact). Full resume: a professional, multi‑section profile with photos, all documents (vet records, certifications), Experience & Activities, Achievements, Training, Professional Certifications, References & Reviews, Travel history, a public share link and PDF export, and a Contact Owner button. PetPort holds all information on pets and horses in one comprehensive digital portfolio."
               }
             },
             {
@@ -1564,6 +1564,7 @@ export default function DogGoneGood() {
               <p className="mt-2">No bio/core details or advanced sections (training, achievements, references, travel, or contact).</p>
               <p className="mt-4">PetPort full resume includes:</p>
               <ul className="list-disc pl-5 mt-2">
+                <li>Photos and all documents (vet records, certifications)</li>
                 <li>Experience & Activities</li>
                 <li>Achievements</li>
                 <li>Training</li>
@@ -1573,6 +1574,7 @@ export default function DogGoneGood() {
                 <li>Public share link and PDF export</li>
                 <li>Contact Owner button</li>
               </ul>
+              <p className="mt-2 text-sm italic">PetPort holds all information on pets and horses in one comprehensive digital portfolio.</p>
               <p className="mt-4">In short: the free version is a simple one‑pager; the full resume is a professional, multi‑section profile.</p>
             </AccordionContent>
           </AccordionItem>

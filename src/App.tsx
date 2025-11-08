@@ -48,6 +48,7 @@ import VaccinationGuide from "./pages/VaccinationGuide";
 import Help from "./pages/Help";
 import PublicGallery from "./pages/PublicGallery";
 import PublicEmergencyProfile from "./pages/PublicEmergencyProfile";
+import RecoverGift from "./pages/RecoverGift";
 import EmailTest from "./pages/EmailTest";
 import SetupStripe from "./pages/SetupStripe";
 import Referrals from "./pages/Referrals";
@@ -185,9 +186,10 @@ const App = () => {
                      <Route path="/referrals" element={
                        <ProtectedRoute>
                          <Referrals />
-                       </ProtectedRoute>
-                     } />
-                   <Route path="*" element={<NotFound />} />
+                        </ProtectedRoute>
+                      } />
+                      <Route path="/recover-gift" element={<RecoverGift />} />
+                    <Route path="*" element={<NotFound />} />
                   </Routes>
                   
                   </BrowserRouter>

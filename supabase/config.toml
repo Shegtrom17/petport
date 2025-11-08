@@ -132,3 +132,6 @@ verify_jwt = false
 
 [functions.story-share]
 verify_jwt = false
+
+[functions.recover-gift]
+verify_jwt = false

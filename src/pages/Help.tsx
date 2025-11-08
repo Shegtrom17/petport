@@ -1,10 +1,16 @@
 import { useState } from "react";
-import { Search, MessageSquare, AlertTriangle, Heart, FileText, Settings, Home, RotateCcw, Mail } from "lucide-react";
+import { Search, MessageSquare, AlertTriangle, Heart, FileText, Settings, Home, RotateCcw, Mail, Wrench } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ReportIssueModal } from "@/components/ReportIssueModal";
+import { 
+  GiftRedemptionWizard, 
+  SubscriptionTroubleshootingWizard,
+  LostPetTroubleshootingWizard 
+} from "@/components/TroubleshootingWizard";
 import { Link } from "react-router-dom";
 import { MetaTags } from "@/components/MetaTags";
 import { PWALayout } from "@/components/PWALayout";
@@ -169,6 +175,37 @@ const Help = () => {
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-10"
             />
+          </div>
+
+          {/* Troubleshooting Wizards Section */}
+          <div className="mb-8">
+            <div className="flex items-center gap-2 mb-4">
+              <Wrench className="w-5 h-5 text-primary" />
+              <h2 className="text-xl font-semibold">Self-Service Troubleshooting</h2>
+            </div>
+            <p className="text-muted-foreground mb-4 text-sm">
+              Step-by-step wizards to help you solve common issues quickly
+            </p>
+            
+            <Tabs defaultValue="gifts" className="w-full">
+              <TabsList className="grid w-full grid-cols-3">
+                <TabsTrigger value="gifts">Gift Cards</TabsTrigger>
+                <TabsTrigger value="subscription">Billing</TabsTrigger>
+                <TabsTrigger value="lostpet">Lost Pets</TabsTrigger>
+              </TabsList>
+              
+              <TabsContent value="gifts" className="mt-4">
+                <GiftRedemptionWizard />
+              </TabsContent>
+              
+              <TabsContent value="subscription" className="mt-4">
+                <SubscriptionTroubleshootingWizard />
+              </TabsContent>
+              
+              <TabsContent value="lostpet" className="mt-4">
+                <LostPetTroubleshootingWizard />
+              </TabsContent>
+            </Tabs>
           </div>
 
           {/* FAQs */}

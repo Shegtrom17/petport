@@ -815,7 +815,7 @@ export default function DogGoneGood() {
               "name": "What's the difference between the free resume and PetPort's full resume?",
               "acceptedAnswer": {
                 "@type": "Answer",
-                "text": "Free resume: core pet details (name, photo, breed/species, age/size), short bio, simple share/download. Full resume: multi‑section profile with Experience & Activities, Achievements, Training, Professional Certifications, References & Reviews, Travel history, public share link and PDF export, plus a Contact Owner button. In short: the free version is a simple one‑pager; the full resume is a professional, detailed profile."
+                "text": "Free resume: 1–2 photos plus playful, humorous Q&A prompts for social sharing; downloadable image only. No bio/core details and no advanced sections (training, achievements, references, travel, or contact). Full resume: a professional, multi‑section profile with Experience & Activities, Achievements, Training, Professional Certifications, References & Reviews, Travel history, a public share link and PDF export, and a Contact Owner button."
               }
             },
             {
@@ -1557,10 +1557,11 @@ export default function DogGoneGood() {
             <AccordionContent className="text-muted-foreground">
               <p>Free Dog-Gone-Good resume includes:</p>
               <ul className="list-disc pl-5 mt-2">
-                <li>Core pet details (name, photo, breed/species, age, size)</li>
-                <li>Short bio/personality</li>
-                <li>Simple, shareable download</li>
+                <li>1–2 photos</li>
+                <li>Playful, humorous Q&A prompts for sharing</li>
+                <li>Shareable image download</li>
               </ul>
+              <p className="mt-2">No bio/core details or advanced sections (training, achievements, references, travel, or contact).</p>
               <p className="mt-4">PetPort full resume includes:</p>
               <ul className="list-disc pl-5 mt-2">
                 <li>Experience & Activities</li>

@@ -11,6 +11,14 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { AzureButton } from "@/components/ui/azure-button";
 import { useNavigate } from "react-router-dom";
+import {
+  Breadcrumb,
+  BreadcrumbList,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbSeparator,
+  BreadcrumbPage,
+} from "@/components/ui/breadcrumb";
 
 const FINNEGAN_ID = "297d1397-c876-4075-bf24-41ee1862853a";
 
@@ -234,6 +242,33 @@ export default function DemoCare() {
       </div>
 
       <main className="container mx-auto px-4 py-8 max-w-4xl">
+        {/* Breadcrumb Navigation */}
+        <Breadcrumb className="mb-6">
+          <BreadcrumbList>
+            <BreadcrumbItem>
+              <BreadcrumbLink 
+                onClick={() => navigate('/')}
+                className="cursor-pointer"
+              >
+                Home
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbLink 
+                onClick={() => navigate('/demos')}
+                className="cursor-pointer"
+              >
+                Demos
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbPage>Care Instructions</BreadcrumbPage>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
+
         {/* Header */}
         <div className="text-center mb-8">
           {data.photos?.photo_url && (

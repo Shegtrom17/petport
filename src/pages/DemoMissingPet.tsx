@@ -45,6 +45,14 @@ import { generateShareURL } from '@/utils/domainUtils';
 import { shareViaMessenger, copyToClipboard } from '@/utils/messengerShare';
 import { shareQRCode } from '@/utils/qrShare';
 import { toast } from 'sonner';
+import {
+  Breadcrumb,
+  BreadcrumbList,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbSeparator,
+  BreadcrumbPage,
+} from "@/components/ui/breadcrumb";
 
 const FINNEGAN_ID = "297d1397-c876-4075-bf24-41ee1862853a";
 
@@ -469,6 +477,33 @@ export default function DemoMissingPet() {
       </div>
 
       <div className="max-w-4xl mx-auto px-4 py-8">
+        {/* Breadcrumb Navigation */}
+        <Breadcrumb className="mb-6">
+          <BreadcrumbList>
+            <BreadcrumbItem>
+              <BreadcrumbLink 
+                onClick={() => navigate('/')}
+                className="cursor-pointer"
+              >
+                Home
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbLink 
+                onClick={() => navigate('/demos')}
+                className="cursor-pointer"
+              >
+                Demos
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbPage>Lost Pet Alert</BreadcrumbPage>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
+
         {/* Urgent Header Alert */}
         <Alert className="mb-6 border-red-600 bg-red-50">
           <AlertTriangle className="h-6 w-6 text-red-600" />

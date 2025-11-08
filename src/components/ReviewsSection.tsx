@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -7,13 +7,15 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Star, Plus, Share2, Mail, MapPin, Calendar, User, Edit, Send, X, Loader2 } from "lucide-react";
+import { Star, Plus, Share2, Mail, MapPin, Calendar, User, Edit, Send, X, Loader2, MessageSquare } from "lucide-react";
 import { ReviewsEditForm } from "@/components/ReviewsEditForm";
+import { ReviewResponseForm } from "@/components/ReviewResponseForm";
 import { useToast } from "@/hooks/use-toast";
 import { useEmailSharing } from "@/hooks/useEmailSharing";
 import { useAuth } from "@/context/AuthContext";
 import { PrivacyHint } from "@/components/PrivacyHint";
 import { SocialShareButtons } from "@/components/SocialShareButtons";
+import { supabase } from "@/integrations/supabase/client";
 
 interface Review {
   id?: string;
@@ -24,6 +26,11 @@ interface Review {
   date?: string;
   location?: string;
   type?: 'boarding' | 'sitting' | 'veterinary' | 'training' | 'grooming' | 'other';
+  response?: {
+    id: string;
+    response_text: string;
+    created_at: string;
+  };
 }
 
 interface ReviewsSectionProps {
@@ -40,6 +47,8 @@ export const ReviewsSection = ({ petData, onUpdate }: ReviewsSectionProps) => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isRequestModalOpen, setIsRequestModalOpen] = useState(false);
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+  const [respondingToReviewId, setRespondingToReviewId] = useState<string | null>(null);
+  const [reviewsWithResponses, setReviewsWithResponses] = useState<Review[]>([]);
   const [requestForm, setRequestForm] = useState({
     name: '',
     email: '',
@@ -50,8 +59,47 @@ export const ReviewsSection = ({ petData, onUpdate }: ReviewsSectionProps) => {
   const { sendEmail, isLoading: isSendingEmail } = useEmailSharing();
   const { user } = useAuth();
 
-  // Use actual reviews from petData or show empty state
-  const reviews = petData.reviews && petData.reviews.length > 0 ? petData.reviews : [];
+  // Check if current user owns this pet
+  const isOwner = user?.id === (petData as any).user_id;
+
+  // Fetch responses for reviews
+  useEffect(() => {
+    const fetchResponses = async () => {
+      if (!petData.reviews || petData.reviews.length === 0) {
+        setReviewsWithResponses([]);
+        return;
+      }
+
+      const reviewIds = petData.reviews.map(r => r.id).filter(Boolean);
+      
+      if (reviewIds.length === 0) {
+        setReviewsWithResponses(petData.reviews);
+        return;
+      }
+
+      const { data: responses } = await supabase
+        .from('review_responses')
+        .select('*')
+        .in('review_id', reviewIds);
+
+      const reviewsMap = petData.reviews.map(review => ({
+        ...review,
+        response: responses?.find(r => r.review_id === review.id)
+      }));
+
+      setReviewsWithResponses(reviewsMap);
+    };
+
+    fetchResponses();
+  }, [petData.reviews]);
+
+  const handleResponseSuccess = () => {
+    setRespondingToReviewId(null);
+    onUpdate?.();
+  };
+
+
+  const reviews = reviewsWithResponses || [];
 
   const averageRating = reviews.length 
     ? reviews.reduce((sum, review) => sum + review.rating, 0) / reviews.length 
@@ -323,6 +371,45 @@ export const ReviewsSection = ({ petData, onUpdate }: ReviewsSectionProps) => {
                     </div>
                   )}
                 </div>
+
+                {/* Owner Response */}
+                {review.response && (
+                  <div className="mt-4 p-4 bg-azure/5 border-l-4 border-azure rounded-r-lg">
+                    <div className="flex items-start gap-2 mb-2">
+                      <MessageSquare className="w-4 h-4 text-azure mt-1 flex-shrink-0" />
+                      <div className="flex-1">
+                        <p className="text-sm font-semibold text-azure mb-1">
+                          Response from {petData.name}'s Owner
+                        </p>
+                        <p className="text-sm text-gray-700">{review.response.response_text}</p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Add Response Button (Only for Owner) */}
+                {isOwner && !review.response && review.id && (
+                  <>
+                    {respondingToReviewId === review.id ? (
+                      <ReviewResponseForm
+                        reviewId={review.id}
+                        petName={petData.name}
+                        onSuccess={handleResponseSuccess}
+                        onCancel={() => setRespondingToReviewId(null)}
+                      />
+                    ) : (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setRespondingToReviewId(review.id!)}
+                        className="mt-4 text-azure border-azure/30 hover:bg-azure/10"
+                      >
+                        <MessageSquare className="w-3 h-3 mr-2" />
+                        Respond to Review
+                      </Button>
+                    )}
+                  </>
+                )}
               </CardContent>
             </Card>
           ))}

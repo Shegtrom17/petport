@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
-import { Stethoscope, Eye, EyeOff, Trash2, Calendar, User, Briefcase, MessageSquare, Share2, Copy, Mail, Edit } from "lucide-react";
+import { Stethoscope, Eye, EyeOff, Trash2, Calendar, User, Briefcase, MessageSquare, Share2, Copy, Mail, Edit, Download } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
@@ -16,6 +16,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { CalendarIcon } from "lucide-react";
 import { Calendar as CalendarComponent } from "@/components/ui/calendar";
 import { cn } from "@/lib/utils";
+import { generateClientPetPDF } from "@/services/clientPdfService";
 
 interface ServiceProviderNote {
   id: string;
@@ -46,6 +47,7 @@ export const ServiceProviderNotesBoard = ({ petId, petName }: ServiceProviderNot
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [editFormData, setEditFormData] = useState<any>({});
   const [editServiceDate, setEditServiceDate] = useState<Date>();
+  const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
   const { toast } = useToast();
 
   const shareUrl = `${window.location.origin}/provider-notes/${petId}`;
@@ -218,6 +220,55 @@ export const ServiceProviderNotesBoard = ({ petId, petName }: ServiceProviderNot
     }
   };
 
+  const handleDownloadPDF = async () => {
+    setIsGeneratingPDF(true);
+    try {
+      // Fetch pet data
+      const { data: petData, error: petError } = await supabase
+        .from('pets')
+        .select('*, provider_notes:service_provider_notes(*)')
+        .eq('id', petId)
+        .single();
+
+      if (petError) throw petError;
+
+      // Add provider_notes to petData
+      const enrichedPetData = {
+        ...petData,
+        provider_notes: notes // Use the already loaded notes
+      };
+
+      const result = await generateClientPetPDF(enrichedPetData, 'provider_notes');
+
+      if (result.success && result.blob) {
+        const url = URL.createObjectURL(result.blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = result.fileName || `${petName}_service_provider_notes.pdf`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+
+        toast({
+          title: "PDF Downloaded",
+          description: "Service provider notes PDF has been downloaded successfully"
+        });
+      } else {
+        throw new Error(result.error || 'Failed to generate PDF');
+      }
+    } catch (error) {
+      console.error('Error generating PDF:', error);
+      toast({
+        title: "Error",
+        description: "Failed to generate PDF",
+        variant: "destructive"
+      });
+    } finally {
+      setIsGeneratingPDF(false);
+    }
+  };
+
   const getProviderTypeColor = (type: string) => {
     switch (type) {
       case 'veterinarian': return 'bg-blue-100 text-blue-800';
@@ -253,7 +304,19 @@ export const ServiceProviderNotesBoard = ({ petId, petName }: ServiceProviderNot
             </Badge>
           </div>
           
-          <Dialog open={isShareDialogOpen} onOpenChange={setIsShareDialogOpen}>
+          <div className="flex items-center gap-2">
+            <Button
+              onClick={handleDownloadPDF}
+              disabled={isGeneratingPDF || notes.length === 0}
+              variant="outline"
+              size="sm"
+              className="gap-2"
+            >
+              <Download className="w-4 h-4" />
+              {isGeneratingPDF ? 'Generating...' : 'Download PDF'}
+            </Button>
+
+            <Dialog open={isShareDialogOpen} onOpenChange={setIsShareDialogOpen}>
             <DialogTrigger asChild>
               <Button size="sm" variant="outline" className="gap-2">
                 <Share2 className="w-4 h-4" />
@@ -289,6 +352,7 @@ export const ServiceProviderNotesBoard = ({ petId, petName }: ServiceProviderNot
               </div>
             </DialogContent>
           </Dialog>
+          </div>
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">

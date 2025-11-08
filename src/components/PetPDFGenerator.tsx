@@ -54,6 +54,7 @@ export const PetPDFGenerator = ({ petId, petName, petData, handlePetUpdate }: Pe
     resume: null,
     lost_pet: null,
     gallery: null,
+    provider_notes: null,
   });
   const [showEmailForm, setShowEmailForm] = useState(false);
   const [emailData, setEmailData] = useState({

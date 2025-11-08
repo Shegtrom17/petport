@@ -1717,6 +1717,111 @@ const generateResumePDF = async (doc: jsPDF, pageManager: PDFPageManager, petDat
   ]);
 };
 
+// Generate Service Provider Notes PDF
+const generateProviderNotesPDF = async (doc: jsPDF, pageManager: PDFPageManager, petData: any): Promise<void> => {
+  const safeText = (text: string) => sanitizeText(text || '');
+  
+  // Header with pet name and title
+  addTitle(doc, pageManager, `${safeText(petData.name)} - Service Provider Notes`, '#5691af', 18);
+  pageManager.addY(10);
+
+  // Pet Basic Information
+  addSubtitle(doc, pageManager, 'Pet Information');
+  addText(doc, pageManager, `Name: ${safeText(petData.name)}`);
+  addText(doc, pageManager, `Species: ${safeText(petData.species)}`);
+  addText(doc, pageManager, `Breed: ${safeText(petData.breed)}`);
+  if (petData.petport_id) {
+    addText(doc, pageManager, `PetPort ID: ${safeText(petData.petport_id)}`);
+  }
+  pageManager.addY(10);
+
+  // Service Provider Notes Section
+  if (petData.provider_notes && petData.provider_notes.length > 0) {
+    addSection(doc, pageManager, 'Service Provider Notes', () => {
+      petData.provider_notes
+        .sort((a: any, b: any) => new Date(b.service_date).getTime() - new Date(a.service_date).getTime())
+        .forEach((note: any, index: number) => {
+          pageManager.checkPageSpace(60); // Ensure space for note card
+          
+          // Note header with provider info
+          doc.setFontSize(12);
+          doc.setTextColor('#5691af');
+          doc.setFont('helvetica', 'bold');
+          doc.text(`${safeText(note.provider_name)} - ${safeText(note.provider_type)}`, pageManager.getCurrentX(), pageManager.getCurrentY());
+          pageManager.addY(7);
+          
+          // Service details
+          doc.setFontSize(10);
+          doc.setTextColor('#374151');
+          doc.setFont('helvetica', 'normal');
+          addText(doc, pageManager, `Service Date: ${new Date(note.service_date).toLocaleDateString()}`);
+          addText(doc, pageManager, `Service Type: ${safeText(note.service_type)}`);
+          
+          if (note.provider_email) {
+            addText(doc, pageManager, `Email: ${safeText(note.provider_email)}`);
+          }
+          if (note.provider_phone) {
+            addText(doc, pageManager, `Phone: ${safeText(note.provider_phone)}`);
+          }
+          
+          pageManager.addY(3);
+          
+          // Observations
+          if (note.observations) {
+            doc.setFont('helvetica', 'bold');
+            addText(doc, pageManager, 'Observations:');
+            doc.setFont('helvetica', 'normal');
+            addText(doc, pageManager, safeText(note.observations));
+            pageManager.addY(3);
+          }
+          
+          // Recommendations
+          if (note.recommendations) {
+            doc.setFont('helvetica', 'bold');
+            addText(doc, pageManager, 'Recommendations:');
+            doc.setFont('helvetica', 'normal');
+            addText(doc, pageManager, safeText(note.recommendations));
+            pageManager.addY(3);
+          }
+          
+          // Next appointment
+          if (note.next_appointment_suggestion) {
+            doc.setFont('helvetica', 'bold');
+            addText(doc, pageManager, 'Next Appointment:');
+            doc.setFont('helvetica', 'normal');
+            addText(doc, pageManager, safeText(note.next_appointment_suggestion));
+          }
+          
+          // Separator line between notes (if not last)
+          if (index < petData.provider_notes.length - 1) {
+            pageManager.addY(5);
+            doc.setDrawColor('#d1d5db');
+            doc.setLineWidth(0.3);
+            doc.line(
+              pageManager.getLeftMargin(),
+              pageManager.getCurrentY(),
+              pageManager.getLeftMargin() + pageManager.getContentWidth(),
+              pageManager.getCurrentY()
+            );
+            pageManager.addY(8);
+          } else {
+            pageManager.addY(10);
+          }
+        });
+    });
+  } else {
+    addSection(doc, pageManager, 'Service Provider Notes', () => {
+      addText(doc, pageManager, 'No service provider notes recorded yet.');
+    });
+  }
+
+  // Footer
+  addFooterBottom(doc, pageManager, [
+    'Petport.app - Professional Pet Care Documentation',
+    `Pet ID: ${safeText(petData.id)} | Generated: ${new Date().toLocaleDateString()}`,
+  ]);
+};
+
 // Generate care instructions PDF (ONLY care-related content)
 const generateCarePDF = async (doc: jsPDF, pageManager: PDFPageManager, petData: any): Promise<void> => {
   const safeText = (text: string) => sanitizeText(text || '');
@@ -1879,7 +1984,7 @@ const generateCarePDF = async (doc: jsPDF, pageManager: PDFPageManager, petData:
 
 export async function generateClientPetPDF(
   petData: any,
-  type: 'emergency' | 'full' | 'lost_pet' | 'care' | 'gallery' | 'resume' = 'emergency'
+  type: 'emergency' | 'full' | 'lost_pet' | 'care' | 'gallery' | 'resume' | 'provider_notes' = 'emergency'
 ): Promise<ClientPDFGenerationResult> {
   try {
     console.log('📋 Starting client PDF generation with jsPDF...', { type, petId: petData?.id });
@@ -1920,6 +2025,9 @@ export async function generateClientPetPDF(
       case 'resume':
         await generateResumePDF(doc, pageManager, normalizedPet);
         break;
+      case 'provider_notes':
+        await generateProviderNotesPDF(doc, pageManager, normalizedPet);
+        break;
       default:
         await generateEmergencyPDF(doc, pageManager, normalizedPet);
     }
@@ -1952,7 +2060,7 @@ export async function generateClientPetPDF(
 }
 
 // Legacy functions for compatibility - redirect to client-side generation
-export async function generatePetPDF(petId: string, type: 'emergency' | 'full' | 'lost_pet' | 'care' | 'gallery' | 'resume' = 'emergency'): Promise<ClientPDFGenerationResult> {
+export async function generatePetPDF(petId: string, type: 'emergency' | 'full' | 'lost_pet' | 'care' | 'gallery' | 'resume' | 'provider_notes' = 'emergency'): Promise<ClientPDFGenerationResult> {
   // This would need to fetch pet data from Supabase first
   // For now, return an error asking to use the new client-side method directly
   return {

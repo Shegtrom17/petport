@@ -1,4 +1,4 @@
-export type PDFType = 'emergency' | 'full' | 'lost_pet' | 'care' | 'gallery' | 'resume';
+export type PDFType = 'emergency' | 'full' | 'lost_pet' | 'care' | 'gallery' | 'resume' | 'provider_notes';
 
 // Centralized type resolver to avoid silent fallbacks and cross-file drift
 export function resolvePdfType(input: string | null | undefined): PDFType {
@@ -46,6 +46,14 @@ export function resolvePdfType(input: string | null | undefined): PDFType {
     case 'resume':
     case 'credentials':
       return 'resume';
+
+    // Provider Notes
+    case 'provider_notes':
+    case 'provider-notes':
+    case 'providernotes':
+    case 'service_provider_notes':
+    case 'service_notes':
+      return 'provider_notes';
   }
 
   // If nothing matches, do NOT silently default. Log and use emergency as a safe fallback.

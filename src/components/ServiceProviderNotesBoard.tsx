@@ -3,13 +3,19 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
-import { Stethoscope, Eye, EyeOff, Trash2, Calendar, User, Briefcase, MessageSquare, Share2, Copy, Mail } from "lucide-react";
+import { Stethoscope, Eye, EyeOff, Trash2, Calendar, User, Briefcase, MessageSquare, Share2, Copy, Mail, Edit } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { CalendarIcon } from "lucide-react";
+import { Calendar as CalendarComponent } from "@/components/ui/calendar";
+import { cn } from "@/lib/utils";
 
 interface ServiceProviderNote {
   id: string;
@@ -36,6 +42,10 @@ export const ServiceProviderNotesBoard = ({ petId, petName }: ServiceProviderNot
   const [notes, setNotes] = useState<ServiceProviderNote[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isShareDialogOpen, setIsShareDialogOpen] = useState(false);
+  const [editingNote, setEditingNote] = useState<ServiceProviderNote | null>(null);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [editFormData, setEditFormData] = useState<any>({});
+  const [editServiceDate, setEditServiceDate] = useState<Date>();
   const { toast } = useToast();
 
   const shareUrl = `${window.location.origin}/provider-notes/${petId}`;
@@ -150,6 +160,59 @@ export const ServiceProviderNotesBoard = ({ petId, petName }: ServiceProviderNot
       toast({
         title: "Error",
         description: "Failed to delete note",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const openEditDialog = (note: ServiceProviderNote) => {
+    setEditingNote(note);
+    setEditFormData({
+      provider_name: note.provider_name,
+      provider_email: note.provider_email || "",
+      provider_phone: note.provider_phone || "",
+      provider_type: note.provider_type,
+      service_type: note.service_type,
+      observations: note.observations || "",
+      recommendations: note.recommendations || "",
+      next_appointment_suggestion: note.next_appointment_suggestion || ""
+    });
+    setEditServiceDate(new Date(note.service_date));
+    setIsEditDialogOpen(true);
+  };
+
+  const handleEditSubmit = async () => {
+    if (!editingNote || !editServiceDate) return;
+
+    try {
+      const { error } = await supabase
+        .from('service_provider_notes')
+        .update({
+          provider_name: editFormData.provider_name,
+          provider_email: editFormData.provider_email || null,
+          provider_phone: editFormData.provider_phone || null,
+          provider_type: editFormData.provider_type,
+          service_date: format(editServiceDate, 'yyyy-MM-dd'),
+          service_type: editFormData.service_type,
+          observations: editFormData.observations || null,
+          recommendations: editFormData.recommendations || null,
+          next_appointment_suggestion: editFormData.next_appointment_suggestion || null,
+        })
+        .eq('id', editingNote.id);
+
+      if (error) throw error;
+
+      toast({
+        title: "Note updated",
+        description: "The service provider note has been updated successfully"
+      });
+      setIsEditDialogOpen(false);
+      setEditingNote(null);
+    } catch (error) {
+      console.error('Error updating note:', error);
+      toast({
+        title: "Error",
+        description: "Failed to update note",
         variant: "destructive"
       });
     }
@@ -275,6 +338,14 @@ export const ServiceProviderNotesBoard = ({ petId, petName }: ServiceProviderNot
                       <Button
                         variant="ghost"
                         size="sm"
+                        onClick={() => openEditDialog(note)}
+                        className="h-8 px-2"
+                      >
+                        <Edit className="w-4 h-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
                         onClick={() => toggleVisibility(note.id, note.is_visible)}
                         className="h-8 px-2"
                       >
@@ -352,6 +423,148 @@ export const ServiceProviderNotesBoard = ({ petId, petName }: ServiceProviderNot
           ))
         )}
       </CardContent>
+
+      {/* Edit Dialog */}
+      <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+        <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Edit Service Provider Note</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="edit_provider_name">Provider Name *</Label>
+                <Input
+                  id="edit_provider_name"
+                  value={editFormData.provider_name || ""}
+                  onChange={(e) => setEditFormData({ ...editFormData, provider_name: e.target.value })}
+                  required
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="edit_provider_type">Provider Type *</Label>
+                <Select
+                  value={editFormData.provider_type || ""}
+                  onValueChange={(value) => setEditFormData({ ...editFormData, provider_type: value })}
+                >
+                  <SelectTrigger id="edit_provider_type">
+                    <SelectValue placeholder="Select type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="veterinarian">Veterinarian</SelectItem>
+                    <SelectItem value="farrier">Farrier</SelectItem>
+                    <SelectItem value="groomer">Groomer</SelectItem>
+                    <SelectItem value="trainer">Trainer</SelectItem>
+                    <SelectItem value="behaviorist">Behaviorist</SelectItem>
+                    <SelectItem value="chiropractor">Chiropractor</SelectItem>
+                    <SelectItem value="dentist">Dentist</SelectItem>
+                    <SelectItem value="other">Other</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="edit_provider_email">Email</Label>
+                <Input
+                  id="edit_provider_email"
+                  type="email"
+                  value={editFormData.provider_email || ""}
+                  onChange={(e) => setEditFormData({ ...editFormData, provider_email: e.target.value })}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="edit_provider_phone">Phone</Label>
+                <Input
+                  id="edit_provider_phone"
+                  type="tel"
+                  value={editFormData.provider_phone || ""}
+                  onChange={(e) => setEditFormData({ ...editFormData, provider_phone: e.target.value })}
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="edit_service_date">Service Date *</Label>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      className={cn(
+                        "w-full justify-start text-left font-normal",
+                        !editServiceDate && "text-muted-foreground"
+                      )}
+                    >
+                      <CalendarIcon className="mr-2 h-4 w-4" />
+                      {editServiceDate ? format(editServiceDate, "PPP") : <span>Pick a date</span>}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0">
+                    <CalendarComponent
+                      mode="single"
+                      selected={editServiceDate}
+                      onSelect={setEditServiceDate}
+                      initialFocus
+                    />
+                  </PopoverContent>
+                </Popover>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="edit_service_type">Service Type *</Label>
+                <Input
+                  id="edit_service_type"
+                  value={editFormData.service_type || ""}
+                  onChange={(e) => setEditFormData({ ...editFormData, service_type: e.target.value })}
+                  required
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="edit_observations">Observations/Notes</Label>
+              <Textarea
+                id="edit_observations"
+                value={editFormData.observations || ""}
+                onChange={(e) => setEditFormData({ ...editFormData, observations: e.target.value })}
+                rows={4}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="edit_recommendations">Recommendations</Label>
+              <Textarea
+                id="edit_recommendations"
+                value={editFormData.recommendations || ""}
+                onChange={(e) => setEditFormData({ ...editFormData, recommendations: e.target.value })}
+                rows={3}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="edit_next_appointment">Next Appointment Suggestion</Label>
+              <Input
+                id="edit_next_appointment"
+                value={editFormData.next_appointment_suggestion || ""}
+                onChange={(e) => setEditFormData({ ...editFormData, next_appointment_suggestion: e.target.value })}
+              />
+            </div>
+
+            <div className="flex gap-2 justify-end">
+              <Button variant="outline" onClick={() => setIsEditDialogOpen(false)}>
+                Cancel
+              </Button>
+              <Button variant="azure" onClick={handleEditSubmit}>
+                Save Changes
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </Card>
   );
 };

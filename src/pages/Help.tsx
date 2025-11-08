@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ReportIssueModal } from "@/components/ReportIssueModal";
+import { SmartHelpSearch } from "@/components/SmartHelpSearch";
 import { 
   GiftRedemptionWizard, 
   SubscriptionTroubleshootingWizard,
@@ -166,19 +167,13 @@ const Help = () => {
             </p>
           </div>
 
-          {/* Search */}
-          <div className="relative mb-8">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
-            <Input
-              placeholder="Search for help topics..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10"
-            />
+          {/* AI-Powered Smart Search */}
+          <div className="mb-8">
+            <SmartHelpSearch />
           </div>
 
           {/* Troubleshooting Wizards Section */}
-          <div className="mb-8">
+          <div id="troubleshooting-wizards" className="mb-8">
             <div className="flex items-center gap-2 mb-4">
               <Wrench className="w-5 h-5 text-primary" />
               <h2 className="text-xl font-semibold">Self-Service Troubleshooting</h2>
@@ -206,6 +201,20 @@ const Help = () => {
                 <LostPetTroubleshootingWizard />
               </TabsContent>
             </Tabs>
+          </div>
+
+          {/* Traditional Keyword Search */}
+          <div className="mb-8">
+            <h2 className="text-xl font-semibold mb-4">Browse All FAQs</h2>
+            <div className="relative mb-4">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
+              <Input
+                placeholder="Filter FAQs by keyword..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10"
+              />
+            </div>
           </div>
 
           {/* FAQs */}

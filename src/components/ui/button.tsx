@@ -18,7 +18,7 @@ const buttonVariants = cva(
           "bg-secondary text-secondary-foreground hover:bg-secondary/80",
         ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-brand-primary underline-offset-4 hover:underline hover:shadow-none hover:scale-100",
-        azure: "bg-[#5691af] text-white hover:bg-[#4a7d99] hover:text-white border-[#5691af] focus-visible:ring-[#5691af]",
+        azure: "bg-brand-primary !text-white hover:bg-brand-primary-dark hover:!text-white border-brand-primary focus-visible:ring-brand-primary",
       },
       size: {
         default: "h-10 px-4 py-2 text-responsive-sm",

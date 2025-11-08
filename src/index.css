@@ -171,6 +171,13 @@ textarea {
     @apply bg-background text-foreground;
   }
 
+  /* Azure Button Text Color Safety Override */
+  /* Ensures all azure-styled buttons have white text regardless of how they're created */
+  :is(button, [role="button"], a.button, a[role="button"]):is(.bg-brand-primary, [class*="bg-[#5691af]"]),
+  :is(button, [role="button"], a.button, a[role="button"]):is(.bg-brand-primary, [class*="bg-[#5691af]"]):hover {
+    color: #ffffff !important;
+  }
+
   /* Emergency/Alert Colors */
   :root {
     --emergency: 0 84% 60%;

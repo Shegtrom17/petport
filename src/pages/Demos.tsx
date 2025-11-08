@@ -415,9 +415,9 @@ export default function Demos() {
                     </p>
                     <Button 
                       onClick={() => navigate('/#pricing')}
-                      variant="outline"
                       size="sm"
-                      className="border-brand-primary text-brand-primary hover:bg-brand-primary hover:text-white"
+                      variant="outline"
+                      className="border-brand-primary text-brand-primary hover:bg-brand-primary hover:!text-white"
                     >
                       Start Free Trial
                     </Button>

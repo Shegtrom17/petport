@@ -348,14 +348,19 @@ const PublicTravelMap = () => {
                 <p className="text-sm">Powered by <span className="font-semibold">PetPort</span></p>
                 <p className="text-xs">Professional pet profiles and travel tracking</p>
               </div>
-              <a 
-                href="https://petport.app" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="inline-flex items-center px-4 py-2 bg-brand-primary text-white rounded-lg hover:bg-brand-primary/90 transition-colors text-sm font-medium"
+              <Button 
+                asChild
+                variant="azure"
+                className="inline-flex items-center px-4 py-2 rounded-lg transition-colors text-sm font-medium"
               >
+                <a 
+                  href="https://petport.app" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                >
                 Create Your Pet's Profile
-              </a>
+                </a>
+              </Button>
             </div>
           </footer>
         </main>

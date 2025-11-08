@@ -480,7 +480,7 @@ export const PetResumeEditForm = ({ petData, onSave, onCancel }: PetResumeEditFo
           <Button type="button" variant="outline" onClick={onCancel} disabled={isLoading}>
             Cancel
           </Button>
-          <Button type="submit" disabled={isLoading || isSubmitting} className="bg-brand-primary hover:bg-brand-primary-dark text-white">
+          <Button type="submit" disabled={isLoading || isSubmitting} variant="azure">
             {isLoading ? (
               <>
                 <Loader2 className="w-4 h-4 mr-2 animate-spin text-white" />

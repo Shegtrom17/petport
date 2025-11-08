@@ -704,7 +704,7 @@ const PublicCareInstructions = () => {
                   <Button 
                     onClick={handleReportUpdate} 
                     disabled={!updateText.trim() || isSubmittingUpdate}
-                    className="bg-[#5691af] hover:bg-[#4a7d99] text-white"
+                    variant="azure"
                     size="sm"
                   >
                     {isSubmittingUpdate ? (

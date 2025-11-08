@@ -465,7 +465,7 @@ export const GuardianManagementModal = ({
                       <Button
                         type="button"
                         onClick={copyGuardianLink}
-                        className="bg-brand-primary hover:bg-brand-primary-dark text-white"
+                        variant="azure"
                       >
                         <Copy className="h-4 w-4 mr-2" />
                         Copy Link
@@ -474,7 +474,7 @@ export const GuardianManagementModal = ({
                         type="button"
                         onClick={sendGuardianEmail}
                         disabled={isLoading}
-                        className="bg-brand-primary hover:bg-brand-primary-dark text-white"
+                        variant="azure"
                       >
                         <Mail className="h-4 w-4 mr-2" />
                         Send Email
@@ -507,7 +507,7 @@ export const GuardianManagementModal = ({
                 type="button"
                 onClick={form.handleSubmit(onSubmit)}
                 disabled={isLoading}
-                className="bg-brand-primary hover:bg-brand-primary-dark text-white"
+                variant="azure"
               >
                 {isLoading ? (
                   <>

@@ -400,7 +400,8 @@ export default function Landing() {
                   </ul>
                   <Button 
                     onClick={() => navigate('/demo/resume')}
-                    className="w-full bg-brand-primary hover:bg-brand-secondary text-white"
+                    variant="azure"
+                    className="w-full"
                     size="lg"
                   >
                     View Live Resume Demo
@@ -463,16 +464,17 @@ export default function Landing() {
                 <a href="#pricing" className="w-full max-w-md">
                   <Button 
                     size="lg"
-                    className="w-full bg-brand-primary hover:bg-brand-primary-dark text-white"
+                    variant="azure"
+                    className="w-full"
                   >
                     Create LiveLinks for Your Pet
                   </Button>
                 </a>
                 <Button 
                   onClick={() => navigate('/demos')}
-                  variant="outline"
                   size="lg"
-                  className="w-full max-w-md border-2 border-brand-primary text-brand-primary hover:bg-brand-primary hover:text-white"
+                  variant="outline"
+                  className="w-full max-w-md border-2 border-brand-primary text-brand-primary hover:bg-brand-primary hover:!text-white"
                 >
                   See More LiveLink Demos
                 </Button>
@@ -848,7 +850,7 @@ export default function Landing() {
               <Button 
                 onClick={() => navigate('/referral-program')}
                 size="lg"
-                className="bg-[#5691af] hover:bg-[#4a7d99] text-white"
+                variant="azure"
               >
                 Learn More About Referrals
               </Button>

@@ -164,7 +164,8 @@ export const PetHeader = ({ activeTab, onTabChange, selectedPetId, selectedPetNa
             )}
             {!user && (
               <Button 
-                className="bg-brand-primary hover:bg-brand-primary-dark text-white border border-white/20 text-xs px-2 h-8 whitespace-nowrap"
+                variant="azure"
+                className="border border-white/20 text-xs px-2 h-8 whitespace-nowrap"
                 onClick={() => navigate('/auth')}
               >
                 <LogIn className="mr-1 h-3 w-3" /> 
@@ -287,7 +288,8 @@ export const PetHeader = ({ activeTab, onTabChange, selectedPetId, selectedPetNa
             )}
             {!user && (
               <Button 
-                className="bg-brand-primary hover:bg-brand-primary-dark text-white border border-white/20 text-sm px-3 h-10 whitespace-nowrap"
+                variant="azure"
+                className="border border-white/20 text-sm px-3 h-10 whitespace-nowrap"
                 onClick={() => navigate('/auth')}
               >
                 <LogIn className="mr-1 h-4 w-4" /> 

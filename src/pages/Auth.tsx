@@ -251,7 +251,8 @@ export default function Auth() {
                 
                 <Button 
                   type="submit" 
-                  className="w-full bg-brand-primary hover:bg-brand-primary-dark text-white border border-white/20"
+                  variant="azure"
+                  className="w-full border border-white/20"
                   disabled={isSubmitting}
                 >
                   {isSubmitting ? "Processing..." : isSignIn ? "Sign In" : "Start Free Trial"}

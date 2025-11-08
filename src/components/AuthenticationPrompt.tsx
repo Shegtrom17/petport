@@ -33,7 +33,8 @@ export const AuthenticationPrompt = ({ isSignedIn, hasPets }: AuthenticationProm
           <h2 className="text-xl sm:text-2xl font-bold text-foreground mb-2 sm:mb-3">No pets found</h2>
           <p className="text-muted-foreground mb-4 sm:mb-6 text-sm sm:text-base px-4">You haven't added any pets yet. Create your first PetPort!</p>
           <Button 
-            className="bg-brand-primary hover:bg-brand-primary-dark text-white border border-white/20 text-sm sm:text-base px-4 sm:px-6 py-2 sm:py-3"
+            variant="azure"
+            className="border border-white/20 text-sm sm:text-base px-4 sm:px-6 py-2 sm:py-3"
             onClick={() => navigate('/add-pet')}
           >
             <PlusCircle className="mr-2 h-4 w-4 sm:h-5 sm:w-5" /> Add Your First Pet

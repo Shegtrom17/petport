@@ -587,7 +587,8 @@ export const PetGallerySection = ({ petData, onUpdate, handlePetUpdate }: PetGal
           <div className="space-y-3">
             <Button 
               type="button"
-              className="w-full bg-brand-primary hover:bg-brand-primary-dark text-white"
+              variant="azure"
+              className="w-full"
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
@@ -601,7 +602,8 @@ export const PetGallerySection = ({ petData, onUpdate, handlePetUpdate }: PetGal
 
             <Button 
               type="button"
-              className="w-full bg-brand-primary hover:bg-brand-primary-dark text-white"
+              variant="azure"
+              className="w-full"
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
@@ -614,7 +616,8 @@ export const PetGallerySection = ({ petData, onUpdate, handlePetUpdate }: PetGal
             </Button>
 
             <Button 
-              className="w-full bg-brand-primary hover:bg-brand-primary-dark text-white"
+              variant="azure"
+              className="w-full"
               onClick={() => window.open(`/gallery/${petData.id}?returnTo=gallery`, '_blank')}
             >
               <ExternalLink className="w-4 h-4 mr-2" />
@@ -799,7 +802,7 @@ export const PetGallerySection = ({ petData, onUpdate, handlePetUpdate }: PetGal
                   e.stopPropagation();
                   handleUploadPhotos(e);
                 }}
-                className="bg-brand-primary hover:bg-brand-primary-dark text-white"
+                variant="azure"
                 disabled={uploading}
               >
                 <Plus className="w-4 h-4 mr-2" />

@@ -1133,9 +1133,9 @@ export default function DogGoneGood() {
               <Button 
                 onClick={viewResume}
                 size="lg"
-                variant="outline"
                 disabled={!isCanvasReady || photosLoading}
-                className="w-full border-brand-primary text-brand-primary hover:bg-brand-primary/10 disabled:opacity-50 disabled:cursor-not-allowed"
+                variant="outline"
+                className="w-full border-brand-primary text-brand-primary hover:bg-brand-primary hover:!text-white disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <Eye className="mr-2 h-5 w-5" />
                 View Full Size
@@ -1144,7 +1144,8 @@ export default function DogGoneGood() {
                 onClick={downloadJPEG}
                 size="lg"
                 disabled={!isCanvasReady || photosLoading}
-                className="w-full bg-brand-primary text-white hover:bg-brand-primary/90 disabled:opacity-50 disabled:cursor-not-allowed"
+                variant="azure"
+                className="w-full disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <Download className="mr-2 h-5 w-5" />
                 Download as Image
@@ -1152,12 +1153,12 @@ export default function DogGoneGood() {
               
               {/* Social Share Buttons */}
               <div className="flex gap-2 w-full">
-                <Button
+                <Button 
                   onClick={handleXShare}
-                  variant="outline"
                   size="lg"
                   disabled={!isCanvasReady || photosLoading}
-                  className="flex-1 border-brand-primary text-brand-primary hover:bg-brand-primary hover:text-white disabled:opacity-50 disabled:cursor-not-allowed"
+                  variant="outline"
+                  className="flex-1 border-brand-primary text-brand-primary hover:bg-brand-primary hover:!text-white disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24" fill="currentColor">
                     <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
@@ -1165,12 +1166,12 @@ export default function DogGoneGood() {
                   Share on X
                 </Button>
                 
-                <Button
+                <Button 
                   onClick={handleFacebookShare}
-                  variant="outline"
                   size="lg"
                   disabled={!isCanvasReady || photosLoading}
-                  className="flex-1 border-brand-primary text-brand-primary hover:bg-brand-primary hover:text-white disabled:opacity-50 disabled:cursor-not-allowed"
+                  variant="outline"
+                  className="flex-1 border-brand-primary text-brand-primary hover:bg-brand-primary hover:!text-white disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <Facebook className="w-5 h-5 mr-2" />
                   Share on Facebook
@@ -1284,8 +1285,8 @@ export default function DogGoneGood() {
                   Create beautiful, shareable profiles with photos, medical records, care instructions & more.
                 </p>
                 <Button 
-                  variant="outline" 
-                  className="w-full border-brand-primary text-brand-primary hover:bg-brand-primary hover:text-white"
+                  variant="outline"
+                  className="w-full border-brand-primary text-brand-primary hover:bg-brand-primary hover:!text-white"
                   onClick={(e) => {
                     e.stopPropagation();
                     navigate('/demos');
@@ -1320,8 +1321,8 @@ export default function DogGoneGood() {
                   Share unlimited photos & videos of your pets with friends and family in beautiful galleries.
                 </p>
                 <Button 
-                  variant="outline" 
-                  className="w-full border-brand-primary text-brand-primary hover:bg-brand-primary hover:text-white"
+                  variant="outline"
+                  className="w-full border-brand-primary text-brand-primary hover:bg-brand-primary hover:!text-white"
                   onClick={(e) => {
                     e.stopPropagation();
                     navigate('/demo/gallery');

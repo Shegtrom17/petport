@@ -455,7 +455,8 @@ export const DocumentsSection = ({ petId, petName, documents, onDocumentDeleted 
               <Button 
                 onClick={(e) => handleCameraCapture(e)}
                 disabled={isUploading}
-                className="bg-brand-primary hover:bg-brand-primary-dark text-white border border-white/20"
+                variant="azure"
+                className="border border-white/20"
                 data-touch-safe
               >
                 <Camera className="w-4 h-4 mr-2" />

@@ -318,7 +318,7 @@ export default function LostPetFeatures() {
                 </ul>
 
                 <div className="space-y-3">
-                  <Button size="lg" asChild className="w-full bg-brand-primary hover:bg-brand-primary-dark text-white">
+                  <Button size="lg" asChild variant="azure" className="w-full">
                     <Link to="/demo/missing-pet">
                       <Eye className="mr-2 h-5 w-5" />
                       View Live Demo
@@ -393,7 +393,7 @@ export default function LostPetFeatures() {
               </p>
               
               <div className="flex flex-col sm:flex-row gap-3 justify-center">
-                <Button size="lg" asChild className="bg-brand-primary hover:bg-brand-primary-dark text-white">
+                <Button size="lg" asChild variant="azure">
                   <Link to="/demo/missing-pet">
                     <Eye className="mr-2 h-4 w-4" />
                     See Full Platform Demo
@@ -629,7 +629,7 @@ export default function LostPetFeatures() {
               <Link to="/referral-program">
                 <Button 
                   size="lg"
-                  className="bg-[#5691af] hover:bg-[#4a7d99] text-white"
+                  variant="azure"
                 >
                   Learn More About Referrals
                 </Button>

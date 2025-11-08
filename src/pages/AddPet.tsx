@@ -259,13 +259,13 @@ export default function AddPet() {
                       <div className="flex gap-3 pt-2">
                         <Button 
                           onClick={handleUpgradeClick}
-                          className="bg-brand-primary hover:bg-brand-primary-dark text-white"
+                          variant="azure"
                           size="sm"
                         >
                           Upgrade Now
                         </Button>
                         <Button 
-                          className="bg-brand-primary hover:bg-brand-primary-dark text-white"
+                          variant="azure"
                           size="sm"
                           onClick={() => navigate('/')}
                         >
@@ -453,7 +453,8 @@ export default function AddPet() {
                   <Button 
                     type="submit"
                     disabled={isSubmitting}
-                    className="bg-brand-primary hover:bg-brand-primary-dark text-white border border-white/20"
+                    variant="azure"
+                    className="border border-white/20"
                   >
                     {isSubmitting ? "Creating..." : "Create Pet Port"}
                   </Button>

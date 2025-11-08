@@ -463,15 +463,16 @@ title: "Link Copied! 📋",
                             <Button
                               onClick={handleSendEmail}
                               disabled={emailLoading}
-                              className="flex-1 bg-brand-primary text-white hover:bg-brand-primary-dark hover:text-white"
+                              variant="azure"
+                              className="flex-1"
                             >
                               <span className="text-responsive-sm">{emailLoading ? 'Sending...' : 'Send Email'}</span>
                             </Button>
                             <Button
-                              variant="outline"
                               onClick={() => setShowEmailForm(false)}
                               disabled={emailLoading}
-                              className="border-brand-primary text-brand-primary hover:bg-brand-primary hover:text-white"
+                              variant="outline"
+                              className="border-brand-primary text-brand-primary hover:bg-brand-primary hover:!text-white"
                             >
                               <span className="text-responsive-sm">Cancel</span>
                             </Button>
@@ -544,15 +545,16 @@ title: "Link Copied! 📋",
                             <Button
                               onClick={handleSendEmail}
                               disabled={emailLoading}
-                              className="flex-1 bg-brand-primary text-white hover:bg-brand-primary-dark hover:text-white"
+                              variant="azure"
+                              className="flex-1"
                             >
                               <span className="text-responsive-sm">{emailLoading ? 'Sending...' : 'Send Email'}</span>
                             </Button>
                             <Button
-                              variant="outline"
                               onClick={() => setShowEmailForm(false)}
                               disabled={emailLoading}
-                              className="border-brand-primary text-brand-primary hover:bg-brand-primary hover:text-white"
+                              variant="outline"
+                              className="border-brand-primary text-brand-primary hover:bg-brand-primary hover:!text-white"
                             >
                               <span className="text-responsive-sm">Cancel</span>
                             </Button>

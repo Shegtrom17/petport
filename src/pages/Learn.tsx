@@ -279,7 +279,8 @@ export default function Learn() {
                 </ul>
                 <Link to="/demo/resume" className="block w-full">
                   <Button 
-                    className="w-full bg-brand-primary hover:bg-brand-secondary text-white"
+                    variant="azure"
+                    className="w-full"
                     size="lg"
                   >
                     View Live Resume Demo
@@ -315,7 +316,8 @@ export default function Learn() {
                 </ul>
                 <Link to="/demo/care" className="block w-full">
                   <Button 
-                    className="w-full bg-[#5691af] hover:bg-[#4a7d99] text-white"
+                    variant="azure"
+                    className="w-full"
                     size="lg"
                   >
                     View Live Care Instructions
@@ -379,9 +381,9 @@ export default function Learn() {
             <div className="flex flex-col items-center gap-2">
               <a href="#pricing">
                 <Button 
-                  variant="outline"
                   size="lg"
-                  className="border-brand-primary text-brand-primary hover:bg-brand-primary hover:text-white"
+                  variant="outline"
+                  className="border-brand-primary text-brand-primary hover:bg-brand-primary hover:!text-white"
                 >
                   Create LiveLinks for Your Pet
                 </Button>
@@ -631,7 +633,7 @@ export default function Learn() {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <a href="#pricing">
-              <Button size="lg" className="text-lg px-8 py-3 bg-brand-primary text-white hover:bg-brand-primary-dark">
+              <Button size="lg" variant="azure" className="text-lg px-8 py-3">
                 See Pricing & Start Free Trial
               </Button>
             </a>
@@ -808,7 +810,7 @@ export default function Learn() {
               <Link to="/referral-program">
                 <Button 
                   size="lg"
-                  className="bg-[#5691af] hover:bg-[#4a7d99] text-white"
+                  variant="azure"
                 >
                   Learn More About Referrals
                 </Button>

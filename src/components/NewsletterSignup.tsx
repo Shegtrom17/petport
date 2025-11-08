@@ -82,7 +82,6 @@ export const NewsletterSignup = () => {
             type="submit" 
             disabled={isLoading}
             variant="azure"
-            className="bg-[#5691af] hover:bg-[#4a7c95] text-white"
           >
             {isLoading ? (
               <Loader2 className="w-4 h-4 animate-spin" />

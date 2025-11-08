@@ -114,7 +114,7 @@ export const PricingSection: React.FC<PricingSectionProps> = ({ context = "landi
               <p className="text-2xl font-bold">{plan.priceText}</p>
               <p className="text-sm text-muted-foreground">{plan.includes}</p>
               <p className="text-xs text-muted-foreground">7-day free trial. Card required; billed after trial unless canceled.</p>
-              <Button className="w-full bg-brand-primary text-white hover:bg-brand-primary-dark" onClick={() => startCheckout(plan.id === "monthly" ? "monthly" : "yearly")}>
+              <Button variant="azure" className="w-full" onClick={() => startCheckout(plan.id === "monthly" ? "monthly" : "yearly")}>
                 <CreditCard className="w-4 h-4" />
                 <span>Start 7-day free trial</span>
               </Button>
@@ -166,7 +166,8 @@ export const PricingSection: React.FC<PricingSectionProps> = ({ context = "landi
             
             <Button 
               onClick={() => buyAdditionalPets(selectedQuantity)} 
-              className="w-full bg-brand-primary text-white hover:bg-brand-primary-dark"
+              variant="azure"
+              className="w-full"
               disabled={isLoading}
             >
               {isLoading ? "Processing..." : "Add Pet Accounts"}

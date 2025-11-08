@@ -781,7 +781,8 @@ export const PetPDFGenerator = ({ petId, petName, petData, handlePetUpdate }: Pe
                       setIsOptionsDialogOpen(false);
                       window.location.hash = 'share-with-members';
                     }}
-                    className="w-full bg-brand-primary hover:bg-brand-primary-dark text-white"
+                    variant="azure"
+                    className="w-full"
                   >
                     <Users className="w-4 h-4 mr-2" />
                     Share with PetPort Members

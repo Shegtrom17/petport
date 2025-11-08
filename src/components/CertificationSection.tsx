@@ -198,7 +198,7 @@ export const CertificationSection = ({
             <p className="text-gray-500 mb-4">
               Add professional certifications to showcase your pet's qualifications and training.
             </p>
-            <Button onClick={() => setIsEditModalOpen(true)} className="bg-brand-primary hover:bg-brand-primary-dark text-white">
+            <Button onClick={() => setIsEditModalOpen(true)} variant="azure">
               <Shield className="w-4 h-4 mr-2" />
               Add Certification
             </Button>
@@ -290,7 +290,7 @@ export const CertificationSection = ({
                 <X className="w-4 h-4 mr-2" />
                 Cancel
               </Button>
-              <Button onClick={handleSave} disabled={isLoading} className="bg-brand-primary hover:bg-brand-primary-dark text-white">
+              <Button onClick={handleSave} disabled={isLoading} variant="azure">
                 <Check className="w-4 h-4 mr-2" />
                 {isLoading ? "Saving..." : "Save Certification"}
               </Button>

@@ -116,7 +116,8 @@ export const PWAInstallCard = () => {
                 <AppBenefits />
                 <Button 
                   onClick={handleInstall}
-                  className="w-full bg-brand-primary text-white hover:bg-brand-primary-dark"
+                  variant="azure"
+                  className="w-full"
                 >
                   <Download className="w-4 h-4 mr-2" />
                   {isIOS ? "Show Install Instructions" : "Install PetPort App"}

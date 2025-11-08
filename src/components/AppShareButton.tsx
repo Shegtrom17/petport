@@ -234,7 +234,7 @@ export const AppShareButton = ({ variant = "icon", className = "" }: AppShareBut
                   <Button
                     onClick={sendAppEmail}
                     disabled={isSending}
-                    className="bg-brand-primary text-white hover:bg-brand-primary-dark hover:text-white"
+                    variant="azure"
                   >
                     {isSending ? "Sending..." : "Send Email"}
                   </Button>
@@ -284,7 +284,7 @@ export const AppShareButton = ({ variant = "icon", className = "" }: AppShareBut
                   <Button
                     onClick={sendAppEmail}
                     disabled={isSending}
-                    className="bg-brand-primary text-white hover:bg-brand-primary-dark hover:text-white"
+                    variant="azure"
                   >
                     {isSending ? "Sending..." : "Send Email"}
                   </Button>
@@ -308,7 +308,8 @@ export const AppShareButton = ({ variant = "icon", className = "" }: AppShareBut
           <Button
             onClick={handleNativeShare}
             onTouchEnd={(e) => e.stopPropagation()}
-            className="flex-1 gap-2 bg-brand-primary text-white hover:bg-brand-primary-dark hover:text-white"
+            variant="azure"
+            className="flex-1 gap-2"
             size="sm"
             style={{ touchAction: 'none' }}
           >
@@ -316,11 +317,11 @@ export const AppShareButton = ({ variant = "icon", className = "" }: AppShareBut
             Share
           </Button>
           <Button
-            variant="outline"
             onClick={handleCopyLink}
             onTouchEnd={(e) => e.stopPropagation()}
             size="sm"
-            className="gap-2 border-brand-primary text-brand-primary hover:bg-brand-primary hover:text-white"
+            variant="outline"
+            className="gap-2 border-brand-primary text-brand-primary hover:bg-brand-primary hover:!text-white"
             style={{ touchAction: 'none' }}
           >
             <Copy className="w-4 h-4" />

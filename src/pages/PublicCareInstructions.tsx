@@ -15,6 +15,9 @@ import { ContactsDisplay } from "@/components/ContactsDisplay";
 import { ContactOwnerModal } from "@/components/ContactOwnerModal";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
+import { ServiceProviderNotesBoard } from "@/components/ServiceProviderNotesBoard";
+import { AddServiceProviderNoteForm } from "@/components/AddServiceProviderNoteForm";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 interface Pet {
   id: string;
@@ -73,6 +76,7 @@ const PublicCareInstructions = () => {
   const [careUpdates, setCareUpdates] = useState<CareUpdate[]>([]);
   const [updateText, setUpdateText] = useState('');
   const [isSubmittingUpdate, setIsSubmittingUpdate] = useState(false);
+  const [isAddProviderNoteOpen, setIsAddProviderNoteOpen] = useState(false);
 
   const isValidUUID = (id: string) => /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(id);
 
@@ -758,6 +762,31 @@ const PublicCareInstructions = () => {
               </div>
             </CardContent>
           </Card>
+
+          {/* Service Provider Notes Board */}
+          <Card className="border-sage-200 shadow-sm">
+            <CardHeader>
+              <CardTitle className="flex items-center justify-between gap-2 text-navy-900">
+                <div className="flex items-center gap-2">
+                  <Sparkles className="h-5 w-5 text-[#8b5cf6]" />
+                  Service Provider Notes
+                </div>
+                <Button
+                  onClick={() => setIsAddProviderNoteOpen(true)}
+                  size="sm"
+                  className="bg-[#8b5cf6] hover:bg-[#7c3aed] text-white"
+                >
+                  Add Note
+                </Button>
+              </CardTitle>
+              <p className="text-sm text-navy-600 mt-2">
+                Professional notes from vets, trainers, farriers, groomers, and other service providers about {pet.name}'s health, training, and care.
+              </p>
+            </CardHeader>
+            <CardContent>
+              <ServiceProviderNotesBoard petId={petId || ''} petName={pet.name} />
+            </CardContent>
+          </Card>
         </div>
 
         {/* Emergency Contacts */}
@@ -798,6 +827,21 @@ const PublicCareInstructions = () => {
         petName={pet.name}
         pageType="care"
       />
+
+      {/* Add Provider Note Dialog */}
+      <Dialog open={isAddProviderNoteOpen} onOpenChange={setIsAddProviderNoteOpen}>
+        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Add Service Provider Note</DialogTitle>
+          </DialogHeader>
+          <AddServiceProviderNoteForm
+            petId={pet.id}
+            petName={pet.name}
+            onSuccess={() => setIsAddProviderNoteOpen(false)}
+            onCancel={() => setIsAddProviderNoteOpen(false)}
+          />
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

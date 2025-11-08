@@ -28,6 +28,7 @@ import PublicMissingPet from "./pages/PublicMissingPet";
 import PublicTravelMap from "./pages/PublicTravelMap";
 import PublicStoryStream from "./pages/PublicStoryStream";
 import PublicGuardian from "./pages/PublicGuardian";
+import PublicProviderNotes from "./pages/PublicProviderNotes";
 import NotFound from "./pages/NotFound";
 
 import TransferAccept from "./pages/TransferAccept";
@@ -148,6 +149,7 @@ const App = () => {
                      <Route path="/travel/:petId" element={<PublicTravelMap />} />
                      <Route path="/story-stream/:petId" element={<PublicStoryStream />} />
                      <Route path="/guardian/:petId/:accessToken" element={<PublicGuardian />} />
+                     <Route path="/provider-notes/:petId" element={<PublicProviderNotes />} />
                    <Route path="/transfer/accept/:token" element={<TransferAccept />} />
                   <Route path="/privacy" element={<Navigate to="/privacy-policy" replace />} />
             <Route path="/terms" element={<Terms />} />

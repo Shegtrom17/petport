@@ -15,6 +15,7 @@ import { AIMedicalAssistantModal } from "@/components/AIMedicalAssistantModal";
 import { QuickShareHub } from "@/components/QuickShareHub";
 import { Button } from "@/components/ui/button";
 import { CareUpdatesModerationBoard } from "@/components/CareUpdatesModerationBoard";
+import { ServiceProviderNotesBoard } from "@/components/ServiceProviderNotesBoard";
 
 interface CareInstructionsSectionProps {
   petData: any;
@@ -189,6 +190,9 @@ export const CareInstructionsSection = ({ petData, onUpdate, handlePetUpdate }: 
       
       {/* Care Updates Moderation Board */}
       <CareUpdatesModerationBoard petId={petData.id} petName={petData.name} />
+
+      {/* Service Provider Notes Board */}
+      <ServiceProviderNotesBoard petId={petData.id} petName={petData.name} />
 
       {/* Feeding Schedule */}
       {/* Mobile Safety: This component uses text truncation and responsive sizing */}

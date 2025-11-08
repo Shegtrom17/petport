@@ -1362,6 +1362,65 @@ export type Database = {
           },
         ]
       }
+      service_provider_notes: {
+        Row: {
+          created_at: string
+          id: string
+          is_visible: boolean
+          next_appointment_suggestion: string | null
+          observations: string | null
+          pet_id: string
+          provider_email: string | null
+          provider_name: string
+          provider_phone: string | null
+          provider_type: string
+          recommendations: string | null
+          service_date: string
+          service_type: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_visible?: boolean
+          next_appointment_suggestion?: string | null
+          observations?: string | null
+          pet_id: string
+          provider_email?: string | null
+          provider_name: string
+          provider_phone?: string | null
+          provider_type: string
+          recommendations?: string | null
+          service_date: string
+          service_type: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_visible?: boolean
+          next_appointment_suggestion?: string | null
+          observations?: string | null
+          pet_id?: string
+          provider_email?: string | null
+          provider_name?: string
+          provider_phone?: string | null
+          provider_type?: string
+          recommendations?: string | null
+          service_date?: string
+          service_type?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "service_provider_notes_pet_id_fkey"
+            columns: ["pet_id"]
+            isOneToOne: false
+            referencedRelation: "pets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       settings: {
         Row: {
           created_at: string | null

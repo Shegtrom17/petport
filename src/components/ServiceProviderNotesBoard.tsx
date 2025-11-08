@@ -17,6 +17,8 @@ import { CalendarIcon } from "lucide-react";
 import { Calendar as CalendarComponent } from "@/components/ui/calendar";
 import { cn } from "@/lib/utils";
 import { generateClientPetPDF } from "@/services/clientPdfService";
+import { AddServiceProviderNoteForm } from "./AddServiceProviderNoteForm";
+import { Plus } from "lucide-react";
 
 interface ServiceProviderNote {
   id: string;
@@ -48,6 +50,7 @@ export const ServiceProviderNotesBoard = ({ petId, petName }: ServiceProviderNot
   const [editFormData, setEditFormData] = useState<any>({});
   const [editServiceDate, setEditServiceDate] = useState<Date>();
   const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
+  const [showAddForm, setShowAddForm] = useState(false);
   const { toast } = useToast();
 
   const shareUrl = `${window.location.origin}/provider-notes/${petId}`;
@@ -356,6 +359,31 @@ export const ServiceProviderNotesBoard = ({ petId, petName }: ServiceProviderNot
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
+        {/* Add Note Form Toggle */}
+        {!showAddForm && (
+          <Button 
+            onClick={() => setShowAddForm(true)}
+            className="w-full gap-2"
+            variant="outline"
+          >
+            <Plus className="w-4 h-4" />
+            Add Owner Note
+          </Button>
+        )}
+
+        {/* Add Note Form */}
+        {showAddForm && (
+          <AddServiceProviderNoteForm
+            petId={petId}
+            petName={petName}
+            onSuccess={() => {
+              setShowAddForm(false);
+              fetchNotes();
+            }}
+            onCancel={() => setShowAddForm(false)}
+          />
+        )}
+
         {notes.length === 0 ? (
           <div className="text-center py-8 text-gray-500">
             <Stethoscope className="w-12 h-12 mx-auto mb-3 text-gray-300" />

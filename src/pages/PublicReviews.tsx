@@ -5,13 +5,17 @@ import { Button } from "@/components/ui/button";
 import { MetaTags } from "@/components/MetaTags";
 import { fetchPetDetails } from "@/services/petService";
 import { AddReviewForm } from "@/components/AddReviewForm";
-import { Star, X, MessageSquare } from "lucide-react";
+import { ReviewResponseForm } from "@/components/ReviewResponseForm";
+import { Star, X, MessageSquare, Pencil, Trash2 } from "lucide-react";
 import { smoothScrollIntoViewIfNeeded } from "@/utils/smoothScroll";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/context/AuthContext";
+import { toast } from "sonner";
 
 interface PublicReviewsData {
   id: string;
   name: string;
+  owner_id?: string;
   is_public?: boolean;
   photoUrl?: string;
   reviews?: Array<{
@@ -33,9 +37,11 @@ interface PublicReviewsData {
 export default function PublicReviews() {
   const { petId } = useParams();
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [data, setData] = useState<PublicReviewsData | null>(null);
   const [loading, setLoading] = useState(true);
   const [showAddReview, setShowAddReview] = useState(false);
+  const [editingResponseId, setEditingResponseId] = useState<string | null>(null);
   const reviewFormRef = useRef<HTMLDivElement>(null);
 
   const handleClose = () => {
@@ -82,8 +88,30 @@ export default function PublicReviews() {
 
   const handleReviewSuccess = () => {
     setShowAddReview(false);
+    setEditingResponseId(null);
     loadPetData();
   };
+
+  const handleDeleteResponse = async (responseId: string) => {
+    if (!confirm("Are you sure you want to delete this response?")) return;
+
+    try {
+      const { error } = await supabase
+        .from('review_responses')
+        .delete()
+        .eq('id', responseId);
+
+      if (error) throw error;
+
+      toast.success("Response deleted successfully");
+      loadPetData();
+    } catch (error) {
+      console.error('Error deleting response:', error);
+      toast.error("Failed to delete response");
+    }
+  };
+
+  const isOwner = user?.id === data?.owner_id;
 
   useEffect(() => {
     loadPetData();
@@ -223,14 +251,46 @@ export default function PublicReviews() {
                   
                   {/* Owner Response */}
                   {r.response && (
-                    <div className="mt-3 p-3 bg-azure/5 border-l-4 border-azure rounded-r-lg">
+                    <div className="mt-3 p-3 bg-brand-primary/5 border-l-4 border-brand-primary rounded-r-lg">
                       <div className="flex items-start gap-2">
-                        <MessageSquare className="w-3 h-3 text-azure mt-1 flex-shrink-0" />
+                        <MessageSquare className="w-3 h-3 text-brand-primary mt-1 flex-shrink-0" />
                         <div className="flex-1">
-                          <p className="text-xs font-semibold text-azure mb-1">
-                            Response from {data.name}'s Owner
-                          </p>
-                          <p className="text-sm text-gray-700">{r.response.response_text}</p>
+                          <div className="flex items-start justify-between gap-2 mb-1">
+                            <p className="text-xs font-semibold text-brand-primary">
+                              Response from {data.name}'s Owner
+                            </p>
+                            {isOwner && (
+                              <div className="flex gap-1">
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => setEditingResponseId(r.id!)}
+                                  className="h-6 px-2 text-brand-primary hover:text-brand-primary/80 hover:bg-brand-primary/10"
+                                >
+                                  <Pencil className="w-3 h-3" />
+                                </Button>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => handleDeleteResponse(r.response!.id)}
+                                  className="h-6 px-2 text-destructive hover:text-destructive/80 hover:bg-destructive/10"
+                                >
+                                  <Trash2 className="w-3 h-3" />
+                                </Button>
+                              </div>
+                            )}
+                          </div>
+                          {editingResponseId === r.id ? (
+                            <ReviewResponseForm
+                              reviewId={r.id!}
+                              petName={data.name}
+                              existingResponse={r.response}
+                              onSuccess={handleReviewSuccess}
+                              onCancel={() => setEditingResponseId(null)}
+                            />
+                          ) : (
+                            <p className="text-sm text-foreground">{r.response.response_text}</p>
+                          )}
                         </div>
                       </div>
                     </div>

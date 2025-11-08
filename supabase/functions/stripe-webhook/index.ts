@@ -437,7 +437,8 @@ async function handleGiftMembershipPurchase(session: any, supabaseClient: any) {
       body: {
         type: 'gift_purchase_confirmation',
         recipientEmail: purchaserEmail,
-        recipientName: senderName,
+        recipientName: senderName, // Purchaser's name
+        giftRecipientEmail: recipientEmail, // Who the gift is FOR
         petName: 'Gift Membership',
         petId: giftCode,
         shareUrl: redemptionLink,

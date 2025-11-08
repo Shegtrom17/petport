@@ -29,6 +29,7 @@ interface EmailRequest {
   recipientStatus?: string;
   // Gift-specific fields
   giftCode?: string;
+  giftRecipientEmail?: string; // The person receiving the gift (for purchase confirmation)
   expiresAt?: string;
   daysRemaining?: number;
   giftMessage?: string;
@@ -683,12 +684,13 @@ const generateEmailTemplate = (data: EmailRequest) => {
       subject: Deno.env.get('HOLIDAY_MODE') === 'true' ? '🎁 Your PetPort Gift Has Been Sent!' : '✅ Gift Purchase Confirmed - PetPort',
       content: `
         <h2 style="color: #5691af;">${Deno.env.get('HOLIDAY_MODE') === 'true' ? '🎁 Your Gift Has Been Sent!' : '✅ Gift Purchase Confirmed'}</h2>
-        <p>Thank you for gifting a year of PetPort to ${data.recipientName || data.recipientEmail}!</p>
+        <p>Hi ${data.recipientName || 'there'},</p>
+        <p>Thank you for gifting a year of PetPort to <strong>${data.giftRecipientEmail}</strong>!</p>
         
         <div style="background: linear-gradient(135deg, #5691af 0%, #4a7c95 100%); color: white; padding: 25px; border-radius: 12px; margin: 25px 0;">
           <h3 style="margin: 0; color: white; font-size: 20px;">🎁 Gift Details</h3>
           <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.3);">
-            <p style="margin: 8px 0; color: rgba(255,255,255,0.95);"><strong>Recipient:</strong> ${data.recipientEmail}</p>
+            <p style="margin: 8px 0; color: rgba(255,255,255,0.95);"><strong>Recipient:</strong> ${data.giftRecipientEmail}</p>
             <p style="margin: 8px 0; color: rgba(255,255,255,0.95);"><strong>Gift Code:</strong> ${data.giftCode}</p>
             <p style="margin: 8px 0; color: rgba(255,255,255,0.95);"><strong>Expires:</strong> ${data.expiresAt}</p>
           </div>
@@ -701,7 +703,7 @@ const generateEmailTemplate = (data: EmailRequest) => {
         <div style="background: #f0f9ff; padding: 20px; border-radius: 8px; margin: 20px 0;">
           <h3 style="margin-top: 0; color: #5691af;">✉️ What Happens Next</h3>
           <p style="color: #475569; line-height: 1.7; margin: 0;">
-            We've sent an email to <strong>${data.recipientEmail}</strong> with instructions to redeem their gift. 
+            We've sent an email to <strong>${data.giftRecipientEmail}</strong> with instructions to redeem their gift. 
             They'll receive a full year of PetPort premium membership!
           </p>
         </div>

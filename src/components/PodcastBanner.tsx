@@ -13,9 +13,8 @@ export const PodcastBanner = () => {
           </span>
           <Link to="/podcast">
             <Button 
-              variant="outline"
+              variant="azure"
               size="sm"
-              className="border-[#5691af] text-[#5691af] hover:bg-[#5691af] hover:text-white"
             >
               Listen Now
             </Button>

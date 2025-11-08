@@ -110,7 +110,8 @@ export function transformPetData(pet: PetWithDetails): any {
       text: review.text,
       date: review.date,
       location: review.location,
-      type: review.type
+      type: review.type,
+      response: (review as any).response || null
     })) || [],
     // Transform travel locations with proper mapping
     travel_locations: pet.travel_locations?.map(location => ({

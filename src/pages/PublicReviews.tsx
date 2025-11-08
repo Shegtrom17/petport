@@ -5,8 +5,9 @@ import { Button } from "@/components/ui/button";
 import { MetaTags } from "@/components/MetaTags";
 import { fetchPetDetails } from "@/services/petService";
 import { AddReviewForm } from "@/components/AddReviewForm";
-import { Star, X } from "lucide-react";
+import { Star, X, MessageSquare } from "lucide-react";
 import { smoothScrollIntoViewIfNeeded } from "@/utils/smoothScroll";
+import { supabase } from "@/integrations/supabase/client";
 
 interface PublicReviewsData {
   id: string;
@@ -14,12 +15,18 @@ interface PublicReviewsData {
   is_public?: boolean;
   photoUrl?: string;
   reviews?: Array<{
+    id?: string;
     reviewerName: string;
     reviewerContact?: string | null;
     rating: number;
     text?: string | null;
     date?: string | null;
     location?: string | null;
+    response?: {
+      id: string;
+      response_text: string;
+      created_at: string;
+    } | null;
   }>;
 }
 
@@ -42,6 +49,24 @@ export default function PublicReviews() {
   const loadPetData = async () => {
     if (!petId) return;
     const pet = await fetchPetDetails(petId);
+    
+    // Fetch responses for reviews
+    if (pet?.reviews && pet.reviews.length > 0) {
+      const reviewIds = pet.reviews.map((r: any) => r.id).filter(Boolean);
+      
+      if (reviewIds.length > 0) {
+        const { data: responses } = await supabase
+          .from('review_responses')
+          .select('*')
+          .in('review_id', reviewIds);
+
+        pet.reviews = pet.reviews.map((review: any) => ({
+          ...review,
+          response: responses?.find((r: any) => r.review_id === review.id) || null
+        }));
+      }
+    }
+    
     setData(pet);
     setLoading(false);
   };
@@ -195,6 +220,21 @@ export default function PublicReviews() {
                     {r.date && <span className="text-sm text-muted-foreground">• {r.date}</span>}
                   </div>
                   {r.text && <p className="text-sm">{r.text}</p>}
+                  
+                  {/* Owner Response */}
+                  {r.response && (
+                    <div className="mt-3 p-3 bg-azure/5 border-l-4 border-azure rounded-r-lg">
+                      <div className="flex items-start gap-2">
+                        <MessageSquare className="w-3 h-3 text-azure mt-1 flex-shrink-0" />
+                        <div className="flex-1">
+                          <p className="text-xs font-semibold text-azure mb-1">
+                            Response from {data.name}'s Owner
+                          </p>
+                          <p className="text-sm text-gray-700">{r.response.response_text}</p>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             ))}

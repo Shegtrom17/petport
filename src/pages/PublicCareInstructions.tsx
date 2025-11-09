@@ -146,7 +146,12 @@ const PublicCareInstructions = () => {
   };
 
   const handleReportUpdate = async () => {
-    if (!updateText.trim() || !petId) return;
+    if (!updateText.trim()) {
+      toast.error('Please write a care update before posting');
+      return;
+    }
+    
+    if (!petId) return;
     
     setIsSubmittingUpdate(true);
     try {
@@ -703,7 +708,7 @@ const PublicCareInstructions = () => {
                   </span>
                   <Button 
                     onClick={handleReportUpdate} 
-                    disabled={!updateText.trim() || isSubmittingUpdate}
+                    disabled={isSubmittingUpdate}
                     variant="azure"
                     size="sm"
                   >

@@ -664,7 +664,7 @@ const Gift = () => {
                           <div className="bg-muted/30 rounded-lg p-3 text-sm">
                             <p className="flex items-center gap-2 text-muted-foreground">
                               <span className="text-lg">⚡</span>
-                              <span><strong>Default:</strong> Gift sends immediately after payment (within minutes)</span>
+                              <span><strong>Default:</strong> Gift sends immediately after payment (within minutes), or use the button above to pick a specific date</span>
                             </p>
                           </div>
                         </>

@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
-import { Heart, MapPin, Phone, Star, Award, GraduationCap, Plane, Trophy, Briefcase, Shield, Building, Mail, Globe, Camera, AlertTriangle, FileText, Eye, Stethoscope, X, MessageSquare } from "lucide-react";
+import { Heart, MapPin, Phone, Star, Award, GraduationCap, Plane, Trophy, Briefcase, Shield, Building, Mail, Globe, Camera, AlertTriangle, FileText, Eye, Stethoscope, X, MessageSquare, Clock } from "lucide-react";
 
 import { MetaTags } from "@/components/MetaTags";
 import { AddReviewForm } from "@/components/AddReviewForm";
@@ -14,6 +14,7 @@ import { ContactOwnerModal } from "@/components/ContactOwnerModal";
 import { AzureButton } from "@/components/ui/azure-button";
 import { sanitizeText, sanitizeHtml } from "@/utils/inputSanitizer";
 import { smoothScrollIntoViewIfNeeded } from "@/utils/smoothScroll";
+import { ServiceProviderNotesBoard } from "@/components/ServiceProviderNotesBoard";
 
 const PublicProfile = () => {
   const { petId } = useParams<{ petId: string }>();
@@ -27,6 +28,7 @@ const PublicProfile = () => {
   const [showAddReview, setShowAddReview] = useState(false);
   const [isContactModalOpen, setIsContactModalOpen] = useState(false);
   const reviewFormRef = React.useRef<HTMLDivElement>(null);
+  const [careUpdates, setCareUpdates] = useState<any[]>([]);
 
   const handleClose = async () => {
     const { data: { user } } = await supabase.auth.getUser();
@@ -309,6 +311,19 @@ const PublicProfile = () => {
               response: responses?.find((r: any) => r.review_id === review.id) || null
             }));
           }
+        }
+
+        // Fetch care updates (visible only)
+        const { data: careUpdatesData } = await supabase
+          .from('care_updates')
+          .select('*')
+          .eq('pet_id', petId)
+          .eq('is_visible', true)
+          .order('reported_at', { ascending: false })
+          .limit(20);
+        
+        if (careUpdatesData) {
+          setCareUpdates(careUpdatesData);
         }
 
         setPetData(sanitizedData);
@@ -675,6 +690,57 @@ const PublicProfile = () => {
             </Card>
           )}
 
+          {/* Care Updates Board */}
+          {careUpdates && careUpdates.length > 0 && (
+            <div className="mb-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-navy-900">
+                    <Clock className="w-5 h-5 text-primary" />
+                    Care Updates
+                  </CardTitle>
+                  <p className="text-sm text-muted-foreground mt-2">
+                    Real-time updates from caretakers, sitters, and service providers
+                  </p>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3">
+                    {careUpdates.map((update: any) => (
+                      <Card key={update.id} className="bg-sage-50/50">
+                        <CardContent className="pt-4">
+                          <div className="flex items-start justify-between gap-2 mb-2">
+                            <Badge variant="secondary" className="text-xs">
+                              <Clock className="w-3 h-3 mr-1" />
+                              {new Date(update.reported_at).toLocaleString()}
+                            </Badge>
+                          </div>
+                          <p className="text-sm text-gray-700">{update.update_text}</p>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          )}
+
+          {/* Service Provider Notes */}
+          <div className="mb-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-navy-900">
+                  <Stethoscope className="w-5 h-5 text-primary" />
+                  Service Provider Notes
+                </CardTitle>
+                <p className="text-sm text-muted-foreground mt-2">
+                  Professional notes from vets, trainers, farriers, groomers, and other service providers
+                </p>
+              </CardHeader>
+              <CardContent>
+                <ServiceProviderNotesBoard petId={petId!} petName={petData.name} />
+              </CardContent>
+            </Card>
+          </div>
 
           {/* Documents on File */}
           {petData.documents && petData.documents.length > 0 && (

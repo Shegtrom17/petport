@@ -65,6 +65,18 @@ export const AddServiceProviderNoteForm = ({ petId, petName, onSuccess, onCancel
 
       if (error) throw error;
 
+      // Send notification email to owner (fire and forget)
+      supabase.functions.invoke('notify-provider-note', {
+        body: {
+          petId,
+          providerName: formData.provider_name.trim(),
+          providerType: formData.provider_type,
+          serviceType: formData.service_type.trim() || undefined,
+          observations: formData.observations.trim() || undefined,
+          serviceDate: serviceDate ? format(serviceDate, 'yyyy-MM-dd') : undefined
+        }
+      }).catch(err => console.error('Failed to send provider note notification:', err));
+
       toast.success("Service note added successfully!");
       
       // Reset form

@@ -441,7 +441,7 @@ const Gift = () => {
                     </div>
                     {additionalPets > 0 && (
                       <div className="flex justify-between items-center text-sm">
-                        <span>Additional pets ({additionalPets})</span>
+                        <span>Additional pets ({additionalPets} × ${ADDON_PRICE.toFixed(2)})</span>
                         <span className="font-semibold">${(additionalPets * ADDON_PRICE).toFixed(2)}</span>
                       </div>
                     )}
@@ -455,11 +455,34 @@ const Gift = () => {
                       </div>
                     </div>
                   </div>
+                  
+                  {/* Pricing Info Box */}
+                  <div className="bg-muted/50 rounded-lg p-4 space-y-2">
+                    <div className="flex items-center gap-2 text-sm font-medium">
+                      <GiftIcon className="h-4 w-4 text-primary" />
+                      <span>What's Included</span>
+                    </div>
+                    <div className="space-y-1.5 text-sm text-muted-foreground">
+                      <div className="flex justify-between">
+                        <span>Base membership</span>
+                        <span className="font-medium text-foreground">${BASE_PRICE.toFixed(2)}/year</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Additional pet accounts</span>
+                        <span className="font-medium text-foreground">${ADDON_PRICE.toFixed(2)}/pet/year</span>
+                      </div>
+                      <div className="flex justify-between pt-1.5 border-t">
+                        <span className="font-medium text-foreground">Current selection</span>
+                        <span className="font-semibold text-primary">{1 + additionalPets} pet{additionalPets > 0 ? 's' : ''}</span>
+                      </div>
+                    </div>
+                  </div>
+                  
                   <div className="space-y-2 text-sm text-muted-foreground">
                     <p>✓ Delivered via email {scheduledDate ? 'on scheduled date' : 'within minutes'}</p>
                     <p>✓ No credit card required from recipient</p>
                     <p>✓ Valid for 12 months from activation</p>
-                    <p>✓ Includes {1 + additionalPets} pet account{additionalPets > 0 ? 's' : ''}</p>
+                    <p>✓ Recipient can add unlimited pet profiles</p>
                   </div>
                 </CardContent>
               </Card>

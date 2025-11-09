@@ -50,6 +50,7 @@ import { generateShareURL } from "@/utils/domainUtils";
 import { generateClientPetPDF, generateQRPrintSheetPDF, viewPDFBlob, downloadPDFBlob, isIOS } from '@/services/clientPdfService';
 import { sharePDFBlob } from '@/services/pdfService';
 import { shareQRCode } from "@/utils/qrShare";
+import { DocumentViewer } from "@/components/DocumentViewer";
 
 interface QuickShareHubProps {
   petData: any; // Accept full pet object with all fields
@@ -119,6 +120,11 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
   // QR Print Sheet State
   const [qrSheetBlob, setQrSheetBlob] = useState<Blob | null>(null);
   const [isGeneratingQRSheet, setIsGeneratingQRSheet] = useState(false);
+  const [showQRSheetDialog, setShowQRSheetDialog] = useState(false);
+  const [showQRSheetEmailForm, setShowQRSheetEmailForm] = useState(false);
+  const [qrSheetEmailData, setQrSheetEmailData] = useState({ to: '', name: '', message: '' });
+  const [qrSheetPdfUrl, setQrSheetPdfUrl] = useState<string | null>(null);
+  const [showQRSheetViewer, setShowQRSheetViewer] = useState(false);
   
   const { toast } = useToast();
   const { sendEmail, isLoading: emailLoading } = useEmailSharing();
@@ -552,6 +558,7 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
       
       if (result.success && result.blob) {
         setQrSheetBlob(result.blob);
+        setShowQRSheetDialog(true);
         toast({ title: "QR Print Sheet Ready!", description: "Your printable sheet has been generated." });
       } else {
         throw new Error(result.error || "Failed to generate QR sheet");
@@ -566,7 +573,14 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
 
   const handleViewQRSheet = () => {
     if (qrSheetBlob) {
-      viewPDFBlob(qrSheetBlob, `${petData.name}_QR_Print_Sheet.pdf`);
+      // On mobile, use DocumentViewer for better scrolling/zooming
+      if (isMobile) {
+        const url = URL.createObjectURL(qrSheetBlob);
+        setQrSheetPdfUrl(url);
+        setShowQRSheetViewer(true);
+      } else {
+        viewPDFBlob(qrSheetBlob, `${petData.name}_QR_Print_Sheet.pdf`);
+      }
     }
   };
 
@@ -616,11 +630,2509 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
     }
   };
 
-  const clearQRSheetCache = () => {
-    if (qrSheetBlob) {
-      setQrSheetBlob(null);
-      toast({ title: "QR Sheet Cleared", description: "Generate a new one when needed." });
+  const handleEmailQRSheet = async () => {
+    if (!qrSheetBlob || !qrSheetEmailData.to.trim()) {
+      toast({
+        title: "Missing Information",
+        description: "Please enter recipient email address.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      // Convert blob to base64 for email attachment
+      const reader = new FileReader();
+      reader.readAsDataURL(qrSheetBlob);
+      
+      await new Promise((resolve, reject) => {
+        reader.onload = async () => {
+          try {
+            const base64 = (reader.result as string).split(',')[1];
+            
+            const success = await sendEmail({
+              type: 'care',
+              recipientEmail: qrSheetEmailData.to,
+              recipientName: qrSheetEmailData.name,
+              petName: petData.name,
+              petId: petData.id!,
+              shareUrl: `${window.location.origin}/profile/${petData.id}`,
+              customMessage: qrSheetEmailData.message || `Attached is a printable QR code sheet for ${petData.name}. Each QR code links to a different page - Emergency Profile, Care Instructions, Resume, Gallery, Complete Profile${isLost ? ', and Lost Pet Flyer' : ''}. Keep this sheet accessible for quick access to all of ${petData.name}'s information.`,
+              pdfAttachment: base64,
+              pdfFileName: `${petData.name}_QR_Print_Sheet.pdf`
+            });
+
+            if (success) {
+              setShowQRSheetEmailForm(false);
+              setQrSheetEmailData({ to: '', name: '', message: '' });
+              toast({
+                title: "Email Sent!",
+                description: `QR Print Sheet sent to ${qrSheetEmailData.to}`,
+              });
+            }
+            resolve(true);
+          } catch (error) {
+            reject(error);
+          }
+        };
+        reader.onerror = reject;
+      });
+    } catch (error) {
+      console.error('QR Sheet email error:', error);
+      toast({
+        title: "Email Failed",
+        description: "Unable to send email. Please try again.",
+        variant: "destructive",
+      });
     }
   };
+
+  const handleViewCarePdf = async () => {
+    if (!carePdfBlob) {
+      toast({ description: "Please generate the PDF first", variant: "destructive" });
+      return;
+    }
+    
+    try {
+      await viewPDFBlob(carePdfBlob, `${petData.name}_Care_Instructions.pdf`);
+    } catch (error: any) {
+      console.error('[Care PDF] View failed:', error);
+      toast({ description: "Failed to open PDF", variant: "destructive" });
+    }
+  };
+
+  const handlePrintCarePdf = async () => {
+    if (!carePdfBlob) {
+      toast({ description: "Please generate the PDF first", variant: "destructive" });
+      return;
+    }
+    
+    try {
+      const url = URL.createObjectURL(carePdfBlob);
+      const iframe = document.createElement('iframe');
+      iframe.style.display = 'none';
+      iframe.src = url;
+      document.body.appendChild(iframe);
+      
+      iframe.onload = () => {
+        iframe.contentWindow?.print();
+        setTimeout(() => {
+          document.body.removeChild(iframe);
+          URL.revokeObjectURL(url);
+        }, 100);
+      };
+    } catch (error: any) {
+      console.error('[Care PDF] Print failed:', error);
+      toast({ description: "Failed to print PDF", variant: "destructive" });
+    }
+  };
+
+  const handleDownloadCarePdf = async () => {
+    if (!carePdfBlob) {
+      toast({ description: "Please generate the PDF first", variant: "destructive" });
+      return;
+    }
+    
+    try {
+      await downloadPDFBlob(carePdfBlob, `${petData.name}_Care_Instructions.pdf`);
+      toast({ description: "PDF downloaded successfully" });
+    } catch (error: any) {
+      console.error('[Care PDF] Download failed:', error);
+      toast({ description: "Failed to download PDF", variant: "destructive" });
+    }
+  };
+
+  const handleShareCarePdf = async () => {
+    if (!carePdfBlob) {
+      toast({ description: "Please generate the PDF first", variant: "destructive" });
+      return;
+    }
+
+    try {
+      const result = await sharePDFBlob(
+        carePdfBlob,
+        `${petData.name}_Care_Instructions.pdf`,
+        petData.name,
+        'care'
+      );
+
+      if (result.success) {
+        toast({ description: result.message || "Shared successfully" });
+      } else {
+        toast({ description: result.message || "Failed to share", variant: "destructive" });
+      }
+    } catch (error: any) {
+      console.error('[Care PDF] Share failed:', error);
+      toast({ description: "Failed to share PDF", variant: "destructive" });
+    }
+  };
+
+  const handleEmailCarePdf = async () => {
+    if (!carePdfEmailData.to || !carePdfEmailData.name) {
+      toast({ description: "Please fill in recipient email and name", variant: "destructive" });
+      return;
+    }
+
+    if (!carePdfBlob) {
+      toast({ description: "Please generate the PDF first", variant: "destructive" });
+      return;
+    }
+
+    try {
+      const base64 = await new Promise<string>((resolve) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result as string);
+        reader.readAsDataURL(carePdfBlob);
+      });
+
+      const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/send-email`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          to: carePdfEmailData.to,
+          subject: `${petData.name}'s Care & Handling Instructions`,
+          html: `
+            <p>Hi ${carePdfEmailData.name},</p>
+            <p>${carePdfEmailData.message || `Here are ${petData.name}'s care and handling instructions.`}</p>
+            <p>Please find the PDF attached.</p>
+          `,
+          attachments: [{
+            filename: `${petData.name}_Care_Instructions.pdf`,
+            content: base64.split(',')[1]
+          }]
+        })
+      });
+
+      if (!response.ok) throw new Error('Failed to send email');
+      
+      toast({ description: "Email sent successfully" });
+      setShowCarePdfDialog(false);
+      setCarePdfEmailData({ to: '', name: '', message: '' });
+    } catch (error: any) {
+      console.error('[Care PDF] Email failed:', error);
+      toast({ description: "Failed to send email", variant: "destructive" });
+    }
+  };
+
+  // ==================== EMERGENCY PDF HANDLERS ====================
+  const handleGenerateEmergencyPdf = async () => {
+    setIsGeneratingEmergencyPdf(true);
+    setEmergencyPdfError(null);
+    try {
+      const result = await generateClientPetPDF(petData, 'emergency');
+      if (result.success && result.blob) {
+        setEmergencyPdfBlob(result.blob);
+        toast({
+          title: "Emergency PDF Generated",
+          description: "Your emergency profile is ready to view, download, or share.",
+        });
+      } else {
+        throw new Error(result.error || 'PDF generation failed');
+      }
+    } catch (error) {
+      console.error('Emergency PDF generation error:', error);
+      const errorMsg = error instanceof Error ? error.message : 'Failed to generate emergency PDF';
+      setEmergencyPdfError(errorMsg);
+      toast({
+        title: "Generation Failed",
+        description: errorMsg,
+        variant: "destructive",
+      });
+    } finally {
+      setIsGeneratingEmergencyPdf(false);
+    }
+  };
+
+  const handleViewEmergencyPdf = () => {
+    if (emergencyPdfBlob) {
+      viewPDFBlob(emergencyPdfBlob, `${petData.name}_Emergency_Profile.pdf`);
+    }
+  };
+
+  const handlePrintEmergencyPdf = () => {
+    if (emergencyPdfBlob) {
+      const url = URL.createObjectURL(emergencyPdfBlob);
+      const printWindow = window.open(url, '_blank');
+      if (printWindow) {
+        printWindow.onload = () => {
+          printWindow.print();
+          URL.revokeObjectURL(url);
+        };
+      }
+    }
+  };
+
+  const handleDownloadEmergencyPdf = () => {
+    if (emergencyPdfBlob) {
+      downloadPDFBlob(emergencyPdfBlob, `${petData.name}_Emergency_Profile.pdf`);
+      toast({
+        title: "Download Started",
+        description: "Emergency profile PDF is downloading.",
+      });
+    }
+  };
+
+  const handleShareEmergencyPdf = async () => {
+    if (!emergencyPdfBlob) return;
+    
+    try {
+      const result = await sharePDFBlob(emergencyPdfBlob, `${petData.name}_Emergency_Profile.pdf`, petData.name, 'emergency');
+      if (result.success) {
+        toast({
+          title: result.shared ? "PDF Shared!" : "Link Copied!",
+          description: result.message,
+        });
+      } else {
+        throw new Error(result.error || 'Share failed');
+      }
+    } catch (error) {
+      console.error('Emergency PDF share error:', error);
+      toast({
+        title: "Share Failed",
+        description: "Unable to share PDF. Please try download instead.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleEmailEmergencyPdf = async () => {
+    if (!emergencyPdfBlob || !emergencyPdfEmailData.to.trim()) {
+      toast({
+        title: "Missing Information",
+        description: "Please enter recipient email address.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Size validation
+    const sizeValidation = validatePDFSize(emergencyPdfBlob);
+    if (sizeValidation.exceedsLimit) {
+      showPDFSizeError(sizeValidation.sizeInMB);
+      return;
+    }
+
+    try {
+      const reader = new FileReader();
+      const base64Promise = new Promise<string>((resolve, reject) => {
+        reader.onloadend = () => {
+          const base64 = reader.result as string;
+          resolve(base64.split(',')[1]);
+        };
+        reader.onerror = reject;
+      });
+      reader.readAsDataURL(emergencyPdfBlob);
+      
+      const pdfAttachment = await base64Promise;
+      const fileName = `PetPort_Emergency_Profile_${petData.name}.pdf`;
+      const baseUrl = window.location.origin;
+      const profileUrl = `${baseUrl}/emergency/${petData.id}`;
+      
+      const success = await sendEmail({
+        type: 'profile',
+        recipientEmail: emergencyPdfEmailData.to.trim(),
+        recipientName: emergencyPdfEmailData.name.trim() || undefined,
+        petName: petData.name,
+        petId: petData.id,
+        shareUrl: profileUrl,
+        customMessage: emergencyPdfEmailData.message.trim() || undefined,
+        senderName: 'PetPort User',
+        pdfAttachment,
+        pdfFileName: fileName
+      });
+
+      if (success) {
+        toast({
+          title: "Email Sent!",
+          description: `Emergency profile PDF sent to ${emergencyPdfEmailData.to}`,
+        });
+        setShowEmergencyPdfDialog(false);
+        setEmergencyPdfEmailData({ to: '', name: '', message: '' });
+      }
+    } catch (error) {
+      console.error('Emergency PDF email error:', error);
+      toast({
+        title: "Email Failed",
+        description: "Unable to send email. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  // ==================== RESUME PDF HANDLERS ====================
+  const handleGenerateResumePdf = async () => {
+    setIsGeneratingResumePdf(true);
+    setResumePdfError(null);
+    try {
+      const result = await generateClientPetPDF(petData, 'resume');
+      if (result.success && result.blob) {
+        setResumePdfBlob(result.blob);
+        toast({
+          title: "Resume PDF Generated",
+          description: "Your pet's credentials are ready to view, download, or share.",
+        });
+      } else {
+        throw new Error(result.error || 'PDF generation failed');
+      }
+    } catch (error) {
+      console.error('Resume PDF generation error:', error);
+      const errorMsg = error instanceof Error ? error.message : 'Failed to generate resume PDF';
+      setResumePdfError(errorMsg);
+      toast({
+        title: "Generation Failed",
+        description: errorMsg,
+        variant: "destructive",
+      });
+    } finally {
+      setIsGeneratingResumePdf(false);
+    }
+  };
+
+  const handleViewResumePdf = () => {
+    if (resumePdfBlob) {
+      viewPDFBlob(resumePdfBlob, `${petData.name}_Resume.pdf`);
+    }
+  };
+
+  const handlePrintResumePdf = () => {
+    if (resumePdfBlob) {
+      const url = URL.createObjectURL(resumePdfBlob);
+      const printWindow = window.open(url, '_blank');
+      if (printWindow) {
+        printWindow.onload = () => {
+          printWindow.print();
+          URL.revokeObjectURL(url);
+        };
+      }
+    }
+  };
+
+  const handleDownloadResumePdf = () => {
+    if (resumePdfBlob) {
+      downloadPDFBlob(resumePdfBlob, `${petData.name}_Resume.pdf`);
+      toast({
+        title: "Download Started",
+        description: "Resume PDF is downloading.",
+      });
+    }
+  };
+
+  const handleShareResumePdf = async () => {
+    if (!resumePdfBlob) return;
+    
+    try {
+      const result = await sharePDFBlob(resumePdfBlob, `${petData.name}_Resume.pdf`, petData.name, 'resume');
+      if (result.success) {
+        toast({
+          title: result.shared ? "PDF Shared!" : "Link Copied!",
+          description: result.message,
+        });
+      } else {
+        throw new Error(result.error || 'Share failed');
+      }
+    } catch (error) {
+      console.error('Resume PDF share error:', error);
+      toast({
+        title: "Share Failed",
+        description: "Unable to share PDF. Please try download instead.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleEmailResumePdf = async () => {
+    if (!resumePdfBlob || !resumePdfEmailData.to.trim()) {
+      toast({
+        title: "Missing Information",
+        description: "Please enter recipient email address.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Size validation
+    const sizeValidation = validatePDFSize(resumePdfBlob);
+    if (sizeValidation.exceedsLimit) {
+      showPDFSizeError(sizeValidation.sizeInMB);
+      return;
+    }
+
+    try {
+      const reader = new FileReader();
+      const base64Promise = new Promise<string>((resolve, reject) => {
+        reader.onloadend = () => {
+          const base64 = reader.result as string;
+          resolve(base64.split(',')[1]);
+        };
+        reader.onerror = reject;
+      });
+      reader.readAsDataURL(resumePdfBlob);
+      
+      const pdfAttachment = await base64Promise;
+      const fileName = `PetPort_Resume_${petData.name}.pdf`;
+      const baseUrl = window.location.origin;
+      const profileUrl = `${baseUrl}/resume/${petData.id}`;
+      
+      const success = await sendEmail({
+        type: 'resume',
+        recipientEmail: resumePdfEmailData.to.trim(),
+        recipientName: resumePdfEmailData.name.trim() || undefined,
+        petName: petData.name,
+        petId: petData.id,
+        shareUrl: profileUrl,
+        customMessage: resumePdfEmailData.message.trim() || undefined,
+        senderName: 'PetPort User',
+        pdfAttachment,
+        pdfFileName: fileName
+      });
+
+      if (success) {
+        toast({
+          title: "Email Sent!",
+          description: `Resume PDF sent to ${resumePdfEmailData.to}`,
+        });
+        setShowResumePdfDialog(false);
+        setResumePdfEmailData({ to: '', name: '', message: '' });
+      }
+    } catch (error) {
+      console.error('Resume PDF email error:', error);
+      toast({
+        title: "Email Failed",
+        description: "Unable to send email. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  // Show all pages, but Lost Pet will be disabled if not available
+  const availablePages = sharePages;
+
+  return (
+    <Card id="quick-share-hub" className="bg-white shadow-xl">
+      <CardHeader>
+        <div className="flex items-start justify-between gap-2">
+          <div className="flex-1">
+            <CardTitle className="text-xl flex items-center gap-2">
+              <Share2 className="w-6 h-6 text-brand-primary" />
+              Quick Share Hub
+            </CardTitle>
+            <p className="text-sm text-muted-foreground mt-1">
+              Share PDFs via email and LiveLinks that update in real time
+            </p>
+          </div>
+          <Button
+            onClick={handleGenerateQRSheet}
+            disabled={isGeneratingQRSheet}
+            variant="outline"
+            size="sm"
+            className="flex items-center gap-2 shrink-0"
+          >
+            {isGeneratingQRSheet ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <QrCode className="h-4 w-4" />
+            )}
+            <span className="hidden sm:inline">Print QR Sheet</span>
+            <span className="sm:hidden">QR Sheet</span>
+          </Button>
+        </div>
+      </CardHeader>
+      <CardContent>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          {availablePages.map((page) => (
+            <div 
+              key={page.id}
+              className={`p-4 rounded-lg border ${
+                page.variant === 'missing' 
+                  ? 'border-red-200 bg-red-50/50' 
+                  : 'border-gray-200 bg-gray-50/50'
+              } hover:shadow-md transition-shadow`}
+            >
+              <div className="flex items-start justify-between mb-3">
+                <div className="flex items-center gap-2">
+                  {page.icon}
+                  <div>
+                    <h3 className="font-semibold text-sm">{page.title}</h3>
+                    <p className="text-xs text-muted-foreground">{page.description}</p>
+                  </div>
+                </div>
+                {page.variant === 'missing' && (
+                  <Badge variant="destructive" className="text-xs flex items-center justify-center self-center">
+                    ALERT
+                  </Badge>
+                )}
+              </div>
+              
+              {page.id === 'emergency' ? (
+                /* Enhanced Emergency Card with PDF Actions */
+                <div className="space-y-2" data-touch-safe="true">
+                  {showOptionsFor !== page.id ? (
+                    <Button
+                      onClick={() => page.available ? setShowOptionsFor(page.id) : null}
+                      onTouchEnd={(e) => e.stopPropagation()}
+                      size="sm"
+                      disabled={!page.available}
+                      className="w-full text-xs bg-primary hover:bg-primary/90 text-white"
+                      style={{ touchAction: 'none' }}
+                    >
+                      <Share2 className="w-3 h-3 mr-1 text-white" />
+                      {page.available ? 'Share' : 'Unavailable'}
+                    </Button>
+                  ) : (
+                    <>
+                      {/* PDF Actions Section */}
+                      <div className="space-y-2 border-t pt-2 mb-2">
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs font-medium">Emergency PDF</span>
+                          {emergencyPdfBlob && (
+                            <Button
+                              onClick={() => setEmergencyPdfBlob(null)}
+                              variant="ghost"
+                              size="sm"
+                              className="h-5 px-1 text-xs"
+                            >
+                              <X className="h-2 w-2 mr-1" />
+                              Clear
+                            </Button>
+                          )}
+                        </div>
+
+                        {!emergencyPdfBlob ? (
+                          <Button
+                            onClick={handleGenerateEmergencyPdf}
+                            disabled={isGeneratingEmergencyPdf || !page.available}
+                            className="w-full text-xs"
+                            variant="outline"
+                            size="sm"
+                          >
+                            {isGeneratingEmergencyPdf ? (
+                              <>
+                                <Loader2 className="mr-1 h-3 w-3 animate-spin" />
+                                Generating...
+                              </>
+                            ) : (
+                              <>
+                                <FileDown className="mr-1 h-3 w-3" />
+                                Generate Emergency PDF
+                              </>
+                            )}
+                          </Button>
+                        ) : (
+                          <div className="grid grid-cols-2 gap-1">
+                            <Button onClick={handleViewEmergencyPdf} variant="outline" size="sm" className="text-xs py-2">
+                              <Eye className="mr-1 h-2 w-2" />
+                              View
+                            </Button>
+                            <Button onClick={handleDownloadEmergencyPdf} variant="outline" size="sm" className="text-xs py-2">
+                              <FileDown className="mr-1 h-2 w-2" />
+                              Download
+                            </Button>
+                            <Button onClick={handlePrintEmergencyPdf} variant="outline" size="sm" className="text-xs py-2">
+                              <Printer className="mr-1 h-2 w-2" />
+                              Print
+                            </Button>
+                            <Button onClick={handleShareEmergencyPdf} variant="outline" size="sm" className="text-xs py-2">
+                              <Share2 className="mr-1 h-2 w-2" />
+                              Share
+                            </Button>
+                          </div>
+                        )}
+                        
+                        {emergencyPdfError && (
+                          <p className="text-xs text-destructive">{emergencyPdfError}</p>
+                        )}
+                      </div>
+
+                      {/* Quick Share Button */}
+                      <Button
+                        onClick={() => page.available ? handleNativeShare(page) : null}
+                        onTouchEnd={(e) => e.stopPropagation()}
+                        size="sm"
+                        disabled={!page.available || sharingId === page.id}
+                        className="w-full text-xs bg-primary hover:bg-primary/90 text-white"
+                        style={{ touchAction: 'none' }}
+                      >
+                        {sharingId === page.id ? (
+                          <>
+                            <div className="w-3 h-3 animate-spin rounded-full border border-white border-t-transparent mr-1" />
+                            Sharing...
+                          </>
+                        ) : (
+                          <>
+                            <Smartphone className="w-3 h-3 mr-1 text-white" />
+                            Quick Share
+                          </>
+                        )}
+                      </Button>
+
+                      {/* Sharing Options */}
+                      <div className="grid grid-cols-4 gap-1" data-touch-safe="true">
+                        <Button
+                          onClick={() => page.available ? handleCopyLink(page) : null}
+                          onTouchEnd={(e) => e.stopPropagation()}
+                          variant="outline"
+                          size="sm"
+                          disabled={!page.available || copyingId === page.id}
+                          style={{ touchAction: 'none' }}
+                          className="text-sm flex flex-col items-center py-3 px-2 h-16 min-h-16 bg-white border-primary text-primary hover:bg-primary/10 hover:text-primary"
+                        >
+                          {copyingId === page.id ? (
+                            <Check className="w-4 h-4 mb-1" />
+                          ) : (
+                            <Copy className="w-4 h-4 mb-1" />
+                          )}
+                          <span className="text-xs font-medium leading-tight">
+                            {copyingId === page.id ? 'Copied' : 'Copy'}
+                          </span>
+                        </Button>
+                        
+                        <Button
+                          onClick={() => page.available ? shareQRCode(`${baseUrl}${page.path}`, petData.name, page.title) : null}
+                          onTouchEnd={(e) => e.stopPropagation()}
+                          variant="outline"
+                          size="sm"
+                          disabled={!page.available}
+                          style={{ touchAction: 'none' }}
+                          className="text-sm flex flex-col items-center py-3 px-2 h-16 min-h-16 bg-white border-primary text-primary hover:bg-primary/10 hover:text-primary"
+                        >
+                          <QrCode className="w-4 h-4 mb-1" />
+                          <span className="text-xs font-medium leading-tight">QR</span>
+                        </Button>
+                        
+                        <Button
+                          onClick={() => page.available ? handleSMSShare(page) : null}
+                          onTouchEnd={(e) => e.stopPropagation()}
+                          variant="outline"
+                          size="sm"
+                          disabled={!page.available}
+                          style={{ touchAction: 'none' }}
+                          className="text-sm flex flex-col items-center py-3 px-2 h-16 min-h-16 bg-white border-primary text-primary hover:bg-primary/10 hover:text-primary"
+                        >
+                          <MessageCircle className="w-4 h-4 mb-1" />
+                          <span className="text-xs font-medium leading-tight">SMS</span>
+                        </Button>
+                        
+                        <Button
+                          onClick={() => page.available ? handleEmailShare(page) : null}
+                          onTouchEnd={(e) => e.stopPropagation()}
+                          variant="outline"
+                          size="sm"
+                          disabled={!page.available}
+                          style={{ touchAction: 'none' }}
+                          className="text-sm flex flex-col items-center py-3 px-2 h-16 min-h-16 bg-white border-primary text-primary hover:bg-primary/10 hover:text-primary"
+                        >
+                          <Mail className="w-4 h-4 mb-1" />
+                          <span className="text-xs font-medium leading-tight">Email</span>
+                        </Button>
+                      </div>
+
+                      <div className="grid grid-cols-3 gap-1" data-touch-safe="true">
+                        <Button
+                          onClick={() => page.available ? handleFacebookShare(page) : null}
+                          onTouchEnd={(e) => e.stopPropagation()}
+                          variant="outline"
+                          size="sm"
+                          disabled={!page.available}
+                          style={{ touchAction: 'none' }}
+                          className="text-sm flex flex-col items-center py-3 px-2 h-16 min-h-16 bg-white border-primary text-primary hover:bg-primary/10 hover:text-primary"
+                        >
+                          <Facebook className="w-4 h-4 mb-1" />
+                          <span className="text-xs font-medium leading-tight">Facebook</span>
+                        </Button>
+                        
+                        <Button
+                          onClick={() => page.available ? handleMessengerShare(page) : null}
+                          onTouchEnd={(e) => e.stopPropagation()}
+                          variant="outline"
+                          size="sm"
+                          disabled={!page.available}
+                          style={{ touchAction: 'none' }}
+                          className="text-sm flex flex-col items-center py-3 px-2 h-16 min-h-16 bg-white border-primary text-primary hover:bg-primary/10 hover:text-primary"
+                        >
+                          <MessageSquare className="w-4 h-4 mb-1" />
+                          <span className="text-xs font-medium leading-tight">Messenger</span>
+                        </Button>
+                        
+                        <Button
+                          onClick={() => {
+                            if (page.available) {
+                              handleCopyLink(page);
+                              toast({
+                                title: "Instagram Limitation",
+                                description: "Instagram doesn't support direct sharing. Link copied - paste it in Instagram Stories or posts.",
+                                duration: 4000,
+                              });
+                            }
+                          }}
+                          onTouchEnd={(e) => e.stopPropagation()}
+                          variant="outline"
+                          size="sm"
+                          disabled={!page.available}
+                          style={{ touchAction: 'none' }}
+                          className="text-sm flex flex-col items-center py-3 px-2 h-16 min-h-16 bg-white border-primary text-primary hover:bg-primary/10 hover:text-primary"
+                        >
+                          <Camera className="w-4 h-4 mb-1" />
+                          <span className="text-xs font-medium leading-tight">Instagram</span>
+                        </Button>
+                      </div>
+
+                      {/* Close Button */}
+                      <Button
+                        onClick={() => setShowOptionsFor(null)}
+                        variant="ghost"
+                        size="sm"
+                        className="w-full text-xs mt-2"
+                      >
+                        Close
+                      </Button>
+                    </>
+                  )}
+                </div>
+              ) : page.id === 'care' ? (
+                /* Enhanced Care Card with PDF Actions */
+                <div className="space-y-2" data-touch-safe="true">
+                  {showOptionsFor !== page.id ? (
+                    <Button
+                      onClick={() => page.available ? setShowOptionsFor(page.id) : null}
+                      onTouchEnd={(e) => e.stopPropagation()}
+                      size="sm"
+                      disabled={!page.available}
+                      className="w-full text-xs bg-primary hover:bg-primary/90 text-white"
+                      style={{ touchAction: 'none' }}
+                    >
+                      <Share2 className="w-3 h-3 mr-1 text-white" />
+                      {page.available ? 'Share' : 'Unavailable'}
+                    </Button>
+                  ) : (
+                    <>
+                      {/* PDF Actions Section */}
+                      <div className="space-y-2 border-t pt-2 mb-2">
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs font-medium">Care PDF</span>
+                          {carePdfBlob && (
+                            <Button
+                              onClick={clearCarePdfCache}
+                              variant="ghost"
+                              size="sm"
+                              className="h-5 px-1 text-xs"
+                            >
+                              <X className="h-2 w-2 mr-1" />
+                              Clear
+                            </Button>
+                          )}
+                        </div>
+
+                        {!carePdfBlob ? (
+                          <Button
+                            onClick={handleGenerateCarePdf}
+                            disabled={isGeneratingCarePdf || !page.available}
+                            className="w-full text-xs"
+                            variant="outline"
+                            size="sm"
+                          >
+                            {isGeneratingCarePdf ? (
+                              <>
+                                <Loader2 className="mr-1 h-3 w-3 animate-spin" />
+                                Generating...
+                              </>
+                            ) : (
+                              <>
+                                <FileDown className="mr-1 h-3 w-3" />
+                                Generate Care PDF
+                              </>
+                            )}
+                          </Button>
+                        ) : (
+                          <div className="grid grid-cols-2 gap-1">
+                            <Button onClick={handleViewCarePdf} variant="outline" size="sm" className="text-xs py-2">
+                              <Eye className="mr-1 h-2 w-2" />
+                              View
+                            </Button>
+                            <Button onClick={handleDownloadCarePdf} variant="outline" size="sm" className="text-xs py-2">
+                              <FileDown className="mr-1 h-2 w-2" />
+                              Download
+                            </Button>
+                            <Button onClick={handlePrintCarePdf} variant="outline" size="sm" className="text-xs py-2">
+                              <Printer className="mr-1 h-2 w-2" />
+                              Print
+                            </Button>
+                            <Button onClick={handleShareCarePdf} variant="outline" size="sm" className="text-xs py-2">
+                              <Share2 className="mr-1 h-2 w-2" />
+                              Share
+                            </Button>
+                          </div>
+                        )}
+
+                        {carePdfError && (
+                          <p className="text-xs text-destructive">{carePdfError}</p>
+                        )}
+                      </div>
+
+                      {/* Share Options */}
+                      <Button
+                        onClick={() => page.available ? handleNativeShare(page) : null}
+                        onTouchEnd={(e) => e.stopPropagation()}
+                        size="sm"
+                        disabled={!page.available || sharingId === page.id}
+                        className="w-full text-xs bg-primary hover:bg-primary/90 text-white"
+                        style={{ touchAction: 'none' }}
+                      >
+                        {sharingId === page.id ? (
+                          <>
+                            <div className="w-3 h-3 animate-spin rounded-full border border-white border-t-transparent mr-1" />
+                            Sharing...
+                          </>
+                        ) : (
+                          <>
+                            <Smartphone className="w-3 h-3 mr-1 text-white" />
+                            Quick Share
+                          </>
+                        )}
+                      </Button>
+                      
+                      <div className="grid grid-cols-4 gap-1" data-touch-safe="true">
+                        <Button
+                          onClick={() => page.available ? handleCopyLink(page) : null}
+                          onTouchEnd={(e) => e.stopPropagation()}
+                          variant="outline"
+                          size="sm"
+                          disabled={!page.available || copyingId === page.id}
+                          style={{ touchAction: 'none' }}
+                          className="text-sm flex flex-col items-center py-3 px-2 h-16 min-h-16 bg-white border-primary text-primary hover:bg-primary/10 hover:text-primary"
+                        >
+                          {copyingId === page.id ? (
+                            <Check className="w-4 h-4 mb-1" />
+                          ) : (
+                            <Copy className="w-4 h-4 mb-1" />
+                          )}
+                          <span className="text-xs font-medium leading-tight">
+                            {copyingId === page.id ? 'Copied' : 'Copy'}
+                          </span>
+                        </Button>
+                        
+                        <Button
+                          onClick={() => page.available ? shareQRCode(`${baseUrl}${page.path}`, petData.name, page.title) : null}
+                          onTouchEnd={(e) => e.stopPropagation()}
+                          variant="outline"
+                          size="sm"
+                          disabled={!page.available}
+                          style={{ touchAction: 'none' }}
+                          className="text-sm flex flex-col items-center py-3 px-2 h-16 min-h-16 bg-white border-primary text-primary hover:bg-primary/10 hover:text-primary"
+                        >
+                          <QrCode className="w-4 h-4 mb-1" />
+                          <span className="text-xs font-medium leading-tight">QR</span>
+                        </Button>
+                        
+                        <Button
+                          onClick={() => page.available ? handleSMSShare(page) : null}
+                          onTouchEnd={(e) => e.stopPropagation()}
+                          variant="outline"
+                          size="sm"
+                          disabled={!page.available}
+                          style={{ touchAction: 'none' }}
+                          className="text-sm flex flex-col items-center py-3 px-2 h-16 min-h-16 bg-white border-primary text-primary hover:bg-primary/10 hover:text-primary"
+                        >
+                          <MessageCircle className="w-4 h-4 mb-1" />
+                          <span className="text-xs font-medium leading-tight">SMS</span>
+                        </Button>
+                        
+                        <Button
+                          onClick={() => page.available ? handleEmailShare(page) : null}
+                          onTouchEnd={(e) => e.stopPropagation()}
+                          variant="outline"
+                          size="sm"
+                          disabled={!page.available}
+                          style={{ touchAction: 'none' }}
+                          className="text-sm flex flex-col items-center py-3 px-2 h-16 min-h-16 bg-white border-primary text-primary hover:bg-primary/10 hover:text-primary"
+                        >
+                          <Mail className="w-4 h-4 mb-1" />
+                          <span className="text-xs font-medium leading-tight">Email</span>
+                        </Button>
+                      </div>
+                      
+                      <div className="grid grid-cols-3 gap-1" data-touch-safe="true">
+                        <Button
+                          onClick={() => page.available ? handleFacebookShare(page) : null}
+                          onTouchEnd={(e) => e.stopPropagation()}
+                          variant="outline"
+                          size="sm"
+                          disabled={!page.available}
+                          style={{ touchAction: 'none' }}
+                          className="text-sm flex flex-col items-center py-3 px-2 h-16 min-h-16 bg-white border-primary text-primary hover:bg-primary/10 hover:text-primary"
+                        >
+                          <Facebook className="w-4 h-4 mb-1" />
+                          <span className="text-xs font-medium leading-tight">Facebook</span>
+                        </Button>
+                        
+                        <Button
+                          onClick={() => page.available ? handleMessengerShare(page) : null}
+                          onTouchEnd={(e) => e.stopPropagation()}
+                          variant="outline"
+                          size="sm"
+                          disabled={!page.available}
+                          style={{ touchAction: 'none' }}
+                          className="text-sm flex flex-col items-center py-3 px-2 h-16 min-h-16 bg-white border-primary text-primary hover:bg-primary/10 hover:text-primary"
+                        >
+                          <MessageSquare className="w-4 h-4 mb-1" />
+                          <span className="text-xs font-medium leading-tight">Messenger</span>
+                        </Button>
+                        
+                        <Button
+                          onClick={() => {
+                            if (page.available) {
+                              handleCopyLink(page);
+                              toast({
+                                title: "Instagram Limitation",
+                                description: "Instagram doesn't support direct sharing. Link copied - paste it in Instagram Stories or posts.",
+                                duration: 4000,
+                              });
+                            }
+                          }}
+                          onTouchEnd={(e) => e.stopPropagation()}
+                          variant="outline"
+                          size="sm"
+                          disabled={!page.available}
+                          style={{ touchAction: 'none' }}
+                          className="text-sm flex flex-col items-center py-3 px-2 h-16 min-h-16 bg-white border-primary text-primary hover:bg-primary/10 hover:text-primary"
+                        >
+                          <Camera className="w-4 h-4 mb-1" />
+                          <span className="text-xs font-medium leading-tight">Instagram</span>
+                        </Button>
+                      </div>
+                    </>
+                  )}
+                </div>
+              ) : page.id === 'resume' ? (
+                /* Enhanced Resume Card with PDF Actions */
+                <div className="space-y-2" data-touch-safe="true">
+                  {showOptionsFor !== page.id ? (
+                    <Button
+                      onClick={() => page.available ? setShowOptionsFor(page.id) : null}
+                      onTouchEnd={(e) => e.stopPropagation()}
+                      size="sm"
+                      disabled={!page.available}
+                      className="w-full text-xs bg-primary hover:bg-primary/90 text-white"
+                      style={{ touchAction: 'none' }}
+                    >
+                      <Share2 className="w-3 h-3 mr-1 text-white" />
+                      {page.available ? 'Share' : 'Unavailable'}
+                    </Button>
+                  ) : (
+                    <>
+                      {/* PDF Actions Section */}
+                      <div className="space-y-2 border-t pt-2 mb-2">
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs font-medium">Resume PDF</span>
+                          {resumePdfBlob && (
+                            <Button
+                              onClick={() => setResumePdfBlob(null)}
+                              variant="ghost"
+                              size="sm"
+                              className="h-5 px-1 text-xs"
+                            >
+                              <X className="h-2 w-2 mr-1" />
+                              Clear
+                            </Button>
+                          )}
+                        </div>
+
+                        {!resumePdfBlob ? (
+                          <Button
+                            onClick={handleGenerateResumePdf}
+                            disabled={isGeneratingResumePdf || !page.available}
+                            className="w-full text-xs"
+                            variant="outline"
+                            size="sm"
+                          >
+                            {isGeneratingResumePdf ? (
+                              <>
+                                <Loader2 className="mr-1 h-3 w-3 animate-spin" />
+                                Generating...
+                              </>
+                            ) : (
+                              <>
+                                <FileDown className="mr-1 h-3 w-3" />
+                                Generate Resume PDF
+                              </>
+                            )}
+                          </Button>
+                        ) : (
+                          <div className="grid grid-cols-2 gap-1">
+                            <Button onClick={handleViewResumePdf} variant="outline" size="sm" className="text-xs py-2">
+                              <Eye className="mr-1 h-2 w-2" />
+                              View
+                            </Button>
+                            <Button onClick={handleDownloadResumePdf} variant="outline" size="sm" className="text-xs py-2">
+                              <FileDown className="mr-1 h-2 w-2" />
+                              Download
+                            </Button>
+                            <Button onClick={handlePrintResumePdf} variant="outline" size="sm" className="text-xs py-2">
+                              <Printer className="mr-1 h-2 w-2" />
+                              Print
+                            </Button>
+                            <Button onClick={handleShareResumePdf} variant="outline" size="sm" className="text-xs py-2">
+                              <Share2 className="mr-1 h-2 w-2" />
+                              Share
+                            </Button>
+                          </div>
+                        )}
+                        
+                        {resumePdfError && (
+                          <p className="text-xs text-destructive">{resumePdfError}</p>
+                        )}
+                      </div>
+
+                      {/* Quick Share Button */}
+                      <Button
+                        onClick={() => page.available ? handleNativeShare(page) : null}
+                        onTouchEnd={(e) => e.stopPropagation()}
+                        size="sm"
+                        disabled={!page.available || sharingId === page.id}
+                        className="w-full text-xs bg-primary hover:bg-primary/90 text-white"
+                        style={{ touchAction: 'none' }}
+                      >
+                        {sharingId === page.id ? (
+                          <>
+                            <div className="w-3 h-3 animate-spin rounded-full border border-white border-t-transparent mr-1" />
+                            Sharing...
+                          </>
+                        ) : (
+                          <>
+                            <Smartphone className="w-3 h-3 mr-1 text-white" />
+                            Quick Share
+                          </>
+                        )}
+                      </Button>
+
+                      {/* Sharing Options */}
+                      <div className="grid grid-cols-4 gap-1" data-touch-safe="true">
+                        <Button
+                          onClick={() => page.available ? handleCopyLink(page) : null}
+                          onTouchEnd={(e) => e.stopPropagation()}
+                          variant="outline"
+                          size="sm"
+                          disabled={!page.available || copyingId === page.id}
+                          style={{ touchAction: 'none' }}
+                          className="text-sm flex flex-col items-center py-3 px-2 h-16 min-h-16 bg-white border-primary text-primary hover:bg-primary/10 hover:text-primary"
+                        >
+                          {copyingId === page.id ? (
+                            <Check className="w-4 h-4 mb-1" />
+                          ) : (
+                            <Copy className="w-4 h-4 mb-1" />
+                          )}
+                          <span className="text-xs font-medium leading-tight">
+                            {copyingId === page.id ? 'Copied' : 'Copy'}
+                          </span>
+                        </Button>
+                        
+                        <Button
+                          onClick={() => page.available ? shareQRCode(`${baseUrl}${page.path}`, petData.name, page.title) : null}
+                          onTouchEnd={(e) => e.stopPropagation()}
+                          variant="outline"
+                          size="sm"
+                          disabled={!page.available}
+                          style={{ touchAction: 'none' }}
+                          className="text-sm flex flex-col items-center py-3 px-2 h-16 min-h-16 bg-white border-primary text-primary hover:bg-primary/10 hover:text-primary"
+                        >
+                          <QrCode className="w-4 h-4 mb-1" />
+                          <span className="text-xs font-medium leading-tight">QR</span>
+                        </Button>
+                        
+                        <Button
+                          onClick={() => page.available ? handleSMSShare(page) : null}
+                          onTouchEnd={(e) => e.stopPropagation()}
+                          variant="outline"
+                          size="sm"
+                          disabled={!page.available}
+                          style={{ touchAction: 'none' }}
+                          className="text-sm flex flex-col items-center py-3 px-2 h-16 min-h-16 bg-white border-primary text-primary hover:bg-primary/10 hover:text-primary"
+                        >
+                          <MessageCircle className="w-4 h-4 mb-1" />
+                          <span className="text-xs font-medium leading-tight">SMS</span>
+                        </Button>
+                        
+                        <Button
+                          onClick={() => page.available ? handleEmailShare(page) : null}
+                          onTouchEnd={(e) => e.stopPropagation()}
+                          variant="outline"
+                          size="sm"
+                          disabled={!page.available}
+                          style={{ touchAction: 'none' }}
+                          className="text-sm flex flex-col items-center py-3 px-2 h-16 min-h-16 bg-white border-primary text-primary hover:bg-primary/10 hover:text-primary"
+                        >
+                          <Mail className="w-4 h-4 mb-1" />
+                          <span className="text-xs font-medium leading-tight">Email</span>
+                        </Button>
+                      </div>
+
+                      <div className="grid grid-cols-3 gap-1" data-touch-safe="true">
+                        <Button
+                          onClick={() => page.available ? handleFacebookShare(page) : null}
+                          onTouchEnd={(e) => e.stopPropagation()}
+                          variant="outline"
+                          size="sm"
+                          disabled={!page.available}
+                          style={{ touchAction: 'none' }}
+                          className="text-sm flex flex-col items-center py-3 px-2 h-16 min-h-16 bg-white border-primary text-primary hover:bg-primary/10 hover:text-primary"
+                        >
+                          <Facebook className="w-4 h-4 mb-1" />
+                          <span className="text-xs font-medium leading-tight">Facebook</span>
+                        </Button>
+                        
+                        <Button
+                          onClick={() => page.available ? handleMessengerShare(page) : null}
+                          onTouchEnd={(e) => e.stopPropagation()}
+                          variant="outline"
+                          size="sm"
+                          disabled={!page.available}
+                          style={{ touchAction: 'none' }}
+                          className="text-sm flex flex-col items-center py-3 px-2 h-16 min-h-16 bg-white border-primary text-primary hover:bg-primary/10 hover:text-primary"
+                        >
+                          <MessageSquare className="w-4 h-4 mb-1" />
+                          <span className="text-xs font-medium leading-tight">Messenger</span>
+                        </Button>
+                        
+                        <Button
+                          onClick={() => {
+                            if (page.available) {
+                              handleCopyLink(page);
+                              toast({
+                                title: "Instagram Limitation",
+                                description: "Instagram doesn't support direct sharing. Link copied - paste it in Instagram Stories or posts.",
+                                duration: 4000,
+                              });
+                            }
+                          }}
+                          onTouchEnd={(e) => e.stopPropagation()}
+                          variant="outline"
+                          size="sm"
+                          disabled={!page.available}
+                          style={{ touchAction: 'none' }}
+                          className="text-sm flex flex-col items-center py-3 px-2 h-16 min-h-16 bg-white border-primary text-primary hover:bg-primary/10 hover:text-primary"
+                        >
+                          <Camera className="w-4 h-4 mb-1" />
+                          <span className="text-xs font-medium leading-tight">Instagram</span>
+                        </Button>
+                      </div>
+
+                      {/* Close Button */}
+                      <Button
+                        onClick={() => setShowOptionsFor(null)}
+                        variant="ghost"
+                        size="sm"
+                        className="w-full text-xs mt-2"
+                      >
+                        Close
+                      </Button>
+                    </>
+                  )}
+                </div>
+              ) : page.id === 'gallery' ? (
+                /* Enhanced Gallery Card with PDF Actions */
+                <div className="space-y-2" data-touch-safe="true">
+                  {showOptionsFor !== page.id ? (
+                    <Button
+                      onClick={() => page.available ? setShowOptionsFor(page.id) : null}
+                      onTouchEnd={(e) => e.stopPropagation()}
+                      size="sm"
+                      disabled={!page.available}
+                      className="w-full text-xs bg-primary hover:bg-primary/90 text-white"
+                      style={{ touchAction: 'none' }}
+                    >
+                      <Share2 className="w-3 h-3 mr-1 text-white" />
+                      {page.available ? 'Share' : 'Unavailable'}
+                    </Button>
+                  ) : (
+                    <>
+                      {/* PDF Actions Section */}
+                      <div className="space-y-2 border-t pt-2 mb-2">
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs font-medium">Gallery PDF</span>
+                          {galleryPdfBlob && (
+                            <Button
+                              onClick={() => setGalleryPdfBlob(null)}
+                              variant="ghost"
+                              size="sm"
+                              className="h-5 px-1 text-xs"
+                            >
+                              <X className="h-2 w-2 mr-1" />
+                              Clear
+                            </Button>
+                          )}
+                        </div>
+
+                        {!galleryPdfBlob ? (
+                          <Button
+                            onClick={handleGenerateGalleryPDF}
+                            disabled={isGeneratingGalleryPdf || !page.available}
+                            className="w-full text-xs"
+                            variant="outline"
+                            size="sm"
+                          >
+                            {isGeneratingGalleryPdf ? (
+                              <>
+                                <Loader2 className="mr-1 h-3 w-3 animate-spin" />
+                                Generating...
+                              </>
+                            ) : (
+                              <>
+                                <FileDown className="mr-1 h-3 w-3" />
+                                Generate Gallery PDF
+                              </>
+                            )}
+                          </Button>
+                        ) : (
+                          <div className="grid grid-cols-2 gap-1">
+                            <Button onClick={() => viewPDFBlob(galleryPdfBlob, `${petData?.name}_Gallery.pdf`)} variant="outline" size="sm" className="text-xs py-2">
+                              <Eye className="mr-1 h-2 w-2" />
+                              View
+                            </Button>
+                            <Button onClick={() => downloadPDFBlob(galleryPdfBlob, `${petData?.name}_Gallery.pdf`)} variant="outline" size="sm" className="text-xs py-2">
+                              <FileDown className="mr-1 h-2 w-2" />
+                              Download
+                            </Button>
+                            <Button onClick={() => viewPDFBlob(galleryPdfBlob, `${petData?.name}_Gallery.pdf`)} variant="outline" size="sm" className="text-xs py-2">
+                              <Printer className="mr-1 h-2 w-2" />
+                              Print
+                            </Button>
+                            <Button onClick={() => galleryPdfBlob && sharePDFBlob(galleryPdfBlob, `${petData?.name}_Gallery.pdf`, petData?.name, 'profile')} variant="outline" size="sm" className="text-xs py-2">
+                              <Share2 className="mr-1 h-2 w-2" />
+                              Share
+                            </Button>
+                          </div>
+                        )}
+
+                        {galleryPdfError && (
+                          <p className="text-xs text-destructive">{galleryPdfError}</p>
+                        )}
+                      </div>
+
+                      {/* Quick Share Button */}
+                      <Button
+                        onClick={() => page.available ? handleNativeShare(page) : null}
+                        onTouchEnd={(e) => e.stopPropagation()}
+                        size="sm"
+                        disabled={!page.available || sharingId === page.id}
+                        className="w-full text-xs bg-primary hover:bg-primary/90 text-white"
+                        style={{ touchAction: 'none' }}
+                      >
+                        {sharingId === page.id ? (
+                          <>
+                            <div className="w-3 h-3 animate-spin rounded-full border border-white border-t-transparent mr-1" />
+                            Sharing...
+                          </>
+                        ) : (
+                          <>
+                            <Smartphone className="w-3 h-3 mr-1 text-white" />
+                            Quick Share
+                          </>
+                        )}
+                      </Button>
+
+                      {/* Sharing Options */}
+                      <div className="grid grid-cols-4 gap-1" data-touch-safe="true">
+                        <Button
+                          onClick={() => page.available ? handleCopyLink(page) : null}
+                          onTouchEnd={(e) => e.stopPropagation()}
+                          variant="outline"
+                          size="sm"
+                          disabled={!page.available || copyingId === page.id}
+                          style={{ touchAction: 'none' }}
+                          className="text-sm flex flex-col items-center py-3 px-2 h-16 min-h-16 bg-white border-primary text-primary hover:bg-primary/10 hover:text-primary"
+                        >
+                          {copyingId === page.id ? (
+                            <Check className="w-4 h-4 mb-1" />
+                          ) : (
+                            <Copy className="w-4 h-4 mb-1" />
+                          )}
+                          <span className="text-xs font-medium leading-tight">
+                            {copyingId === page.id ? 'Copied' : 'Copy'}
+                          </span>
+                        </Button>
+                        
+                        <Button
+                          onClick={() => page.available ? shareQRCode(`${baseUrl}${page.path}`, petData.name, page.title) : null}
+                          onTouchEnd={(e) => e.stopPropagation()}
+                          variant="outline"
+                          size="sm"
+                          disabled={!page.available}
+                          style={{ touchAction: 'none' }}
+                          className="text-sm flex flex-col items-center py-3 px-2 h-16 min-h-16 bg-white border-primary text-primary hover:bg-primary/10 hover:text-primary"
+                        >
+                          <QrCode className="w-4 h-4 mb-1" />
+                          <span className="text-xs font-medium leading-tight">QR</span>
+                        </Button>
+                        
+                        <Button
+                          onClick={() => page.available ? handleSMSShare(page) : null}
+                          onTouchEnd={(e) => e.stopPropagation()}
+                          variant="outline"
+                          size="sm"
+                          disabled={!page.available}
+                          style={{ touchAction: 'none' }}
+                          className="text-sm flex flex-col items-center py-3 px-2 h-16 min-h-16 bg-white border-primary text-primary hover:bg-primary/10 hover:text-primary"
+                        >
+                          <MessageCircle className="w-4 h-4 mb-1" />
+                          <span className="text-xs font-medium leading-tight">SMS</span>
+                        </Button>
+                        
+                        <Button
+                          onClick={() => page.available ? handleEmailShare(page) : null}
+                          onTouchEnd={(e) => e.stopPropagation()}
+                          variant="outline"
+                          size="sm"
+                          disabled={!page.available}
+                          style={{ touchAction: 'none' }}
+                          className="text-sm flex flex-col items-center py-3 px-2 h-16 min-h-16 bg-white border-primary text-primary hover:bg-primary/10 hover:text-primary"
+                        >
+                          <Mail className="w-4 h-4 mb-1" />
+                          <span className="text-xs font-medium leading-tight">Email</span>
+                        </Button>
+                      </div>
+                      
+                      <div className="grid grid-cols-3 gap-1" data-touch-safe="true">
+                        <Button
+                          onClick={() => page.available ? handleFacebookShare(page) : null}
+                          onTouchEnd={(e) => e.stopPropagation()}
+                          variant="outline"
+                          size="sm"
+                          disabled={!page.available}
+                          style={{ touchAction: 'none' }}
+                          className="text-sm flex flex-col items-center py-3 px-2 h-16 min-h-16 bg-white border-primary text-primary hover:bg-primary/10 hover:text-primary"
+                        >
+                          <Facebook className="w-4 h-4 mb-1" />
+                          <span className="text-xs font-medium leading-tight">Facebook</span>
+                        </Button>
+                        
+                        <Button
+                          onClick={() => page.available ? handleMessengerShare(page) : null}
+                          onTouchEnd={(e) => e.stopPropagation()}
+                          variant="outline"
+                          size="sm"
+                          disabled={!page.available}
+                          style={{ touchAction: 'none' }}
+                          className="text-sm flex flex-col items-center py-3 px-2 h-16 min-h-16 bg-white border-primary text-primary hover:bg-primary/10 hover:text-primary"
+                        >
+                          <MessageSquare className="w-4 h-4 mb-1" />
+                          <span className="text-xs font-medium leading-tight">Messenger</span>
+                        </Button>
+                        
+                        <Button
+                          onClick={() => {
+                            if (page.available) {
+                              handleCopyLink(page);
+                              toast({
+                                title: "Instagram Limitation",
+                                description: "Instagram doesn't support direct sharing. Link copied - paste it in Instagram Stories or posts.",
+                                duration: 4000,
+                              });
+                            }
+                          }}
+                          onTouchEnd={(e) => e.stopPropagation()}
+                          variant="outline"
+                          size="sm"
+                          disabled={!page.available}
+                          style={{ touchAction: 'none' }}
+                          className="text-sm flex flex-col items-center py-3 px-2 h-16 min-h-16 bg-white border-primary text-primary hover:bg-primary/10 hover:text-primary"
+                        >
+                          <Camera className="w-4 h-4 mb-1" />
+                          <span className="text-xs font-medium leading-tight">Instagram</span>
+                        </Button>
+                      </div>
+
+                      {/* Close Button */}
+                      <Button
+                        onClick={() => setShowOptionsFor(null)}
+                        variant="ghost"
+                        size="sm"
+                        className="w-full text-xs mt-2"
+                      >
+                        Close
+                      </Button>
+                    </>
+                  )}
+                </div>
+              ) : page.id === 'profile' ? (
+                /* Enhanced Profile Card - Matches Care Structure */
+                <div className="space-y-2" data-touch-safe="true">
+                  {showOptionsFor !== page.id ? (
+                    <Button
+                      onClick={() => page.available ? setShowOptionsFor(page.id) : null}
+                      onTouchEnd={(e) => e.stopPropagation()}
+                      size="sm"
+                      disabled={!page.available}
+                      className="w-full text-xs bg-primary hover:bg-primary/90 text-white"
+                      style={{ touchAction: 'none' }}
+                    >
+                      <Share2 className="w-3 h-3 mr-1 text-white" />
+                      {page.available ? 'Share' : 'Unavailable'}
+                    </Button>
+                  ) : (
+                    <>
+                      {/* PDF Actions */}
+                      <div className="space-y-2">
+                        <Button
+                          onClick={handleGenerateProfilePDF}
+                          disabled={isGeneratingProfilePdf || !page.available}
+                          className="w-full text-xs"
+                          variant="outline"
+                          size="sm"
+                        >
+                          {isGeneratingProfilePdf ? (
+                            <>
+                              <Loader2 className="mr-1 h-3 w-3 animate-spin" />
+                              Generating...
+                            </>
+                          ) : (
+                            <>
+                              <FileDown className="mr-1 h-3 w-3" />
+                              Generate Profile PDF
+                            </>
+                          )}
+                        </Button>
+
+                        {profilePdfBlob && (
+                          <div className="grid grid-cols-3 gap-1">
+                            <Button
+                              onClick={() => viewPDFBlob(profilePdfBlob, `${petData?.name || 'pet'}-profile.pdf`)}
+                              variant="outline"
+                              size="sm"
+                              className="text-xs"
+                            >
+                              <Eye className="mr-1 h-3 w-3" />
+                              View
+                            </Button>
+                            <Button
+                              onClick={() => downloadPDFBlob(profilePdfBlob, `${petData?.name || 'pet'}-profile.pdf`)}
+                              variant="outline"
+                              size="sm"
+                              className="text-xs"
+                            >
+                              <Download className="mr-1 h-3 w-3" />
+                              Download
+                            </Button>
+                            <Button
+                              onClick={() => {
+                                const url = URL.createObjectURL(profilePdfBlob);
+                                const printWindow = window.open(url, '_blank');
+                                if (printWindow) {
+                                  printWindow.onload = () => {
+                                    printWindow.print();
+                                    URL.revokeObjectURL(url);
+                                  };
+                                }
+                              }}
+                              variant="outline"
+                              size="sm"
+                              className="text-xs"
+                            >
+                              <Printer className="mr-1 h-3 w-3" />
+                              Print
+                            </Button>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Quick Share Button */}
+                      <Button
+                        onClick={() => page.available ? handleNativeShare(page) : null}
+                        onTouchEnd={(e) => e.stopPropagation()}
+                        size="sm"
+                        disabled={!page.available || sharingId === page.id}
+                        className="w-full text-xs bg-primary hover:bg-primary/90 text-white"
+                        style={{ touchAction: 'none' }}
+                      >
+                        {sharingId === page.id ? (
+                          <>
+                            <div className="w-3 h-3 animate-spin rounded-full border border-white border-t-transparent mr-1" />
+                            Sharing...
+                          </>
+                        ) : (
+                          <>
+                            <Smartphone className="w-3 h-3 mr-1 text-white" />
+                            Quick Share
+                          </>
+                        )}
+                      </Button>
+
+                      {/* Sharing Options - Row 1 */}
+                      <div className="grid grid-cols-4 gap-1" data-touch-safe="true">
+                        <Button
+                          onClick={() => page.available ? handleCopyLink(page) : null}
+                          onTouchEnd={(e) => e.stopPropagation()}
+                          variant="outline"
+                          size="sm"
+                          disabled={!page.available || copyingId === page.id}
+                          style={{ touchAction: 'none' }}
+                          className="text-sm flex flex-col items-center py-3 px-2 h-16 min-h-16 bg-white border-primary text-primary hover:bg-primary/10 hover:text-primary"
+                        >
+                          {copyingId === page.id ? (
+                            <Check className="w-4 h-4 mb-1" />
+                          ) : (
+                            <Copy className="w-4 h-4 mb-1" />
+                          )}
+                          <span className="text-xs font-medium leading-tight">
+                            {copyingId === page.id ? 'Copied' : 'Copy'}
+                          </span>
+                        </Button>
+                        
+                        <Button
+                          onClick={() => page.available ? shareQRCode(`${baseUrl}${page.path}`, petData.name, page.title) : null}
+                          onTouchEnd={(e) => e.stopPropagation()}
+                          variant="outline"
+                          size="sm"
+                          disabled={!page.available}
+                          style={{ touchAction: 'none' }}
+                          className="text-sm flex flex-col items-center py-3 px-2 h-16 min-h-16 bg-white border-primary text-primary hover:bg-primary/10 hover:text-primary"
+                        >
+                          <QrCode className="w-4 h-4 mb-1" />
+                          <span className="text-xs font-medium leading-tight">QR</span>
+                        </Button>
+                        
+                        <Button
+                          onClick={() => page.available ? handleSMSShare(page) : null}
+                          onTouchEnd={(e) => e.stopPropagation()}
+                          variant="outline"
+                          size="sm"
+                          disabled={!page.available}
+                          style={{ touchAction: 'none' }}
+                          className="text-sm flex flex-col items-center py-3 px-2 h-16 min-h-16 bg-white border-primary text-primary hover:bg-primary/10 hover:text-primary"
+                        >
+                          <MessageCircle className="w-4 h-4 mb-1" />
+                          <span className="text-xs font-medium leading-tight">SMS</span>
+                        </Button>
+                        
+                        <Button
+                          onClick={() => page.available ? handleEmailShare(page) : null}
+                          onTouchEnd={(e) => e.stopPropagation()}
+                          variant="outline"
+                          size="sm"
+                          disabled={!page.available}
+                          style={{ touchAction: 'none' }}
+                          className="text-sm flex flex-col items-center py-3 px-2 h-16 min-h-16 bg-white border-primary text-primary hover:bg-primary/10 hover:text-primary"
+                        >
+                          <Mail className="w-4 h-4 mb-1" />
+                          <span className="text-xs font-medium leading-tight">Email</span>
+                        </Button>
+                      </div>
+                      
+                      {/* Sharing Options - Row 2 */}
+                      <div className="grid grid-cols-3 gap-1" data-touch-safe="true">
+                        <Button
+                          onClick={() => page.available ? handleFacebookShare(page) : null}
+                          onTouchEnd={(e) => e.stopPropagation()}
+                          variant="outline"
+                          size="sm"
+                          disabled={!page.available}
+                          style={{ touchAction: 'none' }}
+                          className="text-sm flex flex-col items-center py-3 px-2 h-16 min-h-16 bg-white border-primary text-primary hover:bg-primary/10 hover:text-primary"
+                        >
+                          <Facebook className="w-4 h-4 mb-1" />
+                          <span className="text-xs font-medium leading-tight">Facebook</span>
+                        </Button>
+                        
+                        <Button
+                          onClick={() => page.available ? handleMessengerShare(page) : null}
+                          onTouchEnd={(e) => e.stopPropagation()}
+                          variant="outline"
+                          size="sm"
+                          disabled={!page.available}
+                          style={{ touchAction: 'none' }}
+                          className="text-sm flex flex-col items-center py-3 px-2 h-16 min-h-16 bg-white border-primary text-primary hover:bg-primary/10 hover:text-primary"
+                        >
+                          <MessageSquare className="w-4 h-4 mb-1" />
+                          <span className="text-xs font-medium leading-tight">Messenger</span>
+                        </Button>
+                        
+                        <Button
+                          onClick={() => {
+                            if (page.available) {
+                              handleCopyLink(page);
+                              toast({
+                                title: "Instagram Limitation",
+                                description: "Instagram doesn't support direct sharing. Link copied - paste it in Instagram Stories or posts.",
+                                duration: 4000,
+                              });
+                            }
+                          }}
+                          onTouchEnd={(e) => e.stopPropagation()}
+                          variant="outline"
+                          size="sm"
+                          disabled={!page.available}
+                          style={{ touchAction: 'none' }}
+                          className="text-sm flex flex-col items-center py-3 px-2 h-16 min-h-16 bg-white border-primary text-primary hover:bg-primary/10 hover:text-primary"
+                        >
+                          <Camera className="w-4 h-4 mb-1" />
+                          <span className="text-xs font-medium leading-tight">Instagram</span>
+                        </Button>
+                      </div>
+
+                      {/* Close Button */}
+                      <Button
+                        onClick={() => setShowOptionsFor(null)}
+                        variant="ghost"
+                        size="sm"
+                        className="w-full text-xs mt-2"
+                      >
+                        Close
+                      </Button>
+                    </>
+                  )}
+                </div>
+              ) : (
+                /* Standard Card Layout for Other Pages */
+                <div className="space-y-2" data-touch-safe="true">
+                  {showOptionsFor !== page.id ? (
+                    /* Show Options Button */
+                    <Button
+                      onClick={() => page.available ? setShowOptionsFor(page.id) : null}
+                      onTouchEnd={(e) => e.stopPropagation()}
+                      size="sm"
+                      disabled={!page.available}
+                      className={`w-full text-xs ${
+                        page.variant === 'missing' 
+                          ? page.available
+                            ? 'bg-red-600 hover:bg-red-700 text-white' 
+                            : 'bg-gray-400 text-gray-600 cursor-not-allowed'
+                          : 'bg-primary hover:bg-primary/90 text-white'
+                      }`}
+                      style={{ touchAction: 'none' }}
+                    >
+                      <Share2 className="w-3 h-3 mr-1 text-white" />
+                      {page.available ? 'Share' : 'Unavailable'}
+                    </Button>
+                  ) : (
+                    <>
+                      {/* Generate PDF (Lost Pet only) */}
+                      {page.id === 'missing' && (
+                        <>
+                          <Button
+                            onClick={handleGenerateLostPetPDF}
+                            disabled={isGeneratingLostPetPdf || !page.available}
+                            className="w-full text-xs"
+                            variant="outline"
+                            size="sm"
+                          >
+                            {isGeneratingLostPetPdf ? (
+                              <>
+                                <Loader2 className="mr-1 h-3 w-3 animate-spin" />
+                                Generating...
+                              </>
+                            ) : (
+                              <>
+                                <FileDown className="mr-1 h-3 w-3" />
+                                Generate Lost Pet PDF
+                              </>
+                            )}
+                          </Button>
+
+                          {/* View/Download/Print show only when PDF is ready */}
+                          {lostPetPdfBlob && (
+                            <div className="grid grid-cols-3 gap-1">
+                              <Button
+                                onClick={() => viewPDFBlob(lostPetPdfBlob, `${petData?.name || 'pet'}-lost-flyer.pdf`)}
+                                variant="outline"
+                                size="sm"
+                                className="text-xs"
+                              >
+                                <Eye className="mr-1 h-3 w-3" />
+                                View
+                              </Button>
+                              <Button
+                                onClick={() => downloadPDFBlob(lostPetPdfBlob, `${petData?.name || 'pet'}-lost-flyer.pdf`)}
+                                variant="outline"
+                                size="sm"
+                                className="text-xs"
+                              >
+                                <Download className="mr-1 h-3 w-3" />
+                                Download
+                              </Button>
+                              <Button
+                                onClick={() => {
+                                  const url = URL.createObjectURL(lostPetPdfBlob);
+                                  const printWindow = window.open(url, '_blank');
+                                  if (printWindow) {
+                                    printWindow.onload = () => {
+                                      printWindow.print();
+                                      URL.revokeObjectURL(url);
+                                    };
+                                  }
+                                }}
+                                variant="outline"
+                                size="sm"
+                                className="text-xs"
+                              >
+                                <Printer className="mr-1 h-3 w-3" />
+                                Print
+                              </Button>
+                            </div>
+                          )}
+                        </>
+                      )}
+
+                      {/* Quick Share Button */}
+                      <Button
+                        onClick={() => page.available ? handleNativeShare(page) : null}
+                        onTouchEnd={(e) => e.stopPropagation()}
+                        size="sm"
+                        disabled={!page.available || sharingId === page.id}
+                        className={`w-full text-xs ${
+                          page.variant === 'missing' 
+                            ? page.available
+                              ? 'bg-red-600 hover:bg-red-700 text-white' 
+                              : 'bg-gray-400 text-gray-600 cursor-not-allowed'
+                            : 'bg-primary hover:bg-primary/90 text-white'
+                        }`}
+                        style={{ touchAction: 'none' }}
+                      >
+                        {sharingId === page.id ? (
+                          <>
+                            <div className="w-3 h-3 animate-spin rounded-full border border-white border-t-transparent mr-1" />
+                            Sharing...
+                          </>
+                        ) : (
+                          <>
+                            <Smartphone className="w-3 h-3 mr-1 text-white" />
+                            Quick Share
+                          </>
+                        )}
+                      </Button>
+                      
+                      {/* Secondary Options */}
+                      <div className="grid grid-cols-4 gap-1" data-touch-safe="true">
+                        <Button
+                          onClick={() => page.available ? handleCopyLink(page) : null}
+                          onTouchEnd={(e) => e.stopPropagation()}
+                          variant="outline"
+                          size="sm"
+                          disabled={!page.available || copyingId === page.id}
+                          style={{ touchAction: 'none' }}
+                          className={`text-sm flex flex-col items-center py-3 px-2 h-16 min-h-16 ${
+                            page.variant === 'missing' 
+                              ? page.available
+                                ? 'border-red-600 text-red-700 hover:bg-red-50' 
+                                : 'border-gray-300 text-gray-400 cursor-not-allowed'
+                              : 'bg-white border-primary text-primary hover:bg-primary/10 hover:text-primary'
+                          }`}
+                        >
+                          {copyingId === page.id ? (
+                            <Check className="w-4 h-4 mb-1" />
+                          ) : (
+                            <Copy className="w-4 h-4 mb-1" />
+                          )}
+                          <span className="text-xs font-medium leading-tight">
+                            {copyingId === page.id ? 'Copied' : 'Copy'}
+                          </span>
+                        </Button>
+                        
+                        <Button
+                          onClick={() => page.available ? shareQRCode(`${baseUrl}${page.path}`, petData.name, page.title) : null}
+                          onTouchEnd={(e) => e.stopPropagation()}
+                          variant="outline"
+                          size="sm"
+                          disabled={!page.available}
+                          style={{ touchAction: 'none' }}
+                          className={`text-sm flex flex-col items-center py-3 px-2 h-16 min-h-16 ${
+                            page.variant === 'missing' 
+                              ? page.available
+                                ? 'border-red-600 text-red-700 hover:bg-red-50' 
+                                : 'border-gray-300 text-gray-400 cursor-not-allowed'
+                              : 'bg-white border-primary text-primary hover:bg-primary/10 hover:text-primary'
+                          }`}
+                        >
+                          <QrCode className="w-4 h-4 mb-1" />
+                          <span className="text-xs font-medium leading-tight">QR</span>
+                        </Button>
+                        
+                        <Button
+                          onClick={() => page.available ? handleSMSShare(page) : null}
+                          onTouchEnd={(e) => e.stopPropagation()}
+                          variant="outline"
+                          size="sm"
+                          disabled={!page.available}
+                          style={{ touchAction: 'none' }}
+                          className={`text-sm flex flex-col items-center py-3 px-2 h-16 min-h-16 ${
+                            page.variant === 'missing' 
+                              ? page.available
+                                ? 'border-red-600 text-red-700 hover:bg-red-50' 
+                                : 'border-gray-300 text-gray-400 cursor-not-allowed'
+                              : 'bg-white border-primary text-primary hover:bg-primary/10 hover:text-primary'
+                          }`}
+                        >
+                          <MessageCircle className="w-4 h-4 mb-1" />
+                          <span className="text-xs font-medium leading-tight">SMS</span>
+                        </Button>
+                        
+                        <Button
+                          onClick={() => page.available ? handleEmailShare(page) : null}
+                          onTouchEnd={(e) => e.stopPropagation()}
+                          variant="outline"
+                          size="sm"
+                          disabled={!page.available}
+                          style={{ touchAction: 'none' }}
+                          className={`text-sm flex flex-col items-center py-3 px-2 h-16 min-h-16 ${
+                            page.variant === 'missing' 
+                              ? page.available
+                                ? 'border-red-600 text-red-700 hover:bg-red-50' 
+                                : 'border-gray-300 text-gray-400 cursor-not-allowed'
+                              : 'bg-white border-primary text-primary hover:bg-primary/10 hover:text-primary'
+                          }`}
+                        >
+                          <Mail className="w-4 h-4 mb-1" />
+                          <span className="text-xs font-medium leading-tight">Email</span>
+                        </Button>
+                      </div>
+                      
+                      <div className="grid grid-cols-3 gap-1" data-touch-safe="true">
+                        <Button
+                          onClick={() => page.available ? handleFacebookShare(page) : null}
+                          onTouchEnd={(e) => e.stopPropagation()}
+                          variant="outline"
+                          size="sm"
+                          disabled={!page.available}
+                          style={{ touchAction: 'none' }}
+                          className={`text-sm flex flex-col items-center py-3 px-2 h-16 min-h-16 ${
+                            page.variant === 'missing' 
+                              ? page.available
+                                ? 'border-red-600 text-red-700 hover:bg-red-50' 
+                                : 'border-gray-300 text-gray-400 cursor-not-allowed'
+                              : 'bg-white border-primary text-primary hover:bg-primary/10 hover:text-primary'
+                          }`}
+                        >
+                          <Facebook className="w-4 h-4 mb-1" />
+                          <span className="text-xs font-medium leading-tight">Facebook</span>
+                        </Button>
+                        
+                        <Button
+                          onClick={() => page.available ? handleMessengerShare(page) : null}
+                          onTouchEnd={(e) => e.stopPropagation()}
+                          variant="outline"
+                          size="sm"
+                          disabled={!page.available}
+                          style={{ touchAction: 'none' }}
+                          className={`text-sm flex flex-col items-center py-3 px-2 h-16 min-h-16 ${
+                            page.variant === 'missing' 
+                              ? page.available
+                                ? 'border-red-600 text-red-700 hover:bg-red-50' 
+                                : 'border-gray-300 text-gray-400 cursor-not-allowed'
+                              : 'bg-white border-primary text-primary hover:bg-primary/10 hover:text-primary'
+                          }`}
+                        >
+                          <MessageSquare className="w-4 h-4 mb-1" />
+                          <span className="text-xs font-medium leading-tight">Messenger</span>
+                        </Button>
+                        
+                        <Button
+                          onClick={() => {
+                            if (page.available) {
+                              handleCopyLink(page);
+                              toast({
+                                title: "Instagram Limitation",
+                                description: "Instagram doesn't support direct sharing. Link copied - paste it in Instagram Stories or posts.",
+                                duration: 4000,
+                              });
+                            }
+                          }}
+                          onTouchEnd={(e) => e.stopPropagation()}
+                          variant="outline"
+                          size="sm"
+                          disabled={!page.available}
+                          style={{ touchAction: 'none' }}
+                          className={`text-sm flex flex-col items-center py-3 px-2 h-16 min-h-16 ${
+                            page.variant === 'missing' 
+                              ? page.available
+                                ? 'border-red-600 text-red-700 hover:bg-red-50' 
+                                : 'border-gray-300 text-gray-400 cursor-not-allowed'
+                              : 'bg-white border-primary text-primary hover:bg-primary/10 hover:text-primary'
+                          }`}
+                        >
+                          <Camera className="w-4 h-4 mb-1" />
+                          <span className="text-xs font-medium leading-tight">Instagram</span>
+                        </Button>
+                      </div>
+                    </>
+                  )}
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+        
+        <div className="mt-4 p-3 bg-blue-50 rounded-lg">
+          <p className="text-xs text-blue-700">
+            💡 <strong>Tip:</strong> Add content to Resume, Care Instructions, Documents, and more for complete profiles! Navigate to each specific page to edit and update information.
+          </p>
+        </div>
+      </CardContent>
+
+{/* Email Dialog/Drawer */}
+      {isMobile ? (
+        <Drawer open={showEmailForm} onOpenChange={setShowEmailForm}>
+          <DrawerContent className="drawer-content px-4 pb-4">
+            <DrawerHeader>
+              <DrawerTitle>Share via Email</DrawerTitle>
+            </DrawerHeader>
+            <div 
+              className="overflow-y-auto overscroll-contain with-keyboard-padding"
+              style={{ 
+                maxHeight: 'calc(70vh - var(--kb-offset, 0px))',
+                WebkitOverflowScrolling: 'touch',
+                overscrollBehavior: 'contain',
+                paddingBottom: 'env(safe-area-inset-bottom)',
+              }}
+            >
+              <div>
+                <Label htmlFor="recipientEmail">Recipient Email *</Label>
+                <Input
+                  id="recipientEmail"
+                  type="email"
+                  placeholder="Enter email address"
+                  value={emailData.recipientEmail}
+                  onChange={(e) => setEmailData(prev => ({ ...prev, recipientEmail: e.target.value }))}
+                  className="mt-1"
+                  autoFocus
+                  onFocus={(e) => {
+                    const el = e.currentTarget as HTMLElement;
+                    const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+                    const delay = isIOS ? 700 : 0;
+                    setTimeout(() => {
+                      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }, delay);
+                  }}
+                />
+              </div>
+              <div className="mt-4">
+                <Label htmlFor="recipientName">Recipient Name (optional)</Label>
+                <Input
+                  id="recipientName"
+                  placeholder="Enter recipient's name"
+                  value={emailData.recipientName}
+                  onChange={(e) => setEmailData(prev => ({ ...prev, recipientName: e.target.value }))}
+                  className="mt-1"
+                  onFocus={(e) => {
+                    const el = e.currentTarget as HTMLElement;
+                    const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+                    const delay = isIOS ? 700 : 0;
+                    setTimeout(() => {
+                      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }, delay);
+                  }}
+                />
+              </div>
+              <div className="mt-4">
+                <Label htmlFor="customMessage">Personal Message (optional)</Label>
+                <Textarea
+                  id="customMessage"
+                  placeholder="Add a personal message..."
+                  value={emailData.customMessage}
+                  onChange={(e) => setEmailData(prev => ({ ...prev, customMessage: e.target.value }))}
+                  rows={3}
+                  className="mt-1"
+                  onFocus={(e) => {
+                    const el = e.currentTarget as HTMLElement;
+                    const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+                    const delay = isIOS ? 700 : 0;
+                    setTimeout(() => {
+                      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }, delay);
+                  }}
+                />
+              </div>
+              <div className="mt-4 flex gap-2">
+                <Button
+                  onClick={handleSendEmail}
+                  disabled={emailLoading}
+                  className="flex-1 bg-primary hover:bg-primary/90 text-white"
+                >
+                  {emailLoading ? 'Sending...' : 'Send Email'}
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() => setShowEmailForm(false)}
+                  disabled={emailLoading}
+                  className="text-muted-foreground border-muted-foreground hover:bg-muted/10"
+                >
+                  Cancel
+                </Button>
+              </div>
+            </div>
+          </DrawerContent>
+        </Drawer>
+      ) : (
+        <Dialog open={showEmailForm} onOpenChange={setShowEmailForm}>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle>Share via Email</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4">
+              <div>
+                <Label htmlFor="recipientEmail">Recipient Email *</Label>
+                <Input
+                  id="recipientEmail"
+                  type="email"
+                  placeholder="Enter email address"
+                  value={emailData.recipientEmail}
+                  onChange={(e) => setEmailData(prev => ({ ...prev, recipientEmail: e.target.value }))}
+                />
+              </div>
+              <div>
+                <Label htmlFor="recipientName">Recipient Name (optional)</Label>
+                <Input
+                  id="recipientName"
+                  placeholder="Enter recipient's name"
+                  value={emailData.recipientName}
+                  onChange={(e) => setEmailData(prev => ({ ...prev, recipientName: e.target.value }))}
+                />
+              </div>
+              <div>
+                <Label htmlFor="customMessage">Personal Message (optional)</Label>
+                <Textarea
+                  id="customMessage"
+                  placeholder="Add a personal message..."
+                  value={emailData.customMessage}
+                  onChange={(e) => setEmailData(prev => ({ ...prev, customMessage: e.target.value }))}
+                  rows={3}
+                />
+              </div>
+              <div className="flex gap-2">
+                <Button
+                  onClick={handleSendEmail}
+                  disabled={emailLoading}
+                  className="flex-1 bg-primary hover:bg-primary/90 text-white"
+                >
+                  {emailLoading ? 'Sending...' : 'Send Email'}
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() => setShowEmailForm(false)}
+                  disabled={emailLoading}
+                  className="text-muted-foreground border-muted-foreground hover:bg-muted/10"
+                >
+                  Cancel
+                </Button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
+      )}
+
+      {/* Emergency PDF Email Dialog */}
+      <Dialog open={showEmergencyPdfDialog} onOpenChange={setShowEmergencyPdfDialog}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Mail className="w-5 h-5" />
+              Email Emergency PDF
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label htmlFor="emergency-email-to">Recipient Email *</Label>
+              <Input
+                id="emergency-email-to"
+                type="email"
+                placeholder="friend@example.com"
+                value={emergencyPdfEmailData.to}
+                onChange={(e) => setEmergencyPdfEmailData(prev => ({ ...prev, to: e.target.value }))}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="emergency-email-name">Recipient Name (Optional)</Label>
+              <Input
+                id="emergency-email-name"
+                placeholder="Friend's name"
+                value={emergencyPdfEmailData.name}
+                onChange={(e) => setEmergencyPdfEmailData(prev => ({ ...prev, name: e.target.value }))}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="emergency-email-message">Custom Message (Optional)</Label>
+              <Textarea
+                id="emergency-email-message"
+                placeholder="Add a personal message..."
+                value={emergencyPdfEmailData.message}
+                onChange={(e) => setEmergencyPdfEmailData(prev => ({ ...prev, message: e.target.value }))}
+                rows={3}
+              />
+            </div>
+            <div className="flex gap-2 pt-2">
+              <Button
+                onClick={handleEmailEmergencyPdf}
+                disabled={emailLoading || !emergencyPdfEmailData.to.trim()}
+                className="flex-1"
+              >
+                {emailLoading ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    Sending...
+                  </>
+                ) : (
+                  <>
+                    <Mail className="w-4 h-4 mr-2" />
+                    Send Email
+                  </>
+                )}
+              </Button>
+              <Button
+                onClick={() => {
+                  setShowEmergencyPdfDialog(false);
+                  setEmergencyPdfEmailData({ to: '', name: '', message: '' });
+                }}
+                variant="outline"
+              >
+                Cancel
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Resume PDF Email Dialog */}
+      {isMobile ? (
+        <Drawer open={showResumePdfDialog} onOpenChange={setShowResumePdfDialog}>
+          <DrawerContent>
+            <DrawerHeader>
+              <DrawerTitle>Email Resume PDF</DrawerTitle>
+            </DrawerHeader>
+            <div className="p-4 space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="resume-email">Recipient Email *</Label>
+                <Input
+                  id="resume-email"
+                  type="email"
+                  placeholder="recipient@example.com"
+                  value={resumePdfEmailData.to}
+                  onChange={(e) => setResumePdfEmailData(prev => ({ ...prev, to: e.target.value }))}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="resume-name">Recipient Name</Label>
+                <Input
+                  id="resume-name"
+                  placeholder="John Doe"
+                  value={resumePdfEmailData.name}
+                  onChange={(e) => setResumePdfEmailData(prev => ({ ...prev, name: e.target.value }))}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="resume-message">Custom Message (Optional)</Label>
+                <Textarea
+                  id="resume-message"
+                  placeholder="Add a personal message..."
+                  value={resumePdfEmailData.message}
+                  onChange={(e) => setResumePdfEmailData(prev => ({ ...prev, message: e.target.value }))}
+                  rows={3}
+                />
+              </div>
+              <Button 
+                onClick={handleEmailResumePdf} 
+                disabled={emailLoading || !resumePdfEmailData.to}
+                className="w-full"
+              >
+                {emailLoading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Sending...
+                  </>
+                ) : (
+                  <>
+                    <Mail className="mr-2 h-4 w-4" />
+                    Send Email
+                  </>
+                )}
+              </Button>
+            </div>
+          </DrawerContent>
+        </Drawer>
+      ) : (
+        <Dialog open={showResumePdfDialog} onOpenChange={setShowResumePdfDialog}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Email Resume PDF</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="resume-email-desktop">Recipient Email *</Label>
+                <Input
+                  id="resume-email-desktop"
+                  type="email"
+                  placeholder="recipient@example.com"
+                  value={resumePdfEmailData.to}
+                  onChange={(e) => setResumePdfEmailData(prev => ({ ...prev, to: e.target.value }))}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="resume-name-desktop">Recipient Name</Label>
+                <Input
+                  id="resume-name-desktop"
+                  placeholder="John Doe"
+                  value={resumePdfEmailData.name}
+                  onChange={(e) => setResumePdfEmailData(prev => ({ ...prev, name: e.target.value }))}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="resume-message-desktop">Custom Message (Optional)</Label>
+                <Textarea
+                  id="resume-message-desktop"
+                  placeholder="Add a personal message..."
+                  value={resumePdfEmailData.message}
+                  onChange={(e) => setResumePdfEmailData(prev => ({ ...prev, message: e.target.value }))}
+                  rows={3}
+                />
+              </div>
+              <Button 
+                onClick={handleEmailResumePdf} 
+                disabled={emailLoading || !resumePdfEmailData.to}
+                className="w-full"
+              >
+                {emailLoading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Sending...
+                  </>
+                ) : (
+                  <>
+                    <Mail className="mr-2 h-4 w-4" />
+                    Send Email
+                  </>
+                )}
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
+      )}
+
+      {/* QR Print Sheet Dialog */}
+      {isMobile ? (
+        <Drawer open={showQRSheetDialog} onOpenChange={setShowQRSheetDialog}>
+          <DrawerContent>
+            <DrawerHeader>
+              <DrawerTitle>
+                {showQRSheetEmailForm ? "Email QR Print Sheet" : "QR Print Sheet Ready!"}
+              </DrawerTitle>
+              <DrawerClose />
+            </DrawerHeader>
+            <div className="p-4 space-y-4">
+              {!showQRSheetEmailForm ? (
+                <>
+                  <p className="text-sm text-muted-foreground">
+                    Your printable sheet contains all QR codes for {petData.name}'s public pages
+                  </p>
+                  <div className="grid grid-cols-2 gap-3">
+                    <Button onClick={handleViewQRSheet} variant="outline" className="w-full">
+                      <Eye className="mr-2 h-4 w-4" />
+                      View
+                    </Button>
+                    <Button onClick={handleDownloadQRSheet} variant="outline" className="w-full">
+                      <Download className="mr-2 h-4 w-4" />
+                      Download
+                    </Button>
+                    <Button onClick={handlePrintQRSheet} variant="outline" className="w-full">
+                      <Printer className="mr-2 h-4 w-4" />
+                      Print
+                    </Button>
+                    <Button onClick={handleShareQRSheet} variant="outline" className="w-full">
+                      <Share2 className="mr-2 h-4 w-4" />
+                      Share
+                    </Button>
+                    <Button 
+                      onClick={() => setShowQRSheetEmailForm(true)} 
+                      variant="default" 
+                      className="w-full col-span-2"
+                    >
+                      <Mail className="mr-2 h-4 w-4" />
+                      Email PDF
+                    </Button>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className="space-y-2">
+                    <Label htmlFor="qr-email">Recipient Email *</Label>
+                    <Input
+                      id="qr-email"
+                      type="email"
+                      placeholder="caretaker@example.com"
+                      value={qrSheetEmailData.to}
+                      onChange={(e) => setQrSheetEmailData(prev => ({ ...prev, to: e.target.value }))}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="qr-name">Recipient Name</Label>
+                    <Input
+                      id="qr-name"
+                      placeholder="Caretaker name"
+                      value={qrSheetEmailData.name}
+                      onChange={(e) => setQrSheetEmailData(prev => ({ ...prev, name: e.target.value }))}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="qr-message">Custom Message (Optional)</Label>
+                    <Textarea
+                      id="qr-message"
+                      placeholder="Add a personal message..."
+                      rows={3}
+                      value={qrSheetEmailData.message}
+                      onChange={(e) => setQrSheetEmailData(prev => ({ ...prev, message: e.target.value }))}
+                    />
+                  </div>
+                  <div className="flex gap-2">
+                    <Button
+                      onClick={handleEmailQRSheet}
+                      disabled={emailLoading || !qrSheetEmailData.to}
+                      className="flex-1"
+                    >
+                      {emailLoading ? (
+                        <>
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          Sending...
+                        </>
+                      ) : (
+                        <>
+                          <Mail className="mr-2 h-4 w-4" />
+                          Send Email
+                        </>
+                      )}
+                    </Button>
+                    <Button
+                      onClick={() => {
+                        setShowQRSheetEmailForm(false);
+                        setQrSheetEmailData({ to: '', name: '', message: '' });
+                      }}
+                      variant="outline"
+                    >
+                      Back
+                    </Button>
+                  </div>
+                </>
+              )}
+            </div>
+          </DrawerContent>
+        </Drawer>
+      ) : (
+        <Dialog open={showQRSheetDialog} onOpenChange={setShowQRSheetDialog}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>
+                {showQRSheetEmailForm ? "Email QR Print Sheet" : "QR Print Sheet Ready!"}
+              </DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4">
+              {!showQRSheetEmailForm ? (
+                <>
+                  <p className="text-sm text-muted-foreground">
+                    Your printable sheet contains all QR codes for {petData.name}'s public pages
+                  </p>
+                  <div className="grid grid-cols-2 gap-3">
+                    <Button onClick={handleViewQRSheet} variant="outline" className="w-full">
+                      <Eye className="mr-2 h-4 w-4" />
+                      View
+                    </Button>
+                    <Button onClick={handleDownloadQRSheet} variant="outline" className="w-full">
+                      <Download className="mr-2 h-4 w-4" />
+                      Download
+                    </Button>
+                    <Button onClick={handlePrintQRSheet} variant="outline" className="w-full">
+                      <Printer className="mr-2 h-4 w-4" />
+                      Print
+                    </Button>
+                    <Button onClick={handleShareQRSheet} variant="outline" className="w-full">
+                      <Share2 className="mr-2 h-4 w-4" />
+                      Share
+                    </Button>
+                    <Button 
+                      onClick={() => setShowQRSheetEmailForm(true)} 
+                      variant="default" 
+                      className="w-full col-span-2"
+                    >
+                      <Mail className="mr-2 h-4 w-4" />
+                      Email PDF
+                    </Button>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className="space-y-2">
+                    <Label htmlFor="qr-email-desktop">Recipient Email *</Label>
+                    <Input
+                      id="qr-email-desktop"
+                      type="email"
+                      placeholder="caretaker@example.com"
+                      value={qrSheetEmailData.to}
+                      onChange={(e) => setQrSheetEmailData(prev => ({ ...prev, to: e.target.value }))}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="qr-name-desktop">Recipient Name</Label>
+                    <Input
+                      id="qr-name-desktop"
+                      placeholder="Caretaker name"
+                      value={qrSheetEmailData.name}
+                      onChange={(e) => setQrSheetEmailData(prev => ({ ...prev, name: e.target.value }))}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="qr-message-desktop">Custom Message (Optional)</Label>
+                    <Textarea
+                      id="qr-message-desktop"
+                      placeholder="Add a personal message..."
+                      rows={3}
+                      value={qrSheetEmailData.message}
+                      onChange={(e) => setQrSheetEmailData(prev => ({ ...prev, message: e.target.value }))}
+                    />
+                  </div>
+                  <div className="flex gap-2">
+                    <Button
+                      onClick={handleEmailQRSheet}
+                      disabled={emailLoading || !qrSheetEmailData.to}
+                      className="flex-1"
+                    >
+                      {emailLoading ? (
+                        <>
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          Sending...
+                        </>
+                      ) : (
+                        <>
+                          <Mail className="mr-2 h-4 w-4" />
+                          Send Email
+                        </>
+                      )}
+                    </Button>
+                    <Button
+                      onClick={() => {
+                        setShowQRSheetEmailForm(false);
+                        setQrSheetEmailData({ to: '', name: '', message: '' });
+                      }}
+                      variant="outline"
+                    >
+                      Cancel
+                    </Button>
+                  </div>
+                </>
+              )}
+            </div>
+          </DialogContent>
+        </Dialog>
+      )}
+
+      {/* QR Sheet PDF Viewer for Mobile */}
+      {showQRSheetViewer && qrSheetPdfUrl && (
+        <DocumentViewer
+          isOpen={showQRSheetViewer}
+          onClose={() => {
+            setShowQRSheetViewer(false);
+            if (qrSheetPdfUrl) {
+              URL.revokeObjectURL(qrSheetPdfUrl);
+              setQrSheetPdfUrl(null);
+            }
+          }}
+          documentUrl={qrSheetPdfUrl}
+          documentName={`${petData.name}_QR_Print_Sheet.pdf`}
+        />
+      )}
+    </Card>
+  );
+};
 
 // @lovable:protect end

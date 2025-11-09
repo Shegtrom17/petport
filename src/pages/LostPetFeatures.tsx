@@ -101,6 +101,22 @@ export default function LostPetFeatures() {
                 "@type": "Answer",
                 "text": "PetPort sends instant notifications via email and SMS when someone posts to your pet's Sighting Board. Each report includes the exact location, time, and optional photos from the community member who spotted your pet."
               }
+            },
+            {
+              "@type": "Question",
+              "name": "What should I include on my lost pet flyer to maximize chances of recovery?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Essential elements include: clear, recent photos showing distinctive markings, your pet's name (helps them respond if called), what will make pet most comfortable to come to stranger, last seen location and date/time, your contact phone number, and any medical conditions or special needs. PetPort's flyer generator guides you through all these elements and auto-generates a professional layout."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "How quickly should I start distributing flyers after my pet goes missing?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Time is critical! Start distributing flyers within the first 24 hours if possible. Lost pets typically stay within a 1-mile radius initially, so saturate your immediate area first. Post flyers at vet clinics, pet stores, shelters, parks, and high-traffic intersections. With PetPort's one-tap sharing, you can instantly distribute your pet's information digitally to social media, email, and SMS while you're printing physical flyers and anyone with the LiveLink or QR code can Print Flyers Also, this gets help fast!!!"
+              }
             }
           ]
         })}

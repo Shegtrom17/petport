@@ -125,6 +125,14 @@ export default function LostPetFeatures() {
                 "@type": "Answer",
                 "text": "With PetPort's one-tap sharing, you can instantly distribute your pet's LiveLink to Facebook, Twitter, Instagram, and community groups. The LiveLink includes your pet's photo, description, last seen location, and a direct contact button. Anyone who sees the post can share it further, creating a viral search network."
               }
+            },
+            {
+              "@type": "Question",
+              "name": "Can community members share my lost pet flyer without creating an account?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Yes! Anyone with your pet's LiveLink or QR code can view the full lost pet flyer and share it to their own social networks without signing up. They can also print additional flyers directly from the link, making it easy for friends, neighbors, and community members to help spread the word."
+              }
             }
           ]
         })}
@@ -793,6 +801,17 @@ export default function LostPetFeatures() {
                 </AccordionTrigger>
                 <AccordionContent className="text-muted-foreground">
                   With PetPort's one-tap sharing, you can instantly distribute your pet's LiveLink to Facebook, Twitter, Instagram, and community groups. The LiveLink includes your pet's photo, description, last seen location, and a direct contact button. Anyone who sees the post can share it further, creating a viral search network.
+                </AccordionContent>
+              </AccordionItem>
+
+              <AccordionItem value="item-9" className="border border-border rounded-lg px-6 bg-card">
+                <AccordionTrigger className="text-left hover:no-underline">
+                  <span className="font-semibold text-foreground">
+                    Can community members share my lost pet flyer without creating an account?
+                  </span>
+                </AccordionTrigger>
+                <AccordionContent className="text-muted-foreground">
+                  Yes! Anyone with your pet's LiveLink or QR code can view the full lost pet flyer and share it to their own social networks without signing up. They can also print additional flyers directly from the link, making it easy for friends, neighbors, and community members to help spread the word.
                 </AccordionContent>
               </AccordionItem>
             </Accordion>

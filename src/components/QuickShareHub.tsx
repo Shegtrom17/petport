@@ -47,7 +47,7 @@ import {
   QrCode
 } from "lucide-react";
 import { generateShareURL } from "@/utils/domainUtils";
-import { generateClientPetPDF, viewPDFBlob, downloadPDFBlob, isIOS } from '@/services/clientPdfService';
+import { generateClientPetPDF, generateQRPrintSheetPDF, viewPDFBlob, downloadPDFBlob, isIOS } from '@/services/clientPdfService';
 import { sharePDFBlob } from '@/services/pdfService';
 import { shareQRCode } from "@/utils/qrShare";
 
@@ -115,6 +115,11 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
   // Lost Pet PDF State
   const [lostPetPdfBlob, setLostPetPdfBlob] = useState<Blob | null>(null);
   const [isGeneratingLostPetPdf, setIsGeneratingLostPetPdf] = useState(false);
+  
+  // QR Print Sheet State
+  const [qrSheetBlob, setQrSheetBlob] = useState<Blob | null>(null);
+  const [isGeneratingQRSheet, setIsGeneratingQRSheet] = useState(false);
+  const [showQRSheetDialog, setShowQRSheetDialog] = useState(false);
   
   const { toast } = useToast();
   const { sendEmail, isLoading: emailLoading } = useEmailSharing();
@@ -530,6 +535,86 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
       toast({ title: "Generation Failed", description: "Could not generate flyer.", variant: "destructive" });
     } finally {
       setIsGeneratingLostPetPdf(false);
+    }
+  };
+
+  // QR Print Sheet Handlers
+  const handleGenerateQRSheet = async () => {
+    if (!petData?.id) {
+      toast({ description: "Pet data not available", variant: "destructive" });
+      return;
+    }
+    
+    setIsGeneratingQRSheet(true);
+    toast({ title: "Generating QR Print Sheet...", description: "Creating your printable QR code sheet." });
+    
+    try {
+      const result = await generateQRPrintSheetPDF(petData, isLost);
+      
+      if (result.success && result.blob) {
+        setQrSheetBlob(result.blob);
+        setShowQRSheetDialog(true);
+        toast({ title: "QR Print Sheet Ready!", description: "Your printable sheet has been generated." });
+      } else {
+        throw new Error(result.error || "Failed to generate QR sheet");
+      }
+    } catch (error: any) {
+      console.error('[QR Sheet] Generation failed:', error);
+      toast({ title: "Generation Failed", description: "Could not generate QR sheet.", variant: "destructive" });
+    } finally {
+      setIsGeneratingQRSheet(false);
+    }
+  };
+
+  const handleViewQRSheet = () => {
+    if (qrSheetBlob) {
+      viewPDFBlob(qrSheetBlob, `${petData.name}_QR_Print_Sheet.pdf`);
+    }
+  };
+
+  const handlePrintQRSheet = () => {
+    if (qrSheetBlob) {
+      const url = URL.createObjectURL(qrSheetBlob);
+      const printWindow = window.open(url, '_blank');
+      if (printWindow) {
+        printWindow.onload = () => {
+          printWindow.print();
+          URL.revokeObjectURL(url);
+        };
+      }
+    }
+  };
+
+  const handleDownloadQRSheet = () => {
+    if (qrSheetBlob) {
+      downloadPDFBlob(qrSheetBlob, `${petData.name}_QR_Print_Sheet.pdf`);
+      toast({
+        title: "Download Started",
+        description: "QR Print Sheet is downloading.",
+      });
+    }
+  };
+
+  const handleShareQRSheet = async () => {
+    if (!qrSheetBlob) return;
+    
+    try {
+      const result = await sharePDFBlob(qrSheetBlob, `${petData.name}_QR_Print_Sheet.pdf`, petData.name, 'profile');
+      if (result.success) {
+        toast({
+          title: result.shared ? "PDF Shared!" : "Link Copied!",
+          description: result.message,
+        });
+      } else {
+        throw new Error(result.error || 'Share failed');
+      }
+    } catch (error) {
+      console.error('QR Sheet share error:', error);
+      toast({
+        title: "Share Failed",
+        description: "Unable to share PDF. Please try download instead.",
+        variant: "destructive",
+      });
     }
   };
 
@@ -956,13 +1041,32 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
   return (
     <Card id="quick-share-hub" className="bg-white shadow-xl">
       <CardHeader>
-        <CardTitle className="text-xl flex items-center gap-2">
-          <Share2 className="w-6 h-6 text-brand-primary" />
-          Quick Share Hub
-        </CardTitle>
-        <p className="text-sm text-muted-foreground">
-          Share PDFs via email and LiveLinks that update in real time
-        </p>
+        <div className="flex items-start justify-between gap-2">
+          <div className="flex-1">
+            <CardTitle className="text-xl flex items-center gap-2">
+              <Share2 className="w-6 h-6 text-brand-primary" />
+              Quick Share Hub
+            </CardTitle>
+            <p className="text-sm text-muted-foreground mt-1">
+              Share PDFs via email and LiveLinks that update in real time
+            </p>
+          </div>
+          <Button
+            onClick={handleGenerateQRSheet}
+            disabled={isGeneratingQRSheet}
+            variant="outline"
+            size="sm"
+            className="flex items-center gap-2 shrink-0"
+          >
+            {isGeneratingQRSheet ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <QrCode className="h-4 w-4" />
+            )}
+            <span className="hidden sm:inline">Print QR Sheet</span>
+            <span className="sm:hidden">QR Sheet</span>
+          </Button>
+        </div>
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -2724,6 +2828,72 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
                   </>
                 )}
               </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
+      )}
+
+      {/* QR Print Sheet Dialog */}
+      {isMobile ? (
+        <Drawer open={showQRSheetDialog} onOpenChange={setShowQRSheetDialog}>
+          <DrawerContent>
+            <DrawerHeader>
+              <DrawerTitle>QR Print Sheet Ready!</DrawerTitle>
+              <DrawerClose />
+            </DrawerHeader>
+            <div className="p-4 space-y-4">
+              <p className="text-sm text-muted-foreground">
+                Your printable sheet contains all QR codes for {petData.name}'s public pages
+              </p>
+              <div className="grid grid-cols-2 gap-3">
+                <Button onClick={handleViewQRSheet} variant="outline" className="w-full">
+                  <Eye className="mr-2 h-4 w-4" />
+                  View
+                </Button>
+                <Button onClick={handleDownloadQRSheet} variant="outline" className="w-full">
+                  <Download className="mr-2 h-4 w-4" />
+                  Download
+                </Button>
+                <Button onClick={handlePrintQRSheet} variant="outline" className="w-full">
+                  <Printer className="mr-2 h-4 w-4" />
+                  Print
+                </Button>
+                <Button onClick={handleShareQRSheet} variant="default" className="w-full">
+                  <Share2 className="mr-2 h-4 w-4" />
+                  Share
+                </Button>
+              </div>
+            </div>
+          </DrawerContent>
+        </Drawer>
+      ) : (
+        <Dialog open={showQRSheetDialog} onOpenChange={setShowQRSheetDialog}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>QR Print Sheet Ready!</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4">
+              <p className="text-sm text-muted-foreground">
+                Your printable sheet contains all QR codes for {petData.name}'s public pages
+              </p>
+              <div className="grid grid-cols-2 gap-3">
+                <Button onClick={handleViewQRSheet} variant="outline" className="w-full">
+                  <Eye className="mr-2 h-4 w-4" />
+                  View
+                </Button>
+                <Button onClick={handleDownloadQRSheet} variant="outline" className="w-full">
+                  <Download className="mr-2 h-4 w-4" />
+                  Download
+                </Button>
+                <Button onClick={handlePrintQRSheet} variant="outline" className="w-full">
+                  <Printer className="mr-2 h-4 w-4" />
+                  Print
+                </Button>
+                <Button onClick={handleShareQRSheet} variant="default" className="w-full">
+                  <Share2 className="mr-2 h-4 w-4" />
+                  Share
+                </Button>
+              </div>
             </div>
           </DialogContent>
         </Dialog>

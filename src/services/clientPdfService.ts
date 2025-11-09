@@ -2058,6 +2058,185 @@ const generateCarePDF = async (doc: jsPDF, pageManager: PDFPageManager, petData:
   ]);
 };
 
+// QR Print Sheet PDF Generator - All public pages QR codes on one sheet
+export async function generateQRPrintSheetPDF(
+  petData: any,
+  isLost: boolean = false
+): Promise<ClientPDFGenerationResult> {
+  try {
+    console.log('📋 Generating QR Print Sheet PDF...', { petId: petData?.id, isLost });
+    
+    if (!petData?.id) {
+      throw new Error('Pet ID is required for QR Print Sheet generation');
+    }
+
+    const doc = new jsPDF('p', 'mm', 'a4');
+    const pageManager = new PDFPageManager(doc);
+    const normalizedPet = await normalizePetData(petData);
+    const baseUrl = window.location.origin;
+    const safeText = (text: string) => sanitizeText(text || '');
+
+    // Header with pet name and photo
+    addTitle(doc, pageManager, 'QR CODE PRINT SHEET', '#5691af', 18);
+    addTitle(doc, pageManager, safeText(normalizedPet.name), '#5691af', 16);
+    pageManager.addY(5);
+
+    // Add pet photo if available
+    if (normalizedPet.photoUrl) {
+      await addImage(doc, pageManager, normalizedPet.photoUrl, 60, 60);
+      pageManager.addY(5);
+    }
+
+    // Instructions
+    doc.setFontSize(9);
+    doc.setTextColor('#6b7280');
+    doc.setFont('helvetica', 'italic');
+    const instruction = 'Keep this sheet accessible for emergencies. Share QR codes with caretakers, vets, and emergency contacts.';
+    const lines = doc.splitTextToSize(instruction, 180);
+    doc.text(lines, 15, pageManager.getCurrentY());
+    pageManager.addY(lines.length * 5 + 10);
+
+    // Define QR codes data
+    const qrCodes = [
+      {
+        id: 'emergency',
+        label: 'Emergency Profile',
+        url: `${baseUrl}/emergency/${normalizedPet.id}`,
+        description: 'Critical medical & emergency contacts',
+        color: '#5691af'
+      },
+      {
+        id: 'care',
+        label: 'Care Instructions',
+        url: `${baseUrl}/care/${normalizedPet.id}`,
+        description: 'Feeding, routines & special needs',
+        color: '#5691af'
+      },
+      {
+        id: 'resume',
+        label: 'Pet Resume',
+        url: `${baseUrl}/resume/${normalizedPet.id}`,
+        description: 'Credentials & professional experience',
+        color: '#5691af'
+      },
+      {
+        id: 'gallery',
+        label: 'Portrait Gallery',
+        url: `${baseUrl}/gallery/${normalizedPet.id}`,
+        description: 'Photo gallery & visual records',
+        color: '#5691af'
+      },
+      {
+        id: 'profile',
+        label: 'Complete Profile',
+        url: `${baseUrl}/profile/${normalizedPet.id}`,
+        description: 'All information in one place',
+        color: '#5691af'
+      }
+    ];
+
+    // Add Lost Pet QR code if pet is lost
+    if (isLost) {
+      qrCodes.push({
+        id: 'missing',
+        label: 'Lost Pet Flyer',
+        url: `${baseUrl}/missing-pet/${normalizedPet.id}`,
+        description: 'Missing pet alert & contact info',
+        color: '#5691af'
+      });
+    }
+
+    // Grid layout: 2 columns, 3 rows
+    const qrSize = 35; // 35mm QR codes
+    const columnWidth = 90; // Space for each column
+    const startX = 20; // Left margin
+    const startY = pageManager.getCurrentY();
+    const rowSpacing = 75; // Vertical space between rows
+
+    for (let i = 0; i < qrCodes.length; i++) {
+      const qr = qrCodes[i];
+      const col = i % 2; // 0 or 1
+      const row = Math.floor(i / 2);
+      
+      const x = startX + (col * columnWidth);
+      const y = startY + (row * rowSpacing);
+
+      // Generate QR code
+      const qrUrl = generateQRCodeUrl(qr.url, 300);
+      
+      try {
+        // Fetch QR code
+        const response = await fetch(qrUrl);
+        const blob = await response.blob();
+        const base64 = await new Promise<string>((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onloadend = () => resolve(reader.result as string);
+          reader.onerror = reject;
+          reader.readAsDataURL(blob);
+        });
+
+        // Add label
+        doc.setFontSize(9);
+        doc.setTextColor('#1f2937');
+        doc.setFont('helvetica', 'bold');
+        doc.text(qr.label, x, y);
+
+        // Add QR code image
+        doc.addImage(base64, 'PNG', x, y + 3, qrSize, qrSize);
+
+        // Add description
+        doc.setFontSize(7);
+        doc.setTextColor('#6b7280');
+        doc.setFont('helvetica', 'normal');
+        const descLines = doc.splitTextToSize(qr.description, columnWidth - 5);
+        doc.text(descLines, x, y + qrSize + 7);
+
+        // Add URL
+        doc.setFontSize(6);
+        doc.setTextColor('#9ca3af');
+        const urlLines = doc.splitTextToSize(qr.url, columnWidth - 5);
+        doc.text(urlLines, x, y + qrSize + 12);
+
+      } catch (error) {
+        console.error(`Failed to add QR code for ${qr.label}:`, error);
+        // Continue with other QR codes
+      }
+    }
+
+    // Footer
+    pageManager.setY(270);
+    doc.setFontSize(7);
+    doc.setTextColor('#9ca3af');
+    doc.setFont('helvetica', 'italic');
+    const footerText = `PetPort.app - Generated ${new Date().toLocaleDateString()} - Pet ID: ${normalizedPet.id}`;
+    const footerWidth = doc.getTextWidth(footerText);
+    doc.text(footerText, (doc.internal.pageSize.width - footerWidth) / 2, 285);
+
+    // Generate blob
+    const pdfBlob = doc.output('blob');
+    
+    console.log('✅ QR Print Sheet generated successfully', { 
+      fileSize: `${(pdfBlob.size / 1024).toFixed(1)}KB`,
+      qrCount: qrCodes.length
+    });
+
+    return {
+      success: true,
+      blob: pdfBlob,
+      fileName: `${(normalizedPet.name || 'pet')}_QR_Print_Sheet.pdf`,
+      type: 'qr_sheet'
+    };
+
+  } catch (error) {
+    console.error('❌ QR Print Sheet generation failed:', error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error occurred',
+      type: 'qr_sheet'
+    };
+  }
+}
+
 export async function generateClientPetPDF(
   petData: any,
   type: 'emergency' | 'full' | 'lost_pet' | 'care' | 'gallery' | 'resume' | 'provider_notes' = 'emergency'

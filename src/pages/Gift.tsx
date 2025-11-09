@@ -137,7 +137,7 @@ const Gift = () => {
         "name": "How is this different from just buying them pet supplies?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Pet supplies are consumable—they get used up. PetPort is a lasting gift that protects, organizes, and celebrates their pet for an entire year. It's the difference between giving them a toy that breaks in a month versus giving them peace of mind, safety tools, and a way to preserve their pet's legacy forever."
+          "text": "Pet supplies are consumable—they get used up. PetPort is a lasting gift that protects, organizes, and celebrates their pet for a lifetime. It's the difference between giving them a toy that breaks in a month versus giving them peace of mind, safety tools, and a way to preserve their pet's legacy forever. Recipients can continue their yearly membership for their pet's entire life."
         }
       },
       {
@@ -755,7 +755,7 @@ const Gift = () => {
                   <span className="font-semibold">How is this different from just buying them pet supplies?</span>
                 </AccordionTrigger>
                 <AccordionContent className="text-muted-foreground">
-                  Pet supplies are consumable—they get used up. PetPort is a lasting gift that protects, organizes, and celebrates their pet for an entire year. It's the difference between giving them a toy that breaks in a month versus giving them peace of mind, safety tools, and a way to preserve their pet's legacy forever.
+                  Pet supplies are consumable—they get used up. PetPort is a lasting gift that protects, organizes, and celebrates their pet for a lifetime. It's the difference between giving them a toy that breaks in a month versus giving them peace of mind, safety tools, and a way to preserve their pet's legacy forever. Recipients can continue their yearly membership for their pet's entire life.
                 </AccordionContent>
               </AccordionItem>
 

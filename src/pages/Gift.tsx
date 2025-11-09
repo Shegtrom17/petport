@@ -622,21 +622,36 @@ const Gift = () => {
                     </div>
 
                     <div className="space-y-2">
-                      <Label>Delivery Date (Optional)</Label>
+                      <Label className="flex items-center gap-2">
+                        <CalendarIcon className="h-4 w-4" />
+                        Schedule Delivery (Optional)
+                      </Label>
                       <Popover>
                         <PopoverTrigger asChild>
                           <Button
+                            type="button"
                             variant="outline"
                             className={cn(
-                              "w-full justify-start text-left font-normal",
+                              "w-full justify-between text-left font-normal hover:bg-accent",
                               !scheduledDate && "text-muted-foreground"
                             )}
                           >
-                            <CalendarIcon className="mr-2 h-4 w-4" />
-                            {scheduledDate ? format(scheduledDate, "PPP") : "Send immediately"}
+                            <span className="flex items-center gap-2">
+                              <CalendarIcon className="h-4 w-4" />
+                              {scheduledDate ? format(scheduledDate, "PPP") : "Click to pick a date →"}
+                            </span>
+                            {!scheduledDate && (
+                              <span className="text-xs bg-primary/10 text-primary px-2 py-1 rounded">
+                                or send now
+                              </span>
+                            )}
                           </Button>
                         </PopoverTrigger>
                         <PopoverContent className="w-auto p-0" align="end">
+                          <div className="bg-muted/50 p-3 border-b">
+                            <p className="text-sm font-medium">Select a future date</p>
+                            <p className="text-xs text-muted-foreground">Gift email will be sent on the chosen date</p>
+                          </div>
                           <CalendarComponent
                             mode="single"
                             selected={scheduledDate}
@@ -646,22 +661,35 @@ const Gift = () => {
                             className="p-3 pointer-events-auto"
                           />
                           {scheduledDate && (
-                            <div className="p-3 border-t">
+                            <div className="p-3 border-t bg-muted/30">
+                              <p className="text-sm font-medium mb-2">
+                                📅 Scheduled for {format(scheduledDate, "MMMM d, yyyy")}
+                              </p>
                               <Button
+                                type="button"
                                 variant="ghost"
+                                size="sm"
                                 className="w-full"
                                 onClick={() => setScheduledDate(undefined)}
                               >
-                                Clear date (send immediately)
+                                <X className="h-4 w-4 mr-2" />
+                                Clear date (send immediately instead)
                               </Button>
                             </div>
                           )}
                         </PopoverContent>
                       </Popover>
-                      <p className="text-xs text-muted-foreground">
-                        {scheduledDate 
-                          ? `Gift will be sent on ${format(scheduledDate, "MMMM d, yyyy")}` 
-                          : "Gift will be sent immediately after payment"}
+                      <p className="text-xs text-muted-foreground flex items-center gap-1">
+                        {scheduledDate ? (
+                          <>
+                            <Check className="h-3 w-3 text-primary" />
+                            Gift will be emailed on <strong>{format(scheduledDate, "MMMM d, yyyy")}</strong>
+                          </>
+                        ) : (
+                          <>
+                            ⚡ Gift will be sent <strong>immediately</strong> after payment (within minutes)
+                          </>
+                        )}
                       </p>
                     </div>
                     <Button type="submit" className="w-full" size="lg" disabled={isLoading}>

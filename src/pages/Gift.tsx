@@ -453,7 +453,7 @@ const Gift = () => {
                   </li>
                   <li className="flex items-start gap-3">
                     <Check className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
-                    <span className="text-sm">Pet Screening Resume for housing applications</span>
+                    <span className="text-sm">Resume builder for Pet screening application, groomers, farriers and much more</span>
                   </li>
                 </ul>
               </div>

@@ -757,7 +757,7 @@ export default function LostPetFeatures() {
                   </span>
                 </AccordionTrigger>
                 <AccordionContent className="text-muted-foreground">
-                  Time is critical! Start distributing flyers within the first 24 hours if possible. Lost pets typically stay within a 1-mile radius initially, so saturate your immediate area first. Post flyers at vet clinics, pet stores, shelters, parks, and high-traffic intersections. With PetPort's one-tap sharing, you can instantly distribute your pet's information digitally to social media, email, and SMS while you're printing physical flyers.
+                  Time is critical! Start distributing flyers within the first 24 hours if possible. Lost pets typically stay within a 1-mile radius initially, so saturate your immediate area first. Post flyers at vet clinics, pet stores, shelters, parks, and high-traffic intersections. With PetPort's one-tap sharing, you can instantly distribute your pet's information digitally to social media, email, and SMS while you're printing physical flyers and anyone with the LiveLink or QR code can Print Flyers Also, this gets help fast!!!
                 </AccordionContent>
               </AccordionItem>
             </Accordion>

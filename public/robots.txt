@@ -1,30 +1,150 @@
 # PetPort.app Robots.txt - Production Configuration
-# Updated: October 2025
+# Updated: November 2025
+# Optimized for crawl efficiency and security
 
-# Allow all major search engines and social media crawlers
+# ============================================
+# MAJOR SEARCH ENGINES - Full Access + Priority
+# ============================================
 User-agent: Googlebot
+User-agent: Googlebot-Image
+User-agent: Googlebot-Mobile
 User-agent: Bingbot
 User-agent: Slurp
 User-agent: DuckDuckBot
 User-agent: Baiduspider
 User-agent: YandexBot
+Crawl-delay: 1
+Allow: /
+Allow: /demo/*
+Allow: /podcast/*
+Allow: /gift
+Allow: /lost-pet-features
+Allow: /learn
+Allow: /demos
+Allow: /referral-program
+Allow: /vaccination-guide
+Allow: /help
+Disallow: /auth
+Disallow: /profile
+Disallow: /add-pet
+Disallow: /billing
+Disallow: /subscribe
+Disallow: /setup-stripe
+Disallow: /referrals
+Disallow: /onboarding
+Disallow: /post-checkout
+Disallow: /payment-success
+Disallow: /payment-canceled
+Disallow: /claim-subscription
+Disallow: /transfer-accept
+Disallow: /recover-gift
+Disallow: /reactivate
+Disallow: /email-test
+
+# ============================================
+# SOCIAL MEDIA CRAWLERS - Full Access for OG Previews
+# ============================================
 User-agent: facebookexternalhit
+User-agent: Facebot
 User-agent: Twitterbot
 User-agent: LinkedInBot
 User-agent: WhatsApp
+User-agent: Slackbot
+User-agent: TelegramBot
+Crawl-delay: 0
 Allow: /
+Allow: /public/*
 
-# Block preview/staging domains from being indexed
+# ============================================
+# AGGRESSIVE/UNKNOWN CRAWLERS - Restricted Access
+# ============================================
+User-agent: AhrefsBot
+User-agent: SemrushBot
+User-agent: MJ12bot
+User-agent: DotBot
+Crawl-delay: 10
+Disallow: /auth
+Disallow: /profile
+Disallow: /add-pet
+Disallow: /billing
+Disallow: /subscribe
+
+# ============================================
+# BAD BOTS - Complete Block
+# ============================================
+User-agent: SemrushBot
+User-agent: AhrefsBot
+User-agent: MJ12bot
+User-agent: DotBot
+User-agent: Rogerbot
+User-agent: Exabot
+User-agent: ia_archiver
+Disallow: /
+
+# ============================================
+# BLOCK STAGING/PREVIEW DOMAINS
+# ============================================
 User-agent: *
 Disallow: /*lovableproject.com*
 Disallow: /*lovable.app*
+Disallow: /*supabase.co*
 
-# Allow everything else for all other crawlers
+# ============================================
+# DEFAULT RULES FOR ALL OTHER CRAWLERS
+# ============================================
 User-agent: *
+Crawl-delay: 2
 Allow: /
+Allow: /demo/*
+Allow: /podcast/*
+Allow: /public/*
+Allow: /gift
+Allow: /lost-pet-features
+Allow: /learn
+Allow: /demos
+Allow: /referral-program
+Allow: /vaccination-guide
+Allow: /help
+Allow: /privacy-policy
+Allow: /terms
+Allow: /data-deletion
 
-# Sitemap location
+# Block authentication and user-specific pages
+Disallow: /auth
+Disallow: /profile
+Disallow: /add-pet
+Disallow: /billing
+Disallow: /subscribe
+Disallow: /setup-stripe
+Disallow: /referrals
+Disallow: /onboarding
+Disallow: /post-checkout
+Disallow: /payment-success
+Disallow: /payment-canceled
+Disallow: /claim-subscription
+Disallow: /transfer-accept
+Disallow: /recover-gift
+Disallow: /reactivate
+Disallow: /email-test
+
+# Block API endpoints and functions
+Disallow: /api/*
+Disallow: /functions/*
+Disallow: /*.json$
+Disallow: /*?*auth*
+Disallow: /*?*token*
+Disallow: /*?*session*
+
+# ============================================
+# SITEMAP LOCATION
+# ============================================
 Sitemap: https://petport.app/sitemap.xml
 
-# Crawl delay to be respectful (optional, in seconds)
-Crawl-delay: 1
+# ============================================
+# CRAWL RATE OPTIMIZATION NOTES
+# ============================================
+# - Search engines: 1s delay (fast, trusted)
+# - Social crawlers: 0s delay (need instant OG data)
+# - SEO tools: 10s delay (rate limited)
+# - Bad bots: Blocked completely
+# - Default: 2s delay (cautious approach)

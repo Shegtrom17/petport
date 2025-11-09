@@ -690,22 +690,57 @@ const PublicProfile = () => {
             </Card>
           )}
 
-          {/* Care Updates Board */}
+          {/* Care & Handling Link Card */}
+          <Card className="mb-6 bg-gradient-to-r from-sage-50 to-blue-50 border-sage-300">
+            <CardContent className="pt-6">
+              <div className="text-center space-y-3">
+                <div className="flex items-center justify-center gap-2">
+                  <Stethoscope className="w-6 h-6 text-sage-600" />
+                  <h3 className="text-lg font-semibold text-navy-900">Care & Handling Instructions</h3>
+                </div>
+                <p className="text-sm text-navy-600 max-w-2xl mx-auto">
+                  View complete care instructions, post updates about {petData.name}'s care, and leave professional service provider notes. No PetPort account needed!
+                </p>
+                <Button
+                  onClick={() => navigate(`/care/${petId}`)}
+                  size="lg"
+                  className="bg-sage-600 hover:bg-sage-700 text-white gap-2"
+                >
+                  <Clock className="w-4 h-4" />
+                  View Full Care Instructions
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Care Updates Board - Read Only Preview */}
           {careUpdates && careUpdates.length > 0 && (
             <div className="mb-6">
               <Card>
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-navy-900">
-                    <Clock className="w-5 h-5 text-primary" />
-                    Care Updates
-                  </CardTitle>
-                  <p className="text-sm text-muted-foreground mt-2">
-                    Real-time updates from caretakers, sitters, and service providers
-                  </p>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <CardTitle className="flex items-center gap-2 text-navy-900">
+                        <Clock className="w-5 h-5 text-primary" />
+                        Recent Care Updates
+                      </CardTitle>
+                      <p className="text-sm text-muted-foreground mt-2">
+                        Real-time updates from caretakers, sitters, and service providers
+                      </p>
+                    </div>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => navigate(`/care/${petId}`)}
+                      className="gap-2"
+                    >
+                      Post Update
+                    </Button>
+                  </div>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-3">
-                    {careUpdates.map((update: any) => (
+                    {careUpdates.slice(0, 3).map((update: any) => (
                       <Card key={update.id} className="bg-sage-50/50">
                         <CardContent className="pt-4">
                           <div className="flex items-start justify-between gap-2 mb-2">
@@ -719,25 +754,59 @@ const PublicProfile = () => {
                       </Card>
                     ))}
                   </div>
+                  {careUpdates.length > 3 && (
+                    <div className="mt-4 text-center">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => navigate(`/care/${petId}`)}
+                        className="text-sage-600 hover:text-sage-700"
+                      >
+                        View all {careUpdates.length} updates →
+                      </Button>
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             </div>
           )}
 
-          {/* Service Provider Notes */}
+          {/* Service Provider Notes - Read Only Preview */}
           <div className="mb-6">
             <Card>
               <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-navy-900">
-                  <Stethoscope className="w-5 h-5 text-primary" />
-                  Service Provider Notes
-                </CardTitle>
-                <p className="text-sm text-muted-foreground mt-2">
-                  Professional notes from vets, trainers, farriers, groomers, and other service providers
-                </p>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <CardTitle className="flex items-center gap-2 text-navy-900">
+                      <Stethoscope className="w-5 h-5 text-primary" />
+                      Service Provider Notes
+                    </CardTitle>
+                    <p className="text-sm text-muted-foreground mt-2">
+                      Professional notes from vets, trainers, farriers, groomers, and other service providers
+                    </p>
+                  </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => navigate(`/care/${petId}`)}
+                    className="gap-2"
+                  >
+                    Add Note
+                  </Button>
+                </div>
               </CardHeader>
               <CardContent>
-                <ServiceProviderNotesBoard petId={petId!} petName={petData.name} />
+                <ServiceProviderNotesBoard petId={petId!} petName={petData.name} isPublicView={true} />
+                <div className="mt-4 text-center">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => navigate(`/care/${petId}`)}
+                    className="text-sage-600 hover:text-sage-700"
+                  >
+                    View all notes & add your own →
+                  </Button>
+                </div>
               </CardContent>
             </Card>
           </div>

@@ -39,9 +39,10 @@ interface ServiceProviderNote {
 interface ServiceProviderNotesBoardProps {
   petId: string;
   petName: string;
+  isPublicView?: boolean;
 }
 
-export const ServiceProviderNotesBoard = ({ petId, petName }: ServiceProviderNotesBoardProps) => {
+export const ServiceProviderNotesBoard = ({ petId, petName, isPublicView = false }: ServiceProviderNotesBoardProps) => {
   const [notes, setNotes] = useState<ServiceProviderNote[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isShareDialogOpen, setIsShareDialogOpen] = useState(false);
@@ -307,60 +308,62 @@ export const ServiceProviderNotesBoard = ({ petId, petName }: ServiceProviderNot
             </Badge>
           </div>
           
-          <div className="flex items-center gap-2">
-            <Button
-              onClick={handleDownloadPDF}
-              disabled={isGeneratingPDF || notes.length === 0}
-              variant="outline"
-              size="sm"
-              className="gap-2"
-            >
-              <Download className="w-4 h-4" />
-              {isGeneratingPDF ? 'Generating...' : 'Download PDF'}
-            </Button>
-
-            <Dialog open={isShareDialogOpen} onOpenChange={setIsShareDialogOpen}>
-            <DialogTrigger asChild>
-              <Button size="sm" variant="outline" className="gap-2">
-                <Share2 className="w-4 h-4" />
-                Invite Provider
+          {!isPublicView && (
+            <div className="flex items-center gap-2">
+              <Button
+                onClick={handleDownloadPDF}
+                disabled={isGeneratingPDF || notes.length === 0}
+                variant="outline"
+                size="sm"
+                className="gap-2"
+              >
+                <Download className="w-4 h-4" />
+                {isGeneratingPDF ? 'Generating...' : 'Download PDF'}
               </Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Share with Service Provider</DialogTitle>
-              </DialogHeader>
-              <div className="space-y-4">
-                <p className="text-sm text-gray-600">
-                  Share this link with your vet, trainer, farrier, or other service provider 
-                  so they can add notes about {petName}.
-                </p>
-                
-                <div className="space-y-2">
-                  <Label>Share Link</Label>
+
+              <Dialog open={isShareDialogOpen} onOpenChange={setIsShareDialogOpen}>
+              <DialogTrigger asChild>
+                <Button size="sm" variant="outline" className="gap-2">
+                  <Share2 className="w-4 h-4" />
+                  Invite Provider
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Share with Service Provider</DialogTitle>
+                </DialogHeader>
+                <div className="space-y-4">
+                  <p className="text-sm text-gray-600">
+                    Share this link with your vet, trainer, farrier, or other service provider 
+                    so they can add notes about {petName}.
+                  </p>
+                  
+                  <div className="space-y-2">
+                    <Label>Share Link</Label>
+                    <div className="flex gap-2">
+                      <Input value={shareUrl} readOnly className="flex-1" />
+                      <Button onClick={copyShareLink} size="icon" variant="outline">
+                        <Copy className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  </div>
+
                   <div className="flex gap-2">
-                    <Input value={shareUrl} readOnly className="flex-1" />
-                    <Button onClick={copyShareLink} size="icon" variant="outline">
-                      <Copy className="w-4 h-4" />
+                    <Button onClick={shareViaEmail} variant="outline" className="flex-1 gap-2">
+                      <Mail className="w-4 h-4" />
+                      Email Link
                     </Button>
                   </div>
                 </div>
-
-                <div className="flex gap-2">
-                  <Button onClick={shareViaEmail} variant="outline" className="flex-1 gap-2">
-                    <Mail className="w-4 h-4" />
-                    Email Link
-                  </Button>
-                </div>
-              </div>
-            </DialogContent>
-          </Dialog>
-          </div>
+              </DialogContent>
+            </Dialog>
+            </div>
+          )}
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        {/* Add Note Form Toggle */}
-        {!showAddForm && (
+        {/* Add Note Form Toggle - Owner Only */}
+        {!isPublicView && !showAddForm && (
           <Button 
             onClick={() => setShowAddForm(true)}
             className="w-full gap-2"
@@ -371,8 +374,8 @@ export const ServiceProviderNotesBoard = ({ petId, petName }: ServiceProviderNot
           </Button>
         )}
 
-        {/* Add Note Form */}
-        {showAddForm && (
+        {/* Add Note Form - Owner Only */}
+        {!isPublicView && showAddForm && (
           <AddServiceProviderNoteForm
             petId={petId}
             petName={petName}
@@ -384,14 +387,14 @@ export const ServiceProviderNotesBoard = ({ petId, petName }: ServiceProviderNot
           />
         )}
 
-        {notes.length === 0 ? (
+        {(isPublicView ? notes.filter(n => n.is_visible) : notes).length === 0 ? (
           <div className="text-center py-8 text-gray-500">
             <Stethoscope className="w-12 h-12 mx-auto mb-3 text-gray-300" />
             <p>No service provider notes yet</p>
             <p className="text-sm mt-1">Professional notes from vets, trainers, and other providers will appear here</p>
           </div>
         ) : (
-          notes.map((note) => (
+          (isPublicView ? notes.filter(n => n.is_visible) : notes).map((note) => (
             <Card key={note.id} className={`${!note.is_visible ? 'bg-gray-50 border-gray-300' : 'border-gray-200'}`}>
               <CardContent className="p-4">
                 <div className="space-y-3">
@@ -399,13 +402,15 @@ export const ServiceProviderNotesBoard = ({ petId, petName }: ServiceProviderNot
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex-1 space-y-2">
                       <div className="flex items-center gap-2 flex-wrap">
-                        <Badge variant={note.is_visible ? "default" : "secondary"} className="text-xs">
-                          {note.is_visible ? (
-                            <><Eye className="w-3 h-3 mr-1" />Visible</>
-                          ) : (
-                            <><EyeOff className="w-3 h-3 mr-1" />Hidden</>
-                          )}
-                        </Badge>
+                        {!isPublicView && (
+                          <Badge variant={note.is_visible ? "default" : "secondary"} className="text-xs">
+                            {note.is_visible ? (
+                              <><Eye className="w-3 h-3 mr-1" />Visible</>
+                            ) : (
+                              <><EyeOff className="w-3 h-3 mr-1" />Hidden</>
+                            )}
+                          </Badge>
+                        )}
                         <Badge className={getProviderTypeColor(note.provider_type)}>
                           {note.provider_type}
                         </Badge>
@@ -426,49 +431,51 @@ export const ServiceProviderNotesBoard = ({ petId, petName }: ServiceProviderNot
                       </div>
                     </div>
                     
-                    <div className="flex items-center gap-2 flex-shrink-0">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => openEditDialog(note)}
-                        className="h-8 px-2"
-                      >
-                        <Edit className="w-4 h-4" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => toggleVisibility(note.id, note.is_visible)}
-                        className="h-8 px-2"
-                      >
-                        {note.is_visible ? (
-                          <EyeOff className="w-4 h-4" />
-                        ) : (
-                          <Eye className="w-4 h-4" />
-                        )}
-                      </Button>
-                      <AlertDialog>
-                        <AlertDialogTrigger asChild>
-                          <Button variant="ghost" size="sm" className="h-8 px-2 text-red-600 hover:text-red-700 hover:bg-red-50">
-                            <Trash2 className="w-4 h-4" />
-                          </Button>
-                        </AlertDialogTrigger>
-                        <AlertDialogContent>
-                          <AlertDialogHeader>
-                            <AlertDialogTitle>Delete Service Provider Note?</AlertDialogTitle>
-                            <AlertDialogDescription>
-                              This will permanently delete this note from {note.provider_name}. This action cannot be undone.
-                            </AlertDialogDescription>
-                          </AlertDialogHeader>
-                          <AlertDialogFooter>
-                            <AlertDialogCancel>Cancel</AlertDialogCancel>
-                            <AlertDialogAction onClick={() => deleteNote(note.id)} className="bg-red-600 hover:bg-red-700">
-                              Delete
-                            </AlertDialogAction>
-                          </AlertDialogFooter>
-                        </AlertDialogContent>
-                      </AlertDialog>
-                    </div>
+                    {!isPublicView && (
+                      <div className="flex items-center gap-2 flex-shrink-0">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => openEditDialog(note)}
+                          className="h-8 px-2"
+                        >
+                          <Edit className="w-4 h-4" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => toggleVisibility(note.id, note.is_visible)}
+                          className="h-8 px-2"
+                        >
+                          {note.is_visible ? (
+                            <EyeOff className="w-4 h-4" />
+                          ) : (
+                            <Eye className="w-4 h-4" />
+                          )}
+                        </Button>
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                            <Button variant="ghost" size="sm" className="h-8 px-2 text-red-600 hover:text-red-700 hover:bg-red-50">
+                              <Trash2 className="w-4 h-4" />
+                            </Button>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>Delete Service Provider Note?</AlertDialogTitle>
+                              <AlertDialogDescription>
+                                This will permanently delete this note from {note.provider_name}. This action cannot be undone.
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>Cancel</AlertDialogCancel>
+                              <AlertDialogAction onClick={() => deleteNote(note.id)} className="bg-red-600 hover:bg-red-700">
+                                Delete
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
+                      </div>
+                    )}
                   </div>
 
                   {/* Service Details */}

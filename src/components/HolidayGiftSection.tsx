@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Gift, Heart, Sparkles, Star } from "lucide-react";
+import { Gift, Heart, Sparkles, Star, TreePine, Flame } from "lucide-react";
 
 export const HolidayGiftSection = () => {
   const navigate = useNavigate();
@@ -16,6 +16,31 @@ export const HolidayGiftSection = () => {
       </div>
       <div className="absolute top-1/2 left-1/4 text-red-200 opacity-10">
         <Gift className="w-24 h-24" />
+      </div>
+      {/* Christmas Tree */}
+      <div className="absolute top-20 right-20 text-green-400 opacity-25">
+        <TreePine className="w-32 h-32" />
+      </div>
+      {/* Hanukkah Menorah */}
+      <div className="absolute bottom-20 left-20 text-blue-400 opacity-25">
+        <div className="flex gap-1">
+          <Flame className="w-6 h-8" />
+          <Flame className="w-6 h-8" />
+          <Flame className="w-6 h-8" />
+          <Flame className="w-8 h-10" />
+          <Flame className="w-6 h-8" />
+          <Flame className="w-6 h-8" />
+          <Flame className="w-6 h-8" />
+          <Flame className="w-6 h-8" />
+          <Flame className="w-6 h-8" />
+        </div>
+      </div>
+      {/* Extra festive elements */}
+      <div className="absolute top-1/3 right-1/3 text-emerald-300 opacity-15">
+        <TreePine className="w-16 h-16" />
+      </div>
+      <div className="absolute bottom-1/3 right-1/4 text-amber-400 opacity-20 animate-pulse">
+        <Star className="w-12 h-12" />
       </div>
 
       <div className="max-w-7xl mx-auto px-4 relative z-10">

@@ -117,6 +117,14 @@ export default function LostPetFeatures() {
                 "@type": "Answer",
                 "text": "Time is critical! Start distributing flyers within the first 24 hours if possible. Lost pets typically stay within a 1-mile radius initially, so saturate your immediate area first. Post flyers at vet clinics, pet stores, shelters, parks, and high-traffic intersections. With PetPort's one-tap sharing, you can instantly distribute your pet's information digitally to social media, email, and SMS while you're printing physical flyers and anyone with the LiveLink or QR code can Print Flyers Also, this gets help fast!!!"
               }
+            },
+            {
+              "@type": "Question",
+              "name": "How can I share my lost pet information on social media?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "With PetPort's one-tap sharing, you can instantly distribute your pet's LiveLink to Facebook, Twitter, Instagram, and community groups. The LiveLink includes your pet's photo, description, last seen location, and a direct contact button. Anyone who sees the post can share it further, creating a viral search network."
+              }
             }
           ]
         })}
@@ -774,6 +782,17 @@ export default function LostPetFeatures() {
                 </AccordionTrigger>
                 <AccordionContent className="text-muted-foreground">
                   Time is critical! Start distributing flyers within the first 24 hours if possible. Lost pets typically stay within a 1-mile radius initially, so saturate your immediate area first. Post flyers at vet clinics, pet stores, shelters, parks, and high-traffic intersections. With PetPort's one-tap sharing, you can instantly distribute your pet's information digitally to social media, email, and SMS while you're printing physical flyers and anyone with the LiveLink or QR code can Print Flyers Also, this gets help fast!!!
+                </AccordionContent>
+              </AccordionItem>
+
+              <AccordionItem value="item-8" className="border border-border rounded-lg px-6 bg-card">
+                <AccordionTrigger className="text-left hover:no-underline">
+                  <span className="font-semibold text-foreground">
+                    How can I share my lost pet information on social media?
+                  </span>
+                </AccordionTrigger>
+                <AccordionContent className="text-muted-foreground">
+                  With PetPort's one-tap sharing, you can instantly distribute your pet's LiveLink to Facebook, Twitter, Instagram, and community groups. The LiveLink includes your pet's photo, description, last seen location, and a direct contact button. Anyone who sees the post can share it further, creating a viral search network.
                 </AccordionContent>
               </AccordionItem>
             </Accordion>

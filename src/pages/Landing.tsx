@@ -86,8 +86,8 @@ export default function Landing() {
   }, [isPreview, user]);
   return <div className="min-h-screen bg-white">
       <MetaTags 
-        title="Pet Records & Safety | Pet Passport, Lost Pet Flyers, Pet Housing | PetPort" 
-        description="Pet passport and portfolio. Manage your pet's medical records, lost pet flyers, pet housing applications, and pet wellness docs. Organize pet safety and emergency contacts." 
+        title="PetPort - Digital Pet Passport & Lost Pet Recovery | Pet Records App & Gift Subscription" 
+        description="All-in-one digital pet passport & subscription for pet parents. Lost pet finder with one-tap flyers, medical records organizer, pet screening resume for housing applications, and emergency contacts. Perfect gift for dog & cat owners. Free 7-day trial." 
         image="https://pub-a7c2c18b8d6143b9a256105ef44f2da0.r2.dev/OG%20General.png"
         url={window.location.origin + "/"} 
       />

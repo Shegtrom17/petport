@@ -112,33 +112,64 @@ const Gift = () => {
     }
   ];
 
-  // SEO Keywords
+  // SEO Keywords - Optimized for high-intent long-tail searches
   const keywords = [
+    // Primary high-volume keywords
     "gift pet passport",
     "pet gift subscription",
     "digital pet passport gift",
     "pet parent gift ideas",
+    "thoughtful gift for pet parent",
+    
+    // Safety & Emergency (high intent)
     "pet safety gift",
-    "pet memorial gift",
-    "unique pet gifts",
-    "pet birthday gift",
-    "new pet owner gift",
-    "pet adoption gift",
-    "pet medical records gift",
+    "pet safety subscription gift",
     "lost pet protection gift",
+    "lost pet recovery service gift",
+    "pet emergency preparedness gift",
+    "pet emergency contact organizer gift",
+    
+    // Digital/Records (unique positioning)
+    "digital pet records gift subscription",
+    "pet medical records gift",
+    "pet medical records app gift",
+    "pet travel documentation gift",
     "pet care organization gift",
-    "multi-pet gift",
-    "dog gift subscription",
-    "cat gift subscription",
-    "pet parent support",
-    "thoughtful pet gifts",
-    "lasting pet gift",
-    "pet legacy gift",
+    
+    // Housing & Screening (unique to PetPort)
     "pet screening resume gift",
     "pet housing gift",
+    "apartment hunting pet gift",
+    "pet housing application gift",
+    
+    // Life stages & occasions
+    "new pet owner gift",
+    "gift for new puppy owner",
+    "pet adoption gift",
+    "pet birthday gift",
+    "christmas gift for dog owner",
+    "adoption day gift for pet",
+    
+    // Specific audiences (high intent)
+    "gift for dog owner who has everything",
+    "gift for foster dog parent",
     "foster parent pet gift",
-    "christmas pet gift",
-    "pet lover gift ideas"
+    "pet sitter gift subscription",
+    "multi-pet family gift subscription",
+    
+    // Memorial & support
+    "pet memorial gift",
+    "grief support pet memorial gift",
+    "pet legacy gift",
+    
+    // Brand descriptors
+    "unique pet gifts",
+    "thoughtful pet gifts",
+    "lasting pet gift",
+    "dog gift subscription",
+    "cat gift subscription",
+    "pet lover gift ideas",
+    "pet parent support"
   ];
 
   // Breadcrumb Schema
@@ -257,8 +288,8 @@ const Gift = () => {
   return (
     <>
       <MetaTags 
-        title="Gift PetPort Membership - Give a Pet a Voice for Life | 12-Month Digital Pet Passport"
-        description="The perfect gift for pet parents: 12 months of pet safety tools, medical records, lost pet protection, and memory preservation. Includes Pet Screening Resume for housing, emergency contacts, and unlimited photo galleries. Gift for birthdays, adoptions, or any occasion."
+        title="Gift PetPort Membership - Perfect Gift for Dog & Cat Owners | Digital Pet Passport Subscription"
+        description="Thoughtful gift for pet parents who have everything: 12-month digital pet safety subscription with lost pet recovery, medical records, pet screening resume for housing applications, emergency contacts, and memory preservation. Perfect for new puppy owners, foster parents, birthdays, and adoption celebrations."
         url="https://petport.app/gift"
         type="product"
         image="https://petport.app/og/general-og.png"

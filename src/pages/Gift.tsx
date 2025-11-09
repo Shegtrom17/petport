@@ -621,41 +621,27 @@ const Gift = () => {
                       </div>
                     </div>
 
-                    <div className="space-y-2">
+                    <div className="space-y-3">
                       <Label className="flex items-center gap-2">
                         <CalendarIcon className="h-4 w-4" />
-                        When to Send Gift
+                        Delivery Timing
                       </Label>
                       
                       {!scheduledDate ? (
-                        <div className="grid grid-cols-2 gap-3">
-                          <Button
-                            type="button"
-                            variant="outline"
-                            className="h-auto py-4 flex-col items-start gap-1 hover:border-primary/50 hover:bg-primary/5 text-foreground hover:text-foreground"
-                            onClick={() => {/* Will send immediately - do nothing */}}
-                          >
-                            <div className="flex items-center gap-2 font-semibold">
-                              ⚡ Send Now
-                            </div>
-                            <div className="text-xs text-muted-foreground font-normal">
-                              Immediate delivery
-                            </div>
-                          </Button>
-                          
+                        <>
                           <Popover>
                             <PopoverTrigger asChild>
                               <Button
                                 type="button"
                                 variant="outline"
-                                className="h-auto py-4 flex-col items-start gap-1 hover:border-primary/50 hover:bg-primary/5 text-foreground hover:text-foreground"
+                                className="w-full h-auto py-3 justify-start hover:border-primary/50 hover:bg-primary/5 text-foreground hover:text-foreground"
                               >
-                                <div className="flex items-center gap-2 font-semibold">
-                                  <CalendarIcon className="h-4 w-4" />
-                                  Pick a Date
-                                </div>
-                                <div className="text-xs text-muted-foreground font-normal">
-                                  Schedule for later
+                                <CalendarIcon className="h-4 w-4 mr-2" />
+                                <div className="text-left">
+                                  <div className="font-semibold">Pick a Future Date (Optional)</div>
+                                  <div className="text-xs text-muted-foreground font-normal">
+                                    Schedule gift for a specific day
+                                  </div>
                                 </div>
                               </Button>
                             </PopoverTrigger>
@@ -674,7 +660,14 @@ const Gift = () => {
                               />
                             </PopoverContent>
                           </Popover>
-                        </div>
+                          
+                          <div className="bg-muted/30 rounded-lg p-3 text-sm">
+                            <p className="flex items-center gap-2 text-muted-foreground">
+                              <span className="text-lg">⚡</span>
+                              <span><strong>Default:</strong> Gift sends immediately after payment (within minutes)</span>
+                            </p>
+                          </div>
+                        </>
                       ) : (
                         <div className="border-2 border-primary/50 rounded-lg p-4 bg-primary/5">
                           <div className="flex items-center justify-between mb-3">
@@ -692,7 +685,7 @@ const Gift = () => {
                               className="text-muted-foreground hover:text-foreground"
                             >
                               <X className="h-4 w-4 mr-1" />
-                              Change
+                              Remove
                             </Button>
                           </div>
                           <p className="text-xs text-muted-foreground">
@@ -700,14 +693,6 @@ const Gift = () => {
                           </p>
                         </div>
                       )}
-                      
-                      <p className="text-xs text-muted-foreground">
-                        {scheduledDate ? (
-                          <>Gift will be emailed on <strong>{format(scheduledDate, "MMMM d, yyyy")}</strong></>
-                        ) : (
-                          <>Gift will be sent <strong>within minutes</strong> after payment</>
-                        )}
-                      </p>
                     </div>
                     <Button type="submit" className="w-full" size="lg" disabled={isLoading}>
                       {isLoading ? (

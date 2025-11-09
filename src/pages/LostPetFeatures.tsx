@@ -80,10 +80,10 @@ export default function LostPetFeatures() {
             },
             {
               "@type": "Question",
-              "name": "Is the PetPort Lost Pet Flyer Generator free to use?",
+              "name": "Is the Free Lost Pet Flyer really free to use?",
               "acceptedAnswer": {
                 "@type": "Answer",
-                "text": "Yes, our customizable, high-quality, print-ready Lost Pet Flyer generator is completely free, no sign-up or payment required. The LiveLink Alert System requires a PetPort subscription to activate."
+                "text": "Yes! print-ready Lost Pet Flyer is completely free with no sign-up or payment required. We want every lost pet to be found. The in app, PetPort Lost Pet Generator with LiveLinks, Alert System, QR codes, real-time updates, and sighting boards requires a PetPort subscription to activate."
               }
             },
             {
@@ -709,11 +709,11 @@ export default function LostPetFeatures() {
               <AccordionItem value="item-3" className="border border-border rounded-lg px-6 bg-card">
                 <AccordionTrigger className="text-left hover:no-underline">
                   <span className="font-semibold text-foreground">
-                    Is the PetPort Lost Pet Flyer Generator free to use?
+                    Is the Free Lost Pet Flyer really free to use?
                   </span>
                 </AccordionTrigger>
                 <AccordionContent className="text-muted-foreground">
-                  Yes! Our customizable, high-quality, print-ready Lost Pet Flyer generator is completely free with no sign-up or payment required. You can create as many flyers as you need. The LiveLink Alert System with QR codes, real-time updates, and sighting boards requires a PetPort subscription to activate.
+                  Yes! print-ready Lost Pet Flyer is completely free with no sign-up or payment required. We want every lost pet to be found. The in app, PetPort Lost Pet Generator with LiveLinks, Alert System, QR codes, real-time updates, and sighting boards requires a PetPort subscription to activate.
                 </AccordionContent>
               </AccordionItem>
 

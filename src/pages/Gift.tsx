@@ -6,9 +6,11 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Loader2, Gift as GiftIcon, Check, X } from "lucide-react";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { Loader2, Gift as GiftIcon, Check, X, Heart, Shield, Image, Users, MapPin, FileText, Calendar, Home, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/context/AuthContext";
+import { MetaTags } from "@/components/MetaTags";
 
 const Gift = () => {
   const navigate = useNavigate();
@@ -54,116 +56,491 @@ const Gift = () => {
     }
   };
 
-  const benefits = [
-    "12 months of unlimited pet profiles",
-    "Emergency contact & care instructions",
-    "Medical records & vaccination tracking",
-    "Beautiful photo galleries",
-    "Travel maps & story streams",
-    "Lost pet alert system with QR codes"
+  const useCases = [
+    {
+      icon: Sparkles,
+      title: "For the New Pet Parent",
+      description: "Help them start organized from day one—medical records, emergency contacts, and care instructions all in one place."
+    },
+    {
+      icon: Home,
+      title: "For the Renter or Apartment Hunter",
+      description: "Give them the Pet Screening Resume tool to stand out in housing applications and prove their pet is responsible."
+    },
+    {
+      icon: Calendar,
+      title: "For the Pet Birthday or Adoption Anniversary",
+      description: "Celebrate their special day with a gift that keeps on giving—12 months of peace of mind and memories."
+    },
+    {
+      icon: Users,
+      title: "For the Multi-Pet Household",
+      description: "They can add unlimited pet profiles with one subscription, then add capacity for more pets at just $3.99/year each."
+    },
+    {
+      icon: Heart,
+      title: "For the Worrier",
+      description: "Give them confidence knowing emergency contacts, medical info, and lost pet tools are ready if they ever need them."
+    }
   ];
 
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "How does the gift recipient activate their membership?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "After you complete your purchase, the recipient receives an email with a unique activation link and your personal message. They click the link, create their PetPort account (name, email, password), and their 12-month membership activates immediately. No credit card required for them!"
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Can the gift be used for multiple pets?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes! The base gift includes 1 pet profile, but recipients can add unlimited profiles. If they want capacity for more than 1 pet, they can add additional pet accounts for just $3.99/year per pet (up to 20 total pets). This makes it perfect for multi-pet households!"
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Is this suitable for cats, dogs, and other pets?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Absolutely! PetPort works for dogs, cats, horses, birds, reptiles, fish, rabbits, and more. Each species has customized fields (like 'hands' for horses or 'spayed/neutered' for dogs/cats), but all features work for any pet type."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How is this different from just buying them pet supplies?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Pet supplies are consumable—they get used up. PetPort is a lasting gift that protects, organizes, and celebrates their pet for an entire year. It's the difference between giving them a toy that breaks in a month versus giving them peace of mind, safety tools, and a way to preserve their pet's legacy forever."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Can I schedule when the gift email is sent?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Currently, the gift email is sent immediately after your purchase is complete (usually within minutes). If you'd like to give the gift on a specific date, we recommend purchasing on that day, or forwarding the activation email at your preferred time."
+        }
+      }
+    ]
+  };
+
+  const productSchema = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "name": "PetPort Gift Membership",
+    "description": "12-month digital pet passport subscription gift - includes pet safety, medical records, lost pet tools, and memory preservation",
+    "brand": {
+      "@type": "Brand",
+      "name": "PetPort"
+    },
+    "offers": {
+      "@type": "Offer",
+      "url": "https://petport.app/gift",
+      "priceCurrency": "USD",
+      "price": "14.99",
+      "availability": "https://schema.org/InStock",
+      "priceValidUntil": "2026-12-31"
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background to-muted/20 py-12 px-4 relative">
-      <Button
-        variant="ghost"
-        size="icon"
-        onClick={() => navigate(-1)}
-        className="absolute top-4 right-4 z-10"
-        aria-label="Close"
-      >
-        <X className="h-6 w-6" />
-      </Button>
-      <div className="max-w-4xl mx-auto">
-        <div className="text-center mb-8">
-          <div className="inline-block p-3 bg-primary/10 rounded-full mb-4">
-            <GiftIcon className="w-12 h-12 text-primary" />
+    <>
+      <MetaTags 
+        title="Gift PetPort - Give a Pet a Voice for Life"
+        description="Thoughtful gift for pet parents. 12 months of pet safety, medical records, lost pet tools, and memory preservation. Perfect for new pets, birthdays, or any occasion."
+        url="https://petport.app/gift"
+        type="product"
+      />
+      
+      <script type="application/ld+json">
+        {JSON.stringify(faqSchema)}
+      </script>
+      <script type="application/ld+json">
+        {JSON.stringify(productSchema)}
+      </script>
+
+      <div className="min-h-screen bg-gradient-to-b from-background to-muted/20 py-12 px-4 relative">
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => navigate(-1)}
+          className="absolute top-4 right-4 z-10"
+          aria-label="Close"
+        >
+          <X className="h-6 w-6" />
+        </Button>
+
+        <div className="max-w-6xl mx-auto space-y-16">
+          {/* Hero Section */}
+          <div className="text-center space-y-6">
+            <div className="inline-block p-4 bg-primary/10 rounded-full mb-2">
+              <GiftIcon className="w-16 h-16 text-primary" />
+            </div>
+            <h1 className="text-5xl md:text-6xl font-bold">Give a Pet a Voice for Life</h1>
+            <p className="text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto">
+              You're not just gifting a subscription—you're giving both a pet AND their caregiver the tools to speak up, stay safe, and be remembered.
+            </p>
           </div>
-          <h1 className="text-4xl font-bold mb-2">Gift PetPort</h1>
-          <p className="text-xl text-muted-foreground">
-            Give the gift of organized pet care for an entire year
-          </p>
-        </div>
 
-        <div className="grid md:grid-cols-2 gap-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>What's Included</CardTitle>
-              <CardDescription>Everything they need to keep their pet safe and organized</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <ul className="space-y-3">
-                {benefits.map((benefit, index) => (
-                  <li key={index} className="flex items-start gap-3">
-                    <Check className="w-5 h-5 text-primary mt-0.5" />
-                    <span className="text-sm">{benefit}</span>
+          {/* Why This Gift IS Different */}
+          <section className="space-y-8">
+            <div className="text-center">
+              <h2 className="text-3xl md:text-4xl font-bold mb-4">Why This Gift IS Different</h2>
+              <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+                This isn't another toy or treat. It's a legacy.
+              </p>
+            </div>
+
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+              <Card className="text-center">
+                <CardContent className="pt-6 space-y-3">
+                  <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto">
+                    <Users className="w-6 h-6 text-primary" />
+                  </div>
+                  <h3 className="font-semibold text-lg">You're Gifting TWO Voices</h3>
+                  <p className="text-sm text-muted-foreground">
+                    This isn't just for the pet—it's for the caregiver too. Give them peace of mind knowing their pet's story, needs, and safety are organized and shareable.
+                  </p>
+                </CardContent>
+              </Card>
+
+              <Card className="text-center">
+                <CardContent className="pt-6 space-y-3">
+                  <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto">
+                    <Heart className="w-6 h-6 text-primary" />
+                  </div>
+                  <h3 className="font-semibold text-lg">A Legacy That Lasts</h3>
+                  <p className="text-sm text-muted-foreground">
+                    Pet supplies get used up. Toys get destroyed. This gift preserves memories, protects their safety, and grows with them through every stage of life.
+                  </p>
+                </CardContent>
+              </Card>
+
+              <Card className="text-center">
+                <CardContent className="pt-6 space-y-3">
+                  <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto">
+                    <Shield className="w-6 h-6 text-primary" />
+                  </div>
+                  <h3 className="font-semibold text-lg">Emergency Safety + Daily Joy</h3>
+                  <p className="text-sm text-muted-foreground">
+                    From lost pet alerts to beautiful photo galleries, from medical records to travel journals—this keeps pets safe while celebrating their unique story.
+                  </p>
+                </CardContent>
+              </Card>
+
+              <Card className="text-center">
+                <CardContent className="pt-6 space-y-3">
+                  <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto">
+                    <Sparkles className="w-6 h-6 text-primary" />
+                  </div>
+                  <h3 className="font-semibold text-lg">Works for ANY Pet, ANY Life Stage</h3>
+                  <p className="text-sm text-muted-foreground">
+                    Whether they just adopted a kitten, have a senior dog, or care for multiple pets—this adapts to their needs.
+                  </p>
+                </CardContent>
+              </Card>
+            </div>
+          </section>
+
+          {/* Use Case Scenarios */}
+          <section className="space-y-8">
+            <div className="text-center">
+              <h2 className="text-3xl md:text-4xl font-bold mb-4">Perfect For</h2>
+              <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+                Every pet parent has unique needs. Here's how PetPort helps.
+              </p>
+            </div>
+
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {useCases.map((useCase, index) => (
+                <Card key={index} className="hover:shadow-lg transition-shadow">
+                  <CardContent className="pt-6 space-y-3">
+                    <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
+                      <useCase.icon className="w-6 h-6 text-primary" />
+                    </div>
+                    <h3 className="font-semibold text-lg">{useCase.title}</h3>
+                    <p className="text-sm text-muted-foreground">{useCase.description}</p>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </section>
+
+          {/* What's Included */}
+          <section className="space-y-8">
+            <div className="text-center">
+              <h2 className="text-3xl md:text-4xl font-bold mb-4">What's Included</h2>
+              <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+                Everything they need to protect, organize, and celebrate their pet for a full year.
+              </p>
+            </div>
+
+            <div className="grid md:grid-cols-3 gap-8">
+              <div className="space-y-4">
+                <div className="flex items-center gap-3 mb-4">
+                  <Shield className="w-6 h-6 text-primary" />
+                  <h3 className="font-semibold text-lg">Safety & Protection</h3>
+                </div>
+                <ul className="space-y-3">
+                  <li className="flex items-start gap-3">
+                    <Check className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
+                    <span className="text-sm">Lost pet alert system with LiveLinks & QR codes</span>
                   </li>
-                ))}
-              </ul>
-              <div className="mt-6 p-4 bg-primary/10 rounded-lg text-center">
-                <div className="text-3xl font-bold text-primary">$14.99</div>
-                <div className="text-sm text-muted-foreground">For a Full Year Gift of PetPort</div>
+                  <li className="flex items-start gap-3">
+                    <Check className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
+                    <span className="text-sm">Emergency contact management</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <Check className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
+                    <span className="text-sm">Care instructions for pet sitters</span>
+                  </li>
+                </ul>
               </div>
-            </CardContent>
-          </Card>
 
-          <Card>
-            <CardHeader>
-              <CardTitle>Gift Details</CardTitle>
-              <CardDescription>Send a PetPort membership to someone special</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="recipientEmail">Recipient Email *</Label>
-                  <Input
-                    id="recipientEmail"
-                    type="email"
-                    placeholder="friend@example.com"
-                    value={formData.recipientEmail}
-                    onChange={(e) => setFormData({ ...formData, recipientEmail: e.target.value })}
-                    required
-                  />
+              <div className="space-y-4">
+                <div className="flex items-center gap-3 mb-4">
+                  <FileText className="w-6 h-6 text-primary" />
+                  <h3 className="font-semibold text-lg">Organization & Records</h3>
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="senderName">Your Name (Optional)</Label>
-                  <Input
-                    id="senderName"
-                    placeholder="John Doe"
-                    value={formData.senderName}
-                    onChange={(e) => setFormData({ ...formData, senderName: e.target.value })}
-                  />
+                <ul className="space-y-3">
+                  <li className="flex items-start gap-3">
+                    <Check className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
+                    <span className="text-sm">Medical records & vaccination tracking</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <Check className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
+                    <span className="text-sm">Document storage (vet records, adoption papers)</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <Check className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
+                    <span className="text-sm">Pet Screening Resume for housing applications</span>
+                  </li>
+                </ul>
+              </div>
+
+              <div className="space-y-4">
+                <div className="flex items-center gap-3 mb-4">
+                  <Image className="w-6 h-6 text-primary" />
+                  <h3 className="font-semibold text-lg">Memories & Storytelling</h3>
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="giftMessage">Personal Message (Optional)</Label>
-                  <Textarea
-                    id="giftMessage"
-                    placeholder="Hope your pets love PetPort!"
-                    value={formData.giftMessage}
-                    onChange={(e) => setFormData({ ...formData, giftMessage: e.target.value })}
-                    maxLength={500}
-                    rows={4}
-                  />
+                <ul className="space-y-3">
+                  <li className="flex items-start gap-3">
+                    <Check className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
+                    <span className="text-sm">Beautiful photo galleries (unlimited photos)</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <Check className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
+                    <span className="text-sm">Travel maps & location history</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <Check className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
+                    <span className="text-sm">Story streams to document their journey</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            <Card className="bg-primary/5 border-primary/20">
+              <CardContent className="pt-6">
+                <div className="text-center space-y-2">
+                  <p className="text-sm font-medium text-muted-foreground">Base Gift Includes</p>
+                  <p className="text-2xl font-bold">1 Pet Account for 12 Months</p>
+                  <p className="text-sm text-muted-foreground">
+                    Need more? Additional pets can be added for just $3.99/year each (up to 20 total)
+                  </p>
                 </div>
-                <Button type="submit" className="w-full text-white" size="lg" disabled={isLoading}>
-                  {isLoading ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Processing...
-                    </>
-                  ) : (
-                    <>
-                      <GiftIcon className="mr-2 h-4 w-4" />
-                      Purchase Gift - $14.99
-                    </>
-                  )}
-                </Button>
-              </form>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
+          </section>
+
+          {/* How It Works */}
+          <section className="space-y-8">
+            <div className="text-center">
+              <h2 className="text-3xl md:text-4xl font-bold mb-4">How It Works</h2>
+              <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+                Simple, fast, and ready to use in minutes.
+              </p>
+            </div>
+
+            <div className="grid md:grid-cols-3 gap-8">
+              <div className="text-center space-y-4">
+                <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto">
+                  <span className="text-2xl font-bold text-primary">1</span>
+                </div>
+                <h3 className="font-semibold text-xl">💳 You Purchase</h3>
+                <p className="text-muted-foreground">
+                  Enter recipient email, add a personal message, and complete your secure checkout.
+                </p>
+              </div>
+
+              <div className="text-center space-y-4">
+                <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto">
+                  <span className="text-2xl font-bold text-primary">2</span>
+                </div>
+                <h3 className="font-semibold text-xl">📧 They Receive</h3>
+                <p className="text-muted-foreground">
+                  Email with your message + activation link arrives within minutes.
+                </p>
+              </div>
+
+              <div className="text-center space-y-4">
+                <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto">
+                  <span className="text-2xl font-bold text-primary">3</span>
+                </div>
+                <h3 className="font-semibold text-xl">🎉 They Activate</h3>
+                <p className="text-muted-foreground">
+                  Create account, start adding pets immediately—no credit card required!
+                </p>
+              </div>
+            </div>
+          </section>
+
+          {/* Purchase Form */}
+          <section className="max-w-4xl mx-auto">
+            <div className="grid md:grid-cols-2 gap-6">
+              <Card className="bg-primary/5 border-primary/20">
+                <CardHeader>
+                  <CardTitle className="text-2xl">Your Gift</CardTitle>
+                  <CardDescription>12-month PetPort membership</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <div className="text-center py-6">
+                    <div className="text-5xl font-bold text-primary mb-2">$14.99</div>
+                    <div className="text-sm text-muted-foreground">One-time payment • Instant delivery</div>
+                  </div>
+                  <div className="space-y-2 text-sm text-muted-foreground">
+                    <p>✓ Delivered via email within minutes</p>
+                    <p>✓ No credit card required from recipient</p>
+                    <p>✓ Valid for 12 months from activation</p>
+                    <p>✓ Recipient can add unlimited pet profiles</p>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle>Gift Details</CardTitle>
+                  <CardDescription>Send a thoughtful gift that lasts all year</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <form onSubmit={handleSubmit} className="space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="recipientEmail">Recipient Email *</Label>
+                      <Input
+                        id="recipientEmail"
+                        type="email"
+                        placeholder="friend@example.com"
+                        value={formData.recipientEmail}
+                        onChange={(e) => setFormData({ ...formData, recipientEmail: e.target.value })}
+                        required
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="senderName">Your Name (Optional)</Label>
+                      <Input
+                        id="senderName"
+                        placeholder="John Doe"
+                        value={formData.senderName}
+                        onChange={(e) => setFormData({ ...formData, senderName: e.target.value })}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="giftMessage">Personal Message (Optional)</Label>
+                      <Textarea
+                        id="giftMessage"
+                        placeholder="Hope your pets love PetPort!"
+                        value={formData.giftMessage}
+                        onChange={(e) => setFormData({ ...formData, giftMessage: e.target.value })}
+                        maxLength={500}
+                        rows={4}
+                      />
+                      <p className="text-xs text-muted-foreground">{formData.giftMessage.length}/500 characters</p>
+                    </div>
+                    <Button type="submit" className="w-full" size="lg" disabled={isLoading}>
+                      {isLoading ? (
+                        <>
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          Processing...
+                        </>
+                      ) : (
+                        <>
+                          <GiftIcon className="mr-2 h-4 w-4" />
+                          Purchase Gift - $14.99
+                        </>
+                      )}
+                    </Button>
+                  </form>
+                </CardContent>
+              </Card>
+            </div>
+          </section>
+
+          {/* FAQ Section */}
+          <section className="max-w-4xl mx-auto space-y-8">
+            <div className="text-center">
+              <h2 className="text-3xl md:text-4xl font-bold mb-4">Frequently Asked Questions</h2>
+              <p className="text-lg text-muted-foreground">
+                Everything you need to know about gifting PetPort.
+              </p>
+            </div>
+
+            <Accordion type="single" collapsible className="w-full space-y-4">
+              <AccordionItem value="item-1" className="border border-border rounded-lg px-6 bg-card">
+                <AccordionTrigger className="text-left hover:no-underline">
+                  <span className="font-semibold">How does the gift recipient activate their membership?</span>
+                </AccordionTrigger>
+                <AccordionContent className="text-muted-foreground">
+                  After you complete your purchase, the recipient receives an email with a unique activation link and your personal message. They click the link, create their PetPort account (name, email, password), and their 12-month membership activates immediately. No credit card required for them!
+                </AccordionContent>
+              </AccordionItem>
+
+              <AccordionItem value="item-2" className="border border-border rounded-lg px-6 bg-card">
+                <AccordionTrigger className="text-left hover:no-underline">
+                  <span className="font-semibold">Can the gift be used for multiple pets?</span>
+                </AccordionTrigger>
+                <AccordionContent className="text-muted-foreground">
+                  Yes! The base gift includes 1 pet profile, but recipients can add unlimited profiles. If they want capacity for more than 1 pet, they can add additional pet accounts for just $3.99/year per pet (up to 20 total pets). This makes it perfect for multi-pet households!
+                </AccordionContent>
+              </AccordionItem>
+
+              <AccordionItem value="item-3" className="border border-border rounded-lg px-6 bg-card">
+                <AccordionTrigger className="text-left hover:no-underline">
+                  <span className="font-semibold">Is this suitable for cats, dogs, and other pets?</span>
+                </AccordionTrigger>
+                <AccordionContent className="text-muted-foreground">
+                  Absolutely! PetPort works for dogs, cats, horses, birds, reptiles, fish, rabbits, and more. Each species has customized fields (like 'hands' for horses or 'spayed/neutered' for dogs/cats), but all features work for any pet type.
+                </AccordionContent>
+              </AccordionItem>
+
+              <AccordionItem value="item-4" className="border border-border rounded-lg px-6 bg-card">
+                <AccordionTrigger className="text-left hover:no-underline">
+                  <span className="font-semibold">How is this different from just buying them pet supplies?</span>
+                </AccordionTrigger>
+                <AccordionContent className="text-muted-foreground">
+                  Pet supplies are consumable—they get used up. PetPort is a lasting gift that protects, organizes, and celebrates their pet for an entire year. It's the difference between giving them a toy that breaks in a month versus giving them peace of mind, safety tools, and a way to preserve their pet's legacy forever.
+                </AccordionContent>
+              </AccordionItem>
+
+              <AccordionItem value="item-5" className="border border-border rounded-lg px-6 bg-card">
+                <AccordionTrigger className="text-left hover:no-underline">
+                  <span className="font-semibold">Can I schedule when the gift email is sent?</span>
+                </AccordionTrigger>
+                <AccordionContent className="text-muted-foreground">
+                  Currently, the gift email is sent immediately after your purchase is complete (usually within minutes). If you'd like to give the gift on a specific date, we recommend purchasing on that day, or forwarding the activation email at your preferred time.
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
+          </section>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

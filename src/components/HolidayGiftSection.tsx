@@ -80,8 +80,8 @@ export const HolidayGiftSection = () => {
               <p className="text-sm text-brand-primary-dark">One-tap flyers & LiveLinks</p>
             </div>
 
-            <div className="bg-white/90 backdrop-blur-sm rounded-xl p-6 shadow-md border border-amber-100 hover:shadow-xl transition-shadow">
-              <div className="w-12 h-12 bg-gradient-to-br from-amber-500 to-orange-600 rounded-full flex items-center justify-center mb-4 mx-auto">
+            <div className="bg-white/90 backdrop-blur-sm rounded-xl p-6 shadow-md border border-emerald-100 hover:shadow-xl transition-shadow">
+              <div className="w-12 h-12 bg-gradient-to-br from-emerald-500 to-green-600 rounded-full flex items-center justify-center mb-4 mx-auto">
                 <Sparkles className="h-6 w-6 text-white" />
               </div>
               <h3 className="font-bold text-brand-primary mb-2">Digital Records</h3>
@@ -96,8 +96,8 @@ export const HolidayGiftSection = () => {
               <p className="text-sm text-brand-primary-dark">Pet screening builder</p>
             </div>
 
-            <div className="bg-white/90 backdrop-blur-sm rounded-xl p-6 shadow-md border border-amber-100 hover:shadow-xl transition-shadow">
-              <div className="w-12 h-12 bg-gradient-to-br from-yellow-500 to-amber-600 rounded-full flex items-center justify-center mb-4 mx-auto">
+            <div className="bg-white/90 backdrop-blur-sm rounded-xl p-6 shadow-md border border-green-100 hover:shadow-xl transition-shadow">
+              <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-600 rounded-full flex items-center justify-center mb-4 mx-auto">
                 <Star className="h-6 w-6 text-white" />
               </div>
               <h3 className="font-bold text-brand-primary mb-2">Memory Gallery</h3>

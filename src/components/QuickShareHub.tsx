@@ -50,7 +50,7 @@ import { generateShareURL } from "@/utils/domainUtils";
 import { generateClientPetPDF, generateQRPrintSheetPDF, viewPDFBlob, downloadPDFBlob, isIOS } from '@/services/clientPdfService';
 import { sharePDFBlob } from '@/services/pdfService';
 import { shareQRCode } from "@/utils/qrShare";
-import { DocumentViewer } from "@/components/DocumentViewer";
+
 
 interface QuickShareHubProps {
   petData: any; // Accept full pet object with all fields
@@ -123,8 +123,6 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
   const [showQRSheetDialog, setShowQRSheetDialog] = useState(false);
   const [showQRSheetEmailForm, setShowQRSheetEmailForm] = useState(false);
   const [qrSheetEmailData, setQrSheetEmailData] = useState({ to: '', name: '', message: '' });
-  const [qrSheetPdfUrl, setQrSheetPdfUrl] = useState<string | null>(null);
-  const [showQRSheetViewer, setShowQRSheetViewer] = useState(false);
   
   const { toast } = useToast();
   const { sendEmail, isLoading: emailLoading } = useEmailSharing();
@@ -573,14 +571,7 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
 
   const handleViewQRSheet = () => {
     if (qrSheetBlob) {
-      // On mobile, use DocumentViewer for better scrolling/zooming
-      if (isMobile) {
-        const url = URL.createObjectURL(qrSheetBlob);
-        setQrSheetPdfUrl(url);
-        setShowQRSheetViewer(true);
-      } else {
-        viewPDFBlob(qrSheetBlob, `${petData.name}_QR_Print_Sheet.pdf`);
-      }
+      viewPDFBlob(qrSheetBlob, `${petData.name}_QR_Print_Sheet.pdf`);
     }
   };
 
@@ -3116,21 +3107,6 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
         </Dialog>
       )}
 
-      {/* QR Sheet PDF Viewer for Mobile */}
-      {showQRSheetViewer && qrSheetPdfUrl && (
-        <DocumentViewer
-          isOpen={showQRSheetViewer}
-          onClose={() => {
-            setShowQRSheetViewer(false);
-            if (qrSheetPdfUrl) {
-              URL.revokeObjectURL(qrSheetPdfUrl);
-              setQrSheetPdfUrl(null);
-            }
-          }}
-          documentUrl={qrSheetPdfUrl}
-          documentName={`${petData.name}_QR_Print_Sheet.pdf`}
-        />
-      )}
     </Card>
   );
 };

@@ -147,6 +147,14 @@ const Gift = () => {
           "@type": "Answer",
           "text": "Yes! You can schedule your gift to be delivered on any future date (date only, not a specific time). Payment is processed immediately when you purchase, but the recipient will receive their gift email on your chosen date. The scheduled email is sent in the morning of the selected date. Perfect for birthdays, holidays, or any special occasion!"
         }
+      },
+      {
+        "@type": "Question",
+        "name": "What happens after the first year? Can they continue using PetPort?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Absolutely! After their gifted first year, recipients can easily renew their membership to keep all their pet's information, photos, and features active. They'll receive a friendly reminder email before their membership expires with simple renewal options. All their data, stories, and pet profiles stay preserved—nothing is lost. This makes PetPort a truly lasting gift that can protect their pet for a lifetime, not just one year."
+        }
       }
     ]
   };
@@ -775,6 +783,15 @@ const Gift = () => {
                     <li>The recipient receives their gift email on your chosen date (sent in the morning)</li>
                     <li>Perfect for birthdays, holidays, adoption anniversaries, or any special occasion!</li>
                   </ul>
+                </AccordionContent>
+              </AccordionItem>
+
+              <AccordionItem value="item-6" className="border border-border rounded-lg px-6 bg-card">
+                <AccordionTrigger className="text-left hover:no-underline">
+                  <span className="font-semibold">What happens after the first year? Can they continue using PetPort?</span>
+                </AccordionTrigger>
+                <AccordionContent className="text-muted-foreground">
+                  Absolutely! After their gifted first year, recipients can easily renew their membership to keep all their pet's information, photos, and features active. They'll receive a friendly reminder email before their membership expires with simple renewal options. All their data, stories, and pet profiles stay preserved—nothing is lost. This makes PetPort a truly lasting gift that can protect their pet for a lifetime, not just one year.
                 </AccordionContent>
               </AccordionItem>
             </Accordion>

@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Gift, Heart, Sparkles, Star, TreePine, Flame } from "lucide-react";
+import { Gift, Heart, Sparkles, Star, TreePine, Flame, Dog } from "lucide-react";
 
 export const HolidayGiftSection = () => {
   const navigate = useNavigate();
@@ -41,6 +41,13 @@ export const HolidayGiftSection = () => {
       </div>
       <div className="absolute bottom-1/3 right-1/4 text-amber-400 opacity-20 animate-pulse">
         <Star className="w-12 h-12" />
+      </div>
+      {/* Reindeer - using Dog icon styled as festive pet */}
+      <div className="absolute top-1/4 left-1/2 text-amber-600 opacity-25">
+        <Dog className="w-20 h-20" />
+      </div>
+      <div className="absolute bottom-1/4 right-16 text-rose-400 opacity-20">
+        <Dog className="w-16 h-16" />
       </div>
 
       <div className="max-w-7xl mx-auto px-4 relative z-10">

@@ -11,6 +11,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Sparkles, ArrowRight, Heart, Menu } from "lucide-react";
 import { PublicNavigationMenu } from "@/components/PublicNavigationMenu";
 import { PodcastBanner } from "@/components/PodcastBanner";
+import { HolidayGiftSection } from "@/components/HolidayGiftSection";
 import createProfileScreenshot from "@/assets/create-profile-screenshot.png";
 import documentUploadScreenshot from "@/assets/document-upload-screenshot.png";
 import resumeDetailsScreenshot from "@/assets/resume-details-screenshot.png";
@@ -363,6 +364,8 @@ export default function Landing() {
           </div>
         </section>
 
+        {/* Holiday Gift Section */}
+        <HolidayGiftSection />
 
         {/* Demo Preview Section */}
         <section className="bg-gradient-to-br from-brand-cream via-white to-brand-cream py-20">

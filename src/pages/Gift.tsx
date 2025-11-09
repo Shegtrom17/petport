@@ -624,71 +624,88 @@ const Gift = () => {
                     <div className="space-y-2">
                       <Label className="flex items-center gap-2">
                         <CalendarIcon className="h-4 w-4" />
-                        Schedule Delivery (Optional)
+                        When to Send Gift
                       </Label>
-                      <Popover>
-                        <PopoverTrigger asChild>
+                      
+                      {!scheduledDate ? (
+                        <div className="grid grid-cols-2 gap-3">
                           <Button
                             type="button"
                             variant="outline"
-                            className={cn(
-                              "w-full justify-between text-left font-normal hover:border-primary/50 hover:bg-primary/5 transition-colors",
-                              scheduledDate ? "text-foreground hover:text-foreground" : "text-muted-foreground hover:text-muted-foreground"
-                            )}
+                            className="h-auto py-4 flex-col items-start gap-1 hover:border-primary/50 hover:bg-primary/5 text-foreground hover:text-foreground"
+                            onClick={() => {/* Will send immediately - do nothing */}}
                           >
-                            <span className="flex items-center gap-2">
-                              <CalendarIcon className="h-4 w-4" />
-                              {scheduledDate ? format(scheduledDate, "PPP") : "Click to pick a date →"}
-                            </span>
-                            {!scheduledDate && (
-                              <span className="text-xs bg-primary/10 text-primary px-2 py-1 rounded">
-                                or send now
-                              </span>
-                            )}
+                            <div className="flex items-center gap-2 font-semibold">
+                              ⚡ Send Now
+                            </div>
+                            <div className="text-xs text-muted-foreground font-normal">
+                              Immediate delivery
+                            </div>
                           </Button>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-auto p-0" align="end">
-                          <div className="bg-muted/50 p-3 border-b">
-                            <p className="text-sm font-medium">Select a future date</p>
-                            <p className="text-xs text-muted-foreground">Gift email will be sent on the chosen date</p>
-                          </div>
-                          <CalendarComponent
-                            mode="single"
-                            selected={scheduledDate}
-                            onSelect={setScheduledDate}
-                            disabled={(date) => date < new Date()}
-                            initialFocus
-                            className="p-3 pointer-events-auto"
-                          />
-                          {scheduledDate && (
-                            <div className="p-3 border-t bg-muted/30">
-                              <p className="text-sm font-medium mb-2">
-                                📅 Scheduled for {format(scheduledDate, "MMMM d, yyyy")}
-                              </p>
+                          
+                          <Popover>
+                            <PopoverTrigger asChild>
                               <Button
                                 type="button"
-                                variant="ghost"
-                                size="sm"
-                                className="w-full"
-                                onClick={() => setScheduledDate(undefined)}
+                                variant="outline"
+                                className="h-auto py-4 flex-col items-start gap-1 hover:border-primary/50 hover:bg-primary/5 text-foreground hover:text-foreground"
                               >
-                                <X className="h-4 w-4 mr-2" />
-                                Clear date (send immediately instead)
+                                <div className="flex items-center gap-2 font-semibold">
+                                  <CalendarIcon className="h-4 w-4" />
+                                  Pick a Date
+                                </div>
+                                <div className="text-xs text-muted-foreground font-normal">
+                                  Schedule for later
+                                </div>
                               </Button>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-auto p-0" align="end">
+                              <div className="bg-muted/50 p-3 border-b">
+                                <p className="text-sm font-medium">Select a future date</p>
+                                <p className="text-xs text-muted-foreground">Gift email will be sent on the chosen date</p>
+                              </div>
+                              <CalendarComponent
+                                mode="single"
+                                selected={scheduledDate}
+                                onSelect={setScheduledDate}
+                                disabled={(date) => date < new Date()}
+                                initialFocus
+                                className="p-3 pointer-events-auto"
+                              />
+                            </PopoverContent>
+                          </Popover>
+                        </div>
+                      ) : (
+                        <div className="border-2 border-primary/50 rounded-lg p-4 bg-primary/5">
+                          <div className="flex items-center justify-between mb-3">
+                            <div>
+                              <p className="text-sm font-medium">Scheduled Delivery</p>
+                              <p className="text-lg font-bold text-primary">
+                                📅 {format(scheduledDate, "MMMM d, yyyy")}
+                              </p>
                             </div>
-                          )}
-                        </PopoverContent>
-                      </Popover>
-                      <p className="text-xs text-muted-foreground flex items-center gap-1">
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => setScheduledDate(undefined)}
+                              className="text-muted-foreground hover:text-foreground"
+                            >
+                              <X className="h-4 w-4 mr-1" />
+                              Change
+                            </Button>
+                          </div>
+                          <p className="text-xs text-muted-foreground">
+                            Gift email will be sent on this date
+                          </p>
+                        </div>
+                      )}
+                      
+                      <p className="text-xs text-muted-foreground">
                         {scheduledDate ? (
-                          <>
-                            <Check className="h-3 w-3 text-primary" />
-                            Gift will be emailed on <strong>{format(scheduledDate, "MMMM d, yyyy")}</strong>
-                          </>
+                          <>Gift will be emailed on <strong>{format(scheduledDate, "MMMM d, yyyy")}</strong></>
                         ) : (
-                          <>
-                            ⚡ Gift will be sent <strong>immediately</strong> after payment (within minutes)
-                          </>
+                          <>Gift will be sent <strong>within minutes</strong> after payment</>
                         )}
                       </p>
                     </div>

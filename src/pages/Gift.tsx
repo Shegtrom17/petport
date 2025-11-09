@@ -9,10 +9,18 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Calendar as CalendarComponent } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Loader2, Gift as GiftIcon, Check, X, Heart, Shield, Image, Users, MapPin, FileText, Calendar as CalendarIcon, Home, Sparkles } from "lucide-react";
+import { Loader2, Gift as GiftIcon, Check, X, Heart, Shield, Image, Users, MapPin, FileText, Calendar as CalendarIcon, Home, Sparkles, ChevronRight } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/context/AuthContext";
 import { MetaTags } from "@/components/MetaTags";
+import { 
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 
@@ -104,6 +112,74 @@ const Gift = () => {
     }
   ];
 
+  // SEO Keywords
+  const keywords = [
+    "gift pet passport",
+    "pet gift subscription",
+    "digital pet passport gift",
+    "pet parent gift ideas",
+    "pet safety gift",
+    "pet memorial gift",
+    "unique pet gifts",
+    "pet birthday gift",
+    "new pet owner gift",
+    "pet adoption gift",
+    "pet medical records gift",
+    "lost pet protection gift",
+    "pet care organization gift",
+    "multi-pet gift",
+    "dog gift subscription",
+    "cat gift subscription",
+    "pet parent support",
+    "thoughtful pet gifts",
+    "lasting pet gift",
+    "pet legacy gift",
+    "pet screening resume gift",
+    "pet housing gift",
+    "foster parent pet gift",
+    "christmas pet gift",
+    "pet lover gift ideas"
+  ];
+
+  // Breadcrumb Schema
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "https://petport.app"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Gift Membership",
+        "item": "https://petport.app/gift"
+      }
+    ]
+  };
+
+  // WebApplication Schema
+  const webAppSchema = {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "PetPort Gift Membership",
+    "applicationCategory": "UtilityApplication",
+    "operatingSystem": "All",
+    "offers": {
+      "@type": "Offer",
+      "price": "14.99",
+      "priceCurrency": "USD"
+    },
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": "4.9",
+      "ratingCount": "250"
+    }
+  };
+
   const faqSchema = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
@@ -181,12 +257,23 @@ const Gift = () => {
   return (
     <>
       <MetaTags 
-        title="Gift PetPort - Give a Pet a Voice for Life"
-        description="Thoughtful gift for pet parents. 12 months of pet safety, medical records, lost pet tools, and memory preservation. Perfect for new pets, birthdays, or any occasion."
+        title="Gift PetPort Membership - Give a Pet a Voice for Life | 12-Month Digital Pet Passport"
+        description="The perfect gift for pet parents: 12 months of pet safety tools, medical records, lost pet protection, and memory preservation. Includes Pet Screening Resume for housing, emergency contacts, and unlimited photo galleries. Gift for birthdays, adoptions, or any occasion."
         url="https://petport.app/gift"
         type="product"
+        image="https://petport.app/og/general-og.png"
       />
       
+      {/* Keywords Meta Tag */}
+      <meta name="keywords" content={keywords.join(", ")} />
+      
+      {/* Structured Data Schemas */}
+      <script type="application/ld+json">
+        {JSON.stringify(breadcrumbSchema)}
+      </script>
+      <script type="application/ld+json">
+        {JSON.stringify(webAppSchema)}
+      </script>
       <script type="application/ld+json">
         {JSON.stringify(faqSchema)}
       </script>
@@ -206,6 +293,24 @@ const Gift = () => {
         </Button>
 
         <div className="max-w-6xl mx-auto space-y-16">
+          {/* Breadcrumb Navigation */}
+          <Breadcrumb>
+            <BreadcrumbList>
+              <BreadcrumbItem>
+                <BreadcrumbLink href="/">
+                  <Home className="h-4 w-4" />
+                  <span className="sr-only">Home</span>
+                </BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator>
+                <ChevronRight className="h-4 w-4" />
+              </BreadcrumbSeparator>
+              <BreadcrumbItem>
+                <BreadcrumbPage>Gift Membership</BreadcrumbPage>
+              </BreadcrumbItem>
+            </BreadcrumbList>
+          </Breadcrumb>
+
           {/* Hero Section */}
           <div className="text-center space-y-6">
             <div className="inline-block p-4 bg-primary/10 rounded-full mb-2">

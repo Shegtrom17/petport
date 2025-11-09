@@ -9,10 +9,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Calendar as CalendarComponent } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Loader2, Gift as GiftIcon, Check, X, Heart, Shield, Image, Users, MapPin, FileText, Calendar as CalendarIcon, Home, Sparkles, ChevronRight } from "lucide-react";
+import { Loader2, Gift as GiftIcon, Check, X, Heart, Shield, Image, Users, MapPin, FileText, Calendar as CalendarIcon, Home, Sparkles, ChevronRight, Menu } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/context/AuthContext";
 import { MetaTags } from "@/components/MetaTags";
+import { PublicNavigationMenu } from "@/components/PublicNavigationMenu";
+import { AppShareButton } from "@/components/AppShareButton";
 import { 
   Breadcrumb,
   BreadcrumbItem,
@@ -28,6 +30,7 @@ const Gift = () => {
   const navigate = useNavigate();
   const { session } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
+  const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [formData, setFormData] = useState({
     recipientEmail: "",
     senderName: "",
@@ -312,18 +315,38 @@ const Gift = () => {
         {JSON.stringify(productSchema)}
       </script>
 
-      <div className="min-h-screen bg-gradient-to-b from-background to-muted/20 py-12 px-4 relative">
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={() => navigate(-1)}
-          className="absolute top-4 right-4 z-10"
-          aria-label="Close"
-        >
-          <X className="h-6 w-6" />
-        </Button>
+      <div className="min-h-screen bg-gradient-to-b from-background to-muted/20">
+        {/* Header Navigation */}
+        <header className="max-w-7xl mx-auto px-4 py-6 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            {/* Hamburger Menu Icon */}
+            <button
+              onClick={() => setShowMobileMenu(true)}
+              className="p-2 hover:bg-accent rounded-md transition-colors"
+              aria-label="Open menu"
+            >
+              <Menu className="h-6 w-6 text-foreground" />
+            </button>
+            
+            <img src="/lovable-uploads/213ccabc-3918-406d-b844-9c2730b7637d.png" alt="PetPort logo" className="w-10 h-10" />
+            <span className="text-xl font-semibold text-brand-primary">PetPort</span>
+          </div>
+          
+          <div className="flex items-center gap-3">
+            <AppShareButton variant="icon" />
+            <Button onClick={() => navigate('/')} variant="ghost" size="icon" aria-label="Home">
+              <Home className="h-5 w-5" />
+            </Button>
+          </div>
+        </header>
 
-        <div className="max-w-6xl mx-auto space-y-16">
+        {/* Mobile Navigation Menu */}
+        <PublicNavigationMenu 
+          isOpen={showMobileMenu} 
+          onClose={() => setShowMobileMenu(false)} 
+        />
+
+        <div className="max-w-6xl mx-auto px-4 py-12 space-y-16">
           {/* Breadcrumb Navigation */}
           <Breadcrumb>
             <BreadcrumbList>

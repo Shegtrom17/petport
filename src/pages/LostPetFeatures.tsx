@@ -133,6 +133,14 @@ export default function LostPetFeatures() {
                 "@type": "Answer",
                 "text": "Yes! Anyone with your pet's LiveLink or QR code can view the full lost pet flyer and share it to their own social networks without signing up. They can also print additional flyers directly from the link, making it easy for friends, neighbors, and community members to help spread the word."
               }
+            },
+            {
+              "@type": "Question",
+              "name": "What's the best way to share on local community groups?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Share your pet's LiveLink to local Facebook groups, Nextdoor, and neighborhood apps within the first 24 hours. Include a brief message with your pet's name, species, and last seen location. The LiveLink automatically updates if your pet is found, so shared posts stay current without needing to edit multiple group posts."
+              }
             }
           ]
         })}
@@ -812,6 +820,17 @@ export default function LostPetFeatures() {
                 </AccordionTrigger>
                 <AccordionContent className="text-muted-foreground">
                   Yes! Anyone with your pet's LiveLink or QR code can view the full lost pet flyer and share it to their own social networks without signing up. They can also print additional flyers directly from the link, making it easy for friends, neighbors, and community members to help spread the word.
+                </AccordionContent>
+              </AccordionItem>
+
+              <AccordionItem value="item-10" className="border border-border rounded-lg px-6 bg-card">
+                <AccordionTrigger className="text-left hover:no-underline">
+                  <span className="font-semibold text-foreground">
+                    What's the best way to share on local community groups?
+                  </span>
+                </AccordionTrigger>
+                <AccordionContent className="text-muted-foreground">
+                  Share your pet's LiveLink to local Facebook groups, Nextdoor, and neighborhood apps within the first 24 hours. Include a brief message with your pet's name, species, and last seen location. The LiveLink automatically updates if your pet is found, so shared posts stay current without needing to edit multiple group posts.
                 </AccordionContent>
               </AccordionItem>
             </Accordion>

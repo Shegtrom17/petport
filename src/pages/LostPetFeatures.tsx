@@ -746,7 +746,7 @@ export default function LostPetFeatures() {
                   </span>
                 </AccordionTrigger>
                 <AccordionContent className="text-muted-foreground">
-                  Essential elements include: clear, recent photos showing distinctive markings, your pet's name (helps them respond if called), last seen location and date/time, your contact phone number, and any medical conditions or special needs. Avoid listing reward amounts on the flyer itself to prevent scams. PetPort's flyer generator guides you through all these elements and auto-generates a professional layout.
+                  Essential elements include: clear, recent photos showing distinctive markings, your pet's name (helps them respond if called), what will make pet most comfortable to come to stranger, last seen location and date/time, your contact phone number, and any medical conditions or special needs. PetPort's flyer generator guides you through all these elements and auto-generates a professional layout.
                 </AccordionContent>
               </AccordionItem>
 

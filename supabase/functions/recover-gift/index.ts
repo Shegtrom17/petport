@@ -69,6 +69,7 @@ serve(async (req) => {
     const senderName = session.metadata?.sender_name || "A PetPort supporter";
     const giftMessage = session.metadata?.gift_message || "";
     const purchaserEmail = session.metadata?.purchaser_email || session.customer_email;
+    const scheduledSendDate = session.metadata?.scheduled_send_date || "";
 
     if (!recipientEmail) {
       throw new Error("No recipient email in session metadata");
@@ -77,6 +78,45 @@ serve(async (req) => {
     // Generate unique 8-character gift code
     const giftCode = crypto.randomUUID().split('-')[0].toUpperCase();
     
+    // If gift is scheduled for future delivery, store in scheduled_gifts table
+    if (scheduledSendDate) {
+      console.log(`Gift scheduled for ${scheduledSendDate} - storing in scheduled_gifts table`);
+      
+      const { error: scheduledError } = await supabaseClient
+        .from('scheduled_gifts')
+        .insert({
+          gift_code: giftCode,
+          recipient_email: recipientEmail,
+          purchaser_email: purchaserEmail || '',
+          sender_name: senderName,
+          gift_message: giftMessage,
+          scheduled_send_date: scheduledSendDate,
+          stripe_checkout_session_id: session.id,
+          stripe_payment_intent_id: session.payment_intent as string,
+          amount_paid: 1499,
+          status: 'scheduled'
+        });
+
+      if (scheduledError) {
+        console.error("Error creating scheduled gift:", scheduledError);
+        throw scheduledError;
+      }
+
+      console.log("Scheduled gift created successfully:", giftCode);
+
+      return new Response(
+        JSON.stringify({ 
+          success: true,
+          giftCode,
+          recipientEmail,
+          scheduledFor: scheduledSendDate,
+          message: `Gift scheduled to be sent on ${scheduledSendDate}`
+        }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+    
+    // Otherwise, create immediate gift membership
     // Calculate expiry (1 year from purchase)
     const expiresAt = new Date();
     expiresAt.setFullYear(expiresAt.getFullYear() + 1);

@@ -12,7 +12,9 @@ interface GiftDetails {
   senderName: string;
   giftMessage: string;
   redemptionLink: string;
-  expiresAt: string;
+  expiresAt?: string;
+  scheduledFor?: string;
+  isScheduled: boolean;
 }
 
 const GiftSent = () => {
@@ -36,11 +38,38 @@ const GiftSent = () => {
 
   const fetchGiftDetails = async () => {
     try {
+      // First check if it's a scheduled gift
+      const { data: scheduledData, error: scheduledError } = await supabase
+        .from('scheduled_gifts')
+        .select('*')
+        .eq('stripe_checkout_session_id', sessionId)
+        .maybeSingle();
+
+      if (scheduledData) {
+        const baseUrl = window.location.origin;
+        setGiftDetails({
+          giftCode: scheduledData.gift_code,
+          recipientEmail: scheduledData.recipient_email,
+          senderName: scheduledData.sender_name || "You",
+          giftMessage: scheduledData.gift_message || "",
+          redemptionLink: `${baseUrl}/claim-subscription?code=${scheduledData.gift_code}`,
+          scheduledFor: new Date(scheduledData.scheduled_send_date).toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+          }),
+          isScheduled: true
+        });
+        setIsLoading(false);
+        return;
+      }
+
+      // If not scheduled, check gift_memberships (immediate gift)
       const { data, error } = await supabase
         .from('gift_memberships')
         .select('*')
         .eq('stripe_checkout_session_id', sessionId)
-        .single();
+        .maybeSingle();
 
       if (error) throw error;
 
@@ -51,12 +80,13 @@ const GiftSent = () => {
           recipientEmail: data.recipient_email,
           senderName: data.sender_name || "You",
           giftMessage: data.gift_message || "",
-          redemptionLink: `${baseUrl}/redeem?code=${data.gift_code}`,
+          redemptionLink: `${baseUrl}/claim-subscription?code=${data.gift_code}`,
           expiresAt: new Date(data.expires_at).toLocaleDateString('en-US', {
             year: 'numeric',
             month: 'long',
             day: 'numeric'
-          })
+          }),
+          isScheduled: false
         });
       }
     } catch (error: any) {
@@ -111,9 +141,13 @@ const GiftSent = () => {
           <div className="inline-block p-4 bg-green-500/10 rounded-full mb-4">
             <CheckCircle2 className="w-16 h-16 text-green-500" />
           </div>
-          <h1 className="text-4xl font-bold mb-2">🎁 Gift Sent Successfully!</h1>
+          <h1 className="text-4xl font-bold mb-2">
+            🎁 {giftDetails.isScheduled ? 'Gift Scheduled!' : 'Gift Sent Successfully!'}
+          </h1>
           <p className="text-lg text-muted-foreground">
-            Your PetPort gift membership is ready to share
+            {giftDetails.isScheduled 
+              ? `Your gift will be delivered on ${giftDetails.scheduledFor}`
+              : 'Your PetPort gift membership is ready to share'}
           </p>
         </div>
 
@@ -182,10 +216,17 @@ const GiftSent = () => {
               </div>
             )}
 
-            <div>
-              <div className="text-sm text-muted-foreground">Valid Until</div>
-              <div className="font-medium">{giftDetails.expiresAt}</div>
-            </div>
+            {giftDetails.isScheduled ? (
+              <div>
+                <div className="text-sm text-muted-foreground">Delivery Date</div>
+                <div className="font-medium">{giftDetails.scheduledFor}</div>
+              </div>
+            ) : (
+              <div>
+                <div className="text-sm text-muted-foreground">Valid Until</div>
+                <div className="font-medium">{giftDetails.expiresAt}</div>
+              </div>
+            )}
           </CardContent>
         </Card>
 
@@ -198,9 +239,13 @@ const GiftSent = () => {
             <div className="flex items-start gap-3">
               <Mail className="w-5 h-5 text-primary mt-0.5" />
               <div>
-                <h3 className="font-semibold mb-1">Email Sent</h3>
+                <h3 className="font-semibold mb-1">
+                  {giftDetails.isScheduled ? 'Email Scheduled' : 'Email Sent'}
+                </h3>
                 <p className="text-sm text-muted-foreground">
-                  We've emailed {giftDetails.recipientEmail} with their gift code and redemption link
+                  {giftDetails.isScheduled 
+                    ? `We'll email ${giftDetails.recipientEmail} on ${giftDetails.scheduledFor} with their gift`
+                    : `We've emailed ${giftDetails.recipientEmail} with their gift code and redemption link`}
                 </p>
               </div>
             </div>

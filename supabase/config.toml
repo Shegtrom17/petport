@@ -138,3 +138,15 @@ verify_jwt = false
 
 [functions.recover-gift]
 verify_jwt = false
+
+[functions.send-scheduled-gifts]
+verify_jwt = false
+
+[functions.story-stream-share]
+verify_jwt = false
+
+[functions.notify-review-submission]
+verify_jwt = false
+
+[functions.search-help]
+verify_jwt = false

@@ -15,6 +15,7 @@ interface PurchaseGiftRequest {
   senderName?: string;
   giftMessage?: string;
   purchaserEmail?: string;
+  scheduledSendDate?: string; // Optional: YYYY-MM-DD format for scheduled delivery
 }
 
 const handler = async (req: Request): Promise<Response> => {
@@ -23,12 +24,13 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
-    const { recipientEmail, senderName, giftMessage, purchaserEmail }: PurchaseGiftRequest = await req.json();
+    const { recipientEmail, senderName, giftMessage, purchaserEmail, scheduledSendDate }: PurchaseGiftRequest = await req.json();
 
     console.log("=== GIFT MEMBERSHIP PURCHASE ===");
     console.log("Recipient:", recipientEmail);
     console.log("Sender:", senderName || "Anonymous");
     console.log("Purchaser:", purchaserEmail || "Not logged in");
+    console.log("Scheduled for:", scheduledSendDate || "Send immediately");
     console.log("================================");
 
     // Validate recipient email
@@ -68,6 +70,7 @@ const handler = async (req: Request): Promise<Response> => {
         sender_name: senderName || "",
         gift_message: giftMessage || "",
         purchaser_email: purchaserEmail || "",
+        scheduled_send_date: scheduledSendDate || "", // Store scheduled date in metadata
       },
       success_url: `${baseUrl}/gift-sent?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${baseUrl}/gift`,

@@ -1362,6 +1362,63 @@ export type Database = {
           },
         ]
       }
+      scheduled_gifts: {
+        Row: {
+          amount_paid: number
+          created_at: string
+          error_message: string | null
+          gift_code: string
+          gift_message: string | null
+          id: string
+          purchaser_email: string
+          purchaser_user_id: string | null
+          recipient_email: string
+          scheduled_send_date: string
+          sender_name: string | null
+          sent_at: string | null
+          status: string
+          stripe_checkout_session_id: string
+          stripe_payment_intent_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          amount_paid?: number
+          created_at?: string
+          error_message?: string | null
+          gift_code: string
+          gift_message?: string | null
+          id?: string
+          purchaser_email: string
+          purchaser_user_id?: string | null
+          recipient_email: string
+          scheduled_send_date: string
+          sender_name?: string | null
+          sent_at?: string | null
+          status?: string
+          stripe_checkout_session_id: string
+          stripe_payment_intent_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          amount_paid?: number
+          created_at?: string
+          error_message?: string | null
+          gift_code?: string
+          gift_message?: string | null
+          id?: string
+          purchaser_email?: string
+          purchaser_user_id?: string | null
+          recipient_email?: string
+          scheduled_send_date?: string
+          sender_name?: string | null
+          sent_at?: string | null
+          status?: string
+          stripe_checkout_session_id?: string
+          stripe_payment_intent_id?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       service_provider_notes: {
         Row: {
           created_at: string

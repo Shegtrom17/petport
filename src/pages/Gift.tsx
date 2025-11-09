@@ -7,10 +7,14 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { Loader2, Gift as GiftIcon, Check, X, Heart, Shield, Image, Users, MapPin, FileText, Calendar, Home, Sparkles } from "lucide-react";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Loader2, Gift as GiftIcon, Check, X, Heart, Shield, Image, Users, MapPin, FileText, Calendar as CalendarIcon, Home, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/context/AuthContext";
 import { MetaTags } from "@/components/MetaTags";
+import { format } from "date-fns";
+import { cn } from "@/lib/utils";
 
 const Gift = () => {
   const navigate = useNavigate();
@@ -21,6 +25,7 @@ const Gift = () => {
     senderName: "",
     giftMessage: ""
   });
+  const [scheduledDate, setScheduledDate] = useState<Date>();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -33,13 +38,20 @@ const Gift = () => {
     setIsLoading(true);
 
     try {
+      const requestBody: any = {
+        recipientEmail: formData.recipientEmail,
+        senderName: formData.senderName || undefined,
+        giftMessage: formData.giftMessage || undefined,
+        purchaserEmail: session?.user?.email || undefined
+      };
+
+      // Add scheduled date if selected
+      if (scheduledDate) {
+        requestBody.scheduledSendDate = format(scheduledDate, 'yyyy-MM-dd');
+      }
+
       const { data, error } = await supabase.functions.invoke('purchase-gift-membership', {
-        body: {
-          recipientEmail: formData.recipientEmail,
-          senderName: formData.senderName || undefined,
-          giftMessage: formData.giftMessage || undefined,
-          purchaserEmail: session?.user?.email || undefined
-        }
+        body: requestBody
       });
 
       if (error) throw error;
@@ -463,6 +475,50 @@ const Gift = () => {
                       />
                       <p className="text-xs text-muted-foreground">{formData.giftMessage.length}/500 characters</p>
                     </div>
+
+                    <div className="space-y-2">
+                      <Label>Delivery Date (Optional)</Label>
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <Button
+                            variant="outline"
+                            className={cn(
+                              "w-full justify-start text-left font-normal",
+                              !scheduledDate && "text-muted-foreground"
+                            )}
+                          >
+                            <CalendarIcon className="mr-2 h-4 w-4" />
+                            {scheduledDate ? format(scheduledDate, "PPP") : "Send immediately"}
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0" align="start">
+                          <Calendar
+                            mode="single"
+                            selected={scheduledDate}
+                            onSelect={setScheduledDate}
+                            disabled={(date) => date < new Date()}
+                            initialFocus
+                            className="p-3 pointer-events-auto"
+                          />
+                          {scheduledDate && (
+                            <div className="p-3 border-t">
+                              <Button
+                                variant="ghost"
+                                className="w-full"
+                                onClick={() => setScheduledDate(undefined)}
+                              >
+                                Clear date (send immediately)
+                              </Button>
+                            </div>
+                          )}
+                        </PopoverContent>
+                      </Popover>
+                      <p className="text-xs text-muted-foreground">
+                        {scheduledDate 
+                          ? `Gift will be sent on ${format(scheduledDate, "MMMM d, yyyy")}` 
+                          : "Gift will be sent immediately after payment"}
+                      </p>
+                    </div>
                     <Button type="submit" className="w-full" size="lg" disabled={isLoading}>
                       {isLoading ? (
                         <>
@@ -533,7 +589,7 @@ const Gift = () => {
                   <span className="font-semibold">Can I schedule when the gift email is sent?</span>
                 </AccordionTrigger>
                 <AccordionContent className="text-muted-foreground">
-                  Currently, the gift email is sent immediately after your purchase is complete (usually within minutes). If you'd like to give the gift on a specific date, we recommend purchasing on that day, or forwarding the activation email at your preferred time.
+                  Yes! You can now schedule your gift to be delivered on any future date. Simply select a delivery date when purchasing. Payment is processed immediately, but the recipient will receive their gift email on your chosen date. Perfect for birthdays, holidays, or any special occasion!
                 </AccordionContent>
               </AccordionItem>
             </Accordion>

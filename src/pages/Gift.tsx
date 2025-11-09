@@ -145,7 +145,7 @@ const Gift = () => {
         "name": "Can I schedule when the gift email is sent?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Currently, the gift email is sent immediately after your purchase is complete (usually within minutes). If you'd like to give the gift on a specific date, we recommend purchasing on that day, or forwarding the activation email at your preferred time."
+          "text": "Yes! You can schedule your gift to be delivered on any future date (date only, not a specific time). Payment is processed immediately when you purchase, but the recipient will receive their gift email on your chosen date. The scheduled email is sent in the morning of the selected date. Perfect for birthdays, holidays, or any special occasion!"
         }
       }
     ]
@@ -764,7 +764,17 @@ const Gift = () => {
                   <span className="font-semibold">Can I schedule when the gift email is sent?</span>
                 </AccordionTrigger>
                 <AccordionContent className="text-muted-foreground">
-                  Yes! You can now schedule your gift to be delivered on any future date. Simply select a delivery date when purchasing. Payment is processed immediately, but the recipient will receive their gift email on your chosen date. Perfect for birthdays, holidays, or any special occasion!
+                  <p className="mb-3">
+                    Yes! You can schedule your gift to be delivered on any future <strong>date</strong> (you pick the date, not a specific time). 
+                  </p>
+                  <p className="mb-3">
+                    <strong>Important details:</strong>
+                  </p>
+                  <ul className="list-disc pl-5 space-y-1">
+                    <li>Payment is processed <strong>immediately</strong> when you purchase the gift</li>
+                    <li>The recipient receives their gift email on your chosen date (sent in the morning)</li>
+                    <li>Perfect for birthdays, holidays, adoption anniversaries, or any special occasion!</li>
+                  </ul>
                 </AccordionContent>
               </AccordionItem>
             </Accordion>

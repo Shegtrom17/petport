@@ -378,11 +378,17 @@ async function handleGiftMembershipPurchase(session: any, supabaseClient: any) {
   const senderName = session.metadata.sender_name || "A PetPort supporter";
   const giftMessage = session.metadata.gift_message || "";
   const purchaserEmail = session.metadata.purchaser_email || session.customer_email;
+  const additionalPets = parseInt(session.metadata.additional_pets || "0", 10);
+  const theme = session.metadata.theme || "default";
+  const amountPaid = session.amount_total || 1499; // amount_total is in cents
 
   logStep("Processing gift membership", { 
     recipientEmail,
     senderName,
-    purchaserEmail 
+    purchaserEmail,
+    additionalPets,
+    theme,
+    amountPaid 
   });
 
   // Generate unique 8-character gift code
@@ -403,7 +409,9 @@ async function handleGiftMembershipPurchase(session: any, supabaseClient: any) {
       gift_message: giftMessage,
       stripe_payment_intent_id: session.payment_intent,
       stripe_checkout_session_id: session.id,
-      amount_paid: 1499,
+      amount_paid: amountPaid,
+      additional_pets: additionalPets,
+      theme: theme,
       status: 'pending',
       purchased_at: new Date().toISOString(),
       expires_at: expiresAt.toISOString()
@@ -432,13 +440,19 @@ async function handleGiftMembershipPurchase(session: any, supabaseClient: any) {
       day: 'numeric' 
     });
     
+    // Select email template based on theme
+    const purchaserTemplate = theme === 'christmas' ? 'gift-purchase-confirmation-christmas' :
+                              theme === 'birthday' ? 'gift-purchase-confirmation-birthday' :
+                              theme === 'adoption' ? 'gift-purchase-confirmation-adoption' :
+                              'gift-purchase-confirmation';
+    
     // Send to purchaser
     await supabaseClient.functions.invoke('send-email', {
       body: {
-        type: 'gift_purchase_confirmation',
+        type: purchaserTemplate,
         recipientEmail: purchaserEmail,
-        recipientName: senderName, // Purchaser's name
-        giftRecipientEmail: recipientEmail, // Who the gift is FOR
+        recipientName: senderName,
+        giftRecipientEmail: recipientEmail,
         petName: 'Gift Membership',
         petId: giftCode,
         shareUrl: redemptionLink,
@@ -450,10 +464,16 @@ async function handleGiftMembershipPurchase(session: any, supabaseClient: any) {
       }
     });
 
+    // Select recipient email template based on theme
+    const recipientTemplate = theme === 'christmas' ? 'gift-notification-christmas' :
+                              theme === 'birthday' ? 'gift-notification-birthday' :
+                              theme === 'adoption' ? 'gift-notification-adoption' :
+                              'gift-notification';
+    
     // Send to recipient
     await supabaseClient.functions.invoke('send-email', {
       body: {
-        type: 'gift_notification',
+        type: recipientTemplate,
         recipientEmail: recipientEmail,
         recipientName: recipientEmail.split('@')[0],
         petName: 'Gift Membership',
@@ -467,7 +487,7 @@ async function handleGiftMembershipPurchase(session: any, supabaseClient: any) {
       }
     });
 
-    logStep("Gift emails sent", { purchaserEmail, recipientEmail });
+    logStep("Gift emails sent", { purchaserEmail, recipientEmail, theme });
   } catch (emailError) {
     logStep("Error sending gift emails", { error: emailError.message });
     // Don't throw - gift is still created even if emails fail

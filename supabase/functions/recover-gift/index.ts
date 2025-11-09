@@ -71,6 +71,7 @@ serve(async (req) => {
     const purchaserEmail = session.metadata?.purchaser_email || session.customer_email;
     const scheduledSendDate = session.metadata?.scheduled_send_date || "";
     const additionalPets = parseInt(session.metadata?.additional_pets || "0", 10);
+    const theme = session.metadata?.theme || 'default';
 
     if (!recipientEmail) {
       throw new Error("No recipient email in session metadata");
@@ -99,7 +100,8 @@ serve(async (req) => {
           stripe_payment_intent_id: session.payment_intent as string,
           amount_paid: amountPaid,
           additional_pets: additionalPets,
-          status: 'scheduled'
+          status: 'scheduled',
+          theme: theme
         });
 
       if (scheduledError) {
@@ -141,7 +143,8 @@ serve(async (req) => {
         additional_pets: additionalPets,
         status: 'pending',
         purchased_at: new Date().toISOString(),
-        expires_at: expiresAt.toISOString()
+        expires_at: expiresAt.toISOString(),
+        theme: theme
       })
       .select()
       .single();
@@ -163,10 +166,16 @@ serve(async (req) => {
         day: 'numeric' 
       });
       
+      // Select email template based on theme
+      const purchaserTemplate = theme === 'christmas' ? 'gift-purchase-confirmation-christmas' :
+                                theme === 'birthday' ? 'gift-purchase-confirmation-birthday' :
+                                theme === 'adoption' ? 'gift-purchase-confirmation-adoption' :
+                                'gift-purchase-confirmation';
+      
       // Send to purchaser
       await supabaseClient.functions.invoke('send-email', {
         body: {
-          type: 'gift_purchase_confirmation',
+          type: purchaserTemplate,
           recipientEmail: purchaserEmail,
           recipientName: senderName,
           petName: 'Gift Membership',
@@ -180,10 +189,16 @@ serve(async (req) => {
         }
       });
 
+      // Select recipient email template based on theme
+      const recipientTemplate = theme === 'christmas' ? 'gift-notification-christmas' :
+                                theme === 'birthday' ? 'gift-notification-birthday' :
+                                theme === 'adoption' ? 'gift-notification-adoption' :
+                                'gift-notification';
+      
       // Send to recipient
       await supabaseClient.functions.invoke('send-email', {
         body: {
-          type: 'gift_notification',
+          type: recipientTemplate,
           recipientEmail: recipientEmail,
           recipientName: recipientEmail.split('@')[0],
           petName: 'Gift Membership',

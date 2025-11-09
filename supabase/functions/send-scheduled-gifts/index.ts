@@ -16,6 +16,7 @@ interface ScheduledGift {
   scheduled_send_date: string;
   amount_paid: number;
   additional_pets: number;
+  theme: string;
 }
 
 const handler = async (req: Request): Promise<Response> => {
@@ -92,7 +93,8 @@ const handler = async (req: Request): Promise<Response> => {
             additional_pets: gift.additional_pets,
             expires_at: expiryDate.toISOString(),
             purchased_at: new Date().toISOString(),
-            status: 'pending'
+            status: 'pending',
+            theme: gift.theme || 'default'
           });
 
         if (insertError) {
@@ -109,11 +111,17 @@ const handler = async (req: Request): Promise<Response> => {
           day: 'numeric'
         });
 
+        // Select template based on gift theme
+        const recipientTemplate = gift.theme === 'christmas' ? 'gift-notification-christmas' :
+                                  gift.theme === 'birthday' ? 'gift-notification-birthday' :
+                                  gift.theme === 'adoption' ? 'gift-notification-adoption' :
+                                  'gift-notification';
+
         // Send gift notification to recipient
         const { error: recipientEmailError } = await supabase.functions.invoke('send-email', {
           body: {
             to: gift.recipient_email,
-            template: 'gift-notification',
+            template: recipientTemplate,
             data: {
               senderName: gift.sender_name || 'A friend',
               giftMessage: gift.gift_message || '',
@@ -129,11 +137,17 @@ const handler = async (req: Request): Promise<Response> => {
           throw new Error(`Failed to send recipient email: ${recipientEmailError.message}`);
         }
 
+        // Select purchaser template based on gift theme
+        const purchaserTemplate = gift.theme === 'christmas' ? 'gift-purchase-confirmation-christmas' :
+                                  gift.theme === 'birthday' ? 'gift-purchase-confirmation-birthday' :
+                                  gift.theme === 'adoption' ? 'gift-purchase-confirmation-adoption' :
+                                  'gift-purchase-confirmation';
+
         // Send confirmation to purchaser
         const { error: purchaserEmailError } = await supabase.functions.invoke('send-email', {
           body: {
             to: gift.purchaser_email,
-            template: 'gift-purchase-confirmation',
+            template: purchaserTemplate,
             data: {
               recipientEmail: gift.recipient_email,
               giftCode: gift.gift_code,

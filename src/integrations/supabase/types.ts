@@ -570,6 +570,7 @@ export type Database = {
           stripe_checkout_session_id: string | null
           stripe_payment_intent_id: string | null
           stripe_subscription_id: string | null
+          theme: string | null
           updated_at: string | null
         }
         Insert: {
@@ -595,6 +596,7 @@ export type Database = {
           stripe_checkout_session_id?: string | null
           stripe_payment_intent_id?: string | null
           stripe_subscription_id?: string | null
+          theme?: string | null
           updated_at?: string | null
         }
         Update: {
@@ -620,6 +622,7 @@ export type Database = {
           stripe_checkout_session_id?: string | null
           stripe_payment_intent_id?: string | null
           stripe_subscription_id?: string | null
+          theme?: string | null
           updated_at?: string | null
         }
         Relationships: []
@@ -1383,6 +1386,7 @@ export type Database = {
           status: string
           stripe_checkout_session_id: string
           stripe_payment_intent_id: string | null
+          theme: string | null
           updated_at: string
         }
         Insert: {
@@ -1402,6 +1406,7 @@ export type Database = {
           status?: string
           stripe_checkout_session_id: string
           stripe_payment_intent_id?: string | null
+          theme?: string | null
           updated_at?: string
         }
         Update: {
@@ -1421,6 +1426,7 @@ export type Database = {
           status?: string
           stripe_checkout_session_id?: string
           stripe_payment_intent_id?: string | null
+          theme?: string | null
           updated_at?: string
         }
         Relationships: []

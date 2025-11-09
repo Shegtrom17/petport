@@ -17,6 +17,7 @@ interface PurchaseGiftRequest {
   purchaserEmail?: string;
   scheduledSendDate?: string; // Optional: YYYY-MM-DD format for scheduled delivery
   additionalPets?: number; // Number of additional pets (0-19)
+  theme?: 'default' | 'christmas' | 'birthday' | 'adoption'; // Email template theme
 }
 
 const handler = async (req: Request): Promise<Response> => {
@@ -25,7 +26,7 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
-    const { recipientEmail, senderName, giftMessage, purchaserEmail, scheduledSendDate, additionalPets }: PurchaseGiftRequest = await req.json();
+    const { recipientEmail, senderName, giftMessage, purchaserEmail, scheduledSendDate, additionalPets, theme }: PurchaseGiftRequest = await req.json();
 
     const petCount = (additionalPets || 0) + 1; // 1 base + additional
     const basePriceCents = 1499; // $14.99
@@ -98,6 +99,7 @@ const handler = async (req: Request): Promise<Response> => {
         purchaser_email: purchaserEmail || "",
         scheduled_send_date: scheduledSendDate || "", // Store scheduled date in metadata
         additional_pets: (additionalPets || 0).toString(), // Store as string for Stripe metadata
+        theme: theme || 'default' // Store theme for email template selection
       },
       success_url: `${baseUrl}/gift-sent?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${baseUrl}/gift`,

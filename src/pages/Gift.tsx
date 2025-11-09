@@ -27,6 +27,7 @@ const Gift = () => {
   });
   const [scheduledDate, setScheduledDate] = useState<Date>();
   const [additionalPets, setAdditionalPets] = useState(0);
+  const [selectedTheme, setSelectedTheme] = useState<'default' | 'christmas' | 'birthday' | 'adoption'>('default');
 
   const BASE_PRICE = 14.99;
   const ADDON_PRICE = 3.99;
@@ -48,7 +49,8 @@ const Gift = () => {
         senderName: formData.senderName || undefined,
         giftMessage: formData.giftMessage || undefined,
         purchaserEmail: session?.user?.email || undefined,
-        additionalPets: additionalPets
+        additionalPets: additionalPets,
+        theme: selectedTheme
       };
 
       // Add scheduled date if selected
@@ -535,6 +537,65 @@ const Gift = () => {
                           ? 'Gift includes 1 pet account. Add more for $3.99 each.' 
                           : `Additional pets: ${additionalPets} × $3.99 = $${(additionalPets * ADDON_PRICE).toFixed(2)}`}
                       </p>
+                    </div>
+
+                    {/* Theme Selector */}
+                    <div className="space-y-2">
+                      <Label>Gift Theme</Label>
+                      <div className="grid grid-cols-2 gap-3">
+                        <button
+                          type="button"
+                          onClick={() => setSelectedTheme('default')}
+                          className={`p-4 border-2 rounded-lg text-left transition-all ${
+                            selectedTheme === 'default' 
+                              ? 'border-primary bg-primary/5' 
+                              : 'border-border hover:border-primary/50'
+                          }`}
+                        >
+                          <div className="text-2xl mb-1">🎁</div>
+                          <div className="font-semibold">Default</div>
+                          <div className="text-xs text-muted-foreground">Classic gift design</div>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setSelectedTheme('christmas')}
+                          className={`p-4 border-2 rounded-lg text-left transition-all ${
+                            selectedTheme === 'christmas' 
+                              ? 'border-primary bg-primary/5' 
+                              : 'border-border hover:border-primary/50'
+                          }`}
+                        >
+                          <div className="text-2xl mb-1">🎄</div>
+                          <div className="font-semibold">Christmas</div>
+                          <div className="text-xs text-muted-foreground">Red, gold & reindeer</div>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setSelectedTheme('birthday')}
+                          className={`p-4 border-2 rounded-lg text-left transition-all ${
+                            selectedTheme === 'birthday' 
+                              ? 'border-primary bg-primary/5' 
+                              : 'border-border hover:border-primary/50'
+                          }`}
+                        >
+                          <div className="text-2xl mb-1">🎂</div>
+                          <div className="font-semibold">Birthday</div>
+                          <div className="text-xs text-muted-foreground">Balloons & celebration</div>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setSelectedTheme('adoption')}
+                          className={`p-4 border-2 rounded-lg text-left transition-all ${
+                            selectedTheme === 'adoption' 
+                              ? 'border-primary bg-primary/5' 
+                              : 'border-border hover:border-primary/50'
+                          }`}
+                        >
+                          <div className="text-2xl mb-1">🏡</div>
+                          <div className="font-semibold">Adoption</div>
+                          <div className="text-xs text-muted-foreground">Hearts & home</div>
+                        </button>
+                      </div>
                     </div>
 
                     <div className="space-y-2">

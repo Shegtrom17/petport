@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Adoption Anniversary Gift from PetPort!</title>
+</head>
+<body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #f8f0ff;">
+  <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #f8f0ff;">
+    <tr>
+      <td style="padding: 40px 20px;">
+        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="600" style="margin: 0 auto; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 16px rgba(0,0,0,0.1);">
+          
+          <!-- Adoption Header with Hearts -->
+          <tr>
+            <td style="background: linear-gradient(135deg, #a855f7 0%, #7e22ce 100%); padding: 8px; text-align: center;">
+              <div style="background: #ec4899; padding: 4px; border-radius: 4px; display: inline-block;">
+                <span style="color: #ffffff; font-size: 12px; font-weight: 700; letter-spacing: 1px;">💜 ADOPTION ANNIVERSARY 💜</span>
+              </div>
+            </td>
+          </tr>
+          
+          <!-- Main Header with Adoption Elements -->
+          <tr>
+            <td style="background: linear-gradient(135deg, #a855f7 0%, #7e22ce 100%); padding: 30px; text-align: center; position: relative;">
+              <p style="margin: 0 0 10px; font-size: 24px;">🏡 💕 🐾</p>
+              <h1 style="margin: 0; color: #ffffff; font-size: 28px; font-weight: 700; text-shadow: 0 2px 4px rgba(0,0,0,0.2);">
+                💜 Celebrating Your Adoption Anniversary! 🏡
+              </h1>
+              <p style="margin: 10px 0 0; color: #fae8ff; font-size: 16px;">A Year of Love & Memories Awaits!</p>
+              <p style="margin: 8px 0 0; font-size: 20px;">✨ 🐕 ✨</p>
+            </td>
+          </tr>
+          
+          <!-- Body -->
+          <tr>
+            <td style="padding: 40px 30px;">
+              <p style="margin: 0 0 20px; font-size: 16px; line-height: 1.6; color: #333333;">
+                {{#if recipient_name}}Hi {{recipient_name}},{{else}}Hello,{{/if}}
+              </p>
+              
+              <p style="margin: 0 0 20px; font-size: 16px; line-height: 1.6; color: #333333;">
+                🏡 Love multiplies when shared! <strong>{{sender_name}}</strong> sent you a special adoption anniversary gift — a full year of PetPort to celebrate and preserve the beautiful journey with your furry family member. 💕
+              </p>
+              
+              {{#if gift_message}}
+              <div style="background: linear-gradient(135deg, #f8f0ff 0%, #fce7f3 100%); border-left: 4px solid #ec4899; padding: 15px 20px; margin: 20px 0; border-radius: 4px; box-shadow: 0 2px 6px rgba(236, 72, 153, 0.1);">
+                <p style="margin: 0 0 5px; font-size: 13px; color: #a855f7; font-weight: 600;">💜 Personal Message:</p>
+                <p style="margin: 0; font-size: 15px; line-height: 1.5; color: #555; font-style: italic;">
+                  "{{gift_message}}"
+                </p>
+                <p style="margin: 10px 0 0; font-size: 13px; color: #888;">— {{sender_name}}</p>
+              </div>
+              {{/if}}
+              
+              <h2 style="margin: 30px 0 15px; font-size: 20px; color: #a855f7; font-weight: 600;">💜 Your Anniversary Gift Includes:</h2>
+              
+              <ul style="margin: 0 0 30px; padding-left: 20px; color: #555555;">
+                <li style="margin-bottom: 8px;">🐾 12 months of unlimited pet profiles</li>
+                <li style="margin-bottom: 8px;">❤️ Care instructions & emergency contacts</li>
+                <li style="margin-bottom: 8px;">💉 Medical records & vaccination tracking</li>
+                <li style="margin-bottom: 8px;">📸 Beautiful photo galleries to preserve memories</li>
+                <li style="margin-bottom: 8px;">🗺️ Travel maps & story streams</li>
+                <li style="margin-bottom: 8px;">🚨 Lost pet alert system</li>
+              </ul>
+              
+              <!-- Adoption CTA Button -->
+              <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                <tr>
+                  <td style="text-align: center; padding: 20px 0;">
+                    <a href="{{redemption_link}}" style="display: inline-block; background: linear-gradient(135deg, #a855f7 0%, #7e22ce 100%); color: #ffffff; text-decoration: none; padding: 16px 40px; border-radius: 6px; font-size: 16px; font-weight: 600; box-shadow: 0 4px 12px rgba(168, 85, 247, 0.3); border: 2px solid #ec4899;">
+                      🏡 Start My PetPort Journey 💕
+                    </a>
+                  </td>
+                </tr>
+              </table>
+              
+              <p style="margin: 20px 0 10px; font-size: 14px; color: #666666; text-align: center;">
+                Your gift code: <strong style="color: #a855f7; font-size: 16px;">{{gift_code}}</strong>
+              </p>
+              
+              <p style="margin: 0 0 30px; font-size: 14px; color: #666666; text-align: center;">
+                Expires: {{expires_at}}
+              </p>
+              
+              <div style="border-top: 2px dashed #ec4899; padding-top: 20px; margin-top: 20px;">
+                <p style="margin: 0 0 10px; font-size: 14px; color: #666666; text-align: center;">
+                  🐾 Learn more about PetPort
+                </p>
+                <p style="margin: 0; text-align: center;">
+                  <a href="https://petport.app" style="color: #a855f7; text-decoration: none; font-size: 14px; font-weight: 600;">Visit PetPort.app →</a>
+                </p>
+              </div>
+            </td>
+          </tr>
+          
+          <!-- Adoption Footer -->
+          <tr>
+            <td style="background: linear-gradient(135deg, #f472b6 0%, #db2777 100%); padding: 30px; text-align: center;">
+              <p style="margin: 0 0 5px; font-size: 20px;">💕 🏡 🐾 ✨ 💕</p>
+              <p style="margin: 0 0 10px; font-size: 16px; color: #ffffff; font-weight: 600;">
+                💜 Celebrating Love & Adoption from PetPort! 🏡
+              </p>
+              <p style="margin: 0 0 15px; font-size: 14px; color: #fce7f3;">
+                <strong>PetPort</strong> — Digital Pet Passport
+              </p>
+              <p style="margin: 0; font-size: 12px; color: #fbcfe8;">
+                Questions? Email us at <a href="mailto:support@petport.app" style="color: #fbbf24; text-decoration: none;">support@petport.app</a>
+              </p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>

@@ -312,7 +312,7 @@ const PublicEmergencyProfile = () => {
             url={window.location.href}
             petName={petData.name}
             pageType="Emergency Profile"
-            color="#dc2626"
+            color="#5691af"
             title={`Scan for ${petData.name}'s Emergency Info`}
             description="Quick access to emergency contacts and critical medical information"
           />

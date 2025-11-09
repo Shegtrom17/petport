@@ -435,7 +435,7 @@ const PublicCareInstructions = () => {
           url={window.location.href}
           petName={pet.name}
           pageType="Care Instructions"
-          color="#10b981"
+          color="#5691af"
           title={`Scan for ${pet.name}'s Care Instructions`}
           description="Perfect for pet sitters, vets, and caretakers to access care details instantly"
         />

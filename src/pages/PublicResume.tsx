@@ -252,7 +252,7 @@ export default function PublicResume() {
           url={window.location.href}
           petName={data.name}
           pageType="Resume"
-          color="#8b5cf6"
+          color="#5691af"
           title={`Scan to View ${data.name}'s Professional Resume`}
           description="Access credentials, training, certifications, and professional experience"
         />

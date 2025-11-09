@@ -192,7 +192,7 @@ export const PublicGallery = () => {
           url={window.location.href}
           petName={petData.name}
           pageType="Photo Gallery"
-          color="#2563eb"
+          color="#5691af"
           title={`Scan to View ${petData.name}'s Photos`}
           description="Access the complete photo gallery instantly"
         />

@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Birthday Gift Purchase Confirmed</title>
+</head>
+<body style="margin: 0; padding: 0; background-color: #fef3c7; font-family: Arial, sans-serif;">
+    <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #fef3c7;">
+        <tr>
+            <td align="center" style="padding: 40px 20px;">
+                <table width="600" cellpadding="0" cellspacing="0" style="background-color: #ffffff; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                    
+                    <!-- Birthday Ribbon -->
+                    <tr>
+                        <td style="background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%); padding: 12px; text-align: center; border-radius: 12px 12px 0 0;">
+                            <h3 style="margin: 0; color: #ffffff; font-size: 14px; font-weight: 600; letter-spacing: 1px;">
+                                🎂 BIRTHDAY GIFT SENT 🎉
+                            </h3>
+                        </td>
+                    </tr>
+                    
+                    <!-- Header -->
+                    <tr>
+                        <td style="padding: 40px 40px 20px; text-align: center;">
+                            <h1 style="margin: 0 0 10px; color: #f59e0b; font-size: 32px;">🎈 Gift Purchase Confirmed! 🎈</h1>
+                            <p style="margin: 0; color: #78716c; font-size: 18px;">Your birthday surprise is on its way!</p>
+                        </td>
+                    </tr>
+                    
+                    <!-- Body -->
+                    <tr>
+                        <td style="padding: 20px 40px 40px;">
+                            <p style="margin: 0 0 20px; color: #292524; font-size: 16px; line-height: 1.6;">
+                                Hi {{sender_name}},
+                            </p>
+                            
+                            <p style="margin: 0 0 20px; color: #292524; font-size: 16px; line-height: 1.6;">
+                                Great news! Your birthday gift to <strong>{{recipient_email}}</strong> has been successfully purchased and will be delivered as scheduled! 🎁
+                            </p>
+                            
+                            {{#if gift_message}}
+                            <div style="background-color: #fef3c7; border-left: 4px solid #f59e0b; padding: 16px; margin: 20px 0; border-radius: 4px;">
+                                <p style="margin: 0 0 8px; color: #78716c; font-size: 14px; font-weight: 600;">YOUR BIRTHDAY MESSAGE:</p>
+                                <p style="margin: 0; color: #292524; font-size: 15px; line-height: 1.6; font-style: italic;">
+                                    "{{gift_message}}"
+                                </p>
+                            </div>
+                            {{/if}}
+                            
+                            <!-- Birthday Gift Details -->
+                            <div style="background-color: #fffbeb; border: 2px solid #fbbf24; border-radius: 8px; padding: 24px; margin: 24px 0;">
+                                <h2 style="margin: 0 0 16px; color: #f59e0b; font-size: 20px;">🎂 Birthday Gift Details</h2>
+                                <table width="100%" cellpadding="8" cellspacing="0">
+                                    <tr>
+                                        <td style="color: #78716c; font-size: 14px; padding: 8px 0;">Recipient:</td>
+                                        <td style="color: #292524; font-size: 14px; font-weight: 600; text-align: right; padding: 8px 0;">{{recipient_email}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="color: #78716c; font-size: 14px; padding: 8px 0;">Gift Code:</td>
+                                        <td style="color: #292524; font-size: 14px; font-weight: 600; text-align: right; padding: 8px 0;">{{gift_code}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="color: #78716c; font-size: 14px; padding: 8px 0;">Expires:</td>
+                                        <td style="color: #292524; font-size: 14px; font-weight: 600; text-align: right; padding: 8px 0;">{{expires_at}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="color: #78716c; font-size: 14px; padding: 8px 0;">Redemption Link:</td>
+                                        <td style="text-align: right; padding: 8px 0;">
+                                            <a href="{{redemption_link}}" style="color: #f59e0b; font-size: 14px; text-decoration: underline;">Redeem Gift</a>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                            
+                            <p style="margin: 20px 0; color: #292524; font-size: 16px; line-height: 1.6;">
+                                Your birthday pal will receive an email with instructions on how to redeem their special gift! 🎉
+                            </p>
+                            
+                            <p style="margin: 20px 0; color: #78716c; font-size: 14px; line-height: 1.6;">
+                                Questions? Contact us at <a href="mailto:support@petport.app" style="color: #f59e0b; text-decoration: underline;">support@petport.app</a>
+                            </p>
+                        </td>
+                    </tr>
+                    
+                    <!-- Birthday Footer -->
+                    <tr>
+                        <td style="background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%); padding: 24px 40px; text-align: center; border-radius: 0 0 12px 12px;">
+                            <p style="margin: 0 0 8px; color: #ffffff; font-size: 16px; font-weight: 600;">
+                                🎊 Happy Birthday to Their Pet! 🎊
+                            </p>
+                            <p style="margin: 0 0 4px; color: #ffffff; font-size: 14px;">
+                                <strong>PetPort</strong> - Celebrate Every Milestone
+                            </p>
+                            <p style="margin: 0; color: #fffbeb; font-size: 12px;">
+                                support@petport.app
+                            </p>
+                        </td>
+                    </tr>
+                    
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>

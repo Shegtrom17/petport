@@ -205,7 +205,7 @@ const Gift = () => {
             </div>
             <h1 className="text-5xl md:text-6xl font-bold">Give a Pet a Voice for Life</h1>
             <p className="text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto">
-              You're not just gifting a subscription—you're giving both a pet AND their caregiver the tools to speak up, stay safe, and be remembered.
+              You're not just gifting a subscription—you're giving both a pet AND their caregiver the tools to relay all the pet's information from any stage in life. All records, stories, and achievements can transfer with the pet.
             </p>
           </div>
 

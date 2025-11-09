@@ -15,6 +15,7 @@ import { AzureButton } from "@/components/ui/azure-button";
 import { sanitizeText, sanitizeHtml } from "@/utils/inputSanitizer";
 import { smoothScrollIntoViewIfNeeded } from "@/utils/smoothScroll";
 import { ServiceProviderNotesBoard } from "@/components/ServiceProviderNotesBoard";
+import { PublicPageQRCode } from "@/components/PublicPageQRCode";
 
 const PublicProfile = () => {
   const { petId } = useParams<{ petId: string }>();
@@ -493,6 +494,16 @@ const PublicProfile = () => {
               </AzureButton>
             </CardContent>
           </Card>
+
+          {/* QR Code Section */}
+          <PublicPageQRCode
+            url={window.location.href}
+            petName={petData.name}
+            pageType="Profile"
+            color="#5691af"
+            title={`Scan to View ${petData.name}'s Profile`}
+            description="Share this QR code to give instant access to the complete profile"
+          />
 
           {/* Show adoption banner if available for adoption */}
           {petData.adoption_status === 'available' && (

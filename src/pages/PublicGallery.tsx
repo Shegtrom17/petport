@@ -8,6 +8,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Link } from 'react-router-dom';
 import { GALLERY_CONFIG } from "@/config/featureFlags";
 import StoryStream from '@/components/StoryStream';
+import { PublicPageQRCode } from "@/components/PublicPageQRCode";
 
 interface GalleryPhoto {
   id: string;
@@ -185,6 +186,16 @@ export const PublicGallery = () => {
             </p>
           </div>
         </div>
+
+        {/* QR Code Section */}
+        <PublicPageQRCode
+          url={window.location.href}
+          petName={petData.name}
+          pageType="Photo Gallery"
+          color="#2563eb"
+          title={`Scan to View ${petData.name}'s Photos`}
+          description="Access the complete photo gallery instantly"
+        />
 
         <Card className="border-0 shadow-xl bg-white/80 backdrop-blur-sm">
           <CardHeader>

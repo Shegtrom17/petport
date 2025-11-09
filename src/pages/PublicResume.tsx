@@ -12,6 +12,7 @@ import { ContactsDisplay } from "@/components/ContactsDisplay";
 import { ContactOwnerModal } from "@/components/ContactOwnerModal";
 import { AddReviewForm } from "@/components/AddReviewForm";
 import { smoothScrollIntoViewIfNeeded } from "@/utils/smoothScroll";
+import { PublicPageQRCode } from "@/components/PublicPageQRCode";
 
 import { fetchPetDetails } from "@/services/petService";
 import { supabase } from "@/integrations/supabase/client";
@@ -245,6 +246,16 @@ export default function PublicResume() {
             </AzureButton>
           </CardContent>
         </Card>
+
+        {/* QR Code Section */}
+        <PublicPageQRCode
+          url={window.location.href}
+          petName={data.name}
+          pageType="Resume"
+          color="#8b5cf6"
+          title={`Scan to View ${data.name}'s Professional Resume`}
+          description="Access credentials, training, certifications, and professional experience"
+        />
 
         {/* Support Animal Status */}
         <SupportAnimalBanner status={data.supportAnimalStatus || null} />

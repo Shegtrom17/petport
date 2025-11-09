@@ -13,6 +13,7 @@ import { AzureButton } from "@/components/ui/azure-button";
 import { ContactOwnerModal } from "@/components/ContactOwnerModal";
 import { sanitizeText } from "@/utils/inputSanitizer";
 import { getOrderedContacts } from "@/utils/contactUtils";
+import { PublicPageQRCode } from "@/components/PublicPageQRCode";
 
 const PublicEmergencyProfile = () => {
   const { petId } = useParams<{ petId: string }>();
@@ -305,6 +306,16 @@ const PublicEmergencyProfile = () => {
               </AzureButton>
             </CardContent>
           </Card>
+
+          {/* QR Code Section */}
+          <PublicPageQRCode
+            url={window.location.href}
+            petName={petData.name}
+            pageType="Emergency Profile"
+            color="#dc2626"
+            title={`Scan for ${petData.name}'s Emergency Info`}
+            description="Quick access to emergency contacts and critical medical information"
+          />
 
           {/* Medical Alert Banner */}
           {petData.medical?.medical_alert && (

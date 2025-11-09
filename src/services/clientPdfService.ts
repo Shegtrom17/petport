@@ -542,6 +542,57 @@ const addFooterBottom = (doc: jsPDF, pageManager: PDFPageManager, lines: string[
     doc.text(t, x, bottomY - ((lines.length - 1 - idx) * 4));
   });
 };
+
+// Add QR code to PDF
+const addQRCode = async (doc: jsPDF, pageManager: PDFPageManager, url: string, label: string): Promise<void> => {
+  try {
+    pageManager.checkPageSpace(50);
+    
+    // Generate QR code URL using the QR Server API
+    const qrCodeUrl = generateQRCodeUrl(url, 300);
+    
+    // Add label above QR code
+    pageManager.addY(10);
+    doc.setFontSize(10);
+    doc.setTextColor('#4b5563');
+    doc.setFont('helvetica', 'bold');
+    const labelWidth = doc.getTextWidth(label);
+    const labelX = (doc.internal.pageSize.width - labelWidth) / 2;
+    doc.text(label, labelX, pageManager.getCurrentY());
+    pageManager.addY(8);
+    
+    // Add QR code image
+    const qrSize = 40; // 40mm square QR code
+    const qrX = (doc.internal.pageSize.width - qrSize) / 2;
+    
+    // Load QR code image
+    const response = await fetch(qrCodeUrl);
+    const blob = await response.blob();
+    const base64 = await new Promise<string>((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result as string);
+      reader.onerror = reject;
+      reader.readAsDataURL(blob);
+    });
+    
+    doc.addImage(base64, 'PNG', qrX, pageManager.getCurrentY(), qrSize, qrSize);
+    pageManager.addY(qrSize + 5);
+    
+    // Add scan instruction
+    doc.setFontSize(8);
+    doc.setTextColor('#6b7280');
+    doc.setFont('helvetica', 'normal');
+    const instructionText = 'Scan to view online';
+    const instrWidth = doc.getTextWidth(instructionText);
+    const instrX = (doc.internal.pageSize.width - instrWidth) / 2;
+    doc.text(instructionText, instrX, pageManager.getCurrentY());
+    pageManager.addY(10);
+  } catch (error) {
+    console.error('Failed to add QR code to PDF:', error);
+    // Continue without QR code if it fails
+  }
+};
+
 // PDF generation functions by type
 const generateEmergencyPDF = async (doc: jsPDF, pageManager: PDFPageManager, petData: any): Promise<void> => {
   const safeText = (text: string) => sanitizeText(text || '');
@@ -620,6 +671,10 @@ const generateEmergencyPDF = async (doc: jsPDF, pageManager: PDFPageManager, pet
       addText(doc, pageManager, petData.bio);
     });
   }
+  
+  // Add QR Code
+  const baseUrl = window.location.origin;
+  await addQRCode(doc, pageManager, `${baseUrl}/emergency/${petData.id}`, 'Scan for Emergency Profile');
   
   // Footer
   addFooterBottom(doc, pageManager, [
@@ -929,6 +984,10 @@ addText(doc, pageManager, 'PLEASE CONTACT IMMEDIATELY IF FOUND!', '#dc2626', 12)
 pageManager.addY(6);
 // ====================================================================
 
+// Add QR Code
+const baseUrl = window.location.origin;
+await addQRCode(doc, pageManager, `${baseUrl}/missing-pet/${petData.id}`, 'Scan for Missing Pet Alert');
+
 // Footer pinned to bottom of the last page
 addFooterBottom(doc, pageManager, [
   'Petport.app - The Ultimate Digital Pet Portfolio',
@@ -1056,6 +1115,10 @@ const generateGalleryPDF = async (doc: jsPDF, pageManager: PDFPageManager, petDa
   } else {
     addText(doc, pageManager, 'No photos available', '#6b7280');
   }
+  
+  // Add QR Code
+  const baseUrl = window.location.origin;
+  await addQRCode(doc, pageManager, `${baseUrl}/gallery/${petData.id}`, 'Scan for Photo Gallery');
   
   // Footer
   addFooterBottom(doc, pageManager, [
@@ -1386,6 +1449,10 @@ const generateFullPDF = async (doc: jsPDF, pageManager: PDFPageManager, petData:
       });
     });
   }
+  
+  // Add QR Code
+  const baseUrl = window.location.origin;
+  await addQRCode(doc, pageManager, `${baseUrl}/profile/${petData.id}`, 'Scan for Complete Profile');
   
   // Footer
   addFooterBottom(doc, pageManager, [
@@ -1815,6 +1882,10 @@ const generateProviderNotesPDF = async (doc: jsPDF, pageManager: PDFPageManager,
     });
   }
 
+  // Add QR Code
+  const baseUrl = window.location.origin;
+  await addQRCode(doc, pageManager, `${baseUrl}/resume/${petData.id}`, 'Scan for Professional Resume');
+
   // Footer
   addFooterBottom(doc, pageManager, [
     'Petport.app - Professional Pet Care Documentation',
@@ -1975,6 +2046,11 @@ const generateCarePDF = async (doc: jsPDF, pageManager: PDFPageManager, petData:
       addText(doc, pageManager, `Pet Caretaker: ${safeText(petData.pet_caretaker)}`);
     }
   });
+  
+  // Add QR Code
+  const baseUrl = window.location.origin;
+  await addQRCode(doc, pageManager, `${baseUrl}/care/${petData.id}`, 'Scan for Care Instructions');
+  
   // Footer
   addFooterBottom(doc, pageManager, [
     'Petport.app - The Ultimate Digital Pet Portfolio',

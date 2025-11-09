@@ -18,6 +18,7 @@ import { toast } from "sonner";
 import { ServiceProviderNotesBoard } from "@/components/ServiceProviderNotesBoard";
 import { AddServiceProviderNoteForm } from "@/components/AddServiceProviderNoteForm";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { PublicPageQRCode } from "@/components/PublicPageQRCode";
 
 interface Pet {
   id: string;
@@ -428,6 +429,16 @@ const PublicCareInstructions = () => {
             </AzureButton>
           </CardContent>
         </Card>
+
+        {/* QR Code Section */}
+        <PublicPageQRCode
+          url={window.location.href}
+          petName={pet.name}
+          pageType="Care Instructions"
+          color="#10b981"
+          title={`Scan for ${pet.name}'s Care Instructions`}
+          description="Perfect for pet sitters, vets, and caretakers to access care details instantly"
+        />
 
         {/* Medical Alert Banner - At top of page */}
         {medicalData?.medical_alert && (

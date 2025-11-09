@@ -60,12 +60,17 @@ interface PublicResumeData {
     contact?: string | null;
   }>;
   reviews?: Array<{
+    id: string;
     reviewerName: string;
     reviewerContact?: string | null;
     rating: number;
     text?: string | null;
     date?: string | null;
     location?: string | null;
+    response?: {
+      response_text: string;
+      created_at: string;
+    } | null;
   }>;
   travel_locations?: Array<{
     id: string;
@@ -411,7 +416,7 @@ export default function PublicResume() {
             {/* Existing Reviews */}
             {data.reviews && data.reviews.length > 0 ? (
               data.reviews.map((review, idx) => (
-                <div key={idx} className="p-4 rounded border">
+                <div key={idx} className="p-4 rounded border space-y-3">
                   <div className="flex items-center justify-between mb-2">
                     <div className="font-medium">{review.reviewerName}</div>
                     <div className="flex items-center gap-1">
@@ -435,6 +440,19 @@ export default function PublicResume() {
                       </div>
                     )}
                   </div>
+                  
+                  {/* Owner's Response */}
+                  {review.response && (
+                    <div className="mt-3 pt-3 border-t bg-sage-50/50 p-3 rounded">
+                      <div className="flex items-center gap-2 mb-2">
+                        <Badge variant="secondary" className="text-xs">Owner's Response</Badge>
+                        <span className="text-xs text-muted-foreground">
+                          {new Date(review.response.created_at).toLocaleDateString()}
+                        </span>
+                      </div>
+                      <p className="text-sm text-navy-700">{review.response.response_text}</p>
+                    </div>
+                  )}
                 </div>
               ))
             ) : (

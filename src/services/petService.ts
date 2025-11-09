@@ -263,7 +263,13 @@ export async function fetchPetDetails(petId: string): Promise<any | null> {
       supabase.from("experiences").select("*").eq("pet_id", petId),
       supabase.from("achievements").select("*").eq("pet_id", petId),
       supabase.from("training").select("*").eq("pet_id", petId),
-      supabase.from("reviews").select("*").eq("pet_id", petId),
+      supabase.from("reviews").select(`
+        *,
+        review_responses (
+          response_text,
+          created_at
+        )
+      `).eq("pet_id", petId),
       supabase.from("travel_locations").select("*").eq("pet_id", petId),
       supabase.from("documents").select("*").eq("pet_id", petId),
       supabase.from("certifications").select("*").eq("pet_id", petId),

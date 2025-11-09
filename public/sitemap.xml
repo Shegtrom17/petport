@@ -2,192 +2,191 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
         xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
   
-  <!-- Homepage -->
+  <!-- Homepage - High priority, frequent updates -->
   <url>
     <loc>https://petport.app/</loc>
-    <lastmod>2025-10-24</lastmod>
-    <changefreq>weekly</changefreq>
+    <lastmod>2025-11-09</lastmod>
+    <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   
-  <!-- Feature Pages -->
+  <!-- High-Value Conversion Pages -->
+  <url>
+    <loc>https://petport.app/gift</loc>
+    <lastmod>2025-11-09</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.95</priority>
+  </url>
+  
   <url>
     <loc>https://petport.app/lost-pet-features</loc>
-    <lastmod>2025-10-24</lastmod>
+    <lastmod>2025-11-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
+  </url>
+  
+  <!-- Core Product Pages -->
+  <url>
+    <loc>https://petport.app/demos</loc>
+    <lastmod>2025-11-09</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
   </url>
   
   <url>
     <loc>https://petport.app/learn</loc>
-    <lastmod>2025-10-24</lastmod>
+    <lastmod>2025-11-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   
-  <!-- Demos Index -->
-  <url>
-    <loc>https://petport.app/demos</loc>
-    <lastmod>2025-10-24</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  
-  <!-- Individual LiveLink Demos -->
+  <!-- Interactive Demo Pages - High engagement -->
   <url>
     <loc>https://petport.app/demo/resume</loc>
-    <lastmod>2025-10-24</lastmod>
+    <lastmod>2025-11-09</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   
   <url>
     <loc>https://petport.app/demo/missing-pet</loc>
-    <lastmod>2025-10-24</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  
-  <url>
-    <loc>https://petport.app/demo/care</loc>
-    <lastmod>2025-10-24</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  
-  <url>
-    <loc>https://petport.app/demo/gallery</loc>
-    <lastmod>2025-10-24</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  
-  <!-- Referral & Programs -->
-  <url>
-    <loc>https://petport.app/referral-program</loc>
-    <lastmod>2025-10-24</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://petport.app/gift</loc>
     <lastmod>2025-11-09</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.9</priority>
-  </url>
-  
-  <!-- Legal & Support Pages -->
-  <url>
-    <loc>https://petport.app/privacy-policy</loc>
-    <lastmod>2025-10-24</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.4</priority>
-  </url>
-  
-  <url>
-    <loc>https://petport.app/terms</loc>
-    <lastmod>2025-10-24</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.4</priority>
-  </url>
-  
-  <url>
-    <loc>https://petport.app/help</loc>
-    <lastmod>2025-10-24</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>https://petport.app/data-deletion</loc>
-    <lastmod>2025-10-24</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.3</priority>
-  </url>
-  
-  <!-- Vaccination Guide -->
-  <url>
-    <loc>https://petport.app/vaccination-guide</loc>
-    <lastmod>2025-10-24</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <!-- Podcast Hub -->
-  <url>
-    <loc>https://petport.app/podcast</loc>
-    <lastmod>2025-11-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   
-  <!-- Podcast Episodes -->
-  <!-- Pilot Episode -->
+  <url>
+    <loc>https://petport.app/demo/care</loc>
+    <lastmod>2025-11-09</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.75</priority>
+  </url>
+  
+  <url>
+    <loc>https://petport.app/demo/gallery</loc>
+    <lastmod>2025-11-09</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.75</priority>
+  </url>
+  
+  <!-- Content Hub - Updated weekly with new episodes -->
+  <url>
+    <loc>https://petport.app/podcast</loc>
+    <lastmod>2025-11-09</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  
+  <!-- Resource Pages -->
+  <url>
+    <loc>https://petport.app/vaccination-guide</loc>
+    <lastmod>2025-11-09</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  
+  <url>
+    <loc>https://petport.app/referral-program</loc>
+    <lastmod>2025-11-09</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.65</priority>
+  </url>
+  
+  <url>
+    <loc>https://petport.app/help</loc>
+    <lastmod>2025-11-09</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <!-- Legal & Compliance Pages - Low priority, rarely change -->
+  <url>
+    <loc>https://petport.app/privacy-policy</loc>
+    <lastmod>2025-11-09</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  
+  <url>
+    <loc>https://petport.app/terms</loc>
+    <lastmod>2025-11-09</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  
+  <url>
+    <loc>https://petport.app/data-deletion</loc>
+    <lastmod>2025-11-09</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <!-- Podcast Episodes - Content marketing, moderate priority -->
+  
+  <!-- Latest Episodes - Higher priority for fresh content -->
+  <url>
+    <loc>https://petport.app/podcast/petport-real-life-stories-digital-pet-care</loc>
+    <lastmod>2025-11-02</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.75</priority>
+  </url>
+  
+  <url>
+    <loc>https://petport.app/podcast/petport-livelinks-digital-pet-care</loc>
+    <lastmod>2025-10-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.75</priority>
+  </url>
+  
+  <!-- Evergreen High-Value Episodes -->
   <url>
     <loc>https://petport.app/podcast/petport-digital-pet-profile-platform</loc>
     <lastmod>2025-09-07</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.9</priority>
+    <changefreq>yearly</changefreq>
+    <priority>0.7</priority>
   </url>
   
   <url>
     <loc>https://petport.app/podcast/petport-beyond-lost-pet-flyer</loc>
     <lastmod>2025-09-24</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  
-  <url>
-    <loc>https://petport.app/podcast/petport-digital-pet-adoption-foster-transfer</loc>
-    <lastmod>2025-09-30</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  
-  <url>
-    <loc>https://petport.app/podcast/petport-pet-care-handling-digital-voice</loc>
-    <lastmod>2025-10-07</lastmod>
-    <changefreq>monthly</changefreq>
+    <changefreq>yearly</changefreq>
     <priority>0.7</priority>
   </url>
   
   <url>
     <loc>https://petport.app/podcast/petport-pet-screening-resume-builder</loc>
     <lastmod>2025-09-17</lastmod>
-    <changefreq>monthly</changefreq>
+    <changefreq>yearly</changefreq>
     <priority>0.7</priority>
+  </url>
+  
+  <!-- Standard Episodes - Stable content -->
+  <url>
+    <loc>https://petport.app/podcast/petport-digital-pet-records-app</loc>
+    <lastmod>2025-10-20</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.65</priority>
   </url>
   
   <url>
     <loc>https://petport.app/podcast/petport-photo-gallery-life-story</loc>
     <lastmod>2025-10-14</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
+    <changefreq>yearly</changefreq>
+    <priority>0.65</priority>
   </url>
   
-  <!-- Episode 6: Digital Pet Records & Document Storage -->
   <url>
-    <loc>https://petport.app/podcast/petport-digital-pet-records-app</loc>
-    <lastmod>2025-10-20</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
+    <loc>https://petport.app/podcast/petport-pet-care-handling-digital-voice</loc>
+    <lastmod>2025-10-07</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.65</priority>
   </url>
   
-  <!-- Episode 7: LiveLinks in Action — The Heartbeat of PetPort -->
   <url>
-    <loc>https://petport.app/podcast/petport-livelinks-digital-pet-care</loc>
-    <lastmod>2025-10-25</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  
-  <!-- Episode 8: Real-Life Stories: How PetPort Changes Everyday Pet Care -->
-  <url>
-    <loc>https://petport.app/podcast/petport-real-life-stories-digital-pet-care</loc>
-    <lastmod>2025-11-02</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
+    <loc>https://petport.app/podcast/petport-digital-pet-adoption-foster-transfer</loc>
+    <lastmod>2025-09-30</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.65</priority>
   </url>
 
 </urlset>

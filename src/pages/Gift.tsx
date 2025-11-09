@@ -7,7 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { Calendar } from "@/components/ui/calendar";
+import { Calendar as CalendarComponent } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Loader2, Gift as GiftIcon, Check, X, Heart, Shield, Image, Users, MapPin, FileText, Calendar as CalendarIcon, Home, Sparkles } from "lucide-react";
 import { toast } from "sonner";
@@ -86,7 +86,7 @@ const Gift = () => {
       description: "Give them the Pet Screening Resume tool to stand out in housing applications and prove their pet is responsible."
     },
     {
-      icon: Calendar,
+      icon: CalendarIcon,
       title: "For the Pet Birthday or Adoption Anniversary",
       description: "Celebrate their special day with a gift that keeps on giving—12 months of peace of mind and memories."
     },
@@ -553,7 +553,7 @@ const Gift = () => {
                           </Button>
                         </PopoverTrigger>
                         <PopoverContent className="w-auto p-0" align="end">
-                          <Calendar
+                          <CalendarComponent
                             mode="single"
                             selected={scheduledDate}
                             onSelect={setScheduledDate}

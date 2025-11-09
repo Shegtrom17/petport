@@ -39,7 +39,7 @@ export const AddServiceProviderNoteForm = ({ petId, petName, onSuccess, onCancel
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!formData.provider_name.trim() || !formData.provider_type || !formData.service_type.trim() || !serviceDate) {
+    if (!formData.provider_name.trim() || !formData.provider_type) {
       toast.error("Please fill in all required fields");
       return;
     }
@@ -55,8 +55,8 @@ export const AddServiceProviderNoteForm = ({ petId, petName, onSuccess, onCancel
           provider_email: formData.provider_email.trim() || null,
           provider_phone: formData.provider_phone.trim() || null,
           provider_type: formData.provider_type,
-          service_date: format(serviceDate, 'yyyy-MM-dd'),
-          service_type: formData.service_type.trim(),
+          service_date: serviceDate ? format(serviceDate, 'yyyy-MM-dd') : null,
+          service_type: formData.service_type.trim() || null,
           observations: formData.observations.trim() || null,
           recommendations: formData.recommendations.trim() || null,
           next_appointment_suggestion: formData.next_appointment_suggestion.trim() || null,
@@ -166,7 +166,7 @@ export const AddServiceProviderNoteForm = ({ petId, petName, onSuccess, onCancel
           {/* Service Details */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="service_date">Service Date *</Label>
+              <Label htmlFor="service_date">Service Date</Label>
               <Popover>
                 <PopoverTrigger asChild>
                   <Button
@@ -192,13 +192,12 @@ export const AddServiceProviderNoteForm = ({ petId, petName, onSuccess, onCancel
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="service_type">Service Type *</Label>
+              <Label htmlFor="service_type">Service Type</Label>
               <Input
                 id="service_type"
                 value={formData.service_type}
                 onChange={(e) => setFormData({ ...formData, service_type: e.target.value })}
                 placeholder="e.g., Annual checkup, Training session"
-                required
               />
             </div>
           </div>

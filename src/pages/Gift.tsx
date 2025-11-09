@@ -26,6 +26,11 @@ const Gift = () => {
     giftMessage: ""
   });
   const [scheduledDate, setScheduledDate] = useState<Date>();
+  const [additionalPets, setAdditionalPets] = useState(0);
+
+  const BASE_PRICE = 14.99;
+  const ADDON_PRICE = 3.99;
+  const totalPrice = BASE_PRICE + (additionalPets * ADDON_PRICE);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -42,7 +47,8 @@ const Gift = () => {
         recipientEmail: formData.recipientEmail,
         senderName: formData.senderName || undefined,
         giftMessage: formData.giftMessage || undefined,
-        purchaserEmail: session?.user?.email || undefined
+        purchaserEmail: session?.user?.email || undefined,
+        additionalPets: additionalPets
       };
 
       // Add scheduled date if selected
@@ -365,7 +371,10 @@ const Gift = () => {
                   <p className="text-sm font-medium text-muted-foreground">Base Gift Includes</p>
                   <p className="text-2xl font-bold">1 Pet Account for 12 Months</p>
                   <p className="text-sm text-muted-foreground">
-                    Need more? Additional pets can be added for just $3.99/year each (up to 20 total)
+                    Want more? Add additional pet accounts for just $3.99 each when purchasing.
+                  </p>
+                  <p className="text-xs text-muted-foreground mt-2">
+                    Recipient gets full capacity immediately upon activation!
                   </p>
                 </div>
               </CardContent>
@@ -423,15 +432,32 @@ const Gift = () => {
                   <CardDescription>12-month PetPort membership</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
-                  <div className="text-center py-6">
-                    <div className="text-5xl font-bold text-primary mb-2">$14.99</div>
-                    <div className="text-sm text-muted-foreground">One-time payment • Instant delivery</div>
+                  <div className="space-y-4">
+                    <div className="flex justify-between items-center text-sm">
+                      <span>Base membership (1 pet)</span>
+                      <span className="font-semibold">${BASE_PRICE.toFixed(2)}</span>
+                    </div>
+                    {additionalPets > 0 && (
+                      <div className="flex justify-between items-center text-sm">
+                        <span>Additional pets ({additionalPets})</span>
+                        <span className="font-semibold">${(additionalPets * ADDON_PRICE).toFixed(2)}</span>
+                      </div>
+                    )}
+                    <div className="border-t pt-4">
+                      <div className="flex justify-between items-center">
+                        <span className="text-lg font-semibold">Total</span>
+                        <span className="text-5xl font-bold text-primary">${totalPrice.toFixed(2)}</span>
+                      </div>
+                      <div className="text-sm text-muted-foreground text-center mt-2">
+                        One-time payment • {scheduledDate ? 'Scheduled delivery' : 'Instant delivery'}
+                      </div>
+                    </div>
                   </div>
                   <div className="space-y-2 text-sm text-muted-foreground">
-                    <p>✓ Delivered via email within minutes</p>
+                    <p>✓ Delivered via email {scheduledDate ? 'on scheduled date' : 'within minutes'}</p>
                     <p>✓ No credit card required from recipient</p>
                     <p>✓ Valid for 12 months from activation</p>
-                    <p>✓ Recipient can add unlimited pet profiles</p>
+                    <p>✓ Includes {1 + additionalPets} pet account{additionalPets > 0 ? 's' : ''}</p>
                   </div>
                 </CardContent>
               </Card>
@@ -474,6 +500,41 @@ const Gift = () => {
                         rows={4}
                       />
                       <p className="text-xs text-muted-foreground">{formData.giftMessage.length}/500 characters</p>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="additionalPets">Number of Pet Accounts</Label>
+                      <div className="flex items-center gap-4">
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="icon"
+                          onClick={() => setAdditionalPets(Math.max(0, additionalPets - 1))}
+                          disabled={additionalPets === 0}
+                        >
+                          -
+                        </Button>
+                        <div className="flex-1 text-center">
+                          <div className="text-2xl font-bold">{1 + additionalPets}</div>
+                          <div className="text-xs text-muted-foreground">
+                            {additionalPets === 0 ? '1 pet included' : `1 base + ${additionalPets} additional`}
+                          </div>
+                        </div>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="icon"
+                          onClick={() => setAdditionalPets(Math.min(19, additionalPets + 1))}
+                          disabled={additionalPets === 19}
+                        >
+                          +
+                        </Button>
+                      </div>
+                      <p className="text-xs text-muted-foreground">
+                        {additionalPets === 0 
+                          ? 'Gift includes 1 pet account. Add more for $3.99 each.' 
+                          : `Additional pets: ${additionalPets} × $3.99 = $${(additionalPets * ADDON_PRICE).toFixed(2)}`}
+                      </p>
                     </div>
 
                     <div className="space-y-2">
@@ -528,7 +589,7 @@ const Gift = () => {
                       ) : (
                         <>
                           <GiftIcon className="mr-2 h-4 w-4" />
-                          Purchase Gift - $14.99
+                          Purchase Gift - ${totalPrice.toFixed(2)}
                         </>
                       )}
                     </Button>
@@ -562,7 +623,7 @@ const Gift = () => {
                   <span className="font-semibold">Can the gift be used for multiple pets?</span>
                 </AccordionTrigger>
                 <AccordionContent className="text-muted-foreground">
-                  Yes! The base gift includes 1 pet profile, but recipients can add unlimited profiles. If they want capacity for more than 1 pet, they can add additional pet accounts for just $3.99/year per pet (up to 20 total pets). This makes it perfect for multi-pet households!
+                  Yes! You can purchase additional pet accounts when buying the gift. The base gift includes 1 pet account, and you can add up to 19 more for just $3.99 each. When the recipient activates the gift, they'll have full capacity for all purchased pet accounts immediately—no need to buy more later!
                 </AccordionContent>
               </AccordionItem>
 

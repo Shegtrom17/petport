@@ -549,6 +549,7 @@ export type Database = {
       gift_memberships: {
         Row: {
           activated_at: string | null
+          additional_pets: number
           amount_paid: number
           created_at: string | null
           expires_at: string | null
@@ -573,6 +574,7 @@ export type Database = {
         }
         Insert: {
           activated_at?: string | null
+          additional_pets?: number
           amount_paid?: number
           created_at?: string | null
           expires_at?: string | null
@@ -597,6 +599,7 @@ export type Database = {
         }
         Update: {
           activated_at?: string | null
+          additional_pets?: number
           amount_paid?: number
           created_at?: string | null
           expires_at?: string | null
@@ -1364,6 +1367,7 @@ export type Database = {
       }
       scheduled_gifts: {
         Row: {
+          additional_pets: number
           amount_paid: number
           created_at: string
           error_message: string | null
@@ -1382,6 +1386,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          additional_pets?: number
           amount_paid?: number
           created_at?: string
           error_message?: string | null
@@ -1400,6 +1405,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          additional_pets?: number
           amount_paid?: number
           created_at?: string
           error_message?: string | null

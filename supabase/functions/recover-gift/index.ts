@@ -70,6 +70,7 @@ serve(async (req) => {
     const giftMessage = session.metadata?.gift_message || "";
     const purchaserEmail = session.metadata?.purchaser_email || session.customer_email;
     const scheduledSendDate = session.metadata?.scheduled_send_date || "";
+    const additionalPets = parseInt(session.metadata?.additional_pets || "0", 10);
 
     if (!recipientEmail) {
       throw new Error("No recipient email in session metadata");
@@ -77,6 +78,9 @@ serve(async (req) => {
 
     // Generate unique 8-character gift code
     const giftCode = crypto.randomUUID().split('-')[0].toUpperCase();
+    
+    // Calculate total amount paid (from session amount_total in cents)
+    const amountPaid = session.amount_total || 1499;
     
     // If gift is scheduled for future delivery, store in scheduled_gifts table
     if (scheduledSendDate) {
@@ -93,7 +97,8 @@ serve(async (req) => {
           scheduled_send_date: scheduledSendDate,
           stripe_checkout_session_id: session.id,
           stripe_payment_intent_id: session.payment_intent as string,
-          amount_paid: 1499,
+          amount_paid: amountPaid,
+          additional_pets: additionalPets,
           status: 'scheduled'
         });
 
@@ -132,7 +137,8 @@ serve(async (req) => {
         gift_message: giftMessage,
         stripe_payment_intent_id: session.payment_intent,
         stripe_checkout_session_id: session.id,
-        amount_paid: 1499,
+        amount_paid: amountPaid,
+        additional_pets: additionalPets,
         status: 'pending',
         purchased_at: new Date().toISOString(),
         expires_at: expiresAt.toISOString()

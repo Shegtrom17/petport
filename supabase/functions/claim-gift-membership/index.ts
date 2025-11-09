@@ -87,7 +87,9 @@ serve(async (req) => {
 
     console.log('Gift activated successfully');
 
-    // Create or update subscriber record
+    // Create or update subscriber record with additional pets capacity
+    const totalPetCapacity = 1 + (gift.additional_pets || 0);
+    
     const { error: subscriberError } = await supabase
       .from('subscribers')
       .upsert({
@@ -96,7 +98,8 @@ serve(async (req) => {
         status: 'active',
         subscribed: true,
         pet_limit: 1,
-        additional_pets: 0,
+        additional_pets: gift.additional_pets || 0,
+        additional_pets_purchased: gift.additional_pets || 0,
         stripe_customer_id: null,
         stripe_subscription_id: gift.stripe_subscription_id,
         plan_interval: 'yearly',
@@ -110,7 +113,7 @@ serve(async (req) => {
       // Don't fail the entire operation if subscriber creation fails
     }
 
-    console.log('Subscriber record created/updated');
+    console.log(`Subscriber record created/updated with ${totalPetCapacity} pet capacity`);
 
     // Send gift activated email
     const { error: emailError } = await supabase.functions.invoke('send-email', {

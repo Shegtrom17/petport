@@ -15,6 +15,7 @@ interface ScheduledGift {
   gift_message: string | null;
   scheduled_send_date: string;
   amount_paid: number;
+  additional_pets: number;
 }
 
 const handler = async (req: Request): Promise<Response> => {
@@ -88,6 +89,7 @@ const handler = async (req: Request): Promise<Response> => {
             sender_name: gift.sender_name,
             gift_message: gift.gift_message,
             amount_paid: gift.amount_paid,
+            additional_pets: gift.additional_pets,
             expires_at: expiryDate.toISOString(),
             purchased_at: new Date().toISOString(),
             status: 'pending'

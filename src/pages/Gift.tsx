@@ -262,7 +262,7 @@ const Gift = () => {
                   </div>
                   <h3 className="font-semibold text-lg">Works for ANY Pet, ANY Life Stage</h3>
                   <p className="text-sm text-muted-foreground">
-                    Whether they just adopted a kitten, have a senior dog, or care for multiple pets—this adapts to their needs.
+                    Whether they just adopted a kitten, have a senior dog, or are a horse parent. Care for multiple pets—this adapts to their needs. Perfect for the pet foster parent, too!
                   </p>
                 </CardContent>
               </Card>

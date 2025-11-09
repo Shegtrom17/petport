@@ -632,8 +632,8 @@ const Gift = () => {
                             type="button"
                             variant="outline"
                             className={cn(
-                              "w-full justify-between text-left font-normal hover:bg-accent",
-                              !scheduledDate && "text-muted-foreground"
+                              "w-full justify-between text-left font-normal hover:border-primary/50 hover:bg-primary/5 transition-colors",
+                              scheduledDate ? "text-foreground" : "text-muted-foreground"
                             )}
                           >
                             <span className="flex items-center gap-2">

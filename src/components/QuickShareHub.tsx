@@ -120,6 +120,8 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
   const [qrSheetBlob, setQrSheetBlob] = useState<Blob | null>(null);
   const [isGeneratingQRSheet, setIsGeneratingQRSheet] = useState(false);
   const [showQRSheetDialog, setShowQRSheetDialog] = useState(false);
+  const [showQRSheetEmailForm, setShowQRSheetEmailForm] = useState(false);
+  const [qrSheetEmailData, setQrSheetEmailData] = useState({ to: '', name: '', message: '' });
   
   const { toast } = useToast();
   const { sendEmail, isLoading: emailLoading } = useEmailSharing();
@@ -613,6 +615,63 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
       toast({
         title: "Share Failed",
         description: "Unable to share PDF. Please try download instead.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleEmailQRSheet = async () => {
+    if (!qrSheetBlob || !qrSheetEmailData.to.trim()) {
+      toast({
+        title: "Missing Information",
+        description: "Please enter recipient email address.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      // Convert blob to base64 for email attachment
+      const reader = new FileReader();
+      reader.readAsDataURL(qrSheetBlob);
+      
+      await new Promise((resolve, reject) => {
+        reader.onload = async () => {
+          try {
+            const base64 = (reader.result as string).split(',')[1];
+            
+            const success = await sendEmail({
+              type: 'care',
+              recipientEmail: qrSheetEmailData.to,
+              recipientName: qrSheetEmailData.name,
+              petName: petData.name,
+              petId: petData.id!,
+              shareUrl: `${window.location.origin}/profile/${petData.id}`,
+              customMessage: qrSheetEmailData.message || `Attached is a printable QR code sheet for ${petData.name}. Each QR code links to a different page - Emergency Profile, Care Instructions, Resume, Gallery, Complete Profile${isLost ? ', and Lost Pet Flyer' : ''}. Keep this sheet accessible for quick access to all of ${petData.name}'s information.`,
+              pdfAttachment: base64,
+              pdfFileName: `${petData.name}_QR_Print_Sheet.pdf`
+            });
+
+            if (success) {
+              setShowQRSheetEmailForm(false);
+              setQrSheetEmailData({ to: '', name: '', message: '' });
+              toast({
+                title: "Email Sent!",
+                description: `QR Print Sheet sent to ${qrSheetEmailData.to}`,
+              });
+            }
+            resolve(true);
+          } catch (error) {
+            reject(error);
+          }
+        };
+        reader.onerror = reject;
+      });
+    } catch (error) {
+      console.error('QR Sheet email error:', error);
+      toast({
+        title: "Email Failed",
+        description: "Unable to send email. Please try again.",
         variant: "destructive",
       });
     }
@@ -2838,31 +2897,105 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
         <Drawer open={showQRSheetDialog} onOpenChange={setShowQRSheetDialog}>
           <DrawerContent>
             <DrawerHeader>
-              <DrawerTitle>QR Print Sheet Ready!</DrawerTitle>
+              <DrawerTitle>
+                {showQRSheetEmailForm ? "Email QR Print Sheet" : "QR Print Sheet Ready!"}
+              </DrawerTitle>
               <DrawerClose />
             </DrawerHeader>
             <div className="p-4 space-y-4">
-              <p className="text-sm text-muted-foreground">
-                Your printable sheet contains all QR codes for {petData.name}'s public pages
-              </p>
-              <div className="grid grid-cols-2 gap-3">
-                <Button onClick={handleViewQRSheet} variant="outline" className="w-full">
-                  <Eye className="mr-2 h-4 w-4" />
-                  View
-                </Button>
-                <Button onClick={handleDownloadQRSheet} variant="outline" className="w-full">
-                  <Download className="mr-2 h-4 w-4" />
-                  Download
-                </Button>
-                <Button onClick={handlePrintQRSheet} variant="outline" className="w-full">
-                  <Printer className="mr-2 h-4 w-4" />
-                  Print
-                </Button>
-                <Button onClick={handleShareQRSheet} variant="default" className="w-full">
-                  <Share2 className="mr-2 h-4 w-4" />
-                  Share
-                </Button>
-              </div>
+              {!showQRSheetEmailForm ? (
+                <>
+                  <p className="text-sm text-muted-foreground">
+                    Your printable sheet contains all QR codes for {petData.name}'s public pages
+                  </p>
+                  <div className="grid grid-cols-2 gap-3">
+                    <Button onClick={handleViewQRSheet} variant="outline" className="w-full">
+                      <Eye className="mr-2 h-4 w-4" />
+                      View
+                    </Button>
+                    <Button onClick={handleDownloadQRSheet} variant="outline" className="w-full">
+                      <Download className="mr-2 h-4 w-4" />
+                      Download
+                    </Button>
+                    <Button onClick={handlePrintQRSheet} variant="outline" className="w-full">
+                      <Printer className="mr-2 h-4 w-4" />
+                      Print
+                    </Button>
+                    <Button onClick={handleShareQRSheet} variant="outline" className="w-full">
+                      <Share2 className="mr-2 h-4 w-4" />
+                      Share
+                    </Button>
+                    <Button 
+                      onClick={() => setShowQRSheetEmailForm(true)} 
+                      variant="default" 
+                      className="w-full col-span-2"
+                    >
+                      <Mail className="mr-2 h-4 w-4" />
+                      Email PDF
+                    </Button>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className="space-y-2">
+                    <Label htmlFor="qr-email">Recipient Email *</Label>
+                    <Input
+                      id="qr-email"
+                      type="email"
+                      placeholder="caretaker@example.com"
+                      value={qrSheetEmailData.to}
+                      onChange={(e) => setQrSheetEmailData(prev => ({ ...prev, to: e.target.value }))}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="qr-name">Recipient Name</Label>
+                    <Input
+                      id="qr-name"
+                      placeholder="Caretaker name"
+                      value={qrSheetEmailData.name}
+                      onChange={(e) => setQrSheetEmailData(prev => ({ ...prev, name: e.target.value }))}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="qr-message">Custom Message (Optional)</Label>
+                    <Textarea
+                      id="qr-message"
+                      placeholder="Add a personal message..."
+                      rows={3}
+                      value={qrSheetEmailData.message}
+                      onChange={(e) => setQrSheetEmailData(prev => ({ ...prev, message: e.target.value }))}
+                    />
+                  </div>
+                  <div className="flex gap-2">
+                    <Button
+                      onClick={handleEmailQRSheet}
+                      disabled={emailLoading || !qrSheetEmailData.to}
+                      className="flex-1"
+                    >
+                      {emailLoading ? (
+                        <>
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          Sending...
+                        </>
+                      ) : (
+                        <>
+                          <Mail className="mr-2 h-4 w-4" />
+                          Send Email
+                        </>
+                      )}
+                    </Button>
+                    <Button
+                      onClick={() => {
+                        setShowQRSheetEmailForm(false);
+                        setQrSheetEmailData({ to: '', name: '', message: '' });
+                      }}
+                      variant="outline"
+                    >
+                      Back
+                    </Button>
+                  </div>
+                </>
+              )}
             </div>
           </DrawerContent>
         </Drawer>
@@ -2870,30 +3003,104 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
         <Dialog open={showQRSheetDialog} onOpenChange={setShowQRSheetDialog}>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>QR Print Sheet Ready!</DialogTitle>
+              <DialogTitle>
+                {showQRSheetEmailForm ? "Email QR Print Sheet" : "QR Print Sheet Ready!"}
+              </DialogTitle>
             </DialogHeader>
             <div className="space-y-4">
-              <p className="text-sm text-muted-foreground">
-                Your printable sheet contains all QR codes for {petData.name}'s public pages
-              </p>
-              <div className="grid grid-cols-2 gap-3">
-                <Button onClick={handleViewQRSheet} variant="outline" className="w-full">
-                  <Eye className="mr-2 h-4 w-4" />
-                  View
-                </Button>
-                <Button onClick={handleDownloadQRSheet} variant="outline" className="w-full">
-                  <Download className="mr-2 h-4 w-4" />
-                  Download
-                </Button>
-                <Button onClick={handlePrintQRSheet} variant="outline" className="w-full">
-                  <Printer className="mr-2 h-4 w-4" />
-                  Print
-                </Button>
-                <Button onClick={handleShareQRSheet} variant="default" className="w-full">
-                  <Share2 className="mr-2 h-4 w-4" />
-                  Share
-                </Button>
-              </div>
+              {!showQRSheetEmailForm ? (
+                <>
+                  <p className="text-sm text-muted-foreground">
+                    Your printable sheet contains all QR codes for {petData.name}'s public pages
+                  </p>
+                  <div className="grid grid-cols-2 gap-3">
+                    <Button onClick={handleViewQRSheet} variant="outline" className="w-full">
+                      <Eye className="mr-2 h-4 w-4" />
+                      View
+                    </Button>
+                    <Button onClick={handleDownloadQRSheet} variant="outline" className="w-full">
+                      <Download className="mr-2 h-4 w-4" />
+                      Download
+                    </Button>
+                    <Button onClick={handlePrintQRSheet} variant="outline" className="w-full">
+                      <Printer className="mr-2 h-4 w-4" />
+                      Print
+                    </Button>
+                    <Button onClick={handleShareQRSheet} variant="outline" className="w-full">
+                      <Share2 className="mr-2 h-4 w-4" />
+                      Share
+                    </Button>
+                    <Button 
+                      onClick={() => setShowQRSheetEmailForm(true)} 
+                      variant="default" 
+                      className="w-full col-span-2"
+                    >
+                      <Mail className="mr-2 h-4 w-4" />
+                      Email PDF
+                    </Button>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className="space-y-2">
+                    <Label htmlFor="qr-email-desktop">Recipient Email *</Label>
+                    <Input
+                      id="qr-email-desktop"
+                      type="email"
+                      placeholder="caretaker@example.com"
+                      value={qrSheetEmailData.to}
+                      onChange={(e) => setQrSheetEmailData(prev => ({ ...prev, to: e.target.value }))}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="qr-name-desktop">Recipient Name</Label>
+                    <Input
+                      id="qr-name-desktop"
+                      placeholder="Caretaker name"
+                      value={qrSheetEmailData.name}
+                      onChange={(e) => setQrSheetEmailData(prev => ({ ...prev, name: e.target.value }))}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="qr-message-desktop">Custom Message (Optional)</Label>
+                    <Textarea
+                      id="qr-message-desktop"
+                      placeholder="Add a personal message..."
+                      rows={3}
+                      value={qrSheetEmailData.message}
+                      onChange={(e) => setQrSheetEmailData(prev => ({ ...prev, message: e.target.value }))}
+                    />
+                  </div>
+                  <div className="flex gap-2">
+                    <Button
+                      onClick={handleEmailQRSheet}
+                      disabled={emailLoading || !qrSheetEmailData.to}
+                      className="flex-1"
+                    >
+                      {emailLoading ? (
+                        <>
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          Sending...
+                        </>
+                      ) : (
+                        <>
+                          <Mail className="mr-2 h-4 w-4" />
+                          Send Email
+                        </>
+                      )}
+                    </Button>
+                    <Button
+                      onClick={() => {
+                        setShowQRSheetEmailForm(false);
+                        setQrSheetEmailData({ to: '', name: '', message: '' });
+                      }}
+                      variant="outline"
+                    >
+                      Cancel
+                    </Button>
+                  </div>
+                </>
+              )}
             </div>
           </DialogContent>
         </Dialog>

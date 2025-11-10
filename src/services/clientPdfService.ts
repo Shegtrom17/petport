@@ -2354,11 +2354,9 @@ export async function viewPDFBlob(blob: Blob, filename: string): Promise<void> {
       userAgent: navigator.userAgent.substring(0, 50) + '...'
     });
     
-    // In iframe/sandbox (like Lovable preview), use location.href immediately
+    // In iframe/sandbox (like Lovable preview), prefer opening a new tab to escape the iframe; fallback handled below
     if (isInIframe) {
-      console.log('🖼️ PDF Viewer: Iframe/sandbox detected - using direct navigation');
-      window.location.href = url;
-      return;
+      console.log('🖼️ PDF Viewer: Iframe/sandbox detected - will try opening in a new tab');
     }
     
     // Try window.open first for non-iframe environments
@@ -2374,6 +2372,23 @@ export async function viewPDFBlob(blob: Blob, filename: string): Promise<void> {
       }, 3000);
     } else {
       console.log('⚠️ PDF Viewer: window.open blocked or failed, using fallback');
+      
+      // If inside iframe, try opening via anchor to escape the iframe
+      if (isInIframe) {
+        try {
+          const a = document.createElement('a');
+          a.href = url;
+          a.target = '_blank';
+          a.rel = 'noopener';
+          document.body.appendChild(a);
+          a.click();
+          a.remove();
+          console.log('✅ PDF Viewer: Opened via anchor fallback');
+          return;
+        } catch (e) {
+          console.warn('⚠️ PDF Viewer: Anchor fallback failed, falling back to navigation', e);
+        }
+      }
       
       // Fallback for iOS PWA: navigate in same window
       if (isIOS && isStandalone) {

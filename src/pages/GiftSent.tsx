@@ -38,16 +38,30 @@ const GiftSent = () => {
 
   const fetchGiftDetails = async () => {
     try {
-      // Try to recover/create the gift deterministically (idempotent)
+      // Try to recover/create the gift deterministically (idempotent) and use response directly
       try {
-        await supabase.functions.invoke('recover-gift', {
+        const { data: recoveryData } = await supabase.functions.invoke('recover-gift', {
           body: { checkoutSessionId: sessionId }
         });
+        if (recoveryData?.success) {
+          const baseUrl = window.location.origin;
+          setGiftDetails({
+            giftCode: recoveryData.giftCode,
+            recipientEmail: recoveryData.recipientEmail || "",
+            senderName: "You",
+            giftMessage: "",
+            redemptionLink: recoveryData.redemptionLink || `${baseUrl}/claim-subscription?code=${recoveryData.giftCode}`,
+            isScheduled: Boolean(recoveryData.scheduledFor),
+            scheduledFor: recoveryData.scheduledFor,
+            expiresAt: recoveryData.expiresAt
+          });
+          setIsLoading(false);
+          return;
+        }
       } catch (e) {
         console.warn('Recover gift invocation failed or not needed:', e);
         // Continue to fetch details regardless
       }
-
       // First check if it's a scheduled gift
       const { data: scheduledData, error: scheduledError } = await supabase
         .from('scheduled_gifts')

@@ -34,7 +34,8 @@ const Gift = () => {
   const [formData, setFormData] = useState({
     recipientEmail: "",
     senderName: "",
-    giftMessage: ""
+    giftMessage: "",
+    purchaserEmail: session?.user?.email || ""
   });
   const [scheduledDate, setScheduledDate] = useState<Date>();
   const [additionalPets, setAdditionalPets] = useState(0);
@@ -51,6 +52,10 @@ const Gift = () => {
       toast.error("Please enter a valid recipient email");
       return;
     }
+    if (!session?.user?.email && (!formData.purchaserEmail || !formData.purchaserEmail.includes("@"))) {
+      toast.error("Please enter your email for the receipt");
+      return;
+    }
 
     setIsLoading(true);
 
@@ -59,7 +64,7 @@ const Gift = () => {
         recipientEmail: formData.recipientEmail,
         senderName: formData.senderName || undefined,
         giftMessage: formData.giftMessage || undefined,
-        purchaserEmail: session?.user?.email || undefined,
+        purchaserEmail: session?.user?.email || formData.purchaserEmail || undefined,
         additionalPets: additionalPets,
         theme: selectedTheme
       };
@@ -672,6 +677,22 @@ const Gift = () => {
                         required
                       />
                     </div>
+
+                    {!session && (
+                      <div className="space-y-2">
+                        <Label htmlFor="purchaserEmail">Your Email (for receipt) *</Label>
+                        <Input
+                          id="purchaserEmail"
+                          type="email"
+                          placeholder="you@example.com"
+                          value={formData.purchaserEmail}
+                          onChange={(e) => setFormData({ ...formData, purchaserEmail: e.target.value })}
+                          required
+                        />
+                        <p className="text-xs text-muted-foreground">We’ll email your receipt and purchase confirmation here. The recipient also gets their gift email.</p>
+                      </div>
+                    )}
+
                     <div className="space-y-2">
                       <Label htmlFor="senderName">Your Name (Optional)</Label>
                       <Input

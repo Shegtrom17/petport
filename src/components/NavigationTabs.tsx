@@ -1,6 +1,7 @@
 
 import { Button } from "@/components/ui/button";
 import { FileText, Badge, Star, Heart, MapPin, Camera, Shield, Search, Syringe } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 interface NavigationTabsProps {
   activeTab: string;
@@ -9,6 +10,8 @@ interface NavigationTabsProps {
 }
 
 export const NavigationTabs = ({ activeTab, onTabChange, isMobile = false }: NavigationTabsProps) => {
+  const navigate = useNavigate();
+  
   const tabs = [
     { id: "profile", label: "HOME", icon: FileText },
     { id: "care", label: "CARE & HANDLING", icon: Heart },
@@ -17,8 +20,16 @@ export const NavigationTabs = ({ activeTab, onTabChange, isMobile = false }: Nav
     { id: "travel", label: "GLOBAL JOURNEYS", icon: MapPin },
     { id: "gallery", label: "PORTRAIT GALLERY", icon: Camera },
     { id: "quickid", label: "LOST PET", icon: Search, coachId: "quick-id" },
-    { id: "vaccination", label: "VACCINATION GUIDE", icon: Syringe },
+    { id: "vaccination", label: "VACCINATION GUIDE", icon: Syringe, isExternalLink: true },
   ];
+
+  const handleTabClick = (tab: typeof tabs[0]) => {
+    if (tab.isExternalLink && tab.id === "vaccination") {
+      navigate('/vaccination-guide');
+    } else {
+      onTabChange(tab.id);
+    }
+  };
 
   if (isMobile) {
     return (
@@ -27,7 +38,7 @@ export const NavigationTabs = ({ activeTab, onTabChange, isMobile = false }: Nav
           <Button
             key={tab.id}
             variant={activeTab === tab.id ? "default" : "ghost"}
-            onClick={() => onTabChange(tab.id)}
+            onClick={() => handleTabClick(tab)}
             className={`w-full justify-start space-x-3 transition-all text-sm sm:text-base py-2 sm:py-3 ${
               activeTab === tab.id 
                 ? "bg-brand-primary text-white shadow-lg" 
@@ -48,7 +59,7 @@ export const NavigationTabs = ({ activeTab, onTabChange, isMobile = false }: Nav
         <Button
           key={tab.id}
           variant={activeTab === tab.id ? "default" : "ghost"}
-          onClick={() => onTabChange(tab.id)}
+          onClick={() => handleTabClick(tab)}
           className={`flex items-center space-x-2 transition-all text-xs sm:text-sm py-1.5 sm:py-2 px-2 sm:px-3 ${
             activeTab === tab.id 
               ? "bg-brand-primary text-white shadow-lg" 

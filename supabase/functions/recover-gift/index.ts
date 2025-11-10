@@ -166,16 +166,10 @@ serve(async (req) => {
         day: 'numeric' 
       });
       
-      // Select email template based on theme
-      const purchaserTemplate = theme === 'christmas' ? 'gift-purchase-confirmation-christmas' :
-                                theme === 'birthday' ? 'gift-purchase-confirmation-birthday' :
-                                theme === 'adoption' ? 'gift-purchase-confirmation-adoption' :
-                                'gift-purchase-confirmation';
-      
-      // Send to purchaser
+      // Send to purchaser (theme is handled by HOLIDAY_MODE env variable in send-email)
       await supabaseClient.functions.invoke('send-email', {
         body: {
-          type: purchaserTemplate,
+          type: 'gift_purchase_confirmation',
           recipientEmail: purchaserEmail,
           recipientName: senderName,
           petName: 'Gift Membership',
@@ -189,16 +183,10 @@ serve(async (req) => {
         }
       });
 
-      // Select recipient email template based on theme
-      const recipientTemplate = theme === 'christmas' ? 'gift-notification-christmas' :
-                                theme === 'birthday' ? 'gift-notification-birthday' :
-                                theme === 'adoption' ? 'gift-notification-adoption' :
-                                'gift-notification';
-      
-      // Send to recipient
+      // Send to recipient (theme is handled by HOLIDAY_MODE env variable in send-email)
       await supabaseClient.functions.invoke('send-email', {
         body: {
-          type: recipientTemplate,
+          type: 'gift_notification',
           recipientEmail: recipientEmail,
           recipientName: recipientEmail.split('@')[0],
           petName: 'Gift Membership',

@@ -48,8 +48,8 @@ const GiftSent = () => {
           setGiftDetails({
             giftCode: recoveryData.giftCode,
             recipientEmail: recoveryData.recipientEmail || "",
-            senderName: "You",
-            giftMessage: "",
+            senderName: recoveryData.senderName || "You",
+            giftMessage: recoveryData.giftMessage || "",
             redemptionLink: recoveryData.redemptionLink || `${baseUrl}/claim-subscription?code=${recoveryData.giftCode}`,
             isScheduled: Boolean(recoveryData.scheduledFor),
             scheduledFor: recoveryData.scheduledFor,

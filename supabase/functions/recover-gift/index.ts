@@ -211,6 +211,9 @@ serve(async (req) => {
         success: true,
         giftCode,
         recipientEmail,
+        senderName,
+        giftMessage,
+        expiresAt: expiresAt.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
         redemptionLink: `${Deno.env.get("APP_ORIGIN") || "https://petport.app"}/redeem?code=${giftCode}`,
         message: "Gift membership recovered and created successfully"
       }),

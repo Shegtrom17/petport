@@ -61,10 +61,7 @@ export const MobileNavigationMenu = ({ isOpen, onClose }: MobileNavigationMenuPr
               <Button
                 variant="ghost"
                 className="w-full justify-start text-sm"
-                onClick={() => {
-                  navigate('/vaccination-guide');
-                  onClose();
-                }}
+                onClick={() => handlePageNavigation('vaccination')}
               >
                 <Syringe className="w-5 h-5 mr-3" />
                 Vaccination Guide

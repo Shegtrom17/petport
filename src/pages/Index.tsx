@@ -10,6 +10,7 @@ import { DocumentsSection } from "@/components/DocumentsSection";
 import { PetGallerySection } from "@/components/PetGallerySection";
 import { InAppSharingModal } from "@/components/InAppSharingModal";
 import { PWALayout } from "@/components/PWALayout";
+import { VaccinationGuide } from "@/components/VaccinationGuide";
 
 import { useAuth } from "@/context/AuthContext";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -67,7 +68,7 @@ const Index = () => {
 
   // Restore last tab from localStorage on mount (fixes document upload redirect bug)
   useEffect(() => {
-    const validTabs = ['profile', 'resume', 'care', 'quickid', 'gallery', 'travel', 'reviews', 'certifications', 'documents'];
+    const validTabs = ['profile', 'resume', 'care', 'quickid', 'gallery', 'travel', 'reviews', 'certifications', 'documents', 'vaccination'];
     
     // Try general sticky key first (saved before upload/capture)
     const lastTab = localStorage.getItem('pp_last_tab_last');
@@ -224,8 +225,8 @@ const Index = () => {
     const petParam = searchParams.get('pet');
     
     if (tabParam) {
-      // Valid tabs: profile, resume, care, quickid, gallery, travel, reviews, certifications, documents
-      const validTabs = ['profile', 'resume', 'care', 'quickid', 'gallery', 'travel', 'reviews', 'certifications', 'documents'];
+      // Valid tabs: profile, resume, care, quickid, gallery, travel, reviews, certifications, documents, vaccination
+      const validTabs = ['profile', 'resume', 'care', 'quickid', 'gallery', 'travel', 'reviews', 'certifications', 'documents', 'vaccination'];
       if (validTabs.includes(tabParam)) {
         setActiveTab(tabParam);
       }
@@ -378,6 +379,13 @@ const Index = () => {
       case "quickid":
         console.log("Rendering QuickIDSection");
         return <QuickIDSection petData={petData} onUpdate={handlePetUpdate} />;
+      case "vaccination":
+        console.log("Rendering VaccinationGuide");
+        return (
+          <div className="bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 -mx-3 sm:-mx-4 px-3 sm:px-4 py-6">
+            <VaccinationGuide isOpen={true} onClose={() => handleTabChange("profile")} isPageMode={true} />
+          </div>
+        );
       case "lostpet":
         console.log("Redirecting to QuickID for lost pet management");
         handleTabChange("quickid");

@@ -7,6 +7,7 @@ export const TAB_ORDER = [
   "travel",
   "gallery",
   "quickid",
+  "vaccination",
 ] as const;
 
 export type TabId = typeof TAB_ORDER[number];

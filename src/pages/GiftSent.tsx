@@ -38,6 +38,16 @@ const GiftSent = () => {
 
   const fetchGiftDetails = async () => {
     try {
+      // Try to recover/create the gift deterministically (idempotent)
+      try {
+        await supabase.functions.invoke('recover-gift', {
+          body: { checkoutSessionId: sessionId }
+        });
+      } catch (e) {
+        console.warn('Recover gift invocation failed or not needed:', e);
+        // Continue to fetch details regardless
+      }
+
       // First check if it's a scheduled gift
       const { data: scheduledData, error: scheduledError } = await supabase
         .from('scheduled_gifts')

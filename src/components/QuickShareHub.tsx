@@ -1145,6 +1145,15 @@ export const QuickShareHub: React.FC<QuickShareHubProps> = ({ petData, isLost })
                   <div>
                     <h3 className="font-semibold text-sm">{page.title}</h3>
                     <p className="text-xs text-muted-foreground">{page.description}</p>
+                    <a 
+                      href={`${baseUrl}${page.path}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-xs text-primary hover:text-primary/80 flex items-center gap-1 mt-1 transition-colors"
+                    >
+                      <Eye className="w-3 h-3" />
+                      Preview this LiveLink
+                    </a>
                   </div>
                 </div>
                 {page.variant === 'missing' && (

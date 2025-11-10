@@ -2146,12 +2146,16 @@ export async function generateQRPrintSheetPDF(
       });
     }
 
-    // Grid layout: 2 columns, 3 rows
-    const qrSize = 35; // 35mm QR codes
+    // Grid layout: responsive to available height to prevent cut-off
+    const pageHeight = (doc.internal.pageSize as any).height || 297;
+    const footerY = 270; // reserve space for footer
+    const gridStartY = pageManager.getCurrentY();
+    const availableHeight = Math.max(footerY - gridStartY, 100);
+    const rows = Math.ceil(qrCodes.length / 2);
+    let rowSpacing = Math.min(75, Math.floor(availableHeight / rows));
+    let qrSize = Math.min(35, Math.max(28, rowSpacing - 22)); // ensure labels+url fit
     const columnWidth = 90; // Space for each column
     const startX = 20; // Left margin
-    const startY = pageManager.getCurrentY();
-    const rowSpacing = 75; // Vertical space between rows
 
     for (let i = 0; i < qrCodes.length; i++) {
       const qr = qrCodes[i];
@@ -2159,7 +2163,7 @@ export async function generateQRPrintSheetPDF(
       const row = Math.floor(i / 2);
       
       const x = startX + (col * columnWidth);
-      const y = startY + (row * rowSpacing);
+      const y = gridStartY + (row * rowSpacing);
 
       // Generate QR code
       const qrUrl = generateQRCodeUrl(qr.url, 300);

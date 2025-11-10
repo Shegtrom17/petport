@@ -235,7 +235,7 @@ export default function PublicMissingPet() {
         microchip_id: sanitizeText(petInfo.microchip_id || ''),
         registration_number: sanitizeText(petInfo.registration_number || ''),
         photoUrl: photos?.photo_url,
-        fullBodyPhotoUrl: photos?.full_body_photo_url,
+        fullBodyPhotoUrl: photos?.full_body_photo_url || (galleryPhotos && galleryPhotos[0]?.url),
         lastSeenLocation: sanitizeText(lostData.last_seen_location || ''),
         lastSeenDate: lostData.last_seen_date,
         lastSeenTime: sanitizeText(lostData.last_seen_time || ''),
@@ -580,10 +580,14 @@ export default function PublicMissingPet() {
             {petData.fullBodyPhotoUrl && (
               <div className="flex justify-center mb-6">
                 <div className="w-full max-w-md">
-                  <h3 className="font-semibold text-red-600 mb-2 text-center">Full Body Photo</h3>
+                  <h3 className="font-semibold text-red-600 mb-2 text-center">
+                    {petData.galleryPhotos && petData.galleryPhotos[0]?.url === petData.fullBodyPhotoUrl 
+                      ? 'Additional Photo' 
+                      : 'Full Body Photo'}
+                  </h3>
                   <img 
                     src={petData.fullBodyPhotoUrl} 
-                    alt={`${petData.name}'s full body photo`}
+                    alt={`${petData.name}'s additional photo`}
                     className="w-full h-auto max-h-[500px] object-contain rounded-lg shadow-lg border-4 border-red-500"
                   />
                 </div>

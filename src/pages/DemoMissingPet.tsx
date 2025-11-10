@@ -142,7 +142,7 @@ export default function DemoMissingPet() {
           sex: petData.sex,
           microchip_id: sanitizeText(petData.microchip_id),
           photo_url: photosData?.photo_url || '',
-          full_body_photo_url: photosData?.full_body_photo_url || '',
+          full_body_photo_url: photosData?.full_body_photo_url || (galleryData && galleryData[0]?.url) || '',
           lost_pet_data: lostData ? {
             is_missing: lostData.is_missing,
             last_seen_location: sanitizeText(lostData.last_seen_location),
@@ -635,10 +635,14 @@ export default function DemoMissingPet() {
             {data.full_body_photo_url && (
               <div className="flex justify-center mb-6">
                 <div className="w-full max-w-md">
-                  <h3 className="font-semibold text-red-600 mb-2 text-center">Full Body Photo</h3>
+                  <h3 className="font-semibold text-red-600 mb-2 text-center">
+                    {data.gallery_photos && data.gallery_photos[0]?.url === data.full_body_photo_url 
+                      ? 'Additional Photo' 
+                      : 'Full Body Photo'}
+                  </h3>
                   <img 
                     src={data.full_body_photo_url} 
-                    alt={`${data.name}'s full body photo`}
+                    alt={`${data.name}'s additional photo`}
                     className="w-full h-auto max-h-[500px] object-contain rounded-lg shadow-lg border-4 border-red-500"
                   />
                 </div>

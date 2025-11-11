@@ -18,9 +18,37 @@ serve(async (req) => {
     if (!stripeSecret) throw new Error("Missing STRIPE_SECRET_KEY");
     const stripe = new Stripe(stripeSecret, { apiVersion: "2023-10-16" });
 
-    const { plan, referral_code } = await req.json();
+    const { plan, referral_code, additional_pets } = await req.json();
     if (plan !== "monthly" && plan !== "yearly") {
       const errorBody = JSON.stringify({ error: "Invalid plan" });
+      return new Response(errorBody, { 
+        status: 400, 
+        headers: { 
+          ...corsHeaders, 
+          "Content-Type": "application/json",
+          "Content-Length": errorBody.length.toString()
+        } 
+      });
+    }
+
+    const additionalPets = additional_pets || 0;
+    
+    // Validate additional pets
+    if (additionalPets < 0 || additionalPets > 19) {
+      const errorBody = JSON.stringify({ error: "Additional pets must be between 0 and 19" });
+      return new Response(errorBody, { 
+        status: 400, 
+        headers: { 
+          ...corsHeaders, 
+          "Content-Type": "application/json",
+          "Content-Length": errorBody.length.toString()
+        } 
+      });
+    }
+
+    // Additional pets only allowed with yearly plan
+    if (additionalPets > 0 && plan === "monthly") {
+      const errorBody = JSON.stringify({ error: "Additional pets only available with yearly subscriptions" });
       return new Response(errorBody, { 
         status: 400, 
         headers: { 
@@ -41,23 +69,44 @@ serve(async (req) => {
       ? [{ coupon: "REFERRAL10" }] 
       : undefined;
 
+    // Build line items - base subscription plus optional additional pets
+    const lineItems = [
+      {
+        price_data: {
+          currency: "usd",
+          product_data: { 
+            name: `PetPort ${plan.charAt(0).toUpperCase() + plan.slice(1)} Subscription`,
+            description: `Includes ${1 + additionalPets} pet account${additionalPets > 0 ? 's' : ''}`
+          },
+          unit_amount: amount,
+          recurring: { interval },
+        },
+        quantity: 1,
+      },
+    ];
+
+    // Add additional pets as separate recurring line item if > 0
+    if (additionalPets > 0) {
+      const additionalPetsPrice = Deno.env.get("STRIPE_PRICE_ADDITIONAL_PETS");
+      if (!additionalPetsPrice) {
+        throw new Error("Missing STRIPE_PRICE_ADDITIONAL_PETS environment variable");
+      }
+      lineItems.push({
+        price: additionalPetsPrice,
+        quantity: additionalPets,
+      });
+    }
+
     const session = await stripe.checkout.sessions.create({
       mode: "subscription",
-      line_items: [
-        {
-          price_data: {
-            currency: "usd",
-            product_data: { name: `PetPort ${plan.charAt(0).toUpperCase() + plan.slice(1)} Subscription` },
-            unit_amount: amount,
-            recurring: { interval },
-          },
-          quantity: 1,
-        },
-      ],
+      line_items: lineItems,
       payment_method_collection: "always",
       subscription_data: {
         trial_period_days: 7,
-        metadata: referral_code ? { referral_code } : {},
+        metadata: {
+          ...(referral_code ? { referral_code } : {}),
+          additional_pets: additionalPets.toString(),
+        },
       },
       discounts,
       success_url: `${origin}/post-checkout?session_id={CHECKOUT_SESSION_ID}`,

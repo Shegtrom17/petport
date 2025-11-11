@@ -19,6 +19,7 @@ export const PricingSection: React.FC<PricingSectionProps> = ({ context = "landi
   const { toast } = useToast();
   const navigate = useNavigate();
   const [selectedQuantity, setSelectedQuantity] = useState(1);
+  const [additionalPetsForCheckout, setAdditionalPetsForCheckout] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
 
   const startCheckout = async (plan: "monthly" | "yearly") => {
@@ -32,7 +33,8 @@ export const PricingSection: React.FC<PricingSectionProps> = ({ context = "landi
       const { data, error } = await supabase.functions.invoke(functionName, {
         body: { 
           plan,
-          referral_code: referralCode 
+          referral_code: referralCode,
+          additional_pets: additionalPetsForCheckout
         }
       });
 
@@ -90,92 +92,121 @@ export const PricingSection: React.FC<PricingSectionProps> = ({ context = "landi
     }
   };
 
+  const totalPetsForCheckout = 1 + additionalPetsForCheckout;
+  const additionalPetsCost = additionalPetsForCheckout * 3.99;
+
   return (
     <section aria-labelledby="pricing-heading" className="space-y-6">
       <div className="text-center">
         <h2 id="pricing-heading" className="text-2xl md:text-3xl font-semibold">
           Plans & Pricing
         </h2>
-        <p className="mt-2 text-sm text-muted-foreground">Includes one pet account. Add more anytime.</p>
+        <p className="mt-2 text-sm text-muted-foreground">Start with one pet, add more during checkout.</p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {PRICING.plans.map((plan) => (
-          <Card key={plan.id} className="h-full">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Crown className="w-5 h-5" />
-                <span>{plan.name} Plan</span>
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              <p className="text-2xl font-bold">{plan.priceText}</p>
-              <p className="text-sm text-muted-foreground">{plan.includes}</p>
-              <p className="text-xs text-muted-foreground">7-day free trial. Card required; billed after trial unless canceled.</p>
-              <Button variant="azure" className="w-full" onClick={() => startCheckout(plan.id === "monthly" ? "monthly" : "yearly")}>
-                <CreditCard className="w-4 h-4" />
-                <span>Start 7-day free trial</span>
+      {/* Pet Quantity Selector */}
+      <Card className="border-primary/20">
+        <CardContent className="pt-6">
+          <div className="space-y-4">
+            <div className="text-center">
+              <Label className="text-base font-medium">How many pets?</Label>
+              <p className="text-sm text-muted-foreground mt-1">
+                Select total number of pet accounts you need
+              </p>
+            </div>
+            <div className="flex items-center justify-center gap-3">
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={() => setAdditionalPetsForCheckout(Math.max(0, additionalPetsForCheckout - 1))}
+                disabled={additionalPetsForCheckout === 0}
+              >
+                -
               </Button>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-
-      <div className="space-y-6">
-        <h3 className="text-lg font-medium text-center">Additional Pet Accounts</h3>
-        
-        {/* Additional Pet Accounts */}
-        <Card className="border-2 hover:border-primary/50 transition-colors">
-          <CardHeader>
-            <CardTitle className="text-xl">{PRICING.addons[0].name}</CardTitle>
-            <CardDescription>
-              {PRICING.addons[0].description}
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <div className="text-center">
-                <div className="text-2xl font-bold text-primary">
-                  {PRICING.addons[0].getTierText(selectedQuantity)}
-                </div>
-                <div className="text-sm text-muted-foreground">
-                  Flat pricing - $3.99/year per pet
+              <div className="text-center min-w-[120px]">
+                <div className="text-3xl font-bold text-primary">{totalPetsForCheckout}</div>
+                <div className="text-xs text-muted-foreground">
+                  pet account{totalPetsForCheckout !== 1 ? 's' : ''}
                 </div>
               </div>
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={() => setAdditionalPetsForCheckout(Math.min(19, additionalPetsForCheckout + 1))}
+                disabled={additionalPetsForCheckout === 19}
+              >
+                +
+              </Button>
             </div>
-            
-            <div className="flex items-center justify-center gap-3">
-              <Label htmlFor="quantity" className="text-sm">Quantity:</Label>
-              <Select value={selectedQuantity.toString()} onValueChange={(value) => setSelectedQuantity(parseInt(value))}>
-                <SelectTrigger className="w-20">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {Array.from({ length: PRICING.addons[0].maxQuantity }, (_, i) => i + 1).map((num) => (
-                    <SelectItem key={num} value={num.toString()}>{num}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            
-            <div className="text-center text-sm text-muted-foreground">
-              Total: ${((PRICING.addons[0].getTierPrice(selectedQuantity) * selectedQuantity) / 100).toFixed(2)}/year
-            </div>
-            
-            <Button 
-              onClick={() => buyAdditionalPets(selectedQuantity)} 
-              variant="azure"
-              className="w-full"
-              disabled={isLoading}
-            >
-              {isLoading ? "Processing..." : "Add Pet Accounts"}
-            </Button>
-            
-            <div className="text-xs text-muted-foreground text-center">
-              Deleting a pet frees a slot immediately. To stop paying for extra slots, reduce quantity in "Manage Subscription".
-            </div>
-          </CardContent>
-        </Card>
+            {additionalPetsForCheckout > 0 && (
+              <div className="text-center text-sm space-y-1 p-3 bg-muted/50 rounded-lg">
+                <div className="font-medium">Price Breakdown:</div>
+                <div className="text-muted-foreground">Base membership: included in plan</div>
+                <div className="text-muted-foreground">
+                  {additionalPetsForCheckout} additional pet{additionalPetsForCheckout !== 1 ? 's' : ''}: ${additionalPetsCost.toFixed(2)}/year
+                </div>
+              </div>
+            )}
+          </div>
+        </CardContent>
+      </Card>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {PRICING.plans.map((plan) => {
+          const basePriceNum = plan.priceCents / 100;
+          const totalPrice = plan.id === "yearly" 
+            ? basePriceNum + additionalPetsCost
+            : basePriceNum;
+          
+          return (
+            <Card key={plan.id} className="h-full">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Crown className="w-5 h-5" />
+                  <span>{plan.name} Plan</span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <div>
+                  <p className="text-2xl font-bold">
+                    ${totalPrice.toFixed(2)}/{plan.interval}
+                  </p>
+                  {plan.id === "yearly" && additionalPetsForCheckout > 0 && (
+                    <p className="text-xs text-muted-foreground mt-1">
+                      ${basePriceNum.toFixed(2)} base + ${additionalPetsCost.toFixed(2)} for {additionalPetsForCheckout} pet{additionalPetsForCheckout !== 1 ? 's' : ''}
+                    </p>
+                  )}
+                </div>
+                <p className="text-sm text-muted-foreground">
+                  Includes {totalPetsForCheckout} pet account{totalPetsForCheckout !== 1 ? 's' : ''}
+                </p>
+                {plan.id === "monthly" && additionalPetsForCheckout > 0 && (
+                  <p className="text-xs text-orange-600 dark:text-orange-400">
+                    Note: Additional pets only available with yearly plan
+                  </p>
+                )}
+                <p className="text-xs text-muted-foreground">
+                  7-day free trial. Card required; billed after trial unless canceled.
+                </p>
+                <Button 
+                  variant="azure" 
+                  className="w-full" 
+                  onClick={() => startCheckout(plan.id === "monthly" ? "monthly" : "yearly")}
+                  disabled={plan.id === "monthly" && additionalPetsForCheckout > 0}
+                >
+                  <CreditCard className="w-4 h-4" />
+                  <span>Start 7-day free trial</span>
+                </Button>
+              </CardContent>
+            </Card>
+          );
+        })}
+      </div>
+
+      <div className="text-center pt-4">
+        <p className="text-sm text-muted-foreground">
+          Need to add more pets later? You can purchase additional slots anytime from your billing page.
+        </p>
       </div>
       <p className="text-xs text-muted-foreground text-center">
         Cancel anytime. Manage from your account or the Customer Portal. See our

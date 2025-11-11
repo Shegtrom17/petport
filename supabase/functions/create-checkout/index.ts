@@ -33,9 +33,21 @@ serve(async (req) => {
     const user = userData.user;
     if (!user?.email) throw new Error("User email not available");
 
-    const { plan, referral_code }: { plan?: Plan; referral_code?: string } = await req.json().catch(() => ({}));
+    const { plan, referral_code, additional_pets }: { plan?: Plan; referral_code?: string; additional_pets?: number } = await req.json().catch(() => ({}));
     if (!plan || (plan !== "monthly" && plan !== "yearly")) {
       throw new Error("Invalid plan. Use 'monthly' or 'yearly'.");
+    }
+
+    const additionalPets = additional_pets || 0;
+    
+    // Validate additional pets
+    if (additionalPets < 0 || additionalPets > 19) {
+      throw new Error("Additional pets must be between 0 and 19");
+    }
+
+    // Additional pets only allowed with yearly plan
+    if (additionalPets > 0 && plan === "monthly") {
+      throw new Error("Additional pets are only available with yearly subscriptions");
     }
 
     const price = plan === "monthly" ? 199 : 1499;
@@ -51,25 +63,46 @@ serve(async (req) => {
       ? [{ coupon: "REFERRAL10" }] 
       : undefined;
 
+    // Build line items - base subscription plus optional additional pets
+    const lineItems = [
+      {
+        price_data: {
+          currency: "usd",
+          product_data: { 
+            name: `PetPort ${plan === "monthly" ? "Monthly" : "Yearly"} Subscription`,
+            description: `Includes ${1 + additionalPets} pet account${additionalPets > 0 ? 's' : ''}`
+          },
+          unit_amount: price,
+          recurring: { interval: interval as "month" | "year" },
+        },
+        quantity: 1,
+      },
+    ];
+
+    // Add additional pets as separate recurring line item if > 0
+    if (additionalPets > 0) {
+      const additionalPetsPrice = Deno.env.get("STRIPE_PRICE_ADDITIONAL_PETS");
+      if (!additionalPetsPrice) {
+        throw new Error("Missing STRIPE_PRICE_ADDITIONAL_PETS environment variable");
+      }
+      lineItems.push({
+        price: additionalPetsPrice,
+        quantity: additionalPets,
+      });
+    }
+
     const session = await stripe.checkout.sessions.create({
       customer: customerId,
       customer_email: customerId ? undefined : user.email,
-      line_items: [
-        {
-          price_data: {
-            currency: "usd",
-            product_data: { name: `PetPort ${plan === "monthly" ? "Monthly" : "Yearly"} Subscription` },
-            unit_amount: price,
-            recurring: { interval: interval as "month" | "year" },
-          },
-          quantity: 1,
-        },
-      ],
+      line_items: lineItems,
       mode: "subscription",
       payment_method_collection: "always",
       subscription_data: {
         trial_period_days: 7,
-        metadata: referral_code ? { referral_code } : {},
+        metadata: {
+          ...(referral_code ? { referral_code } : {}),
+          additional_pets: additionalPets.toString(),
+        },
       },
       discounts,
       allow_promotion_codes: true,

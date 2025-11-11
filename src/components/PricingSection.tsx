@@ -22,16 +22,14 @@ export const PricingSection: React.FC<PricingSectionProps> = ({ context = "landi
   const [isLoading, setIsLoading] = useState(false);
 
   const startCheckout = async (plan: "monthly" | "yearly") => {
-    // Landing page should redirect to auth, not Stripe
-    if (context === "landing") {
-      navigate(`/auth?plan=${plan}`);
-      return;
-    }
-    
-    // Only authenticated users on subscribe page call Stripe directly
     try {
       setIsLoading(true);
-      const { data, error } = await supabase.functions.invoke("create-checkout", {
+      
+      // Landing page uses public checkout (no auth required)
+      // Profile/subscribe page uses authenticated checkout
+      const functionName = context === "landing" ? "public-create-checkout" : "create-checkout";
+      
+      const { data, error } = await supabase.functions.invoke(functionName, {
         body: { 
           plan,
           referral_code: referralCode 
@@ -62,17 +60,17 @@ export const PricingSection: React.FC<PricingSectionProps> = ({ context = "landi
   };
 
   const buyAdditionalPets = async (quantity: number) => {
-    // Landing page should redirect to auth for additional pets too
-    if (context === "landing") {
-      navigate("/auth?plan=monthly");
-      return;
-    }
-    
     try {
       setIsLoading(true);
-      const fn = "purchase-addons";
+      
+      // Landing page uses public checkout, profile uses authenticated
+      const fn = context === "landing" ? "public-create-checkout" : "purchase-addons";
+      const body = context === "landing" 
+        ? { plan: "monthly", referral_code: referralCode }
+        : { quantity };
+      
       const { data, error } = await supabase.functions.invoke(fn, {
-        body: { quantity }
+        body
       });
 
       if (error) throw error;

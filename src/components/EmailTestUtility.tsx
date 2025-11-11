@@ -44,15 +44,19 @@ const EmailTestUtility = () => {
         const { data, error } = await supabase.functions.invoke('send-email', {
           body: {
             type: emailType,
-            to: recipientEmail,
+            recipientEmail: recipientEmail,
             recipientName: recipientName || 'Friend',
             senderName: senderName || 'Test User',
+            petName: petName || 'Your Pet',
+            petId: 'test-pet-id',
+            shareUrl: 'https://petport.app',
             giftMessage: customMessage || 'Hope you enjoy this gift membership!',
             giftCode: giftCode,
-            redemptionLink: `https://petport.app/claim-gift?code=${giftCode}`,
+            redemptionLink: `https://petport.app/claim-subscription?code=${giftCode}`,
             expiresAt: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toLocaleDateString(),
             daysRemaining: 365,
-            theme: giftTheme
+            giftTheme: giftTheme,
+            customMessage: customMessage || 'Hope you enjoy this gift membership!'
           }
         });
 

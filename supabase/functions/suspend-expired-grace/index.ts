@@ -39,15 +39,43 @@ serve(async (req) => {
     logStep("Found expired grace period users", { count: expiredUsers?.length || 0 });
 
     if (expiredUsers && expiredUsers.length > 0) {
-      // Update all expired users to suspended status
+      // Update each user's status to suspended and send notification
       for (const user of expiredUsers) {
-        await supabaseClient.rpc("update_subscriber_status", {
-          _user_id: user.user_id,
-          _status: 'suspended',
-          _suspended_at: new Date().toISOString()
-        });
+        const { error: updateError } = await supabaseClient.rpc(
+          "update_subscriber_status",
+          {
+            _user_id: user.user_id,
+            _status: 'suspended'
+          }
+        );
 
-        logStep("Suspended user", { userId: user.user_id, email: user.email });
+        if (updateError) {
+          logStep(`Failed to suspend user ${user.email}`, { error: updateError });
+        } else {
+          logStep(`Successfully suspended user ${user.email}`);
+          
+          // Send grace period expired notification
+          try {
+            // Get user profile for name
+            const { data: profile } = await supabaseClient
+              .from('profiles')
+              .select('full_name')
+              .eq('id', user.user_id)
+              .single();
+
+            await supabaseClient.functions.invoke('notify-grace-period', {
+              body: {
+                userEmail: user.email,
+                userName: profile?.full_name,
+                status: 'expired'
+              }
+            });
+            logStep(`Expiration notification sent to ${user.email}`);
+          } catch (emailError) {
+            logStep(`Failed to send expiration notification to ${user.email}`, { error: emailError });
+            // Don't throw - suspension already happened
+          }
+        }
       }
     }
 

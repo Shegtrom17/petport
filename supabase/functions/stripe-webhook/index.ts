@@ -295,6 +295,23 @@ async function handlePaymentFailed(event: any, supabaseClient: any) {
     userId: user.id, 
     gracePeriodEnd: gracePeriodEnd.toISOString() 
   });
+
+  // Send grace period started email notification
+  try {
+    await supabaseClient.functions.invoke('notify-grace-period', {
+      body: {
+        userEmail: customer.email,
+        userName: customer.name || undefined,
+        status: 'started',
+        gracePeriodEnd: gracePeriodEnd.toISOString(),
+        daysRemaining: 14
+      }
+    });
+    logStep("Grace period notification sent", { email: customer.email });
+  } catch (emailError) {
+    logStep("Failed to send grace period notification", { error: emailError });
+    // Don't throw - email failure shouldn't block the status update
+  }
 }
 
 async function handlePaymentSucceeded(event: any, supabaseClient: any) {

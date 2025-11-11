@@ -8,8 +8,9 @@ const corsHeaders = {
 };
 
 interface EmailRequest {
-  type: 'profile' | 'care' | 'credentials' | 'resume' | 'reviews' | 'review_request' | 'missing_pet' | 'app_share' | 'welcome' | 'welcome_trial' | 'transfer_invite_new' | 'transfer_invite_existing' | 'transfer_success' | 'transfer_limit_reached' | 'transfer_sent_confirmation' | 'transfer_completed_sender' | 'gift_purchase_confirmation' | 'gift_notification' | 'gift_activated' | 'gift_renewal_reminder' | 'gift_expired' | 'pet_guardian';
+  type: 'profile' | 'care' | 'credentials' | 'resume' | 'reviews' | 'review_request' | 'missing_pet' | 'app_share' | 'welcome' | 'welcome_trial' | 'transfer_invite_new' | 'transfer_invite_existing' | 'transfer_success' | 'transfer_limit_reached' | 'transfer_sent_confirmation' | 'transfer_completed_sender' | 'gift_purchase_confirmation' | 'gift_notification' | 'gift_activated' | 'gift_renewal_reminder' | 'gift_expired' | 'pet_guardian' | 'grace_period_started' | 'grace_period_reminder' | 'grace_period_expired';
   recipientEmail: string;
+  gracePeriodEnd?: string;
   guardianLink?: string;
   guardianName?: string;
   transferRecipientEmail?: string;
@@ -647,6 +648,162 @@ const generateEmailTemplate = (data: EmailRequest) => {
         
         <div style="background: linear-gradient(135deg, #5691af 0%, #4a7c95 100%); color: white; padding: 25px; border-radius: 12px; margin: 25px 0; text-align: center;">
           <div style="font-size: 48px; margin-bottom: 10px;">🛡️</div>
+          <h3 style="margin: 0; color: white; font-size: 20px;">Trusted Pet Guardian</h3>
+        </div>
+        
+        ${customMessage ? `<blockquote style="border-left: 4px solid #5691af; padding-left: 16px; margin: 16px 0; font-style: italic; background-color: #f8fafc;">"${customMessage}"</blockquote>` : ''}
+        
+        <div style="background: #f0f9ff; border-left: 4px solid #5691af; padding: 20px; border-radius: 8px; margin: 20px 0;">
+          <h3 style="margin-top: 0; color: #5691af;">📋 Your Guardian Access Includes:</h3>
+          <ul style="color: #475569; margin: 10px 0; padding-left: 20px; line-height: 1.8;">
+            <li>Complete pet profile and emergency contact information</li>
+            <li>Medical records and vaccination history</li>
+            <li>Care instructions and dietary requirements</li>
+            <li>Behavioral notes and special needs</li>
+            <li>Authorization to make care decisions</li>
+          </ul>
+        </div>
+        
+        <div style="background: #fef3c7; border: 2px solid #fbbf24; border-radius: 8px; padding: 18px; margin: 20px 0;">
+          <p style="color: #92400e; margin: 0; line-height: 1.7;">
+            <strong>🔒 Important:</strong> This link is private and should not be shared with others. Please keep it secure for when it's needed.
+          </p>
+        </div>
+        
+        <div style="background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); padding: 25px; border-radius: 10px; margin: 25px 0; text-align: center; border: 2px solid #5691af;">
+          <p style="color: #0c4a6e; font-size: 18px; margin: 0; font-weight: 600; line-height: 1.6;">
+            Thank you for being a trusted guardian for ${petName}! 🐾
+          </p>
+        </div>
+      `
+    },
+    grace_period_started: {
+      subject: '⚠️ Payment Failed - Your PetPort Account is in Grace Period',
+      content: `
+        <h2 style="color: #f59e0b;">⚠️ Payment Failed - Grace Period Started</h2>
+        <p>${greeting}</p>
+        
+        <div style="background: #fef3c7; border: 2px solid #f59e0b; border-radius: 8px; padding: 20px; margin: 20px 0;">
+          <p style="color: #92400e; margin: 0; line-height: 1.7; font-size: 16px;">
+            <strong>We couldn't process your payment.</strong> Your account is now in a 14-day grace period. You can continue using PetPort while you update your payment method.
+          </p>
+        </div>
+        
+        <div style="background: #f0f9ff; border-left: 4px solid #5691af; padding: 20px; border-radius: 8px; margin: 20px 0;">
+          <h3 style="margin-top: 0; color: #5691af;">What This Means:</h3>
+          <ul style="color: #475569; margin: 10px 0; padding-left: 20px; line-height: 1.8;">
+            <li><strong>Full Access:</strong> All your pet profiles and features remain active</li>
+            <li><strong>14-Day Window:</strong> You have 14 days to update your payment method</li>
+            <li><strong>After 14 Days:</strong> Your account will be suspended if payment isn't resolved</li>
+          </ul>
+        </div>
+        
+        <div style="background: linear-gradient(135deg, #5691af 0%, #4a7c95 100%); color: white; padding: 25px; border-radius: 12px; margin: 25px 0; text-align: center;">
+          <div style="font-size: 48px; margin-bottom: 10px;">⏰</div>
+          <h3 style="margin: 10px 0; color: white; font-size: 24px;">14 Days Remaining</h3>
+          <p style="color: rgba(255,255,255,0.95); margin: 10px 0;">Grace period ends: ${data.gracePeriodEnd ? new Date(data.gracePeriodEnd).toLocaleDateString() : ''}</p>
+        </div>
+        
+        <p style="text-align: center; margin: 30px 0;">
+          <a href="https://petport.app/billing" style="display: inline-block; background: #22c55e; color: white; text-decoration: none; padding: 15px 40px; border-radius: 8px; font-weight: bold; font-size: 18px;">
+            💳 Update Payment Method
+          </a>
+        </p>
+        
+        <div style="background: #f8fafc; border-radius: 8px; padding: 15px; margin: 20px 0; text-align: center;">
+          <p style="color: #64748b; margin: 0; font-size: 14px;">
+            Need help? Contact us at <a href="mailto:info@petport.app" style="color: #5691af;">info@petport.app</a>
+          </p>
+        </div>
+      `
+    },
+    grace_period_reminder: {
+      subject: `⏰ ${data.daysRemaining} Days Left - PetPort Grace Period Ending Soon`,
+      content: `
+        <h2 style="color: #dc2626;">⏰ Grace Period Ending Soon</h2>
+        <p>${greeting}</p>
+        
+        <div style="background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%); border: 3px solid #dc2626; border-radius: 12px; padding: 25px; margin: 25px 0; text-align: center;">
+          <div style="font-size: 64px; margin-bottom: 10px;">⚠️</div>
+          <h3 style="margin: 10px 0; color: #991b1b; font-size: 28px;">${data.daysRemaining} ${data.daysRemaining === 1 ? 'Day' : 'Days'} Remaining</h3>
+          <p style="color: #991b1b; margin: 10px 0; font-size: 16px;">Your account will be suspended on ${data.gracePeriodEnd ? new Date(data.gracePeriodEnd).toLocaleDateString() : ''}</p>
+        </div>
+        
+        <div style="background: #fef3c7; border-left: 4px solid #f59e0b; padding: 20px; border-radius: 8px; margin: 20px 0;">
+          <h3 style="margin-top: 0; color: #92400e;">⚡ Act Now to Avoid Losing Access</h3>
+          <p style="color: #78350f; line-height: 1.7; margin: 0;">
+            Update your payment method within ${data.daysRemaining} ${data.daysRemaining === 1 ? 'day' : 'days'} to keep your pet profiles, records, and all PetPort features active.
+          </p>
+        </div>
+        
+        <div style="background: #f8fafc; border-radius: 10px; padding: 20px; margin: 20px 0;">
+          <h3 style="margin-top: 0; color: #5691af;">What Happens If Payment Isn't Updated:</h3>
+          <ul style="color: #475569; margin: 10px 0; padding-left: 20px; line-height: 1.8;">
+            <li>❌ You'll lose access to all pet profiles</li>
+            <li>❌ LiveLinks and shared profiles will be disabled</li>
+            <li>❌ Pet records and documents won't be accessible</li>
+            <li>❌ Lost pet recovery features will be unavailable</li>
+          </ul>
+        </div>
+        
+        <p style="text-align: center; margin: 30px 0;">
+          <a href="https://petport.app/billing" style="display: inline-block; background: #dc2626; color: white; text-decoration: none; padding: 18px 45px; border-radius: 8px; font-weight: bold; font-size: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+            🔥 Update Payment Now
+          </a>
+        </p>
+        
+        <div style="background: #f8fafc; border-radius: 8px; padding: 15px; margin: 20px 0; text-align: center;">
+          <p style="color: #64748b; margin: 0; font-size: 14px;">
+            Having trouble? We're here to help: <a href="mailto:info@petport.app" style="color: #5691af;">info@petport.app</a>
+          </p>
+        </div>
+      `
+    },
+    grace_period_expired: {
+      subject: '🚫 PetPort Account Suspended - Reactivate Now',
+      content: `
+        <h2 style="color: #991b1b;">🚫 Account Suspended</h2>
+        <p>${greeting}</p>
+        
+        <div style="background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%); border: 3px solid #dc2626; border-radius: 12px; padding: 25px; margin: 25px 0; text-align: center;">
+          <div style="font-size: 64px; margin-bottom: 10px;">⛔</div>
+          <h3 style="margin: 10px 0; color: #991b1b; font-size: 24px;">Your Account Has Been Suspended</h3>
+          <p style="color: #991b1b; margin: 10px 0;">The 14-day grace period has ended</p>
+        </div>
+        
+        <div style="background: #fee2e2; border: 2px solid #dc2626; border-radius: 8px; padding: 20px; margin: 20px 0;">
+          <h3 style="margin-top: 0; color: #991b1b;">❌ Current Account Status:</h3>
+          <ul style="color: #991b1b; margin: 10px 0; padding-left: 20px; line-height: 1.8;">
+            <li>All pet profiles are currently inaccessible</li>
+            <li>LiveLinks and shared profiles are disabled</li>
+            <li>Pet records and documents are unavailable</li>
+            <li>Lost pet recovery features are inactive</li>
+          </ul>
+        </div>
+        
+        <div style="background: #f0fdf4; border-left: 4px solid #22c55e; padding: 20px; border-radius: 8px; margin: 20px 0;">
+          <h3 style="margin-top: 0; color: #15803d;">✅ Good News - Easy to Reactivate!</h3>
+          <p style="color: #166534; line-height: 1.7; margin: 0;">
+            Your data is safe! Update your payment method now to immediately restore full access to all your pet profiles and features.
+          </p>
+        </div>
+        
+        <p style="text-align: center; margin: 30px 0;">
+          <a href="https://petport.app/billing" style="display: inline-block; background: #22c55e; color: white; text-decoration: none; padding: 18px 45px; border-radius: 8px; font-weight: bold; font-size: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+            ✨ Reactivate My Account
+          </a>
+        </p>
+        
+        <div style="background: #f8fafc; border-radius: 10px; padding: 20px; margin: 20px 0; text-align: center;">
+          <p style="color: #475569; margin: 0; line-height: 1.7;">
+            <strong>Need assistance?</strong><br>
+            We're here to help get you back up and running.<br>
+            Contact us at <a href="mailto:info@petport.app" style="color: #5691af;">info@petport.app</a>
+          </p>
+        </div>
+      `
+    }
+  };
           <h3 style="margin: 0; color: white; font-size: 20px;">Trusted Guardian for ${petName}</h3>
         </div>
         
@@ -1104,6 +1261,15 @@ const handler = async (req: Request): Promise<Response> => {
       },
       pet_guardian: {
         subject: `🛡️ You've Been Designated as a Pet Guardian for ${emailData.petName}`
+      },
+      grace_period_started: {
+        subject: '⚠️ Payment Failed - Your PetPort Account is in Grace Period'
+      },
+      grace_period_reminder: {
+        subject: `⏰ ${emailData.daysRemaining} Days Left - PetPort Grace Period Ending Soon`
+      },
+      grace_period_expired: {
+        subject: '🚫 PetPort Account Suspended - Reactivate Now'
       }
     };
 

@@ -1,5 +1,11 @@
 project_id = "dxghbhujugsfmaecilrq"
 
+[functions.notify-grace-period]
+verify_jwt = false
+
+[functions.send-grace-reminders]
+verify_jwt = false
+
 [functions.resend-gift-emails]
 verify_jwt = false
 

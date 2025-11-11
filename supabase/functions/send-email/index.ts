@@ -682,138 +682,145 @@ const generateEmailTemplate = (data: EmailRequest) => {
       `
     },
     gift_purchase_confirmation: {
-      subject: data.giftTheme === 'christmas' ? '🎁 Your PetPort Christmas Gift Has Been Sent!' : 
-               data.giftTheme === 'adoption' ? '🏡 Your PetPort Adoption Gift Has Been Sent!' :
-               data.giftTheme === 'birthday' ? '🎂 Your PetPort Birthday Gift Has Been Sent!' :
-               data.giftTheme === 'holiday' ? '🎁 Your PetPort Holiday Gift Has Been Sent!' :
-               '✅ Gift Purchase Confirmed - PetPort',
+      subject: data.giftTheme === 'christmas' ? `${data.recipientName || 'You'} sent a PetPort membership - Christmas` : 
+               data.giftTheme === 'adoption' ? `${data.recipientName || 'You'} sent a PetPort membership - New Adoption` :
+               data.giftTheme === 'birthday' ? `${data.recipientName || 'You'} sent a PetPort membership - Birthday` :
+               data.giftTheme === 'holiday' ? `${data.recipientName || 'You'} sent a PetPort membership - Holiday` :
+               `${data.recipientName || 'You'} sent a PetPort membership to ${data.giftRecipientEmail}`,
       content: `
         <h2 style="color: #5691af;">${
-          data.giftTheme === 'christmas' ? '🎄 Your Christmas Gift Has Been Sent!' :
-          data.giftTheme === 'adoption' ? '🏡 Your Adoption Gift Has Been Sent!' :
-          data.giftTheme === 'birthday' ? '🎂 Your Birthday Gift Has Been Sent!' :
-          data.giftTheme === 'holiday' ? '🎁 Your Holiday Gift Has Been Sent!' :
-          '✅ Gift Purchase Confirmed'
+          data.giftTheme === 'christmas' ? '🎄 Your PetPort Membership Has Been Sent' :
+          data.giftTheme === 'adoption' ? '🏡 Your PetPort Membership Has Been Sent' :
+          data.giftTheme === 'birthday' ? '🎂 Your PetPort Membership Has Been Sent' :
+          data.giftTheme === 'holiday' ? '🎁 Your PetPort Membership Has Been Sent' :
+          'Your PetPort Membership Has Been Sent'
         }</h2>
         <p>Hi ${data.recipientName || 'there'},</p>
-        <p>Thank you for gifting a year of PetPort to <strong>${data.giftRecipientEmail}</strong>!</p>
+        <p>You have shared a PetPort membership with <strong>${data.giftRecipientEmail}</strong>. They will receive an email with instructions to activate their account.</p>
         
-        <div style="background: linear-gradient(135deg, #5691af 0%, #4a7c95 100%); color: white; padding: 25px; border-radius: 12px; margin: 25px 0;">
-          <p style="margin: 0 0 15px 0; font-size: 16px;"><strong>Gift Details:</strong></p>
-          <p style="margin: 5px 0;"><strong>Gift Code:</strong> ${data.giftCode}</p>
-          <p style="margin: 5px 0;"><strong>Recipient:</strong> ${data.giftRecipientEmail}</p>
-          ${data.giftMessage ? `<p style="margin: 5px 0;"><strong>Your Message:</strong> "${data.giftMessage}"</p>` : ''}
-          <p style="margin: 5px 0;"><strong>Redemption Link:</strong> ${data.redemptionLink}</p>
-          <p style="margin: 15px 0 0 0; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.3);">
-            <em>✨ Valid for 1 year from activation</em><br>
-            They'll receive a full year of PetPort premium membership!
-          </p>
+        ${data.giftMessage ? `
+        <div style="background: #f8f9fa; padding: 20px; border-left: 4px solid #5691af; border-radius: 8px; margin: 25px 0;">
+          <p style="margin: 0 0 10px 0; font-weight: 600; color: #5691af;">Your Message:</p>
+          <p style="margin: 0; font-style: italic; color: #333;">"${data.giftMessage}"</p>
         </div>
+        ` : ''}
+        
+        <div style="background: #f0f9ff; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #5691af;">
+          <h3 style="margin-top: 0; color: #5691af;">Membership Details</h3>
+          <p style="color: #475569; margin: 5px 0;"><strong>Recipient:</strong> ${data.giftRecipientEmail}</p>
+          <p style="color: #475569; margin: 5px 0;"><strong>Access Code:</strong> ${data.giftCode}</p>
+          <p style="color: #475569; margin: 5px 0;"><strong>Activation Link:</strong></p>
+          <p style="color: #64748b; font-size: 14px; word-break: break-all; margin: 5px 0;">${data.redemptionLink}</p>
+        </div>
+        
+        <p style="color: #64748b; margin-top: 25px;">The recipient can activate their membership anytime within the next year. Once activated, they will have full access to create pet profiles and use all PetPort features.</p>
         
         ${data.giftTheme === 'christmas' ? `
         <div style="background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%); color: white; padding: 25px; border-radius: 12px; margin: 25px 0; text-align: center;">
-          <p style="margin: 0; font-size: 18px; line-height: 1.6;">🎄 Merry Christmas from the PetPort Team! 🎄</p>
+          <p style="margin: 0; font-size: 18px; line-height: 1.6;">🎄 Season\'s Greetings from PetPort 🎄</p>
         </div>
         ` : data.giftTheme === 'adoption' ? `
         <div style="background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%); color: white; padding: 25px; border-radius: 12px; margin: 25px 0; text-align: center;">
-          <p style="margin: 0; font-size: 18px; line-height: 1.6;">🏡 Celebrating their new beginning! 🐾</p>
+          <p style="margin: 0; font-size: 18px; line-height: 1.6;">🏡 Celebrating New Beginnings 🐾</p>
         </div>
         ` : data.giftTheme === 'birthday' ? `
         <div style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: white; padding: 25px; border-radius: 12px; margin: 25px 0; text-align: center;">
-          <p style="margin: 0; font-size: 18px; line-height: 1.6;">🎂 Happy Birthday from the PetPort Team! 🎉</p>
+          <p style="margin: 0; font-size: 18px; line-height: 1.6;">🎂 Birthday Wishes from PetPort 🎉</p>
         </div>
         ` : data.giftTheme === 'holiday' ? `
         <div style="background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%); color: white; padding: 25px; border-radius: 12px; margin: 25px 0; text-align: center;">
-          <p style="margin: 0; font-size: 18px; line-height: 1.6;">🎁 Happy Holidays from the PetPort Team! 🎉</p>
+          <p style="margin: 0; font-size: 18px; line-height: 1.6;">🎁 Warm Wishes from PetPort 🎉</p>
         </div>
         ` : ''}
       `
     },
     gift_notification: {
-      subject: data.giftTheme === 'christmas' ? '🎁 You\'ve Been Gifted PetPort — A Christmas Surprise!' : 
-               data.giftTheme === 'adoption' ? '🏡 You\'ve Been Gifted PetPort — An Adoption Celebration!' :
-               data.giftTheme === 'birthday' ? '🎂 You\'ve Been Gifted PetPort — A Birthday Treat!' :
-               data.giftTheme === 'holiday' ? '🎁 You\'ve Been Gifted PetPort — A Year of Pawsitivity!' :
-               '🎁 You\'ve Received a PetPort Gift Membership!',
+      subject: data.giftTheme === 'christmas' ? `${data.senderName || 'Someone'} sent you a PetPort membership - Christmas` : 
+               data.giftTheme === 'adoption' ? `${data.senderName || 'Someone'} sent you a PetPort membership - New Adoption` :
+               data.giftTheme === 'birthday' ? `${data.senderName || 'Someone'} sent you a PetPort membership - Birthday` :
+               data.giftTheme === 'holiday' ? `${data.senderName || 'Someone'} sent you a PetPort membership - Holiday` :
+               `${data.senderName || 'Someone'} sent you a PetPort membership`,
       content: `
         <h2 style="color: #5691af;">${
-          data.giftTheme === 'christmas' ? '🎄 You\'ve Received a Christmas Gift!' :
-          data.giftTheme === 'adoption' ? '🏡 You\'ve Received an Adoption Gift!' :
-          data.giftTheme === 'birthday' ? '🎂 You\'ve Received a Birthday Gift!' :
-          data.giftTheme === 'holiday' ? '🎁 You\'ve Received a Holiday Gift!' :
-          '🎁 You\'ve Received a Gift!'
+          data.giftTheme === 'christmas' ? '🎄 A PetPort Membership Has Been Shared With You' :
+          data.giftTheme === 'adoption' ? '🏡 A PetPort Membership Has Been Shared With You' :
+          data.giftTheme === 'birthday' ? '🎂 A PetPort Membership Has Been Shared With You' :
+          data.giftTheme === 'holiday' ? '🎁 A PetPort Membership Has Been Shared With You' :
+          'A PetPort Membership Has Been Shared With You'
         }</h2>
-        <p><strong>${data.senderName || 'Someone special'}</strong> has gifted you a full year of PetPort premium membership!</p>
-        
-        ${data.giftTheme === 'christmas' ? `
-        <div style="background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%); color: white; padding: 25px; border-radius: 12px; margin: 25px 0; text-align: center;">
-          <div style="font-size: 48px; margin-bottom: 10px;">🎄</div>
-          <p style="margin: 0; font-size: 18px; line-height: 1.6;">Merry Christmas! This is a gift of love for you and your pet.</p>
-        </div>
-        ` : data.giftTheme === 'adoption' ? `
-        <div style="background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%); color: white; padding: 25px; border-radius: 12px; margin: 25px 0; text-align: center;">
-          <div style="font-size: 48px; margin-bottom: 10px;">🏡</div>
-          <p style="margin: 0; font-size: 18px; line-height: 1.6;">Congratulations on your new family member! This gift celebrates their new beginning.</p>
-        </div>
-        ` : data.giftTheme === 'birthday' ? `
-        <div style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: white; padding: 25px; border-radius: 12px; margin: 25px 0; text-align: center;">
-          <div style="font-size: 48px; margin-bottom: 10px;">🎂</div>
-          <p style="margin: 0; font-size: 18px; line-height: 1.6;">Happy Birthday! This gift celebrates you and your furry friend.</p>
-        </div>
-        ` : data.giftTheme === 'holiday' ? `
-        <div style="background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%); color: white; padding: 25px; border-radius: 12px; margin: 25px 0; text-align: center;">
-          <div style="font-size: 48px; margin-bottom: 10px;">🎁</div>
-          <p style="margin: 0; font-size: 18px; line-height: 1.6;">Happy Holidays! This is a gift of love for you and your pet.</p>
-        </div>
-        ` : ''}
+        <p><strong>${data.senderName || 'Someone special'}</strong> has shared a PetPort membership with you to create digital profiles for your pets.</p>
         
         ${data.giftMessage ? `
         <div style="background: #f8f9fa; padding: 20px; border-left: 4px solid #5691af; border-radius: 8px; margin: 25px 0;">
-          <p style="margin: 0 0 10px 0; font-weight: 600; color: #5691af;">Personal Message:</p>
+          <p style="margin: 0 0 10px 0; font-weight: 600; color: #5691af;">Message from ${data.senderName || 'sender'}:</p>
           <p style="margin: 0; font-style: italic; color: #333;">"${data.giftMessage}"</p>
         </div>
         ` : ''}
         
-        <div style="background: linear-gradient(135deg, #5691af 0%, #4a7c95 100%); color: white; padding: 30px; border-radius: 12px; margin: 25px 0; text-align: center;">
-          <p style="margin: 0 0 20px 0; font-size: 18px; font-weight: 600;">Redeem Your Gift Now</p>
-          <a href="${data.redemptionLink}" style="display: inline-block; background: white; color: #5691af; padding: 15px 40px; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 16px;">
-            Activate My Gift
-          </a>
-          <p style="margin: 20px 0 0 0; font-size: 14px; opacity: 0.9;">
-            <strong>Gift Code:</strong> ${data.giftCode}
-          </p>
-        </div>
-      `
-    },
-    gift_activated: {
-      subject: data.giftTheme === 'christmas' ? '🎉 Your PetPort Christmas Gift Is Now Active!' :
-               data.giftTheme === 'adoption' ? '🎉 Your PetPort Adoption Gift Is Now Active!' :
-               data.giftTheme === 'birthday' ? '🎉 Your PetPort Birthday Gift Is Now Active!' :
-               data.giftTheme === 'holiday' ? '🎉 Your PetPort Holiday Gift Is Now Active!' :
-               '✅ Welcome to PetPort - Your Gift Membership Is Active',
-      content: `
-        <h2 style="color: #5691af;">🎉 Your Gift Is Now Active!</h2>
-        <p>Welcome to PetPort! Your gift membership from <strong>${data.senderName || 'a friend'}</strong> is now active.</p>
-        
-        <div style="background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%); color: white; padding: 25px; border-radius: 12px; margin: 25px 0;">
-          <p style="margin: 0 0 15px 0; font-size: 18px; font-weight: 600;">🎁 Your Premium Membership</p>
-          <p style="margin: 5px 0;">📅 <strong>Expires:</strong> ${data.expiresAt}</p>
-          <p style="margin: 5px 0;">✨ <strong>Status:</strong> Active</p>
-        </div>
-        
-        <div style="background: #f8f9fa; padding: 25px; border-radius: 12px; margin: 25px 0;">
-          <p style="margin: 0 0 15px 0; font-weight: 600; color: #5691af;">What's Included:</p>
-          <ul style="margin: 0; padding-left: 20px; color: #333;">
-            <li><strong>Digital pet profiles</strong> - Create beautiful profiles for your pets</li>
-            <li><strong>QR code access</strong> - Instant profile sharing with QR codes</li>
-            <li><strong>Lost pet features</strong> - Quick alerts if your pet goes missing</li>
-            <li><strong>Share with caregivers</strong> - Send profiles to vets, boarders, and sitters</li>
+        <div style="background: #f0f9ff; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #5691af;">
+          <h3 style="margin-top: 0; color: #5691af;">What You Can Do With PetPort</h3>
+          <ul style="color: #475569; margin: 10px 0; padding-left: 20px; line-height: 1.8;">
+            <li>Create beautiful digital profiles for your pets</li>
+            <li>Store medical records and vaccination information</li>
+            <li>Share emergency contact details with caregivers</li>
+            <li>Generate QR codes for easy profile sharing</li>
+            <li>Keep all pet information organized in one place</li>
           </ul>
         </div>
         
+        <p style="color: #64748b;">Click the button below to activate your membership and start creating profiles for your pets.</p>
+        
         ${data.giftTheme === 'christmas' ? `
         <div style="background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%); color: white; padding: 25px; border-radius: 12px; margin: 25px 0; text-align: center;">
-          <p style="margin: 0; font-size: 18px; line-height: 1.6;">🎄 Merry Christmas from the PetPort Team! 🎄</p>
+          <p style="margin: 0; font-size: 18px; line-height: 1.6;">🎄 Season\'s Greetings 🎄</p>
+        </div>
+        ` : data.giftTheme === 'adoption' ? `
+        <div style="background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%); color: white; padding: 25px; border-radius: 12px; margin: 25px 0; text-align: center;">
+          <p style="margin: 0; font-size: 18px; line-height: 1.6;">🏡 Celebrating New Beginnings 🐾</p>
+        </div>
+        ` : data.giftTheme === 'birthday' ? `
+        <div style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: white; padding: 25px; border-radius: 12px; margin: 25px 0; text-align: center;">
+          <p style="margin: 0; font-size: 18px; line-height: 1.6;">🎂 Birthday Wishes 🎉</p>
+        </div>
+        ` : data.giftTheme === 'holiday' ? `
+        <div style="background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%); color: white; padding: 25px; border-radius: 12px; margin: 25px 0; text-align: center;">
+          <p style="margin: 0; font-size: 18px; line-height: 1.6;">🎁 Warm Wishes 🎉</p>
+        </div>
+        ` : ''}
+      `
+    },
+    gift_activated: {
+      subject: data.giftTheme === 'christmas' ? 'Your PetPort membership is now active - Christmas' :
+               data.giftTheme === 'adoption' ? 'Your PetPort membership is now active - New Adoption' :
+               data.giftTheme === 'birthday' ? 'Your PetPort membership is now active - Birthday' :
+               data.giftTheme === 'holiday' ? 'Your PetPort membership is now active - Holiday' :
+               'Welcome to PetPort - Your membership is now active',
+      content: `
+        <h2 style="color: #5691af;">Welcome to PetPort!</h2>
+        <p>Your membership from <strong>${data.senderName || 'a friend'}</strong> has been activated. You can now create profiles for your pets.</p>
+        
+        <div style="background: #f0f9ff; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #5691af;">
+          <h3 style="margin-top: 0; color: #5691af;">Getting Started</h3>
+          <ul style="color: #475569; margin: 10px 0; padding-left: 20px; line-height: 1.8;">
+            <li><strong>Create your first pet profile</strong> - Add photos and basic information</li>
+            <li><strong>Add medical records</strong> - Upload vaccination and health documents</li>
+            <li><strong>Set up emergency contacts</strong> - Keep important information accessible</li>
+            <li><strong>Share with caregivers</strong> - Send profiles to vets, boarders, and pet sitters</li>
+            <li><strong>Generate QR codes</strong> - Create instant access links to profiles</li>
+          </ul>
+        </div>
+        
+        <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0;">
+          <p style="margin: 0; color: #475569; line-height: 1.7;">
+            Your account is active through <strong>${data.expiresAt}</strong>. All your pet information is securely stored and accessible from any device.
+          </p>
+        </div>
+        
+        <p style="color: #64748b;">Click the button below to add your first pet profile and start organizing all your pet information in one place.</p>
+        
+        ${data.giftTheme === 'christmas' ? `
+        <div style="background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%); color: white; padding: 25px; border-radius: 12px; margin: 25px 0; text-align: center;">
+          <p style="margin: 0; font-size: 18px; line-height: 1.6;">🎄 Season\'s Greetings from PetPort 🎄</p>
         </div>
         ` : data.giftTheme === 'adoption' ? `
         <div style="background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%); color: white; padding: 25px; border-radius: 12px; margin: 25px 0; text-align: center;">
@@ -821,84 +828,70 @@ const generateEmailTemplate = (data: EmailRequest) => {
         </div>
         ` : data.giftTheme === 'birthday' ? `
         <div style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: white; padding: 25px; border-radius: 12px; margin: 25px 0; text-align: center;">
-          <p style="margin: 0; font-size: 18px; line-height: 1.6;">🎂 Happy Birthday from the PetPort Team! 🎉</p>
+          <p style="margin: 0; font-size: 18px; line-height: 1.6;">🎂 Birthday Wishes from PetPort 🎉</p>
         </div>
         ` : data.giftTheme === 'holiday' ? `
         <div style="background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%); color: white; padding: 25px; border-radius: 12px; margin: 25px 0; text-align: center;">
-          <p style="margin: 0; font-size: 18px; line-height: 1.6;">🎁 Happy Holidays from the PetPort Team! 🎉</p>
+          <p style="margin: 0; font-size: 18px; line-height: 1.6;">🎁 Warm Wishes from PetPort 🎉</p>
         </div>
         ` : ''}
       `
     },
     gift_renewal_reminder: {
-      subject: data.daysRemaining === 60 ? '🎁 Your PetPort Gift Expires in 60 Days' : 
-               data.daysRemaining === 30 ? '⏰ Your PetPort Gift Expires in 30 Days' :
-               '🚨 Your PetPort Gift Expires in 7 Days',
+      subject: data.daysRemaining === 60 ? `Your PetPort membership renews in ${data.daysRemaining} days` : 
+               data.daysRemaining === 30 ? `Your PetPort membership renews in ${data.daysRemaining} days` :
+               `Your PetPort membership renews in ${data.daysRemaining} days`,
       content: `
-        <h2 style="color: #5691af;">${data.daysRemaining === 7 ? '🚨' : '⏰'} Your Gift Membership Is Expiring Soon</h2>
-        <p>Your PetPort gift membership from <strong>${data.senderName || 'a friend'}</strong> expires in <strong>${data.daysRemaining} days</strong>.</p>
+        <h2 style="color: #5691af;">Membership Renewal Reminder</h2>
+        <p>Your PetPort membership from <strong>${data.senderName || 'a friend'}</strong> will need to be renewed in <strong>${data.daysRemaining} days</strong> on <strong>${data.expiresAt}</strong>.</p>
         
-        <div style="background: ${data.daysRemaining === 7 ? '#fef2f2' : '#fef3c7'}; border: 2px solid ${data.daysRemaining === 7 ? '#dc2626' : '#f59e0b'}; border-radius: 8px; padding: 20px; margin: 20px 0; text-align: center;">
-          <h3 style="margin-top: 0; color: ${data.daysRemaining === 7 ? '#991b1b' : '#92400e'};">
-            ${data.daysRemaining === 7 ? '⚠️ Only 7 Days Remaining!' : `⏰ ${data.daysRemaining} Days Remaining`}
-          </h3>
-          <p style="margin: 10px 0 0 0; color: ${data.daysRemaining === 7 ? '#991b1b' : '#92400e'}; font-size: 18px; font-weight: bold;">
-            Expires on ${data.expiresAt}
-          </p>
+        <div style="background: #f0f9ff; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #5691af;">
+          <h3 style="margin-top: 0; color: #5691af;">Your Account Status</h3>
+          <p style="color: #475569; margin: 5px 0;">All your pet profiles and information remain safely stored. To continue accessing your account after <strong>${data.expiresAt}</strong>, you can renew your membership.</p>
         </div>
         
-        <div style="background: #f0f9ff; padding: 20px; border-radius: 8px; margin: 20px 0;">
-          <h3 style="margin-top: 0; color: #5691af;">💝 Keep Your Pets Protected</h3>
-          <p style="color: #475569; line-height: 1.7; margin: 0;">
-            Don't lose access to your pet profiles, emergency information, and medical records. 
-            Continue your membership for just <strong>$14.99/year</strong> to keep everything safe and accessible.
-          </p>
-        </div>
-        
-        <div style="background: linear-gradient(135deg, #5691af 0%, #4a7c95 100%); color: white; padding: 25px; border-radius: 12px; margin: 25px 0;">
-          <h3 style="margin: 0 0 15px 0; color: white; font-size: 18px;">✨ Your Premium Features:</h3>
-          <ul style="color: rgba(255,255,255,0.95); margin: 0; padding-left: 20px; line-height: 1.8;">
-            <li>Unlimited pet profiles</li>
-            <li>Emergency information sharing</li>
-            <li>Medical record storage</li>
+        <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0;">
+          <h3 style="margin-top: 0; color: #5691af;">What You Can Keep</h3>
+          <ul style="color: #475569; margin: 10px 0; padding-left: 20px; line-height: 1.8;">
+            <li>All pet profiles and photos</li>
+            <li>Medical records and vaccination history</li>
+            <li>Emergency contact information</li>
+            <li>QR code sharing capabilities</li>
             <li>Lost pet flyer generation</li>
-            <li>Beautiful photo galleries</li>
           </ul>
         </div>
+        
+        <p style="color: #64748b; margin-top: 25px;">If you choose to renew, all your pet information will remain accessible without interruption.</p>
       `
     },
     gift_expired: {
-      subject: 'Your PetPort Gift Membership Has Expired',
+      subject: 'Your PetPort membership has ended',
       content: `
-        <h2 style="color: #5691af;">Your Gift Membership Has Expired</h2>
-        <p>Your PetPort gift membership from <strong>${data.senderName || 'a friend'}</strong> has expired.</p>
+        <h2 style="color: #5691af;">Your PetPort Membership Has Ended</h2>
+        <p>Your PetPort membership from <strong>${data.senderName || 'a friend'}</strong> ended on <strong>${data.expiresAt}</strong>.</p>
         
-        <div style="background: #fef2f2; border: 2px solid #dc2626; border-radius: 8px; padding: 20px; margin: 20px 0;">
-          <h3 style="margin-top: 0; color: #991b1b;">⚠️ Membership Expired</h3>
-          <p style="color: #991b1b; line-height: 1.7; margin: 0;">
-            Your gift membership expired on ${data.expiresAt}. To continue accessing your pet profiles and premium features, 
-            please subscribe to keep everything safe and accessible.
-          </p>
-        </div>
-        
-        <div style="background: #f0f9ff; padding: 20px; border-radius: 8px; margin: 20px 0;">
-          <h3 style="margin-top: 0; color: #5691af;">💝 Continue Your Membership</h3>
+        <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0;">
+          <h3 style="margin-top: 0; color: #5691af;">Your Pet Information</h3>
           <p style="color: #475569; line-height: 1.7; margin: 0;">
-            Subscribe for just <strong>$14.99/year</strong> to keep your pet profiles, emergency information, 
-            and medical records safe and accessible.
+            All your pet profiles, photos, and medical records remain safely stored. To access your account again, you can renew your membership at any time.
           </p>
         </div>
         
-        <div style="background: linear-gradient(135deg, #5691af 0%, #4a7c95 100%); color: white; padding: 25px; border-radius: 12px; margin: 25px 0;">
-          <h3 style="margin: 0 0 15px 0; color: white; font-size: 18px;">✨ Premium Features You'll Keep:</h3>
-          <ul style="color: rgba(255,255,255,0.95); margin: 0; padding-left: 20px; line-height: 1.8;">
-            <li>Unlimited pet profiles</li>
-            <li>Emergency information sharing</li>
-            <li>Medical record storage</li>
+        <div style="background: #f0f9ff; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #5691af;">
+          <h3 style="margin-top: 0; color: #5691af;">Renew to Keep Access</h3>
+          <p style="color: #475569; line-height: 1.7; margin: 0 0 10px 0;">
+            If you would like to continue using PetPort, you can renew your membership to regain full access to:
+          </p>
+          <ul style="color: #475569; margin: 0; padding-left: 20px; line-height: 1.8;">
+            <li>All pet profiles and photos</li>
+            <li>Medical records and vaccination history</li>
+            <li>Emergency contact information</li>
+            <li>QR code sharing capabilities</li>
             <li>Lost pet flyer generation</li>
-            <li>Beautiful photo galleries</li>
           </ul>
         </div>
+        
+        <p style="color: #64748b; margin-top: 25px;">Your account and pet information will be preserved and available when you return.</p>
       `
     }
   };

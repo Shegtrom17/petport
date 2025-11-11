@@ -179,7 +179,8 @@ serve(async (req) => {
           giftMessage: giftMessage,
           giftCode: giftCode,
           redemptionLink: redemptionLink,
-          expiresAt: formattedExpiry
+          expiresAt: formattedExpiry,
+          giftRecipientEmail: recipientEmail
         }
       });
 

@@ -758,13 +758,14 @@ const generateEmailTemplate = (data: EmailRequest) => {
         ` : ''}
         
         <div style="background: #f0f9ff; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #5691af;">
-          <h3 style="margin-top: 0; color: #5691af;">What You Can Do With PetPort</h3>
+          <h3 style="margin-top: 0; color: #5691af;">PetPort gives your furry companion a voice for life!</h3>
           <ul style="color: #475569; margin: 10px 0; padding-left: 20px; line-height: 1.8;">
             <li>Create beautiful digital profiles for your pets</li>
             <li>Store medical records and vaccination information</li>
-            <li>Share emergency contact details with caregivers</li>
-            <li>Generate QR codes for easy profile sharing</li>
-            <li>Keep all pet information organized in one place</li>
+            <li>Create Care and Handling Instructions for caregivers</li>
+            <li>Insurance of PetPort Lost Pet Recovery System ready incase of Emergency</li>
+            <li>Photo gallery, Travel log and Pet Resume Builder for lodging and Caregivers</li>
+            <li>All information tranfers with you pet!</li>
           </ul>
         </div>
         
@@ -800,13 +801,14 @@ const generateEmailTemplate = (data: EmailRequest) => {
         <p>Your membership from <strong>${data.senderName || 'a friend'}</strong> has been activated. You can now create profiles for your pets.</p>
         
         <div style="background: #f0f9ff; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #5691af;">
-          <h3 style="margin-top: 0; color: #5691af;">Getting Started</h3>
+          <h3 style="margin-top: 0; color: #5691af;">PetPort gives your furry companion a voice for life!</h3>
           <ul style="color: #475569; margin: 10px 0; padding-left: 20px; line-height: 1.8;">
-            <li><strong>Create your first pet profile</strong> - Add photos and basic information</li>
-            <li><strong>Add medical records</strong> - Upload vaccination and health documents</li>
-            <li><strong>Set up emergency contacts</strong> - Keep important information accessible</li>
-            <li><strong>Share with caregivers</strong> - Send profiles to vets, boarders, and pet sitters</li>
-            <li><strong>Generate QR codes</strong> - Create instant access links to profiles</li>
+            <li>Create beautiful digital profiles for your pets</li>
+            <li>Store medical records and vaccination information</li>
+            <li>Create Care and Handling Instructions for caregivers</li>
+            <li>Insurance of PetPort Lost Pet Recovery System ready incase of Emergency</li>
+            <li>Photo gallery, Travel log and Pet Resume Builder for lodging and Caregivers</li>
+            <li>All information tranfers with you pet!</li>
           </ul>
         </div>
         
@@ -851,13 +853,14 @@ const generateEmailTemplate = (data: EmailRequest) => {
         </div>
         
         <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0;">
-          <h3 style="margin-top: 0; color: #5691af;">What You Can Keep</h3>
+          <h3 style="margin-top: 0; color: #5691af;">PetPort gives your furry companion a voice for life!</h3>
           <ul style="color: #475569; margin: 10px 0; padding-left: 20px; line-height: 1.8;">
-            <li>All pet profiles and photos</li>
-            <li>Medical records and vaccination history</li>
-            <li>Emergency contact information</li>
-            <li>QR code sharing capabilities</li>
-            <li>Lost pet flyer generation</li>
+            <li>Create beautiful digital profiles for your pets</li>
+            <li>Store medical records and vaccination information</li>
+            <li>Create Care and Handling Instructions for caregivers</li>
+            <li>Insurance of PetPort Lost Pet Recovery System ready incase of Emergency</li>
+            <li>Photo gallery, Travel log and Pet Resume Builder for lodging and Caregivers</li>
+            <li>All information tranfers with you pet!</li>
           </ul>
         </div>
         
@@ -883,11 +886,12 @@ const generateEmailTemplate = (data: EmailRequest) => {
             If you would like to continue using PetPort, you can renew your membership to regain full access to:
           </p>
           <ul style="color: #475569; margin: 0; padding-left: 20px; line-height: 1.8;">
-            <li>All pet profiles and photos</li>
-            <li>Medical records and vaccination history</li>
-            <li>Emergency contact information</li>
-            <li>QR code sharing capabilities</li>
-            <li>Lost pet flyer generation</li>
+            <li>Create beautiful digital profiles for your pets</li>
+            <li>Store medical records and vaccination information</li>
+            <li>Create Care and Handling Instructions for caregivers</li>
+            <li>Insurance of PetPort Lost Pet Recovery System ready incase of Emergency</li>
+            <li>Photo gallery, Travel log and Pet Resume Builder for lodging and Caregivers</li>
+            <li>All information tranfers with you pet!</li>
           </ul>
         </div>
         

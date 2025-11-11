@@ -417,9 +417,8 @@ See LiveLinks for yourself at PetPort.app and check out the innovation yourself.
                   </span>
                   "
                 </p>
-                <Button
+                <AzureButton
                   size="sm"
-                  variant="outline"
                   onClick={() => {
                     const message = `Just found the perfect pet management app, and I mean perfect. PetPort gives our furry friends a voice of life!
 
@@ -441,11 +440,10 @@ See LiveLinks for yourself at PetPort.app and check out the innovation yourself.
                     toast({ title: "Copied!", description: "Message copied to clipboard" });
                   }}
                   disabled={!referralCode}
-                  className="border-[#5691af] text-[#5691af] hover:bg-[#5691af]/10"
                 >
                   <Copy className="h-3 w-3 mr-1" />
                   Copy Message
-                </Button>
+                </AzureButton>
               </div>
 
               {/* Message 2 */}
@@ -457,20 +455,18 @@ See LiveLinks for yourself at PetPort.app and check out the innovation yourself.
                   </span>
                   "
                 </p>
-                <Button
+                <AzureButton
                   size="sm"
-                  variant="outline"
                   onClick={() => {
                     const message = `Fellow pet parents! Check out PetPort - it's the ALL-IN-ONE digital information sharing platform for pets, horses, birds, and more! Medical records & all documents, one-tap links, QR codes & PDFs for care and handling instructions, ask for reviews from groomers & trainers, build a pet resume, certificates, one-tap LOST PET FLYER (no design needed), and so much more! Use my referral code: https://petport.app?ref=${referralCode}`;
                     navigator.clipboard.writeText(message);
                     toast({ title: "Copied!", description: "Message copied to clipboard" });
                   }}
                   disabled={!referralCode}
-                  className="border-[#5691af] text-[#5691af] hover:bg-[#5691af]/10"
                 >
                   <Copy className="h-3 w-3 mr-1" />
                   Copy Message
-                </Button>
+                </AzureButton>
               </div>
 
               {/* Message 3 - Foster to Adopter Transfer */}
@@ -485,20 +481,18 @@ See LiveLinks for yourself at PetPort.app and check out the innovation yourself.
                   </span>
                   "
                 </p>
-                <Button
+                <AzureButton
                   size="sm"
-                  variant="outline"
                   onClick={() => {
                     const message = `Foster to Forever - Give your foster friend a story for life! PetPort's full account transfer seamlessly passes everything to the adopter - complete bio, resume, medical alerts, documents, care instructions, and so much more. Their entire journey transfers with them. Start their story today: https://petport.app?ref=${referralCode}`;
                     navigator.clipboard.writeText(message);
                     toast({ title: "Copied!", description: "Message copied to clipboard" });
                   }}
                   disabled={!referralCode}
-                  className="border-[#5691af] text-[#5691af] hover:bg-[#5691af]/10 font-semibold"
                 >
                   <Copy className="h-3 w-3 mr-1" />
                   Copy Message
-                </Button>
+                </AzureButton>
               </div>
             </div>
           </CardContent>

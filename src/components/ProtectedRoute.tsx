@@ -41,29 +41,16 @@ export function ProtectedRoute({ children }: { children: React.ReactNode }) {
           }
           
           // Then check subscription status
-          const { data, error } = await supabase
-            .from("subscribers")
-            .select("subscribed, status, grace_period_end")
-            .eq("user_id", user.id)
-            .maybeSingle();
+          const { data: rpcActive, error } = await supabase
+            .rpc('is_user_subscription_active', { user_uuid: user.id });
           
           if (error) throw error;
           
-          // Consider subscription active if:
-          // 1. subscribed = true (legacy check), OR
-          // 2. status = 'active', OR  
-          // 3. status = 'grace' and grace period hasn't ended
-          const now = new Date();
-          const isActive = data?.subscribed || 
-                           data?.status === 'active' ||
-                           (data?.status === 'grace' && 
-                            (!data.grace_period_end || new Date(data.grace_period_end) > now));
+          const isActive = rpcActive === true;
           
-          console.log("Protected Route - Subscription status after linking:", { 
-            subscribed: data?.subscribed,
-            status: data?.status,
-            gracePeriodEnd: data?.grace_period_end,
-            isActive 
+          console.log("Protected Route - Subscription status (RPC):", { 
+            isActiveFromRpc: rpcActive,
+            userId: user.id
           });
           
           return isActive;

@@ -22,14 +22,9 @@ export default function Auth() {
   // Extract URL params
   const searchParams = new URLSearchParams(location.search);
   const transferToken = searchParams.get('transfer_token');
-  const plan = searchParams.get('plan');
-  const mode = searchParams.get('mode'); // 'signin' or 'signup'
   
-  // Default to signin if coming from post-checkout, otherwise signup for new users
-  const [isSignIn, setIsSignIn] = useState(mode === 'signin' || location.state?.mode === 'signin' || false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [fullName, setFullName] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   
@@ -39,7 +34,7 @@ export default function Auth() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    console.log("Auth: Form submitted", { isSignIn, email, fullName });
+    console.log("Auth: Sign in form submitted", { email });
     
     if (!email || !password) {
       toast({
@@ -50,67 +45,18 @@ export default function Auth() {
       return;
     }
     
-    if (!isSignIn && !fullName) {
-      toast({
-        variant: "destructive",
-        title: "Missing information",
-        description: "Please enter your full name.",
-      });
-      return;
-    }
-    
     setIsSubmitting(true);
     
     try {
-      if (isSignIn) {
-        console.log("Auth: Attempting sign in");
-        await signIn(email, password);
-        console.log("Auth: Sign in completed");
+      console.log("Auth: Attempting sign in");
+      await signIn(email, password);
+      console.log("Auth: Sign in completed");
 
-        // Redirect based on transfer token presence
-        if (transferToken) {
-          navigate(`/transfer/accept/${transferToken}`);
-        } else {
-          navigate("/app");
-        }
+      // Redirect based on transfer token presence
+      if (transferToken) {
+        navigate(`/transfer/accept/${transferToken}`);
       } else {
-        console.log("Auth: Attempting sign up");
-        const { error } = await supabase.auth.signUp({
-          email,
-          password,
-          options: {
-            emailRedirectTo: `${window.location.origin}/`,
-            data: {
-              full_name: fullName.trim()
-            }
-          }
-        });
-
-        if (error) {
-          throw error;
-        }
-
-        console.log("Auth: Sign up completed, redirecting...");
-        
-        // Welcome email will be sent after subscription creation
-        // (handled by create-subscription-with-user function)
-        
-        // Check for referral code and append to subscribe redirect
-        const referralCode = localStorage.getItem('petport_referral');
-        const baseUrl = transferToken 
-          ? `/subscribe?transfer_token=${transferToken}`
-          : '/subscribe';
-        
-        const finalUrl = referralCode 
-          ? `${baseUrl}${baseUrl.includes('?') ? '&' : '?'}ref=${referralCode}`
-          : baseUrl;
-        
-        // Clear referral code immediately after use
-        if (referralCode) {
-          localStorage.removeItem('petport_referral');
-        }
-        
-        navigate(finalUrl);
+        navigate("/app");
       }
     } catch (error) {
       console.error("Auth: Authentication error:", error);
@@ -131,35 +77,10 @@ export default function Auth() {
             title: "Email not confirmed",
             description: "Please check your email and click the confirmation link before signing in.",
           });
-        } else if (errorMessage.includes('user already registered') || errorMessage.includes('email already registered')) {
-          toast({
-            variant: "destructive",
-            title: "Account already exists",
-            description: "An account with this email already exists. Try signing in instead.",
-          });
-          setIsSignIn(true);
-        } else if (errorMessage.includes('duplicate key') || errorMessage.includes('pet pass id')) {
-          toast({
-            variant: "destructive",
-            title: "Account creation failed",
-            description: "There was an issue setting up your account. Please try again in a moment.",
-          });
-        } else if (errorMessage.includes('invalid token') || errorMessage.includes('signature')) {
-          toast({
-            variant: "destructive",
-            title: "Email confirmation failed",
-            description: "There was an issue with email confirmation. Please check your email settings or try again.",
-          });
-        } else if (errorMessage.includes('password') && errorMessage.includes('characters')) {
-          toast({
-            variant: "destructive",
-            title: "Password too weak",
-            description: "Password must be at least 6 characters long.",
-          });
         } else {
           toast({
             variant: "destructive",
-            title: isSignIn ? "Sign in failed" : "Sign up failed",
+            title: "Sign in failed",
             description: error.message,
           });
         }
@@ -203,27 +124,14 @@ export default function Auth() {
         
         <Card className="border-0 shadow-lg bg-white/90 backdrop-blur-sm">
           <CardHeader>
-            <CardTitle>{isSignIn ? "Welcome Back" : "Start Your Free Trial"}</CardTitle>
+            <CardTitle>Welcome Back</CardTitle>
             <CardDescription>
-              {isSignIn ? "Sign in to access your pet profiles" : "Create your account - 7 days free, cancel anytime"}
+              Sign in to access your pet profiles
             </CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit}>
               <div className="space-y-4">
-                {!isSignIn && (
-                  <div className="space-y-2">
-                    <Label htmlFor="fullName">Full Name</Label>
-                    <Input
-                      id="fullName"
-                      placeholder="John Smith"
-                      value={fullName}
-                      onChange={(e) => setFullName(e.target.value)}
-                      required={!isSignIn}
-                    />
-                  </div>
-                )}
-                
                 <div className="space-y-2">
                   <Label htmlFor="email">Email</Label>
                   <Input
@@ -245,7 +153,7 @@ export default function Auth() {
                     onChange={(e) => setPassword(e.target.value)}
                     required
                     minLength={6}
-                    placeholder={isSignIn ? "Enter your password" : "Minimum 6 characters"}
+                    placeholder="Enter your password"
                   />
                 </div>
                 
@@ -255,32 +163,19 @@ export default function Auth() {
                   className="w-full border border-white/20"
                   disabled={isSubmitting}
                 >
-                  {isSubmitting ? "Processing..." : isSignIn ? "Sign In" : "Start Free Trial"}
+                  {isSubmitting ? "Signing In..." : "Sign In"}
                 </Button>
               </div>
             </form>
           </CardContent>
           <CardFooter className="flex-col space-y-4">
             <div className="text-center">
-              {isSignIn ? (
-                <Button
-                  type="button"
-                  variant="link"
-                  onClick={() => setIsSignIn(false)}
-                  className="text-sm text-muted-foreground hover:text-primary"
-                >
-                  Need an account? Start your free trial
-                </Button>
-              ) : (
-                <Button
-                  type="button"
-                  variant="link"
-                  onClick={() => setIsSignIn(true)}
-                  className="text-sm text-muted-foreground hover:text-primary"
-                >
-                  Already have an account? Sign in
-                </Button>
-              )}
+              <p className="text-sm text-muted-foreground">
+                Don't have an account?{" "}
+                <Link to="/#pricing" className="text-primary hover:underline font-medium">
+                  Start your free trial
+                </Link>
+              </p>
             </div>
             
             <div className="w-full border-t pt-4 space-y-2">

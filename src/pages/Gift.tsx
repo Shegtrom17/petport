@@ -339,9 +339,6 @@ const Gift = () => {
           
           <div className="flex items-center gap-3">
             <AppShareButton variant="icon" />
-            <Button onClick={() => navigate('/')} variant="ghost" size="icon" aria-label="Home">
-              <Home className="h-5 w-5" />
-            </Button>
           </div>
         </header>
 

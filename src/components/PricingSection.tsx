@@ -111,9 +111,9 @@ export const PricingSection: React.FC<PricingSectionProps> = ({ context = "landi
         <CardContent className="pt-6">
           <div className="space-y-4">
             <div className="text-center">
-              <Label className="text-base font-medium">How many pets?</Label>
+              <Label className="text-base font-medium">How many pets? ($3.99/year per additional pet)</Label>
               <p className="text-sm text-muted-foreground mt-1">
-                Select total number of pet accounts you need
+                1st pet included • Additional pets: $3.99/year each
               </p>
             </div>
             <div className="flex items-center justify-center gap-3">
@@ -145,7 +145,7 @@ export const PricingSection: React.FC<PricingSectionProps> = ({ context = "landi
                 <div className="font-medium">Price Breakdown:</div>
                 <div className="text-muted-foreground">Base membership: included in plan</div>
                 <div className="text-muted-foreground">
-                  {additionalPetsForCheckout} additional pet{additionalPetsForCheckout !== 1 ? 's' : ''}: ${additionalPetsCost.toFixed(2)}/year
+                  {additionalPetsForCheckout} additional pet{additionalPetsForCheckout !== 1 ? 's' : ''}: ${additionalPetsCost.toFixed(2)}/year (${PRICING.addons[0].getTierPrice(1) / 100} each)
                 </div>
               </div>
             )}

@@ -19,9 +19,10 @@ serve(async (req) => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
     );
 
-    // Find pending yearly referrals past 45-day trial period
-    const fortyFiveDaysAgo = new Date();
-    fortyFiveDaysAgo.setDate(fortyFiveDaysAgo.getDate() - 45);
+    // Find pending yearly referrals past 45 days from signup (38 days after trial ends)
+    // 45 days from signup = 7 day trial + 38 days active subscription
+    const approvalDate = new Date();
+    approvalDate.setDate(approvalDate.getDate() - 38);
 
     const { data: pendingReferrals, error: fetchError } = await supabaseClient
       .from("referrals")
@@ -30,7 +31,7 @@ serve(async (req) => {
       .eq("referred_plan_interval", "year")
       .not("referred_user_id", "is", null)
       .not("trial_completed_at", "is", null)
-      .lte("trial_completed_at", fortyFiveDaysAgo.toISOString());
+      .lte("trial_completed_at", approvalDate.toISOString());
 
     if (fetchError) {
       throw fetchError;

@@ -208,22 +208,22 @@ export const QuickReferralModal = ({ isOpen, onClose }: QuickReferralModalProps)
                   <Copy className="h-4 w-4 mr-2" />
                   Copy Link
                 </Button>
-                <Button
-                  onClick={handleShare}
-                  disabled={!referralLink}
-                  variant="outline"
-                  className="flex-1 border-[#5691af] text-[#5691af] hover:bg-[#5691af]/10"
-                >
-                  <Share2 className="h-4 w-4 mr-2" />
-                  Share
-                </Button>
+              <Button
+                onClick={handleShare}
+                disabled={!referralLink}
+                variant="azure"
+                className="flex-1"
+              >
+                <Share2 className="h-4 w-4 mr-2" />
+                Share
+              </Button>
               </div>
 
               {/* View Full Stats Link */}
               <Button
                 onClick={handleViewFullStats}
-                variant="ghost"
-                className="w-full text-[#5691af] hover:text-[#4a7d99] hover:bg-[#5691af]/10"
+                variant="azure"
+                className="w-full"
               >
                 <ExternalLink className="h-4 w-4 mr-2" />
                 View Full Stats & Earnings

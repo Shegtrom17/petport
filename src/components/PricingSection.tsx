@@ -216,6 +216,11 @@ export const PricingSection: React.FC<PricingSectionProps> = ({ context = "landi
           Need to add more pets later? You can purchase additional slots anytime from your billing page.
         </p>
       </div>
+      <div className="text-center pt-2">
+        <p className="text-sm text-muted-foreground">
+          Questions about pricing? <a href="/help" className="underline text-primary hover:text-primary/80">Visit our Help Center</a>
+        </p>
+      </div>
       <p className="text-xs text-muted-foreground text-center">
         Cancel anytime. Manage from your account or the Customer Portal. See our
         <a href="/terms#cancellation" className="underline ml-1">cancellation policy</a>.

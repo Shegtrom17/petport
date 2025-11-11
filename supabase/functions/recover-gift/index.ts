@@ -159,8 +159,8 @@ serve(async (req) => {
     // Send confirmation emails
     try {
       const baseUrl = Deno.env.get("APP_ORIGIN") || "https://petport.app";
-      const redemptionLink = `${baseUrl}/redeem?code=${giftCode}`;
-      const formattedExpiry = expiresAt.toLocaleDateString('en-US', { 
+      const redemptionLink = `${baseUrl}/claim-subscription?code=${giftCode}`;
+      const formattedExpiry = expiresAt.toLocaleDateString('en-US', {
         year: 'numeric', 
         month: 'long', 
         day: 'numeric' 
@@ -217,7 +217,7 @@ serve(async (req) => {
         senderName,
         giftMessage,
         expiresAt: expiresAt.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
-        redemptionLink: `${Deno.env.get("APP_ORIGIN") || "https://petport.app"}/redeem?code=${giftCode}`,
+        redemptionLink: `${Deno.env.get("APP_ORIGIN") || "https://petport.app"}/claim-subscription?code=${giftCode}`,
         message: "Gift membership recovered and created successfully"
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }

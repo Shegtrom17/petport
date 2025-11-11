@@ -450,8 +450,8 @@ async function handleGiftMembershipPurchase(session: any, supabaseClient: any) {
   // Send confirmation emails
   try {
     const baseUrl = Deno.env.get("APP_ORIGIN") || "https://petport.app";
-    const redemptionLink = `${baseUrl}/redeem?code=${giftCode}`;
-    const formattedExpiry = expiresAt.toLocaleDateString('en-US', { 
+    const redemptionLink = `${baseUrl}/claim-subscription?code=${giftCode}`;
+    const formattedExpiry = expiresAt.toLocaleDateString('en-US', {
       year: 'numeric', 
       month: 'long', 
       day: 'numeric' 

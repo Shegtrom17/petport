@@ -765,7 +765,7 @@ const generateEmailTemplate = (data: EmailRequest) => {
             <li>Create Care and Handling Instructions for caregivers</li>
             <li>Insurance of PetPort Lost Pet Recovery System ready incase of Emergency</li>
             <li>Photo gallery, Travel log and Pet Resume Builder for lodging and Caregivers</li>
-            <li>All information tranfers with you pet!</li>
+            <li>All information transfers with your pet!</li>
           </ul>
         </div>
         
@@ -808,7 +808,7 @@ const generateEmailTemplate = (data: EmailRequest) => {
             <li>Create Care and Handling Instructions for caregivers</li>
             <li>Insurance of PetPort Lost Pet Recovery System ready incase of Emergency</li>
             <li>Photo gallery, Travel log and Pet Resume Builder for lodging and Caregivers</li>
-            <li>All information tranfers with you pet!</li>
+            <li>All information transfers with your pet!</li>
           </ul>
         </div>
         
@@ -860,7 +860,7 @@ const generateEmailTemplate = (data: EmailRequest) => {
             <li>Create Care and Handling Instructions for caregivers</li>
             <li>Insurance of PetPort Lost Pet Recovery System ready incase of Emergency</li>
             <li>Photo gallery, Travel log and Pet Resume Builder for lodging and Caregivers</li>
-            <li>All information tranfers with you pet!</li>
+            <li>All information transfers with your pet!</li>
           </ul>
         </div>
         
@@ -891,7 +891,7 @@ const generateEmailTemplate = (data: EmailRequest) => {
             <li>Create Care and Handling Instructions for caregivers</li>
             <li>Insurance of PetPort Lost Pet Recovery System ready incase of Emergency</li>
             <li>Photo gallery, Travel log and Pet Resume Builder for lodging and Caregivers</li>
-            <li>All information tranfers with you pet!</li>
+            <li>All information transfers with your pet!</li>
           </ul>
         </div>
         

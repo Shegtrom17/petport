@@ -12,7 +12,7 @@ export const featureFlags: FeatureFlags = {
   enableSwipeNavigation: false,
   enableSelectPhotos: true,
   useHostedCheckout: true,
-  testMode: false, // Set to true for development, false for production
+  testMode: true, // Set to true for development, false for production
   enablePullToRefresh: true, // iOS pull-to-refresh enabled with proper safe zones
 };
 

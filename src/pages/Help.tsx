@@ -139,6 +139,31 @@ const Help = () => {
       id: "guardian-access",
       question: "What does the Guardian feature do and what are its limitations?",
       answer: "The Guardian feature allows you to designate a trusted person (e.g., family member, friend) who can view your pet's information in emergencies using a secure access link. Important: This feature provides view-only access only and does not transfer legal ownership or account control. PetPort has no legal authority to facilitate ownership transfers. For complete account access or ownership transfer, you must provide your guardian with your login credentials and ensure proper legal arrangements (will, power of attorney, etc.) are in place independently."
+    },
+    {
+      id: "pricing-plans",
+      question: "How much does PetPort cost?",
+      answer: "PetPort offers two subscription plans: $1.99/month or $14.99/year (save over 35% with yearly). Each plan includes one pet account. You can add additional pets for $3.99/year each (up to 20 pets total). All plans start with a 7-day free trial with full access and no charges until the trial ends."
+    },
+    {
+      id: "free-trial",
+      question: "How does the 7-day free trial work?",
+      answer: "Your 7-day free trial gives you complete access to all PetPort features at no cost. A credit card is required to start the trial, but you won't be charged until the trial period ends. Cancel anytime during the trial and you won't pay anything. After the trial, your chosen plan (monthly or yearly) will automatically begin unless you cancel."
+    },
+    {
+      id: "additional-pets-pricing",
+      question: "How much does it cost to add more pets?",
+      answer: "Additional pet accounts cost $3.99/year per pet. Your first pet is included in your base subscription ($1.99/month or $14.99/year). You can add additional pets during checkout or anytime later from your billing page. Additional pets are charged annually regardless of whether you have a monthly or yearly base plan. You can manage up to 20 pet profiles total."
+    },
+    {
+      id: "billing-cycles",
+      question: "When will I be charged and how does billing work?",
+      answer: "After your 7-day free trial ends, you'll be charged based on your selected plan: $1.99 every month for monthly plans, or $14.99 once per year for yearly plans. Additional pet slots ($3.99 each) are always charged annually. Your subscription automatically renews unless you cancel. You can view your billing details, update payment methods, and manage your subscription from your billing page or the Stripe Customer Portal."
+    },
+    {
+      id: "cancel-subscription",
+      question: "Can I cancel my subscription?",
+      answer: "Yes, you can cancel anytime with no penalties or fees. Cancel during your free trial and you won't be charged at all. After your trial, you can cancel from Profile → Billing & Add-ons or through the Stripe Customer Portal. Your access continues until the end of your current billing period. See our cancellation policy in the Terms of Service for full details."
     }
   ];
 

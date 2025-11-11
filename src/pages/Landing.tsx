@@ -756,12 +756,48 @@ export default function Landing() {
                 </p>
               </div>
 
-              <div className="pb-8">
+              <div className="border-b border-gray-200 pb-8">
                 <h3 className="text-xl font-semibold text-brand-primary mb-4">
                   Why should I use PetPort instead of a paper file or basic notes app?
                 </h3>
                 <p className="text-brand-primary-dark leading-relaxed">
                   Paper gets lost, notes get outdated. PetPort is a living digital record: always backed up, easy to update, and instantly shareable. Beyond records, you can collect hospitality reviews, track travel history, and build a complete story of your pet's life.
+                </p>
+              </div>
+
+              <div className="border-b border-gray-200 pb-8">
+                <h3 className="text-xl font-semibold text-brand-primary mb-4">
+                  How much does PetPort cost?
+                </h3>
+                <p className="text-brand-primary-dark leading-relaxed">
+                  PetPort offers two subscription plans: $1.99/month or $14.99/year (save over 35% with yearly). Each plan includes one pet account. You can add additional pets for $3.99/year each (up to 20 pets total). All plans start with a 7-day free trial — full access, no charges until the trial ends.
+                </p>
+              </div>
+
+              <div className="border-b border-gray-200 pb-8">
+                <h3 className="text-xl font-semibold text-brand-primary mb-4">
+                  How does the 7-day free trial work?
+                </h3>
+                <p className="text-brand-primary-dark leading-relaxed">
+                  Your 7-day free trial gives you complete access to all PetPort features at no cost. A credit card is required to start the trial, but you won't be charged until the trial period ends. Cancel anytime during the trial and you won't pay anything. After the trial, your chosen plan (monthly or yearly) will automatically begin unless you cancel.
+                </p>
+              </div>
+
+              <div className="border-b border-gray-200 pb-8">
+                <h3 className="text-xl font-semibold text-brand-primary mb-4">
+                  Can I add more pets later?
+                </h3>
+                <p className="text-brand-primary-dark leading-relaxed">
+                  Absolutely! You can add additional pet accounts anytime from your billing page for $3.99/year per pet. Your first pet is included in your base subscription. Additional pets are charged annually regardless of whether you have a monthly or yearly plan. You can manage up to 20 pet profiles total.
+                </p>
+              </div>
+
+              <div className="pb-8">
+                <h3 className="text-xl font-semibold text-brand-primary mb-4">
+                  Can I cancel my subscription?
+                </h3>
+                <p className="text-brand-primary-dark leading-relaxed">
+                  Yes, you can cancel anytime with no penalties or fees. Cancel during your free trial and you won't be charged at all. After your trial, you can cancel from your account settings or through the Customer Portal. Your access continues until the end of your current billing period. See our <a href="/terms#cancellation" className="font-bold text-brand-primary hover:underline">cancellation policy</a> for full details.
                 </p>
               </div>
             </div>
@@ -813,6 +849,34 @@ export default function Landing() {
               "acceptedAnswer": {
                 "@type": "Answer",
                 "text": "Paper gets lost, notes get outdated. PetPort is a living digital record: always backed up, easy to update, and instantly shareable. Beyond records, you can collect hospitality reviews, track travel history, and build a complete story of your pet's life."
+              }
+            }, {
+              "@type": "Question",
+              "name": "How much does PetPort cost?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "PetPort offers two subscription plans: $1.99/month or $14.99/year (save over 35% with yearly). Each plan includes one pet account. You can add additional pets for $3.99/year each (up to 20 pets total). All plans start with a 7-day free trial — full access, no charges until the trial ends."
+              }
+            }, {
+              "@type": "Question",
+              "name": "How does the 7-day free trial work?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Your 7-day free trial gives you complete access to all PetPort features at no cost. A credit card is required to start the trial, but you won't be charged until the trial period ends. Cancel anytime during the trial and you won't pay anything. After the trial, your chosen plan (monthly or yearly) will automatically begin unless you cancel."
+              }
+            }, {
+              "@type": "Question",
+              "name": "Can I add more pets later?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Absolutely! You can add additional pet accounts anytime from your billing page for $3.99/year per pet. Your first pet is included in your base subscription. Additional pets are charged annually regardless of whether you have a monthly or yearly plan. You can manage up to 20 pet profiles total."
+              }
+            }, {
+              "@type": "Question",
+              "name": "Can I cancel my subscription?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Yes, you can cancel anytime with no penalties or fees. Cancel during your free trial and you won't be charged at all. After your trial, you can cancel from your account settings or through the Customer Portal. Your access continues until the end of your current billing period."
               }
             }]
           })

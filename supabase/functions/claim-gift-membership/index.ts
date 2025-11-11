@@ -115,16 +115,22 @@ serve(async (req) => {
 
     console.log(`Subscriber record created/updated with ${totalPetCapacity} pet capacity`);
 
-    // Send gift activated email
+    // Send gift activated email with theme
     const { error: emailError } = await supabase.functions.invoke('send-email', {
       body: {
-        to: user.email,
         type: 'gift_activated',
-        data: {
-          recipientName: user.user_metadata?.full_name || user.email,
-          senderName: gift.sender_name || 'A friend',
-          expiresAt: expiresAt.toISOString()
-        }
+        recipientEmail: user.email,
+        recipientName: user.user_metadata?.full_name || user.email?.split('@')[0],
+        petName: 'Gift Membership',
+        petId: gift.gift_code,
+        shareUrl: `${Deno.env.get('APP_ORIGIN') || 'https://petport.app'}/add-pet`,
+        senderName: gift.sender_name || 'A friend',
+        expiresAt: expiresAt.toLocaleDateString('en-US', { 
+          year: 'numeric', 
+          month: 'long', 
+          day: 'numeric' 
+        }),
+        giftTheme: gift.theme || 'standard'
       }
     });
 

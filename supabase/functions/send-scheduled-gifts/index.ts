@@ -111,24 +111,21 @@ const handler = async (req: Request): Promise<Response> => {
           day: 'numeric'
         });
 
-        // Select template based on gift theme
-        const recipientTemplate = gift.theme === 'christmas' ? 'gift-notification-christmas' :
-                                  gift.theme === 'birthday' ? 'gift-notification-birthday' :
-                                  gift.theme === 'adoption' ? 'gift-notification-adoption' :
-                                  'gift-notification';
-
-        // Send gift notification to recipient
+        // Send gift notification to recipient with theme
         const { error: recipientEmailError } = await supabase.functions.invoke('send-email', {
           body: {
-            to: gift.recipient_email,
-            template: recipientTemplate,
-            data: {
-              senderName: gift.sender_name || 'A friend',
-              giftMessage: gift.gift_message || '',
-              redemptionLink,
-              giftCode: gift.gift_code,
-              expiryDate: formattedExpiry
-            }
+            type: 'gift_notification',
+            recipientEmail: gift.recipient_email,
+            recipientName: gift.recipient_email.split('@')[0],
+            petName: 'Gift Membership',
+            petId: gift.gift_code,
+            shareUrl: redemptionLink,
+            senderName: gift.sender_name || 'A friend',
+            giftMessage: gift.gift_message || undefined,
+            giftCode: gift.gift_code,
+            redemptionLink: redemptionLink,
+            expiresAt: formattedExpiry,
+            giftTheme: gift.theme || 'standard'
           }
         });
 
@@ -137,23 +134,22 @@ const handler = async (req: Request): Promise<Response> => {
           throw new Error(`Failed to send recipient email: ${recipientEmailError.message}`);
         }
 
-        // Select purchaser template based on gift theme
-        const purchaserTemplate = gift.theme === 'christmas' ? 'gift-purchase-confirmation-christmas' :
-                                  gift.theme === 'birthday' ? 'gift-purchase-confirmation-birthday' :
-                                  gift.theme === 'adoption' ? 'gift-purchase-confirmation-adoption' :
-                                  'gift-purchase-confirmation';
-
-        // Send confirmation to purchaser
+        // Send confirmation to purchaser with theme
         const { error: purchaserEmailError } = await supabase.functions.invoke('send-email', {
           body: {
-            to: gift.purchaser_email,
-            template: purchaserTemplate,
-            data: {
-              recipientEmail: gift.recipient_email,
-              giftCode: gift.gift_code,
-              redemptionLink,
-              expiryDate: formattedExpiry
-            }
+            type: 'gift_purchase_confirmation',
+            recipientEmail: gift.purchaser_email,
+            recipientName: gift.sender_name || 'there',
+            petName: 'Gift Membership',
+            petId: gift.gift_code,
+            shareUrl: redemptionLink,
+            senderName: gift.sender_name || 'A friend',
+            giftMessage: gift.gift_message || undefined,
+            giftCode: gift.gift_code,
+            redemptionLink: redemptionLink,
+            expiresAt: formattedExpiry,
+            giftRecipientEmail: gift.recipient_email,
+            giftTheme: gift.theme || 'standard'
           }
         });
 

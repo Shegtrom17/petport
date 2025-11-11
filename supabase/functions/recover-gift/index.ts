@@ -166,7 +166,7 @@ serve(async (req) => {
         day: 'numeric' 
       });
       
-      // Send to purchaser (theme is handled by HOLIDAY_MODE env variable in send-email)
+      // Send to purchaser with selected theme
       await supabaseClient.functions.invoke('send-email', {
         body: {
           type: 'gift_purchase_confirmation',
@@ -180,11 +180,12 @@ serve(async (req) => {
           giftCode: giftCode,
           redemptionLink: redemptionLink,
           expiresAt: formattedExpiry,
-          giftRecipientEmail: recipientEmail
+          giftRecipientEmail: recipientEmail,
+          giftTheme: theme || 'standard'
         }
       });
 
-      // Send to recipient (theme is handled by HOLIDAY_MODE env variable in send-email)
+      // Send to recipient with selected theme
       await supabaseClient.functions.invoke('send-email', {
         body: {
           type: 'gift_notification',
@@ -197,7 +198,8 @@ serve(async (req) => {
           giftMessage: giftMessage,
           giftCode: giftCode,
           redemptionLink: redemptionLink,
-          expiresAt: formattedExpiry
+          expiresAt: formattedExpiry,
+          giftTheme: theme || 'standard'
         }
       });
 

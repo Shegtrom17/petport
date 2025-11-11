@@ -101,7 +101,9 @@ export const PricingSection: React.FC<PricingSectionProps> = ({ context = "landi
         <h2 id="pricing-heading" className="text-2xl md:text-3xl font-semibold">
           Plans & Pricing
         </h2>
-        <p className="mt-2 text-sm text-muted-foreground">Start with one pet, add more during checkout.</p>
+        <p className="mt-2 text-sm text-muted-foreground">
+          Start with one pet, add more during checkout. Additional pet slots are charged annually.
+        </p>
       </div>
 
       {/* Pet Quantity Selector */}
@@ -154,9 +156,13 @@ export const PricingSection: React.FC<PricingSectionProps> = ({ context = "landi
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {PRICING.plans.map((plan) => {
           const basePriceNum = plan.priceCents / 100;
+          // Both plans show total cost, but monthly shows plan cost separately
           const totalPrice = plan.id === "yearly" 
             ? basePriceNum + additionalPetsCost
             : basePriceNum;
+          const upfrontPetCost = plan.id === "monthly" && additionalPetsForCheckout > 0 
+            ? additionalPetsCost 
+            : 0;
           
           return (
             <Card key={plan.id} className="h-full">
@@ -171,9 +177,12 @@ export const PricingSection: React.FC<PricingSectionProps> = ({ context = "landi
                   <p className="text-2xl font-bold">
                     ${totalPrice.toFixed(2)}/{plan.interval}
                   </p>
-                  {plan.id === "yearly" && additionalPetsForCheckout > 0 && (
+                  {additionalPetsForCheckout > 0 && (
                     <p className="text-xs text-muted-foreground mt-1">
-                      ${basePriceNum.toFixed(2)} base + ${additionalPetsCost.toFixed(2)} for {additionalPetsForCheckout} pet{additionalPetsForCheckout !== 1 ? 's' : ''}
+                      {plan.id === "yearly" 
+                        ? `$${basePriceNum.toFixed(2)} base + $${additionalPetsCost.toFixed(2)} for ${additionalPetsForCheckout} pet${additionalPetsForCheckout !== 1 ? 's' : ''}`
+                        : `$${basePriceNum.toFixed(2)}/${plan.interval} + $${additionalPetsCost.toFixed(2)} upfront for ${additionalPetsForCheckout} pet${additionalPetsForCheckout !== 1 ? 's' : ''} (annual)`
+                      }
                     </p>
                   )}
                 </div>
@@ -182,7 +191,7 @@ export const PricingSection: React.FC<PricingSectionProps> = ({ context = "landi
                 </p>
                 {plan.id === "monthly" && additionalPetsForCheckout > 0 && (
                   <p className="text-xs text-orange-600 dark:text-orange-400">
-                    Note: Additional pets only available with yearly plan
+                    Additional pets charged annually ($3.99/year each)
                   </p>
                 )}
                 <p className="text-xs text-muted-foreground">
@@ -192,7 +201,6 @@ export const PricingSection: React.FC<PricingSectionProps> = ({ context = "landi
                   variant="azure" 
                   className="w-full" 
                   onClick={() => startCheckout(plan.id === "monthly" ? "monthly" : "yearly")}
-                  disabled={plan.id === "monthly" && additionalPetsForCheckout > 0}
                 >
                   <CreditCard className="w-4 h-4" />
                   <span>Start 7-day free trial</span>

@@ -45,11 +45,6 @@ serve(async (req) => {
       throw new Error("Additional pets must be between 0 and 19");
     }
 
-    // Additional pets only allowed with yearly plan
-    if (additionalPets > 0 && plan === "monthly") {
-      throw new Error("Additional pets are only available with yearly subscriptions");
-    }
-
     const price = plan === "monthly" ? 199 : 1499;
     const interval = plan === "monthly" ? "month" : "year";
 

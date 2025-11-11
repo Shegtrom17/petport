@@ -46,19 +46,6 @@ serve(async (req) => {
       });
     }
 
-    // Additional pets only allowed with yearly plan
-    if (additionalPets > 0 && plan === "monthly") {
-      const errorBody = JSON.stringify({ error: "Additional pets only available with yearly subscriptions" });
-      return new Response(errorBody, { 
-        status: 400, 
-        headers: { 
-          ...corsHeaders, 
-          "Content-Type": "application/json",
-          "Content-Length": errorBody.length.toString()
-        } 
-      });
-    }
-
     const amount = plan === "monthly" ? 199 : 1499; // cents
     const interval = plan === "monthly" ? "month" : "year";
 

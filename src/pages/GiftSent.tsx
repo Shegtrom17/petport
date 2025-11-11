@@ -3,7 +3,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { CheckCircle2, Copy, Mail, Gift, Loader2 } from "lucide-react";
+import { CheckCircle2, Copy, Mail, Gift, Loader2, X } from "lucide-react";
 import { toast } from "sonner";
 
 interface GiftDetails {
@@ -159,7 +159,16 @@ const GiftSent = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-muted/20 py-12 px-4">
-      <div className="max-w-2xl mx-auto">
+      <div className="max-w-2xl mx-auto relative">
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => navigate("/")}
+          className="absolute top-0 right-0 z-10"
+          aria-label="Close"
+        >
+          <X className="h-5 w-5" />
+        </Button>
         {/* Success Header */}
         <div className="text-center mb-8">
           <div className="inline-block p-4 bg-green-500/10 rounded-full mb-4">
@@ -175,50 +184,56 @@ const GiftSent = () => {
           </p>
         </div>
 
-        {/* Gift Code Card */}
+        {/* Backup Gift Code Card */}
         <Card className="mb-6">
           <CardHeader>
-            <CardTitle>Gift Code</CardTitle>
-            <CardDescription>Share this code or link with the recipient</CardDescription>
+            <CardTitle>Backup Gift Information</CardTitle>
+            <CardDescription>
+              {giftDetails.isScheduled 
+                ? "For your records only - the email will be sent automatically on the scheduled date"
+                : "For your records only - the email has already been sent automatically"}
+            </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="p-6 bg-primary/10 rounded-lg text-center">
-              <div className="text-sm text-muted-foreground mb-2">Gift Code</div>
-              <div className="text-4xl font-bold font-mono tracking-wider text-primary">
-                {giftDetails.giftCode}
+            <div className="p-4 bg-muted/50 rounded-lg border border-border">
+              <p className="text-sm text-muted-foreground mb-3">
+                <strong>You don't need to do anything!</strong> This information is just for your reference in case the recipient needs help.
+              </p>
+              
+              <div className="p-4 bg-background rounded-md text-center mb-3">
+                <div className="text-xs text-muted-foreground mb-1">Gift Code (Backup)</div>
+                <div className="text-2xl font-bold font-mono tracking-wider text-primary">
+                  {giftDetails.giftCode}
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-xs font-medium text-muted-foreground">Redemption Link (Backup)</label>
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={giftDetails.redemptionLink}
+                    readOnly
+                    className="flex-1 px-3 py-2 text-xs bg-background rounded-md border"
+                  />
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    onClick={() => copyToClipboard(giftDetails.redemptionLink)}
+                  >
+                    {isCopied ? (
+                      <CheckCircle2 className="h-4 w-4 text-green-500" />
+                    ) : (
+                      <Copy className="h-4 w-4" />
+                    )}
+                  </Button>
+                </div>
               </div>
             </div>
 
-            <div className="space-y-2">
-              <label className="text-sm font-medium">Redemption Link</label>
-              <div className="flex gap-2">
-                <input
-                  type="text"
-                  value={giftDetails.redemptionLink}
-                  readOnly
-                  className="flex-1 px-3 py-2 text-sm bg-muted rounded-md"
-                />
-                <Button
-                  variant="outline"
-                  size="icon"
-                  onClick={() => copyToClipboard(giftDetails.redemptionLink)}
-                >
-                  {isCopied ? (
-                    <CheckCircle2 className="h-4 w-4 text-green-500" />
-                  ) : (
-                    <Copy className="h-4 w-4" />
-                  )}
-                </Button>
-              </div>
-            </div>
-
-            <Button
-              className="w-full"
-              onClick={() => copyToClipboard(giftDetails.redemptionLink)}
-            >
-              <Copy className="mr-2 h-4 w-4" />
-              Copy Redemption Link
-            </Button>
+            <p className="text-xs text-muted-foreground text-center">
+              💡 Only share this if your recipient didn't receive the automatic email
+            </p>
           </CardContent>
         </Card>
 
@@ -255,41 +270,42 @@ const GiftSent = () => {
         </Card>
 
         {/* Next Steps Card */}
-        <Card className="mb-6">
+        <Card className="mb-6 border-primary/20">
           <CardHeader>
-            <CardTitle>What Happens Next?</CardTitle>
+            <CardTitle>✅ You're All Done!</CardTitle>
+            <CardDescription>Here's what happens automatically</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="flex items-start gap-3">
-              <Mail className="w-5 h-5 text-primary mt-0.5" />
+            <div className="flex items-start gap-3 p-3 bg-green-500/5 rounded-lg border border-green-500/20">
+              <Mail className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
               <div>
-                <h3 className="font-semibold mb-1">
-                  {giftDetails.isScheduled ? 'Email Scheduled' : 'Email Sent'}
+                <h3 className="font-semibold mb-1 text-green-900 dark:text-green-100">
+                  {giftDetails.isScheduled ? '📅 Email Will Be Sent Automatically' : '✉️ Email Already Sent'}
                 </h3>
                 <p className="text-sm text-muted-foreground">
                   {giftDetails.isScheduled 
-                    ? `We'll email ${giftDetails.recipientEmail} on ${giftDetails.scheduledFor} with their gift`
-                    : `We've emailed ${giftDetails.recipientEmail} with their gift code and redemption link`}
+                    ? `On ${giftDetails.scheduledFor}, we'll automatically email ${giftDetails.recipientEmail} with their gift, redemption link, and instructions. You don't need to do anything!`
+                    : `We've already emailed ${giftDetails.recipientEmail} with their gift code, redemption link, and step-by-step instructions. They're all set!`}
                 </p>
               </div>
             </div>
 
             <div className="flex items-start gap-3">
-              <Gift className="w-5 h-5 text-primary mt-0.5" />
+              <Gift className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
               <div>
-                <h3 className="font-semibold mb-1">Easy Redemption</h3>
+                <h3 className="font-semibold mb-1">One-Click Redemption</h3>
                 <p className="text-sm text-muted-foreground">
-                  They can click the link or enter the code at petport.app/redeem
+                  The email includes a direct link - they just click and their account is activated instantly
                 </p>
               </div>
             </div>
 
             <div className="flex items-start gap-3">
-              <CheckCircle2 className="w-5 h-5 text-primary mt-0.5" />
+              <CheckCircle2 className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
               <div>
-                <h3 className="font-semibold mb-1">Instant Access</h3>
+                <h3 className="font-semibold mb-1">12 Months of Full Access</h3>
                 <p className="text-sm text-muted-foreground">
-                  After redemption, they'll have 12 months of full PetPort access
+                  Once redeemed, they get a full year of unlimited PetPort features
                 </p>
               </div>
             </div>

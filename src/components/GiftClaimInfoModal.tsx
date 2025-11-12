@@ -90,8 +90,11 @@ export function GiftClaimInfoModal({ isOpen, onClose }: GiftClaimInfoModalProps)
           <DialogTitle className="text-2xl font-bold text-center text-[#5691af]">
             Your PetPort Premium Gift Includes:
           </DialogTitle>
-          <p className="text-center text-lg font-semibold text-green-600 mt-2">
-            $14.99/year value - Yours FREE!
+          <p className="text-center text-base text-gray-600 mt-2">
+            One full year of premium access - completely free!
+          </p>
+          <p className="text-center text-sm text-gray-500 mt-1">
+            After your first year, you can choose to continue your subscription or let it expire
           </p>
         </DialogHeader>
 

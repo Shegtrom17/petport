@@ -126,19 +126,21 @@ export default function ClaimSubscription() {
         <CardContent>
           {/* Gift Value Banner */}
           <div className="mb-6 p-4 bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg border-2 border-[#5691af]/30">
-            <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center mb-2">
               <h3 className="text-lg font-bold text-[#5691af] flex items-center gap-2">
                 <Gift className="h-5 w-5" />
-                You're Receiving Premium Access
+                You're Receiving One Year of Premium Access
               </h3>
-              <span className="text-sm font-semibold text-green-600">$14.99 Value</span>
             </div>
-            <ul className="text-sm text-gray-700 space-y-1 mb-3">
+            <ul className="text-sm text-gray-700 space-y-1 mb-2">
               <li>✓ Full year of premium features</li>
               <li>✓ Photo gallery with 36 photos</li>
               <li>✓ Lost pet tools & LiveLinks</li>
               <li>✓ Resume builder & medical records</li>
             </ul>
+            <p className="text-xs text-gray-600 italic">
+              After your first year, you can choose to continue your subscription or let it expire
+            </p>
             <Button 
               type="button"
               variant="outline" 

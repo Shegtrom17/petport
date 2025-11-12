@@ -218,7 +218,7 @@ export const PricingSection: React.FC<PricingSectionProps> = ({ context = "landi
       </div>
       <div className="text-center pt-2">
         <p className="text-sm text-muted-foreground">
-          Questions about pricing? <a href="/help" className="underline text-primary hover:text-primary/80">Visit our Help Center</a>
+          Questions about pricing? <a href="/#faq" className="underline text-primary hover:text-primary/80">Check our FAQ</a>
         </p>
       </div>
       <p className="text-xs text-muted-foreground text-center">

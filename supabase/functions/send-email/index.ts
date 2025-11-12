@@ -814,22 +814,26 @@ const generateEmailTemplate = (data: EmailRequest) => {
           <div style="background: #ec4899; padding: 6px; border-radius: 6px; text-align: center; margin-bottom: 15px;">
             <span style="color: #ffffff; font-size: 14px; font-weight: 700; letter-spacing: 1px;">💜 ADOPTION ANNIVERSARY 💜</span>
           </div>
-          <h2 style="color: #ec4899; text-align: center; font-size: 28px; margin-bottom: 10px;">💜 Celebrating Your Adoption Anniversary! 🏡</h2>
+          <h2 style="color: #ec4899; text-align: center; font-size: 28px; margin-bottom: 10px;">💜 You've Been Gifted PetPort — A Year of Pawsitivity!</h2>
+          <p style="text-align: center; color: #831843; font-size: 16px; margin-bottom: 10px;">The App that gives your pet a voice for life!!</p>
         ` : data.giftTheme === 'christmas' ? `
           <div style="background: #dc2626; padding: 6px; border-radius: 6px; text-align: center; margin-bottom: 15px;">
             <span style="color: #ffffff; font-size: 14px; font-weight: 700; letter-spacing: 1px;">🎄 MERRY CHRISTMAS 🎁</span>
           </div>
-          <h2 style="color: #dc2626; text-align: center; font-size: 28px; margin-bottom: 10px;">🎁 A Special Christmas Gift For You! 🎄</h2>
+          <h2 style="color: #dc2626; text-align: center; font-size: 28px; margin-bottom: 10px;">🎁 You've Been Gifted PetPort — A Year of Pawsitivity!</h2>
+          <p style="text-align: center; color: #991b1b; font-size: 16px; margin-bottom: 10px;">The App that gives your pet a voice for life!!</p>
         ` : data.giftTheme === 'birthday' ? `
           <div style="background: #8b5cf6; padding: 6px; border-radius: 6px; text-align: center; margin-bottom: 15px;">
             <span style="color: #ffffff; font-size: 14px; font-weight: 700; letter-spacing: 1px;">🎂 HAPPY BIRTHDAY 🎉</span>
           </div>
-          <h2 style="color: #8b5cf6; text-align: center; font-size: 28px; margin-bottom: 10px;">🎂 A Birthday Gift Just For You! 🎉</h2>
+          <h2 style="color: #8b5cf6; text-align: center; font-size: 28px; margin-bottom: 10px;">🎂 You've Been Gifted PetPort — A Year of Pawsitivity!</h2>
+          <p style="text-align: center; color: #6b21a8; font-size: 16px; margin-bottom: 10px;">The App that gives your pet a voice for life!!</p>
         ` : data.giftTheme === 'holiday' ? `
           <div style="background: #ea580c; padding: 6px; border-radius: 6px; text-align: center; margin-bottom: 15px;">
             <span style="color: #ffffff; font-size: 14px; font-weight: 700; letter-spacing: 1px;">🎊 HAPPY HOLIDAYS 🎁</span>
           </div>
-          <h2 style="color: #ea580c; text-align: center; font-size: 28px; margin-bottom: 10px;">🎁 A Special Holiday Gift! 🎊</h2>
+          <h2 style="color: #ea580c; text-align: center; font-size: 28px; margin-bottom: 10px;">🎁 You've Been Gifted PetPort — A Year of Pawsitivity!</h2>
+          <p style="text-align: center; color: #9a3412; font-size: 16px; margin-bottom: 10px;">The App that gives your pet a voice for life!!</p>
         ` : `
           <h2 style="color: #5691af; text-align: center; font-size: 28px; margin-bottom: 10px;">🎁 You've Received a Gift!</h2>
         `}
@@ -855,14 +859,15 @@ const generateEmailTemplate = (data: EmailRequest) => {
         ` : ''}
         
         <div style="background: ${data.giftTheme === 'adoption' ? 'linear-gradient(135deg, #fdf2f8 0%, #fce7f3 100%)' : data.giftTheme === 'christmas' ? 'linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%)' : data.giftTheme === 'birthday' ? 'linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%)' : data.giftTheme === 'holiday' ? 'linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%)' : 'linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%)'}; border: 2px solid ${data.giftTheme === 'adoption' ? '#ec4899' : data.giftTheme === 'christmas' ? '#dc2626' : data.giftTheme === 'birthday' ? '#8b5cf6' : data.giftTheme === 'holiday' ? '#ea580c' : '#5691af'}; border-radius: 12px; padding: 25px; margin: 25px 0; text-align: center;">
-          <h3 style="margin: 0 0 15px 0; color: ${data.giftTheme === 'adoption' ? '#831843' : data.giftTheme === 'christmas' ? '#991b1b' : data.giftTheme === 'birthday' ? '#6b21a8' : data.giftTheme === 'holiday' ? '#9a3412' : '#0c4a6e'}; font-size: 20px;">🎁 Your Gift Includes</h3>
+          <h3 style="margin: 0 0 15px 0; color: ${data.giftTheme === 'adoption' ? '#831843' : data.giftTheme === 'christmas' ? '#991b1b' : data.giftTheme === 'birthday' ? '#6b21a8' : data.giftTheme === 'holiday' ? '#9a3412' : '#0c4a6e'}; font-size: 20px;">This gift includes:</h3>
           <ul style="text-align: left; color: #475569; margin: 15px auto; padding-left: 20px; line-height: 1.8; max-width: 400px;">
-            <li>1 Full Year of PetPort Premium</li>
-            <li>Unlimited Pet Profiles</li>
-            <li>Secure Document Storage</li>
-            <li>Missing Pet Recovery Tools</li>
-            <li>LiveLinks & QR Code Sharing</li>
-            <li>Emergency Contact System</li>
+            <li>~ Full year of premium membership</li>
+            <li>~ 1 free pet profile</li>
+            <li>~ Beautiful Photo Gallery up to 36 photo</li>
+            <li>~ Medical, Vaccination and Doc record storage</li>
+            <li>~ One-Tap Lost pet flyer generation</li>
+            <li>~ Livelinks for Care Instructions for all caregivers</li>
+            <li>~ Resume Builder for sitters, groomers, lodging and more</li>
           </ul>
         </div>
         

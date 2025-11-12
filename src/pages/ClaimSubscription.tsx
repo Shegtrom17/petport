@@ -7,7 +7,8 @@ import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { MetaTags } from "@/components/MetaTags";
-import { User, Mail, Lock, Eye, EyeOff } from "lucide-react";
+import { GiftClaimInfoModal } from "@/components/GiftClaimInfoModal";
+import { User, Mail, Lock, Eye, EyeOff, Gift } from "lucide-react";
 
 export default function ClaimSubscription() {
   const navigate = useNavigate();
@@ -20,6 +21,7 @@ export default function ClaimSubscription() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [showInfoModal, setShowInfoModal] = useState(false);
   const [isCreatingAccount, setIsCreatingAccount] = useState(false);
 
   useEffect(() => {
@@ -122,6 +124,31 @@ export default function ClaimSubscription() {
           </p>
         </CardHeader>
         <CardContent>
+          {/* Gift Value Banner */}
+          <div className="mb-6 p-4 bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg border-2 border-[#5691af]/30">
+            <div className="flex items-center justify-between mb-2">
+              <h3 className="text-lg font-bold text-[#5691af] flex items-center gap-2">
+                <Gift className="h-5 w-5" />
+                You're Receiving Premium Access
+              </h3>
+              <span className="text-sm font-semibold text-green-600">$14.99 Value</span>
+            </div>
+            <ul className="text-sm text-gray-700 space-y-1 mb-3">
+              <li>✓ Full year of premium features</li>
+              <li>✓ Photo gallery with 36 photos</li>
+              <li>✓ Lost pet tools & LiveLinks</li>
+              <li>✓ Resume builder & medical records</li>
+            </ul>
+            <Button 
+              type="button"
+              variant="outline" 
+              onClick={() => setShowInfoModal(true)}
+              className="w-full text-[#5691af] border-[#5691af] hover:bg-[#5691af] hover:text-white"
+            >
+              📚 See Full Feature List & Learn More
+            </Button>
+          </div>
+
           <form onSubmit={handleAccountSetup} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="email" className="flex items-center gap-2 text-[#5691af]">
@@ -219,8 +246,50 @@ export default function ClaimSubscription() {
               </button>
             </p>
           </div>
+
+          {/* Educational Links Section */}
+          <div className="mt-6 pt-4 border-t border-gray-200">
+            <p className="text-sm text-gray-600 text-center mb-3">
+              Want to explore PetPort first?
+            </p>
+            <div className="flex flex-col gap-2">
+              <a 
+                href="/podcast" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="text-sm text-[#5691af] hover:underline text-center flex items-center justify-center gap-1"
+              >
+                🎧 Listen to Our Podcast (opens in new tab) →
+              </a>
+              <a 
+                href="/demos" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="text-sm text-[#5691af] hover:underline text-center flex items-center justify-center gap-1"
+              >
+                🎬 Watch Feature Demos (opens in new tab) →
+              </a>
+              <a 
+                href="/learn" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="text-sm text-[#5691af] hover:underline text-center flex items-center justify-center gap-1"
+              >
+                📖 Read Success Stories (opens in new tab) →
+              </a>
+            </div>
+            <p className="text-xs text-gray-500 text-center mt-2">
+              Don't worry - this claim page will stay open!
+            </p>
+          </div>
         </CardContent>
       </Card>
+
+      {/* Gift Info Modal */}
+      <GiftClaimInfoModal 
+        isOpen={showInfoModal}
+        onClose={() => setShowInfoModal(false)}
+      />
     </div>
   );
 }

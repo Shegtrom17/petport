@@ -1128,11 +1128,16 @@ const generateEmailTemplate = (data: EmailRequest) => {
           
           ${template.content}
           
-          ${type !== 'transfer_completed_sender' && type !== 'gift_purchase_confirmation' && type !== 'gift_renewal_reminder' && type !== 'gift_expired' ? `
+          ${type !== 'transfer_completed_sender' && type !== 'gift_purchase_confirmation' ? `
           <div style="text-align: center; margin: 30px 0;">
             <a href="${(() => {
               // Determine the correct button URL based on email type
               const baseUrl = Deno.env.get("APP_ORIGIN") || "https://petport.app";
+              
+              // For gift renewal and expired, go to billing page
+              if (type === 'gift_renewal_reminder' || type === 'gift_expired') {
+                return `${baseUrl}/billing`;
+              }
               
               // For gift notification, go to claim page with gift code
               if (type === 'gift_notification') {
@@ -1164,6 +1169,8 @@ const generateEmailTemplate = (data: EmailRequest) => {
             })()} " 
                style="display: inline-block; background: linear-gradient(135deg, #5691af 0%, #4a7c95 100%); color: white; text-decoration: none; padding: 15px 30px; border-radius: 8px; font-weight: bold; font-size: 16px;">
                ${isDocumentShare ? '📄 View Document' : 
+                  type === 'gift_renewal_reminder' ? '🔄 Renew My Subscription' :
+                  type === 'gift_expired' ? '✅ Reactivate My Account' :
                   type === 'gift_notification' ? '🎁 Claim Your Gift' :
                   type === 'gift_activated' ? '🐾 Add Your First Pet' :
                   type === 'review_request' ? `📝 Leave a Review for ${petName}` :

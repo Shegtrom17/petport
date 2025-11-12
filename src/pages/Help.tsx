@@ -164,6 +164,16 @@ const Help = () => {
       id: "cancel-subscription",
       question: "Can I cancel my subscription?",
       answer: "Yes, you can cancel anytime with no penalties or fees. Cancel during your free trial and you won't be charged at all. After your trial, you can cancel from Profile → Billing & Add-ons or through the Stripe Customer Portal. Your access continues until the end of your current billing period. See our cancellation policy in the Terms of Service for full details."
+    },
+    {
+      id: "gift-subscription-expiration",
+      question: "What happens when my gift subscription expires?",
+      answer: "When your one-year gift subscription ends, you'll have the option to continue with PetPort or let your subscription expire. We'll send you a reminder email 30 days before your gift year ends, giving you plenty of time to decide. If you choose to continue, you can select either a monthly plan ($1.99/month) or yearly plan ($14.99/year) from your billing page. If you don't renew, your account will remain accessible in read-only mode for 30 days, allowing you to download your pet's information, photos, and documents before they're archived. You can manage your subscription renewal anytime from Profile → Billing & Add-ons."
+    },
+    {
+      id: "gift-renewal-process",
+      question: "How do I renew my subscription after receiving it as a gift?",
+      answer: "Renewing after your gift year is simple! Go to Profile → Billing & Add-ons and select either the monthly ($1.99/month) or yearly ($14.99/year) subscription plan. You can add your payment method and choose your preferred plan at any time before your gift expires. We recommend setting up your renewal at least a week before your gift year ends to ensure uninterrupted access. If you have additional pets on your account, those add-ons ($3.99/year per pet) will also need to be renewed. You'll receive reminder emails 30 days and 7 days before your gift subscription expires."
     }
   ];
 

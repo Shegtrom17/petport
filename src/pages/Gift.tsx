@@ -9,12 +9,13 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Calendar as CalendarComponent } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Loader2, Gift as GiftIcon, Check, X, Heart, Shield, Image, Users, MapPin, FileText, Calendar as CalendarIcon, Home, Sparkles, ChevronRight, Menu } from "lucide-react";
+import { Loader2, Gift as GiftIcon, Check, X, Heart, Shield, Image, Users, MapPin, FileText, Calendar as CalendarIcon, Home, Sparkles, ChevronRight, Menu, Eye } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/context/AuthContext";
 import { MetaTags } from "@/components/MetaTags";
 import { PublicNavigationMenu } from "@/components/PublicNavigationMenu";
 import { AppShareButton } from "@/components/AppShareButton";
+import { GiftEmailPreviewModal } from "@/components/GiftEmailPreviewModal";
 import { 
   Breadcrumb,
   BreadcrumbItem,
@@ -31,6 +32,7 @@ const Gift = () => {
   const { session } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
+  const [showPreviewModal, setShowPreviewModal] = useState(false);
   const [formData, setFormData] = useState({
     recipientEmail: "",
     senderName: "",
@@ -804,6 +806,23 @@ const Gift = () => {
                           <div className="text-xs text-muted-foreground">Hearts & home</div>
                         </button>
                       </div>
+                      
+                      {/* Preview Email Button */}
+                      <Button
+                        type="button"
+                        variant="outline"
+                        className="w-full mt-3"
+                        onClick={() => {
+                          if (!formData.recipientEmail || !formData.recipientEmail.includes("@")) {
+                            toast.error("Please enter a recipient email first");
+                            return;
+                          }
+                          setShowPreviewModal(true);
+                        }}
+                      >
+                        <Eye className="h-4 w-4 mr-2" />
+                        Preview Gift Email
+                      </Button>
                     </div>
 
                     <div className="space-y-3">
@@ -975,6 +994,22 @@ const Gift = () => {
           </section>
         </div>
       </div>
+
+      {/* Gift Email Preview Modal */}
+      <GiftEmailPreviewModal
+        isOpen={showPreviewModal}
+        onClose={() => setShowPreviewModal(false)}
+        onProceedToCheckout={() => {
+          setShowPreviewModal(false);
+          handleSubmit(new Event('submit') as any);
+        }}
+        recipientEmail={formData.recipientEmail}
+        senderName={formData.senderName}
+        giftMessage={formData.giftMessage}
+        scheduledDate={scheduledDate}
+        additionalPets={additionalPets}
+        theme={selectedTheme}
+      />
     </>
   );
 };

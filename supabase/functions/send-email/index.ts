@@ -858,6 +858,13 @@ const generateEmailTemplate = (data: EmailRequest) => {
           </div>
         ` : ''}
         
+        <!-- First CTA Button - Top -->
+        <div style="text-align: center; margin: 30px 0;">
+          <a href="${data.redemptionLink}" style="display: inline-block; background: ${data.giftTheme === 'adoption' ? '#ec4899' : data.giftTheme === 'christmas' ? '#dc2626' : data.giftTheme === 'birthday' ? '#8b5cf6' : data.giftTheme === 'holiday' ? '#ea580c' : '#5691af'}; color: #ffffff; text-decoration: none; padding: 18px 45px; border-radius: 8px; font-size: 20px; font-weight: bold; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
+            🎁 Claim Your Gift Now
+          </a>
+        </div>
+        
         <div style="background: ${data.giftTheme === 'adoption' ? 'linear-gradient(135deg, #fdf2f8 0%, #fce7f3 100%)' : data.giftTheme === 'christmas' ? 'linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%)' : data.giftTheme === 'birthday' ? 'linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%)' : data.giftTheme === 'holiday' ? 'linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%)' : 'linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%)'}; border: 2px solid ${data.giftTheme === 'adoption' ? '#ec4899' : data.giftTheme === 'christmas' ? '#dc2626' : data.giftTheme === 'birthday' ? '#8b5cf6' : data.giftTheme === 'holiday' ? '#ea580c' : '#5691af'}; border-radius: 12px; padding: 25px; margin: 25px 0; text-align: center;">
           <h3 style="margin: 0 0 15px 0; color: ${data.giftTheme === 'adoption' ? '#831843' : data.giftTheme === 'christmas' ? '#991b1b' : data.giftTheme === 'birthday' ? '#6b21a8' : data.giftTheme === 'holiday' ? '#9a3412' : '#0c4a6e'}; font-size: 20px;">This gift includes:</h3>
           <ul style="text-align: left; color: #475569; margin: 15px auto; padding-left: 20px; line-height: 1.8; max-width: 400px;">
@@ -871,12 +878,30 @@ const generateEmailTemplate = (data: EmailRequest) => {
           </ul>
         </div>
         
+        <!-- Second CTA Button - Middle -->
+        <div style="text-align: center; margin: 30px 0;">
+          <a href="${data.redemptionLink}" style="display: inline-block; background: ${data.giftTheme === 'adoption' ? '#ec4899' : data.giftTheme === 'christmas' ? '#dc2626' : data.giftTheme === 'birthday' ? '#8b5cf6' : data.giftTheme === 'holiday' ? '#ea580c' : '#5691af'}; color: #ffffff; text-decoration: none; padding: 18px 45px; border-radius: 8px; font-size: 20px; font-weight: bold; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
+            🎁 Claim Your Gift Now
+          </a>
+        </div>
+        
         <div style="background: #fef3c7; border: 2px solid #f59e0b; border-radius: 8px; padding: 20px; margin: 20px 0;">
-          <p style="margin: 0; color: #92400e; line-height: 1.7; font-size: 16px;">
+          <p style="margin: 0 0 15px 0; color: #92400e; line-height: 1.7; font-size: 16px;">
             <strong>📋 Your Gift Code:</strong> <span style="font-family: monospace; font-size: 18px; font-weight: 700;">${data.giftCode}</span><br>
-            <strong>⏰ Valid Until:</strong> ${data.expiresAt}<br>
-            <em style="font-size: 14px;">Redeem your gift now to activate your membership!</em>
+            <strong>⏰ Valid Until:</strong> ${data.expiresAt}
           </p>
+          <div style="text-align: center;">
+            <a href="${data.redemptionLink}" style="display: inline-block; background: #f59e0b; color: white; text-decoration: none; padding: 12px 30px; border-radius: 6px; font-size: 16px; font-weight: 600;">
+              ✨ Redeem Gift Code
+            </a>
+          </div>
+        </div>
+        
+        <!-- Third CTA Button - Bottom -->
+        <div style="text-align: center; margin: 30px 0;">
+          <a href="${data.redemptionLink}" style="display: inline-block; background: ${data.giftTheme === 'adoption' ? '#ec4899' : data.giftTheme === 'christmas' ? '#dc2626' : data.giftTheme === 'birthday' ? '#8b5cf6' : data.giftTheme === 'holiday' ? '#ea580c' : '#5691af'}; color: #ffffff; text-decoration: none; padding: 18px 45px; border-radius: 8px; font-size: 20px; font-weight: bold; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
+            🎁 Claim Your Gift Now
+          </a>
         </div>
         
         <div style="text-align: center; margin: 25px 0;">
@@ -886,6 +911,9 @@ const generateEmailTemplate = (data: EmailRequest) => {
               data.giftTheme === 'birthday' ? '🎂 Happy Birthday from PetPort! 🎉' :
               data.giftTheme === 'holiday' ? '🎊 Happy Holidays from PetPort! 🎁' :
               '🎁 From PetPort with Love! 🐾'}
+          </p>
+          <p style="color: #94a3b8; font-size: 13px; margin: 15px 0 5px 0;">
+            Having trouble? <a href="${data.redemptionLink}" style="color: #5691af; text-decoration: underline;">Click here to claim your gift</a>
           </p>
         </div>
       `

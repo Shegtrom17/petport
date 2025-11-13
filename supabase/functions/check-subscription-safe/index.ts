@@ -89,19 +89,23 @@ serve(async (req) => {
       }
 
       // Otherwise keep the prior behavior (mark as inactive)
-      await supabase.from("subscribers").upsert(
-        {
-          email: user.email,
-          user_id: user.id,
-          stripe_customer_id: null,
-          subscribed: false,
-          status: "inactive" as any,
-          subscription_tier: null,
-          subscription_end: null,
-          updated_at: new Date().toISOString(),
-        },
-        { onConflict: "email" }
-      );
+      // CRITICAL: Do NOT set stripe_customer_id to null - preserve existing value
+      const inactiveUpdate: any = {
+        email: user.email,
+        user_id: user.id,
+        subscribed: false,
+        status: "inactive" as any,
+        subscription_tier: null,
+        subscription_end: null,
+        updated_at: new Date().toISOString(),
+      };
+      
+      // Only set stripe_customer_id to null if it doesn't already exist
+      if (!existingSub?.stripe_customer_id) {
+        inactiveUpdate.stripe_customer_id = null;
+      }
+      
+      await supabase.from("subscribers").upsert(inactiveUpdate, { onConflict: "email" });
 
       const responseBody = JSON.stringify({ subscribed: false });
       return new Response(responseBody, { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 200 });
@@ -196,24 +200,43 @@ serve(async (req) => {
       }
     }
 
-    // Persist
-    await supabase.from("subscribers").upsert(
-      {
-        email: user.email,
-        user_id: user.id,
-        stripe_customer_id: customerId,
-        subscribed: hasActiveSub,
-        status: status as any,
-        subscription_tier: subscriptionTier,
-        subscription_end: subscriptionEnd,
-        additional_pets: additionalPets,
-        pet_limit: petLimit,
-        grace_period_end: gracePeriodEnd,
-        payment_failed_at: paymentFailedAt,
-        updated_at: new Date().toISOString(),
-      },
-      { onConflict: "email" }
-    );
+    // Persist - CRITICAL: Protect existing stripe_customer_id from NULL overwrites
+    const updatePayload: any = {
+      email: user.email,
+      user_id: user.id,
+      subscribed: hasActiveSub,
+      status: status as any,
+      subscription_tier: subscriptionTier,
+      subscription_end: subscriptionEnd,
+      additional_pets: additionalPets,
+      pet_limit: petLimit,
+      grace_period_end: gracePeriodEnd,
+      payment_failed_at: paymentFailedAt,
+      updated_at: new Date().toISOString(),
+    };
+    
+    // SAFEGUARD: Only update stripe_customer_id if we have a valid value
+    // OR if there's no existing value (don't overwrite with null)
+    if (customerId) {
+      // We have a valid Stripe customer ID - safe to update
+      updatePayload.stripe_customer_id = customerId;
+      log("Updating stripe_customer_id", { 
+        customerId, 
+        hadExisting: !!existingSub?.stripe_customer_id 
+      });
+    } else if (!existingSub?.stripe_customer_id) {
+      // No existing ID and no new ID - can safely set to null for new records
+      updatePayload.stripe_customer_id = null;
+      log("Setting stripe_customer_id to null for new record");
+    } else {
+      // CRITICAL: We have an existing ID but no new ID - preserve existing
+      log("⚠️ PROTECTED: Preserving existing stripe_customer_id", { 
+        existingId: existingSub.stripe_customer_id 
+      });
+      // Don't include stripe_customer_id in update to preserve existing value
+    }
+    
+    await supabase.from("subscribers").upsert(updatePayload, { onConflict: "email" });
 
     const responseBody = JSON.stringify({
       subscribed: hasActiveSub,

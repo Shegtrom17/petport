@@ -5,6 +5,7 @@ import { useAuth } from "@/context/AuthContext";
 import { PWALayout } from "@/components/PWALayout";
 import { ReferralCard } from "@/components/ReferralCard";
 import { ConnectStripeButton } from "@/components/ConnectStripeButton";
+import { ReferralPayoutsAdmin } from "@/components/admin/ReferralPayoutsAdmin";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Table,
@@ -46,12 +47,31 @@ export default function Referrals() {
   const [referrals, setReferrals] = useState<Referral[]>([]);
   const [payoutInfo, setPayoutInfo] = useState<UserPayout | null>(null);
   const [connectingStripe, setConnectingStripe] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
     if (!user) return;
     loadReferralData();
     checkStripeStatus();
+    checkAdminStatus();
   }, [user]);
+
+  const checkAdminStatus = async () => {
+    if (!user) return;
+    
+    try {
+      const { data, error } = await supabase.rpc('has_role', {
+        _user_id: user.id,
+        _role: 'admin'
+      });
+      
+      if (!error && data) {
+        setIsAdmin(true);
+      }
+    } catch (error) {
+      console.error('Error checking admin status:', error);
+    }
+  };
 
   // Check for Stripe Connect redirect
   useEffect(() => {
@@ -300,6 +320,13 @@ export default function Referrals() {
             </p>
           </div>
         </div>
+
+        {/* Admin Payout Controls */}
+        {isAdmin && (
+          <div className="mb-6">
+            <ReferralPayoutsAdmin />
+          </div>
+        )}
 
         {/* Referral Card */}
         <ReferralCard

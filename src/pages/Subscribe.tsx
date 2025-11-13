@@ -17,11 +17,19 @@ export default function Subscribe() {
   const [loadingPortal, setLoadingPortal] = useState(false);
   const [processingTransfer, setProcessingTransfer] = useState(false);
 
-  // Extract transfer token from URL params
+  // Extract transfer token and referral code from URL params
   const searchParams = new URLSearchParams(location.search);
   const transferToken = searchParams.get('transfer_token');
   const upgrade = searchParams.get('upgrade');
-  const referralCode = searchParams.get('ref');
+  
+  // Get referral code from URL or localStorage
+  const [referralCode, setReferralCode] = useState<string | undefined>();
+
+  useEffect(() => {
+    const urlCode = searchParams.get('ref');
+    const storedCode = localStorage.getItem('petport_referral');
+    setReferralCode(urlCode || storedCode || undefined);
+  }, [searchParams]);
 
   const openPortal = async () => {
     setLoadingPortal(true);
@@ -140,7 +148,7 @@ export default function Subscribe() {
             </div>
           )}
         </header>
-        <PricingSection context="profile" referralCode={referralCode || undefined} />
+        <PricingSection context="profile" referralCode={referralCode} />
         <section aria-labelledby="cancellation-policy" className="mt-6 space-y-3">
           <h2 id="cancellation-policy" className="text-lg font-medium">Cancellation Policy</h2>
           <p className="text-sm text-muted-foreground">

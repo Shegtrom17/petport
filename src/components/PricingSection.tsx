@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { CreditCard, Crown, Plus } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { featureFlags } from "@/config/featureFlags";
 
@@ -15,12 +15,24 @@ interface PricingSectionProps {
   referralCode?: string;
 }
 
-export const PricingSection: React.FC<PricingSectionProps> = ({ context = "landing", referralCode }) => {
+export const PricingSection: React.FC<PricingSectionProps> = ({ context = "landing", referralCode: propReferralCode }) => {
   const { toast } = useToast();
   const navigate = useNavigate();
   const [selectedQuantity, setSelectedQuantity] = useState(1);
   const [additionalPetsForCheckout, setAdditionalPetsForCheckout] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
+
+  // Get referral code from prop, URL, or localStorage
+  const [referralCode, setReferralCode] = useState<string | undefined>(propReferralCode);
+
+  useEffect(() => {
+    if (!propReferralCode) {
+      const urlParams = new URLSearchParams(window.location.search);
+      const urlCode = urlParams.get('ref');
+      const storedCode = localStorage.getItem('petport_referral');
+      setReferralCode(urlCode || storedCode || undefined);
+    }
+  }, [propReferralCode]);
 
   const startCheckout = async (plan: "monthly" | "yearly") => {
     try {

@@ -74,13 +74,16 @@ serve(async (req) => {
 
     // Add additional pets as separate recurring line item if > 0
     if (additionalPets > 0) {
-      const additionalPetsPrice = Deno.env.get("STRIPE_PRICE_ADDITIONAL_PETS");
-      if (!additionalPetsPrice) {
-        console.error('[PUBLIC-CREATE-CHECKOUT] Missing STRIPE_PRICE_ADDITIONAL_PETS secret');
-        throw new Error("Missing STRIPE_PRICE_ADDITIONAL_PETS environment variable");
-      }
       lineItems.push({
-        price: additionalPetsPrice,
+        price_data: {
+          currency: "usd",
+          product_data: {
+            name: "Additional Pet Accounts",
+            description: `${additionalPets} additional pet account${additionalPets > 1 ? 's' : ''}`,
+          },
+          unit_amount: 399, // $3.99 per year
+          recurring: { interval: "year" },
+        },
         quantity: additionalPets,
       });
     }

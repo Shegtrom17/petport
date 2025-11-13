@@ -94,7 +94,7 @@ serve(async (req) => {
 
     console.log('[PUBLIC-CREATE-CHECKOUT] Creating Stripe session with discounts:', discounts);
     
-    const session = await stripe.checkout.sessions.create({
+    const sessionParams: any = {
       mode: "subscription",
       line_items: lineItems,
       payment_method_collection: "always",
@@ -105,11 +105,18 @@ serve(async (req) => {
           additional_pets: additionalPets.toString(),
         },
       },
-      discounts,
       success_url: `${origin}/post-checkout?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${origin}/subscribe`,
-      allow_promotion_codes: true,
-    });
+    };
+
+    if (discounts) {
+      // Can't set allow_promotion_codes when discounts are provided
+      sessionParams.discounts = discounts;
+    } else {
+      sessionParams.allow_promotion_codes = true;
+    }
+
+    const session = await stripe.checkout.sessions.create(sessionParams);
     
     if (referral_code) {
       console.log('[PUBLIC-CREATE-CHECKOUT] Referral code attached to session:', referral_code);

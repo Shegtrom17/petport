@@ -23,7 +23,7 @@ export const ReferralCard = ({
   totalEarnings,
 }: ReferralCardProps) => {
   const [copied, setCopied] = useState(false);
-  const referralLink = `https://petport.app/?ref=${referralCode}`;
+  const referralLink = `https://petport.app?ref=${referralCode}`;
 
   const handleCopyLink = async () => {
     try {
@@ -44,8 +44,6 @@ export const ReferralCard = ({
   };
 
   const shareMessage = `🐾 Keep your pet's info safe with PetPort! Get 10% off yearly plans when you join with my link: ${referralLink}`;
-
-  // Native share removed as requested; using explicit channels only (Email, SMS, Facebook).
 
   const handleEmailShare = () => {
     const subject = encodeURIComponent("Try PetPort - Get 10% Off!");

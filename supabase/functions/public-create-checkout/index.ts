@@ -15,10 +15,15 @@ serve(async (req) => {
 
   try {
     const stripeSecret = Deno.env.get("STRIPE_SECRET_KEY");
-    if (!stripeSecret) throw new Error("Missing STRIPE_SECRET_KEY");
+    if (!stripeSecret) {
+      console.error('[PUBLIC-CREATE-CHECKOUT] Missing STRIPE_SECRET_KEY');
+      throw new Error("Missing STRIPE_SECRET_KEY");
+    }
     const stripe = new Stripe(stripeSecret, { apiVersion: "2023-10-16" });
 
     const { plan, referral_code, additional_pets } = await req.json();
+    console.log('[PUBLIC-CREATE-CHECKOUT] Request:', { plan, referral_code, additional_pets });
+    
     if (plan !== "monthly" && plan !== "yearly") {
       const errorBody = JSON.stringify({ error: "Invalid plan" });
       return new Response(errorBody, { 
@@ -76,6 +81,7 @@ serve(async (req) => {
     if (additionalPets > 0) {
       const additionalPetsPrice = Deno.env.get("STRIPE_PRICE_ADDITIONAL_PETS");
       if (!additionalPetsPrice) {
+        console.error('[PUBLIC-CREATE-CHECKOUT] Missing STRIPE_PRICE_ADDITIONAL_PETS secret');
         throw new Error("Missing STRIPE_PRICE_ADDITIONAL_PETS environment variable");
       }
       lineItems.push({
@@ -83,7 +89,11 @@ serve(async (req) => {
         quantity: additionalPets,
       });
     }
+    
+    console.log('[PUBLIC-CREATE-CHECKOUT] Line items:', JSON.stringify(lineItems));
 
+    console.log('[PUBLIC-CREATE-CHECKOUT] Creating Stripe session with discounts:', discounts);
+    
     const session = await stripe.checkout.sessions.create({
       mode: "subscription",
       line_items: lineItems,
@@ -115,6 +125,7 @@ serve(async (req) => {
       status: 200,
     });
   } catch (error: any) {
+    console.error('[PUBLIC-CREATE-CHECKOUT] Error:', error.message, error.stack);
     const errorBody = JSON.stringify({ error: error?.message || "Unexpected error" });
     return new Response(errorBody, {
       headers: { 

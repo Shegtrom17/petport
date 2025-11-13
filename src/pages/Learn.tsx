@@ -7,6 +7,7 @@ import { PricingSection } from "@/components/PricingSection";
 import { ArrowRight, Menu } from "lucide-react";
 import { PublicNavigationMenu } from "@/components/PublicNavigationMenu";
 import { PodcastBanner } from "@/components/PodcastBanner";
+import { useReferralCode } from "@/hooks/useReferralCode";
 import createProfileScreenshot from "@/assets/create-profile-screenshot.png";
 import documentUploadScreenshot from "@/assets/document-upload-screenshot.png";
 import resumeDetailsScreenshot from "@/assets/resume-details-screenshot.png";
@@ -15,6 +16,9 @@ import referralProgramHero from "@/assets/referral-program-hero.png";
 
 export default function Learn() {
   const [showMobileMenu, setShowMobileMenu] = useState(false);
+  
+  // Capture referral codes from URL
+  useReferralCode();
 
   return <div className="min-h-screen bg-white">
       <MetaTags 

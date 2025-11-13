@@ -12,38 +12,33 @@ import { Sparkles, ArrowRight, Heart, Menu } from "lucide-react";
 import { PublicNavigationMenu } from "@/components/PublicNavigationMenu";
 import { PodcastBanner } from "@/components/PodcastBanner";
 import { HolidayGiftSection } from "@/components/HolidayGiftSection";
+import { useReferralCode } from "@/hooks/useReferralCode";
 import createProfileScreenshot from "@/assets/create-profile-screenshot.png";
 import documentUploadScreenshot from "@/assets/document-upload-screenshot.png";
 import resumeDetailsScreenshot from "@/assets/resume-details-screenshot.png";
 import shareInstructionsScreenshot from "@/assets/share-instructions-screenshot.png";
+
 export default function Landing() {
-  const {
-    user
-  } = useAuth();
+  const { user } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const [showSharePrompt, setShowSharePrompt] = useState(false);
   const [publicPets, setPublicPets] = useState<any[]>([]);
   const [hasReferralCode, setHasReferralCode] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
+  const { getReferralCode } = useReferralCode();
 
   // Detect if we're in preview environment
   const isPreview = window.location.hostname.includes('lovableproject.com') || window.location.hostname.includes('lovable.app');
+  
   useEffect(() => {
     const urlParams = new URLSearchParams(location.search);
 
-    // Capture referral code
-    const refCode = urlParams.get('ref');
-    if (refCode) {
-      localStorage.setItem('petport_referral', refCode);
+    // Check for referral code (captured by useReferralCode hook)
+    if (getReferralCode()) {
       setHasReferralCode(true);
-      console.log('Referral code captured:', refCode);
     }
 
-    // Check for existing referral code
-    if (localStorage.getItem('petport_referral')) {
-      setHasReferralCode(true);
-    }
     const isShare = urlParams.get("share") === "true";
     if (isShare) {
       setShowSharePrompt(true);
@@ -51,7 +46,7 @@ export default function Landing() {
 
     // Landing page always stays on "/" - no auto-redirects
     // Users manually navigate to /app via "Open App" button
-  }, [location.search]);
+  }, [location.search, getReferralCode]);
 
   // Scroll to section if hash present (e.g., /#pricing)
   useEffect(() => {

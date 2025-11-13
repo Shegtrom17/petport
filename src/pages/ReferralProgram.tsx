@@ -5,10 +5,14 @@ import { AzureButton } from "@/components/ui/azure-button";
 import { MetaTags } from "@/components/MetaTags";
 import { PricingSection } from "@/components/PricingSection";
 import { PublicNavigationMenu } from "@/components/PublicNavigationMenu";
+import { useReferralCode } from "@/hooks/useReferralCode";
 
 export default function ReferralProgram() {
   const navigate = useNavigate();
   const [showMobileMenu, setShowMobileMenu] = useState(false);
+  
+  // Capture referral codes from URL
+  useReferralCode();
 
   return <>
       <MetaTags title="Referral Program - Earn $2 Per Friend | PetPort" description="Join PetPort's referral program and earn $2 for every friend who subscribes to a yearly plan. Get paid via Stripe Connect. Start earning today!" url={window.location.origin + "/referral-program"} type="website" />

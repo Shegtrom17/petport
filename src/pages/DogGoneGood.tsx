@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { MetaTags } from "@/components/MetaTags";
 import { Sparkles, Download, Share2, Wand2, Eye, X, Heart, FileText, AlertTriangle, Camera, Menu, Facebook, Home, HelpCircle } from "lucide-react";
 import { toast } from "sonner";
+import { useReferralCode } from "@/hooks/useReferralCode";
 import {
   Dialog,
   DialogContent,
@@ -78,6 +79,10 @@ const horseOptions = {
 
 export default function DogGoneGood() {
   const navigate = useNavigate();
+  
+  // Capture referral codes from URL
+  useReferralCode();
+  
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [species, setSpecies] = useState<Species>('dog');
   const [theme, setTheme] = useState<ThemeId>('patriotic');

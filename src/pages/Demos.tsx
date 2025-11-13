@@ -3,6 +3,7 @@ import { useState } from "react";
 import { MetaTags } from "@/components/MetaTags";
 import { Button } from "@/components/ui/button";
 import { PodcastBanner } from "@/components/PodcastBanner";
+import { useReferralCode } from "@/hooks/useReferralCode";
 import { 
   Sparkles, 
   FileText, 
@@ -30,6 +31,9 @@ import {
 export default function Demos() {
   const navigate = useNavigate();
   const [showMobileMenu, setShowMobileMenu] = useState(false);
+  
+  // Capture referral codes from URL
+  useReferralCode();
 
   const liveLinks = [
     {

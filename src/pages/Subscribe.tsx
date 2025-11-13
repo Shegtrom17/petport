@@ -1,5 +1,6 @@
 import { MetaTags } from "@/components/MetaTags";
 import PricingSection from "@/components/PricingSection";
+import ReferralBanner from "@/components/ReferralBanner";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/context/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -122,6 +123,9 @@ export default function Subscribe() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 flex items-center justify-center p-4">
       <MetaTags title="Complete Subscription - PetPort" description="Subscribe to continue using PetPort." url={window.location.href} noindex={true} />
+      
+      <ReferralBanner />
+
       <div className="w-full max-w-3xl bg-white/90 backdrop-blur-sm rounded-xl shadow-lg p-6 relative">
         <Button
           variant="ghost"

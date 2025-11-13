@@ -166,6 +166,9 @@ verify_jwt = false
 [functions.check-data-corruption]
 verify_jwt = false
 
+[functions.test-corruption-safeguards]
+verify_jwt = false
+
 [functions.check-subscription-safe]
 verify_jwt = true
 

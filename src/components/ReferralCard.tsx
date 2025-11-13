@@ -130,6 +130,11 @@ export const ReferralCard = ({
           <p className="text-xs text-muted-foreground">
             🎁 Earn $2.00 for every Yearly Subscriber. Subscribers receive 10% discount.
           </p>
+          <div className="mt-2 p-2 bg-muted/50 rounded-md border border-border/50">
+            <p className="text-xs text-muted-foreground">
+              ℹ️ Referrals become <span className="font-medium text-foreground">Approved</span> after your friend completes their 7-day trial plus 31 days of active subscription. If they cancel during this period, the referral will not be approved.
+            </p>
+          </div>
         </div>
 
         {/* Stats Grid */}

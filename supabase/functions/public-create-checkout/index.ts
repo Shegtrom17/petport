@@ -87,7 +87,7 @@ serve(async (req) => {
     
     console.log('[PUBLIC-CREATE-CHECKOUT] Line items:', JSON.stringify(lineItems));
 
-    console.log('[PUBLIC-CREATE-CHECKOUT] Creating Stripe session with discounts:', discounts);
+    console.log('[PUBLIC-CREATE-CHECKOUT] Creating Stripe session');
     
     const sessionParams: any = {
       mode: "subscription",

@@ -116,6 +116,9 @@ serve(async (req) => {
       sessionParams.allow_promotion_codes = true;
     }
 
+    console.log('[PUBLIC-CREATE-CHECKOUT] Session params keys:', Object.keys(sessionParams));
+    console.log('[PUBLIC-CREATE-CHECKOUT] allow_promotion_codes present?', 'allow_promotion_codes' in sessionParams, 'discounts present?', 'discounts' in sessionParams);
+
     const session = await stripe.checkout.sessions.create(sessionParams);
     
     if (referral_code) {

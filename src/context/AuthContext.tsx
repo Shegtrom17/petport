@@ -93,7 +93,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         if (session?.user) {
           setTimeout(async () => {
             try {
-              await supabase.functions.invoke('check-subscription');
+              await supabase.functions.invoke('check-subscription-safe');
             } catch (err) {
               console.warn('Auth: check-subscription failed', err);
             }

@@ -49,7 +49,7 @@ export default function Billing() {
   const fetchStatus = async () => {
     setLoading(true);
     try {
-      const { data, error } = await supabase.functions.invoke("check-subscription");
+      const { data, error } = await supabase.functions.invoke("check-subscription-safe");
       if (error) throw error;
       setStatus(data as SubStatus);
     } catch (e: any) {

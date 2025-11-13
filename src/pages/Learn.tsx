@@ -13,6 +13,7 @@ import documentUploadScreenshot from "@/assets/document-upload-screenshot.png";
 import resumeDetailsScreenshot from "@/assets/resume-details-screenshot.png";
 import shareInstructionsScreenshot from "@/assets/share-instructions-screenshot.png";
 import referralProgramHero from "@/assets/referral-program-hero.png";
+import ReferralBanner from "@/components/ReferralBanner";
 
 export default function Learn() {
   const [showMobileMenu, setShowMobileMenu] = useState(false);
@@ -27,6 +28,8 @@ export default function Learn() {
         image="https://pub-a7c2c18b8d6143b9a256105ef44f2da0.r2.dev/OG%20General.png"
         url={window.location.origin + "/learn"} 
       />
+
+      <ReferralBanner />
 
       {/* Schema.org Structured Data for Learn Page */}
       <script type="application/ld+json">

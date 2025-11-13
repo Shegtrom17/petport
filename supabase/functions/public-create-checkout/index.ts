@@ -56,11 +56,6 @@ serve(async (req) => {
 
     const origin = req.headers.get("origin") || "https://petport.app";
 
-    // Apply 10% discount for yearly plans with referral code
-    const discounts = referral_code && plan === "yearly" 
-      ? [{ coupon: "REFERRAL10" }] 
-      : undefined;
-
     // Build line items - base subscription plus optional additional pets
     const lineItems = [
       {
@@ -107,23 +102,10 @@ serve(async (req) => {
       },
       success_url: `${origin}/post-checkout?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${origin}/subscribe`,
+      allow_promotion_codes: true,
     };
 
-    if (discounts) {
-      // Can't set allow_promotion_codes when discounts are provided
-      sessionParams.discounts = discounts;
-    } else {
-      sessionParams.allow_promotion_codes = true;
-    }
-
-    console.log('[PUBLIC-CREATE-CHECKOUT] Session params keys:', Object.keys(sessionParams));
-    console.log('[PUBLIC-CREATE-CHECKOUT] allow_promotion_codes present?', 'allow_promotion_codes' in sessionParams, 'discounts present?', 'discounts' in sessionParams);
-
     const session = await stripe.checkout.sessions.create(sessionParams);
-    
-    if (referral_code) {
-      console.log('[PUBLIC-CREATE-CHECKOUT] Referral code attached to session:', referral_code);
-    }
 
     const responseBody = JSON.stringify({ url: session.url });
     return new Response(responseBody, {

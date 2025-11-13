@@ -11,7 +11,8 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
-import { Copy, Share2, ExternalLink, Gift } from "lucide-react";
+import { Copy, ExternalLink, Gift, Mail, MessageSquare } from "lucide-react";
+import { Facebook } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 
 interface QuickReferralModalProps {
@@ -136,42 +137,26 @@ export const QuickReferralModal = ({ isOpen, onClose }: QuickReferralModalProps)
     }
   };
 
-  const handleShare = async () => {
-    if (!referralLink) return;
+  const shareMessage = `🐾 Keep your pet's info safe with PetPort! Get 10% off yearly plans when you join with my link: ${referralLink}`;
 
-    const shareData = {
-      title: "Join PetPort!",
-      text: "Just found the perfect pet management app, and I mean perfect. PetPort gives our furry friends a voice of life!\n\nI'm blown away by the innovation and the safety features:\n\nSafety & Social Proof (Next-Gen Features)\n\n🐾 LiveLinks for instant pet profiles on the go.\n🐾 One-Tap Lost Pet Flyers (seriously next-gen status!).\n🐾 Sighting Boards for quick community support.\n🐾 Pet Resume Builder: Our pets can receive reviews from sitters/groomers! It's amazing for passing along verified care info and social proof to anyone new.\n\nBeyond the emergency tools. I can store all documents by upload or snap a photo and its a PDF stored in app. Plus, I can sign in from any device, from anywhere. And the best part? It includes Care and Handling for live updates to and from sitters—no more scribbling on paper, I can update instructions 24/7!\n\nIt truly feels like the future of pet care. All accounts are transferable so my companions will have a voice for life!\n\nSee LiveLinks for yourself at PetPort.app and check out the innovation yourself. Use my link to try it:",
-      url: referralLink,
-    };
+  const handleEmailShare = () => {
+    const subject = encodeURIComponent("Try PetPort - Get 10% Off!");
+    const body = encodeURIComponent(shareMessage);
+    window.location.href = `mailto:?subject=${subject}&body=${body}`;
+  };
 
-    if (navigator.share && navigator.canShare(shareData)) {
-      try {
-        // Close modal before opening native share to prevent UI issues
-        onClose();
-        
-        await navigator.share(shareData);
-        
-        // Show success toast after share completes
-        toast({
-          title: "Shared!",
-          description: "Thanks for sharing PetPort!",
-        });
-      } catch (error) {
-        // User cancelled share, ignore
-        if ((error as Error).name !== "AbortError") {
-          console.error("Share failed:", error);
-          toast({
-            title: "Share failed",
-            description: "Please try copying the link instead",
-            variant: "destructive",
-          });
-        }
-      }
-    } else {
-      // Fallback to copy
-      handleCopy();
-    }
+  const handleSMSShare = () => {
+    const message = encodeURIComponent(shareMessage);
+    window.location.href = `sms:?body=${message}`;
+  };
+
+  const handleFacebookShare = () => {
+    const shareUrl = encodeURIComponent(referralLink);
+    window.open(
+      `https://www.facebook.com/sharer/sharer.php?u=${shareUrl}`,
+      "_blank",
+      "noopener,noreferrer"
+    );
   };
 
   const handleViewFullStats = () => {
@@ -207,26 +192,49 @@ export const QuickReferralModal = ({ isOpen, onClose }: QuickReferralModalProps)
                 </p>
               </div>
 
-              {/* Action Buttons */}
-              <div className="flex gap-2">
-                <Button
-                  onClick={handleCopy}
-                  disabled={!referralLink}
-                  variant="azure"
-                  className="flex-1"
-                >
-                  <Copy className="h-4 w-4 mr-2" />
-                  Copy Link
-                </Button>
+              {/* Copy Button */}
               <Button
-                onClick={handleShare}
+                onClick={handleCopy}
                 disabled={!referralLink}
                 variant="azure"
-                className="flex-1"
+                className="w-full"
               >
-                <Share2 className="h-4 w-4 mr-2" />
-                Share
+                <Copy className="h-4 w-4 mr-2" />
+                Copy Link
               </Button>
+
+              {/* Share Buttons */}
+              <div className="flex gap-2">
+                <Button
+                  onClick={handleEmailShare}
+                  disabled={!referralLink}
+                  variant="outline"
+                  size="sm"
+                  className="flex-1"
+                >
+                  <Mail className="h-4 w-4 mr-1" />
+                  Email
+                </Button>
+                <Button
+                  onClick={handleSMSShare}
+                  disabled={!referralLink}
+                  variant="outline"
+                  size="sm"
+                  className="flex-1"
+                >
+                  <MessageSquare className="h-4 w-4 mr-1" />
+                  SMS
+                </Button>
+                <Button
+                  onClick={handleFacebookShare}
+                  disabled={!referralLink}
+                  variant="outline"
+                  size="sm"
+                  className="flex-1"
+                >
+                  <Facebook className="h-4 w-4 mr-1" />
+                  Facebook
+                </Button>
               </div>
 
               {/* View Full Stats Link */}

@@ -54,7 +54,7 @@ export default function Subscribe() {
   // Auto-refresh subscription status on mount/focus; no manual button
   const refreshStatus = async () => {
     try {
-      await supabase.functions.invoke("check-subscription");
+      await supabase.functions.invoke("check-subscription-safe");
       
       // If there's a transfer token, check if we can complete the transfer now
       if (transferToken && user) {

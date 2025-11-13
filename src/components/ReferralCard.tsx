@@ -1,8 +1,9 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Copy, CheckCircle2 } from "lucide-react";
+import { Copy, CheckCircle2, Share2, Mail, MessageSquare } from "lucide-react";
 import { useState } from "react";
 import { toast } from "@/hooks/use-toast";
 import { AzureButton } from "@/components/ui/azure-button";
+import { Button } from "@/components/ui/button";
 
 interface ReferralCardProps {
   referralCode: string;
@@ -42,6 +43,41 @@ export const ReferralCard = ({
     }
   };
 
+  const shareMessage = `🐾 Keep your pet's info safe with PetPort! Get 10% off yearly plans when you join with my link: ${referralLink}`;
+
+  const handleNativeShare = async () => {
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: "Join PetPort - Get 10% Off!",
+          text: shareMessage,
+          url: referralLink,
+        });
+        toast({
+          title: "Shared Successfully!",
+          description: "Thanks for spreading the word about PetPort!",
+        });
+      } catch (err: any) {
+        if (err.name !== 'AbortError') {
+          console.error('Share failed:', err);
+        }
+      }
+    } else {
+      handleCopyLink();
+    }
+  };
+
+  const handleEmailShare = () => {
+    const subject = encodeURIComponent("Try PetPort - Get 10% Off!");
+    const body = encodeURIComponent(shareMessage);
+    window.open(`mailto:?subject=${subject}&body=${body}`, '_blank');
+  };
+
+  const handleSMSShare = () => {
+    const body = encodeURIComponent(shareMessage);
+    window.open(`sms:?&body=${body}`, '_blank');
+  };
+
   return (
     <Card className="w-full">
       <CardHeader>
@@ -49,7 +85,7 @@ export const ReferralCard = ({
       </CardHeader>
       <CardContent className="space-y-6">
         {/* Referral Link Section */}
-        <div className="space-y-2">
+        <div className="space-y-3">
           <label className="text-sm font-medium text-muted-foreground">
             Share this link with friends
           </label>
@@ -74,8 +110,40 @@ export const ReferralCard = ({
               )}
             </AzureButton>
           </div>
+
+          {/* Social Sharing Buttons */}
+          <div className="flex gap-2 flex-wrap">
+            <Button
+              onClick={handleNativeShare}
+              variant="outline"
+              size="sm"
+              className="flex items-center gap-2"
+            >
+              <Share2 className="h-4 w-4" />
+              Share
+            </Button>
+            <Button
+              onClick={handleEmailShare}
+              variant="outline"
+              size="sm"
+              className="flex items-center gap-2"
+            >
+              <Mail className="h-4 w-4" />
+              Email
+            </Button>
+            <Button
+              onClick={handleSMSShare}
+              variant="outline"
+              size="sm"
+              className="flex items-center gap-2"
+            >
+              <MessageSquare className="h-4 w-4" />
+              SMS
+            </Button>
+          </div>
+
           <p className="text-xs text-muted-foreground">
-            Earn $2.00 for every Yearly Subscriber. Subscribers receive 10% discount.
+            🎁 Earn $2.00 for every Yearly Subscriber. Subscribers receive 10% discount.
           </p>
         </div>
 

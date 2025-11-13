@@ -159,3 +159,15 @@ verify_jwt = false
 
 [functions.search-help]
 verify_jwt = false
+
+[functions.send-corruption-alert]
+verify_jwt = false
+
+[functions.check-data-corruption]
+verify_jwt = false
+
+[functions.check-subscription-safe]
+verify_jwt = true
+
+[functions.notify-provider-note]
+verify_jwt = false

@@ -7,6 +7,7 @@ import { PodcastEpisodeCard } from '@/components/PodcastEpisodeCard';
 import { podcastEpisodes } from '@/data/podcastEpisodes';
 import { MetaTags } from '@/components/MetaTags';
 import { PublicNavigationMenu } from '@/components/PublicNavigationMenu';
+import ReferralBanner from '@/components/ReferralBanner';
 import {
   Breadcrumb,
   BreadcrumbList,
@@ -30,6 +31,8 @@ const Podcast = () => {
         image="https://pub-a7c2c18b8d6143b9a256105ef44f2da0.r2.dev/og/resume-og-1mb.png"
         url={window.location.origin + "/podcast"}
       />
+
+      <ReferralBanner />
 
       {/* PodcastSeries Schema for SEO */}
       <script type="application/ld+json">

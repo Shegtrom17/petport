@@ -16,7 +16,8 @@ import { MetaTags } from "@/components/MetaTags";
 import { PublicNavigationMenu } from "@/components/PublicNavigationMenu";
 import { AppShareButton } from "@/components/AppShareButton";
 import { GiftEmailPreviewModal } from "@/components/GiftEmailPreviewModal";
-import { 
+import ReferralBanner from "@/components/ReferralBanner";
+import {
   Breadcrumb,
   BreadcrumbItem,
   BreadcrumbLink,
@@ -305,6 +306,8 @@ const Gift = () => {
         image="https://petport.app/og/general-og.png"
       />
       
+      <ReferralBanner />
+
       {/* Keywords Meta Tag */}
       <meta name="keywords" content={keywords.join(", ")} />
       

@@ -4,7 +4,8 @@ import { MetaTags } from "@/components/MetaTags";
 import { Button } from "@/components/ui/button";
 import { PodcastBanner } from "@/components/PodcastBanner";
 import { useReferralCode } from "@/hooks/useReferralCode";
-import { 
+import ReferralBanner from "@/components/ReferralBanner";
+import {
   Sparkles, 
   FileText, 
   AlertCircle, 
@@ -174,6 +175,8 @@ export default function Demos() {
         image="https://pub-a7c2c18b8d6143b9a256105ef44f2da0.r2.dev/OG%20General.png"
         url={`${window.location.origin}/demos`}
       />
+
+      <ReferralBanner />
 
       {/* Schema.org Structured Data - ItemList for LiveLink Demos */}
       <script type="application/ld+json">

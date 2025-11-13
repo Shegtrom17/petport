@@ -17,6 +17,7 @@ import createProfileScreenshot from "@/assets/create-profile-screenshot.png";
 import documentUploadScreenshot from "@/assets/document-upload-screenshot.png";
 import resumeDetailsScreenshot from "@/assets/resume-details-screenshot.png";
 import shareInstructionsScreenshot from "@/assets/share-instructions-screenshot.png";
+import ReferralBanner from "@/components/ReferralBanner";
 
 export default function Landing() {
   const { user } = useAuth();
@@ -88,6 +89,8 @@ export default function Landing() {
         url={window.location.origin + "/"} 
       />
       
+      <ReferralBanner />
+
       {/* SoftwareApplication Schema for SEO */}
       <script type="application/ld+json">
         {JSON.stringify({

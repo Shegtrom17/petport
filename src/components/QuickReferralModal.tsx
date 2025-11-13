@@ -147,7 +147,12 @@ export const QuickReferralModal = ({ isOpen, onClose }: QuickReferralModalProps)
 
     if (navigator.share && navigator.canShare(shareData)) {
       try {
+        // Close modal before opening native share to prevent UI issues
+        onClose();
+        
         await navigator.share(shareData);
+        
+        // Show success toast after share completes
         toast({
           title: "Shared!",
           description: "Thanks for sharing PetPort!",
@@ -156,6 +161,11 @@ export const QuickReferralModal = ({ isOpen, onClose }: QuickReferralModalProps)
         // User cancelled share, ignore
         if ((error as Error).name !== "AbortError") {
           console.error("Share failed:", error);
+          toast({
+            title: "Share failed",
+            description: "Please try copying the link instead",
+            variant: "destructive",
+          });
         }
       }
     } else {

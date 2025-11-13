@@ -84,11 +84,27 @@ serve(async (req) => {
     if (listErr) throw new Error(`List users failed: ${listErr.message}`);
 
     const matched = usersList?.users?.find((u: any) => u.email?.toLowerCase() === email.toLowerCase());
-    let existingUser = !!matched;
+    const authUserExists = !!matched;
     let userId: string | null = matched?.id ?? null;
 
-    if (existingUser) {
-      log("Existing user found", { userId });
+    // Check if subscriber record exists and is linked
+    let existingUser = false;
+    if (authUserExists && userId) {
+      log("Auth user found, checking for linked subscriber", { userId });
+      const { data: subData } = await supabase
+        .from("subscribers")
+        .select("user_id")
+        .eq("email", email.toLowerCase())
+        .maybeSingle();
+      
+      // Only treat as existing user if they have a linked subscriber record
+      existingUser = !!(subData?.user_id);
+      
+      if (existingUser) {
+        log("Existing user with linked subscriber found", { userId });
+      } else {
+        log("Auth user exists but no linked subscriber - needs account setup", { userId, email });
+      }
     } else {
       // For new users, we'll store payment info without creating account yet
       log("New user - will need account setup", { email });

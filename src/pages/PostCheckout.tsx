@@ -314,9 +314,34 @@ export default function PostCheckout() {
                 )}
                 
                 {!needsAccountSetup && !isAddonPurchase && (
-                  <div className="bg-blue-50 p-3 rounded-lg border border-blue-200">
-                    <p className="text-sm text-blue-800 font-medium mb-2">Next step: Sign in to your new account</p>
-                    <p className="text-xs text-blue-600">Use the email and password you just created to access PetPort</p>
+                  <div className="bg-blue-50 p-3 rounded-lg border border-blue-200 space-y-2">
+                    <p className="text-sm text-blue-800 font-medium">Next step: Sign in to your account</p>
+                    <p className="text-xs text-blue-600">Already have a PetPort account? Use your existing credentials below.</p>
+                    <Button 
+                      variant="link" 
+                      size="sm" 
+                      className="text-xs h-auto p-0 text-blue-700 hover:text-blue-900"
+                      onClick={async () => {
+                        if (!email) return;
+                        try {
+                          await supabase.auth.resetPasswordForEmail(email, {
+                            redirectTo: `${window.location.origin}/auth?mode=reset`,
+                          });
+                          toast({
+                            title: "Password reset email sent",
+                            description: "Check your email for a password reset link.",
+                          });
+                        } catch (error) {
+                          toast({
+                            title: "Error",
+                            description: "Failed to send password reset email. Please try again.",
+                            variant: "destructive",
+                          });
+                        }
+                      }}
+                    >
+                      Forgot your password?
+                    </Button>
                   </div>
                 )}
                 

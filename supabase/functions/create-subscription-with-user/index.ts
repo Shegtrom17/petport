@@ -14,6 +14,7 @@ interface ProvisionRequest {
   plan: "monthly" | "yearly";
   additionalPets: number;
   paymentMethodId?: string;
+  referralCode?: string; // NEW: optional referral code
   corrId?: string; // Correlation ID for debugging
 }
 
@@ -32,7 +33,7 @@ const handler = async (req: Request): Promise<Response> => {
 
   try {
     const startTime = Date.now();
-    const { email, password, fullName, plan, additionalPets, paymentMethodId, corrId }: ProvisionRequest = JSON.parse(body);
+    const { email, password, fullName, plan, additionalPets, paymentMethodId, referralCode, corrId }: ProvisionRequest = JSON.parse(body);
     
     console.log(`🚀 [${corrId || 'no-id'}] Starting provisioning for ${email}, plan: ${plan}, additional pets: ${additionalPets}`);
 
@@ -165,6 +166,7 @@ const handler = async (req: Request): Promise<Response> => {
         pets_included: (1 + additionalPets).toString(),
         created_via: 'petport_signup',
         correlation_id: corrId || 'no-id',
+        ...(referralCode && plan === 'yearly' ? { referral_code: referralCode } : {}),
       },
     };
 

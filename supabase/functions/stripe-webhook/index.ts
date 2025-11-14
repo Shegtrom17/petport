@@ -244,6 +244,81 @@ async function handleSubscriptionEvent(
     } catch (error) {
       logStep("Error linking referral", { error: error.message, referralCode });
     }
+  } else if (status === 'active' && planInterval === 'year') {
+    // FALLBACK: If no referral code in metadata but it's a yearly plan,
+    // check server-side tracking for recent visits (within last 7 days)
+    logStep("No referral code in metadata, checking server-side tracking", { planInterval });
+    
+    try {
+      const sevenDaysAgo = new Date();
+      sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+      
+      // Look for referral visits from this user's email domain or recent visits
+      // (Note: we can't get IP from webhook, so we match by timing)
+      const { data: recentVisits } = await supabaseClient
+        .from('referral_visits')
+        .select('id, referral_code, visited_at')
+        .is('converted_user_id', null)
+        .gte('visited_at', sevenDaysAgo.toISOString())
+        .order('visited_at', { ascending: false })
+        .limit(50);
+      
+      if (recentVisits && recentVisits.length > 0) {
+        // Find most recent visit for any referral code
+        const mostRecentVisit = recentVisits[0];
+        
+        logStep("Found recent referral visit", {
+          visitId: mostRecentVisit.id,
+          referralCode: mostRecentVisit.referral_code,
+          visitedAt: mostRecentVisit.visited_at
+        });
+        
+        // Try to link this referral
+        const { data: referralData } = await supabaseClient
+          .from('referrals')
+          .select('id, referrer_user_id')
+          .eq('referral_code', mostRecentVisit.referral_code)
+          .is('referred_user_id', null)
+          .single();
+        
+        if (referralData) {
+          const trialEnd = subscription.trial_end 
+            ? new Date(subscription.trial_end * 1000).toISOString()
+            : new Date().toISOString();
+          
+          // Link the referral
+          await supabaseClient
+            .from('referrals')
+            .update({
+              referred_user_id: user.id,
+              trial_completed_at: trialEnd,
+              referred_plan_interval: planInterval,
+              updated_at: new Date().toISOString()
+            })
+            .eq('id', referralData.id);
+          
+          // Mark the visit as converted
+          await supabaseClient
+            .from('referral_visits')
+            .update({
+              converted_user_id: user.id,
+              converted_at: new Date().toISOString(),
+              plan_type: 'yearly'
+            })
+            .eq('id', mostRecentVisit.id);
+          
+          logStep("Referral linked via server-side tracking fallback", {
+            referralId: referralData.id,
+            referredUserId: user.id,
+            visitId: mostRecentVisit.id
+          });
+        }
+      } else {
+        logStep("No recent referral visits found for fallback");
+      }
+    } catch (error) {
+      logStep("Error in referral fallback tracking", { error: error.message });
+    }
   }
 }
 

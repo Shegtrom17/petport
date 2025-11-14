@@ -1241,6 +1241,42 @@ export type Database = {
         }
         Relationships: []
       }
+      referral_visits: {
+        Row: {
+          converted_at: string | null
+          converted_user_id: string | null
+          created_at: string
+          id: string
+          ip_address: string | null
+          plan_type: string | null
+          referral_code: string
+          user_agent: string | null
+          visited_at: string
+        }
+        Insert: {
+          converted_at?: string | null
+          converted_user_id?: string | null
+          created_at?: string
+          id?: string
+          ip_address?: string | null
+          plan_type?: string | null
+          referral_code: string
+          user_agent?: string | null
+          visited_at?: string
+        }
+        Update: {
+          converted_at?: string | null
+          converted_user_id?: string | null
+          created_at?: string
+          id?: string
+          ip_address?: string | null
+          plan_type?: string | null
+          referral_code?: string
+          user_agent?: string | null
+          visited_at?: string
+        }
+        Relationships: []
+      }
       referrals: {
         Row: {
           approved_at: string | null

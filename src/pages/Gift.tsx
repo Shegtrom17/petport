@@ -485,6 +485,21 @@ const Gift = () => {
             </p>
           </div>
 
+          {/* Scheduling Feature Callout */}
+          <div className="max-w-4xl mx-auto">
+            <Card className="border-2 border-primary/20 bg-gradient-to-br from-primary/5 to-secondary/5 shadow-xl">
+              <CardContent className="p-6 md:p-8 text-center">
+                <div className="flex items-center justify-center gap-3 mb-3">
+                  <CalendarIcon className="w-8 h-8 text-primary" />
+                  <h3 className="text-2xl md:text-3xl font-bold">Schedule Your Gift Delivery</h3>
+                </div>
+                <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto">
+                  <strong className="text-foreground">Pay now, deliver later.</strong> Choose any future date and we'll send the gift email on your selected day—perfect for birthdays, holidays, or special occasions!
+                </p>
+              </CardContent>
+            </Card>
+          </div>
+
           {/* Why This Gift IS Different */}
           <section className="space-y-8">
             <div className="text-center">

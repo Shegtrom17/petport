@@ -289,7 +289,7 @@ export const PetResumeSection = ({ petData, onUpdate, handlePetUpdate }: PetResu
         </CardHeader>
         <CardContent>
           <p className="text-gray-700 leading-relaxed">
-            {petData.bio || `${petData.name} is a wonderful ${petData.breed.toLowerCase()} with a gentle temperament and friendly disposition. Known for being well-behaved and great with people of all ages. An ideal companion for any setting.`}
+            {petData.bio || `${petData.name} is a wonderful ${(petData.breed?.toLowerCase() || 'pet')} with a gentle temperament and friendly disposition. Known for being well-behaved and great with people of all ages. An ideal companion for any setting.`}
           </p>
         </CardContent>
       </Card>

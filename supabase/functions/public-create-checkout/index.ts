@@ -105,12 +105,14 @@ serve(async (req) => {
       },
       success_url: `${origin}/post-checkout?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${origin}/subscribe`,
-      allow_promotion_codes: true,
-      // Automatically apply REFERRAL10 discount for referred users
-      ...(referral_code && plan === "yearly" ? {
-        discounts: [{ coupon: 'REFERRAL10' }]
-      } : {}),
-    };
+    } as any;
+
+    // Configure promotions vs coupon: mutually exclusive
+    if (referral_code && plan === "yearly") {
+      sessionParams.discounts = [{ coupon: 'REFERRAL10' }];
+    } else {
+      sessionParams.allow_promotion_codes = true;
+    }
 
     const session = await stripe.checkout.sessions.create(sessionParams);
 

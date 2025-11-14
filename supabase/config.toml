@@ -1,5 +1,8 @@
 project_id = "dxghbhujugsfmaecilrq"
 
+[functions.podcast-rss]
+verify_jwt = false
+
 [functions.notify-grace-period]
 verify_jwt = false
 

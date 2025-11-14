@@ -1974,7 +1974,7 @@ const generateCarePDF = async (doc: jsPDF, pageManager: PDFPageManager, petData:
     
     // Health Monitoring - Critical information for caregivers
     addSection(doc, pageManager, 'HEALTH MONITORING', () => {
-      const isHorse = petData.species?.toLowerCase() === 'horse';
+      const isHorse = (petData.species ?? '').toLowerCase() === 'horse';
       const healthMonitoring = [
         '• Monitor appetite and water intake daily',
         '• Watch for any behavioral changes',

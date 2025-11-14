@@ -113,7 +113,7 @@ export default function AddPet() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Basic validation - name and species are required
+    // Basic validation - name is required
     if (!petData.name.trim()) {
       toast({
         variant: "destructive",

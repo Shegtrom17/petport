@@ -412,9 +412,9 @@ const PublicProfile = () => {
 
   // Generate meta tags for social sharing
   const profileTitle = `See ${petData.name}'s Profile | PetPort`;
-  const profileDescription = petData.bio 
+  const profileDescription = petData.bio && petData.bio.trim()
     ? `Meet ${petData.name}! ${petData.bio.slice(0, 150)}${petData.bio.length > 150 ? '...' : ''}`
-    : `Meet ${petData.name}, a ${petData.species || 'pet'}${petData.breed ? ` (${petData.breed})` : ''} on PetPort.`;
+    : `Meet ${petData.name || 'this pet'}${(petData.species || petData.breed) ? `, a ${petData.species || 'pet'}${petData.breed ? ` (${petData.breed})` : ''}` : ''} on PetPort.`;
   const heroImage = petData.pet_photos?.[0]?.photo_url || petData.gallery_photos?.[0]?.url;
   const profileImage = heroImage || "https://pub-a7c2c18b8d6143b9a256105ef44f2da0.r2.dev/OG%20General.png";
   const profileUrl = `${window.location.origin}/profile/${petId}`;

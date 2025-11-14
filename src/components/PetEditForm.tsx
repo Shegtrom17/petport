@@ -298,15 +298,6 @@ export const PetEditForm = ({ petData, onSave, onCancel, togglePetPublicVisibili
       });
       return;
     }
-    
-    if (!formData.species?.trim()) {
-      toast({
-        variant: "destructive",
-        title: "Species Required",
-        description: "Please select your pet's species (Dog, Cat, or Horse).",
-      });
-      return;
-    }
 
     if (containsSuspiciousContent(formData.name) ||
         containsSuspiciousContent(formData.bio) ||

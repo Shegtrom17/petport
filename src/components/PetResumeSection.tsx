@@ -179,7 +179,9 @@ export const PetResumeSection = ({ petData, onUpdate, handlePetUpdate }: PetResu
             <div className="flex-1 space-y-4">
               <div>
                 <h3 className="text-3xl font-bold text-navy-900 mb-2">{petData.name}</h3>
-                <p className="text-lg text-gray-600 mb-4">{petData.breed} • {petData.age} • {petData.weight}</p>
+                <p className="text-lg text-gray-600 mb-4">
+                  {petData.breed || 'Unknown breed'} • {petData.age || 'Age unknown'} • {petData.weight || 'Weight unknown'}
+                </p>
               </div>
 
 
@@ -289,7 +291,7 @@ export const PetResumeSection = ({ petData, onUpdate, handlePetUpdate }: PetResu
         </CardHeader>
         <CardContent>
           <p className="text-gray-700 leading-relaxed">
-            {petData.bio || `${petData.name} is a wonderful ${(petData.breed?.toLowerCase() || 'pet')} with a gentle temperament and friendly disposition. Known for being well-behaved and great with people of all ages. An ideal companion for any setting.`}
+            {petData.bio || `${petData.name} is a wonderful ${((petData.breed || petData.species || 'pet').toLowerCase())} with a gentle temperament and friendly disposition. Known for being well-behaved and great with people of all ages. An ideal companion for any setting.`}
           </p>
         </CardContent>
       </Card>

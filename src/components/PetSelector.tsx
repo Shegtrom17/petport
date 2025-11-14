@@ -10,6 +10,7 @@ interface Pet {
   id: string;
   name: string;
   breed: string;
+  species?: string;
   photoUrl?: string;
 }
 
@@ -123,7 +124,7 @@ export const PetSelector = ({ pets, selectedPet, onSelectPet, onReorderPets, pet
                         </div>
                         <div className="min-w-0 flex-1">
                           <h3 className="font-semibold text-sm sm:text-base truncate">{pet.name}</h3>
-                          <p className="text-xs sm:text-sm text-gray-500 truncate">{pet.breed}</p>
+                          <p className="text-xs sm:text-sm text-gray-500 truncate">{pet.breed || pet.species || 'Pet'}</p>
                         </div>
                       </div>
                     </Card>

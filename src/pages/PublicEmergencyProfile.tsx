@@ -193,7 +193,7 @@ const PublicEmergencyProfile = () => {
 
   // Generate meta tags for emergency profile sharing
   const profileTitle = `${petData.name} - Emergency Profile`;
-  const profileDescription = `Emergency contact information for ${petData.name}, a ${petData.species || 'pet'}${petData.breed ? ` (${petData.breed})` : ''}`;
+  const profileDescription = `Emergency contact information for ${petData.name || 'this pet'}${(petData.species || petData.breed) ? `, a ${petData.species || 'pet'}${petData.breed ? ` (${petData.breed})` : ''}` : ''}`;
   const profileImage = petData.pet_photos?.[0]?.photo_url;
   const profileUrl = `${window.location.origin}/emergency/${petId}`;
 

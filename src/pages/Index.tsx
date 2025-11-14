@@ -45,6 +45,8 @@ import { featureFlags } from "@/config/featureFlags";
 import { OnboardingTour } from "@/components/OnboardingTour";
 import { useOnboardingTour } from "@/hooks/useOnboardingTour";
 import { MetaTags } from "@/components/MetaTags";
+import { useReferralCode } from "@/hooks/useReferralCode";
+import ReferralBanner from "@/components/ReferralBanner";
 
 
 // Tab state - restored from localStorage on mount
@@ -65,6 +67,9 @@ const Index = () => {
   const { user, status } = useAuth();
   const { settings } = useUserSettings(user?.id);
   const isOverlayOpen = useOverlayOpen();
+  
+  // Capture referral codes on app page too
+  useReferralCode();
 
   // Restore last tab from localStorage on mount (fixes document upload redirect bug)
   useEffect(() => {
@@ -510,6 +515,7 @@ const Index = () => {
           url={typeof window !== 'undefined' ? window.location.href : 'https://petport.app/app'}
           noindex={true}
         />
+        <ReferralBanner />
         {/* ✅ Main Onboarding Tour */}
         <OnboardingTour
           runTour={runTour}

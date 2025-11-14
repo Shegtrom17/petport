@@ -531,6 +531,13 @@ See LiveLinks for yourself at PetPort.app and check out the innovation yourself.
             <CardTitle className="text-xl font-bold">Referral History</CardTitle>
           </CardHeader>
           <CardContent>
+            {/* Important Note about Trial Period */}
+            <div className="mb-6 bg-amber-50 border border-amber-200 rounded-lg p-4">
+              <p className="text-sm text-amber-900">
+                <strong className="font-semibold">⏳ Note:</strong> New referrals appear as "Pending" after the referred user completes their 7-day free trial. 
+                Commissions are approved 38 days after the trial ends (45 days total from signup).
+              </p>
+            </div>
             {referrals.length === 0 ? (
               <div className="text-center py-12">
                 <Users className="h-12 w-12 text-muted-foreground mx-auto mb-4" />

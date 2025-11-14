@@ -132,6 +132,68 @@ serve(async (req) => {
 
       console.log('[LINK-SUBSCRIBER] Successfully linked subscription:', linkedSubscription.status);
       
+      // Now link any referrals for this user (if they signed up via a referral link)
+      if (linkedSubscription.plan_interval === 'year') {
+        console.log('[LINK-SUBSCRIBER] Checking for referrals to link for yearly subscriber');
+        
+        try {
+          // Find any referral visits for this email
+          const { data: visitData } = await supabase
+            .from('referral_visits')
+            .select('referral_code')
+            .eq('converted_user_id', null)
+            .order('visited_at', { ascending: false })
+            .limit(1);
+          
+          if (visitData && visitData.length > 0) {
+            const referralCode = visitData[0].referral_code;
+            console.log('[LINK-SUBSCRIBER] Found referral visit with code:', referralCode);
+            
+            // Find the referral record
+            const { data: referralData } = await supabase
+              .from('referrals')
+              .select('id')
+              .eq('referral_code', referralCode)
+              .is('referred_user_id', null)
+              .single();
+            
+            if (referralData) {
+              // Get trial end from Stripe subscription or use now
+              const trialEnd = new Date();
+              trialEnd.setDate(trialEnd.getDate() + 7);
+              
+              // Update referrals table
+              await supabase
+                .from('referrals')
+                .update({
+                  referred_user_id: user.id,
+                  trial_completed_at: trialEnd.toISOString(),
+                  referred_plan_interval: 'year',
+                  updated_at: new Date().toISOString()
+                })
+                .eq('id', referralData.id);
+              
+              // Update referral_visits to mark conversion
+              await supabase
+                .from('referral_visits')
+                .update({
+                  converted_user_id: user.id,
+                  converted_at: new Date().toISOString(),
+                  plan_type: 'yearly'
+                })
+                .eq('referral_code', referralCode)
+                .is('converted_user_id', null)
+                .order('visited_at', { ascending: false })
+                .limit(1);
+              
+              console.log('[LINK-SUBSCRIBER] Referral linked successfully');
+            }
+          }
+        } catch (refError) {
+          console.error('[LINK-SUBSCRIBER] Error linking referral (non-fatal):', refError);
+        }
+      }
+      
       return new Response(
         JSON.stringify({ 
           success: true, 

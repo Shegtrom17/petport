@@ -29,10 +29,25 @@ export const PricingSection: React.FC<PricingSectionProps> = ({ context = "landi
     if (!propReferralCode) {
       const urlParams = new URLSearchParams(window.location.search);
       const urlCode = urlParams.get('ref');
-      const storedCode = localStorage.getItem('petport_referral');
-      setReferralCode(urlCode || storedCode || undefined);
+      
+      // Check cookie
+      const cookieMatch = document.cookie.match(/petport_referral=([^;]+)/);
+      const cookieCode = cookieMatch ? cookieMatch[1] : null;
+      
+      const storedCode = localStorage.getItem('petport_referral') || sessionStorage.getItem('petport_referral');
+      const finalCode = urlCode || cookieCode || storedCode || undefined;
+      
+      console.log('[PricingSection] Referral code check:', {
+        urlCode,
+        cookieCode,
+        storedCode,
+        finalCode,
+        context
+      });
+      
+      setReferralCode(finalCode);
     }
-  }, [propReferralCode]);
+  }, [propReferralCode, context]);
 
   const startCheckout = async (plan: "monthly" | "yearly") => {
     try {
@@ -41,6 +56,13 @@ export const PricingSection: React.FC<PricingSectionProps> = ({ context = "landi
       // Landing page uses public checkout (no auth required)
       // Profile/subscribe page uses authenticated checkout
       const functionName = context === "landing" ? "public-create-checkout" : "create-checkout";
+      
+      console.log('[PricingSection] Starting checkout with:', {
+        plan,
+        referralCode,
+        functionName,
+        additionalPets: additionalPetsForCheckout
+      });
       
       const { data, error } = await supabase.functions.invoke(functionName, {
         body: { 

@@ -17,8 +17,8 @@ const defaultSexOptions = [
   { value: "unknown", label: "Unknown" }
 ];
 
-export const getSpeciesConfig = (species: string): SpeciesFieldConfig => {
-  const normalizedSpecies = species.toLowerCase();
+export const getSpeciesConfig = (species?: string | null): SpeciesFieldConfig => {
+  const normalizedSpecies = (species ?? '').toLowerCase();
 
   switch (normalizedSpecies) {
     case "horse":

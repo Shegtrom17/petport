@@ -15,18 +15,21 @@ export const DocumentViewer = ({
   documentUrl, 
   documentName 
 }: DocumentViewerProps) => {
-  const isPDF = documentUrl.toLowerCase().includes('.pdf');
+  const safeUrl = documentUrl ?? '';
+  const isPDF = safeUrl.toLowerCase().includes('.pdf');
   
   const handleDownload = () => {
+    if (!safeUrl) return;
     const link = document.createElement('a');
-    link.href = documentUrl;
-    link.download = documentName;
+    link.href = safeUrl;
+    link.download = documentName || 'document';
     link.click();
   };
 
-  const handleOpenNewTab = () => {
-    window.open(documentUrl, '_blank', 'noopener,noreferrer');
-  };
+const handleOpenNewTab = () => {
+  if (!safeUrl) return;
+  window.open(safeUrl, '_blank', 'noopener,noreferrer');
+};
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -48,15 +51,15 @@ export const DocumentViewer = ({
         </DialogHeader>
         
         <div className="flex-1 min-h-0 overflow-auto">
-          {isPDF ? (
+{isPDF ? (
             <object
-              data={documentUrl}
+              data={safeUrl}
               type="application/pdf"
               className="w-full h-full min-h-[600px] md:min-h-[500px]"
               title={documentName}
             >
               <iframe
-                src={documentUrl}
+                src={safeUrl}
                 className="w-full h-full min-h-[600px] md:min-h-[500px] border-0"
                 title={documentName}
               />
@@ -64,7 +67,7 @@ export const DocumentViewer = ({
           ) : (
             <div className="w-full h-full flex items-center justify-center bg-muted rounded">
               <img 
-                src={documentUrl} 
+                src={safeUrl} 
                 alt={documentName}
                 className="max-w-full max-h-full object-contain"
               />

@@ -150,7 +150,7 @@ export const CareInstructionsSection = ({ petData, onUpdate, handlePetUpdate }: 
 
 
       {/* Care & Handling Management Hub */}
-      <Card className="border-0 shadow-lg">
+      <Card className="border-0 shadow-lg care-management-hub">
         <CardContent className="p-6 space-y-4">
           {/* Hub Title */}
           <div className="flex items-center space-x-3">
@@ -173,7 +173,7 @@ export const CareInstructionsSection = ({ petData, onUpdate, handlePetUpdate }: 
           <div className="space-y-3">
             <Button 
               onClick={() => setIsEditing(true)}
-              className="w-full h-14 text-lg text-white"
+              className="w-full h-14 text-lg text-white edit-care-button"
               size="lg"
             >
               <Edit className="w-5 h-5 mr-2" />
@@ -183,7 +183,7 @@ export const CareInstructionsSection = ({ petData, onUpdate, handlePetUpdate }: 
             <Button
               onClick={() => window.open(`/care/${petData.id}?returnTo=care`, '_blank')}
               variant="azure"
-              className="w-full h-14 text-lg"
+              className="w-full h-14 text-lg preview-care-link-button"
             >
               <Eye className="w-5 h-5 mr-2" />
               Preview Care & Handling LiveLink

@@ -108,7 +108,8 @@ const Index = () => {
   } = usePetData();
 
   const { runTour, tourKey, completeTour, skipTour } = useOnboardingTour({
-    hasPets: pets.length > 0 && !isLoading, // ✅ Wait for pets to load
+    tourType: 'main',
+    requiredTab: 'care',
     currentTab: activeTab,
   });
 
@@ -118,7 +119,6 @@ const Index = () => {
     completeTour: completeLostPetTour, 
     skipTour: skipLostPetTour 
   } = useOnboardingTour({
-    hasPets: pets.length > 0 && !isLoading,
     tourType: 'lostPet',
     requiredTab: 'quickid',
     currentTab: activeTab,

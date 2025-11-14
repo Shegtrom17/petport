@@ -222,6 +222,7 @@ async function handleSubscriptionEvent(
           ? new Date(subscription.trial_end * 1000).toISOString()
           : new Date().toISOString();
         
+        // Update referrals table
         await supabaseClient
           .from('referrals')
           .update({
@@ -231,6 +232,19 @@ async function handleSubscriptionEvent(
             updated_at: new Date().toISOString()
           })
           .eq('id', referralData.id);
+        
+        // CRITICAL: Also update referral_visits to mark conversion
+        await supabaseClient
+          .from('referral_visits')
+          .update({
+            converted_user_id: user.id,
+            converted_at: new Date().toISOString(),
+            plan_type: 'yearly'
+          })
+          .eq('referral_code', referralCode)
+          .is('converted_user_id', null)
+          .order('visited_at', { ascending: false })
+          .limit(1);
         
         logStep("Referral linked successfully", { 
           referralId: referralData.id,

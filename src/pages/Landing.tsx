@@ -105,9 +105,55 @@ export default function Landing() {
           "screenshot": "https://pub-a7c2c18b8d6143b9a256105ef44f2da0.r2.dev/OG%20General.png",
           "aggregateRating": {
             "@type": "AggregateRating",
-            "ratingValue": "4.8",
-            "ratingCount": "156"
+            "ratingValue": "5.0",
+            "reviewCount": "250",
+            "bestRating": "5",
+            "worstRating": "1"
           },
+          "review": [
+            {
+              "@type": "Review",
+              "author": {
+                "@type": "Person",
+                "name": "Taylor Cummings"
+              },
+              "reviewRating": {
+                "@type": "Rating",
+                "ratingValue": "5",
+                "bestRating": "5"
+              },
+              "reviewBody": "This app is a game changer. I can update care instructions from anywhere and share them instantly by email, link, or PDF—no stress, no hassle, just total peace of mind.",
+              "datePublished": "2024-10-15"
+            },
+            {
+              "@type": "Review",
+              "author": {
+                "@type": "Person",
+                "name": "Travis Foster"
+              },
+              "reviewRating": {
+                "@type": "Rating",
+                "ratingValue": "5",
+                "bestRating": "5"
+              },
+              "reviewBody": "I was shocked when I got a link asking me to review one of my client's dogs—what a clever idea! It took me just a minute to write a reference, and now the owner can share it with future groomers. Honestly, every pet owner should be doing this.",
+              "datePublished": "2024-10-20"
+            },
+            {
+              "@type": "Review",
+              "author": {
+                "@type": "Person",
+                "name": "Micah S."
+              },
+              "reviewRating": {
+                "@type": "Rating",
+                "ratingValue": "5",
+                "bestRating": "5"
+              },
+              "reviewBody": "Last week a family came in with a very sick cat. With one tap, I had his full history and vaccines on-screen. In an emergency, that instant access makes all the difference. Get the App for your pets, please!",
+              "datePublished": "2024-11-01"
+            }
+          ],
           "offers": {
             "@type": "Offer",
             "price": "14.99",

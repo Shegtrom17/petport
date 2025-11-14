@@ -52,6 +52,7 @@ import PublicEmergencyProfile from "./pages/PublicEmergencyProfile";
 import RecoverGift from "./pages/RecoverGift";
 import EmailTest from "./pages/EmailTest";
 import SetupStripe from "./pages/SetupStripe";
+import DiagnoseStripe from "./pages/DiagnoseStripe";
 import Referrals from "./pages/Referrals";
 import ReferralProgram from "./pages/ReferralProgram";
 import DemoResume from "./pages/DemoResume";
@@ -183,6 +184,11 @@ const App = () => {
                      <Route path="/setup-stripe" element={
                        <ProtectedRoute>
                          <SetupStripe />
+                       </ProtectedRoute>
+                     } />
+                     <Route path="/diagnose-stripe" element={
+                       <ProtectedRoute>
+                         <DiagnoseStripe />
                        </ProtectedRoute>
                      } />
                      <Route path="/referrals" element={

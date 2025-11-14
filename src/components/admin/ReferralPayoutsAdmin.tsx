@@ -3,7 +3,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { DollarSign, AlertTriangle, CheckCircle, Loader2 } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { DollarSign, AlertTriangle, CheckCircle, Loader2, Link as LinkIcon } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 
 interface PayoutSummary {
@@ -19,6 +21,9 @@ export const ReferralPayoutsAdmin = () => {
   const { toast } = useToast();
   const [processing, setProcessing] = useState(false);
   const [lastResult, setLastResult] = useState<PayoutSummary | null>(null);
+  const [linkingReferral, setLinkingReferral] = useState(false);
+  const [referralCode, setReferralCode] = useState("");
+  const [referredEmail, setReferredEmail] = useState("");
 
   const processPayouts = async () => {
     try {
@@ -54,8 +59,113 @@ export const ReferralPayoutsAdmin = () => {
     }
   };
 
+  const linkReferral = async () => {
+    if (!referralCode || !referredEmail) {
+      toast({
+        title: "Missing Information",
+        description: "Please enter both referral code and referred user email.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      setLinkingReferral(true);
+
+      const { data, error } = await supabase.functions.invoke("admin-link-referral", {
+        body: {
+          referral_code: referralCode,
+          referred_user_email: referredEmail,
+        },
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: "Referral Linked Successfully",
+        description: `${referredEmail} has been linked to ${referralCode}. Will be approved on ${new Date(data.approval_date).toLocaleDateString()}.`,
+      });
+
+      // Clear form
+      setReferralCode("");
+      setReferredEmail("");
+    } catch (error: any) {
+      console.error("Link referral error:", error);
+      toast({
+        title: "Failed to Link Referral",
+        description: error.message || "Check console for details.",
+        variant: "destructive",
+      });
+    } finally {
+      setLinkingReferral(false);
+    }
+  };
+
   return (
-    <Card>
+    <div className="space-y-4">
+      {/* Manual Referral Linking */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <LinkIcon className="h-5 w-5" />
+            Manually Link Referral
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <Alert>
+            <AlertDescription>
+              Use this to manually link a referral when tracking failed (e.g., email links, localStorage issues).
+              Only works for yearly subscribers.
+            </AlertDescription>
+          </Alert>
+
+          <div className="space-y-3">
+            <div>
+              <Label htmlFor="referral-code">Referral Code</Label>
+              <Input
+                id="referral-code"
+                placeholder="REF-C091B2"
+                value={referralCode}
+                onChange={(e) => setReferralCode(e.target.value)}
+                disabled={linkingReferral}
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="referred-email">Referred User Email</Label>
+              <Input
+                id="referred-email"
+                type="email"
+                placeholder="sue@petport.app"
+                value={referredEmail}
+                onChange={(e) => setReferredEmail(e.target.value)}
+                disabled={linkingReferral}
+              />
+            </div>
+
+            <Button
+              onClick={linkReferral}
+              disabled={linkingReferral || !referralCode || !referredEmail}
+              className="w-full"
+            >
+              {linkingReferral ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Linking...
+                </>
+              ) : (
+                <>
+                  <LinkIcon className="mr-2 h-4 w-4" />
+                  Link Referral
+                </>
+              )}
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Payout Processing */}
+      <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <DollarSign className="h-5 w-5" />
@@ -158,6 +268,7 @@ export const ReferralPayoutsAdmin = () => {
           </ul>
         </div>
       </CardContent>
-    </Card>
+      </Card>
+    </div>
   );
 };

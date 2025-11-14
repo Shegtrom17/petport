@@ -137,7 +137,7 @@ export default function AddPet() {
           title: "Success!",
           description: `${petData.name} has been added to your pets.`,
         });
-        navigate("/profile");
+        navigate("/app");
       } else {
         toast({
           variant: "destructive",

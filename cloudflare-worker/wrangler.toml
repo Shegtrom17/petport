@@ -1,0 +1,40 @@
+# Cloudflare Worker Configuration for PetPort.app Prerendering
+# Documentation: https://developers.cloudflare.com/workers/wrangler/configuration/
+
+name = "petport-prerender"
+main = "prerender-worker.js"
+compatibility_date = "2024-01-01"
+
+# Account details (get from Cloudflare dashboard)
+# account_id = "YOUR_ACCOUNT_ID"
+# workers_dev = false
+
+# Routes - THIS IS CRITICAL
+# The worker will intercept ALL requests to petport.app
+routes = [
+  { pattern = "petport.app/*", zone_name = "petport.app" }
+]
+
+# KV Namespace for caching (optional but recommended)
+# Uncomment after creating KV namespace:
+# wrangler kv:namespace create "PRERENDER_CACHE"
+# kv_namespaces = [
+#   { binding = "PRERENDER_CACHE", id = "YOUR_KV_NAMESPACE_ID" }
+# ]
+
+# Secrets (set with: wrangler secret put PRERENDER_TOKEN)
+# PRERENDER_TOKEN = "your-prerender-io-token"
+
+# Limits
+limits = { cpu_ms = 50 }
+
+# Observability
+observability = {
+  enabled = true
+}
+
+# Usage model (bundled = free tier, unbound = paid)
+usage_model = "bundled"
+
+# Compatibility flags
+compatibility_flags = []

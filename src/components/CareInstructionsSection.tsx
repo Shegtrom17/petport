@@ -35,7 +35,7 @@ export const CareInstructionsSection = ({ petData, onUpdate, handlePetUpdate }: 
   const [isAIMedicalModalOpen, setIsAIMedicalModalOpen] = useState(false);
   const [isAddingProviderNote, setIsAddingProviderNote] = useState(false);
   const { toast } = useToast();
-  const isHorse = petData.species?.toLowerCase() === 'horse';
+  const isHorse = (petData.species ?? '').toLowerCase() === 'horse';
 
 
   // Load care instructions from database

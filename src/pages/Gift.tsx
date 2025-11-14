@@ -9,7 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Calendar as CalendarComponent } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Loader2, Gift as GiftIcon, Check, X, Heart, Shield, Image, Users, MapPin, FileText, Calendar as CalendarIcon, Home, Sparkles, ChevronRight, Menu, Eye } from "lucide-react";
+import { Loader2, Gift as GiftIcon, Check, X, Heart, Shield, Image, Users, MapPin, FileText, Calendar as CalendarIcon, Home, Sparkles, ChevronRight, Menu, Eye, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/context/AuthContext";
 import { MetaTags } from "@/components/MetaTags";
@@ -120,6 +120,11 @@ const Gift = () => {
       icon: Heart,
       title: "For the Worrier",
       description: "Give them confidence knowing emergency contacts, medical info, and lost pet tools are ready if they ever need them."
+    },
+    {
+      icon: RefreshCw,
+      title: "For the Foster Parent",
+      description: "All pet profiles are fully transferable with photos, training records, medical docs, and complete history—making transitions seamless when foster pets find their forever homes."
     }
   ];
 

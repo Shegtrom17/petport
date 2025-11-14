@@ -40,7 +40,7 @@ export default function ReferralBanner() {
           <div className="flex-1">
             <AlertTitle>Referral applied</AlertTitle>
             <AlertDescription>
-              Thanks for using a friend’s link. Your discount will be applied at checkout. Code: <span className="font-mono">{code}</span>
+              Thanks for using a friend's link. Get 10% off yearly subscriptions at checkout. Code: <span className="font-mono">{code}</span>
             </AlertDescription>
           </div>
           <button

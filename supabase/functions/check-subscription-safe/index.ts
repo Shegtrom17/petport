@@ -50,9 +50,53 @@ serve(async (req) => {
 
     // Prefer a known customer id; otherwise fall back to email lookup
     let customerId = existingSub?.stripe_customer_id ?? null;
+    
+    // Try to fetch customer from Stripe (handle test/live mode mismatches)
     if (!customerId) {
-      const customers = await stripe.customers.list({ email: user.email, limit: 1 });
-      customerId = customers.data[0]?.id ?? null;
+      try {
+        const customers = await stripe.customers.list({ email: user.email, limit: 1 });
+        customerId = customers.data[0]?.id ?? null;
+      } catch (stripeError: any) {
+        log("Stripe customer list error", { message: stripeError.message, email: user.email });
+        // Continue without customer ID - will handle below
+      }
+    } else {
+      // Validate existing customer ID works in current Stripe mode
+      try {
+        await stripe.customers.retrieve(customerId);
+        log("Existing customer ID validated", { customerId });
+      } catch (stripeError: any) {
+        // Customer ID is invalid (likely test mode ID with live mode key)
+        log("Existing customer ID invalid (test/live mode mismatch?)", { 
+          customerId, 
+          error: stripeError.message 
+        });
+        
+        // Try to find customer by email instead
+        try {
+          const customers = await stripe.customers.list({ email: user.email, limit: 1 });
+          if (customers.data[0]) {
+            customerId = customers.data[0].id;
+            log("Found valid customer by email", { customerId });
+            
+            // Update the subscriber record with the correct customer ID
+            await supabase
+              .from("subscribers")
+              .update({ 
+                stripe_customer_id: customerId,
+                updated_at: new Date().toISOString()
+              })
+              .eq("user_id", user.id);
+          } else {
+            // No valid customer found - clear the invalid ID
+            customerId = null;
+            log("No valid customer found, clearing invalid ID");
+          }
+        } catch (emailLookupError: any) {
+          log("Email lookup also failed", { error: emailLookupError.message });
+          customerId = null;
+        }
+      }
     }
 
     // If we still don't have a Stripe customer, DO NOT DOWNGRADE a clearly active user
@@ -112,11 +156,44 @@ serve(async (req) => {
     }
 
     // At this point we have a customer id -> fetch subscriptions
-    const subscriptions = await stripe.subscriptions.list({
-      customer: customerId,
-      limit: 100,
-      expand: ["data.items.data.price"],
-    });
+    let subscriptions;
+    try {
+      subscriptions = await stripe.subscriptions.list({
+        customer: customerId,
+        limit: 100,
+        expand: ["data.items.data.price"],
+      });
+    } catch (stripeError: any) {
+      log("Stripe subscriptions list error", { 
+        customerId, 
+        error: stripeError.message 
+      });
+      
+      // If we can't fetch subscriptions but have existing active record, preserve it
+      if (existingSub && (existingSub.status === 'active' || existingSub.subscribed)) {
+        log("Preserving active status despite Stripe error", { userId: user.id });
+        const responseBody = JSON.stringify({
+          subscribed: true,
+          status: existingSub.status,
+          subscription_tier: null,
+          subscription_end: existingSub.subscription_end ?? null,
+          additional_pets: existingSub.additional_pets ?? 0,
+          pet_limit: existingSub.pet_limit ?? 1,
+          grace_period_end: null,
+        });
+        return new Response(responseBody, {
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+          status: 200,
+        });
+      }
+      
+      // Otherwise treat as inactive
+      const responseBody = JSON.stringify({ subscribed: false });
+      return new Response(responseBody, { 
+        headers: { ...corsHeaders, "Content-Type": "application/json" }, 
+        status: 200 
+      });
+    }
 
     const activeOrTrialing = subscriptions.data.filter((s: any) => s.status === "active" || s.status === "trialing");
     const hasActiveSub = activeOrTrialing.length > 0;
@@ -249,11 +326,25 @@ serve(async (req) => {
     });
 
     return new Response(responseBody, { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 200 });
-  } catch (err) {
-    log("Error", { message: (err as Error).message });
-    return new Response(JSON.stringify({ error: (err as Error).message }), {
+  } catch (err: any) {
+    log("Unexpected error in check-subscription-safe", { 
+      error: err.message, 
+      stack: err.stack?.substring(0, 200) 
+    });
+    
+    // CRITICAL: Never return 500 - always return a safe response
+    // This prevents ProtectedRoute from crashing
+    const responseBody = JSON.stringify({ 
+      subscribed: false,
+      status: "error",
+      error: "Subscription check failed - please contact support if this persists",
+      errorType: err.message?.includes("test mode") || err.message?.includes("similar object exists") 
+        ? "stripe_mode_mismatch" 
+        : "unknown"
+    });
+    return new Response(responseBody, {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
-      status: 500,
+      status: 200, // Return 200 to prevent client-side crashes
     });
   }
 });

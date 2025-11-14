@@ -268,7 +268,7 @@ export const QuickIDSection = ({ petData, onUpdate }: QuickIDSectionProps) => {
             />
             <div>
               <h3 className="text-2xl font-bold text-brand-primary">{petData.name}</h3>
-              <p className="text-muted-foreground">{petData.breed} • {petData.age}</p>
+              <p className="text-muted-foreground">{petData.breed || 'Breed unknown'} • {petData.age || 'Age unknown'}</p>
             </div>
           </CardTitle>
         </CardHeader>

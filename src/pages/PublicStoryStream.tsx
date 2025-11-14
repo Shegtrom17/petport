@@ -172,7 +172,7 @@ const PublicStoryStream = () => {
                 </h1>
               </div>
               <p className="text-muted-foreground mt-1">
-                {petData.breed} • {stories.length} {stories.length === 1 ? 'story' : 'stories'}
+                {petData.breed || petData.species || 'Pet'} • {stories.length} {stories.length === 1 ? 'story' : 'stories'}
               </p>
             </div>
 

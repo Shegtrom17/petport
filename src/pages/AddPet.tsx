@@ -113,12 +113,21 @@ export default function AddPet() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Basic validation - name is required
+    // Basic validation - name and species are required
     if (!petData.name.trim()) {
       toast({
         variant: "destructive",
         title: "Name is required",
         description: "Please provide a name for your pet."
+      });
+      return;
+    }
+    
+    if (!petData.species.trim()) {
+      toast({
+        variant: "destructive",
+        title: "Species is required",
+        description: "Please select your pet's species (Dog, Cat, or Horse)."
       });
       return;
     }

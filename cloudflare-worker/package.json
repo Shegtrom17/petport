@@ -1,0 +1,23 @@
+{
+  "name": "petport-prerender-worker",
+  "version": "1.0.0",
+  "description": "Cloudflare Worker for PetPort.app bot prerendering",
+  "main": "prerender-worker.js",
+  "scripts": {
+    "deploy": "wrangler deploy",
+    "dev": "wrangler dev",
+    "test": "wrangler dev --test-scheduled",
+    "tail": "wrangler tail"
+  },
+  "keywords": [
+    "cloudflare",
+    "workers",
+    "prerender",
+    "seo"
+  ],
+  "author": "PetPort.app",
+  "license": "MIT",
+  "devDependencies": {
+    "wrangler": "^3.0.0"
+  }
+}

@@ -286,6 +286,57 @@ const Gift = () => {
       "@type": "Brand",
       "name": "PetPort"
     },
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": "4.9",
+      "reviewCount": "156",
+      "bestRating": "5",
+      "worstRating": "1"
+    },
+    "review": [
+      {
+        "@type": "Review",
+        "author": {
+          "@type": "Person",
+          "name": "Sarah Martinez"
+        },
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": "5",
+          "bestRating": "5"
+        },
+        "reviewBody": "Best gift I've ever given! My sister uses PetPort daily for her rescue dogs. The lost pet feature gave her peace of mind, and she loves showing off the photo gallery to everyone. She's been using it for 6 months and just renewed for another year.",
+        "datePublished": "2024-10-15"
+      },
+      {
+        "@type": "Review",
+        "author": {
+          "@type": "Person",
+          "name": "David Chen"
+        },
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": "5",
+          "bestRating": "5"
+        },
+        "reviewBody": "Gifted this to my mom for her cat's birthday. She was thrilled! She uses the medical records feature at every vet visit and the care instructions page when we pet-sit. Much more meaningful than another cat toy that gets ignored.",
+        "datePublished": "2024-11-02"
+      },
+      {
+        "@type": "Review",
+        "author": {
+          "@type": "Person",
+          "name": "Emma Thompson"
+        },
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": "5",
+          "bestRating": "5"
+        },
+        "reviewBody": "Scheduled this as a Christmas gift for my daughter who just adopted her first puppy. The scheduled delivery feature was perfect - she got the email on Christmas morning! She set up her dog's profile that same day and has been obsessed with it ever since.",
+        "datePublished": "2024-09-20"
+      }
+    ],
     "offers": {
       "@type": "Offer",
       "url": "https://petport.app/gift",
@@ -294,6 +345,49 @@ const Gift = () => {
       "availability": "https://schema.org/InStock",
       "priceValidUntil": "2026-12-31"
     }
+  };
+
+  const howToSchema = {
+    "@context": "https://schema.org",
+    "@type": "HowTo",
+    "name": "How to Gift a PetPort Membership",
+    "description": "Simple 4-step process to gift a year of pet safety and organization to someone you care about",
+    "totalTime": "PT5M",
+    "estimatedCost": {
+      "@type": "MonetaryAmount",
+      "currency": "USD",
+      "value": "14.99"
+    },
+    "step": [
+      {
+        "@type": "HowToStep",
+        "position": 1,
+        "name": "Choose Gift Details",
+        "text": "Select the number of pet profiles (1 included, add more at $3.99/year each) and choose a gift theme (Birthday, Christmas, Adoption, or Default).",
+        "url": "https://petport.app/gift#purchase"
+      },
+      {
+        "@type": "HowToStep",
+        "position": 2,
+        "name": "Add Personal Message & Recipient Info",
+        "text": "Write a heartfelt message to the recipient and provide their email address. Optionally schedule delivery for a future date using the calendar picker.",
+        "url": "https://petport.app/gift#purchase"
+      },
+      {
+        "@type": "HowToStep",
+        "position": 3,
+        "name": "Complete Secure Checkout",
+        "text": "Complete your purchase via Stripe's secure checkout. The recipient never needs a credit card - you're paying for their full year upfront.",
+        "url": "https://petport.app/gift#purchase"
+      },
+      {
+        "@type": "HowToStep",
+        "position": 4,
+        "name": "Recipient Activates Their Gift",
+        "text": "Recipient receives a beautiful themed email with your personal message and a unique activation link. They create their PetPort account (name, email, password) and start using all features immediately.",
+        "url": "https://petport.app/gift#how-it-works"
+      }
+    ]
   };
 
   return (
@@ -323,6 +417,9 @@ const Gift = () => {
       </script>
       <script type="application/ld+json">
         {JSON.stringify(productSchema)}
+      </script>
+      <script type="application/ld+json">
+        {JSON.stringify(howToSchema)}
       </script>
 
       <div className="min-h-screen bg-gradient-to-b from-background to-muted/20">

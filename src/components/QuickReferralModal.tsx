@@ -11,8 +11,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
-import { Copy, ExternalLink, Gift, Mail, MessageSquare } from "lucide-react";
-import { Facebook } from "lucide-react";
+import { Copy, ExternalLink, Gift } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 
 interface QuickReferralModalProps {
@@ -137,28 +136,6 @@ export const QuickReferralModal = ({ isOpen, onClose }: QuickReferralModalProps)
     }
   };
 
-  const shareMessage = `🐾 Keep your pet's info safe with PetPort! Get 10% off yearly plans when you join with my link: ${referralLink}`;
-
-  const handleEmailShare = () => {
-    const subject = encodeURIComponent("Try PetPort - Get 10% Off!");
-    const body = encodeURIComponent(shareMessage);
-    window.location.href = `mailto:?subject=${subject}&body=${body}`;
-  };
-
-  const handleSMSShare = () => {
-    const message = encodeURIComponent(shareMessage);
-    window.location.href = `sms:?body=${message}`;
-  };
-
-  const handleFacebookShare = () => {
-    const shareUrl = encodeURIComponent(referralLink);
-    window.open(
-      `https://www.facebook.com/sharer/sharer.php?u=${shareUrl}`,
-      "_blank",
-      "noopener,noreferrer"
-    );
-  };
-
   const handleViewFullStats = () => {
     onClose();
     navigate("/referrals");
@@ -202,40 +179,6 @@ export const QuickReferralModal = ({ isOpen, onClose }: QuickReferralModalProps)
                 <Copy className="h-4 w-4 mr-2" />
                 Copy Link
               </Button>
-
-              {/* Share Buttons */}
-              <div className="flex gap-2">
-                <Button
-                  onClick={handleEmailShare}
-                  disabled={!referralLink}
-                  variant="outline"
-                  size="sm"
-                  className="flex-1"
-                >
-                  <Mail className="h-4 w-4 mr-1" />
-                  Email
-                </Button>
-                <Button
-                  onClick={handleSMSShare}
-                  disabled={!referralLink}
-                  variant="outline"
-                  size="sm"
-                  className="flex-1"
-                >
-                  <MessageSquare className="h-4 w-4 mr-1" />
-                  SMS
-                </Button>
-                <Button
-                  onClick={handleFacebookShare}
-                  disabled={!referralLink}
-                  variant="outline"
-                  size="sm"
-                  className="flex-1"
-                >
-                  <Facebook className="h-4 w-4 mr-1" />
-                  Facebook
-                </Button>
-              </div>
 
               {/* View Full Stats Link */}
               <Button

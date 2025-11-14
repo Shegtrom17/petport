@@ -48,12 +48,12 @@ export const ReferralCard = ({
   const handleEmailShare = () => {
     const subject = encodeURIComponent("Try PetPort - Get 10% Off!");
     const body = encodeURIComponent(shareMessage);
-    window.open(`mailto:?subject=${subject}&body=${body}`, '_blank');
+    window.location.href = `mailto:?subject=${subject}&body=${body}`;
   };
 
   const handleSMSShare = () => {
     const body = encodeURIComponent(shareMessage);
-    window.open(`sms:?&body=${body}`, '_blank');
+    window.location.href = `sms:?&body=${body}`;
   };
 
   const handleFacebookShare = () => {

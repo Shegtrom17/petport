@@ -114,7 +114,26 @@ serve(async (req) => {
       sessionParams.allow_promotion_codes = true;
     }
 
-    const session = await stripe.checkout.sessions.create(sessionParams);
+    let session;
+    try {
+      session = await stripe.checkout.sessions.create(sessionParams);
+    } catch (err: any) {
+      console.error('[PUBLIC-CREATE-CHECKOUT] Initial session create failed:', err?.message);
+      const msg = (err?.message || '').toLowerCase();
+      const conflict = msg.includes('allow_promotion_codes') && msg.includes('discounts');
+      const invalidCoupon = msg.includes('no such coupon') || msg.includes('invalid') && msg.includes('coupon');
+      if ((conflict || invalidCoupon) && sessionParams) {
+        // Fallback: remove discounts and allow promo codes instead
+        // @ts-ignore
+        if (sessionParams.discounts) delete sessionParams.discounts;
+        // @ts-ignore
+        sessionParams.allow_promotion_codes = true;
+        console.log('[PUBLIC-CREATE-CHECKOUT] Retrying session create without discounts, allowing promotion codes');
+        session = await stripe.checkout.sessions.create(sessionParams);
+      } else {
+        throw err;
+      }
+    }
 
     const responseBody = JSON.stringify({ url: session.url });
     return new Response(responseBody, {

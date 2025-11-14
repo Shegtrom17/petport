@@ -8,13 +8,12 @@ const LOST_PET_TOUR_COMPLETED_KEY = 'petport_lost_pet_tour_completed';
 const LOST_PET_TOUR_SKIPPED_KEY = 'petport_lost_pet_tour_skipped';
 
 interface UseOnboardingTourProps {
-  hasPets: boolean; // Safeguard: don't run if no pets
   tourType?: 'main' | 'lostPet'; // Which tour to run
   requiredTab?: string; // Tab that must be active for tour to run
   currentTab?: string; // Current active tab
 }
 
-export const useOnboardingTour = ({ hasPets, tourType = 'main', requiredTab, currentTab }: UseOnboardingTourProps) => {
+export const useOnboardingTour = ({ tourType = 'main', requiredTab, currentTab }: UseOnboardingTourProps) => {
   const { user } = useAuth();
   const location = useLocation();
   const [runTour, setRunTour] = useState(false);
@@ -36,10 +35,7 @@ export const useOnboardingTour = ({ hasPets, tourType = 'main', requiredTab, cur
             'quick-share-hub',
           ]
         : [
-            'profile-management-hub',
             'quick-share-hub',
-            'bottom-nav-menu',
-            'three-dot-menu',
           ];
       
       // Note: sightings-moderation-board is optional for Lost Pet tour (only shows when pet is marked missing)
@@ -80,7 +76,6 @@ export const useOnboardingTour = ({ hasPets, tourType = 'main', requiredTab, cur
   useEffect(() => {
     console.log(`🔍 [${tourType}] Tour state check:`, {
       pathname: location.pathname,
-      hasPets,
       user: !!user,
       requiredTab,
       currentTab,
@@ -95,9 +90,9 @@ export const useOnboardingTour = ({ hasPets, tourType = 'main', requiredTab, cur
       return;
     }
 
-    // ✅ No-pet safeguard
-    if (!user || !hasPets) {
-      console.log(`⏸️ [${tourType}] Tour blocked: no user or no pets`);
+    // ✅ User check
+    if (!user) {
+      console.log(`⏸️ [${tourType}] Tour blocked: no user`);
       setRunTour(false);
       return;
     }
@@ -126,7 +121,7 @@ export const useOnboardingTour = ({ hasPets, tourType = 'main', requiredTab, cur
     } else {
       console.log(`⏸️ [${tourType}] Tour already completed or skipped`);
     }
-  }, [user, hasPets, location.pathname, completedKey, skippedKey, requiredTab, currentTab, tourType]);
+  }, [user, location.pathname, completedKey, skippedKey, requiredTab, currentTab, tourType]);
 
   const completeTour = () => {
     localStorage.setItem(completedKey, 'true');

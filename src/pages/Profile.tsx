@@ -23,8 +23,8 @@ import { Badge } from "@/components/ui/badge";
 export default function Profile() {
   const { user, signOut } = useAuth();
   const { settings, updateSettings } = useUserSettings(user?.id);
-  const { restartTour } = useOnboardingTour({ hasPets: true });
-  const { restartTour: restartLostPetTour } = useOnboardingTour({ hasPets: true, tourType: 'lostPet' });
+  const { restartTour } = useOnboardingTour({});
+  const { restartTour: restartLostPetTour } = useOnboardingTour({ tourType: 'lostPet' });
   const navigate = useNavigate();
   const { toast } = useToast();
   const [guardianModalOpen, setGuardianModalOpen] = useState(false);

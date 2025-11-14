@@ -297,7 +297,7 @@ export const ServiceProviderNotesBoard = ({ petId, petName, isPublicView = false
   }
 
   return (
-    <Card className="border-0 shadow-lg bg-passport-section-bg backdrop-blur-sm">
+    <Card className="border-0 shadow-lg bg-passport-section-bg backdrop-blur-sm service-provider-board">
       <CardHeader>
         <CardTitle className="flex items-center justify-between">
           <div className="flex items-center space-x-2">

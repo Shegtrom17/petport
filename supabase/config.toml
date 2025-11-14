@@ -177,3 +177,9 @@ verify_jwt = false
 
 [functions.diagnose-stripe-mode]
 verify_jwt = false
+
+[functions.track-referral-visit]
+verify_jwt = false
+
+[functions.admin-link-referral]
+verify_jwt = true

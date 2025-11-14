@@ -21,6 +21,21 @@ export const useReferralCode = () => {
       document.cookie = `petport_referral=${refCode}; path=/; max-age=${30 * 24 * 60 * 60}; SameSite=Lax`;
       
       console.log('[Referral] Code captured and stored in localStorage, sessionStorage, and cookie:', refCode);
+      
+      // Track visit on server (async, don't wait for result)
+      import('@/integrations/supabase/client').then(({ supabase }) => {
+        supabase.functions.invoke('track-referral-visit', {
+          body: { referral_code: refCode }
+        }).then(({ data, error }) => {
+          if (error) {
+            console.warn('[Referral] Failed to track visit:', error.message);
+          } else {
+            console.log('[Referral] Visit tracked on server');
+          }
+        }).catch(err => {
+          console.warn('[Referral] Track visit error:', err);
+        });
+      });
     }
     
     // Debug: Log what's currently stored

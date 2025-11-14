@@ -161,6 +161,57 @@ serve(async (req) => {
       .upsert(upsertData, { onConflict: "email" });
     if (upsertErr) throw new Error(`Upsert subscriber failed: ${upsertErr.message}`);
 
+    log("Subscriber upserted successfully", { email, petLimit, planInterval });
+
+    // Link referral if code exists in subscription metadata AND plan is yearly
+    const referralCode = subscription?.metadata?.referral_code;
+    if (referralCode && userId && planInterval === 'year') {
+      log("Processing referral code", { referralCode, userId });
+      
+      try {
+        const { data: referralData } = await supabase
+          .from('referrals')
+          .select('id')
+          .eq('referral_code', referralCode)
+          .is('referred_user_id', null)
+          .single();
+        
+        if (referralData) {
+          const trialEnd = subscription.trial_end 
+            ? new Date(subscription.trial_end * 1000).toISOString()
+            : new Date().toISOString();
+          
+          // Update referrals table
+          await supabase
+            .from('referrals')
+            .update({
+              referred_user_id: userId,
+              trial_completed_at: trialEnd,
+              referred_plan_interval: 'year',
+              updated_at: new Date().toISOString()
+            })
+            .eq('id', referralData.id);
+          
+          // Update referral_visits to mark conversion
+          await supabase
+            .from('referral_visits')
+            .update({
+              converted_user_id: userId,
+              converted_at: new Date().toISOString(),
+              plan_type: 'yearly'
+            })
+            .eq('referral_code', referralCode)
+            .is('converted_user_id', null)
+            .order('visited_at', { ascending: false })
+            .limit(1);
+          
+          log("Referral linked successfully", { referralId: referralData.id });
+        }
+      } catch (refError) {
+        log("Error linking referral (non-fatal)", { error: refError.message });
+      }
+    }
+
     const responseBody = JSON.stringify({ success: true, needsAccountSetup: !existingUser, existingUser, email });
     return new Response(responseBody, {
       headers: { 

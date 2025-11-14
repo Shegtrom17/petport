@@ -252,6 +252,57 @@ const handler = async (req: Request): Promise<Response> => {
 
     console.log(`✅ [${corrId || 'no-id'}] Subscriber record created (${Date.now() - subscriberStartTime}ms):`, subscriberData);
 
+    // Link referral if referral code provided AND it's a yearly plan
+    if (referralCode && plan === 'yearly') {
+      console.log(`🔗 [${corrId || 'no-id'}] Processing referral code: ${referralCode}`);
+      
+      try {
+        // Find the referral record
+        const { data: referralData, error: referralError } = await supabase
+          .from('referrals')
+          .select('id, referrer_user_id')
+          .eq('referral_code', referralCode)
+          .is('referred_user_id', null)
+          .single();
+        
+        if (!referralError && referralData) {
+          // Update referrals table
+          await supabase
+            .from('referrals')
+            .update({
+              referred_user_id: user.id,
+              trial_completed_at: trialEndDate.toISOString(),
+              referred_plan_interval: 'year',
+              updated_at: new Date().toISOString()
+            })
+            .eq('id', referralData.id);
+          
+          // Update referral_visits to mark conversion
+          await supabase
+            .from('referral_visits')
+            .update({
+              converted_user_id: user.id,
+              converted_at: new Date().toISOString(),
+              plan_type: 'yearly'
+            })
+            .eq('referral_code', referralCode)
+            .is('converted_user_id', null)
+            .order('visited_at', { ascending: false })
+            .limit(1);
+          
+          console.log(`✅ [${corrId || 'no-id'}] Referral linked successfully`, {
+            referralId: referralData.id,
+            referredUserId: user.id
+          });
+        } else {
+          console.log(`⚠️ [${corrId || 'no-id'}] Referral code not found or already used: ${referralCode}`);
+        }
+      } catch (referralError) {
+        // Don't fail signup if referral linking fails
+        console.error(`❌ [${corrId || 'no-id'}] Error linking referral (non-fatal):`, referralError);
+      }
+    }
+
     // Send welcome email asynchronously using the proper Postmark template
     console.log(`📧 [${corrId || 'no-id'}] Sending welcome email to ${email}...`);
     supabase.functions.invoke('send-email', {

@@ -71,6 +71,15 @@ export default function PublicMissingPet() {
   const [error, setError] = useState<string | null>(null);
   const pageUrl = window.location.href;
   
+  useEffect(() => {
+    // Signal to Prerender.io that page is ready after meta tags render
+    const timer = setTimeout(() => {
+      (window as any).prerenderReady = true;
+    }, 500);
+    
+    return () => clearTimeout(timer);
+  }, []);
+  
   // Lost Pet PDF State (same as QuickShareHub)
   const [lostPetPdfBlob, setLostPetPdfBlob] = useState<Blob | null>(null);
   const [isGeneratingLostPetPdf, setIsGeneratingLostPetPdf] = useState(false);

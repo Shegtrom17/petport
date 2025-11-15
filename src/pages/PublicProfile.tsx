@@ -31,6 +31,15 @@ const PublicProfile = () => {
   const reviewFormRef = React.useRef<HTMLDivElement>(null);
   const [careUpdates, setCareUpdates] = useState<any[]>([]);
 
+  useEffect(() => {
+    // Signal to Prerender.io that page is ready after meta tags render
+    const timer = setTimeout(() => {
+      (window as any).prerenderReady = true;
+    }, 500);
+    
+    return () => clearTimeout(timer);
+  }, []);
+
   const handleClose = async () => {
     const { data: { user } } = await supabase.auth.getUser();
     

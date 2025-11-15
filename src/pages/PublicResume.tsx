@@ -93,6 +93,15 @@ export default function PublicResume() {
   const [showAddReview, setShowAddReview] = useState(false);
   const reviewFormRef = useRef<HTMLDivElement>(null);
 
+  useEffect(() => {
+    // Signal to Prerender.io that page is ready after meta tags render
+    const timer = setTimeout(() => {
+      (window as any).prerenderReady = true;
+    }, 500);
+    
+    return () => clearTimeout(timer);
+  }, []);
+
   const handleClose = async () => {
     const { data: { user } } = await supabase.auth.getUser();
     

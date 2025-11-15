@@ -170,7 +170,7 @@ Deno.serve(async (req) => {
      xmlns:content="http://purl.org/rss/1.0/modules/content/"
      xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Dog Gone Good Podcast - PetPort</title>
+    <title>The PetPort Podcast: Giving Your Pet a Voice for Life</title>
     <link>https://petport.app/podcast</link>
     <atom:link href="https://petport.app/podcast/rss" rel="self" type="application/rss+xml"/>
     <description>Expert strategies and real-world advice for modern pet parents. Learn how to manage pet health records, create professional pet resumes, implement lost pet recovery systems, organize medical documents, handle foster-to-adopter transitions, and give your companion animal a complete digital voice that lasts a lifetime.</description>
@@ -179,7 +179,7 @@ Deno.serve(async (req) => {
     <lastBuildDate>${new Date().toUTCString()}</lastBuildDate>
     
     <!-- iTunes Podcast Metadata -->
-    <itunes:author>Susan Hegstrom</itunes:author>
+    <itunes:author>Petport.app</itunes:author>
     <itunes:summary>Give Your Pet a Digital Voice for Life. Expert strategies for pet health records, lost pet recovery, pet housing applications, document storage, foster care programs, and comprehensive care instructions.</itunes:summary>
     <itunes:owner>
       <itunes:name>PetPort</itunes:name>

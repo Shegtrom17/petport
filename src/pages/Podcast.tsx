@@ -39,8 +39,8 @@ const Podcast = () => {
         {JSON.stringify({
           "@context": "https://schema.org",
           "@type": "PodcastSeries",
-          "name": "Dog Gone Good Podcast",
-          "alternateName": "PetPort Podcast: Give Your Pet a Digital Voice for Life",
+          "name": "The PetPort Podcast",
+          "alternateName": "Giving Your Pet a Voice for Life",
           "description": "Expert strategies and real-world advice for modern pet parents. Learn how to manage pet health records, create professional pet resumes, implement lost pet recovery systems, organize medical documents, handle foster-to-adopter transitions, and give your companion animal a complete digital voice that lasts a lifetime.",
           "url": "https://petport.app/podcast",
           "image": {
@@ -50,9 +50,9 @@ const Podcast = () => {
             "height": 630
           },
           "author": {
-            "@type": "Person",
-            "name": "Susan Hegstrom",
-            "jobTitle": "Pet Care Technology Expert"
+            "@type": "Organization",
+            "name": "Petport.app",
+            "url": "https://petport.app"
           },
           "publisher": {
             "@type": "Organization",

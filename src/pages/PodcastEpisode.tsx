@@ -102,13 +102,13 @@ const PodcastEpisode = () => {
           "partOfSeries": {
             "@type": "PodcastSeries",
             "@id": "https://petport.app/podcast#series",
-            "name": "Dog Gone Good Podcast",
+            "name": "The PetPort Podcast",
             "url": "https://petport.app/podcast"
           },
           "author": {
-            "@type": "Person",
-            "name": "Susan Hegstrom",
-            "jobTitle": "Pet Care Technology Expert"
+            "@type": "Organization",
+            "name": "Petport.app",
+            "url": "https://petport.app"
           },
           "publisher": {
             "@type": "Organization",

@@ -214,6 +214,7 @@ export default {
           return new Response(cached, {
             headers: {
               'Content-Type': 'text/html',
+              'X-Prerender': 'true',
               'X-Prerender-Cache': 'HIT',
               'Cache-Control': `public, max-age=${getCacheTTL(pathname)}`,
             },
@@ -251,6 +252,7 @@ export default {
       return new Response(html, {
         headers: {
           'Content-Type': 'text/html',
+          'X-Prerender': 'true',
           'X-Prerender-Cache': 'MISS',
           'Cache-Control': `public, max-age=${getCacheTTL(pathname)}`,
           'X-Prerender-Status': prerenderedResponse.status.toString(),

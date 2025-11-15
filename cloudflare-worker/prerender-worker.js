@@ -108,12 +108,14 @@ function shouldSkipPath(pathname) {
  * Get appropriate cache TTL based on path
  */
 function getCacheTTL(pathname) {
-  // Marketing pages
+  // Marketing pages (homepage, podcast, learn) - 24 hours
+  // Podcast episodes - 6 hours (content pages update more frequently)
   if (['/'].includes(pathname) || 
       pathname.startsWith('/podcast') ||
       pathname.startsWith('/learn') ||
       pathname.startsWith('/demos')) {
-    return pathname.startsWith('/podcast/episode/') 
+    // Check if it's an episode page (any podcast path except /podcast itself)
+    return (pathname.startsWith('/podcast/') && pathname !== '/podcast') 
       ? CONFIG.cacheTTL.podcast 
       : CONFIG.cacheTTL.marketing;
   }

@@ -17,7 +17,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft, Menu } from "lucide-react";
 import { useNavigate, Link } from "react-router-dom";
 import { PublicNavigationMenu } from "@/components/PublicNavigationMenu";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function VaccinationGuide() {
   const navigate = useNavigate();
@@ -26,6 +26,15 @@ export default function VaccinationGuide() {
   const handleGoBack = () => {
     navigate("/learn");
   };
+
+  useEffect(() => {
+    // Signal to Prerender.io that page is ready after meta tags render
+    const timer = setTimeout(() => {
+      (window as any).prerenderReady = true;
+    }, 1000);
+    
+    return () => clearTimeout(timer);
+  }, []);
 
   return (
     <div className="min-h-screen bg-white">

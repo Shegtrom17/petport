@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { MetaTags } from "@/components/MetaTags";
 import { useNavigate } from "react-router-dom";
 import { X } from "lucide-react";
@@ -13,6 +14,16 @@ export default function Privacy() {
       navigate('/');
     }
   };
+
+  useEffect(() => {
+    // Signal to Prerender.io that page is ready after meta tags render
+    const timer = setTimeout(() => {
+      (window as any).prerenderReady = true;
+    }, 1000);
+    
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
       <MetaTags

@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { DollarSign, Users, Clock, ArrowRight, Menu } from "lucide-react";
 import { AzureButton } from "@/components/ui/azure-button";
 import { MetaTags } from "@/components/MetaTags";
@@ -13,6 +13,15 @@ export default function ReferralProgram() {
   
   // Capture referral codes from URL
   useReferralCode();
+
+  useEffect(() => {
+    // Signal to Prerender.io that page is ready after meta tags render
+    const timer = setTimeout(() => {
+      (window as any).prerenderReady = true;
+    }, 1000);
+    
+    return () => clearTimeout(timer);
+  }, []);
 
   return <>
       <MetaTags title="Referral Program - Earn $2 Per Friend | PetPort" description="Join PetPort's referral program and earn $2 for every friend who subscribes to a yearly plan. Get paid via Stripe Connect. Start earning today!" url={window.location.origin + "/referral-program"} type="website" />

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Menu, Gift, Play, Share2, Calendar, Clock } from 'lucide-react';
 import { AzureButton } from '@/components/ui/azure-button';
@@ -38,6 +38,15 @@ const PodcastEpisode = () => {
       </div>
     );
   }
+
+  useEffect(() => {
+    // Signal to Prerender.io that page is ready after meta tags render
+    const timer = setTimeout(() => {
+      (window as any).prerenderReady = true;
+    }, 500);
+    
+    return () => clearTimeout(timer);
+  }, []);
 
   const relatedEpisodes = podcastEpisodes
     .filter((ep) => ep.slug !== episode.slug)

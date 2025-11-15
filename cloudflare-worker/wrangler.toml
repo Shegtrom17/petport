@@ -10,9 +10,10 @@ account_id = "7fd3fa8f32e03b54886fa5f75d6b9696"
 workers_dev = false
 
 # Routes - THIS IS CRITICAL
-# The worker will intercept ALL requests to petport.app
+# The worker will intercept ALL requests to petport.app and www
 routes = [
-  { pattern = "petport.app/*", zone_name = "petport.app" }
+  { pattern = "petport.app/*", zone_name = "petport.app" },
+  { pattern = "www.petport.app/*", zone_name = "petport.app" }
 ]
 
 # KV Namespace for caching (optional but recommended)

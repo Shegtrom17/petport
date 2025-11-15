@@ -2,6 +2,7 @@
 declare global {
   interface Window {
     __recentUpdate?: boolean;
+    prerenderReady?: boolean;
   }
 }
 

@@ -176,6 +176,15 @@ export default {
       const pathname = url.pathname;
       
       // ----------------------------------------------------------------
+      // WHITELIST: Let Prerender.io servers through (prevents loops)
+      // ----------------------------------------------------------------
+      
+      if (userAgent.toLowerCase().includes('prerender')) {
+        console.log('[PRERENDER.IO BYPASS] Letting Prerender.io crawler through');
+        return fetch(request);
+      }
+      
+      // ----------------------------------------------------------------
       // DECISION POINT: Should we prerender this request?
       // ----------------------------------------------------------------
       

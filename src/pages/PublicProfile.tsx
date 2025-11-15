@@ -35,7 +35,7 @@ const PublicProfile = () => {
     // Signal to Prerender.io that page is ready after meta tags render
     const timer = setTimeout(() => {
       (window as any).prerenderReady = true;
-    }, 500);
+    }, 1000);
     
     return () => clearTimeout(timer);
   }, []);

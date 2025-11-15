@@ -16,6 +16,15 @@ export default function PublicGuardian() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    // Signal to Prerender.io that page is ready after meta tags render
+    const timer = setTimeout(() => {
+      (window as any).prerenderReady = true;
+    }, 1000);
+    
+    return () => clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
     fetchGuardianData();
   }, [petId, accessToken]);
 

@@ -67,6 +67,15 @@ export const PublicGallery = () => {
   const selectedPhotoIds = searchParams.get('photos')?.split(',') || [];
 
   useEffect(() => {
+    // Signal to Prerender.io that page is ready after meta tags render
+    const timer = setTimeout(() => {
+      (window as any).prerenderReady = true;
+    }, 1000);
+    
+    return () => clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
     const fetchPetData = async () => {
       if (!petId) {
         setError('Pet ID not found');

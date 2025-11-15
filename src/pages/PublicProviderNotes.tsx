@@ -37,6 +37,15 @@ const PublicProviderNotes = () => {
   };
 
   useEffect(() => {
+    // Signal to Prerender.io that page is ready after meta tags render
+    const timer = setTimeout(() => {
+      (window as any).prerenderReady = true;
+    }, 1000);
+    
+    return () => clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
     const fetchData = async () => {
       if (!petId || petId.startsWith(':') || !isValidUUID(petId)) {
         setError('Invalid or missing pet ID');

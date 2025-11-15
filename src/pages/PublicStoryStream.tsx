@@ -34,6 +34,15 @@ const PublicStoryStream = () => {
   const storiesPerPage = 10;
 
   useEffect(() => {
+    // Signal to Prerender.io that page is ready after meta tags render
+    const timer = setTimeout(() => {
+      (window as any).prerenderReady = true;
+    }, 1000);
+    
+    return () => clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
     loadData();
   }, [petId, page]);
 
@@ -107,8 +116,14 @@ const PublicStoryStream = () => {
   };
 
   if (loading && page === 1) {
-    return (
-      <div className="min-h-screen bg-background py-8 px-4">
+  return (
+    <div className="min-h-screen bg-background py-8 px-4">
+      <MetaTags 
+        title={`${petData.name}'s Story Stream - PetPort`}
+        description={`Follow ${petData.name}'s life story and updates on PetPort.`}
+        image="https://pub-a7c2c18b8d6143b9a256105ef44f2da0.r2.dev/resume-og-1mb.png"
+        url={`https://petport.app/story-stream/${petId}`}
+      />
         <div className="max-w-4xl mx-auto">
           <div className="space-y-4">
             {[1, 2, 3].map(i => (

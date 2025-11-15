@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { MetaTags } from "@/components/MetaTags";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
@@ -21,8 +21,17 @@ export default function Learn() {
   // Capture referral codes from URL
   useReferralCode();
 
+  useEffect(() => {
+    // Signal to Prerender.io that page is ready after meta tags render
+    const timer = setTimeout(() => {
+      (window as any).prerenderReady = true;
+    }, 500);
+    
+    return () => clearTimeout(timer);
+  }, []);
+
   return <div className="min-h-screen bg-white">
-      <MetaTags 
+      <MetaTags
         title="Pet Emergency Guide: Lost Pet Recovery, Travel Docs & Pet Health Records | PetPort" 
         description="Complete guide to digital pet management: pet emergency preparedness, lost pet recovery system, pet care instructions, pet travel documentation, pet health records & pet foster care. Free demos included." 
         image="https://pub-a7c2c18b8d6143b9a256105ef44f2da0.r2.dev/OG%20General.png"

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Check, X, ArrowRight, Eye, Heart, Menu, Home, HelpCircle } from "lucide-react";
@@ -20,13 +20,23 @@ import lostPetDemoPreview from "@/assets/lost-pet-demo-preview.png";
 export default function LostPetFeatures() {
   const navigate = useNavigate();
   const [showMobileMenu, setShowMobileMenu] = useState(false);
+  
+  useEffect(() => {
+    // Signal to Prerender.io that page is ready after meta tags render
+    const timer = setTimeout(() => {
+      (window as any).prerenderReady = true;
+    }, 500);
+    
+    return () => clearTimeout(timer);
+  }, []);
+  
   const scrollToGenerator = () => {
     document.getElementById('free-generator')?.scrollIntoView({ behavior: 'smooth' });
   };
 
   return (
     <>
-      <MetaTags 
+      <MetaTags
         title="Lost Pet Flyer Generator & LiveLink Alert System | PetPort"
         description="Free lost pet flyer tool. Create missing pet LiveLinks in 60 seconds with QR codes, sighting board & instant sharing. Help bring your pet home safely."
         type="website"

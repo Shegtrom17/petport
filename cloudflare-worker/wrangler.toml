@@ -16,12 +16,10 @@ routes = [
   { pattern = "www.petport.app/*", zone_name = "petport.app" }
 ]
 
-# KV Namespace for caching (optional but recommended)
-# Uncomment after creating KV namespace:
-# wrangler kv:namespace create "PRERENDER_CACHE"
-# kv_namespaces = [
-#   { binding = "PRERENDER_CACHE", id = "YOUR_KV_NAMESPACE_ID" }
-# ]
+# KV Namespace for caching
+kv_namespaces = [
+  { binding = "PRERENDER_CACHE", id = "960cd799487549fb920021fa9e7cef58" }
+]
 
 # Secrets (set with: wrangler secret put PRERENDER_TOKEN)
 # PRERENDER_TOKEN = "your-prerender-io-token"

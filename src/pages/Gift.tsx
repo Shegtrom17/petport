@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -47,6 +47,15 @@ const Gift = () => {
   const BASE_PRICE = 14.99;
   const ADDON_PRICE = 3.99;
   const totalPrice = BASE_PRICE + (additionalPets * ADDON_PRICE);
+  
+  useEffect(() => {
+    // Signal to Prerender.io that page is ready after meta tags render
+    const timer = setTimeout(() => {
+      (window as any).prerenderReady = true;
+    }, 500);
+    
+    return () => clearTimeout(timer);
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

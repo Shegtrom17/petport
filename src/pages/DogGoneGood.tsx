@@ -83,6 +83,15 @@ export default function DogGoneGood() {
   // Capture referral codes from URL
   useReferralCode();
   
+  useEffect(() => {
+    // Signal to Prerender.io that page is ready after meta tags render
+    const timer = setTimeout(() => {
+      (window as any).prerenderReady = true;
+    }, 500);
+    
+    return () => clearTimeout(timer);
+  }, []);
+  
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [species, setSpecies] = useState<Species>('dog');
   const [theme, setTheme] = useState<ThemeId>('patriotic');

@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { MetaTags } from "@/components/MetaTags";
 import { AzureButton } from "@/components/ui/azure-button";
 import { Button } from "@/components/ui/button";
@@ -12,6 +12,15 @@ import { PodcastEpisodeCard } from "@/components/PodcastEpisodeCard";
 const FosterProgram = () => {
   const navigate = useNavigate();
   const [showMobileMenu, setShowMobileMenu] = useState(false);
+
+  useEffect(() => {
+    // Signal to Prerender.io that page is ready after meta tags render
+    const timer = setTimeout(() => {
+      (window as any).prerenderReady = true;
+    }, 500);
+    
+    return () => clearTimeout(timer);
+  }, []);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-muted/20">

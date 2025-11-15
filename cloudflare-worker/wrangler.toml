@@ -6,8 +6,8 @@ main = "prerender-worker.js"
 compatibility_date = "2024-01-01"
 
 # Account details (get from Cloudflare dashboard)
-# account_id = "YOUR_ACCOUNT_ID"
-# workers_dev = false
+account_id = "7fd3fa8f32e03b54886fa5f75d6b9696"
+workers_dev = false
 
 # Routes - THIS IS CRITICAL
 # The worker will intercept ALL requests to petport.app

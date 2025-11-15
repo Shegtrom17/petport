@@ -141,7 +141,9 @@ function getCacheTTL(pathname) {
  * Fetch pre-rendered content from Prerender.io
  */
 async function fetchPrerenderedContent(url, prerenderToken) {
-  const prerenderUrl = `${CONFIG.prerenderUrl}/${url}`;
+  // Convert petport.app URL to staging URL for Prerender.io to fetch
+  const stagingUrl = url.replace('petport.app', 'petport.lovable.app');
+  const prerenderUrl = `${CONFIG.prerenderUrl}/${stagingUrl}`;
   
   const response = await fetch(prerenderUrl, {
     headers: {
@@ -192,9 +194,11 @@ export default {
         (isBot(userAgent) || hasEscapedFragment(url)) &&
         !shouldSkipPath(pathname);
       
-      // If not a bot or skip path, serve normal React app
+      // If not a bot or skip path, serve normal React app from staging
       if (!needsPrerender) {
-        return fetch(request);
+        // Convert petport.app to staging URL for regular users
+        const stagingUrl = request.url.replace('petport.app', 'petport.lovable.app');
+        return fetch(stagingUrl, request);
       }
       
       // ----------------------------------------------------------------

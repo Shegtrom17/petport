@@ -1,3 +1,5 @@
+import { getBaseURL } from './domainUtils';
+
 interface AppShareData {
   title: string;
   text: string;
@@ -14,7 +16,7 @@ export const generateAppShareData = (): AppShareData => {
   return {
     title: "PetPort - Digital Pet Passport",
     text: "Check out PetPort - the digital passport for your pets! Create beautiful profiles, emergency info, and share with caregivers.",
-    url: window.location.origin
+    url: getBaseURL()
   };
 };
 

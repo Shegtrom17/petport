@@ -24,8 +24,12 @@ const Podcast = () => {
   const latestEpisode = podcastEpisodes[0];
 
   useEffect(() => {
-    // Signal to Prerender.io that page is ready after meta tags render
-    (window as any).prerenderReady = true;
+    // Give MetaTags component time to update DOM before signaling ready to Prerender.io
+    const timer = setTimeout(() => {
+      (window as any).prerenderReady = true;
+    }, 500);
+    
+    return () => clearTimeout(timer);
   }, []);
 
   return (

@@ -52,6 +52,15 @@ export default function DemoResume() {
     loadPetData();
   }, []);
 
+  useEffect(() => {
+    // Signal to Prerender.io that page is ready after meta tags render
+    const timer = setTimeout(() => {
+      (window as any).prerenderReady = true;
+    }, 1000);
+    
+    return () => clearTimeout(timer);
+  }, []);
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">

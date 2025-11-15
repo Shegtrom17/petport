@@ -114,7 +114,7 @@ function getCacheTTL(pathname) {
       pathname.startsWith('/podcast') ||
       pathname.startsWith('/learn') ||
       pathname.startsWith('/demos')) {
-    // Check if it's an episode page (any podcast path except /podcast itself)
+    // Check if it's an episode page (episodes are at /podcast/:episodeSlug)
     return (pathname.startsWith('/podcast/') && pathname !== '/podcast') 
       ? CONFIG.cacheTTL.podcast 
       : CONFIG.cacheTTL.marketing;

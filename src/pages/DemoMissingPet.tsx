@@ -86,6 +86,15 @@ export default function DemoMissingPet() {
   const [isSubmittingSighting, setIsSubmittingSighting] = useState(false);
 
   useEffect(() => {
+    // Signal to Prerender.io that page is ready after meta tags render
+    const timer = setTimeout(() => {
+      (window as any).prerenderReady = true;
+    }, 1000);
+    
+    return () => clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
     const load = async () => {
       try {
         // Fetch Finnegan's live data from the database

@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { CheckCircle2, Copy, Mail, Gift, Loader2, X } from "lucide-react";
 import { toast } from "sonner";
+import { MetaTags } from "@/components/MetaTags";
 
 interface GiftDetails {
   giftCode: string;
@@ -25,6 +26,15 @@ const GiftSent = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [giftDetails, setGiftDetails] = useState<GiftDetails | null>(null);
   const [isCopied, setIsCopied] = useState(false);
+
+  useEffect(() => {
+    // Signal to Prerender.io that page is ready after meta tags render
+    const timer = setTimeout(() => {
+      (window as any).prerenderReady = true;
+    }, 1000);
+    
+    return () => clearTimeout(timer);
+  }, []);
 
   useEffect(() => {
     if (!sessionId) {

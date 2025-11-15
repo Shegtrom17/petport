@@ -38,6 +38,15 @@ export default function DemoGallery() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // Signal to Prerender.io that page is ready after meta tags render
+    const timer = setTimeout(() => {
+      (window as any).prerenderReady = true;
+    }, 1000);
+    
+    return () => clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
     const load = async () => {
       try {
         // Fetch pet data

@@ -59,6 +59,15 @@ const PublicEmergencyProfile = () => {
   };
 
   useEffect(() => {
+    // Signal to Prerender.io that page is ready after meta tags render
+    const timer = setTimeout(() => {
+      (window as any).prerenderReady = true;
+    }, 1000);
+    
+    return () => clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
     const loadPetData = async () => {
       if (!petId) {
         setError("Pet ID not provided");

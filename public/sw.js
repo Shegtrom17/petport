@@ -47,12 +47,12 @@ self.addEventListener('fetch', (event) => {
   const isCrossOrigin = urlObj.origin !== self.location.origin;
   const isNavigation = req.mode === 'navigate' || req.destination === 'document' || req.headers.get('accept')?.includes('text/html');
 
-  // Avoid caching PDFs or dynamic share routes
+  // Avoid caching PDFs or public LiveLinks (dynamic content)
   const isPdfRequest = req.headers.get('accept')?.includes('application/pdf') || urlObj.pathname.endsWith('.pdf');
-  const isShareRoute = urlObj.pathname.includes('/public/') || urlObj.pathname.includes('/share/');
+  const isPublicLiveLink = /\/(profile|resume|missing-pet|emergency|care|gallery|travel|story-stream|reviews|provider-notes|guardian)\//.test(urlObj.pathname);
 
-  // Bypass SW for preflight/edge functions/non-GET/cross-origin/PDFs/shares
-  if (isOptions || isSupabaseFunction || isNonGet || isCrossOrigin || isPdfRequest || isShareRoute) {
+  // Bypass SW for preflight/edge functions/non-GET/cross-origin/PDFs/public LiveLinks
+  if (isOptions || isSupabaseFunction || isNonGet || isCrossOrigin || isPdfRequest || isPublicLiveLink) {
     event.respondWith(fetch(req));
     return;
   }

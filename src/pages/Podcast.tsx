@@ -27,7 +27,7 @@ const Podcast = () => {
     // Give MetaTags component time to update DOM before signaling ready to Prerender.io
     const timer = setTimeout(() => {
       (window as any).prerenderReady = true;
-    }, 500);
+    }, 1000);
     
     return () => clearTimeout(timer);
   }, []);

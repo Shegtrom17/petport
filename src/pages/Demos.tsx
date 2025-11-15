@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { MetaTags } from "@/components/MetaTags";
 import { Button } from "@/components/ui/button";
 import { PodcastBanner } from "@/components/PodcastBanner";
@@ -35,6 +35,15 @@ export default function Demos() {
   
   // Capture referral codes from URL
   useReferralCode();
+
+  useEffect(() => {
+    // Signal to Prerender.io that page is ready after meta tags render
+    const timer = setTimeout(() => {
+      (window as any).prerenderReady = true;
+    }, 1000);
+    
+    return () => clearTimeout(timer);
+  }, []);
 
   const liveLinks = [
     {

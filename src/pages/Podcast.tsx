@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Headphones, ArrowLeft, Gift, Menu } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { AzureButton } from '@/components/ui/azure-button';
@@ -22,6 +22,11 @@ const Podcast = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const latestEpisode = podcastEpisodes[0];
+
+  useEffect(() => {
+    // Signal to Prerender.io that page is ready after meta tags render
+    (window as any).prerenderReady = true;
+  }, []);
 
   return (
     <>

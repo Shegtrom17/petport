@@ -109,7 +109,7 @@ const Index = () => {
 
   const { runTour, tourKey, completeTour, skipTour } = useOnboardingTour({
     tourType: 'main',
-    requiredTab: 'care',
+    requiredTab: 'profile',
     currentTab: activeTab,
   });
 

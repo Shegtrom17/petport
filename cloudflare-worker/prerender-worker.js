@@ -142,7 +142,7 @@ function getCacheTTL(pathname) {
  */
 async function fetchPrerenderedContent(url, prerenderToken) {
   // Convert petport.app URL to staging URL for Prerender.io to fetch
-  const stagingUrl = url.replace('petport.app', 'petport.lovable.app');
+  const stagingUrl = url.replace('petport.app', 'c2db7d2d-7448-4eaf-945e-d804d3aeaccc.lovableproject.com');
   const prerenderUrl = `${CONFIG.prerenderUrl}/${stagingUrl}`;
   
   const response = await fetch(prerenderUrl, {
@@ -183,7 +183,7 @@ export default {
       
       if (userAgent.toLowerCase().includes('prerender')) {
         console.log('[PRERENDER.IO BYPASS] Proxying Prerender.io to staging origin');
-        const stagingUrl = request.url.replace('petport.app', 'petport.lovable.app');
+        const stagingUrl = request.url.replace('petport.app', 'c2db7d2d-7448-4eaf-945e-d804d3aeaccc.lovableproject.com');
         return fetch(stagingUrl, request);
       }
       
@@ -198,7 +198,7 @@ export default {
       // If not a bot or skip path, serve normal React app from staging
       if (!needsPrerender) {
         // Convert petport.app to staging URL for regular users
-        const stagingUrl = request.url.replace('petport.app', 'petport.lovable.app');
+        const stagingUrl = request.url.replace('petport.app', 'c2db7d2d-7448-4eaf-945e-d804d3aeaccc.lovableproject.com');
         return fetch(stagingUrl, request);
       }
       

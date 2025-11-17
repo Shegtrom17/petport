@@ -182,8 +182,9 @@ export default {
       // ----------------------------------------------------------------
       
       if (userAgent.toLowerCase().includes('prerender')) {
-        console.log('[PRERENDER.IO BYPASS] Letting Prerender.io crawler through');
-        return fetch(request);
+        console.log('[PRERENDER.IO BYPASS] Proxying Prerender.io to staging origin');
+        const stagingUrl = request.url.replace('petport.app', 'petport.lovable.app');
+        return fetch(stagingUrl, request);
       }
       
       // ----------------------------------------------------------------

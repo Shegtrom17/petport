@@ -22,3 +22,7 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+# Prevent Bun or other managers from being autodetected
+bun.lockb
+yarn.lock
+pnpm-lock.yaml

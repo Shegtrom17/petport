@@ -5,10 +5,10 @@
  * while serving the normal React app to regular users.
  * 
  * Architecture:
- * - Bot request → Prerender.io → Full HTML
- * - User request → Lovable App → React SPA
+ * - Bot request → Prerender.io → Full HTML from Cloudflare Pages
+ * - User request → Cloudflare Pages → React SPA
  * 
- * Deploy with: wrangler deploy
+ * Deploy via: Cloudflare Dashboard > Workers & Pages > Your Worker > Quick Edit
  */
 
 // ============================================================================
@@ -109,7 +109,6 @@ function shouldSkipPath(pathname) {
  */
 function getCacheTTL(pathname) {
   // Marketing pages (homepage, podcast, learn) - 24 hours
-  // Podcast episodes - 6 hours (content pages update more frequently)
   if (['/'].includes(pathname) || 
       pathname.startsWith('/podcast') ||
       pathname.startsWith('/learn') ||
@@ -138,23 +137,12 @@ function getCacheTTL(pathname) {
 // ============================================================================
 
 /**
- * Convert any petport.app (with or without www) URL to the staging origin.
- */
-function toStagingUrl(input) {
-  const u = new URL(input);
-  u.protocol = 'https:';
-  u.hostname = 'c2db7d2d-7448-4eaf-945e-d804d3aeaccc.lovableproject.com';
-  u.port = '';
-  return u.toString();
-}
-
-/**
  * Fetch pre-rendered content from Prerender.io
+ * FIXED: Now tells Prerender.io to fetch from petport.app directly (Cloudflare Pages)
  */
 async function fetchPrerenderedContent(url, prerenderToken) {
-  // Convert petport.app URL to staging URL for Prerender.io to fetch
-  const stagingUrl = toStagingUrl(url);
-  const prerenderUrl = `${CONFIG.prerenderUrl}/${stagingUrl}`;
+  // Tell Prerender.io to fetch from the actual URL (petport.app on Cloudflare Pages)
+  const prerenderUrl = `${CONFIG.prerenderUrl}/${url}`;
   
   const response = await fetch(prerenderUrl, {
     headers: {
@@ -186,29 +174,28 @@ export default {
     try {
       const url = new URL(request.url);
       const userAgent = request.headers.get('User-Agent') || '';
-  const pathname = url.pathname;
+      const pathname = url.pathname;
 
-  // ----------------------------------------------------------------
-  // BYPASS: Static verification files (Google, Bing, etc.)
-  // ----------------------------------------------------------------
+      // ----------------------------------------------------------------
+      // BYPASS: Static verification files (Google, Bing, etc.)
+      // ----------------------------------------------------------------
 
-  // Let verification files pass through to origin (Cloudflare Pages)
-  if (pathname.match(/\.(html|txt|xml)$/) && 
-      !pathname.startsWith('/demo') && 
-      !pathname.startsWith('/public')) {
-    console.log('[STATIC FILE] Bypassing worker for:', pathname);
-    // Fetch from origin (Cloudflare Pages), not staging
-    return fetch(request);
-  }
+      // Let verification files pass through to origin (Cloudflare Pages)
+      if (pathname.match(/\.(html|txt|xml)$/) && 
+          !pathname.startsWith('/demo') && 
+          !pathname.startsWith('/public')) {
+        console.log('[STATIC FILE] Bypassing worker for:', pathname);
+        return fetch(request);
+      }
 
-  // ----------------------------------------------------------------
+      // ----------------------------------------------------------------
       // WHITELIST: Let Prerender.io servers through (prevents loops)
       // ----------------------------------------------------------------
       
       if (userAgent.toLowerCase().includes('prerender')) {
-        console.log('[PRERENDER.IO BYPASS] Proxying Prerender.io to staging origin');
-        const stagingUrl = toStagingUrl(request.url);
-        return fetch(stagingUrl, request);
+        console.log('[PRERENDER.IO BYPASS] Proxying Prerender.io to Cloudflare Pages');
+        // FIXED: Just pass through to Cloudflare Pages, no conversion needed
+        return fetch(request);
       }
       
       // ----------------------------------------------------------------
@@ -219,11 +206,10 @@ export default {
         (isBot(userAgent) || hasEscapedFragment(url)) &&
         !shouldSkipPath(pathname);
       
-      // If not a bot or skip path, serve normal React app from staging
+      // If not a bot or skip path, serve normal React app from Cloudflare Pages
       if (!needsPrerender) {
-        // Convert petport.app to staging URL for regular users
-        const stagingUrl = toStagingUrl(request.url);
-        return fetch(stagingUrl, request);
+        // FIXED: Just pass through to Cloudflare Pages, no conversion needed
+        return fetch(request);
       }
       
       // ----------------------------------------------------------------
@@ -234,7 +220,6 @@ export default {
       
       // Check cache first (optional, requires KV namespace)
       const cacheKey = getCacheKey(url);
-      let cachedResponse = null;
       
       if (env.PRERENDER_CACHE) {
         const cached = await env.PRERENDER_CACHE.get(cacheKey, 'text');
@@ -260,6 +245,7 @@ export default {
         return fetch(request); // Fallback to React app
       }
       
+      // FIXED: Now passes the correct petport.app URL to Prerender.io
       const prerenderedResponse = await fetchPrerenderedContent(
         request.url, 
         prerenderToken

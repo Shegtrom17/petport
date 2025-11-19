@@ -186,9 +186,22 @@ export default {
     try {
       const url = new URL(request.url);
       const userAgent = request.headers.get('User-Agent') || '';
-      const pathname = url.pathname;
-      
-      // ----------------------------------------------------------------
+  const pathname = url.pathname;
+
+  // ----------------------------------------------------------------
+  // BYPASS: Static verification files (Google, Bing, etc.)
+  // ----------------------------------------------------------------
+
+  // Let verification files pass through to origin (Cloudflare Pages)
+  if (pathname.match(/\.(html|txt|xml)$/) && 
+      !pathname.startsWith('/demo') && 
+      !pathname.startsWith('/public')) {
+    console.log('[STATIC FILE] Bypassing worker for:', pathname);
+    // Fetch from origin (Cloudflare Pages), not staging
+    return fetch(request);
+  }
+
+  // ----------------------------------------------------------------
       // WHITELIST: Let Prerender.io servers through (prevents loops)
       // ----------------------------------------------------------------
       

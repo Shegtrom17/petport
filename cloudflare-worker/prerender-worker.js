@@ -192,7 +192,12 @@ export default {
       // WHITELIST: Let Prerender.io servers through (prevents loops)
       // ----------------------------------------------------------------
       
-      if (userAgent.toLowerCase().includes('prerender')) {
+      const lowerUserAgent = userAgent.toLowerCase();
+      const isPrerenderBot = lowerUserAgent.includes('prerender') || 
+                             lowerUserAgent.includes('headless') ||
+                             request.headers.get('X-Prerender') === 'true';
+      
+      if (isPrerenderBot) {
         console.log('[PRERENDER.IO BYPASS] Proxying Prerender.io to Cloudflare Pages');
         // FIXED: Just pass through to Cloudflare Pages, no conversion needed
         return fetch(request);

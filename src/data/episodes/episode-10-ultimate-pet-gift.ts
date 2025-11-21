@@ -4,7 +4,7 @@ const episode: PodcastEpisode = {
   slug: "petport-ultimate-pet-gift",
   title: "PetPort: The Ultimate Pet Gift Solution for Fosters, Adopters, & Pet Parents",
   description: "Discover why PetPort is the perfect thoughtful gift for any pet milestone. This episode explores how digital pet profiles transform chaos into structure, solve daily stressors with real-time Care LiveLinks, empower fosters with one-tap transfers, and provide ultimate insurance for lost pet emergencies with instant flyer generation and sighting boards.",
-  coverImage: "https://pub-5e3024d73a954e09aa62c81c9d3f1592.r2.dev/petport-ultimate-pet-gift-1000x1000%20.jpg",
+  coverImage: "https://pub-5e3024d73a954e09aa62c81c9d3f1592.r2.dev/petport-ultimate-pet-gift-1000x1000.jpg",
   audioUrl: "https://pub-5e3024d73a954e09aa62c81c9d3f1592.r2.dev/petport-ultimate-pet-gift.m4a",
   duration: "10:34",
   publishDate: "2025-11-18",

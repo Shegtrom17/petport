@@ -3,7 +3,7 @@ import type { PodcastEpisode } from '../podcastEpisodes';
 const episode: PodcastEpisode = {
   slug: 'petport-livelinks-digital-pet-care',
   title: 'LiveLinks in Action — The Heartbeat of PetPort',
-  description: 'PetPort\'s LiveLinks bring every pet\'s story to life. From real-time care updates and one-tap calling to lost-pet flyers, sighting boards, and transferable records, discover how this all-in-one app gives every dog, cat, and horse a digital voice for life—organized, shareable, and built to travel anywhere you go.',
+  description: 'PetPort\'s LiveLinks bring every pet\'s story to life with real-time care updates, lost-pet flyers, and transferable records for life.',
   coverImage: 'https://pub-5e3024d73a954e09aa62c81c9d3f1592.r2.dev/petport-livelinks-digital-pet-care-1000x1000.jpg',
   ogImage: 'https://pub-5e3024d73a954e09aa62c81c9d3f1592.r2.dev/petport-livelinks-digital-pet-care-1200x630.jpg',
   audioUrl: 'https://pub-5e3024d73a954e09aa62c81c9d3f1592.r2.dev/petport-livelinks-digital-pet-care.mp3',

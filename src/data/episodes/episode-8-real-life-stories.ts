@@ -2,8 +2,8 @@ import type { PodcastEpisode } from '../podcastEpisodes';
 
 const episode: PodcastEpisode = {
   slug: 'petport-real-life-stories-digital-pet-care',
-  title: 'Real-Life Stories: How PetPort Changes Everyday Pet Care',
-  description: 'Every pet has a story — but what happens when that story gets lost in paperwork? In this episode, hear how PetPort\'s LiveLinks and Care Boards saved real pets in real moments: a horse\'s farrier visit, a cat\'s grooming day, and a midnight vet emergency. From barn to boarding kennel, PetPort turns scattered information into a living voice that keeps pets safe, organized, and understood.',
+  title: 'Real-Life Stories: How PetPort Changes Pet Care',
+  description: 'Hear how PetPort\'s LiveLinks saved real pets in real moments—from a horse\'s farrier visit to a midnight vet emergency.',
   coverImage: 'https://pub-5e3024d73a954e09aa62c81c9d3f1592.r2.dev/petport-real-life-stories-digital-pet-care-1000x1000.jpg',
   ogImage: 'https://pub-5e3024d73a954e09aa62c81c9d3f1592.r2.dev/petport-real-life-stories-digital-pet-care-1200x630.jpg',
   audioUrl: 'https://pub-5e3024d73a954e09aa62c81c9d3f1592.r2.dev/petport-real-life-stories.mp3',

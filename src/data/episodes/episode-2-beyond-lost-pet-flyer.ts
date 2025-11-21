@@ -2,8 +2,8 @@ import { PodcastEpisode } from '../podcastEpisodes';
 
 const episode: PodcastEpisode = {
   slug: "petport-beyond-lost-pet-flyer",
-  title: "Beyond the Lost Pet Flyer — Inside PetPort's LiveLink Ecosystem | The PetPort Podcast",
-  description: "Welcome to The PetPort Podcast — giving every pet a voice for life. Discover how PetPort.app transforms lost-pet recovery through the Lost Pet Flyer Generator, LiveLink demos, and QR-enabled sharing that unites communities in minutes.",
+  title: "Beyond the Lost Pet Flyer: LiveLink Ecosystem",
+  description: "Transform lost-pet recovery with PetPort's Flyer Generator, LiveLink system, and QR-enabled sharing that unites communities instantly.",
   coverImage: "https://pub-5e3024d73a954e09aa62c81c9d3f1592.r2.dev/beyond-lost-pet-flyer-og-1000x1000.jpg",
   ogImage: "https://pub-5e3024d73a954e09aa62c81c9d3f1592.r2.dev/beyond-lost-pet-flyer-podcast-cover-1200x630.jpg",
   audioUrl: "https://pub-5e3024d73a954e09aa62c81c9d3f1592.r2.dev/beyond-the-lost-pet-flyer.m4a",

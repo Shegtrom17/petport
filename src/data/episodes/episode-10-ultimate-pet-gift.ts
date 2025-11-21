@@ -206,7 +206,130 @@ Definitely something to think about. Thank you for joining us on this deep dive.
     "lifetime pet gift",
     "pet legacy platform",
     "pet voice for life"
-  ]
+  ],
+  displayTranscript: `
+    <h1>PetPort: The Ultimate Pet Gift Solution</h1>
+
+    <p class="lead text-lg text-muted-foreground mb-6">
+      Discover why <strong>PetPort</strong> is the ultimate <strong>thoughtful pet gift</strong> for any milestone. This special Deep Dive explores how <strong>digital pet profiles</strong> transform the chaos of paperwork into a living, breathing digital identity. Perfect for <strong>adoption day</strong>, <strong>Christmas</strong>, or any pet milestone, PetPort gives your pet a <strong>voice for life</strong>.
+    </p>
+
+    <h2>Segment 1: The Gift for Every Milestone</h2>
+
+    <div class="space-y-8">
+      <div class="border-l-4 border-brand-primary pl-6">
+        <div class="flex items-baseline gap-3 mb-2">
+          <span class="text-sm font-mono text-muted-foreground">0:00</span>
+          <h3 class="text-xl font-bold text-foreground">Beyond the Squeaky Toy</h3>
+        </div>
+        <p class="text-foreground leading-relaxed">"This is the gift when it's the thought that counts!!!!" The platform positions itself as lasting value—not another disposable toy, but an investment in the pet's well-being and owner's peace of mind. It's the gift of <strong>structure</strong>.</p>
+      </div>
+
+      <div class="border-l-4 border-brand-primary pl-6">
+        <div class="flex items-baseline gap-3 mb-2">
+          <span class="text-sm font-mono text-muted-foreground">1:15</span>
+          <h3 class="text-xl font-bold text-foreground">Perfect Timing Feature</h3>
+        </div>
+        <p class="text-foreground leading-relaxed">The convenience of scheduling gift delivery via email. Pick the exact date it arrives—<strong>adoption day</strong>, <strong>birthday</strong>, <strong>Christmas</strong>. Maximum emotional impact at the perfect moment. It's like handing someone a perfectly organized filing cabinet right when they realize their papers are scattered.</p>
+      </div>
+
+      <div class="border-l-4 border-brand-primary pl-6">
+        <div class="flex items-baseline gap-3 mb-2">
+          <span class="text-sm font-mono text-muted-foreground">2:00</span>
+          <h3 class="text-xl font-bold text-foreground">The Slogan That Captures It All</h3>
+        </div>
+        <p class="text-foreground leading-relaxed">"Last Christmas I gave you a dog. This Christmas I give your dog a voice." The shift from gifting the animal to gifting the infrastructure needed to manage its modern, complex life.</p>
+      </div>
+    </div>
+
+    <h2>Segment 2: Real-Time Organization & Daily Life</h2>
+
+    <div class="space-y-8">
+      <div class="border-l-4 border-brand-primary pl-6">
+        <div class="flex items-baseline gap-3 mb-2">
+          <span class="text-sm font-mono text-muted-foreground">2:45</span>
+          <h3 class="text-xl font-bold text-foreground">Digital Pet Passport</h3>
+        </div>
+        <p class="text-foreground leading-relaxed">The central hub for health and travel: <strong>vaccines</strong>, <strong>insurance info</strong>, <strong>medical records</strong>, <strong>medication schedules</strong>, and travel documents. All in the cloud, secure, instantly shareable. Guaranteed to be current whether with a vet, dog sitter, or landlord.</p>
+      </div>
+
+      <div class="border-l-4 border-brand-primary pl-6">
+        <div class="flex items-baseline gap-3 mb-2">
+          <span class="text-sm font-mono text-muted-foreground">4:10</span>
+          <h3 class="text-xl font-bold text-foreground">Care LiveLinks: The Single Source of Truth</h3>
+        </div>
+        <p class="text-foreground leading-relaxed">Not a one-off text message. A <strong>persistent link</strong> that updates in real-time. Update routines, diet, or medications in one place—the sitter's link shows new info instantly. "Like a read-only Google Doc, but built specifically for pet care." Eliminates dangerous outdated information.</p>
+      </div>
+    </div>
+
+    <h2>Segment 3: Professional Pet Identity</h2>
+
+    <div class="space-y-8">
+      <div class="border-l-4 border-brand-primary pl-6">
+        <div class="flex items-baseline gap-3 mb-2">
+          <span class="text-sm font-mono text-muted-foreground">5:20</span>
+          <h3 class="text-xl font-bold text-foreground">The Professional Pet Resume</h3>
+        </div>
+        <p class="text-foreground leading-relaxed">Formalizes the pet's role in the human world of <strong>rentals and insurance</strong>. A <strong>housing resume</strong> specifically for rental applications. Landlords assess risk with certifiable data: documented <strong>training certificates</strong>, full <strong>health history</strong>, and real-time <strong>reviews from professionals</strong> (vets, groomers, trainers).</p>
+      </div>
+
+      <div class="border-l-4 border-brand-primary pl-6">
+        <div class="flex items-baseline gap-3 mb-2">
+          <span class="text-sm font-mono text-muted-foreground">6:30</span>
+          <h3 class="text-xl font-bold text-foreground">LinkedIn for Your Dog</h3>
+        </div>
+        <p class="text-foreground leading-relaxed">Verifiable third-party endorsements give the pet actual credibility. Changes the pet from "unknown risk" to "documented, vetted applicant." The system does the heavy lifting—pulling together documents automatically and streamlining review requests.</p>
+      </div>
+
+      <div class="border-l-4 border-brand-primary pl-6">
+        <div class="flex items-baseline gap-3 mb-2">
+          <span class="text-sm font-mono text-muted-foreground">7:15</span>
+          <h3 class="text-xl font-bold text-foreground">Foster-to-Adopter Transfer</h3>
+        </div>
+        <p class="text-foreground leading-relaxed"><strong>Pet fosters</strong> juggle records for multiple animals. The <strong>one-tap app transition</strong>: send the pet's entire digital history—every note, photo, health log—directly to the new owner's account. Zero knowledge gap. Perfect handoff, seamless for everyone, especially the animal.</p>
+      </div>
+    </div>
+
+    <h2>Segment 4: Security & Peace of Mind</h2>
+
+    <div class="space-y-8">
+      <div class="border-l-4 border-brand-primary pl-6">
+        <div class="flex items-baseline gap-3 mb-2">
+          <span class="text-sm font-mono text-muted-foreground">8:00</span>
+          <h3 class="text-xl font-bold text-foreground">Insurance for Lost Pet Solution</h3>
+        </div>
+        <p class="text-foreground leading-relaxed">The scariest moment for any pet owner. PetPort turns panic into a clear action plan. The <strong>one-tap emergency toolkit</strong> condenses an hour of panicked work into 30 seconds.</p>
+      </div>
+
+      <div class="border-l-4 border-brand-primary pl-6">
+        <div class="flex items-baseline gap-3 mb-2">
+          <span class="text-sm font-mono text-muted-foreground">8:40</span>
+          <h3 class="text-xl font-bold text-foreground">Lost Pet Flyer Generator</h3>
+        </div>
+        <p class="text-foreground leading-relaxed">Instantly creates professional, high-quality flyer with <strong>QR code</strong>. Not a static poster—links to real-time <strong>missing pet emergency page</strong>, the central hub for the entire search.</p>
+      </div>
+
+      <div class="border-l-4 border-brand-primary pl-6">
+        <div class="flex items-baseline gap-3 mb-2">
+          <span class="text-sm font-mono text-muted-foreground">9:10</span>
+          <h3 class="text-xl font-bold text-foreground">In-App Sighting Board</h3>
+        </div>
+        <p class="text-foreground leading-relaxed">Structure over social media chaos. Anyone can log a <strong>sighting</strong> (location, time, details) and owner gets instant email notification. Creates a dedicated <strong>real-time tracking map</strong>. "The difference between a mob with flashlights and an actual search and rescue team."</p>
+      </div>
+    </div>
+
+    <h2>Final Thought: Changing the Game</h2>
+
+    <div class="space-y-8">
+      <div class="border-l-4 border-brand-primary pl-6">
+        <div class="flex items-baseline gap-3 mb-2">
+          <span class="text-sm font-mono text-muted-foreground">9:50</span>
+          <h3 class="text-xl font-bold text-foreground">The Provocative Question</h3>
+        </div>
+        <p class="text-foreground leading-relaxed">In a world where you can present a landlord with a <strong>housing resume</strong> featuring third-party verification of your pet's good health and behavior—could documented history eventually make blanket <strong>no-pets policies</strong> or unfair pet fees functionally obsolete? The tech elevates the animal from liability to documented, responsible resident.</p>
+      </div>
+    </div>
+  `
 };
 
 export default episode;

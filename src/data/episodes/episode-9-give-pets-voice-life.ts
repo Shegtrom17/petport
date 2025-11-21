@@ -3,7 +3,7 @@ import { PodcastEpisode } from '../podcastEpisodes';
 const episode: PodcastEpisode = {
   slug: "give-pets-voice-life",
   title: "Give Your Pet a Voice for Life",
-  description: "Explore how PetPort acts as a digital legacy keeper for pets—storing seven years of history, enabling real-time care updates through LiveLinks, and ensuring no animal's story is ever lost. From guardian emergency protocols to lifelong records for horses and parrots, discover the shift from ownership to stewardship.",
+  description: "PetPort stores 7 years of history, enables real-time care updates through LiveLinks, and ensures no animal's story is ever lost.",
   coverImage: "https://pub-5e3024d73a954e09aa62c81c9d3f1592.r2.dev/petport-give-voice-life-1000x1000.jpg",
   ogImage: "https://pub-5e3024d73a954e09aa62c81c9d3f1592.r2.dev/petport-give-voice-life-1200x630.jpg",
   audioUrl: "https://pub-5e3024d73a954e09aa62c81c9d3f1592.r2.dev/petport-give-pets-voice.mp3",

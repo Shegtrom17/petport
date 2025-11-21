@@ -27,6 +27,18 @@ const PodcastEpisode = () => {
   const episode = podcastEpisodes.find((ep) => ep.slug === episodeSlug);
 
   if (!episode) {
+    // Signal 404 to Prerender.io for invalid episodes
+    React.useEffect(() => {
+      const statusMeta = document.createElement('meta');
+      statusMeta.name = 'prerender-status-code';
+      statusMeta.content = '404';
+      document.head.appendChild(statusMeta);
+      
+      (window as any).prerenderReady = true;
+      
+      return () => statusMeta.remove();
+    }, []);
+    
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
@@ -40,13 +52,23 @@ const PodcastEpisode = () => {
   }
 
   useEffect(() => {
+    // Add explicit 200 status code for valid episodes
+    const statusMeta = document.createElement('meta');
+    statusMeta.name = 'prerender-status-code';
+    statusMeta.content = '200';
+    document.head.appendChild(statusMeta);
+    
     // Signal to Prerender.io that page is ready after meta tags render
+    // Increased delay to ensure all content is fully rendered
     const timer = setTimeout(() => {
       (window as any).prerenderReady = true;
-    }, 1000);
+    }, 2000);
     
-    return () => clearTimeout(timer);
-  }, []);
+    return () => {
+      clearTimeout(timer);
+      statusMeta.remove();
+    };
+  }, [episode]);
 
   const relatedEpisodes = podcastEpisodes
     .filter((ep) => ep.slug !== episode.slug)

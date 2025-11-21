@@ -2,8 +2,8 @@ import { PodcastEpisode } from '../podcastEpisodes';
 
 const episode: PodcastEpisode = {
   slug: 'petport-photo-gallery-life-story',
-  title: 'The Photo Gallery: The Pet\'s Digital Life Story For Safety and Sharing',
-  description: 'Petport\'s Photo Gallery and Story Stream are the ultimate digital pet photo album. Jamie and Alex show how this feature preserves your pet\'s life story while providing critical, one-tap visual evidence for Lost Pet Flyers and groomer instructions',
+  title: 'Photo Gallery: Digital Life Story & Safety',
+  description: 'PetPort\'s Photo Gallery preserves your pet\'s life story with one-tap visual evidence for Lost Pet Flyers and groomer instructions.',
   coverImage: 'https://pub-5e3024d73a954e09aa62c81c9d3f1592.r2.dev/petport-photo-gallery-life-story-1000x1000.jpg',
   ogImage: 'https://pub-5e3024d73a954e09aa62c81c9d3f1592.r2.dev/petport-photo-gallery-life-story-1200x630.jpg',
   audioUrl: 'https://pub-5e3024d73a954e09aa62c81c9d3f1592.r2.dev/petport-photo-gallery-life-story.m4a',

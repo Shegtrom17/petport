@@ -3,7 +3,7 @@ import { PodcastEpisode } from '../podcastEpisodes';
 const episode: PodcastEpisode = {
   slug: "petport-pet-screening-resume-builder",
   title: "Pet Screening & Resume Builder",
-  description: "From adoption applications to apartment hunting, discover why a professional pet resume opens doors and how to create one that showcases your pet's best qualities.",
+  description: "Discover how a professional pet resume opens doors for adoption, rentals, and housing—showcasing your pet's best qualities instantly.",
   coverImage: "https://pub-5e3024d73a954e09aa62c81c9d3f1592.r2.dev/petport-pet-screening-resume-1000x1000.jpg",
   ogImage: "https://pub-5e3024d73a954e09aa62c81c9d3f1592.r2.dev/petport-pet-screening-resume-builder-podcast.jpg",
   audioUrl: "https://pub-5e3024d73a954e09aa62c81c9d3f1592.r2.dev/pet-screening-resume-builder.mp3",

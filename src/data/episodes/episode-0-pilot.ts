@@ -2,8 +2,8 @@ import type { PodcastEpisode } from '../podcastEpisodes';
 
 const episode: PodcastEpisode = {
   slug: "petport-digital-pet-profile-platform",
-  title: "The Digital Pet Profile & Information Platform for a Lifetime",
-  description: "PetPort is the all-in-one app that gives every pet a voice for life. From LiveLinks and real-time pet care updates to lost-pet flyers, résumé builders, storyboards, and instant photo-to-PDF records, it keeps every detail organized, shareable, and ready when your pet needs you most.",
+  title: "Digital Pet Profile Platform for a Lifetime",
+  description: "PetPort gives every pet a voice for life with LiveLinks, lost-pet flyers, résumé builders, and instant photo-to-PDF records—organized and shareable.",
   coverImage: "https://pub-5e3024d73a954e09aa62c81c9d3f1592.r2.dev/petport-digital-pet-profile-1000x1000.jpg",
   ogImage: "https://pub-5e3024d73a954e09aa62c81c9d3f1592.r2.dev/petport-digital-pet-profile-1200x630.jpg",
   audioUrl: "https://pub-5e3024d73a954e09aa62c81c9d3f1592.r2.dev/petport-digital-pet-profile-platform.mp3",

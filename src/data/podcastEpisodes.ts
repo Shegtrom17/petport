@@ -33,6 +33,7 @@ import episode6 from './episodes/episode-6-digital-pet-records-app';
 import episode7 from './episodes/episode-7-livelinks-digital-pet-care';
 import episode8 from './episodes/episode-8-real-life-stories';
 import episode9 from './episodes/episode-9-give-pets-voice-life';
+import episode10 from './episodes/episode-10-ultimate-pet-gift';
 
 // Export episodes array in strategic order (by user importance)
 export const podcastEpisodes: PodcastEpisode[] = [
@@ -45,5 +46,6 @@ export const podcastEpisodes: PodcastEpisode[] = [
   episode4,      // #4 - Nov 1, 2025 - "Pet Care & Handling: Digital Voice and Wellness"
   episode5,      // #5 - Nov 2, 2025 - "The Photo Gallery: The Pet's Digital Life Story For Safety and Sharing"
   episode8,      // #8 - Nov 2, 2025 - "Real-Life Stories: How PetPort Changes Everyday Pet Care"
-  episode9       // #9 - Nov 7, 2025 - "Give Your Pet a Voice for Life"
+  episode9,      // #9 - Nov 7, 2025 - "Give Your Pet a Voice for Life"
+  episode10      // #10 - Nov 18, 2025 - "The Ultimate Pet Gift Solution"
 ];
